@@ -1,0 +1,15 @@
+
+SET(qrdf_SRCS world.cpp storage.cpp model.cpp parser.cpp node.cpp statement.cpp)
+ADD_DEFINITIONS(${REDLAND_CFLAGS})
+
+ADD_LIBRARY(qrdf SHARED ${qrdf_SRCS})
+
+INCLUDE_DIRECTORIES(${QT_QTCORE_INCLUDE_DIR})
+TARGET_LINK_LIBRARIES(qrdf ${REDLAND_LIBRARIES})
+TARGET_LINK_LIBRARIES(qrdf ${QT_QTCORE_LIBRARY})
+
+
+
+
+ 
+
