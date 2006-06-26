@@ -24,11 +24,8 @@ World::~World()
   librdf_free_world(d->world);
 }
 
-
-
-
-
 librdf_world* World::worldPtr()
 {
   return d->world;
 }
+

@@ -22,6 +22,7 @@ public:
     TypeLast = TypeBlank
   };
 
+  Node(const Node &rhs);
   Node(World *world, const QUrl &url);
   Node(World *world, const QString &literal);
   Node::NodeType nodeType() const;
@@ -34,7 +35,7 @@ public:
 
   QString toString() const;
   ~Node();
-  librdf_node* nodePtr();
+  librdf_node* nodePtr() const;
 private:
   class Private;
   Private *d;

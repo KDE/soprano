@@ -11,6 +11,14 @@ struct Statement::Private
   librdf_statement *statement;
 };
 
+
+Statement::Statement( const Statement &rhs )
+{
+  d = new Private;
+  d->statement = librdf_new_statement_from_statement( rhs.statementPtr() );
+  Q_ASSERT(d->statement != NULL);
+}
+
 Statement::Statement(World *world, Node *subject, Node *predicate, Node *object)
 {
   d = new Private;
@@ -28,7 +36,7 @@ bool Statement::equals( Statement *s )
   return ( librdf_statement_equals(d->statement, s->statementPtr()));
 }
 
-librdf_statement* Statement::statementPtr()
+librdf_statement* Statement::statementPtr() const
 {
   return d->statement;
 }

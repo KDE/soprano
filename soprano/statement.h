@@ -15,6 +15,7 @@ namespace RDF
 class Statement
 {
 public:
+  Statement( const Statement &rhs );
   Statement(World *world, Node *subject, Node *predicate, Node *object);
   ~Statement();
 
@@ -30,7 +31,7 @@ public:
 
   void clear();
 
-  librdf_statement* statementPtr();
+  librdf_statement* statementPtr() const;
   QString toString() const;
 private:
   class Private;

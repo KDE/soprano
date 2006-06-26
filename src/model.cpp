@@ -13,7 +13,14 @@ struct Model::Private
   librdf_model* model;
 };
 
-Model::Model(World *world, Storage *storage, const QString &options )
+Model::Model( const Model &rhs )
+{
+  d = new Private;
+  d->model = librdf_new_model_from_model( rhs.modelPtr() );
+  Q_ASSERT(d->model != NULL);
+}
+
+Model::Model( World *world, Storage *storage, const QString &options )
 {
   d = new Private;
   d->model = librdf_new_model(world->worldPtr(), storage->storagePtr(), options.toLatin1().data());
@@ -39,4 +46,9 @@ void Model::addStringLiteralStatement( Node *subject, Node *predicate, const QSt
 int Model::size() const
 {
   return librdf_model_size(d->model);
+}
+
+librdf_model* Model::modelPtr() const
+{
+  return d->model;
 }

@@ -11,6 +11,13 @@ struct Node::Private
   librdf_node *node;
 };
 
+Node::Node(const Node &rhs)
+{
+  d = new Private;
+  d->node = librdf_new_node_from_node(rhs.nodePtr());
+  Q_ASSERT(d->node != NULL);
+}
+
 Node::Node(World *world, const QUrl &url)
 {
   d = new Private;
@@ -30,7 +37,7 @@ Node::~Node()
   librdf_free_node(d->node);
 }
 
-librdf_node* Node::nodePtr()
+librdf_node* Node::nodePtr() const
 {
   return d->node;
 }

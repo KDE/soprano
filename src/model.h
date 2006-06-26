@@ -13,11 +13,13 @@ class Node;
 class Model
 {
 public:
+  Model(const Model &rhs);
   Model(World *world, Storage *storage, const QString &options );
   ~Model();
   bool containsStatement( Statement *s ) const;
   void addStringLiteralStatement( Node *subject, Node *predicate, const QString &literal );
   int size() const;
+  librdf_model* modelPtr() const;
 private:
   class Private;
   Private *d;
