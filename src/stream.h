@@ -10,7 +10,7 @@ namespace RDF
 class Stream
 {
 public:
-  Stream();
+  Stream( librdf_stream *stream );
   ~Stream();
   librdf_stream* streamPtr();
 private:

@@ -9,18 +9,20 @@ struct Parser::Private
   Private() : parser(0L)
   {}
   librdf_parser *parser;
+  World world;
 };
 
-Parser::Parser(World *world, const QString &name)
+Parser::Parser(const QString &name)
 {
   d = new Private;
-  d->parser = librdf_new_parser(world->worldPtr(), name.toLatin1().data(), NULL, NULL);
+  d->parser = librdf_new_parser(d->world.worldPtr(), name.toLatin1().data(), NULL, NULL);
   Q_ASSERT(d->parser != NULL);
 }
 
 Parser::~Parser()
 {
   librdf_free_parser(d->parser);
+  delete d;
 }
 
 librdf_parser* Parser::parserPtr()

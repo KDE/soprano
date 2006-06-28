@@ -1,7 +1,7 @@
 FIND_PROGRAM(REDLANDCONFIG_EXECUTABLE NAMES redland-config PATHS
    /usr/bin
    /usr/local/bin
-   /home/duncan/sw/redland/bin
+#   /home/duncan/sw/redland/bin
 )
 #reset vars
 set(REDLAND_LIBRARIES)

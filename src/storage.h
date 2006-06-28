@@ -9,12 +9,10 @@
 namespace RDF
 {
 
-class World;
-
 class Storage
 {
 public:
-  Storage(World *world, const QString &type, const QString &name, const QString &options );
+  Storage(const QString &type, const QString &name, const QString &options );
   ~Storage();
   librdf_storage* storagePtr();
 private:

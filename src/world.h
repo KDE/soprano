@@ -14,8 +14,8 @@ public:
   ~World();
   librdf_world* worldPtr();
 private:
-  class Private;
-  Private *d;
+  static librdf_world *_world;
+  static int _refcount;
 };
 
 

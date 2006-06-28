@@ -23,8 +23,8 @@ public:
   };
 
   Node(const Node &rhs);
-  Node(World *world, const QUrl &url);
-  Node(World *world, const QString &literal);
+  Node(const QUrl &url);
+  Node(const QString &literal);
   Node::NodeType nodeType() const;
   bool isLiteral() const;
   bool isResource() const;

@@ -10,8 +10,8 @@ using namespace RDF;
 int
 main(int argc, char *argv[]) 
 {
-  World *world = new World();
-  Node *node = new Node( world, QUrl("http://purl.org/dc/elements/1.1/title"));
+  Node *node = new Node( QUrl("http://purl.org/dc/elements/1.1/title"));
+  delete node;
   //Storage *storage = new Storage( context, "memory", "test", NULL);
 }
 

@@ -12,7 +12,7 @@ namespace RDF
 class Parser
 {
 public:
-  Parser(World *world, const QString &name);
+  Parser(const QString &name);
   ~Parser();
   librdf_parser* parserPtr();
 private:

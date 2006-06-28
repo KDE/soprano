@@ -9,6 +9,7 @@ struct Statement::Private
   Private() : statement(0L)
   {}
   librdf_statement *statement;
+  World world;
 };
 
 
@@ -19,16 +20,17 @@ Statement::Statement( const Statement &rhs )
   Q_ASSERT(d->statement != NULL);
 }
 
-Statement::Statement(World *world, Node *subject, Node *predicate, Node *object)
+Statement::Statement(Node *subject, Node *predicate, Node *object)
 {
   d = new Private;
-  d->statement = librdf_new_statement_from_nodes(world->worldPtr(), subject->nodePtr(), predicate->nodePtr(), object->nodePtr());
+  d->statement = librdf_new_statement_from_nodes(d->world.worldPtr(), subject->nodePtr(), predicate->nodePtr(), object->nodePtr());
   Q_ASSERT(d->statement != NULL);
 }
 
 Statement::~Statement()
 {
   librdf_free_statement(d->statement);
+  delete d;
 }
 
 bool Statement::equals( Statement *s )

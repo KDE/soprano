@@ -11,6 +11,7 @@ struct Model::Private
   Private() : model(0L)
   {}
   librdf_model* model;
+  World world;
 };
 
 Model::Model( const Model &rhs )
@@ -20,10 +21,10 @@ Model::Model( const Model &rhs )
   Q_ASSERT(d->model != NULL);
 }
 
-Model::Model( World *world, Storage *storage, const QString &options )
+Model::Model( Storage *storage, const QString &options )
 {
   d = new Private;
-  d->model = librdf_new_model(world->worldPtr(), storage->storagePtr(), options.toLatin1().data());
+  d->model = librdf_new_model(d->world.worldPtr(), storage->storagePtr(), options.toLatin1().data());
   Q_ASSERT(d->model != NULL);
    
 }

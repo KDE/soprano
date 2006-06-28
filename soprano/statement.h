@@ -16,7 +16,7 @@ class Statement
 {
 public:
   Statement( const Statement &rhs );
-  Statement(World *world, Node *subject, Node *predicate, Node *object);
+  Statement(Node *subject, Node *predicate, Node *object);
   ~Statement();
 
   bool equals( Statement *s );
