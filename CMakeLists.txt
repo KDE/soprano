@@ -1,9 +1,9 @@
 PROJECT(QRDF)
 
-SET(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules )
+SET(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules" )
 set(LIBRARY_OUTPUT_PATH  ${CMAKE_BINARY_DIR}/lib )
 
-macro_optional_find_package(RedLand)
+macro_optional_find_package(Redland)
 macro_log_feature(RedLand_FOUND "Redland" "RedLand Development Libraries" "fixme" FALSE "" "fixme")
 
 macro_optional_find_package(Raptor)
