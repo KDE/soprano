@@ -30,7 +30,7 @@ Node::Node(const QUrl &url)
 Node::Node(const QString &literal)
 {
   d = new Private;
-  d->node = librdf_new_node_from_literal(d->world.worldPtr(), (unsigned unsigned char*) literal.toLatin1().constData(), NULL, 0);
+  d->node = librdf_new_node_from_literal(d->world.worldPtr(), (unsigned char*) literal.toLatin1().constData(), NULL, 0);
   Q_ASSERT(d->node != NULL);
 }
 
@@ -93,3 +93,4 @@ QString Node::literal() const
 {
   return QString( (const char *) librdf_node_get_literal_value(d->node) );
 }
+

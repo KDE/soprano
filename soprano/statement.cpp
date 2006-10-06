@@ -82,3 +82,4 @@ void Statement::clear()
 {
   librdf_statement_clear(d->statement);
 }
+
