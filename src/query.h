@@ -21,22 +21,35 @@
 #ifndef QUERY_H
 #define QUERY_H
 
+#include <QString>
+
 #include <redland.h>
 
 namespace RDF
 {
 
+class World;
+
 class Query
 {
 public:
-  Query();
+  Query(World *world, const QString &query);
+  
   ~Query();
-  librdf_query* queryPtr();
+
+  int limit();
+
+  void setLimit(int limit);
+
+  int offset();
+
+  void setOffset(int offset);
+  
+  librdf_query* hook();
 private:
   class Private;
   Private *d;
 };
-
 
 }
 

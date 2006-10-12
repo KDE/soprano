@@ -1,5 +1,14 @@
 
-SET(qrdf_SRCS world.cpp storage.cpp model.cpp parser.cpp node.cpp statement.cpp stream.cpp)
+SET(qrdf_SRCS 
+    world.cpp 
+    storage.cpp 
+    model.cpp	
+    parser.cpp 
+    node.cpp
+    statement.cpp 
+    stream.cpp
+    query.cpp)
+
 ADD_DEFINITIONS(${REDLAND_CFLAGS})
 
 ADD_LIBRARY(qrdf SHARED ${qrdf_SRCS})

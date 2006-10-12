@@ -2,3 +2,12 @@
 - copy constructors
 - docs
 - headers
+
+
+Daniele Galdi
+
+- convert *Ptr() to hook()
+
+query.h
+- Add execute method
+

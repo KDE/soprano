@@ -58,6 +58,11 @@ bool Model::containsStatement( Statement *s ) const
   return ( librdf_model_contains_statement(d->model, s->statementPtr()) != 0 );
 }
 
+void Model::add( Node *subject, Node *predicate, Node *object )
+{
+  librdf_model_add( d->model, subject->nodePtr(), predicate->nodePtr(), object->nodePtr() );
+}
+
 void Model::addStringLiteralStatement( Node *subject, Node *predicate, const QString &literal )
 {
   librdf_model_add_string_literal_statement ( d->model, subject->nodePtr(), predicate->nodePtr(), (const unsigned char*) literal.toLatin1().constData(), NULL, 0);
@@ -66,6 +71,16 @@ void Model::addStringLiteralStatement( Node *subject, Node *predicate, const QSt
 int Model::size() const
 {
   return librdf_model_size(d->model);
+}
+
+void Model::addStatement( Statement *s )
+{
+  librdf_model_add_statement( d->model, s->statementPtr() );
+}
+
+void Model::removeStatement( Statement *s )
+{
+  librdf_model_remove_statement( d->model, s->statementPtr() );
 }
 
 librdf_model* Model::modelPtr() const

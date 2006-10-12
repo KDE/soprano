@@ -19,6 +19,7 @@
  */
 
 #include <QtGlobal>
+#include "world.h"
 #include "query.h"
 
 using namespace RDF;
@@ -30,12 +31,11 @@ struct Query::Private
   librdf_query *query;
 };
 
-Query::Query()
+Query::Query(World *world, const QString &query)
 {
   d = new Private;
-  d->query = librdf_new_query();
+  d->query = librdf_new_query( world->worldPtr(), "rdql", NULL, (unsigned char *) query.toLatin1().constData(), NULL);
   Q_ASSERT(d->query != NULL);
-  librdf_query_open(d->query);
 }
 
 Query::~Query()
@@ -43,11 +43,27 @@ Query::~Query()
   librdf_free_query(d->query);
 }
 
+int Query::limit()
+{
+  return librdf_query_get_limit( d->query );
+}
 
+void Query::setLimit(int limit)
+{
+  librdf_query_set_limit( d->query, limit );
+}
 
+int Query::offset()
+{
+  return librdf_query_get_offset( d->query );
+}
 
+void Query::setOffset(int offset)
+{
+  librdf_query_set_offset( d->query, offset ); 
+}
 
-librdf_query* Query::queryPtr()
+librdf_query* Query::hook()
 {
   return d->query;
 }
