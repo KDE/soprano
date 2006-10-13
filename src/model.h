@@ -28,6 +28,7 @@ namespace RDF
 
 class Statement;
 class Node;
+class World;
 
 class Model
 {
@@ -35,7 +36,7 @@ public:
   
   Model(const Model &rhs);
   
-  Model( Storage *storage, const QString &options );
+  Model( World *world, Storage *storage, const QString &options );
   
   ~Model();
   
@@ -51,12 +52,11 @@ public:
 
   void removeStatement( Statement *s);
 
-  librdf_model* modelPtr() const;
+  librdf_model* hook() const;
 private:
   class Private;
   Private *d;
 };
-
 
 }
 

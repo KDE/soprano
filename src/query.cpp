@@ -34,13 +34,14 @@ struct Query::Private
 Query::Query(World *world, const QString &query)
 {
   d = new Private;
-  d->query = librdf_new_query( world->worldPtr(), "rdql", NULL, (unsigned char *) query.toLatin1().constData(), NULL);
+  d->query = librdf_new_query( world->hook(), NULL, NULL, (unsigned char *) query.toLatin1().constData(), NULL);
   Q_ASSERT(d->query != NULL);
 }
 
 Query::~Query()
 {
   librdf_free_query(d->query);
+  delete d;
 }
 
 int Query::limit()

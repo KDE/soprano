@@ -24,10 +24,11 @@
 #include <QString>
 #include <QUrl>
 #include <redland.h>
-#include "world.h"
 
 namespace RDF
 {
+
+class World;
 
 class Node
 {
@@ -42,24 +43,26 @@ public:
   };
 
   Node(const Node &rhs);
-  explicit Node(const QUrl &url);
-  explicit Node(const QString &literal);
+  Node(librdf_node *node);
+  Node(World *world, const QUrl &url);
+  Node(World *world, const QString &literal);
+  ~Node();
+
   Node::NodeType nodeType() const;
+
   bool isLiteral() const;
   bool isResource() const;
   bool isBlank() const;
 
   QUrl url() const;
   QString literal() const;
-
   QString toString() const;
-  ~Node();
-  librdf_node* nodePtr() const;
+
+  librdf_node* hook() const;
 private:
   class Private;
   Private *d;
 };
-
 
 }
 

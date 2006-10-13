@@ -22,7 +22,6 @@
 #define QUERY_H
 
 #include <QString>
-
 #include <redland.h>
 
 namespace RDF
@@ -54,4 +53,3 @@ private:
 }
 
 #endif
-

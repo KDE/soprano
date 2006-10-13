@@ -25,17 +25,18 @@
 #include <QUrl>
 
 #include <redland.h>
-#include "world.h"
 #include "node.h"
 
 namespace RDF
 {
 
+class World;
+
 class Statement
 {
 public:
   Statement( const Statement &rhs );
-  Statement(Node *subject, Node *predicate, Node *object);
+  Statement(World *world, Node *subject, Node *predicate, Node *object);
   ~Statement();
 
   bool equals( Statement *s );
@@ -49,14 +50,13 @@ public:
   Node* object() const;
 
   void clear();
-
-  librdf_statement* statementPtr() const;
   QString toString() const;
+  
+  librdf_statement* hook() const;
 private:
   class Private;
   Private *d;
 };
-
 
 }
 

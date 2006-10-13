@@ -23,17 +23,18 @@
 
 #include <QString>
 #include <redland.h>
-#include "world.h"
 
 namespace RDF
 {
 
+class World;
+
 class Parser
 {
 public:
-  explicit Parser(const QString &name);
+  explicit Parser(World *world, const QString &name);
   ~Parser();
-  librdf_parser* parserPtr();
+  librdf_parser* hook();
 private:
   class Private;
   Private *d;

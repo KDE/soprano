@@ -27,16 +27,16 @@ using namespace RDF;
 
 struct Storage::Private
 {
+  Private() : storage(0L)
+  {}
   librdf_storage* storage;
-  World world;
 };
 
-Storage::Storage(const QString &type, const QString &name, const QString &options )
+Storage::Storage( World *world, const QString &type, const QString &name, const QString &options )
 {
   d = new Private;
-  d->storage = librdf_new_storage(d->world.worldPtr(), type.toLatin1().data(), name.toLatin1().data(), options.toLatin1().data());
-  Q_ASSERT(d->storage != NULL);
-   
+  d->storage = librdf_new_storage(world->hook(), type.toLatin1().data(), name.toLatin1().data(), options.toLatin1().data());
+  Q_ASSERT(d->storage != NULL);   
 }
 
 Storage::~Storage()
@@ -45,7 +45,7 @@ Storage::~Storage()
   delete d;
 }
 
-librdf_storage* Storage::storagePtr()
+librdf_storage* Storage::hook()
 {
   return d->storage;
 }

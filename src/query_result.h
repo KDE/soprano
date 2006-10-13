@@ -1,6 +1,6 @@
 /* This file is part of QRDF
  *
- * Copyright (C) 2006 Duncan Mac-Vicar <duncan@kde.org>
+ * Copyright (C) 2006 Daniele Galdi <daniele.galdi@gmail.com>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -18,25 +18,30 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef STORAGE_H
-#define STORAGE_H
-
-#include <QString>
+#ifndef QUERY_RESULT_H
+#define QUERY_RESULT_H
 
 #include <redland.h>
 
-namespace RDF
-{
+namespace RDF {
 
-class World;
+class Node;
 
-class Storage
+class QueryResult
 {
 public:
-  Storage( World *world, const QString &type, const QString &name, const QString &options );
-  ~Storage();
+  explicit QueryResult(librdf_query_results *qr);
+  ~QueryResult();
 
-   librdf_storage* hook();
+  int count();
+ 
+  bool hasNext();
+
+  Node *getBinding(int offset);
+
+  bool isBoolean();
+
+  bool getBoolean();
 private:
   class Private;
   Private *d;

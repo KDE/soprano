@@ -7,7 +7,8 @@ SET(qrdf_SRCS
     node.cpp
     statement.cpp 
     stream.cpp
-    query.cpp)
+    query.cpp
+    query_result.cpp)
 
 ADD_DEFINITIONS(${REDLAND_CFLAGS})
 

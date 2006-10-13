@@ -19,8 +19,8 @@
  */
 
 #include <QtGlobal>
+#include "world.h"
 #include "node.h"
-#include <iostream>
 
 using namespace RDF;
 
@@ -29,38 +29,43 @@ struct Node::Private
   Private() : node(0L)
   {}
   librdf_node *node;
-  World world;
 };
 
 Node::Node(const Node &rhs)
 {
   d = new Private;
-  d->node = librdf_new_node_from_node(rhs.nodePtr());
+  d->node = librdf_new_node_from_node(rhs.hook());
   Q_ASSERT(d->node != NULL);
 }
 
-Node::Node(const QUrl &url)
+Node::Node(librdf_node *node)
 {
   d = new Private;
-  d->node = librdf_new_node_from_uri_string(d->world.worldPtr(), (const unsigned char*) url.toString().toLatin1().constData());
+  d->node = node;
   Q_ASSERT(d->node != NULL);
 }
 
-Node::Node(const QString &literal)
+Node::Node(World *world, const QUrl &url)
 {
   d = new Private;
-  d->node = librdf_new_node_from_literal(d->world.worldPtr(), (unsigned char*) literal.toLatin1().constData(), NULL, 0);
+  d->node = librdf_new_node_from_uri_string(world->hook(), (const unsigned char*) url.toString().toLatin1().constData());
+  Q_ASSERT(d->node != NULL);
+}
+
+Node::Node(World *world, const QString &literal)
+{
+  d = new Private;
+  d->node = librdf_new_node_from_literal( world->hook(), (unsigned char*) literal.toLatin1().constData(), NULL, 0);
   Q_ASSERT(d->node != NULL);
 }
 
 Node::~Node()
 {
-  std::cout << "~ node" << std::endl;
   librdf_free_node(d->node);
   delete d;
 }
 
-librdf_node* Node::nodePtr() const
+librdf_node* Node::hook() const
 {
   return d->node;
 }

@@ -1,6 +1,6 @@
 /* This file is part of QRDF
  *
- * Copyright (C) 2006 Duncan Mac-Vicar <duncan@kde.org>
+ * Copyright (C) 2006 Daniele Galdi <daniele.galdi@gmail.com>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -19,33 +19,52 @@
  */
 
 #include <QtGlobal>
-#include "world.h"
-#include "parser.h"
+#include "node.h"
+#include "query_result.h"
 
 using namespace RDF;
 
-struct Parser::Private
+struct QueryResult::Private
 {
-  Private() : parser(0L)
+  Private() : queryResult(0L)
   {}
-  librdf_parser *parser;
+  librdf_query_results *queryResult;
 };
 
-Parser::Parser(World *world, const QString &name)
+QueryResult::QueryResult(librdf_query_results *qr)
 {
   d = new Private;
-  d->parser = librdf_new_parser(world->hook(), name.toLatin1().data(), NULL, NULL);
-  Q_ASSERT(d->parser != NULL);
+  d->queryResult = qr;
+  Q_ASSERT( d->queryResult != NULL );
 }
 
-Parser::~Parser()
+QueryResult::~QueryResult()
 {
-  librdf_free_parser(d->parser);
+  librdf_free_query_results( d->queryResult );
   delete d;
 }
 
-librdf_parser* Parser::hook()
+int QueryResult::count()
 {
-  return d->parser;
+  return librdf_query_results_get_count( d->queryResult );
 }
 
+bool QueryResult::hasNext()
+{
+  return librdf_query_results_next( d->queryResult ) != 0;
+}
+
+Node *QueryResult::getBinding(int offset)
+{
+  return new Node( librdf_query_results_get_binding_value( d->queryResult, offset ) );
+}
+
+bool QueryResult::isBoolean()
+{
+  return librdf_query_results_is_boolean( d->queryResult ) != 0;
+}
+
+bool QueryResult::getBoolean()
+{
+  return librdf_query_results_get_boolean( d->queryResult ) > 0;
+}

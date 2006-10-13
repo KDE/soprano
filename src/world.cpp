@@ -25,35 +25,33 @@
 using namespace RDF;
 using namespace std;
 
-librdf_world *World::_world = 0L;
-int World::_refcount = 0;
+struct World::Private
+{
+  Private() : world(0L)
+  {}
+  librdf_world* world;
+};
 
 World::World()
 {
-  cout << "ref:" << _refcount << std::endl;
-  if ( _refcount == 0 )
-  {
-    cout << "Creating world.." << std::endl;
-    _world = librdf_new_world();
-    librdf_world_open(_world);
-  }
-  _refcount++;
-  Q_ASSERT(_world != NULL);
+  d = new Private;
+  d->world = librdf_new_world();
+  Q_ASSERT(d->world != NULL);
 }
 
 World::~World()
 {
-  cout << "~ ref:" << _refcount << std::endl;
-  _refcount--;
-  if ( _refcount == 0 )
-  {
-    cout << "Destroying world.." << std::endl;
-    librdf_free_world(_world);
-  }
+  librdf_free_world( d->world );
+  delete d;
 }
 
-librdf_world* World::worldPtr()
+void World::open()
 {
-  return _world;
+  librdf_world_open( d->world );
+}
+
+librdf_world* World::hook()
+{
+  return d->world;
 }
 

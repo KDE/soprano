@@ -30,13 +30,16 @@ class World
 {
 public:
   World();
-  ~World();
-  librdf_world* worldPtr();
-private:
-  static librdf_world *_world;
-  static int _refcount;
-};
 
+  ~World();
+  
+  void open();
+  
+  librdf_world* hook();
+private:
+  class Private;
+  Private *d;
+};
 
 }
 

@@ -19,6 +19,7 @@
  */
 
 #include <QtGlobal>
+#include "world.h"
 #include "statement.h"
 
 using namespace RDF;
@@ -28,21 +29,19 @@ struct Statement::Private
   Private() : statement(0L)
   {}
   librdf_statement *statement;
-  World world;
 };
-
 
 Statement::Statement( const Statement &rhs )
 {
   d = new Private;
-  d->statement = librdf_new_statement_from_statement( rhs.statementPtr() );
+  d->statement = librdf_new_statement_from_statement( rhs.hook() );
   Q_ASSERT(d->statement != NULL);
 }
 
-Statement::Statement(Node *subject, Node *predicate, Node *object)
+Statement::Statement(World *world, Node *subject, Node *predicate, Node *object)
 {
   d = new Private;
-  d->statement = librdf_new_statement_from_nodes(d->world.worldPtr(), subject->nodePtr(), predicate->nodePtr(), object->nodePtr());
+  d->statement = librdf_new_statement_from_nodes(world->hook(), subject->hook(), predicate->hook(), object->hook());
   Q_ASSERT(d->statement != NULL);
 }
 
@@ -54,10 +53,10 @@ Statement::~Statement()
 
 bool Statement::equals( Statement *s )
 {
-  return ( librdf_statement_equals(d->statement, s->statementPtr()));
+  return ( librdf_statement_equals(d->statement, s->hook()));
 }
 
-librdf_statement* Statement::statementPtr() const
+librdf_statement* Statement::hook() const
 {
   return d->statement;
 }
@@ -69,32 +68,32 @@ QString Statement::toString() const
 
 void Statement::setSubject( Node *node )
 {
-  librdf_statement_set_subject(d->statement, node->nodePtr());
+  librdf_statement_set_subject(d->statement, node->hook());
 }
 
 void Statement::setPredicate( Node *node )
 {
-  librdf_statement_set_predicate(d->statement, node->nodePtr());
+  librdf_statement_set_predicate(d->statement, node->hook());
 }
 
 void Statement::setObject( Node *node )
 {
-  librdf_statement_set_object(d->statement, node->nodePtr());
+  librdf_statement_set_object(d->statement, node->hook());
 }
 
 Node* Statement::subject() const
 {
-  return 0L;
+  return new Node( librdf_statement_get_subject( d->statement ) );
 }
 
 Node* Statement::predicate() const
 {
-  return 0L;
+  return new Node( librdf_statement_get_predicate( d->statement ) );
 }
 
 Node* Statement::object() const
 {
-  return 0L;
+  return new Node( librdf_statement_get_object( d->statement ) );
 }
 
 void Statement::clear()
