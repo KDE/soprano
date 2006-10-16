@@ -52,6 +52,8 @@ public:
 
   void removeStatement( Statement *s);
 
+  void print( FILE *fh );
+
   librdf_model* hook() const;
 private:
   class Private;

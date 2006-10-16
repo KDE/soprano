@@ -82,6 +82,11 @@ void Model::removeStatement( Statement *s )
   librdf_model_remove_statement( d->model, s->hook() );
 }
 
+void Model::print( FILE *fh )
+{
+  librdf_model_print( d->model, fh );
+}
+
 librdf_model* Model::hook() const
 {
   return d->model;

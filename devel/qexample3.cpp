@@ -47,8 +47,7 @@ main(int argc, char *argv[])
 
   Model *model = new Model( world, storage, NULL);
   model->addStatement( st );
-
-  librdf_model_print(model->hook(), stdout);
+  model->print( stdout );
 
   // FIXME: Memory leak
   delete subject;
