@@ -22,6 +22,8 @@
 #include "model.h"
 #include "world.h"
 #include "statement.h"
+#include "query.h"
+#include "query_result.h"
 
 using namespace RDF;
 
@@ -85,6 +87,11 @@ void Model::removeStatement( Statement *s )
 void Model::print( FILE *fh )
 {
   librdf_model_print( d->model, fh );
+}
+
+QueryResult *Model::executeQuery( Query *query )
+{
+  return new QueryResult( librdf_model_query_execute( d->model, query->hook() ) );
 }
 
 librdf_model* Model::hook() const

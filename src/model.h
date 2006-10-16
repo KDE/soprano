@@ -29,6 +29,8 @@ namespace RDF
 class Statement;
 class Node;
 class World;
+class Query;
+class QueryResult;
 
 class Model
 {
@@ -53,6 +55,8 @@ public:
   void removeStatement( Statement *s);
 
   void print( FILE *fh );
+
+  QueryResult *executeQuery( Query *query );
 
   librdf_model* hook() const;
 private:

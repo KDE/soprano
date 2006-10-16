@@ -21,38 +21,35 @@
 #ifndef STATEMENT_H
 #define STATEMENT_H
 
-#include <QString>
-#include <QUrl>
-
 #include <redland.h>
 #include "node.h"
 
 namespace RDF
 {
 
-class World;
-
 class Statement
 {
 public:
+  Statement( World *world );
   Statement( const Statement &rhs );
-  Statement(World *world, Node *subject, Node *predicate, Node *object);
+  Statement( World *world, Node *subject, Node *predicate, Node *object );
   ~Statement();
 
-  bool equals( Statement *s );
-
   void setSubject( Node *node );
-  void setPredicate( Node *node );
-  void setObject( Node *node );
-
-  Node* subject() const;
-  Node* predicate() const;
-  Node* object() const;
-
-  void clear();
-  QString toString() const;
+  Node *subject() const;
   
-  librdf_statement* hook() const;
+  void setPredicate( Node *node );
+  Node *predicate() const;
+  
+  void setObject( Node *node );
+  Node *object() const;
+  
+  void clear();
+
+  bool isComplete();
+
+  librdf_statement *hook() const;
+
 private:
   class Private;
   Private *d;

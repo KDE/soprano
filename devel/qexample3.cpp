@@ -40,10 +40,10 @@ main(int argc, char *argv[])
   Storage *storage = new Storage( world, "hashes", "test", "hash-type='bdb',dir='.'" );
 
   Node *subject = new Node( world, QUrl("http://purl.org/net/dagnele/") );
-  Node *property = new Node( world, QUrl("http://purl.org/dc/elements/1.1/creator") );
+  Node *predicate = new Node( world, QUrl("http://purl.org/dc/elements/1.1/creator") );
   Node *object = new Node( world, "Daniele Galdi");
 
-  Statement *st = new Statement( world, subject, property, object);
+  Statement *st = new Statement( world, subject, predicate, object);
 
   Model *model = new Model( world, storage, NULL);
   model->addStatement( st );
@@ -51,7 +51,7 @@ main(int argc, char *argv[])
 
   // FIXME: Memory leak
   delete subject;
-  delete property;
+  delete predicate;
   delete object;
   // END
 

@@ -6,8 +6,5 @@
 
 Daniele Galdi
 
-- convert *Ptr() to hook()
-
 query.h
 - Add execute method
-

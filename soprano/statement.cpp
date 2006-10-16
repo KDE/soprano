@@ -20,6 +20,7 @@
 
 #include <QtGlobal>
 #include "world.h"
+#include "node.h"
 #include "statement.h"
 
 using namespace RDF;
@@ -30,6 +31,13 @@ struct Statement::Private
   {}
   librdf_statement *statement;
 };
+
+Statement::Statement( World *world)
+{
+  d = new Private;
+  d->statement = librdf_new_statement( world->hook() );
+  Q_ASSERT(d->statement != NULL);
+}
 
 Statement::Statement( const Statement &rhs )
 {
@@ -47,38 +55,13 @@ Statement::Statement(World *world, Node *subject, Node *predicate, Node *object)
 
 Statement::~Statement()
 {
-  librdf_free_statement(d->statement);
+  librdf_free_statement( d->statement );
   delete d;
-}
-
-bool Statement::equals( Statement *s )
-{
-  return ( librdf_statement_equals(d->statement, s->hook()));
-}
-
-librdf_statement* Statement::hook() const
-{
-  return d->statement;
-}
-
-QString Statement::toString() const
-{
-  return QString( (const char *) librdf_statement_to_string (d->statement));
 }
 
 void Statement::setSubject( Node *node )
 {
-  librdf_statement_set_subject(d->statement, node->hook());
-}
-
-void Statement::setPredicate( Node *node )
-{
-  librdf_statement_set_predicate(d->statement, node->hook());
-}
-
-void Statement::setObject( Node *node )
-{
-  librdf_statement_set_object(d->statement, node->hook());
+  librdf_statement_set_subject( d->statement, node->hook() );
 }
 
 Node* Statement::subject() const
@@ -86,9 +69,19 @@ Node* Statement::subject() const
   return new Node( librdf_statement_get_subject( d->statement ) );
 }
 
+void Statement::setPredicate( Node *node )
+{
+  librdf_statement_set_predicate( d->statement, node->hook() );
+}
+
 Node* Statement::predicate() const
 {
   return new Node( librdf_statement_get_predicate( d->statement ) );
+}
+
+void Statement::setObject( Node *node )
+{
+  librdf_statement_set_object(d->statement, node->hook());
 }
 
 Node* Statement::object() const
@@ -98,6 +91,17 @@ Node* Statement::object() const
 
 void Statement::clear()
 {
-  librdf_statement_clear(d->statement);
+  librdf_statement_clear( d->statement );
 }
+
+bool Statement::isComplete()
+{
+  return librdf_statement_is_complete( d->statement ) != 0; 
+}
+
+librdf_statement *Statement::hook() const
+{
+  return d->statement;
+}
+
 
