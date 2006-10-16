@@ -1,7 +1,7 @@
 PROJECT(QRDF)
 
 SET(CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake/modules)
-set(LIBRARY_OUTPUT_PATH  ${CMAKE_BINARY_DIR}/lib )
+SET(LIBRARY_OUTPUT_PATH  ${CMAKE_BINARY_DIR}/lib )
 
 find_package(KDE4 REQUIRED)
 include(KDE4Defaults)
@@ -18,6 +18,6 @@ macro_log_feature(Rasqal_FOUND "Rasqal" "Rasqal Development Libraries" "fixme" F
 
 if(Redland_FOUND AND Raptor_FOUND AND Rasqal_FOUND)
   add_subdirectory(src)
-#  add_subdirectory(devel)
+  add_subdirectory(devel)
   add_subdirectory(tests)
 endif(Redland_FOUND AND Raptor_FOUND AND Rasqal_FOUND)

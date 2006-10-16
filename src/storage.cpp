@@ -35,8 +35,8 @@ struct Storage::Private
 Storage::Storage( World *world, const QString &type, const QString &name, const QString &options )
 {
   d = new Private;
-  d->storage = librdf_new_storage(world->hook(), type.toLatin1().data(), name.toLatin1().data(), options.toLatin1().data());
-  Q_ASSERT(d->storage != NULL);   
+  d->storage = librdf_new_storage( world->hook(), type.toLatin1().data(), name.toLatin1().data(), options.toLatin1().data() );
+  Q_ASSERT(d->storage != NULL);
 }
 
 Storage::~Storage()

@@ -61,7 +61,7 @@ Node::Node(World *world, const QString &literal)
 
 Node::~Node()
 {
-  librdf_free_node(d->node);
+  //librdf_free_node(d->node);
   delete d;
 }
 
