@@ -37,7 +37,8 @@ main(int argc, char *argv[])
   World *world = new World();
   world->open();
    
-  Storage *storage = new Storage( world, "hashes", "test", "hash-type='bdb',dir='.'" );
+  //Storage *storage = new Storage( world, "hashes", "test", "hash-type='bdb',dir='.'" );
+  Storage *storage = new Storage( world, "memory", "test", NULL );
 
   Node *subject = new Node( world, QUrl("http://purl.org/net/dagnele/") );
   Node *predicate = new Node( world, QUrl("http://purl.org/dc/elements/1.1/creator") );
