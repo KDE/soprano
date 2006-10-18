@@ -18,6 +18,6 @@ macro_log_feature(Rasqal_FOUND "Rasqal" "Rasqal Development Libraries" "fixme" F
 
 if(Redland_FOUND AND Raptor_FOUND AND Rasqal_FOUND)
   add_subdirectory(src)
-  add_subdirectory(devel)
+  add_subdirectory(samples)
   add_subdirectory(tests)
 endif(Redland_FOUND AND Raptor_FOUND AND Rasqal_FOUND)

@@ -32,7 +32,7 @@ class World;
 class Parser
 {
 public:
-  explicit Parser(World *world, const QString &name);
+  Parser(World *world, const QString &name);
   ~Parser();
   librdf_parser* hook();
 private:
