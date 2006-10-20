@@ -29,23 +29,34 @@ using namespace RDF;
 
 struct Model::Private
 {
-  Private() : model(0L)
+  Private() : model(0L), world(0L)
   {}
-  librdf_model* model;
+  librdf_model *model;
+  librdf_world *world;
 };
+
+librdf_node *redland_node( librdf_world *world, Node *node )
+{
+  librdf_node *converted = node->hook( world );
+  delete node;
+
+  return converted;
+}
 
 Model::Model( const Model &rhs )
 {
   d = new Private;
-  d->model = librdf_new_model_from_model( rhs.hook() );
-  Q_ASSERT(d->model != NULL);
+  d->model = librdf_new_model_from_model( rhs.hookModel() );
+  d->world = rhs.hookWorld();
+  Q_ASSERT(d->model != 0L);
 }
 
 Model::Model( World *world, Storage *storage, const QString &options )
 {
   d = new Private;
   d->model = librdf_new_model(world->hook(), storage->hook(), options.toLatin1().data());
-  Q_ASSERT(d->model != NULL);
+  d->world = world->hook();
+  Q_ASSERT(d->model != 0L);
 }
 
 Model::~Model()
@@ -56,32 +67,45 @@ Model::~Model()
 
 bool Model::containsStatement( Statement *s ) const
 {
-  return ( librdf_model_contains_statement(d->model, s->hook()) != 0 );
+  return ( librdf_model_contains_statement(d->model, s->hook( d->world )) != 0 );
 }
 
 void Model::add( Node *subject, Node *predicate, Node *object )
 {
-  librdf_model_add( d->model, subject->hook(), predicate->hook(), object->hook() );
+  librdf_node *s = redland_node( d->world, subject );
+  librdf_node *p = redland_node( d->world, predicate );
+  librdf_node *o = redland_node( d->world, object );
+
+  librdf_model_add( d->model, s, p, o );
 }
 
-void Model::addStringLiteralStatement( Node *subject, Node *predicate, const QString &literal )
+
+void Model::addStringLiteralStatement( Node *subject, Node *predicate, QString *literal )
 {
-  librdf_model_add_string_literal_statement ( d->model, subject->hook(), predicate->hook(), (const unsigned char*) literal.toLatin1().constData(), NULL, 0);
+  librdf_node *s = redland_node( d->world, subject );
+  librdf_node *p = redland_node( d->world, predicate );
+
+  librdf_model_add_string_literal_statement ( d->model, s, p, (const unsigned char*) literal->toLatin1().constData(), NULL, 0);
+  delete literal;
 }
 
 int Model::size() const
 {
-  return librdf_model_size(d->model);
+  return librdf_model_size( d->model );
 }
 
 void Model::addStatement( Statement *s )
 {
-  librdf_model_add_statement( d->model, s->hook() );
+  librdf_statement *st = s->hook( d->world);
+  librdf_model_add_statement( d->model, st );
+  librdf_free_statement( st );
 }
 
 void Model::removeStatement( Statement *s )
 {
-  librdf_model_remove_statement( d->model, s->hook() );
+  librdf_statement *st = s->hook( d->world);
+  librdf_model_remove_statement( d->model, s->hook( d->world ) );
+  librdf_free_statement( st );
 }
 
 void Model::print( FILE *fh )
@@ -94,7 +118,13 @@ QueryResult *Model::executeQuery( Query *query )
   return new QueryResult( librdf_model_query_execute( d->model, query->hook() ) );
 }
 
-librdf_model* Model::hook() const
+librdf_model* Model::hookModel() const
 {
   return d->model;
 }
+
+librdf_world *Model::hookWorld() const
+{
+  return d->world;
+}
+

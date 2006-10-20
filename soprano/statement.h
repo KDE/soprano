@@ -30,25 +30,25 @@ namespace RDF
 class Statement
 {
 public:
-  Statement( World *world );
+  Statement( );
   Statement( const Statement &rhs );
-  Statement( World *world, Node *subject, Node *predicate, Node *object );
+  Statement( Node *subject, Node *predicate, Node *object );
   ~Statement();
 
   void setSubject( Node *node );
-  Node *subject() const;
+  const Node *subject() const;
   
   void setPredicate( Node *node );
-  Node *predicate() const;
+  const Node *predicate() const;
   
   void setObject( Node *node );
-  Node *object() const;
+  const Node *object() const;
   
   void clear();
 
   bool isComplete();
 
-  librdf_statement *hook() const;
+  librdf_statement *hook( librdf_world *world ) const;
 
 private:
   class Private;

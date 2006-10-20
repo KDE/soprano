@@ -28,8 +28,6 @@
 namespace RDF
 {
 
-class World;
-
 class Node
 {
 public:
@@ -38,27 +36,26 @@ public:
     TypeUnknown = 0,
     TypeResource = 1,
     TypeLiteral = 2,
-    TypeBlank = 4,
-    TypeLast = TypeBlank
+    TypeBlank = 4
   };
 
+  explicit Node(librdf_node *node);
+  explicit Node(QUrl *url);
+  explicit Node(QString *literal);
   Node(const Node &rhs);
-  Node(librdf_node *node);
-  Node(World *world, const QUrl &url);
-  Node(World *world, const QString &literal);
   ~Node();
 
-  Node::NodeType nodeType() const;
+  NodeType type() const;
 
   bool isLiteral() const;
   bool isResource() const;
   bool isBlank() const;
 
-  QUrl url() const;
-  QString literal() const;
-  QString toString() const;
+  const QUrl *url() const;
+  const QString *literal() const;
+  const QString *blank() const;
 
-  librdf_node* hook() const;
+  librdf_node* hook(librdf_world *world) const;
 private:
   class Private;
   Private *d;
@@ -67,5 +64,3 @@ private:
 }
 
 #endif
-
-

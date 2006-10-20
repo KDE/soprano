@@ -36,7 +36,7 @@ class Model
 {
 public:
   
-  Model(const Model &rhs);
+  Model( const Model &rhs );
   
   Model( World *world, Storage *storage, const QString &options );
   
@@ -46,7 +46,7 @@ public:
   
   void add( Node *subject, Node *predicate, Node *object );
 
-  void addStringLiteralStatement( Node *subject, Node *predicate, const QString &literal );
+  void addStringLiteralStatement( Node *subject, Node *predicate, QString *literal );
   
   int size() const;
 
@@ -58,7 +58,8 @@ public:
 
   QueryResult *executeQuery( Query *query );
 
-  librdf_model* hook() const;
+  librdf_model *hookModel() const;
+  librdf_world *hookWorld() const;
 private:
   class Private;
   Private *d;

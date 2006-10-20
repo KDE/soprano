@@ -27,81 +27,100 @@ using namespace RDF;
 
 struct Statement::Private
 {
-  Private() : statement(0L)
+  Private() : subject(0L), predicate(0L), object(0L)
   {}
-  librdf_statement *statement;
+  Node *subject;
+  Node *predicate;
+  Node *object;
 };
 
-Statement::Statement( World *world)
+Statement::Statement()
 {
   d = new Private;
-  d->statement = librdf_new_statement( world->hook() );
-  Q_ASSERT(d->statement != NULL);
 }
 
 Statement::Statement( const Statement &rhs )
 {
   d = new Private;
-  d->statement = librdf_new_statement_from_statement( rhs.hook() );
-  Q_ASSERT(d->statement != NULL);
+  d->subject = new Node( *rhs.subject() );
+  d->predicate = new Node( *rhs.predicate() );
+  d->object = new Node( *rhs.object() );
 }
 
-Statement::Statement(World *world, Node *subject, Node *predicate, Node *object)
+Statement::Statement( Node *subject, Node *predicate, Node *object )
 {
   d = new Private;
-  d->statement = librdf_new_statement_from_nodes(world->hook(), subject->hook(), predicate->hook(), object->hook());
-  Q_ASSERT(d->statement != NULL);
+  d->subject = subject;
+  d->predicate = predicate;
+  d->object = object;
 }
 
 Statement::~Statement()
 {
-  librdf_free_statement( d->statement );
+  clear();
   delete d;
 }
 
 void Statement::setSubject( Node *node )
 {
-  librdf_statement_set_subject( d->statement, node->hook() );
+  d->subject = node;
 }
 
-Node* Statement::subject() const
+const Node* Statement::subject() const
 {
-  return new Node( librdf_statement_get_subject( d->statement ) );
+  return d->subject;
 }
 
 void Statement::setPredicate( Node *node )
 {
-  librdf_statement_set_predicate( d->statement, node->hook() );
+  d->predicate = node;
 }
 
-Node* Statement::predicate() const
+const Node* Statement::predicate() const
 {
-  return new Node( librdf_statement_get_predicate( d->statement ) );
+  return d->predicate;
 }
 
 void Statement::setObject( Node *node )
 {
-  librdf_statement_set_object(d->statement, node->hook());
+  d->object = node;
 }
 
-Node* Statement::object() const
+const Node* Statement::object() const
 {
-  return new Node( librdf_statement_get_object( d->statement ) );
+  return d->object;
 }
 
 void Statement::clear()
 {
-  librdf_statement_clear( d->statement );
+  if ( d->subject ) 
+  {
+    delete d->subject;
+    d->subject = 0L;
+  }
+  if ( d->predicate ) 
+  {
+    delete d->predicate;
+    d->predicate = 0L;
+  }
+  if ( d->object ) 
+  {
+    delete d->object;
+    d->object = 0L;
+  }
 }
 
 bool Statement::isComplete()
 {
-  return librdf_statement_is_complete( d->statement ) != 0; 
+  return ( d->subject != 0L && d->predicate != 0L && d->object != 0L );
 }
 
-librdf_statement *Statement::hook() const
+librdf_statement *Statement::hook( librdf_world *world ) const
 {
-  return d->statement;
+  librdf_node *subject = d->subject->hook( world ); 
+  librdf_node *predicate = d->predicate->hook( world ); 
+  librdf_node *object = d->object->hook( world ); 
+ 
+  return librdf_new_statement_from_nodes( world, subject, predicate, object ); 
 }
-
 
