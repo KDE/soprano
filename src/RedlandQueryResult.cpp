@@ -63,6 +63,8 @@ bool RedlandQueryResult::next()
 Node *RedlandQueryResult::get( const QString &name )
 {
   librdf_node *node = librdf_query_results_get_binding_value_by_name( d->queryResult, (const char *)name.toLatin1().data() );
+  Q_ASSERT( node != 0L );
+
   Node *tmp = Redland::createNode( node );
   librdf_free_node( node );
   
