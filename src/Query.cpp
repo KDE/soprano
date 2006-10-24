@@ -24,23 +24,26 @@ using namespace RDF;
 
 struct Query::Private
 {
-  Private() : limit(-1), offset(0)
+  Private() : limit(-1), offset(-1)
   {}
   int limit;
   int offset;
   QString query;
+  QueryType type;
 };
 
-Query::Query( const QString &query )
+Query::Query( const QString &query, QueryType type )
 {
   d = new Private;
   d->query = query;
+  d->type = type;
 }
 
-Query::Query( const QString &query, int limit, int offset )
+Query::Query( const QString &query, QueryType type, int limit, int offset )
 {
   d = new Private;
   d->query = query;
+  d->type = type;
   d->limit = limit;
   d->offset = offset;
 }
@@ -49,6 +52,7 @@ Query::Query( const Query &other )
 {
   d = new Private;
   d->query = other.query();
+  d->type = other.type();
   d->limit = other.limit();
   d->offset = other.offset();
 }
@@ -56,6 +60,11 @@ Query::Query( const Query &other )
 Query::~Query()
 {
   delete d;
+}
+
+Query::QueryType Query::type() const
+{
+  return d->type;
 }
 
 const QString &Query::query() const

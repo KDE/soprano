@@ -23,6 +23,9 @@
 #include "RedlandModel.h"
 using namespace RDF;
 
+#include <iostream>
+using namespace std;
+
 struct RedlandModel::Private {
   Private(): world(0L), model(0L), storage(0L)
   {}
@@ -85,7 +88,19 @@ bool RedlandModel::contains( const Statement &partial )
 
 QueryResult *RedlandModel::execute( const Query &query )
 {
-  librdf_query *q = librdf_new_query( d->world, "rdql", 0L, (unsigned char *)query.query().toLatin1().data(), 0L ); 
+  cout << "build a query object.." << endl;
+  librdf_query *q = librdf_new_query( d->world, "rdql", 0L, (unsigned char *)query.query().toLatin1().data(), 0L );
+  Q_ASSERT( q != 0L );
+
+  librdf_query_set_limit( q , query.limit() );
+  librdf_query_set_offset( q, query.offset() );
+  
+  if (q) cout << "done." << endl;
+  
+  cout << "limit: " << librdf_query_get_limit( q ) << endl;
+  cout << "offset: " << librdf_query_get_offset( q ) << endl;
+  cout << "executing query..." << endl;
+ 
   librdf_query_results *res = librdf_model_query_execute( d->model, q );
   librdf_free_query( q );
 
@@ -99,9 +114,7 @@ void RedlandModel::remove( const Statement &st )
   librdf_node *object = Redland::createNode( d->world, st.object() );
 
   librdf_statement *statement = librdf_new_statement_from_nodes( d->world , subject, predicate, object );
-
   librdf_model_remove_statement( d->model, statement );
-  
   librdf_free_statement( statement );
 }
 

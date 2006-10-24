@@ -29,13 +29,20 @@ namespace RDF
 class Query
 {
 public:
-  Query( const QString &query );
+  enum QueryType {
+    SPARQL = 0,
+    RDQL
+  };
 
-  Query( const QString &query, int limit, int offset );
+  Query( const QString &query, QueryType type);
+
+  Query( const QString &query, QueryType type, int limit, int offset );
 
   Query( const Query &other );
   
   ~Query();
+
+  QueryType type() const;
 
   const QString &query() const;
 

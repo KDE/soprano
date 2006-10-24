@@ -22,6 +22,9 @@
 #include "RedlandQueryResult.h"
 using namespace RDF;
 
+#include <iostream>
+using namespace std;
+
 struct RedlandQueryResult::Private
 {
   Private() : queryResult(0L)
@@ -60,7 +63,6 @@ bool RedlandQueryResult::next()
 Node *RedlandQueryResult::get( const QString &name )
 {
   librdf_node *node = librdf_query_results_get_binding_value_by_name( d->queryResult, (const char *)name.toLatin1().data() );
-
   return Redland::createNode( node );
 }
 

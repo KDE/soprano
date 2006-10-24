@@ -26,6 +26,7 @@
 
 #include <redland.h>
 #include "Node.h"
+#include "Query.h"
 
 namespace RDF
 {
@@ -35,6 +36,8 @@ namespace Redland
   Node *createNode( librdf_node *node );
 
   librdf_node *createNode( librdf_world *world, const Node &node );
+
+  QString queryType( const Query &query );
 }
 
 }

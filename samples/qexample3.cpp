@@ -26,6 +26,8 @@
 #include "../src/Node.h"
 #include "../src/Statement.h"
 #include "../src/Model.h"
+#include "../src/Query.h"
+#include "../src/QueryResult.h"
 
 #include "../src/World.h"
 #include "../src/RedlandModel.h"
@@ -33,26 +35,67 @@
 
 using namespace RDF;
 
+#include <iostream>
+using namespace std;
+
 int
 main(int argc, char *argv[])
 {
   World world;
   world.open();
    
-  Node subject( QUrl("http://purl.org/net/dagnele/"), Node::TypeResource );
-  Node predicate( QUrl("http://purl.org/dc/elements/1.1/creator"), Node::TypeResource );
-  Node object( QString("Daniele Galdi"), Node::TypeLiteral );
-  Statement st( subject, predicate, object );
+  Node subject0( QUrl("http://purl.org/net/dagnele/"), Node::TypeResource );
+  Node predicate0( QUrl("http://purl.org/dc/elements/1.1/creator"), Node::TypeResource );
+  Node object0( QString("Daniele Galdi"), Node::TypeLiteral );
+  Statement st0( subject0, predicate0, object0 );
+
+  Node subject1( QUrl("http://purl.org/net/dagnele/"), Node::TypeResource );
+  Node predicate1( QUrl("http://purl.org/dc/elements/1.1/age"), Node::TypeResource );
+  Node object1( QString("29"), Node::TypeLiteral );
+  Statement st1( subject1, predicate1, object1 );
+
+  Node subject2( QUrl("http://purl.org/net/dagnele/"), Node::TypeResource );
+  Node predicate2( QUrl("http://purl.org/dc/elements/1.1/born"), Node::TypeResource );
+  Node object2( QString("Rome"), Node::TypeLiteral );
+  Statement st2( subject2, predicate2, object2 );
 
   RedlandModelFactory factory( world );
 
   //Model *model = factory.createPersistentModel( "test" , "/tmp" );
   Model *model = factory.createMemoryModel( "test" );
-  model->add( st );
-  model->write( stdout );
-  model->remove( st );
+  model->add( st0 );
+  model->add( st1 );
+  model->add( st2 );
   model->write( stdout );
 
+  // Rdql query
+  Query query("select ?a, ?b, ?c where (?a, ?b, ?c)", Query::RDQL);
+
+  // Sparql query
+  //Query query("select ?a ?b ?c where {?a ?b ?c}", Query::SPARQL);
+
+  QueryResult *res = model->execute( query );
+  std::cout << "Result: " << res->size() << std::endl << std::endl;
+  
+  while ( res->hasNext() )
+  {
+    Node *subject = res->get("a");
+    Node *predicate = res->get("b");
+    Node *object = res->get("c");
+
+    cout << "Subject: " << subject->uri().toString().toStdString() << endl;
+    cout << "Predicate: " << predicate->uri().toString().toStdString() << endl;
+    cout << "Object: " << object->literal().toStdString() << endl;
+    cout << "-------------------------------------------------" << endl;
+
+    delete subject;
+    delete predicate;
+    delete object;
+
+    res->next();
+  }
+  
+  delete res;
   delete model;
 
   /* keep gcc -Wall happy */
