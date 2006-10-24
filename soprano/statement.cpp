@@ -53,6 +53,13 @@ Statement::~Statement()
   delete d;
 }
 
+Statement& Statement::operator=( const Statement& other )
+{
+  d->subject = other.subject();
+  d->predicate = other.predicate();
+  d->object = other.object();
+}
+
 const Node &Statement::subject() const
 {
   return d->subject;

@@ -58,8 +58,6 @@ public:
   const QString &literal() const;
   const QString &blank() const;
 
-  Node& operator=( const Node& node );
-
 private:
   class Private;
   Private *d;

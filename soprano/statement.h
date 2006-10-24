@@ -33,6 +33,8 @@ public:
   Statement( const Node &subject, const Node &predicate, const Node &object );
   ~Statement();
 
+  Statement& operator=( const Statement& other );
+
   const Node &subject() const;
   const Node &predicate() const;
   const Node &object() const;
