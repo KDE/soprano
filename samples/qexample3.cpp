@@ -50,6 +50,8 @@ main(int argc, char *argv[])
   Model *model = factory.createMemoryModel( "test" );
   model->add( st );
   model->write( stdout );
+  model->remove( st );
+  model->write( stdout );
 
   delete model;
 

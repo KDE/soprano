@@ -94,7 +94,15 @@ QueryResult *RedlandModel::execute( const Query &query )
 
 void RedlandModel::remove( const Statement &st )
 {
+  librdf_node *subject = Redland::createNode( d->world, st.subject() );
+  librdf_node *predicate = Redland::createNode( d->world, st.predicate() );
+  librdf_node *object = Redland::createNode( d->world, st.object() );
+
+  librdf_statement *statement = librdf_new_statement_from_nodes( d->world , subject, predicate, object );
+
+  librdf_model_remove_statement( d->model, statement );
   
+  librdf_free_statement( statement );
 }
 
 void RedlandModel::remove( const QList<Statement> &statements )
