@@ -63,7 +63,10 @@ bool RedlandQueryResult::next()
 Node *RedlandQueryResult::get( const QString &name )
 {
   librdf_node *node = librdf_query_results_get_binding_value_by_name( d->queryResult, (const char *)name.toLatin1().data() );
-  return Redland::createNode( node );
+  Node *tmp = Redland::createNode( node );
+  librdf_free_node( node );
+  
+  return tmp;
 }
 
 bool RedlandQueryResult::isBoolean()
