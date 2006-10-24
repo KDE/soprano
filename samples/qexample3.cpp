@@ -46,7 +46,8 @@ main(int argc, char *argv[])
 
   RedlandModelFactory factory( world );
 
-  Model *model = factory.createPersistentModel( "test" , "/tmp" );
+  //Model *model = factory.createPersistentModel( "test" , "/tmp" );
+  Model *model = factory.createMemoryModel( "test" );
   model->add( st );
   model->write( stdout );
 
