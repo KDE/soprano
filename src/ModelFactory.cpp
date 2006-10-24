@@ -21,10 +21,6 @@
 #include "ModelFactory.h"
 using namespace RDF;
 
-ModelFactory::ModelFactory() 
-{
-}
-
 ModelFactory::~ModelFactory() 
 {
 }

@@ -41,7 +41,7 @@ public:
 
   void add( const QList<Statement> &statements );
 
-  /*void add( const Model &model );
+  void add( const Model &model );
 
   void add( const Statement &st );
   
@@ -63,7 +63,7 @@ public:
 
   int size();
 
-  void write( FILE *fh );*/
+  void write( FILE *fh );
 
   librdf_world *worldPtr() const;
 

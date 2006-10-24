@@ -34,7 +34,7 @@ public:
 
   virtual void add( const QList<Statement> &statements ) = 0;
 
-  /*virtual void add( const Model &model ) = 0;
+  virtual void add( const Model &model ) = 0;
 
   virtual void add( const Statement &st ) = 0;
   
@@ -56,7 +56,7 @@ public:
 
   virtual int size() = 0;
 
-  virtual void write( FILE *fh ) = 0;*/
+  virtual void write( FILE *fh ) = 0;
 };
 
 }

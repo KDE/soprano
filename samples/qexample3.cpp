@@ -44,13 +44,14 @@ main(int argc, char *argv[])
   Node object( QString("Daniele Galdi"), Node::TypeLiteral );
   Statement st( subject, predicate, object );
 
-  RedlandModelFactory factory(world);
+  RedlandModelFactory factory( world );
 
-  //RedlandModel model = factory.createMemoryModel( "test" );
-  Model model = factory.createPersistentModel( "test" , "/tmp" );
-  //model.add( st );
-  //model.write( stdout );
+  Model *model = factory.createPersistentModel( "test" , "/tmp" );
+  model->add( st );
+  model->write( stdout );
+
+  delete model;
 
   /* keep gcc -Wall happy */
-  return(0);
+  return (0);
 }

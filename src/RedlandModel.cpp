@@ -60,7 +60,7 @@ void RedlandModel::add( const QList<Statement> &statements )
 {
 }
 
-/*void RedlandModel::add( const Model &model )
+void RedlandModel::add( const Model &model )
 {
   
 }
@@ -68,9 +68,22 @@ void RedlandModel::add( const QList<Statement> &statements )
 void RedlandModel::add( const Statement &st )
 {
   librdf_node *subject = librdf_new_node_from_uri_string( d->world, (unsigned char *) st.subject().uri().toString().toLatin1().data() );
-  librdf_node *predicate;
+  librdf_node *predicate = librdf_new_node_from_uri_string( d->world, (unsigned char *) st.predicate().uri().toString().toLatin1().data() );
+  
   librdf_node *object;
-
+  if ( st.object().isResource() )
+  {
+    object = librdf_new_node_from_uri_string( d->world, (unsigned char *) st.object().uri().toString().toLatin1().data() );
+  } 
+  else if ( st.object().isLiteral() )
+  {
+    object = librdf_new_node_from_literal( d->world, (const unsigned char *) st.object().literal().toLatin1().data(), 0L, 0L);
+  } 
+  else if ( st.object().isBlank() )
+  {
+    object = librdf_new_node_from_blank_identifier( d->world, (unsigned char *) st.object().literal().toLatin1().data() );
+  }
+  
   librdf_model_add( d->model, subject, predicate, object );
 }
 
@@ -112,7 +125,8 @@ int RedlandModel::size()
 
 void RedlandModel::write( FILE *fh )
 {
-}*/
+  librdf_model_print( d->model, fh ); 
+}
 
 librdf_world *RedlandModel::worldPtr() const
 {
