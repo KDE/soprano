@@ -108,3 +108,10 @@ const QString &Node::blank() const
 {
   return d->value;
 }
+
+Node& Node::operator=( const Node& other )
+{
+  d->type = other.type();
+  d->uri = other.uri();
+  d->value = other.literal();
+}
