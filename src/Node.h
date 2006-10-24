@@ -39,10 +39,12 @@ public:
   };
 
   Node();
-  explicit Node(const QUrl &url, NodeType type);
-  explicit Node(const QString &value, NodeType type);
+  Node(const QUrl &url, NodeType type);
+  Node(const QString &value, NodeType type);
   Node(const Node &other);
   ~Node();
+
+  Node &operator=( const Node& other );
 
   NodeType type() const;
 
