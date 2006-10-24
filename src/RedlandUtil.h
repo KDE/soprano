@@ -37,7 +37,7 @@ namespace Redland
 
   librdf_node *createNode( librdf_world *world, const Node &node );
 
-  QString queryType( const Query &query );
+  const char *queryType( const Query &query );
 }
 
 }

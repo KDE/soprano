@@ -59,11 +59,11 @@ librdf_node *Redland::createNode( librdf_world *world, const Node &node )
   return 0L;
 }
 
-QString Redland::queryType( const Query &query )
+const char *Redland::queryType( const Query &query )
 {
   if ( query.type() == Query::RDQL )
   {
-    return QString::fromAscii("rdql");
+    return "rdql";
   }
   else if (query.type() == Query::SPARQL )
   {

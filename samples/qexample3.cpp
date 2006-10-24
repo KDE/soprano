@@ -69,10 +69,10 @@ main(int argc, char *argv[])
   model->write( stdout );
 
   // Rdql query
-  Query query("select ?a, ?b, ?c where (?a, ?b, ?c)", Query::RDQL);
+  //Query query("select ?a, ?b, ?c where (?a, ?b, ?c)", Query::RDQL);
 
   // Sparql query
-  //Query query("select ?a ?b ?c where {?a ?b ?c}", Query::SPARQL);
+  Query query("select ?a ?b ?c where {?a ?b ?c}", Query::SPARQL);
 
   QueryResult *res = model->execute( query );
   std::cout << "Result: " << res->size() << std::endl << std::endl;
