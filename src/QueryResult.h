@@ -18,29 +18,34 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#include "Model.h"
-using namespace RDF;
+#ifndef QUERY_RESULT_H
+#define QUERY_RESULT_H
 
-Model::~Model()
+#include <QtGlobal>
+
+namespace RDF {
+
+class Node;
+
+class QueryResult
 {
+public:
+  virtual ~QueryResult();
+
+  virtual int size() = 0;
+ 
+  virtual bool hasNext() = 0;
+
+  virtual bool next() = 0;
+
+  virtual Node *get( const QString &name ) = 0;
+
+  virtual bool isBoolean() = 0;
+
+  virtual bool boolean() = 0;
+};
+
 }
 
-Node *Model::createProperty( const QString &ns, const QString &value )
-{
-  return new Node( QUrl( ns + value), Node::TypeResource );
-}
+#endif //QUERY_RESULT_H
 
-Node *Model::createBlankNode( const QString &uri )
-{
-  return new Node( uri, Node::TypeBlank );
-}
-
-Node *Model::createResource( const QUrl &uri )
-{
-  return new Node( uri, Node::TypeResource );
-}
-
-Node *Model::createLiteral( const QString &literal )
-{
-  return new Node( literal, Node::TypeLiteral );
-}

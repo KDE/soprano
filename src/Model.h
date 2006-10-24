@@ -23,9 +23,13 @@
 
 #include <QtGlobal>
 #include "Statement.h"
+#include "Query.h"
 
 namespace RDF
 {
+
+class Node;
+class QueryResult;
 
 class Model
 {
@@ -38,17 +42,19 @@ public:
 
   virtual void add( const Statement &st ) = 0;
   
-  virtual Node &createProperty( const QString &ns, const QString &value ) = 0;
+  Node *createProperty( const QString &ns, const QString &value );
 
-  virtual Node &createBlankNode( const QString &uri ) = 0;
+  Node *createBlankNode( const QString &uri );
 
-  virtual Node &createResource( const QUrl &uri ) = 0;
+  Node *createResource( const QUrl &uri );
 
-  virtual Node &createLiteral( const QString &literal ) = 0;
+  Node *createLiteral( const QString &literal );
 
   virtual bool isEmpty() = 0;
 
   virtual bool contains( const Statement &partial ) = 0;
+
+  virtual QueryResult *execute( const Query &query ) = 0;
 
   virtual void remove( const Statement &st ) = 0;
 

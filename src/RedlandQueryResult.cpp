@@ -18,53 +18,58 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#include <QtGlobal>
-#include "node.h"
-#include "query_result.h"
-
+#include "RedlandUtil.h"
+#include "RedlandQueryResult.h"
 using namespace RDF;
 
-struct QueryResult::Private
+struct RedlandQueryResult::Private
 {
   Private() : queryResult(0L)
   {}
   librdf_query_results *queryResult;
 };
 
-QueryResult::QueryResult(librdf_query_results *qr)
+RedlandQueryResult::RedlandQueryResult( librdf_query_results *qr )
 {
   d = new Private;
   d->queryResult = qr;
   Q_ASSERT( d->queryResult != NULL );
 }
 
-QueryResult::~QueryResult()
+RedlandQueryResult::~RedlandQueryResult()
 {
   librdf_free_query_results( d->queryResult );
   delete d;
 }
 
-int QueryResult::count()
+int RedlandQueryResult::size()
 {
   return librdf_query_results_get_count( d->queryResult );
 }
 
-bool QueryResult::hasNext()
+bool RedlandQueryResult::hasNext()
+{
+  return librdf_query_results_finished( d->queryResult ) == 0;
+}
+
+bool RedlandQueryResult::next()
 {
   return librdf_query_results_next( d->queryResult ) != 0;
 }
 
-Node *QueryResult::getBinding(int offset)
+Node *RedlandQueryResult::get( const QString &name )
 {
-  return new Node( librdf_query_results_get_binding_value( d->queryResult, offset ) );
+  librdf_node *node = librdf_query_results_get_binding_value_by_name( d->queryResult, (const char *)name.toLatin1().data() );
+
+  return Redland::createNode( node );
 }
 
-bool QueryResult::isBoolean()
+bool RedlandQueryResult::isBoolean()
 {
   return librdf_query_results_is_boolean( d->queryResult ) != 0;
 }
 
-bool QueryResult::getBoolean()
+bool RedlandQueryResult::boolean()
 {
   return librdf_query_results_get_boolean( d->queryResult ) > 0;
 }

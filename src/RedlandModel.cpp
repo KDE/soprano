@@ -13,14 +13,13 @@
  * Library General Public License for more details.
  *
  * You should have received a copy of the GNU Library General Public
- * License
- * along with this library; see the file COPYING.LIB.  If not, write
- * to
- * the Free Software Foundation, Inc., 51 Franklin Street, Fifth
- * Floor,
- * Boston, MA 02110-1301, USA.
+ * License along with this library; see the file COPYING.LIB.  If not, 
+ * write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
+ * Floor, Boston, MA 02110-1301, USA.
  */
 
+#include "RedlandUtil.h"
+#include "RedlandQueryResult.h"
 #include "RedlandModel.h"
 using namespace RDF;
 
@@ -58,6 +57,7 @@ RedlandModel::~RedlandModel()
 
 void RedlandModel::add( const QList<Statement> &statements )
 {
+
 }
 
 void RedlandModel::add( const Model &model )
@@ -67,60 +67,44 @@ void RedlandModel::add( const Model &model )
 
 void RedlandModel::add( const Statement &st )
 {
-  librdf_node *subject = librdf_new_node_from_uri_string( d->world, (unsigned char *) st.subject().uri().toString().toLatin1().data() );
-  librdf_node *predicate = librdf_new_node_from_uri_string( d->world, (unsigned char *) st.predicate().uri().toString().toLatin1().data() );
-  
-  librdf_node *object;
-  if ( st.object().isResource() )
-  {
-    object = librdf_new_node_from_uri_string( d->world, (unsigned char *) st.object().uri().toString().toLatin1().data() );
-  } 
-  else if ( st.object().isLiteral() )
-  {
-    object = librdf_new_node_from_literal( d->world, (const unsigned char *) st.object().literal().toLatin1().data(), 0L, 0L);
-  } 
-  else if ( st.object().isBlank() )
-  {
-    object = librdf_new_node_from_blank_identifier( d->world, (unsigned char *) st.object().literal().toLatin1().data() );
-  }
+  librdf_node *subject = Redland::createNode( d->world, st.subject() );
+  librdf_node *predicate = Redland::createNode( d->world, st.predicate() );
+  librdf_node *object = Redland::createNode( d->world, st.object() );
   
   librdf_model_add( d->model, subject, predicate, object );
 }
 
-Node &RedlandModel::createProperty( const QString &ns, const QString &value )
-{
-}
-
-Node &RedlandModel::createBlankNode( const QString &uri )
-{
-}
-
-Node &RedlandModel::createResource( const QUrl &uri )
-{
-}
-
-Node &RedlandModel::createLiteral( const QString &literal )
-{
-}
-
 bool RedlandModel::isEmpty()
 {
+  return librdf_model_size( d->model ) == 0;
 }
 
 bool RedlandModel::contains( const Statement &partial )
 {
 }
 
+QueryResult *RedlandModel::execute( const Query &query )
+{
+  librdf_query *q = librdf_new_query( d->world, "rdql", 0L, (unsigned char *)query.query().toLatin1().data(), 0L ); 
+  librdf_query_results *res = librdf_model_query_execute( d->model, q );
+  librdf_free_query( q );
+
+  return new RedlandQueryResult( res );
+}
+
 void RedlandModel::remove( const Statement &st )
 {
+  
 }
 
 void RedlandModel::remove( const QList<Statement> &statements )
 {
+
 }
 
 int RedlandModel::size()
 {
+  return librdf_model_size( d->model );
 }
 
 void RedlandModel::write( FILE *fh )

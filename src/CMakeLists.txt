@@ -1,12 +1,15 @@
 
 SET(qrdf_SRCS 
-    Query.cpp	      
+    Query.cpp	    
+    QueryResult.cpp  
     Node.cpp
     Statement.cpp
     Model.cpp
     ModelFactory.cpp
 
     World.cpp
+    RedlandUtil.cpp
+    RedlandQueryResult.cpp
     RedlandModel.cpp
     RedlandModelFactory.cpp)    
 

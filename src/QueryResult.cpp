@@ -18,29 +18,10 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#include "Model.h"
+#include "QueryResult.h"
+
 using namespace RDF;
 
-Model::~Model()
+QueryResult::~QueryResult()
 {
-}
-
-Node *Model::createProperty( const QString &ns, const QString &value )
-{
-  return new Node( QUrl( ns + value), Node::TypeResource );
-}
-
-Node *Model::createBlankNode( const QString &uri )
-{
-  return new Node( uri, Node::TypeBlank );
-}
-
-Node *Model::createResource( const QUrl &uri )
-{
-  return new Node( uri, Node::TypeResource );
-}
-
-Node *Model::createLiteral( const QString &literal )
-{
-  return new Node( literal, Node::TypeLiteral );
 }

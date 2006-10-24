@@ -45,17 +45,19 @@ public:
 
   void add( const Statement &st );
   
-  Node &createProperty( const QString &ns, const QString &value );
+  Node *createProperty( const QString &ns, const QString &value );
 
-  Node &createBlankNode( const QString &uri );
+  Node *createBlankNode( const QString &uri );
 
-  Node &createResource( const QUrl &uri );
+  Node *createResource( const QUrl &uri );
 
-  Node &createLiteral( const QString &literal );
+  Node *createLiteral( const QString &literal );
 
   bool isEmpty();
 
   bool contains( const Statement &partial );
+
+  QueryResult *execute( const Query &query );
 
   void remove( const Statement &st );
 

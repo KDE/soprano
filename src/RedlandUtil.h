@@ -12,42 +12,31 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Library General Public License for more details.
  *
- * You should have received a copy of the GNU Library General Public License
- * along with this library; see the file COPYING.LIB.  If not, write to
- * the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
+ * You should have received a copy of the GNU Library General Public
+ * License
+ * along with this library; see the file COPYING.LIB.  If not, write
+ * to
+ * the Free Software Foundation, Inc., 51 Franklin Street, Fifth
+ * Floor,
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef QUERY_RESULT_H
-#define QUERY_RESULT_H
+#ifndef REDLAND_UTIL_H
+#define REDLAND_UTIL_H
 
 #include <redland.h>
+#include "Node.h"
 
-namespace RDF {
-
-class Node;
-
-class QueryResult
+namespace RDF
 {
-public:
-  explicit QueryResult(librdf_query_results *qr);
-  ~QueryResult();
 
-  int count();
- 
-  bool hasNext();
+namespace Redland
+{
+  Node *createNode( librdf_node *node );
 
-  Node *getBinding(int offset);
-
-  bool isBoolean();
-
-  bool getBoolean();
-private:
-  class Private;
-  Private *d;
-};
+  librdf_node *createNode( librdf_world *world, const Node &node );
+}
 
 }
 
-#endif
-
+#endif // REDLAND_UTIL_H
