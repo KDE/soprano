@@ -18,31 +18,35 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef STATEMENT_H
-#define STATEMENT_H
+#include "World.h"
+using namespace RDF;
 
-#include "Node.h"
-
-namespace RDF
+struct World::Private
 {
-
-class Statement
-{
-public: 
-  Statement( const Statement &other );
-  Statement( const Node &subject, const Node &predicate, const Node &object );
-  ~Statement();
-
-  const Node &subject() const;
-  const Node &predicate() const;
-  const Node &object() const;
-
-private:
-  class Private;
-  Private *d;
+  Private() : world(0L)
+  {}
+  librdf_world* world;
 };
 
+World::World()
+{
+  d = new Private;
+  d->world = librdf_new_world();
 }
 
-#endif
+World::~World()
+{
+  librdf_free_world( d->world );
+  delete d;
+}
+
+void World::open()
+{
+  librdf_world_open( d->world );
+}
+
+librdf_world* World::worldPtr() const
+{
+  return d->world;
+}
 

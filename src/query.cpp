@@ -26,46 +26,61 @@ using namespace RDF;
 
 struct Query::Private
 {
-  Private() : query(0L)
+  Private() : query(0L), limit(-1), offset(0)
   {}
-  librdf_query *query;
+  int limit;
+  int offset;
+  QString *query;
 };
 
-Query::Query(World *world, const QString &query)
+Query::Query(QString *query)
 {
   d = new Private;
-  d->query = librdf_new_query( world->hook(), NULL, NULL, (unsigned char *) query.toLatin1().constData(), NULL);
+  d->query = query;
+  Q_ASSERT(d->query != NULL);
+}
+
+Query::Query(QString *query, int limit, int offset)
+{
+  d = new Private;
+  d->query = query;
+  d->limit = limit;
+  d->offset = offset;
   Q_ASSERT(d->query != NULL);
 }
 
 Query::~Query()
 {
-  librdf_free_query(d->query);
+  delete d->query;
   delete d;
 }
 
 int Query::limit()
 {
-  return librdf_query_get_limit( d->query );
+  return d->limit;
 }
 
 void Query::setLimit(int limit)
 {
-  librdf_query_set_limit( d->query, limit );
+  d->limit = limit;
 }
 
 int Query::offset()
 {
-  return librdf_query_get_offset( d->query );
+  return d->offset;
 }
 
 void Query::setOffset(int offset)
 {
-  librdf_query_set_offset( d->query, offset ); 
+  d->offset = offset;
 }
 
-librdf_query* Query::hook()
+librdf_query* Query::hook(World *world)
 {
-  return d->query;
+  librdf_query *q = librdf_new_query( world->hook(), NULL, NULL, (unsigned char *) d->query->toLatin1().constData(), NULL);
+  librdf_query_set_limit( q, d->limit );
+  librdf_query_set_offset( q, d->offset );
+
+  return q;
 }
 

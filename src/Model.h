@@ -1,6 +1,6 @@
 /* This file is part of QRDF
  *
- * Copyright (C) 2006 Duncan Mac-Vicar <duncan@kde.org>
+ * Copyright (C) 2006 Daniele Galdi <daniele.galdi@gmail.com>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -18,27 +18,45 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef WORLD_H
-#define WORLD_H
+#ifndef MODEL_H
+#define MODEL_H
 
-#include <redland.h>
+#include <QtGlobal>
+#include "Statement.h"
 
 namespace RDF
 {
 
-class World
+class Model
 {
 public:
-  World();
+  virtual ~Model();
 
-  ~World();
+  virtual void add( const QList<Statement> &statements ) = 0;
+
+  /*virtual void add( const Model &model ) = 0;
+
+  virtual void add( const Statement &st ) = 0;
   
-  void open();
-  
-  librdf_world* hook();
-private:
-  class Private;
-  Private *d;
+  virtual Node &createProperty( const QString &ns, const QString &value ) = 0;
+
+  virtual Node &createBlankNode( const QString &uri ) = 0;
+
+  virtual Node &createResource( const QUrl &uri ) = 0;
+
+  virtual Node &createLiteral( const QString &literal ) = 0;
+
+  virtual bool isEmpty() = 0;
+
+  virtual bool contains( const Statement &partial ) = 0;
+
+  virtual void remove( const Statement &st ) = 0;
+
+  virtual void remove( const QList<Statement> &statements ) = 0;
+
+  virtual int size() = 0;
+
+  virtual void write( FILE *fh ) = 0;*/
 };
 
 }

@@ -23,36 +23,33 @@
 
 #include <QtGlobal>
 
-#include "../src/world.h"
-#include "../src/storage.h"
-#include "../src/model.h"
-#include "../src/node.h"
-#include "../src/statement.h"
+#include "../src/Node.h"
+#include "../src/Statement.h"
+#include "../src/Model.h"
+
+#include "../src/World.h"
+#include "../src/RedlandModel.h"
+#include "../src/RedlandModelFactory.h"
 
 using namespace RDF;
 
 int
 main(int argc, char *argv[])
 {
-  World *world = new World();
-  world->open();
+  World world;
+  world.open();
    
-  //Storage *storage = new Storage( world, "hashes", "test", "hash-type='bdb',dir='.'" );
-  Storage *storage = new Storage( world, "memory", "test", NULL );
+  Node subject( QUrl("http://purl.org/net/dagnele/"), Node::TypeResource );
+  Node predicate( QUrl("http://purl.org/dc/elements/1.1/creator"), Node::TypeResource );
+  Node object( QString("Daniele Galdi"), Node::TypeLiteral );
+  Statement st( subject, predicate, object );
 
-  Node *subject = new Node( new QUrl("http://purl.org/net/dagnele/") );
-  Node *predicate = new Node( new QUrl("http://purl.org/dc/elements/1.1/creator") );
-  Node *object = new Node( new QString("Daniele Galdi") );
-  Statement *st = new Statement( subject, predicate, object );
+  RedlandModelFactory factory(world);
 
-  Model *model = new Model( world, storage, NULL);
-  model->addStatement( st );
-  model->print( stdout );
-
-  delete st;
-  delete model;
-  delete storage;
-  delete world;
+  //RedlandModel model = factory.createMemoryModel( "test" );
+  Model model = factory.createPersistentModel( "test" , "/tmp" );
+  //model.add( st );
+  //model.write( stdout );
 
   /* keep gcc -Wall happy */
   return(0);

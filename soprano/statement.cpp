@@ -1,6 +1,6 @@
 /* This file is part of QRDF
  *
- * Copyright (C) 2006 Duncan Mac-Vicar <duncan@kde.org>
+ * Copyright (C) 2006 Daniele Galdi <daniele.galdi@gmail.com>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -18,36 +18,29 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#include <QtGlobal>
-#include "world.h"
-#include "node.h"
-#include "statement.h"
+#include "Node.h"
+#include "Statement.h"
 
 using namespace RDF;
 
 struct Statement::Private
 {
-  Private() : subject(0L), predicate(0L), object(0L)
+  Private()
   {}
-  Node *subject;
-  Node *predicate;
-  Node *object;
+  Node subject;
+  Node predicate;
+  Node object;
 };
 
-Statement::Statement()
+Statement::Statement( const Statement &other )
 {
   d = new Private;
+  d->subject = other.subject();
+  d->predicate = other.predicate();
+  d->object = other.object();
 }
 
-Statement::Statement( const Statement &rhs )
-{
-  d = new Private;
-  d->subject = new Node( *rhs.subject() );
-  d->predicate = new Node( *rhs.predicate() );
-  d->object = new Node( *rhs.object() );
-}
-
-Statement::Statement( Node *subject, Node *predicate, Node *object )
+Statement::Statement( const Node &subject, const Node &predicate, const Node &object )
 {
   d = new Private;
   d->subject = subject;
@@ -57,70 +50,20 @@ Statement::Statement( Node *subject, Node *predicate, Node *object )
 
 Statement::~Statement()
 {
-  clear();
   delete d;
 }
 
-void Statement::setSubject( Node *node )
-{
-  d->subject = node;
-}
-
-const Node* Statement::subject() const
+const Node &Statement::subject() const
 {
   return d->subject;
 }
 
-void Statement::setPredicate( Node *node )
-{
-  d->predicate = node;
-}
-
-const Node* Statement::predicate() const
+const Node &Statement::predicate() const
 {
   return d->predicate;
 }
 
-void Statement::setObject( Node *node )
-{
-  d->object = node;
-}
-
-const Node* Statement::object() const
+const Node &Statement::object() const
 {
   return d->object;
 }
-
-void Statement::clear()
-{
-  if ( d->subject ) 
-  {
-    delete d->subject;
-    d->subject = 0L;
-  }
-  if ( d->predicate ) 
-  {
-    delete d->predicate;
-    d->predicate = 0L;
-  }
-  if ( d->object ) 
-  {
-    delete d->object;
-    d->object = 0L;
-  }
-}
-
-bool Statement::isComplete()
-{
-  return ( d->subject != 0L && d->predicate != 0L && d->object != 0L );
-}
-
-librdf_statement *Statement::hook( librdf_world *world ) const
-{
-  librdf_node *subject = d->subject->hook( world ); 
-  librdf_node *predicate = d->predicate->hook( world ); 
-  librdf_node *object = d->object->hook( world ); 
- 
-  return librdf_new_statement_from_nodes( world, subject, predicate, object ); 
-}
-

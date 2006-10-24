@@ -115,7 +115,13 @@ void Model::print( FILE *fh )
 
 QueryResult *Model::executeQuery( Query *query )
 {
-  return new QueryResult( librdf_model_query_execute( d->model, query->hook() ) );
+  /*
+   * RedlandFactory->query( Query *query );
+   *
+   * librdf_query *q = RedlandFactory->query( query );
+   */
+
+  return new QueryResult( librdf_model_query_execute( d->model, query->hook( d->world ) ) );
 }
 
 librdf_model* Model::hookModel() const

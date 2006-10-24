@@ -1,6 +1,6 @@
 /* This file is part of QRDF
  *
- * Copyright (C) 2006 Duncan Mac-Vicar <duncan@kde.org>
+ * Copyright (C) 2006 Daniele Galdi <daniele.galdi@gmail.com>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -18,49 +18,29 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef NODE_H
-#define NODE_H
+#ifndef MODEL_FACTORY_H
+#define MODEL_FACTORY_H
 
-#include <QString>
-#include <QUrl>
-#include <redland.h>
+#include <QtGlobal>
 
 namespace RDF
 {
 
-class Node
+class Model;
+
+class ModelFactory
 {
 public:
+  
+  ModelFactory();
+  ~ModelFactory();
 
-  enum NodeType {
-    TypeUnknown = 0,
-    TypeResource = 1,
-    TypeLiteral = 2,
-    TypeBlank = 4
-  };
+  virtual Model &createMemoryModel( const QString &name ) = 0;
 
-  explicit Node(librdf_node *node);
-  explicit Node(QUrl *url);
-  explicit Node(QString *literal);
-  Node(const Node &rhs);
-  ~Node();
-
-  NodeType type() const;
-
-  bool isLiteral() const;
-  bool isResource() const;
-  bool isBlank() const;
-
-  const QUrl *url() const;
-  const QString *literal() const;
-  const QString *blank() const;
-
-  librdf_node* hook(librdf_world *world) const;
-private:
-  class Private;
-  Private *d;
+  virtual Model &createPersistentModel( const QString &name, const QString &filePath) = 0;
 };
 
 }
 
 #endif
+

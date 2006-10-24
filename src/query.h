@@ -32,7 +32,9 @@ class World;
 class Query
 {
 public:
-  Query(World *world, const QString &query);
+  Query(QString *query);
+
+  Query(QString *query, int limit, int offset);
   
   ~Query();
 
@@ -44,7 +46,7 @@ public:
 
   void setOffset(int offset);
   
-  librdf_query* hook();
+  librdf_query* hook( World *world );
 private:
   class Private;
   Private *d;

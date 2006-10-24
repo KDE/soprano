@@ -1,6 +1,6 @@
 /* This file is part of QRDF
  *
- * Copyright (C) 2006 Duncan Mac-Vicar <duncan@kde.org>
+ * Copyright (C) 2006 Daniele Galdi <daniele.galdi@gmail.com>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -18,40 +18,13 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#include <QtGlobal>
-#include "world.h"
-#include <iostream>
-
+#include "ModelFactory.h"
 using namespace RDF;
-using namespace std;
 
-struct World::Private
+ModelFactory::ModelFactory() 
 {
-  Private() : world(0L)
-  {}
-  librdf_world* world;
-};
-
-World::World()
-{
-  d = new Private;
-  d->world = librdf_new_world();
-  Q_ASSERT(d->world != NULL);
 }
 
-World::~World()
+ModelFactory::~ModelFactory() 
 {
-  librdf_free_world( d->world );
-  delete d;
 }
-
-void World::open()
-{
-  librdf_world_open( d->world );
-}
-
-librdf_world* World::hook()
-{
-  return d->world;
-}
-

@@ -18,31 +18,9 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef STATEMENT_H
-#define STATEMENT_H
+#include "Model.h"
+using namespace RDF;
 
-#include "Node.h"
-
-namespace RDF
+Model::~Model()
 {
-
-class Statement
-{
-public: 
-  Statement( const Statement &other );
-  Statement( const Node &subject, const Node &predicate, const Node &object );
-  ~Statement();
-
-  const Node &subject() const;
-  const Node &predicate() const;
-  const Node &object() const;
-
-private:
-  class Private;
-  Private *d;
-};
-
 }
-
-#endif
-

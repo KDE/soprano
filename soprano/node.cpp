@@ -1,6 +1,6 @@
 /* This file is part of QRDF
  *
- * Copyright (C) 2006 Duncan Mac-Vicar <duncan@kde.org>
+ * Copyright (C) 2006 Daniele Galdi <daniele.galdi@gmail.com>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -19,107 +19,59 @@
  */
 
 #include <QtGlobal>
-#include "node.h"
-#include <iostream>
+#include "Node.h"
 
 using namespace RDF;
-using namespace std;
 
 struct Node::Private
 {
-  Private() : url(0L), value(0L), type(TypeUnknown)
+  Private(): type(TypeUnknown)
   {}
   NodeType type;
-  QUrl *url;
-  QString *value;
+  QUrl uri;
+  QString value;
 };
 
-Node::Node(const Node &rhs)
+Node::Node()
 {
   d = new Private;
-  if ( rhs.isResource() )
-  {
-    d->type = TypeResource;
-    d->url = new QUrl( *rhs.url() );
-  } 
-  if ( rhs.isLiteral() )
-  {
-    d->type = TypeLiteral;
-    d->value = new QString( *rhs.literal() );
-  }
-  if ( rhs.isBlank() )
-  {
-    d->type = TypeBlank;
-    d->value = new QString( *rhs.blank() );
-  }
 }
 
-Node::Node( librdf_node *node )
+Node::Node( const Node &other )
 {
   d = new Private;
-  if ( librdf_node_is_resource( node ) )
-  {
-    d->type = TypeResource;
-    librdf_uri *uri = librdf_node_get_uri( node ); 
-  }
-  if ( librdf_node_is_literal( node ) )
-  {
-    d->type = TypeLiteral;
-    d->value = new QString( librdf_node_get_literal_value_as_latin1( node ) );
-  }
-  if ( librdf_node_is_blank( node ) ) 
-  {
-    d->type = TypeBlank;
-    d->value = new QString( (char *) librdf_node_get_blank_identifier( node )  );
-  }
+  d->type = other.type();
+  d->uri = other.uri();
+  d->value = other.literal();
 }
 
-Node::Node( QUrl *url )
+Node::Node( const QUrl &uri, NodeType type )
 {
   d = new Private;
-  d->url = url;
-  d->type = TypeResource;
-  Q_ASSERT( d->url != NULL );
+  d->uri = uri;
+  d->type = type;
 }
 
-Node::Node( QString *value )
+Node::Node( const QString &value, NodeType type )
 {
   d = new Private;
   d->value = value;
-  d->type = TypeLiteral;
-  Q_ASSERT(d->value != NULL);
+  d->type = type;
 }
 
 Node::~Node()
 {
-  if ( isResource() )
-  {
-    cout << "~Node(Resource)" << endl;
-    delete d->url;
-  }
-  if ( isLiteral() || isBlank() )
-  {
-    cout << "~Node(LorB)" << endl;
-    delete d->value;
-  }
   delete d;
-  cout << "~Node()" << endl;
 }
 
-librdf_node* Node::hook( librdf_world *world ) const
+bool Node::isEmpty() const
 {
-  if ( isResource() )
-  {
-    return librdf_new_node_from_uri_string( world, (const unsigned char*) d->url->toString().toLatin1().constData() );
-  }
-  if ( isLiteral() )
-  {
-    return librdf_new_node_from_literal( world, (unsigned char*) d->value->toLatin1().constData(), NULL, 0);
-  }
-  if ( isBlank() )
-  {
-    return librdf_new_node_from_blank_identifier( world, (unsigned char*) d->value->toLatin1().constData() );
-  }
+  return ( d->type == Node::TypeUnknown );
+}
+
+bool Node::isValid() const
+{
+  return !isEmpty();
 }
 
 bool Node::isLiteral() const
@@ -142,18 +94,17 @@ Node::NodeType Node::type() const
   return d->type;
 }
 
-const QUrl *Node::url() const
+const QUrl &Node::uri() const
 {
-  return d->url;
+  return d->uri;
 }
 
-const QString *Node::literal() const
-{
-  return d->value;
-}
-
-const QString *Node::blank() const
+const QString &Node::literal() const
 {
   return d->value;
 }
 
+const QString &Node::blank() const
+{
+  return d->value;
+}

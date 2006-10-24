@@ -1,6 +1,6 @@
 /* This file is part of QRDF
  *
- * Copyright (C) 2006 Duncan Mac-Vicar <duncan@kde.org>
+ * Copyright (C) 2006 Daniele Galdi <daniele.galdi@gmail.com>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -18,49 +18,26 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef MODEL_H
-#define MODEL_H
+#ifndef REDLAND_WORLD_H
+#define REDLAND_WORLD_H
 
-#include "storage.h"
+#include <redland.h>
 
 namespace RDF
 {
 
-class Statement;
-class Node;
-class World;
-class Query;
-class QueryResult;
-
-class Model
+class World
 {
 public:
+  World();
+  ~World();
   
-  Model( const Model &rhs );
+  void open();
   
-  Model( World *world, Storage *storage, const QString &options );
-  
-  ~Model();
-  
-  bool containsStatement( Statement *s ) const;
-  
-  void add( Node *subject, Node *predicate, Node *object );
-
-  void addStringLiteralStatement( Node *subject, Node *predicate, QString *literal );
-  
-  int size() const;
-
-  void addStatement( Statement *s );
-
-  void removeStatement( Statement *s);
-
-  void print( FILE *fh );
-
-  QueryResult *executeQuery( Query *query );
-
-  librdf_model *hookModel() const;
-  librdf_world *hookWorld() const;
+  librdf_world* worldPtr() const;
 private:
+  World( const World &other ) {};
+
   class Private;
   Private *d;
 };

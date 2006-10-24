@@ -18,25 +18,43 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef STATEMENT_H
-#define STATEMENT_H
+#ifndef NODE_H
+#define NODE_H
 
-#include "Node.h"
+#include <QString>
+#include <QUrl>
 
 namespace RDF
 {
 
-class Statement
+class Node
 {
-public: 
-  Statement( const Statement &other );
-  Statement( const Node &subject, const Node &predicate, const Node &object );
-  ~Statement();
+public:
 
-  const Node &subject() const;
-  const Node &predicate() const;
-  const Node &object() const;
+  enum NodeType {
+    TypeUnknown = 0,
+    TypeResource = 1,
+    TypeLiteral = 2,
+    TypeBlank = 4
+  };
 
+  Node();
+  explicit Node(const QUrl &url, NodeType type);
+  explicit Node(const QString &value, NodeType type);
+  Node(const Node &other);
+  ~Node();
+
+  NodeType type() const;
+
+  bool isEmpty() const;
+  bool isValid() const ;
+  bool isLiteral() const;
+  bool isResource() const;
+  bool isBlank() const;
+
+  const QUrl &uri() const;
+  const QString &literal() const;
+  const QString &blank() const;
 private:
   class Private;
   Private *d;
@@ -45,4 +63,3 @@ private:
 }
 
 #endif
-

@@ -18,26 +18,29 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef STATEMENT_H
-#define STATEMENT_H
+#ifndef REDLAND_MODEL_FACTORY_H
+#define REDLAND_MODEL_FACTORY_H
 
-#include "Node.h"
+#include <QtGlobal>
+#include "World.h"
 
 namespace RDF
 {
 
-class Statement
+class Model;
+
+class RedlandModelFactory
 {
-public: 
-  Statement( const Statement &other );
-  Statement( const Node &subject, const Node &predicate, const Node &object );
-  ~Statement();
+public:
+  RedlandModelFactory(const World &world);
+  ~RedlandModelFactory();
 
-  const Node &subject() const;
-  const Node &predicate() const;
-  const Node &object() const;
+  Model createMemoryModel( const QString &name );
 
+  Model createPersistentModel( const QString &name, const QString &filePath );
 private:
+  RedlandModelFactory( const RedlandModelFactory &other ) {};
+
   class Private;
   Private *d;
 };
@@ -45,4 +48,3 @@ private:
 }
 
 #endif
-

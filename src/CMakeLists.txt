@@ -1,14 +1,12 @@
 
 SET(qrdf_SRCS 
-    world.cpp 
-    storage.cpp 
-    model.cpp	
-    parser.cpp 
-    node.cpp
-    statement.cpp 
-    stream.cpp
-    query.cpp
-    query_result.cpp)
+    Node.cpp
+    Statement.cpp
+    Model.cpp
+    ModelFactory.cpp
+    RedlandModel.cpp
+    RedlandModelFactory.cpp
+    World.cpp)    
 
 ADD_DEFINITIONS(${REDLAND_CFLAGS})
 
@@ -23,7 +21,7 @@ TARGET_LINK_LIBRARIES(qrdf ${QT_QTCORE_LIBRARY})
 INSTALL(TARGETS qrdf
 		LIBRARY DESTINATION lib)
 
-INSTALL(FILES world.h storage.h model.h statement.h
+INSTALL(FILES Model.h
 	DESTINATION include)
  
 
