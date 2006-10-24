@@ -1,12 +1,14 @@
 
 SET(qrdf_SRCS 
+    Query.cpp	      
     Node.cpp
     Statement.cpp
     Model.cpp
     ModelFactory.cpp
+
+    World.cpp
     RedlandModel.cpp
-    RedlandModelFactory.cpp
-    World.cpp)    
+    RedlandModelFactory.cpp)    
 
 ADD_DEFINITIONS(${REDLAND_CFLAGS})
 

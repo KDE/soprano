@@ -1,6 +1,6 @@
 /* This file is part of QRDF
  *
- * Copyright (C) 2006 Duncan Mac-Vicar <duncan@kde.org>
+ * Copyright (C) 2006 Daniele Galdi <daniele.galdi@gmail.com>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -19,43 +19,51 @@
  */
 
 #include <QtGlobal>
-#include "world.h"
-#include "query.h"
-
+#include "Query.h"
 using namespace RDF;
 
 struct Query::Private
 {
-  Private() : query(0L), limit(-1), offset(0)
+  Private() : limit(-1), offset(0)
   {}
   int limit;
   int offset;
-  QString *query;
+  QString query;
 };
 
-Query::Query(QString *query)
+Query::Query( const QString &query )
 {
   d = new Private;
   d->query = query;
-  Q_ASSERT(d->query != NULL);
 }
 
-Query::Query(QString *query, int limit, int offset)
+Query::Query( const QString &query, int limit, int offset )
 {
   d = new Private;
   d->query = query;
   d->limit = limit;
   d->offset = offset;
-  Q_ASSERT(d->query != NULL);
+}
+
+Query::Query( const Query &other )
+{
+  d = new Private;
+  d->query = other.query();
+  d->limit = other.limit();
+  d->offset = other.offset();
 }
 
 Query::~Query()
 {
-  delete d->query;
   delete d;
 }
 
-int Query::limit()
+const QString &Query::query() const
+{
+  return d->query;
+}
+
+int Query::limit() const
 {
   return d->limit;
 }
@@ -65,7 +73,7 @@ void Query::setLimit(int limit)
   d->limit = limit;
 }
 
-int Query::offset()
+int Query::offset() const
 {
   return d->offset;
 }
@@ -73,14 +81,5 @@ int Query::offset()
 void Query::setOffset(int offset)
 {
   d->offset = offset;
-}
-
-librdf_query* Query::hook(World *world)
-{
-  librdf_query *q = librdf_new_query( world->hook(), NULL, NULL, (unsigned char *) d->query->toLatin1().constData(), NULL);
-  librdf_query_set_limit( q, d->limit );
-  librdf_query_set_offset( q, d->offset );
-
-  return q;
 }
 

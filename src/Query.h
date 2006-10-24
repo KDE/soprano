@@ -1,6 +1,6 @@
 /* This file is part of QRDF
  *
- * Copyright (C) 2006 Duncan Mac-Vicar <duncan@kde.org>
+ * Copyright (C) 2006 Daniele Galdi <daniele.galdi@gmail.com>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -22,31 +22,30 @@
 #define QUERY_H
 
 #include <QString>
-#include <redland.h>
 
 namespace RDF
 {
 
-class World;
-
 class Query
 {
 public:
-  Query(QString *query);
+  Query( const QString &query );
 
-  Query(QString *query, int limit, int offset);
+  Query( const QString &query, int limit, int offset );
+
+  Query( const Query &other );
   
   ~Query();
 
-  int limit();
+  const QString &query() const;
+
+  int limit() const;
 
   void setLimit(int limit);
 
-  int offset();
+  int offset() const;
 
   void setOffset(int offset);
-  
-  librdf_query* hook( World *world );
 private:
   class Private;
   Private *d;
