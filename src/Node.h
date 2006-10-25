@@ -33,9 +33,9 @@ public:
 
   enum NodeType {
     TypeUnknown = 0,
-    TypeResource = 1,
-    TypeLiteral = 2,
-    TypeBlank = 4
+    TypeResource,
+    TypeLiteral,
+    TypeBlank
   };
 
   Node();
