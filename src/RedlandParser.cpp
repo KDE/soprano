@@ -30,14 +30,19 @@ using namespace RDF;
 Model *RedlandParser::parse( const World &world, const QUrl &url )
 {
   RedlandModelFactory factory( world );
-  RedlandModel *model = dynamic_cast<RedlandModel *>(factory.createMemoryModel( url.toString().toLatin1().data() ) );
-
-  // Redland stuff
-  librdf_world *w = world.worldPtr();
-  librdf_uri *uri = librdf_new_uri( w, (unsigned char *)url.toString().toLatin1().data() );  
-  librdf_parser *parser = librdf_new_parser( w, "parser", NULL, NULL );
   
-  if ( librdf_parser_parse_into_model( parser, uri, 0L, model->modelPtr() ) )
+  RedlandModel *model = dynamic_cast<RedlandModel *>( factory.createMemoryModel( url.toString() ) );
+  if (!model) return 0L;
+
+  librdf_world *w = world.worldPtr();
+  
+  librdf_uri *uri = librdf_new_uri( w, (unsigned char *) url.toString().toLatin1().data() );  
+  if (!uri) return 0L;
+
+  librdf_parser *parser = librdf_new_parser( w, "rdfxml", "application/rdf+xml", NULL );
+  if (!parser) return 0L;
+
+  if ( librdf_parser_parse_into_model( parser, uri, uri, model->modelPtr() ) )
   {
     delete model;
     model = 0L;
