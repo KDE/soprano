@@ -27,7 +27,7 @@ using namespace RDF;
 using namespace std;
 
 struct RedlandModel::Private {
-  Private(): world(0L), model(0L), storage(0L)
+  Private(): world(0L), model(0L)
   {}
 
   librdf_world *world;
@@ -35,12 +35,12 @@ struct RedlandModel::Private {
   librdf_storage *storage;
 };
 
-RedlandModel::RedlandModel( librdf_world *world, librdf_model *model, librdf_storage *storage )
+RedlandModel::RedlandModel( librdf_world *world, librdf_model *model )
 {
   d = new Private;
   d->world = world;
-  d->model = model;
-  d->storage = storage;
+  d->model = model; 
+  d->storage = librdf_model_get_storage( model );
 }
 
 RedlandModel::RedlandModel( const RedlandModel &other )
@@ -49,12 +49,16 @@ RedlandModel::RedlandModel( const RedlandModel &other )
   d->world = other.worldPtr();
   d->model = librdf_new_model_from_model( other.modelPtr() );
   d->storage = librdf_new_storage_from_storage( other.storagePtr() );
+
+  librdf_storage_open( d->storage, d->model );
 }
 
 RedlandModel::~RedlandModel()
 {
+  librdf_storage_close( d->storage );
+
   librdf_free_model( d->model );
-  librdf_free_storage( d->storage );
+  librdf_free_storage( storagePtr() );
   delete d;
 }
 

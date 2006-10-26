@@ -6,12 +6,14 @@ SET(qrdf_SRCS
     Statement.cpp
     Model.cpp
     ModelFactory.cpp
+    Parser.cpp
 
     World.cpp
     RedlandUtil.cpp
     RedlandQueryResult.cpp
     RedlandModel.cpp
-    RedlandModelFactory.cpp)    
+    RedlandModelFactory.cpp
+    RedlandParser.cpp)    
 
 ADD_DEFINITIONS(${REDLAND_CFLAGS})
 
@@ -26,7 +28,5 @@ TARGET_LINK_LIBRARIES(qrdf ${QT_QTCORE_LIBRARY})
 INSTALL(TARGETS qrdf
 		LIBRARY DESTINATION lib)
 
-INSTALL(FILES Model.h
+INSTALL(FILES Model.h Parser.h
 	DESTINATION include)
- 
-

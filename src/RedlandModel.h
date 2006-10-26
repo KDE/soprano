@@ -33,7 +33,7 @@ namespace RDF
 class RedlandModel: virtual public Model
 {
 public:
-  RedlandModel( librdf_world *world, librdf_model *model, librdf_storage *storage );
+  RedlandModel( librdf_world *world, librdf_model *model );
 
   RedlandModel( const RedlandModel &other );
 

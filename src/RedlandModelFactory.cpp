@@ -49,7 +49,7 @@ Model *RedlandModelFactory::createMemoryModel( const QString &name )
   librdf_storage *storage = librdf_new_storage( d->world, "memory", name.toLatin1().data(), 0L );
   librdf_model *model = librdf_new_model( d->world, storage, 0L );
 
-  return new RedlandModel( d->world, model, storage);
+  return new RedlandModel( d->world, model );
 }
 
 Model *RedlandModelFactory::createPersistentModel( const QString &name, const QString &filePath )
@@ -61,5 +61,5 @@ Model *RedlandModelFactory::createPersistentModel( const QString &name, const QS
   librdf_storage *storage = librdf_new_storage( d->world, "hashes", name.toLatin1().data(), prefix.toLatin1().data() );
   librdf_model *model = librdf_new_model( d->world, storage, 0L );
 
-  return new RedlandModel( d->world, model, storage);
+  return new RedlandModel( d->world, model );
 }

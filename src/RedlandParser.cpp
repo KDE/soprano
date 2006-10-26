@@ -1,6 +1,6 @@
 /* This file is part of QRDF
  *
- * Copyright (C) 2006 Daniele Galdi <daniele.galdi@gmail.com>
+ * Copyright (C) 2006 Duncan Mac-Vicar <duncan@kde.org>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -18,11 +18,33 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#include "Parser.h"
+#include <QtGlobal>
+#include <redland.h>
+
+#include "RedlandModel.h"
+#include "RedlandModelFactory.h"
+#include "RedlandParser.h"
 
 using namespace RDF;
 
-Parser::~Parser()
+Model *RedlandParser::parse( const World &world, const QUrl &url )
 {
-}
+  RedlandModelFactory factory( world );
+  RedlandModel *model = dynamic_cast<RedlandModel *>(factory.createMemoryModel( url.toString().toLatin1().data() ) );
 
+  // Redland stuff
+  librdf_world *w = world.worldPtr();
+  librdf_uri *uri = librdf_new_uri( w, (unsigned char *)url.toString().toLatin1().data() );  
+  librdf_parser *parser = librdf_new_parser( w, "parser", NULL, NULL );
+  
+  if ( librdf_parser_parse_into_model( parser, uri, 0L, model->modelPtr() ) )
+  {
+    delete model;
+    model = 0L;
+  }
+
+  librdf_free_parser( parser );
+  librdf_free_uri( uri );
+
+  return model;
+}

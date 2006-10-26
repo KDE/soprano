@@ -1,6 +1,6 @@
 /* This file is part of QRDF
  *
- * Copyright (C) 2006 Daniele Galdi <daniele.galdi@gmail.com>
+ * Copyright (C) 2006 Duncan Mac-Vicar <duncan@kde.org>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -18,24 +18,25 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef RDF_PARSER_H
-#define RDF_PARSER_H
+#ifndef RDF_REDLAND_PARSER_H
+#define RDF_REDLAND_PARSER_H
 
-#include <QString>
+#include <QUrl>
+#include "World.h"
+#include "Parser.h"
 
 namespace RDF
 {
 
 class Model;
 
-class Parser
+class RedlandParser
 {
 public:
-  virtual ~Parser();
-  virtual Model *parse( const QString &filePath ) = 0;
+  Model *parse( const World &world, const QUrl &url );
 };
 
 }
 
-#endif // RDF_PARSER_H
+#endif // RDF_REDLAND_PARSER_H
 
