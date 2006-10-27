@@ -22,6 +22,7 @@
 #define RDF_REDLAND_MODEL_H
 
 #include <QtGlobal>
+#include <QTextStream>
 #include <redland.h>
 
 #include "Model.h"
@@ -65,7 +66,7 @@ public:
 
   int size() const;
 
-  void write( FILE *fh ) const;
+  void write( QTextStream &os ) const;
 
   librdf_world *worldPtr() const;
 

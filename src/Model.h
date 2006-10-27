@@ -18,10 +18,12 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef MODEL_H
-#define MODEL_H
+#ifndef RDF_MODEL_H
+#define RDF_MODEL_H
 
 #include <QtGlobal>
+#include <QTextStream>
+
 #include "Statement.h"
 #include "Query.h"
 
@@ -62,10 +64,10 @@ public:
 
   virtual int size() const = 0;
 
-  virtual void write( FILE *fh ) const = 0;
+  virtual void write( QTextStream &os ) const = 0;
 };
 
 }
 
-#endif
+#endif // RDF_MODEL_H
 

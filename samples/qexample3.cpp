@@ -22,6 +22,8 @@
  */
 
 #include <QtGlobal>
+#include <QTextStream>
+#include <QFile>
 
 #include "../src/Node.h"
 #include "../src/Statement.h"
@@ -66,7 +68,12 @@ main(int argc, char *argv[])
   model->add( st0 );
   model->add( st1 );
   model->add( st2 );
-  model->write( stdout );
+  
+  QFile file("/tmp/test.rdf");
+
+  QTextStream os( &file );
+
+  //model->write( os );
 
   // Rdql query
   //Query query("select ?a, ?b, ?c where (?a, ?b, ?c)", Query::RDQL);

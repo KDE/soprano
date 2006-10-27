@@ -140,9 +140,15 @@ int RedlandModel::size() const
   return librdf_model_size( d->model );
 }
 
-void RedlandModel::write( FILE *fh ) const
+void RedlandModel::write( QTextStream &os ) const
 {
-  librdf_model_print( d->model, fh ); 
+  unsigned char *serialized = librdf_model_to_string( d->model, 0L, 0L, 0L, 0L  );
+  QString tmp( (const char *) serialized );
+
+  os << tmp;
+  os.flush();
+
+  free( serialized );
 }
 
 librdf_world *RedlandModel::worldPtr() const

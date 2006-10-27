@@ -20,6 +20,8 @@
 
 
 #include <QtGlobal>
+#include <QFile>
+#include <QTextStream>
 
 #include "../src/Node.h"
 #include "../src/Statement.h"
@@ -42,14 +44,36 @@ main(int argc, char *argv[])
   RedlandModelFactory factory( world );
 
   //Model *model = factory.createPersistentModel( "test" , "/tmp" );
-  Model *model = factory.createMemoryModel( "test" );
+  Model *model = factory.createMemoryModel( "memory-model" );
   model->add( st );
-  model->write( stdout );
+  
+  QFile file("/tmp/model-before-remove.rdf");
+  if (!file.open(QIODevice::WriteOnly | QIODevice::Text))
+  {
+    qDebug( "Cannot create '/tmp/model-before-remove.rdf' file..\n" );
+    return (1);
+  }
+
+  qDebug( "'cat /tmp/model-before-remove.rdf' to see the model." );
+
+  QTextStream os( &file );
+  model->write( os );
 
   qDebug( "Now we remove the same statement..\n");
  
   model->remove( st );
-  model->write( stdout );
+  
+  QFile file1("/tmp/model-after-remove.rdf");
+  if (!file1.open(QIODevice::WriteOnly | QIODevice::Text))
+  {
+    qDebug( "Cannot create '/tmp/model-after-remove.rdf' file..\n" );
+    return (1);
+  }
+
+  QTextStream os1( &file1 );
+  model->write( os1 );
+
+  qDebug( "'cat /tmp/model-after-remove.rdf' to see the model." );
 
   delete model;
 

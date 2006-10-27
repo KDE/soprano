@@ -19,6 +19,8 @@
  */
 
 #include <QtGlobal>
+#include <QTextStream>
+#include <QFile>
 #include <iostream>
 
 #include "../src/Model.h"
@@ -45,10 +47,21 @@ main(int argc, char *argv[])
   Model *model = parser.parse(world, QUrl( (const char*)argv[1] ));
   if (!model) 
   {
-    cout << "error during model creation.." << endl;
-    return 0L;  
+    qDebug( "Error during model creation..\n" );
+    return (1);  
   }
-  model->write( stdout );
+
+  QFile file("/tmp/parse.rdf");
+  if (!file.open(QIODevice::WriteOnly | QIODevice::Text))
+  {
+    qDebug( "Cannot create '/tmp/parse.rdf' file..\n" );
+    return (1);
+  }
+
+  qDebug( "'cat /tmp/parse.rdf' to see the parsed files.." );
+
+  QTextStream os( &file );
+  model->write( os );
 
   delete model;
  
