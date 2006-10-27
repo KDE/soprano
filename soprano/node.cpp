@@ -116,3 +116,17 @@ Node& Node::operator=( const Node& other )
   d->value = other.literal();
   return *this;
 }
+
+bool Node::operator==( const Node& other ) const
+{
+    if (d->type != other.d->type)
+        return false;
+    
+    if (d->type == Resource)
+        return d->uri == other.d->uri;
+    else
+        return d->value == other.d->value;
+    
+    // never reached
+    return false;
+}

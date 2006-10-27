@@ -45,7 +45,8 @@ public:
   virtual ~Node();
 
   Node &operator=( const Node& other );
-
+  bool operator==( const Node& other ) const;
+  
   Type type() const;
 
   bool isEmpty() const;
