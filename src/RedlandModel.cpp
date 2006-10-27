@@ -23,8 +23,6 @@
 #include "RedlandModel.h"
 using namespace RDF;
 
-#include <iostream>
-using namespace std;
 
 struct RedlandModel::Private {
   Private(): world(0L), model(0L)
@@ -92,18 +90,19 @@ bool RedlandModel::contains( const Statement &partial ) const
 
 QueryResult *RedlandModel::execute( const Query &query ) const
 {
-  cout << "build a query object.." << endl;
+  qDebug("build a query object..");
   librdf_query *q = librdf_new_query( d->world, Redland::queryType( query ), 0L, (unsigned char *)query.query().toLatin1().data(), 0L );
   Q_ASSERT( q != 0L );
 
   librdf_query_set_limit( q , query.limit() );
   librdf_query_set_offset( q, query.offset() );
   
-  if (q) cout << "done." << endl;
+  if (q)
+      qDebug("done.");
   
-  cout << "limit: " << librdf_query_get_limit( q ) << endl;
-  cout << "offset: " << librdf_query_get_offset( q ) << endl;
-  cout << "executing query..." << endl;
+  qDebug("limit: %d", librdf_query_get_limit( q ));
+  qDebug("offset: %d", librdf_query_get_offset( q ));
+  qDebug("executing query...");
  
   librdf_query_results *res = librdf_model_query_execute( d->model, q );
   librdf_free_query( q );

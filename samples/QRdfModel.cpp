@@ -20,7 +20,6 @@
 
 
 #include <QtGlobal>
-#include <iostream>
 
 #include "../src/Node.h"
 #include "../src/Statement.h"
@@ -28,7 +27,6 @@
 #include "../src/RedlandModelFactory.h"
 
 using namespace RDF;
-using namespace std;
 
 int
 main(int argc, char *argv[])
@@ -48,8 +46,7 @@ main(int argc, char *argv[])
   model->add( st );
   model->write( stdout );
 
-  cout << endl;
-  cout << "Now we remove the same statement.." << endl << endl;
+  qDebug( "Now we remove the same statement..\n");
  
   model->remove( st );
   model->write( stdout );

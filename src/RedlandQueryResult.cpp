@@ -22,9 +22,6 @@
 #include "RedlandQueryResult.h"
 using namespace RDF;
 
-#include <iostream>
-using namespace std;
-
 struct RedlandQueryResult::Private
 {
   Private() : queryResult(0L)
