@@ -18,8 +18,8 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef STATEMENT_H
-#define STATEMENT_H
+#ifndef RDF_STATEMENT_H
+#define RDF_STATEMENT_H
 
 #include "Node.h"
 
@@ -29,15 +29,32 @@ namespace RDF
 class Statement
 {
 public: 
+  Statement();
   Statement( const Statement &other );
   Statement( const Node &subject, const Node &predicate, const Node &object );
   ~Statement();
 
   Statement& operator=( const Statement& other );
 
+  void setSubject( const Node &subject );
+
   const Node &subject() const;
+
+  void setPredicate( const Node &predicate );
+
   const Node &predicate() const;
+
+  void setObject( const Node &object );
+
   const Node &object() const;
+
+  /**
+   * A Statement is valid if contains (subject, predicate, object) and
+   * and all are valid.
+   *
+   * \return true if the Stamenet is valid, false otherwise
+   */
+  bool isValid() const;
 
 private:
   class Private;
@@ -46,5 +63,5 @@ private:
 
 }
 
-#endif
+#endif // RDF_STATEMENT_H
 

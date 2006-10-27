@@ -32,6 +32,11 @@ struct Statement::Private
   Node object;
 };
 
+Statement::Statement()
+{
+  d = new Private;
+}
+
 Statement::Statement( const Statement &other )
 {
   d = new Private;
@@ -60,9 +65,19 @@ Statement& Statement::operator=( const Statement& other )
   d->object = other.object();
 }
 
+void Statement::setSubject( const Node &subject )
+{
+  d->subject = subject;
+}
+
 const Node &Statement::subject() const
 {
   return d->subject;
+}
+
+void Statement::setPredicate( const Node &predicate )
+{
+  d->predicate = predicate;
 }
 
 const Node &Statement::predicate() const
@@ -70,7 +85,17 @@ const Node &Statement::predicate() const
   return d->predicate;
 }
 
+void Statement::setObject( const Node &object )
+{
+  d->object = object;
+}
+
 const Node &Statement::object() const
 {
   return d->object;
+}
+
+bool Statement::isValid() const
+{
+  return ( d->subject.isValid() && d->predicate.isValid() && d->object.isValid() );
 }
