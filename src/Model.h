@@ -50,7 +50,7 @@ public:
 
   Node *createLiteral( const QString &literal );
 
-  virtual bool isEmpty() = 0;
+  virtual bool isEmpty() const = 0;
 
   virtual bool contains( const Statement &partial ) = 0;
 
@@ -60,7 +60,7 @@ public:
 
   virtual void remove( const QList<Statement> &statements ) = 0;
 
-  virtual int size() = 0;
+  virtual int size() const = 0;
 
   virtual void write( FILE *fh ) = 0;
 };

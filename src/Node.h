@@ -42,7 +42,7 @@ public:
   Node(const QUrl &url, NodeType type);
   Node(const QString &value, NodeType type);
   Node(const Node &other);
-  ~Node();
+  virtual ~Node();
 
   Node &operator=( const Node& other );
 

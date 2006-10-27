@@ -81,7 +81,7 @@ void RedlandModel::add( const Statement &st )
   librdf_model_add( d->model, subject, predicate, object );
 }
 
-bool RedlandModel::isEmpty()
+bool RedlandModel::isEmpty() const
 {
   return librdf_model_size( d->model ) == 0;
 }
@@ -127,7 +127,7 @@ void RedlandModel::remove( const QList<Statement> &statements )
 
 }
 
-int RedlandModel::size()
+int RedlandModel::size() const
 {
   return librdf_model_size( d->model );
 }

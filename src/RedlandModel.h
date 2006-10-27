@@ -53,7 +53,7 @@ public:
 
   Node *createLiteral( const QString &literal );
 
-  bool isEmpty();
+  bool isEmpty() const;
 
   bool contains( const Statement &partial );
 
@@ -63,7 +63,7 @@ public:
 
   void remove( const QList<Statement> &statements );
 
-  int size();
+  int size() const;
 
   void write( FILE *fh );
 
