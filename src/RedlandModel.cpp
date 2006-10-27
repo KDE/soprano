@@ -86,7 +86,7 @@ bool RedlandModel::isEmpty() const
   return librdf_model_size( d->model ) == 0;
 }
 
-bool RedlandModel::contains( const Statement &partial )
+bool RedlandModel::contains( const Statement &partial ) const
 {
 }
 
@@ -132,7 +132,7 @@ int RedlandModel::size() const
   return librdf_model_size( d->model );
 }
 
-void RedlandModel::write( FILE *fh )
+void RedlandModel::write( FILE *fh ) const
 {
   librdf_model_print( d->model, fh ); 
 }

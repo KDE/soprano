@@ -55,7 +55,7 @@ public:
 
   bool isEmpty() const;
 
-  bool contains( const Statement &partial );
+  bool contains( const Statement &partial ) const;
 
   QueryResult *execute( const Query &query );
 
@@ -65,7 +65,7 @@ public:
 
   int size() const;
 
-  void write( FILE *fh );
+  void write( FILE *fh ) const;
 
   librdf_world *worldPtr() const;
 

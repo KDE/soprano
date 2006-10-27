@@ -52,7 +52,7 @@ public:
 
   virtual bool isEmpty() const = 0;
 
-  virtual bool contains( const Statement &partial ) = 0;
+  virtual bool contains( const Statement &partial ) const = 0;
 
   virtual QueryResult *execute( const Query &query ) = 0;
 
@@ -62,7 +62,7 @@ public:
 
   virtual int size() const = 0;
 
-  virtual void write( FILE *fh ) = 0;
+  virtual void write( FILE *fh ) const = 0;
 };
 
 }
