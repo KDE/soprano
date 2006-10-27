@@ -26,15 +26,15 @@ Node *Redland::createNode( librdf_node *node )
   if ( librdf_node_is_resource( node ) ) 
   {
     librdf_uri *uri = librdf_node_get_uri( node );
-    return new Node( QUrl( (const char *)librdf_uri_as_string(uri) ), Node::TypeResource );
+    return new Node( QUrl( (const char *)librdf_uri_as_string(uri) ), Node::Resource );
   }
   else if ( librdf_node_is_literal( node ) )
   {
-    return new Node( (const char *)librdf_node_get_literal_value( node ), Node::TypeLiteral );
+    return new Node( (const char *)librdf_node_get_literal_value( node ), Node::Literal );
   }
   else if ( librdf_node_is_blank( node ) )
   {
-    return new Node( (const char *)librdf_node_get_blank_identifier( node ), Node::TypeBlank );
+    return new Node( (const char *)librdf_node_get_blank_identifier( node ), Node::Blank );
   }
   return 0L;
 }

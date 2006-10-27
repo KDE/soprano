@@ -32,7 +32,7 @@ class Parser
 {
 public:
   virtual ~Parser();
-  virtual Model *parse( const QString &filePath ) = 0;
+  virtual Model *parse( const QString &filePath ) const = 0;
 };
 
 }

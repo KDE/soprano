@@ -44,7 +44,7 @@ RedlandModelFactory::~RedlandModelFactory()
   delete d;
 }
 
-Model *RedlandModelFactory::createMemoryModel( const QString &name )
+Model *RedlandModelFactory::createMemoryModel( const QString &name ) const
 {
   librdf_storage *storage = librdf_new_storage( d->world, "memory", name.toLatin1().data(), 0L );
   librdf_model *model = librdf_new_model( d->world, storage, 0L );
@@ -52,7 +52,7 @@ Model *RedlandModelFactory::createMemoryModel( const QString &name )
   return new RedlandModel( d->world, model );
 }
 
-Model *RedlandModelFactory::createPersistentModel( const QString &name, const QString &filePath )
+Model *RedlandModelFactory::createPersistentModel( const QString &name, const QString &filePath ) const
 {
   QString prefix("hash-type='bdb',dir='");
   prefix.append(filePath);

@@ -36,9 +36,9 @@ main(int argc, char *argv[])
   World world;
   world.open();
 
-  Node subject( QUrl("http://purl.org/net/dagnele/"), Node::TypeResource );
-  Node predicate( QUrl("http://purl.org/dc/elements/1.1/creator"), Node::TypeResource );
-  Node object( QString("Daniele Galdi"), Node::TypeLiteral );
+  Node subject( QUrl("http://purl.org/net/dagnele/"), Node::Resource );
+  Node predicate( QUrl("http://purl.org/dc/elements/1.1/creator"), Node::Resource );
+  Node object( QString("Daniele Galdi"), Node::Literal );
   Statement st( subject, predicate, object );
 
   RedlandModelFactory factory( world );

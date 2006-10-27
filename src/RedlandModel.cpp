@@ -90,7 +90,7 @@ bool RedlandModel::contains( const Statement &partial ) const
 {
 }
 
-QueryResult *RedlandModel::execute( const Query &query )
+QueryResult *RedlandModel::execute( const Query &query ) const
 {
   cout << "build a query object.." << endl;
   librdf_query *q = librdf_new_query( d->world, Redland::queryType( query ), 0L, (unsigned char *)query.query().toLatin1().data(), 0L );

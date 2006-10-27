@@ -54,7 +54,7 @@ public:
 
   virtual bool contains( const Statement &partial ) const = 0;
 
-  virtual QueryResult *execute( const Query &query ) = 0;
+  virtual QueryResult *execute( const Query &query ) const = 0;
 
   virtual void remove( const Statement &st ) = 0;
 

@@ -36,9 +36,9 @@ public:
   RedlandModelFactory(const World &world);
   ~RedlandModelFactory();
 
-  Model *createMemoryModel( const QString &name );
+  Model *createMemoryModel( const QString &name ) const;
 
-  Model *createPersistentModel( const QString &name, const QString &filePath );
+  Model *createPersistentModel( const QString &name, const QString &filePath ) const;
 private:
   RedlandModelFactory( const RedlandModelFactory &other ) {};
 

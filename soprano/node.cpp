@@ -25,9 +25,9 @@ using namespace RDF;
 
 struct Node::Private
 {
-  Private(): type(TypeUnknown)
+  Private(): type(Unknown)
   {}
-  NodeType type;
+  Type type;
   QUrl uri;
   QString value;
 };
@@ -45,14 +45,14 @@ Node::Node( const Node &other )
   d->value = other.literal();
 }
 
-Node::Node( const QUrl &uri, NodeType type )
+Node::Node( const QUrl &uri, Type type )
 {
   d = new Private;
   d->uri = uri;
   d->type = type;
 }
 
-Node::Node( const QString &value, NodeType type )
+Node::Node( const QString &value, Type type )
 {
   d = new Private;
   d->value = value;
@@ -66,7 +66,7 @@ Node::~Node()
 
 bool Node::isEmpty() const
 {
-  return ( d->type == Node::TypeUnknown );
+  return ( d->type == Node::Unknown );
 }
 
 bool Node::isValid() const
@@ -76,20 +76,20 @@ bool Node::isValid() const
 
 bool Node::isLiteral() const
 {
-  return ( d->type == Node::TypeLiteral );
+  return ( d->type == Node::Literal );
 }
 
 bool Node::isResource() const
 {
-  return ( d->type == Node::TypeResource );
+  return ( d->type == Node::Resource );
 }
 
 bool Node::isBlank() const
 {
-  return ( d->type == Node::TypeBlank );
+  return ( d->type == Node::Blank );
 }
 
-Node::NodeType Node::type() const
+Node::Type Node::type() const
 {
   return d->type;
 }

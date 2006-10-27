@@ -27,20 +27,20 @@ Model::~Model()
 
 Node *Model::createProperty( const QString &ns, const QString &value )
 {
-  return new Node( QUrl( ns + value), Node::TypeResource );
+  return new Node( QUrl( ns + value), Node::Resource );
 }
 
 Node *Model::createBlankNode( const QString &uri )
 {
-  return new Node( uri, Node::TypeBlank );
+  return new Node( uri, Node::Blank );
 }
 
 Node *Model::createResource( const QUrl &uri )
 {
-  return new Node( uri, Node::TypeResource );
+  return new Node( uri, Node::Resource );
 }
 
 Node *Model::createLiteral( const QString &literal )
 {
-  return new Node( literal, Node::TypeLiteral );
+  return new Node( literal, Node::Literal );
 }

@@ -27,7 +27,7 @@
 
 using namespace RDF;
 
-Model *RedlandParser::parse( const World &world, const QUrl &url )
+Model *RedlandParser::parse( const World &world, const QUrl &url ) const
 {
   RedlandModelFactory factory( world );
   

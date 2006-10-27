@@ -57,7 +57,7 @@ public:
 
   bool contains( const Statement &partial ) const;
 
-  QueryResult *execute( const Query &query );
+  QueryResult *execute( const Query &query ) const;
 
   void remove( const Statement &st );
 

@@ -31,22 +31,22 @@ class Node
 {
 public:
 
-  enum NodeType {
-    TypeUnknown = 0,
-    TypeResource,
-    TypeLiteral,
-    TypeBlank
+  enum Type {
+    Unknown = 0,
+    Resource,
+    Literal,
+    Blank
   };
 
   Node();
-  Node(const QUrl &url, NodeType type);
-  Node(const QString &value, NodeType type);
+  Node(const QUrl &url, Type type);
+  Node(const QString &value, Type type);
   Node(const Node &other);
   virtual ~Node();
 
   Node &operator=( const Node& other );
 
-  NodeType type() const;
+  Type type() const;
 
   bool isEmpty() const;
   bool isValid() const ;

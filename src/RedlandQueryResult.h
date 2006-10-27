@@ -39,17 +39,17 @@ public:
 
   virtual ~RedlandQueryResult();
     
-  int size();
+  int size() const;
   
-  bool hasNext();
+  bool hasNext() const;
 
   bool next();
     
-  Node *get( const QString &name );
+  Node *get( const QString &name ) const;
 
-  bool isBoolean();
+  bool isBoolean() const;
 
-  bool boolean();
+  bool boolean() const;
 private:
   class Private;
   Private *d;

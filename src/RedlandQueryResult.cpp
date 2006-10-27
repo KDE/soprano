@@ -45,12 +45,12 @@ RedlandQueryResult::~RedlandQueryResult()
   delete d;
 }
 
-int RedlandQueryResult::size()
+int RedlandQueryResult::size() const
 {
   return librdf_query_results_get_count( d->queryResult );
 }
 
-bool RedlandQueryResult::hasNext()
+bool RedlandQueryResult::hasNext() const
 {
   return librdf_query_results_finished( d->queryResult ) == 0;
 }
@@ -60,7 +60,7 @@ bool RedlandQueryResult::next()
   return librdf_query_results_next( d->queryResult ) != 0;
 }
 
-Node *RedlandQueryResult::get( const QString &name )
+Node *RedlandQueryResult::get( const QString &name ) const
 {
   librdf_node *node = librdf_query_results_get_binding_value_by_name( d->queryResult, (const char *)name.toLatin1().data() );
   Q_ASSERT( node != 0L );
@@ -71,12 +71,12 @@ Node *RedlandQueryResult::get( const QString &name )
   return tmp;
 }
 
-bool RedlandQueryResult::isBoolean()
+bool RedlandQueryResult::isBoolean() const
 {
   return librdf_query_results_is_boolean( d->queryResult ) != 0;
 }
 
-bool RedlandQueryResult::boolean()
+bool RedlandQueryResult::boolean() const
 {
   return librdf_query_results_get_boolean( d->queryResult ) > 0;
 }

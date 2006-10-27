@@ -44,19 +44,19 @@ main(int argc, char *argv[])
   World world;
   world.open();
    
-  Node subject0( QUrl("http://purl.org/net/dagnele/"), Node::TypeResource );
-  Node predicate0( QUrl("http://purl.org/dc/elements/1.1/creator"), Node::TypeResource );
-  Node object0( QString("Daniele Galdi"), Node::TypeLiteral );
+  Node subject0( QUrl("http://purl.org/net/dagnele/"), Node::Resource );
+  Node predicate0( QUrl("http://purl.org/dc/elements/1.1/creator"), Node::Resource );
+  Node object0( QString("Daniele Galdi"), Node::Literal );
   Statement st0( subject0, predicate0, object0 );
 
-  Node subject1( QUrl("http://purl.org/net/dagnele/"), Node::TypeResource );
-  Node predicate1( QUrl("http://purl.org/dc/elements/1.1/age"), Node::TypeResource );
-  Node object1( QString("29"), Node::TypeLiteral );
+  Node subject1( QUrl("http://purl.org/net/dagnele/"), Node::Resource );
+  Node predicate1( QUrl("http://purl.org/dc/elements/1.1/age"), Node::Resource );
+  Node object1( QString("29"), Node::Literal );
   Statement st1( subject1, predicate1, object1 );
 
-  Node subject2( QUrl("http://purl.org/net/dagnele/"), Node::TypeResource );
-  Node predicate2( QUrl("http://purl.org/dc/elements/1.1/born"), Node::TypeResource );
-  Node object2( QString("Rome"), Node::TypeLiteral );
+  Node subject2( QUrl("http://purl.org/net/dagnele/"), Node::Resource );
+  Node predicate2( QUrl("http://purl.org/dc/elements/1.1/born"), Node::Resource );
+  Node object2( QString("Rome"), Node::Literal );
   Statement st2( subject2, predicate2, object2 );
 
   RedlandModelFactory factory( world );

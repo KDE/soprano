@@ -33,7 +33,7 @@ class Model;
 class RedlandParser
 {
 public:
-  Model *parse( const World &world, const QUrl &url );
+  Model *parse( const World &world, const QUrl &url ) const;
 };
 
 }

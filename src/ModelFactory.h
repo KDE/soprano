@@ -33,9 +33,9 @@ class ModelFactory
 public:
   virtual ~ModelFactory();
 
-  virtual Model *createMemoryModel( const QString &name ) = 0;
+  virtual Model *createMemoryModel( const QString &name ) const = 0;
 
-  virtual Model *createPersistentModel( const QString &name, const QString &filePath) = 0;
+  virtual Model *createPersistentModel( const QString &name, const QString &filePath) const = 0;
 };
 
 }

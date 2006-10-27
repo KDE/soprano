@@ -32,17 +32,17 @@ class QueryResult
 public:
   virtual ~QueryResult();
 
-  virtual int size() = 0;
+  virtual int size() const = 0;
  
-  virtual bool hasNext() = 0;
+  virtual bool hasNext() const = 0;
 
   virtual bool next() = 0;
 
-  virtual Node *get( const QString &name ) = 0;
+  virtual Node *get( const QString &name ) const = 0;
 
-  virtual bool isBoolean() = 0;
+  virtual bool isBoolean() const = 0;
 
-  virtual bool boolean() = 0;
+  virtual bool boolean() const = 0;
 };
 
 }
