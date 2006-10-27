@@ -13,19 +13,18 @@
  * Library General Public License for more details.
  *
  * You should have received a copy of the GNU Library General Public
- * License
- * along with this library; see the file COPYING.LIB.  If not, write
- * to
- * the Free Software Foundation, Inc., 51 Franklin Street, Fifth
- * Floor,
- * Boston, MA 02110-1301, USA.
+ * License along with this library; see the file COPYING.LIB.  If not,
+ * write to the Free Software Foundation, Inc., 51 Franklin Street,
+ * Fifth
+ * Floor, Boston, MA 02110-1301, USA.
  */
 
-#ifndef REDLAND_UTIL_H
-#define REDLAND_UTIL_H
+#ifndef RDF_REDLAND_UTIL_H
+#define RDF_REDLAND_UTIL_H
 
 #include <redland.h>
 #include "Node.h"
+#include "Statement.h"
 #include "Query.h"
 
 namespace RDF
@@ -37,9 +36,11 @@ namespace Redland
 
   librdf_node *createNode( librdf_world *world, const Node &node );
 
+  librdf_statement *createStatement( librdf_world *world, const Statement &statement );
+
   const char *queryType( const Query &query );
 }
 
 }
 
-#endif // REDLAND_UTIL_H
+#endif // RDF_REDLAND_UTIL_H

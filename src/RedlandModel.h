@@ -18,8 +18,8 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef REDLAND_MODEL_H
-#define REDLAND_MODEL_H
+#ifndef RDF_REDLAND_MODEL_H
+#define RDF_REDLAND_MODEL_H
 
 #include <QtGlobal>
 #include <redland.h>
@@ -55,7 +55,7 @@ public:
 
   bool isEmpty() const;
 
-  bool contains( const Statement &partial ) const;
+  bool contains( const Statement &statement ) const;
 
   QueryResult *execute( const Query &query ) const;
 

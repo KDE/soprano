@@ -56,6 +56,15 @@ librdf_node *Redland::createNode( librdf_world *world, const Node &node )
   return 0L;
 }
 
+librdf_statement *Redland::createStatement( librdf_world *world, const Statement &statement )
+{
+  librdf_node *subject = createNode( world, statement.subject() );
+  librdf_node *predicate = createNode( world, statement.predicate() );
+  librdf_node *object = createNode( world, statement.object() );
+
+  return librdf_new_statement_from_nodes( world, subject, predicate, object );
+}
+
 const char *Redland::queryType( const Query &query )
 {
   if ( query.type() == Query::RDQL )

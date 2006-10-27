@@ -52,7 +52,7 @@ public:
 
   virtual bool isEmpty() const = 0;
 
-  virtual bool contains( const Statement &partial ) const = 0;
+  virtual bool contains( const Statement &statement ) const = 0;
 
   virtual QueryResult *execute( const Query &query ) const = 0;
 

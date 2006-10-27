@@ -84,8 +84,17 @@ bool RedlandModel::isEmpty() const
   return librdf_model_size( d->model ) == 0;
 }
 
-bool RedlandModel::contains( const Statement &partial ) const
+bool RedlandModel::contains( const Statement &statement ) const
 {
+  if ( !statement.isValid() ) return false;
+
+  librdf_statement *st = Redland::createStatement( d->world, statement );
+
+  int result = librdf_model_contains_statement( d->model, st );
+
+  librdf_free_statement( st );
+
+  return result != 0;
 }
 
 QueryResult *RedlandModel::execute( const Query &query ) const
