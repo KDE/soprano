@@ -1,10 +1,7 @@
+- Model
+  - class StatementIterator
+  - StatementIterator listStatements();
+  - StatementIterator listStatement( const Statement &partial );
+  - Implements empty methods
 
-- copy constructors
-- docs
-- headers
-
-
-Daniele Galdi
-
-query.h
-- Add execute method
+- Doxygen comments
