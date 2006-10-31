@@ -18,8 +18,8 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef REDLAND_WORLD_H
-#define REDLAND_WORLD_H
+#ifndef RDF_REDLAND_WORLD_H
+#define RDF_REDLAND_WORLD_H
 
 #include <redland.h>
 
@@ -29,20 +29,21 @@ namespace RDF
 class World
 {
 public:
-  World();
+  static World *self();
+
   ~World();
-  
-  void open();
-  
+
   librdf_world* worldPtr() const;
 private:
+  World();
   World( const World &other ) {};
 
-  class Private;
-  Private *d;
+  librdf_world * m_world;
+
+  static World *m_instance;
 };
 
 }
 
-#endif
+#endif // RDF_REDLAND_WORLD_H
 

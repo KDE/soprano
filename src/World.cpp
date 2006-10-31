@@ -18,35 +18,37 @@
  * Boston, MA 02110-1301, USA.
  */
 
+#include <QtGlobal>
+
 #include "World.h"
 using namespace RDF;
 
-struct World::Private
+World *World::m_instance = NULL;
+
+World *World::self()
 {
-  Private() : world(0L)
-  {}
-  librdf_world* world;
-};
+  if ( !m_instance )
+  {
+    qDebug( "new World()\n" );
+    m_instance = new World();
+  }
+
+  return m_instance;
+}
 
 World::World()
 {
-  d = new Private;
-  d->world = librdf_new_world();
+  m_world = librdf_new_world();
+  librdf_world_open( m_world );
 }
 
 World::~World()
 {
-  librdf_free_world( d->world );
-  delete d;
-}
-
-void World::open()
-{
-  librdf_world_open( d->world );
+  librdf_free_world( m_world );
 }
 
 librdf_world* World::worldPtr() const
 {
-  return d->world;
+  return m_world;
 }
 
