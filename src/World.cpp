@@ -23,7 +23,7 @@
 #include "World.h"
 using namespace RDF;
 
-World *World::m_instance = NULL;
+World *World::m_instance = 0;
 
 World *World::self()
 {
@@ -45,6 +45,7 @@ World::World()
 World::~World()
 {
   librdf_free_world( m_world );
+  m_instance = 0;
 }
 
 librdf_world* World::worldPtr() const
