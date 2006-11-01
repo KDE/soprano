@@ -31,10 +31,13 @@
 namespace RDF
 {
 
+class QueryResult;
+class StatementIterator;
+
 class RedlandModel: virtual public Model
 {
 public:
-  RedlandModel( librdf_world *world, librdf_model *model );
+  RedlandModel( librdf_model *model );
 
   RedlandModel( const RedlandModel &other );
 
@@ -58,7 +61,11 @@ public:
 
   bool contains( const Statement &statement ) const;
 
-  QueryResult *execute( const Query &query ) const;
+  QueryResult *executeQuery( const Query &query ) const;
+
+  StatementIterator *listStatements() const;
+
+  StatementIterator *listStatements( const Statement &partial ) const;
 
   void remove( const Statement &st );
 
@@ -68,7 +75,7 @@ public:
 
   void write( QTextStream &os ) const;
 
-  librdf_world *worldPtr() const;
+  void print() const;
 
   librdf_model *modelPtr() const;
 

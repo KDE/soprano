@@ -12,12 +12,9 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Library General Public License for more details.
  *
- * You should have received a copy of the GNU Library General Public
- * License
- * along with this library; see the file COPYING.LIB.  If not, write
- * to
- * the Free Software Foundation, Inc., 51 Franklin Street, Fifth
- * Floor,
+ * You should have received a copy of the GNU Library General Public License
+ * along with this library; see the file COPYING.LIB.  If not, write to
+ * the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
  * Boston, MA 02110-1301, USA.
  */
 
@@ -37,19 +34,24 @@ class RedlandQueryResult: public QueryResult
 public:
   RedlandQueryResult( librdf_query_results *result );
 
-  virtual ~RedlandQueryResult();
+  ~RedlandQueryResult();
     
-  int size() const;
+  int count() const;
   
   bool hasNext() const;
 
-  bool next();
+  bool next() const;
     
-  Node *get( const QString &name ) const;
+  Node getBinding( const QString &name ) const;
 
-  bool isBoolean() const;
+  bool isGraph() const;
 
-  bool boolean() const;
+  bool isBinding() const;
+
+  bool isBool() const;
+
+  bool boolValue() const;
+
 private:
   class Private;
   Private *d;
@@ -57,5 +59,5 @@ private:
  
 }
 
-#endif //REDLAND_QUERY_RESULT_H
+#endif // REDLAND_QUERY_RESULT_H
 

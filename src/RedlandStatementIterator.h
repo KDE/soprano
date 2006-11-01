@@ -18,31 +18,31 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef RDF_MANAGER_H
-#define RDF_MANAGER_H
+#ifndef RDF_REDLAND_STATEMENT_ITERATOR_H
+#define RDF_REDLAND_STATEMENT_ITERATOR_H
 
-#include <QMap>
-#include <QString>
+#include "StatementIterator.h"
 
-namespace RDF
-{
+namespace RDF {
 
-class ModelFactory;
+class Statement;
 
-class Manager
+class RedlandStatementIterator: public StatementIterator
 {
 public:
-  Manager();
-  ~Manager();
+  RedlandStatementIterator( librdf_stream *stream );
 
-  const QMap<QString, ModelFactory *> &listAvailableModelFactory() const;
+  ~RedlandStatementIterator();
 
+  bool hasNext() const;
+
+  const Statement next() const;
 private:
-  Manager(const Manager& s) {}
   class Private;
   Private *d;
 };
 
 }
 
-#endif // RDF_MANAGER_H
+#endif // RDF_REDLAND_STATEMENT_ITERATOR_H
+

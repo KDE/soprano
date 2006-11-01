@@ -32,11 +32,13 @@ namespace RDF
 
 namespace Redland
 {
-  Node *createNode( librdf_node *node );
+  Node createNode( librdf_node *node );
 
-  librdf_node *createNode( librdf_world *world, const Node &node );
+  librdf_node *createNode( const Node &node );
 
-  librdf_statement *createStatement( librdf_world *world, const Statement &statement );
+  Statement createStatement( librdf_statement *st );
+  
+  librdf_statement *createStatement( const Statement &statement );
 
   const char *queryType( const Query &query );
 }

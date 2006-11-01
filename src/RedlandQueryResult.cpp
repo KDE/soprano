@@ -24,56 +24,66 @@ using namespace RDF;
 
 struct RedlandQueryResult::Private
 {
-  Private() : queryResult(0L)
+  Private() : result(0L)
   {}
-  librdf_query_results *queryResult;
+  librdf_query_results *result;
 };
 
-RedlandQueryResult::RedlandQueryResult( librdf_query_results *qr )
+RedlandQueryResult::RedlandQueryResult( librdf_query_results *result )
 {
   d = new Private;
-  d->queryResult = qr;
-  Q_ASSERT( d->queryResult != NULL );
+  d->result = result;
+  Q_ASSERT( d->result != NULL );
 }
 
 RedlandQueryResult::~RedlandQueryResult()
 {
-  librdf_free_query_results( d->queryResult );
+  librdf_free_query_results( d->result );
   delete d;
 }
 
-int RedlandQueryResult::size() const
+int RedlandQueryResult::count() const
 {
-  return librdf_query_results_get_count( d->queryResult );
+  return librdf_query_results_get_count( d->result );
 }
 
 bool RedlandQueryResult::hasNext() const
 {
-  return librdf_query_results_finished( d->queryResult ) == 0;
+  return librdf_query_results_finished( d->result ) == 0;
 }
 
-bool RedlandQueryResult::next()
+bool RedlandQueryResult::next() const
 {
-  return librdf_query_results_next( d->queryResult ) != 0;
+  return librdf_query_results_next( d->result ) != 0;
 }
 
-Node *RedlandQueryResult::get( const QString &name ) const
+Node RedlandQueryResult::getBinding( const QString &name ) const
 {
-  librdf_node *node = librdf_query_results_get_binding_value_by_name( d->queryResult, (const char *)name.toLatin1().data() );
+  librdf_node *node = librdf_query_results_get_binding_value_by_name( d->result, (const char *)name.toLatin1().data() );
   Q_ASSERT( node != 0L );
 
-  Node *tmp = Redland::createNode( node );
+  Node tmp = Redland::createNode( node );
   librdf_free_node( node );
   
   return tmp;
 }
 
-bool RedlandQueryResult::isBoolean() const
+bool RedlandQueryResult::isGraph() const
 {
-  return librdf_query_results_is_boolean( d->queryResult ) != 0;
+  return librdf_query_results_is_graph( d->result ) != 0;
 }
 
-bool RedlandQueryResult::boolean() const
+bool RedlandQueryResult::isBinding() const
 {
-  return librdf_query_results_get_boolean( d->queryResult ) > 0;
+  return librdf_query_results_is_bindings( d->result ) != 0;
+}
+
+bool RedlandQueryResult::isBool() const
+{
+  return librdf_query_results_is_boolean( d->result ) != 0;
+}
+
+bool RedlandQueryResult::boolValue() const
+{
+  return librdf_query_results_get_boolean( d->result ) > 0;
 }

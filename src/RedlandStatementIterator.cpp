@@ -18,31 +18,43 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef RDF_MANAGER_H
-#define RDF_MANAGER_H
+#include <redland.h>
 
-#include <QMap>
-#include <QString>
+#include "RedlandUtil.h"
+#include "RedlandStatementIterator.h"
+using namespace RDF;
 
-namespace RDF
+struct RedlandStatementIterator::Private
 {
+  Private(): stream(0L)
+  {}
 
-class ModelFactory;
-
-class Manager
-{
-public:
-  Manager();
-  ~Manager();
-
-  const QMap<QString, ModelFactory *> &listAvailableModelFactory() const;
-
-private:
-  Manager(const Manager& s) {}
-  class Private;
-  Private *d;
+  librdf_stream *stream;
 };
 
+RedlandStatementIterator::RedlandStatementIterator( librdf_stream *stream )
+{
+  d = new Private;
+  d->stream = stream;
 }
 
-#endif // RDF_MANAGER_H
+RedlandStatementIterator::~RedlandStatementIterator()
+{
+  librdf_free_stream( d->stream );
+  delete d;
+}
+
+bool RedlandStatementIterator::hasNext() const
+{
+  return librdf_stream_end( d->stream) != 0; 
+}
+
+const Statement RedlandStatementIterator::next() const
+{
+  librdf_stream_next( d->stream );
+
+  librdf_statement *st = librdf_stream_get_object( d->stream );
+
+  return Redland::createStatement( st );
+}
+

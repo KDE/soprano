@@ -18,10 +18,10 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef QUERY_RESULT_H
-#define QUERY_RESULT_H
+#ifndef RDF_QUERY_RESULT_H
+#define RDF_QUERY_RESULT_H
 
-#include <QtGlobal>
+#include <QString>
 
 namespace RDF {
 
@@ -32,20 +32,24 @@ class QueryResult
 public:
   virtual ~QueryResult();
 
-  virtual int size() const = 0;
+  virtual int count() const = 0;
  
   virtual bool hasNext() const = 0;
 
-  virtual bool next() = 0;
+  virtual bool next() const = 0;
 
-  virtual Node *get( const QString &name ) const = 0;
+  virtual Node getBinding( const QString &name ) const = 0;
 
-  virtual bool isBoolean() const = 0;
+  virtual bool isGraph() const = 0;
 
-  virtual bool boolean() const = 0;
+  virtual bool isBinding() const = 0;
+
+  virtual bool isBool() const = 0;
+
+  virtual bool boolValue() const = 0;
 };
 
 }
 
-#endif //QUERY_RESULT_H
+#endif // RDF_QUERY_RESULT_H
 

@@ -23,7 +23,6 @@
 
 #include <QtGlobal>
 #include "ModelFactory.h"
-#include "World.h"
 
 namespace RDF
 {
@@ -33,7 +32,7 @@ class Model;
 class RedlandModelFactory: public ModelFactory
 {
 public:
-  RedlandModelFactory(const World &world);
+  RedlandModelFactory();
   ~RedlandModelFactory();
 
   Model *createMemoryModel( const QString &name ) const;
@@ -41,9 +40,6 @@ public:
   Model *createPersistentModel( const QString &name, const QString &filePath ) const;
 private:
   RedlandModelFactory( const RedlandModelFactory &other ) {};
-
-  class Private;
-  Private *d;
 };
 
 }

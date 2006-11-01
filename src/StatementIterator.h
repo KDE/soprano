@@ -18,31 +18,32 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef RDF_MANAGER_H
-#define RDF_MANAGER_H
+#ifndef RDF_STATEMENT_ITERATOR_H
+#define RDF_STATEMENT_ITERATOR_H
 
-#include <QMap>
-#include <QString>
+#include <QtGlobal>
 
-namespace RDF
-{
+namespace RDF {
 
-class ModelFactory;
+class Statement;
 
-class Manager
+class StatementIterator
 {
 public:
-  Manager();
-  ~Manager();
+  virtual ~StatementIterator();
 
-  const QMap<QString, ModelFactory *> &listAvailableModelFactory() const;
+  /**
+   *\return true if there is another Statement
+   */
+  virtual  bool hasNext() const = 0;
 
-private:
-  Manager(const Manager& s) {}
-  class Private;
-  Private *d;
+  /**
+   *\return the Next Statement
+   */
+  virtual const Statement next() const = 0;
 };
 
 }
 
-#endif // RDF_MANAGER_H
+#endif // RDF_STATEMENT_ITERATOR_H
+

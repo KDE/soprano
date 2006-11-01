@@ -32,39 +32,42 @@ namespace RDF
 
 class Node;
 class QueryResult;
+class StatementIterator;
 
 class Model
 {
 public:
   virtual ~Model();
 
-  virtual void add( const QList<Statement> &statements ) = 0;
-
   virtual void add( const Model &model ) = 0;
 
   virtual void add( const Statement &st ) = 0;
   
-  Node *createProperty( const QString &ns, const QString &value );
+  Node createProperty( const QString &ns, const QString &value );
 
-  Node *createBlankNode( const QString &uri );
+  Node createBlankNode( const QString &uri );
 
-  Node *createResource( const QUrl &uri );
+  Node createResource( const QUrl &uri );
 
-  Node *createLiteral( const QString &literal );
+  Node createLiteral( const QString &literal );
 
   virtual bool isEmpty() const = 0;
 
   virtual bool contains( const Statement &statement ) const = 0;
 
-  virtual QueryResult *execute( const Query &query ) const = 0;
+  virtual QueryResult *executeQuery( const Query &query ) const = 0;
+
+  virtual StatementIterator *listStatements() const = 0;
+
+  virtual StatementIterator *listStatements( const Statement &partial ) const = 0;
 
   virtual void remove( const Statement &st ) = 0;
-
-  virtual void remove( const QList<Statement> &statements ) = 0;
 
   virtual int size() const = 0;
 
   virtual void write( QTextStream &os ) const = 0;
+
+  virtual void print() const = 0;
 };
 
 }

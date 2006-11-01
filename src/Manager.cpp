@@ -21,37 +21,32 @@
 #include <QtGlobal>
 #include "RedlandModelFactory.h"
 #include "ModelFactory.h"
+#include "Manager.h"
 using namespace RDF;
 
 struct Manager::Private {
   Private()
   {}
 
-  QMap<QString, ModelFactory> factory;
+  QMap<QString, ModelFactory *> factory;
 };
 
-Manager *Manager::self() {
-  if ( !m_instance )
-  {
-    m_instance = new Manager();
-  }
-  return m_instance;
-}
-
-
-Manager::Manager() : m_instance(0L)
+Manager::Manager()
 {
   d = new Private;
-  d->factory.insert( "Redland", RedlandModelFactory );
+  d->factory.insert( "Redland", new RedlandModelFactory() );
   //d->factory.insert( "Nepomuk", NepomukModelFactory );
 }
 
 Manager::~Manager()
 {
+  RedlandModelFactory *f = dynamic_cast<RedlandModelFactory *>( d->factory.value( "Redland" ) );
+  delete f;
+  
   delete d;
 }
 
-const QMap<QString, ModelFactory> &Manager::listAvailableModelFactory() const
+const QMap<QString, ModelFactory *> &Manager::listAvailableModelFactory() const
 {
   return d->factory;
 }

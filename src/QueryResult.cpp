@@ -19,7 +19,6 @@
  */
 
 #include "QueryResult.h"
-
 using namespace RDF;
 
 QueryResult::~QueryResult()

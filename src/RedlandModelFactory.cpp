@@ -22,34 +22,31 @@
  */
 
 #include <redland.h>
+#include "World.h"
 #include "Model.h"
 #include "RedlandModel.h"
 #include "RedlandModelFactory.h"
 using namespace RDF;
 
-struct RedlandModelFactory::Private
+RedlandModelFactory::RedlandModelFactory() 
 {
-  Private() {};
-  librdf_world *world;
-};
-
-RedlandModelFactory::RedlandModelFactory( const World &world ) 
-{
-  d = new Private;
-  d->world = world.worldPtr();
 }
 
 RedlandModelFactory::~RedlandModelFactory() 
 {
-  delete d;
 }
 
 Model *RedlandModelFactory::createMemoryModel( const QString &name ) const
 {
-  librdf_storage *storage = librdf_new_storage( d->world, "memory", name.toLatin1().data(), 0L );
-  librdf_model *model = librdf_new_model( d->world, storage, 0L );
+  librdf_world *world = World::self()->worldPtr();
 
-  return new RedlandModel( d->world, model );
+  librdf_storage *storage = librdf_new_storage( world, "memory", name.toLatin1().data(), 0L );
+  Q_ASSERT( storage != 0L);
+  
+  librdf_model *model = librdf_new_model( world, storage, 0L );
+  Q_ASSERT( model != 0L);
+
+  return new RedlandModel( model );
 }
 
 Model *RedlandModelFactory::createPersistentModel( const QString &name, const QString &filePath ) const
@@ -58,8 +55,13 @@ Model *RedlandModelFactory::createPersistentModel( const QString &name, const QS
   prefix.append(filePath);
   prefix.append("'");
 
-  librdf_storage *storage = librdf_new_storage( d->world, "hashes", name.toLatin1().data(), prefix.toLatin1().data() );
-  librdf_model *model = librdf_new_model( d->world, storage, 0L );
+  librdf_world *world = World::self()->worldPtr();
 
-  return new RedlandModel( d->world, model );
+  librdf_storage *storage = librdf_new_storage( world, "hashes", name.toLatin1().data(), prefix.toLatin1().data() );
+  Q_ASSERT( storage != 0L);
+
+  librdf_model *model = librdf_new_model( world, storage, 0L );
+  Q_ASSERT( model != 0L);
+
+  return new RedlandModel( model );
 }
