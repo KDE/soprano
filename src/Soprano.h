@@ -1,0 +1,8 @@
+#include "soprano/Query.h"
+#include "soprano/QueryResult.h"
+#include "soprano/Node.h"
+#include "soprano/Statement.h"
+#include "soprano/StatementIterator.h"
+#include "soprano/Model.h"
+#include "soprano/ModelFactory.h"
+#include "soprano/Manager.h"

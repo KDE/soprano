@@ -1,4 +1,4 @@
-/* This file is part of QRDF
+/* This file is part of Soprano
  *
  * Copyright (C) 2006 Daniele Galdi <daniele.galdi@gmail.com>
  *
@@ -18,12 +18,12 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef RDF_QUERY_RESULT_H
-#define RDF_QUERY_RESULT_H
+#ifndef SOPRANO_QUERY_RESULT_H
+#define SOPRANO_QUERY_RESULT_H
 
 #include <QString>
 
-namespace RDF {
+namespace Soprano {
 
 class Node;
 
@@ -51,5 +51,5 @@ public:
 
 }
 
-#endif // RDF_QUERY_RESULT_H
+#endif // SOPRANO_QUERY_RESULT_H
 

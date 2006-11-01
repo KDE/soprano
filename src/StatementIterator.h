@@ -1,4 +1,4 @@
-/* This file is part of QRDF
+/* This file is part of Soprano
  *
  * Copyright (C) 2006 Daniele Galdi <daniele.galdi@gmail.com>
  *
@@ -18,12 +18,12 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef RDF_STATEMENT_ITERATOR_H
-#define RDF_STATEMENT_ITERATOR_H
+#ifndef SOPRANO_STATEMENT_ITERATOR_H
+#define SOPRANO_STATEMENT_ITERATOR_H
 
 #include <QtGlobal>
 
-namespace RDF {
+namespace Soprano {
 
 class Statement;
 
@@ -45,5 +45,5 @@ public:
 
 }
 
-#endif // RDF_STATEMENT_ITERATOR_H
+#endif // SOPRANO_STATEMENT_ITERATOR_H
 

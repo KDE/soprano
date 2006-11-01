@@ -1,4 +1,4 @@
-/* This file is part of QRDF
+/* This file is part of Soprano
  *
  * Copyright (C) 2006 Daniele Galdi <daniele.galdi@gmail.com>
  *
@@ -20,7 +20,7 @@
 
 #include "RedlandUtil.h"
 #include "RedlandQueryResult.h"
-using namespace RDF;
+using namespace Soprano;
 
 struct RedlandQueryResult::Private
 {

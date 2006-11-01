@@ -1,4 +1,4 @@
-/* This file is part of QRDF
+/* This file is part of Soprano
  *
  * Copyright (C) 2006 Daniele Galdi <daniele.galdi@gmail.com>
  *
@@ -19,15 +19,15 @@
  * Floor, Boston, MA 02110-1301, USA.
  */
 
-#ifndef RDF_REDLAND_UTIL_H
-#define RDF_REDLAND_UTIL_H
+#ifndef SOPRANO_REDLAND_UTIL_H
+#define SOPRANO_REDLAND_UTIL_H
 
 #include <redland.h>
 #include "Node.h"
 #include "Statement.h"
 #include "Query.h"
 
-namespace RDF
+namespace Soprano
 {
 
 namespace Redland
@@ -45,4 +45,4 @@ namespace Redland
 
 }
 
-#endif // RDF_REDLAND_UTIL_H
+#endif // SOPRANO_REDLAND_UTIL_H

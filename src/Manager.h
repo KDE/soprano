@@ -1,4 +1,4 @@
-/* This file is part of QRDF
+/* This file is part of Soprano
  *
  * Copyright (C) 2006 Daniele Galdi <daniele.galdi@gmail.com>
  *
@@ -18,13 +18,13 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef RDF_MANAGER_H
-#define RDF_MANAGER_H
+#ifndef SOPRANO_MANAGER_H
+#define SOPRANO_MANAGER_H
 
 #include <QMap>
 #include <QString>
 
-namespace RDF
+namespace Soprano
 {
 
 class ModelFactory;
@@ -45,4 +45,4 @@ private:
 
 }
 
-#endif // RDF_MANAGER_H
+#endif // SOPRANO_MANAGER_H

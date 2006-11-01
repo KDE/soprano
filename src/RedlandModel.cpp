@@ -1,4 +1,4 @@
-/* This file is part of QRDF
+/* This file is part of Soprano
  *
  * Copyright (C) 2006 Daniele Galdi <daniele.galdi@gmail.com>
  *
@@ -24,7 +24,7 @@
 #include "RedlandStatementIterator.h"
 #include "RedlandModel.h"
 
-using namespace RDF;
+using namespace Soprano;
 
 struct RedlandModel::Private {
   Private(): world(0L), model(0L), storage(0L) 

@@ -1,4 +1,4 @@
-/* This file is part of QRDF
+/* This file is part of Soprano
  *
  * Copyright (C) 2006 Daniele Galdi <daniele.galdi@gmail.com>
  *
@@ -18,8 +18,8 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef RDF_MODEL_H
-#define RDF_MODEL_H
+#ifndef SOPRANO_MODEL_H
+#define SOPRANO_MODEL_H
 
 #include <QtGlobal>
 #include <QTextStream>
@@ -27,7 +27,7 @@
 #include "Statement.h"
 #include "Query.h"
 
-namespace RDF
+namespace Soprano
 {
 
 class Node;
@@ -72,5 +72,5 @@ public:
 
 }
 
-#endif // RDF_MODEL_H
+#endif // SOPRANO_MODEL_H
 

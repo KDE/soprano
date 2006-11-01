@@ -1,4 +1,4 @@
-/* This file is part of QRDF
+/* This file is part of Soprano
  *
  * Copyright (C) 2006 Daniele Galdi <daniele.galdi@gmail.com>
  *
@@ -18,12 +18,12 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef RDF_PARSER_H
-#define RDF_PARSER_H
+#ifndef SOPRANO_PARSER_H
+#define SOPRANO_PARSER_H
 
 #include <QString>
 
-namespace RDF
+namespace Soprano
 {
 
 class Model;
@@ -37,5 +37,5 @@ public:
 
 }
 
-#endif // RDF_PARSER_H
+#endif // SOPRANO_PARSER_H
 

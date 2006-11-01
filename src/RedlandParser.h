@@ -1,4 +1,4 @@
-/* This file is part of QRDF
+/* This file is part of Soprano
  *
  * Copyright (C) 2006 Duncan Mac-Vicar <duncan@kde.org>
  *
@@ -18,14 +18,14 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef RDF_REDLAND_PARSER_H
-#define RDF_REDLAND_PARSER_H
+#ifndef SOPRANO_REDLAND_PARSER_H
+#define SOPRANO_REDLAND_PARSER_H
 
 #include <QUrl>
 #include "World.h"
 #include "Parser.h"
 
-namespace RDF
+namespace Soprano
 {
 
 class Model;
@@ -38,5 +38,5 @@ public:
 
 }
 
-#endif // RDF_REDLAND_PARSER_H
+#endif // SOPRANO_REDLAND_PARSER_H
 

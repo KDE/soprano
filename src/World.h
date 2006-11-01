@@ -1,4 +1,4 @@
-/* This file is part of QRDF
+/* This file is part of Soprano
  *
  * Copyright (C) 2006 Daniele Galdi <daniele.galdi@gmail.com>
  *
@@ -18,12 +18,12 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef RDF_REDLAND_WORLD_H
-#define RDF_REDLAND_WORLD_H
+#ifndef SOPRANO_REDLAND_WORLD_H
+#define SOPRANO_REDLAND_WORLD_H
 
 #include <redland.h>
 
-namespace RDF
+namespace Soprano
 {
 
 class World
@@ -45,5 +45,5 @@ private:
 
 }
 
-#endif // RDF_REDLAND_WORLD_H
+#endif // SOPRANO_REDLAND_WORLD_H
 

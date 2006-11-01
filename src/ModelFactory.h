@@ -1,4 +1,4 @@
-/* This file is part of QRDF
+/* This file is part of Soprano
  *
  * Copyright (C) 2006 Daniele Galdi <daniele.galdi@gmail.com>
  *
@@ -23,7 +23,7 @@
 
 #include <QtGlobal>
 
-namespace RDF
+namespace Soprano
 {
 
 class Model;

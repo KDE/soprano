@@ -23,7 +23,7 @@
 #include <QFile>
 #include <QTextStream>
 
-#include <qrdf/QRdf.h>
+#include <soprano/Soprano.h>
 
 using namespace RDF;
 
@@ -33,9 +33,9 @@ main(int argc, char *argv[])
   
   Manager manager;
 
-  Node subject( QUrl("http://purl.org/net/dagnele/"), Node::Resource );
-  Node predicate( QUrl("http://purl.org/dc/elements/1.1/creator"), Node::Resource );
-  Node object( QString("Daniele Galdi"), Node::Literal );
+  Node subject( QUrl("http://purl.org/nepomuk#uri:nepomuk:1"), Node::Resource );
+  Node predicate( QUrl("http://purl.org/nepomuk#Model"), Node::Resource );
+  Node object( QString("Test Model"), Node::Literal );
   Statement st( subject, predicate, object );
 
   QMap<QString, ModelFactory *> factoryMap = manager.listAvailableModelFactory();

@@ -1,4 +1,4 @@
-/* This file is part of QRDF
+/* This file is part of Soprano
  *
  * Copyright (C) 2006 Daniele Galdi <daniele.galdi@gmail.com>
  *
@@ -25,7 +25,7 @@
 #include <redland.h>
 #include "QueryResult.h"
 
-namespace RDF {
+namespace Soprano {
 
 class Node;
 

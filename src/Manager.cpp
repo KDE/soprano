@@ -1,4 +1,4 @@
-/* This file is part of QRDF
+/* This file is part of Soprano
  *
  * Copyright (C) 2006 Daniele Galdi <daniele.galdi@gmail.com>
  *
@@ -22,7 +22,7 @@
 #include "RedlandModelFactory.h"
 #include "ModelFactory.h"
 #include "Manager.h"
-using namespace RDF;
+using namespace Soprano;
 
 struct Manager::Private {
   Private()
