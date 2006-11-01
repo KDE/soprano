@@ -23,11 +23,10 @@
 
 #include <QtGlobal>
 #include "ModelFactory.h"
+#include "RedlandModel.h"
 
 namespace Soprano
 {
-
-class Model;
 
 class RedlandModelFactory: public ModelFactory
 {
@@ -35,9 +34,9 @@ public:
   RedlandModelFactory();
   ~RedlandModelFactory();
 
-  Model *createMemoryModel( const QString &name ) const;
+  RedlandModel *createMemoryModel( const QString &name ) const;
 
-  Model *createPersistentModel( const QString &name, const QString &filePath ) const;
+  RedlandModel *createPersistentModel( const QString &name, const QString &filePath ) const;
 private:
   RedlandModelFactory( const RedlandModelFactory &other ) {};
 };

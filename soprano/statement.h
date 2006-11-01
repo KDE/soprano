@@ -52,7 +52,7 @@ public:
    * A Statement is valid if contains (subject, predicate, object) and
    * and all are valid.
    *
-   * \return true if the Stamenet is valid, false otherwise
+   * \return @p true if the Statement is valid, @p false otherwise
    */
   bool isValid() const;
 

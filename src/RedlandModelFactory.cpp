@@ -36,7 +36,7 @@ RedlandModelFactory::~RedlandModelFactory()
 {
 }
 
-Model *RedlandModelFactory::createMemoryModel( const QString &name ) const
+RedlandModel *RedlandModelFactory::createMemoryModel( const QString &name ) const
 {
   librdf_world *world = World::self()->worldPtr();
 
@@ -49,7 +49,7 @@ Model *RedlandModelFactory::createMemoryModel( const QString &name ) const
   return new RedlandModel( model );
 }
 
-Model *RedlandModelFactory::createPersistentModel( const QString &name, const QString &filePath ) const
+RedlandModel *RedlandModelFactory::createPersistentModel( const QString &name, const QString &filePath ) const
 {
   QString prefix("hash-type='bdb',dir='");
   prefix.append(filePath);
