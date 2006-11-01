@@ -23,57 +23,29 @@
 #include <QFile>
 #include <QTextStream>
 
-#include "../src/Node.h"
-#include "../src/Statement.h"
-#include "../src/Model.h"
-#include "../src/RedlandModelFactory.h"
+#include <qrdf/QRdf.h>
 
 using namespace RDF;
 
 int
 main(int argc, char *argv[])
 {
-  World world;
-  world.open();
+  
+  Manager manager;
 
   Node subject( QUrl("http://purl.org/net/dagnele/"), Node::Resource );
   Node predicate( QUrl("http://purl.org/dc/elements/1.1/creator"), Node::Resource );
   Node object( QString("Daniele Galdi"), Node::Literal );
   Statement st( subject, predicate, object );
 
-  RedlandModelFactory factory( world );
+  QMap<QString, ModelFactory *> factoryMap = manager.listAvailableModelFactory();
+  ModelFactory *factory = factoryMap.value( "Redland" );
 
-  //Model *model = factory.createPersistentModel( "test" , "/tmp" );
-  Model *model = factory.createMemoryModel( "memory-model" );
+  //Model *model = factory->createPersistentModel( "test" , "/tmp" );
+  Model *model = factory->createMemoryModel( "memory-model" );
   model->add( st );
   
-  QFile file("/tmp/model-before-remove.rdf");
-  if (!file.open(QIODevice::WriteOnly | QIODevice::Text))
-  {
-    qDebug( "Cannot create '/tmp/model-before-remove.rdf' file..\n" );
-    return (1);
-  }
-
-  qDebug( "'cat /tmp/model-before-remove.rdf' to see the model." );
-
-  QTextStream os( &file );
-  model->write( os );
-
-  qDebug( "Now we remove the same statement..\n");
- 
-  model->remove( st );
-  
-  QFile file1("/tmp/model-after-remove.rdf");
-  if (!file1.open(QIODevice::WriteOnly | QIODevice::Text))
-  {
-    qDebug( "Cannot create '/tmp/model-after-remove.rdf' file..\n" );
-    return (1);
-  }
-
-  QTextStream os1( &file1 );
-  model->write( os1 );
-
-  qDebug( "'cat /tmp/model-after-remove.rdf' to see the model." );
+  model->print();
 
   delete model;
 
