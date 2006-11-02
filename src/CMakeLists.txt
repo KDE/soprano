@@ -7,7 +7,7 @@ SET(soprano_SRCS
     StatementIterator.cpp
     Model.cpp
     ModelFactory.cpp
-#    Parser.cpp
+    Parser.cpp
     Manager.cpp
 
     World.cpp
@@ -16,7 +16,7 @@ SET(soprano_SRCS
     RedlandQueryResult.cpp
     RedlandModel.cpp
     RedlandModelFactory.cpp
-#    RedlandParser.cpp 
+    RedlandParser.cpp 
    )    
 
 ADD_DEFINITIONS(${REDLAND_CFLAGS})
@@ -33,6 +33,7 @@ INSTALL(TARGETS soprano
 		LIBRARY DESTINATION lib)
 
 INSTALL(FILES 
+	Parser.h
 	Query.h
 	QueryResult.h
 	Node.h

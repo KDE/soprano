@@ -21,21 +21,22 @@
 #include <QtGlobal>
 #include <redland.h>
 
+#include "World.h"
 #include "RedlandModel.h"
 #include "RedlandModelFactory.h"
 #include "RedlandParser.h"
 
 using namespace Soprano;
 
-Model *RedlandParser::parse( const World &world, const QUrl &url ) const
+Model *RedlandParser::parse( const QUrl &url ) const
 {
-  RedlandModelFactory factory( world );
+  librdf_world *w = World::self()->worldPtr();
+
+  RedlandModelFactory factory;
   
   RedlandModel *model = factory.createMemoryModel( url.toString() );
   if (!model) return 0L;
 
-  librdf_world *w = world.worldPtr();
-  
   librdf_uri *uri = librdf_new_uri( w, (unsigned char *) url.toString().toLatin1().data() );  
   if (!uri) 
   {

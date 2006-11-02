@@ -22,7 +22,6 @@
 #define SOPRANO_REDLAND_PARSER_H
 
 #include <QUrl>
-#include "World.h"
 #include "Parser.h"
 
 namespace Soprano
@@ -30,10 +29,10 @@ namespace Soprano
 
 class Model;
 
-class RedlandParser
+class RedlandParser: public Parser
 {
 public:
-  Model *parse( const World &world, const QUrl &url ) const;
+  Model *parse( const QUrl &url ) const;
 };
 
 }
