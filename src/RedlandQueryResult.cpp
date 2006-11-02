@@ -33,7 +33,7 @@ RedlandQueryResult::RedlandQueryResult( librdf_query_results *result )
 {
   d = new Private;
   d->result = result;
-  Q_ASSERT( d->result != NULL );
+  Q_ASSERT( d->result != 0L );
 }
 
 RedlandQueryResult::~RedlandQueryResult()

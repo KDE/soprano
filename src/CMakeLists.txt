@@ -41,5 +41,5 @@ INSTALL(FILES
 	Model.h
 	ModelFactory.h
 	Manager.h
-	QRdf.h
+	Soprano.h
 	DESTINATION include/soprano)

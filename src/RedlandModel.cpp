@@ -87,9 +87,7 @@ bool RedlandModel::contains( const Statement &statement ) const
   if ( !statement.isValid() ) return false;
 
   librdf_statement *st = Redland::createStatement( statement );
-
   int result = librdf_model_contains_statement( d->model, st );
-
   librdf_free_statement( st );
 
   return result != 0;
@@ -98,13 +96,28 @@ bool RedlandModel::contains( const Statement &statement ) const
 QueryResult *RedlandModel::executeQuery( const Query &query ) const
 {
   librdf_query *q = librdf_new_query( d->world, Redland::queryType( query ), 0L, (unsigned char *)query.query().toLatin1().data(), 0L );
-  Q_ASSERT( q != 0L );
+  if ( q == 0L)
+  {
+    qDebug( "error during librdf_query creation!" );
+    return 0L;
+  }
 
   librdf_query_set_limit( q , query.limit() );
+  qDebug("set query limit to: %d", query.limit() );
+  
   librdf_query_set_offset( q, query.offset() );
-     
+  qDebug("set query offset: %d", query.offset() );
+  
+  qDebug("executeQuery - %s\n", query.query().toLatin1().data() );
+
   librdf_query_results *res = librdf_model_query_execute( d->model, q );
   librdf_free_query( q );
+
+  if (res == 0L) 
+  {
+    qDebug( "error during librdf_model_query_execute!" );
+    return 0L;
+  }
 
   return new RedlandQueryResult( res );
 }
@@ -123,9 +136,7 @@ StatementIterator *RedlandModel::listStatements() const
 StatementIterator *RedlandModel::listStatements( const Statement &partial ) const
 {
   librdf_statement *st = Redland::createStatement( partial );
-
   librdf_stream *stream = librdf_model_find_statements( d->model, st );
-
   librdf_free_statement( st );
 
   return new RedlandStatementIterator( stream );
@@ -172,4 +183,3 @@ librdf_storage *RedlandModel::storagePtr() const
 {
   return d->storage;
 }
-
