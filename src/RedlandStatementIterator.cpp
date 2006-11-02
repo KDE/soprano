@@ -36,6 +36,7 @@ RedlandStatementIterator::RedlandStatementIterator( librdf_stream *stream )
 {
   d = new Private;
   d->stream = stream;
+  Q_ASSERT( d->stream != 0L);
 }
 
 RedlandStatementIterator::~RedlandStatementIterator()
@@ -46,14 +47,18 @@ RedlandStatementIterator::~RedlandStatementIterator()
 
 bool RedlandStatementIterator::hasNext() const
 {
-  return librdf_stream_end( d->stream) != 0; 
+  return librdf_stream_end( d->stream) == 0; 
 }
 
 const Statement RedlandStatementIterator::next() const
 {
-  librdf_stream_next( d->stream );
-
   librdf_statement *st = librdf_stream_get_object( d->stream );
+  if ( st == 0L )
+  {
+    return Statement();
+  }
+
+  librdf_stream_next( d->stream );
 
   return Redland::createStatement( st );
 }

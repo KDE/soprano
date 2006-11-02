@@ -98,7 +98,6 @@ QueryResult *RedlandModel::executeQuery( const Query &query ) const
   librdf_query *q = librdf_new_query( d->world, Redland::queryType( query ), 0L, (unsigned char *)query.query().toLatin1().data(), 0L );
   if ( q == 0L)
   {
-    qDebug( "error during librdf_query creation!" );
     return 0L;
   }
 
@@ -108,14 +107,13 @@ QueryResult *RedlandModel::executeQuery( const Query &query ) const
   librdf_query_set_offset( q, query.offset() );
   qDebug("set query offset: %d", query.offset() );
   
-  qDebug("executeQuery - %s\n", query.query().toLatin1().data() );
+  qDebug("executeQuery -'%s'\n", query.query().toLatin1().data() );
 
   librdf_query_results *res = librdf_model_query_execute( d->model, q );
   librdf_free_query( q );
-
+  
   if (res == 0L) 
   {
-    qDebug( "error during librdf_model_query_execute!" );
     return 0L;
   }
 
@@ -125,8 +123,16 @@ QueryResult *RedlandModel::executeQuery( const Query &query ) const
 StatementIterator *RedlandModel::listStatements() const
 {
   librdf_statement *all = librdf_new_statement( d->world );
+  if ( all == 0L)
+  {
+    return 0L;
+  }
 
   librdf_stream *stream = librdf_model_find_statements( d->model, all );
+  if ( stream == 0L)
+  {
+    return 0L;
+  }
 
   librdf_free_statement( all );
 
@@ -136,7 +142,17 @@ StatementIterator *RedlandModel::listStatements() const
 StatementIterator *RedlandModel::listStatements( const Statement &partial ) const
 {
   librdf_statement *st = Redland::createStatement( partial );
+  if ( st == 0L)
+  {
+    return 0L;
+  }
+  
   librdf_stream *stream = librdf_model_find_statements( d->model, st );
+  if ( stream == 0L)
+  {
+    return 0L;
+  }
+
   librdf_free_statement( st );
 
   return new RedlandStatementIterator( stream );
