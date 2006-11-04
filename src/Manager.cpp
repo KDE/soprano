@@ -28,25 +28,27 @@ struct Manager::Private {
   Private()
   {}
 
-  QMap<QString, ModelFactory *> factory;
+  QStringList names;
 };
 
 Manager::Manager()
 {
   d = new Private;
-  d->factory.insert( "Redland", new RedlandModelFactory() );
-  //d->factory.insert( "Nepomuk", NepomukModelFactory );
+  d->names << "Redland";
 }
 
 Manager::~Manager()
-{
-  RedlandModelFactory *f = dynamic_cast<RedlandModelFactory *>( d->factory.value( "Redland" ) );
-  delete f;
-  
+{  
   delete d;
 }
 
-const QMap<QString, ModelFactory *> &Manager::listAvailableModelFactory() const
+const QStringList &Manager::listModelFactoryNames() const
 {
-  return d->factory;
+  return d->names;
+}
+
+ModelFactory *Manager::factory( const QString &name ) const
+{
+  if ( name == "Redland" ) return new RedlandModelFactory();
+  return 0L;
 }

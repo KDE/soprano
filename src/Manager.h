@@ -21,7 +21,7 @@
 #ifndef SOPRANO_MANAGER_H
 #define SOPRANO_MANAGER_H
 
-#include <QMap>
+#include <QStringList>
 #include <QString>
 
 namespace Soprano
@@ -35,10 +35,12 @@ public:
   Manager();
   ~Manager();
 
-  const QMap<QString, ModelFactory *> &listAvailableModelFactory() const;
+  const QStringList &listModelFactoryNames() const;
+
+  ModelFactory *factory( const QString &name ) const;
 
 private:
-  Manager(const Manager& s) {}
+  Manager(const Manager&) {}
   class Private;
   Private *d;
 };
