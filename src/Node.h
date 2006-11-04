@@ -18,11 +18,11 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef NODE_H
-#define NODE_H
+#ifndef SOPRANO_NODE_H
+#define SOPRANO_NODE_H
 
-#include <QString>
-#include <QUrl>
+class QString;
+class QUrl;
 
 namespace Soprano
 {
@@ -39,7 +39,7 @@ public:
   };
 
   Node();
-  Node(const QUrl &url, Type type);
+  Node(const QUrl &uri, Type type);
   Node(const QString &value, Type type);
   Node(const Node &other);
   virtual ~Node();

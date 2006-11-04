@@ -21,8 +21,8 @@
 #ifndef SOPRANO_MANAGER_H
 #define SOPRANO_MANAGER_H
 
-#include <QStringList>
-#include <QString>
+class QString;
+class QStringList;
 
 namespace Soprano
 {

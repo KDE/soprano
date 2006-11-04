@@ -21,8 +21,9 @@
 #ifndef SOPRANO_REDLAND_PARSER_H
 #define SOPRANO_REDLAND_PARSER_H
 
-#include <QUrl>
 #include "Parser.h"
+
+class QUrl;
 
 namespace Soprano
 {

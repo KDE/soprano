@@ -18,12 +18,13 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef REDLAND_QUERY_RESULT_H
-#define REDLAND_QUERY_RESULT_H
+#ifndef SOPRANO_REDLAND_QUERY_RESULT_H
+#define SOPRANO_REDLAND_QUERY_RESULT_H
 
-#include <QString>
 #include <redland.h>
 #include "QueryResult.h"
+
+class QString;
 
 namespace Soprano {
 

@@ -18,10 +18,10 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef QUERY_H
-#define QUERY_H
+#ifndef SOPRANO_QUERY_H
+#define SOPRANO_QUERY_H
 
-#include <QString>
+class QString;
 
 namespace Soprano
 {

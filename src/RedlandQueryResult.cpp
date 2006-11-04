@@ -18,8 +18,12 @@
  * Boston, MA 02110-1301, USA.
  */
 
+#include "Node.h"
 #include "RedlandUtil.h"
 #include "RedlandQueryResult.h"
+
+#include <QString>
+
 using namespace Soprano;
 
 struct RedlandQueryResult::Private

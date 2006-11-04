@@ -18,8 +18,10 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#include <QtGlobal>
+#include <QString>
+#include <QUrl>
 #include "Node.h"
+
 
 using namespace Soprano;
 

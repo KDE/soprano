@@ -18,8 +18,14 @@
  * Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
-#include "World.h"
+#include "Node.h"
+#include "Query.h"
 #include "RedlandUtil.h"
+#include "Statement.h"
+#include "World.h"
+
+#include <QUrl>
+
 using namespace Soprano;
 
 Node Redland::createNode( librdf_node *node )

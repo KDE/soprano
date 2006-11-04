@@ -18,10 +18,9 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef REDLAND_MODEL_FACTORY_H
-#define REDLAND_MODEL_FACTORY_H
+#ifndef SOPRANO_REDLANDMODEL_FACTORY_H
+#define SOPRANO_REDLANDMODEL_FACTORY_H
 
-#include <QtGlobal>
 #include "ModelFactory.h"
 #include "RedlandModel.h"
 

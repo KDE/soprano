@@ -18,7 +18,9 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#include <QtGlobal>
+#include <QStringList>
+#include <QString>
+
 #include "RedlandModelFactory.h"
 #include "ModelFactory.h"
 #include "Manager.h"

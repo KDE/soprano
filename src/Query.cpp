@@ -18,8 +18,10 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#include <QtGlobal>
+#include <QString>
+
 #include "Query.h"
+
 using namespace Soprano;
 
 struct Query::Private

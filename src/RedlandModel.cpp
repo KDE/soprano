@@ -18,6 +18,7 @@
  * Floor, Boston, MA 02110-1301, USA.
  */
 
+#include "Query.h"
 #include "World.h"
 #include "RedlandUtil.h"
 #include "RedlandQueryResult.h"

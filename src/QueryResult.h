@@ -21,7 +21,7 @@
 #ifndef SOPRANO_QUERY_RESULT_H
 #define SOPRANO_QUERY_RESULT_H
 
-#include <QString>
+class QString;
 
 namespace Soprano {
 

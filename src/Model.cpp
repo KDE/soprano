@@ -19,6 +19,11 @@
  */
 
 #include "Model.h"
+#include "Node.h"
+
+#include <QString>
+#include <QUrl>
+
 using namespace Soprano;
 
 Model::~Model()

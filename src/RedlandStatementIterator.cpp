@@ -22,6 +22,10 @@
 
 #include "RedlandUtil.h"
 #include "RedlandStatementIterator.h"
+#include "Statement.h"
+
+#include <QtGlobal>
+
 using namespace Soprano;
 
 struct RedlandStatementIterator::Private

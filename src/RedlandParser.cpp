@@ -18,7 +18,7 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#include <QtGlobal>
+#include <QUrl>
 #include <redland.h>
 
 #include "World.h"

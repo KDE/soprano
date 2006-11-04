@@ -21,7 +21,7 @@
 #ifndef SOPRANO_PARSER_H
 #define SOPRANO_PARSER_H
 
-#include <QString>
+class QString;
 
 namespace Soprano
 {

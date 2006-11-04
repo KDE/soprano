@@ -21,17 +21,18 @@
 #ifndef SOPRANO_MODEL_H
 #define SOPRANO_MODEL_H
 
-#include <QtGlobal>
-#include <QTextStream>
 
-#include "Statement.h"
-#include "Query.h"
+class QString;
+class QTextStream;
+class QUrl;
 
 namespace Soprano
 {
 
 class Node;
+class Query;
 class QueryResult;
+class Statement;
 class StatementIterator;
 
 class Model

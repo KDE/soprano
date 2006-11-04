@@ -18,10 +18,10 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef MODEL_FACTORY_H
-#define MODEL_FACTORY_H
+#ifndef SOPRANO_MODELFACTORY_H
+#define SOPRANO_MODELFACTORY_H
 
-#include <QtGlobal>
+class QString;
 
 namespace Soprano
 {

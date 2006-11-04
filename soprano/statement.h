@@ -21,10 +21,11 @@
 #ifndef SOPRANO_STATEMENT_H
 #define SOPRANO_STATEMENT_H
 
-#include "Node.h"
 
 namespace Soprano
 {
+
+class Node;
 
 class Statement
 {

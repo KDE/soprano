@@ -23,12 +23,13 @@
 #define SOPRANO_REDLAND_UTIL_H
 
 #include <redland.h>
-#include "Node.h"
-#include "Statement.h"
-#include "Query.h"
 
 namespace Soprano
 {
+
+class Node;
+class Query;
+class Statement;
 
 namespace Redland
 {

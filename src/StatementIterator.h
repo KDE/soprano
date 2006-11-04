@@ -21,8 +21,6 @@
 #ifndef SOPRANO_STATEMENT_ITERATOR_H
 #define SOPRANO_STATEMENT_ITERATOR_H
 
-#include <QtGlobal>
-
 namespace Soprano {
 
 class Statement;
