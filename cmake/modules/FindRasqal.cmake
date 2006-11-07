@@ -1,7 +1,6 @@
 FIND_PROGRAM(RASQALCONFIG_EXECUTABLE NAMES rasqal-config PATHS
    /usr/bin
    /usr/local/bin
-#   /home/duncan/sw/redland/bin
 )
 #reset vars
 set(RASQAL_LIBRARIES)

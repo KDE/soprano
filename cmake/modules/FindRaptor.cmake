@@ -1,7 +1,6 @@
 FIND_PROGRAM(RAPTORCONFIG_EXECUTABLE NAMES raptor-config PATHS
    /usr/bin
    /usr/local/bin
-#   /home/duncan/sw/redland/bin
 )
 #reset vars
 set(RAPTOR_LIBRARIES)
