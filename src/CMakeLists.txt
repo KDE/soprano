@@ -11,13 +11,17 @@ SET(soprano_SRCS
     Manager.cpp
 
     # RedlandBackend
+    RedlandUtil.cpp
     World.cpp
     RedlandStatementIterator.cpp
-    RedlandUtil.cpp
     RedlandQueryResult.cpp
     RedlandModel.cpp
     RedlandModelFactory.cpp
     RedlandParser.cpp 
+
+    # NepomukBackend
+    NepomukUtil.cpp
+    NepomukModel.cpp
    )    
 
 ADD_DEFINITIONS(${REDLAND_CFLAGS})
