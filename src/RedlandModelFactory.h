@@ -1,4 +1,5 @@
-/* This file is part of Soprano
+/* 
+ * This file is part of Soprano Project
  *
  * Copyright (C) 2006 Daniele Galdi <daniele.galdi@gmail.com>
  *
@@ -18,28 +19,43 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef SOPRANO_REDLANDMODEL_FACTORY_H
-#define SOPRANO_REDLANDMODEL_FACTORY_H
+#ifndef SOPRANO_BACKEND_REDLAND_MODEL_FACTORY_H
+#define SOPRANO_BACKEND_REDLAND_MODEL_FACTORY_H
 
 #include "ModelFactory.h"
 #include "RedlandModel.h"
 
 namespace Soprano
 {
+namespace Backend
+{
+namespace Redland
+{
 
 class RedlandModelFactory: public ModelFactory
 {
 public:
+  /**
+   * Create a new RedlandModelFactory 
+   */
   RedlandModelFactory();
+    
   ~RedlandModelFactory();
 
   RedlandModel *createMemoryModel( const QString &name ) const;
 
-  RedlandModel *createPersistentModel( const QString &name, const QString &filePath ) const;
+  RedlandModel *createPersistentModel( const QString &name ) const;
+
 private:
   RedlandModelFactory( const RedlandModelFactory &other ) {};
+  RedlandModel *createModel( const QString &type, const QString &name, QString *options ) const;
+
+  class Private;
+  Private *d;
 };
 
 }
+}
+}
 
-#endif
+#endif // SOPRANO_BACKEND_REDLAND_MODEL_FACTORY_H

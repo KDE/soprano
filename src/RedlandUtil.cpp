@@ -1,4 +1,5 @@
-/* This file is part of Soprano
+/* 
+ * This file is part of Soprano Project
  *
  * Copyright (C) 2006 Daniele Galdi <daniele.galdi@gmail.com>
  *
@@ -20,36 +21,35 @@
 
 #include "Node.h"
 #include "Query.h"
-#include "RedlandUtil.h"
 #include "Statement.h"
 #include "World.h"
 
+#include "RedlandUtil.h"
+
 #include <QUrl>
 
-using namespace Soprano;
+using namespace Soprano::Backend::Redland;
 
-Node Redland::createNode( librdf_node *node )
+Soprano::Node Util::createNode( librdf_node *node )
 {
-  if (node == 0L)
-  {
-    return Node();
-  }
-  else if ( librdf_node_is_resource( node ) ) 
+  if ( librdf_node_is_resource( node ) ) 
   {
     librdf_uri *uri = librdf_node_get_uri( node );
-    return Node( QUrl( (const char *)librdf_uri_as_string(uri) ), Node::Resource );
+    return Soprano::Node( QUrl( (const char *)librdf_uri_as_string(uri) ), Node::Resource );
   }
   else if ( librdf_node_is_literal( node ) )
   {
-    return Node( (const char *)librdf_node_get_literal_value( node ), Node::Literal );
+    return Soprano::Node( (const char *)librdf_node_get_literal_value( node ), Node::Literal );
   }
   else if ( librdf_node_is_blank( node ) )
   {
-    return Node( (const char *)librdf_node_get_blank_identifier( node ), Node::Blank );
+    return Soprano::Node( (const char *)librdf_node_get_blank_identifier( node ), Node::Blank );
   }
+
+  return Soprano::Node();
 }
 
-librdf_node *Redland::createNode( const Node &node )
+librdf_node *Util::createNode( const Node &node )
 {
   librdf_world *world = World::self()->worldPtr();
 
@@ -69,9 +69,11 @@ librdf_node *Redland::createNode( const Node &node )
   {
     return librdf_new_node_from_blank_identifier( world, (unsigned char *) node.blank().toLatin1().data() );
   }
+
+  return 0L;
 }
 
-librdf_statement *Redland::createStatement( const Statement &statement )
+librdf_statement *Util::createStatement( const Statement &statement )
 {
   librdf_world *world = World::self()->worldPtr();
 
@@ -82,18 +84,16 @@ librdf_statement *Redland::createStatement( const Statement &statement )
   return librdf_new_statement_from_nodes( world, subject, predicate, object );
 }
 
-Statement Redland::createStatement( librdf_statement *st )
+Soprano::Statement Util::createStatement( librdf_statement *st )
 {
-  librdf_world *world = World::self()->worldPtr();
-
   librdf_node *subject = librdf_statement_get_subject( st );
   librdf_node *predicate = librdf_statement_get_predicate( st );
   librdf_node *object = librdf_statement_get_object( st );
 
-  return Statement( createNode( subject), createNode( predicate), createNode( object ) );
+  return Soprano::Statement( createNode( subject), createNode( predicate), createNode( object ) );
 }
 
-const char *Redland::queryType( const Query &query )
+const char *Util::queryType( const Query &query )
 {
   if ( query.type() == Query::RDQL )
   {

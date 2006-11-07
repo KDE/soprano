@@ -1,4 +1,5 @@
-/* This file is part of Soprano
+/* 
+ * This file is part of Soprano Project
  *
  * Copyright (C) 2006 Daniele Galdi <daniele.galdi@gmail.com>
  *
@@ -24,7 +25,9 @@
 #include "RedlandModelFactory.h"
 #include "ModelFactory.h"
 #include "Manager.h"
+
 using namespace Soprano;
+using namespace Soprano::Backend::Redland;
 
 struct Manager::Private {
   Private()

@@ -38,11 +38,16 @@ class StatementIterator;
 class Model
 {
 public:
+  enum ExitCode {
+    SUCCESS_EXIT = 0,
+    ERROR_EXIT
+  };
+
   virtual ~Model();
 
-  virtual void add( const Model &model ) = 0;
+  virtual Model::ExitCode add( const Model &model ) = 0;
 
-  virtual void add( const Statement &st ) = 0;
+  virtual Model::ExitCode add( const Statement &st ) = 0;
   
   Node createProperty( const QString &ns, const QString &value );
 
@@ -52,23 +57,23 @@ public:
 
   Node createLiteral( const QString &literal );
 
-  virtual bool isEmpty() const = 0;
+  bool isEmpty() const;
 
   virtual bool contains( const Statement &statement ) const = 0;
 
   virtual QueryResult *executeQuery( const Query &query ) const = 0;
 
-  virtual StatementIterator *listStatements() const = 0;
+  StatementIterator *listStatements() const;
 
   virtual StatementIterator *listStatements( const Statement &partial ) const = 0;
 
-  virtual void remove( const Statement &st ) = 0;
+  virtual Model::ExitCode remove( const Statement &st ) = 0;
 
   virtual int size() const = 0;
 
-  virtual void write( QTextStream &os ) const = 0;
+  virtual Model::ExitCode write( QTextStream &os ) const = 0;
 
-  virtual void print() const = 0;
+  virtual Model::ExitCode print() const = 0;
 };
 
 }

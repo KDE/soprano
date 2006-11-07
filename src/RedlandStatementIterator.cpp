@@ -1,4 +1,5 @@
-/* This file is part of Soprano
+/* 
+ * This file is part of Soprano Project
  *
  * Copyright (C) 2006 Daniele Galdi <daniele.galdi@gmail.com>
  *
@@ -18,15 +19,13 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#include <redland.h>
+#include <QtGlobal>
 
 #include "RedlandUtil.h"
 #include "RedlandStatementIterator.h"
 #include "Statement.h"
 
-#include <QtGlobal>
-
-using namespace Soprano;
+using namespace Soprano::Backend::Redland;
 
 struct RedlandStatementIterator::Private
 {
@@ -54,16 +53,21 @@ bool RedlandStatementIterator::hasNext() const
   return librdf_stream_end( d->stream) == 0; 
 }
 
-const Statement RedlandStatementIterator::next() const
+const Soprano::Statement RedlandStatementIterator::next() const
 {
   librdf_statement *st = librdf_stream_get_object( d->stream );
-  if ( st == 0L )
+  if ( !st )
   {
-    return Statement();
+    // Return a not valid Statement
+    return Soprano::Statement();
   }
 
-  librdf_stream_next( d->stream );
+  if ( librdf_stream_next( d->stream ) )
+  {
+    // The stream has finished
+    return Soprano::Statement();
+  }
 
-  return Redland::createStatement( st );
+  return Util::createStatement( st );
 }
 

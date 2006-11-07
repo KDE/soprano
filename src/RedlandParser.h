@@ -1,4 +1,5 @@
-/* This file is part of Soprano
+/* 
+ * This file is part of Soprano Project
  *
  * Copyright (C) 2006 Duncan Mac-Vicar <duncan@kde.org>
  *
@@ -18,25 +19,31 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef SOPRANO_REDLAND_PARSER_H
-#define SOPRANO_REDLAND_PARSER_H
+#ifndef SOPRANO_BACKEND_REDLAND_PARSER_H
+#define SOPRANO_BACKEND_REDLAND_PARSER_H
+
+#include <QUrl>
 
 #include "Parser.h"
 
-class QUrl;
-
 namespace Soprano
 {
+namespace Backend
+{
+namespace Redland
+{
 
-class Model;
+class RedlandModel;
 
-class RedlandParser: public Parser
+class RedlandParser: public Soprano::Parser
 {
 public:
-  Model *parse( const QUrl &url ) const;
+  RedlandModel *parse( const QUrl &url ) const;
 };
 
 }
+}
+}
 
-#endif // SOPRANO_REDLAND_PARSER_H
+#endif // SOPRANO_BACKEND_REDLAND_PARSER_H
 

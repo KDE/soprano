@@ -1,4 +1,5 @@
-/* This file is part of Soprano
+/* 
+ * This file is part of Soprano Project
  *
  * Copyright (C) 2006 Daniele Galdi <daniele.galdi@gmail.com>
  *
@@ -18,19 +19,25 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef SOPRANO_REDLAND_QUERY_RESULT_H
-#define SOPRANO_REDLAND_QUERY_RESULT_H
+#ifndef SOPRANO_BACKEND_REDLAND_QUERY_RESULT_H
+#define SOPRANO_BACKEND_REDLAND_QUERY_RESULT_H
 
 #include <redland.h>
+#include <QString>
+
 #include "QueryResult.h"
 
-class QString;
-
-namespace Soprano {
+namespace Soprano 
+{
 
 class Node;
 
-class RedlandQueryResult: public QueryResult
+namespace Backend
+{
+namespace Redland
+{
+
+class RedlandQueryResult: public Soprano::QueryResult
 {
 public:
   RedlandQueryResult( librdf_query_results *result );
@@ -43,7 +50,7 @@ public:
 
   bool next() const;
     
-  Node getBinding( const QString &name ) const;
+  Soprano::Node getBinding( const QString &name ) const;
 
   bool isGraph() const;
 
@@ -59,6 +66,8 @@ private:
 };
  
 }
+}
+}
 
-#endif // REDLAND_QUERY_RESULT_H
+#endif // SOPRANO_BACKEND_REDLAND_QUERY_RESULT_H
 

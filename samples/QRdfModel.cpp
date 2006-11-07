@@ -1,4 +1,5 @@
-/* This file is part of QRDF
+/* 
+ * This file is part of Soprano Project
  *
  * Copyright (C) 2006 Daniele Galdi <daniele.galdi@gmail.com>
  *
@@ -22,10 +23,11 @@
 #include <QtGlobal>
 #include <QFile>
 #include <QTextStream>
+#include <QUrl>
 
 #include <soprano/Soprano.h>
 
-using namespace RDF;
+using namespace Soprano;
 
 int
 main(int argc, char *argv[])
@@ -33,21 +35,23 @@ main(int argc, char *argv[])
   
   Manager manager;
 
-  Node subject( QUrl("http://purl.org/nepomuk#uri:nepomuk:1"), Node::Resource );
+  Node subject( QUrl("http://purl.org/nepomuk#uri:nepomuk:3"), Node::Resource );
   Node predicate( QUrl("http://purl.org/nepomuk#Model"), Node::Resource );
   Node object( QString("Test Model"), Node::Literal );
   Statement st( subject, predicate, object );
 
-  QMap<QString, ModelFactory *> factoryMap = manager.listAvailableModelFactory();
-  ModelFactory *factory = factoryMap.value( "Redland" );
+  ModelFactory *factory = manager.factory( "Redland" );
 
-  //Model *model = factory->createPersistentModel( "test" , "/tmp" );
-  Model *model = factory->createMemoryModel( "memory-model" );
+  Model *model = factory->createPersistentModel( "test" );
+  //Model *model = factory->createMemoryModel( "memory-model" );
+  model->print(); 
+ 
   model->add( st );
   
   model->print();
 
   delete model;
+  delete factory;
 
   /* keep gcc -Wall happy */
   return (0);

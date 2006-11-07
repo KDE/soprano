@@ -22,9 +22,7 @@
 #include "RedlandUtil.h"
 #include "RedlandQueryResult.h"
 
-#include <QString>
-
-using namespace Soprano;
+using namespace Soprano::Backend::Redland;
 
 struct RedlandQueryResult::Private
 {
@@ -61,12 +59,16 @@ bool RedlandQueryResult::next() const
   return librdf_query_results_next( d->result ) != 0;
 }
 
-Node RedlandQueryResult::getBinding( const QString &name ) const
+Soprano::Node RedlandQueryResult::getBinding( const QString &name ) const
 {
   librdf_node *node = librdf_query_results_get_binding_value_by_name( d->result, (const char *)name.toLatin1().data() );
-  Q_ASSERT( node != 0L );
+  if ( !node )
+  {
+    // Return a not valid node (empty)
+    return Soprano::Node();
+  }
 
-  Node tmp = Redland::createNode( node );
+  Soprano::Node tmp = Util::createNode( node );
   librdf_free_node( node );
   
   return tmp;

@@ -1,4 +1,5 @@
-/* This file is part of Soprano
+/* 
+ * This file is part of Soprano Project
  *
  * Copyright (C) 2006 Daniele Galdi <daniele.galdi@gmail.com>
  *
@@ -18,16 +19,24 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef SOPRANO_REDLAND_STATEMENT_ITERATOR_H
-#define SOPRANO_REDLAND_STATEMENT_ITERATOR_H
+#ifndef SOPRANO_BACKEND_REDLAND_STATEMENT_ITERATOR_H
+#define SOPRANO_BACKEND_REDLAND_STATEMENT_ITERATOR_H
+
+#include <redland.h>
 
 #include "StatementIterator.h"
 
-namespace Soprano {
+namespace Soprano 
+{
 
 class Statement;
 
-class RedlandStatementIterator: public StatementIterator
+namespace Backend
+{
+namespace Redland
+{
+
+class RedlandStatementIterator: public Soprano::StatementIterator
 {
 public:
   RedlandStatementIterator( librdf_stream *stream );
@@ -36,13 +45,15 @@ public:
 
   bool hasNext() const;
 
-  const Statement next() const;
+  const Soprano::Statement next() const;
 private:
   class Private;
   Private *d;
 };
 
 }
+}
+}
 
-#endif // SOPRANO_REDLAND_STATEMENT_ITERATOR_H
+#endif // SOPRANO_BACKEND_REDLAND_STATEMENT_ITERATOR_H
 

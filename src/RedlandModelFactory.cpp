@@ -1,4 +1,5 @@
-/* This file is part of Soprano
+/* 
+ * This file is part of Soprano Project
  *
  * Copyright (C) 2006 Daniele Galdi <daniele.galdi@gmail.com>
  *
@@ -12,56 +13,69 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Library General Public License for more details.
  *
- * You should have received a copy of the GNU Library General Public
- * License
- * along with this library; see the file COPYING.LIB.  If not, write
- * to
- * the Free Software Foundation, Inc., 51 Franklin Street, Fifth
- * Floor,
+ * You should have received a copy of the GNU Library General Public License
+ * along with this library; see the file COPYING.LIB.  If not, write to
+ * the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
  * Boston, MA 02110-1301, USA.
  */
 
 #include <redland.h>
 #include "World.h"
-#include "Model.h"
 #include "RedlandModel.h"
 #include "RedlandModelFactory.h"
-using namespace Soprano;
 
-RedlandModelFactory::RedlandModelFactory() 
+using namespace Soprano::Backend::Redland;
+
+struct RedlandModelFactory::Private
 {
+  Private(): world(0L)
+  {}
+
+  librdf_world *world;
+  QString path;
+};
+
+RedlandModelFactory::RedlandModelFactory()
+{
+  d = new Private;
+  d->world = World::self()->worldPtr();
+  d->path = "/tmp"; // Move to a possible LibConf
+  Q_ASSERT( d->world != 0 );
 }
 
 RedlandModelFactory::~RedlandModelFactory() 
 {
+  delete d;
 }
 
 RedlandModel *RedlandModelFactory::createMemoryModel( const QString &name ) const
 {
-  librdf_world *world = World::self()->worldPtr();
-
-  librdf_storage *storage = librdf_new_storage( world, "memory", name.toLatin1().data(), 0L );
-  Q_ASSERT( storage != 0L);
-  
-  librdf_model *model = librdf_new_model( world, storage, 0L );
-  Q_ASSERT( model != 0L);
-
-  return new RedlandModel( model );
+  return createModel( "memory", name, 0L ); 
 }
 
-RedlandModel *RedlandModelFactory::createPersistentModel( const QString &name, const QString &filePath ) const
+RedlandModel *RedlandModelFactory::createPersistentModel( const QString &name ) const
 {
-  QString prefix("hash-type='bdb',dir='");
-  prefix.append(filePath);
-  prefix.append("'");
+  QString options("hash-type='bdb',dir='");
+  options.append( d->path );
+  options.append("'");
 
-  librdf_world *world = World::self()->worldPtr();
+  return createModel( "hashes", name, &options ); 
+}
 
-  librdf_storage *storage = librdf_new_storage( world, "hashes", name.toLatin1().data(), prefix.toLatin1().data() );
-  Q_ASSERT( storage != 0L);
+RedlandModel *RedlandModelFactory::createModel( const QString &type, const QString &name, QString *options ) const
+{
+  librdf_storage *storage = librdf_new_storage( d->world, type.toLatin1().data(), name.toLatin1().data(), options->toLatin1().data() );
+  if ( !storage )
+  {
+    return 0L;
+  } 
 
-  librdf_model *model = librdf_new_model( world, storage, 0L );
-  Q_ASSERT( model != 0L);
+  librdf_model *model = librdf_new_model( d->world, storage, 0L );
+  if ( !model )
+  {
+    librdf_free_storage( storage );
+    return 0L;
+  } 
 
   return new RedlandModel( model );
 }

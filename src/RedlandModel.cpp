@@ -1,4 +1,5 @@
-/* This file is part of Soprano
+/* 
+ * This file is part of Soprano Project
  *
  * Copyright (C) 2006 Daniele Galdi <daniele.galdi@gmail.com>
  *
@@ -26,6 +27,7 @@
 #include "RedlandModel.h"
 
 using namespace Soprano;
+using namespace Soprano::Backend::Redland;
 
 struct RedlandModel::Private {
   Private(): world(0L), model(0L), storage(0L) 
@@ -57,47 +59,90 @@ RedlandModel::RedlandModel( const RedlandModel &other )
 
 RedlandModel::~RedlandModel()
 {
-  librdf_storage_close( d->storage );
-
   librdf_free_model( d->model );
   librdf_free_storage( d->storage );
   delete d;
 }
 
-void RedlandModel::add( const Model &model )
+Model::ExitCode RedlandModel::add( const Model &model )
 {
-  
+  StatementIterator *stmi = model.listStatements();
+  if ( !stmi )
+  {
+    return Model::ERROR_EXIT;
+  }
+
+  while ( stmi->hasNext() )
+  {
+    if ( add( stmi->next() ) != Model::SUCCESS_EXIT ) 
+    {
+      delete stmi;
+      return Model::ERROR_EXIT;
+    }
+  }
+  // Sync the model
+  if ( librdf_model_sync( d->model ) ) 
+  {
+    return Model::ERROR_EXIT;
+  }
+
+  delete stmi;
+
+  return Model::SUCCESS_EXIT;
 }
 
-void RedlandModel::add( const Statement &st )
+Model::ExitCode RedlandModel::add( const Statement &st )
 {
-  librdf_node *subject = Redland::createNode( st.subject() );
-  librdf_node *predicate = Redland::createNode( st.predicate() );
-  librdf_node *object = Redland::createNode( st.object() );
-  
-  librdf_model_add( d->model, subject, predicate, object );
-}
+  librdf_node *subject = Util::createNode( st.subject() );
+  if ( !subject )
+  {
+    return Model::ERROR_EXIT;
+  }
 
-bool RedlandModel::isEmpty() const
-{
-  return librdf_model_size( d->model ) == 0;
+  librdf_node *predicate = Util::createNode( st.predicate() );
+  if ( !predicate )
+  {
+    librdf_free_node( subject );
+    return Model::ERROR_EXIT;
+  }
+
+  librdf_node *object = Util::createNode( st.object() );
+  if ( !object )
+  {
+    librdf_free_node( subject );
+    librdf_free_node( predicate );
+    return Model::ERROR_EXIT;
+  }
+
+  if ( librdf_model_add( d->model, subject, predicate, object ) )
+  {
+    return Model::ERROR_EXIT;
+  }
+
+  // Sync the model
+  if ( librdf_model_sync( d->model ) ) 
+  {
+    return Model::ERROR_EXIT;
+  }
+  
+  return Model::SUCCESS_EXIT;
 }
 
 bool RedlandModel::contains( const Statement &statement ) const
 {
   if ( !statement.isValid() ) return false;
 
-  librdf_statement *st = Redland::createStatement( statement );
+  librdf_statement *st = Util::createStatement( statement );
   int result = librdf_model_contains_statement( d->model, st );
   librdf_free_statement( st );
 
   return result != 0;
 }
 
-QueryResult *RedlandModel::executeQuery( const Query &query ) const
+Soprano::QueryResult *RedlandModel::executeQuery( const Query &query ) const
 {
-  librdf_query *q = librdf_new_query( d->world, Redland::queryType( query ), 0L, (unsigned char *)query.query().toLatin1().data(), 0L );
-  if ( q == 0L)
+  librdf_query *q = librdf_new_query( d->world, Util::queryType( query ), 0L, (unsigned char *)query.query().toLatin1().data(), 0L );
+  if ( !q )
   {
     return 0L;
   }
@@ -121,36 +166,18 @@ QueryResult *RedlandModel::executeQuery( const Query &query ) const
   return new RedlandQueryResult( res );
 }
 
-StatementIterator *RedlandModel::listStatements() const
+Soprano::StatementIterator *RedlandModel::listStatements( const Statement &partial ) const
 {
-  librdf_statement *all = librdf_new_statement( d->world );
-  if ( all == 0L)
-  {
-    return 0L;
-  }
-
-  librdf_stream *stream = librdf_model_find_statements( d->model, all );
-  if ( stream == 0L)
-  {
-    return 0L;
-  }
-
-  librdf_free_statement( all );
-
-  return new RedlandStatementIterator( stream );
-}
-
-StatementIterator *RedlandModel::listStatements( const Statement &partial ) const
-{
-  librdf_statement *st = Redland::createStatement( partial );
-  if ( st == 0L)
+  librdf_statement *st = Util::createStatement( partial );
+  if ( !st )
   {
     return 0L;
   }
   
   librdf_stream *stream = librdf_model_find_statements( d->model, st );
-  if ( stream == 0L)
+  if ( !stream )
   {
+    librdf_free_statement( st );
     return 0L;
   }
 
@@ -159,15 +186,53 @@ StatementIterator *RedlandModel::listStatements( const Statement &partial ) cons
   return new RedlandStatementIterator( stream );
 }
 
-void RedlandModel::remove( const Statement &st )
+Model::ExitCode RedlandModel::remove( const Statement &st )
 {
-  librdf_node *subject = Redland::createNode( st.subject() );
-  librdf_node *predicate = Redland::createNode( st.predicate() );
-  librdf_node *object = Redland::createNode( st.object() );
+  librdf_node *subject = Util::createNode( st.subject() );
+  if ( !subject )
+  {
+    return Model::ERROR_EXIT;
+  }
+
+  librdf_node *predicate = Util::createNode( st.predicate() );
+  if ( !predicate )
+  {
+    librdf_free_node( subject );
+    return Model::ERROR_EXIT;
+  }
+
+  librdf_node *object = Util::createNode( st.object() );
+  if ( !object )
+  {
+    librdf_free_node( subject );
+    librdf_free_node( predicate );
+    return Model::ERROR_EXIT;
+  }
 
   librdf_statement *statement = librdf_new_statement_from_nodes( d->world , subject, predicate, object );
-  librdf_model_remove_statement( d->model, statement );
+  if ( !statement )
+  {
+    librdf_free_node( subject );
+    librdf_free_node( predicate );
+    librdf_free_node( object );
+    return Model::ERROR_EXIT;
+  }
+
+  if ( librdf_model_remove_statement( d->model, statement ) )
+  {
+    librdf_free_statement( statement );
+    return Model::ERROR_EXIT;
+  }
+  
   librdf_free_statement( statement );
+  
+  // Sync the model
+  if ( librdf_model_sync( d->model ) )
+  {
+    return Model::ERROR_EXIT;
+  }
+
+  return Model::SUCCESS_EXIT;
 }
 
 int RedlandModel::size() const
@@ -175,7 +240,7 @@ int RedlandModel::size() const
   return librdf_model_size( d->model );
 }
 
-void RedlandModel::write( QTextStream &os ) const
+Model::ExitCode RedlandModel::write( QTextStream &os ) const
 {
   unsigned char *serialized = librdf_model_to_string( d->model, 0L, 0L, 0L, 0L  );
   QString tmp( (const char *) serialized );
@@ -184,11 +249,15 @@ void RedlandModel::write( QTextStream &os ) const
   os.flush();
 
   free( serialized );
+
+  return Model::SUCCESS_EXIT;
 }
 
-void RedlandModel::print() const
+Model::ExitCode RedlandModel::print() const
 {
   librdf_model_print( d->model, stdout );
+
+  return Model::SUCCESS_EXIT;
 }
 
 librdf_model *RedlandModel::modelPtr() const

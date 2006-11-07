@@ -1,4 +1,5 @@
-/* This file is part of Soprano
+/* 
+ * This file is part of Soprano Project
  *
  * Copyright (C) 2006 Daniele Galdi <daniele.galdi@gmail.com>
  *
@@ -15,12 +16,11 @@
  * You should have received a copy of the GNU Library General Public
  * License along with this library; see the file COPYING.LIB.  If not,
  * write to the Free Software Foundation, Inc., 51 Franklin Street,
- * Fifth
- * Floor, Boston, MA 02110-1301, USA.
+ * Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
-#ifndef SOPRANO_REDLAND_UTIL_H
-#define SOPRANO_REDLAND_UTIL_H
+#ifndef SOPRANO_BACKEND_REDLAND_UTIL_H
+#define SOPRANO_BACKEND_REDLAND_UTIL_H
 
 #include <redland.h>
 
@@ -31,19 +31,27 @@ class Node;
 class Query;
 class Statement;
 
+namespace Backend
+{
 namespace Redland
 {
-  Node createNode( librdf_node *node );
 
-  librdf_node *createNode( const Node &node );
+class Util
+{
+public:
+  static Soprano::Node createNode( librdf_node *node );
 
-  Statement createStatement( librdf_statement *st );
+  static librdf_node *createNode( const Node &node );
+
+  static Soprano::Statement createStatement( librdf_statement *st );
   
-  librdf_statement *createStatement( const Statement &statement );
+  static librdf_statement *createStatement( const Statement &statement );
 
-  const char *queryType( const Query &query );
+  static const char *queryType( const Query &query );
+};
+
+}
+}
 }
 
-}
-
-#endif // SOPRANO_REDLAND_UTIL_H
+#endif // SOPRANO_BACKEND_REDLAND_UTIL_H

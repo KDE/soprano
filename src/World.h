@@ -1,4 +1,5 @@
-/* This file is part of Soprano
+/* 
+ * This file is part of Soprano Project
  *
  * Copyright (C) 2006 Daniele Galdi <daniele.galdi@gmail.com>
  *
@@ -18,12 +19,16 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef SOPRANO_REDLAND_WORLD_H
-#define SOPRANO_REDLAND_WORLD_H
+#ifndef SOPRANO_BACKEND_REDLAND_WORLD_H
+#define SOPRANO_BACKEND_REDLAND_WORLD_H
 
 #include <redland.h>
 
 namespace Soprano
+{
+namespace Backend
+{
+namespace Redland
 {
 
 class World
@@ -44,6 +49,8 @@ private:
 };
 
 }
+}
+}
 
-#endif // SOPRANO_REDLAND_WORLD_H
+#endif // SOPRANO_BACKEND_REDLAND_WORLD_H
 

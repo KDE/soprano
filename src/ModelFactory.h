@@ -1,4 +1,5 @@
-/* This file is part of Soprano
+/* 
+ * This file is part of Soprano Project
  *
  * Copyright (C) 2006 Daniele Galdi <daniele.galdi@gmail.com>
  *
@@ -18,10 +19,10 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef SOPRANO_MODELFACTORY_H
-#define SOPRANO_MODELFACTORY_H
+#ifndef SOPRANO_MODEL_FACTORY_H
+#define SOPRANO_MODEL_FACTORY_H
 
-class QString;
+#include <QString>
 
 namespace Soprano
 {
@@ -33,12 +34,28 @@ class ModelFactory
 public:
   virtual ~ModelFactory();
 
+  /**
+   * Create a new Model stored into the memory.
+   *
+   * \param name
+   *            The Model name
+   *
+   * \return a new Model or NULL on error
+   */
   virtual Model *createMemoryModel( const QString &name ) const = 0;
 
-  virtual Model *createPersistentModel( const QString &name, const QString &filePath) const = 0;
+  /**
+   * Create a new Model stored to a persistent layer.
+   *
+   * \param name
+   *            The Model name
+   *
+   * \return a new Model or NULL on error
+   */
+  virtual Model *createPersistentModel( const QString &name ) const = 0;
 };
 
 }
 
-#endif
+#endif // SOPRANO_MODEL_FACTORY_H
 

@@ -1,4 +1,5 @@
-/* This file is part of Soprano
+/* 
+ * This file is part of Soprano Project
  *
  * Copyright (C) 2006 Daniele Galdi <daniele.galdi@gmail.com>
  *
@@ -18,8 +19,8 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef SOPRANO_REDLAND_MODEL_H
-#define SOPRANO_REDLAND_MODEL_H
+#ifndef SOPRANO_BACKEND_REDLAND_MODEL_H
+#define SOPRANO_BACKEND_REDLAND_MODEL_H
 
 #include <QtGlobal>
 #include <QTextStream>
@@ -34,7 +35,12 @@ namespace Soprano
 class QueryResult;
 class StatementIterator;
 
-class RedlandModel: virtual public Model
+namespace Backend
+{
+namespace Redland
+{
+
+class RedlandModel: public Soprano::Model
 {
 public:
   RedlandModel( librdf_model *model );
@@ -43,39 +49,23 @@ public:
 
   virtual ~RedlandModel();
 
-  void add( const QList<Statement> &statements );
+  Model::ExitCode add( const Model &model );
 
-  void add( const Model &model );
-
-  void add( const Statement &st );
-  
-  Node *createProperty( const QString &ns, const QString &value );
-
-  Node *createBlankNode( const QString &uri );
-
-  Node *createResource( const QUrl &uri );
-
-  Node *createLiteral( const QString &literal );
-
-  bool isEmpty() const;
+  Model::ExitCode add( const Statement &st );
 
   bool contains( const Statement &statement ) const;
 
-  QueryResult *executeQuery( const Query &query ) const;
+  Soprano::QueryResult *executeQuery( const Query &query ) const;
 
-  StatementIterator *listStatements() const;
+  Soprano::StatementIterator *listStatements( const Statement &partial ) const;
 
-  StatementIterator *listStatements( const Statement &partial ) const;
-
-  void remove( const Statement &st );
-
-  void remove( const QList<Statement> &statements );
+  Model::ExitCode remove( const Statement &st );
 
   int size() const;
 
-  void write( QTextStream &os ) const;
+  Model::ExitCode write( QTextStream &os ) const;
 
-  void print() const;
+  Model::ExitCode print() const;
 
   librdf_model *modelPtr() const;
 
@@ -83,9 +73,11 @@ public:
 private:
   class Private;
   Private *d;
-};
+}; 
 
 }
+}
+}
 
-#endif
+#endif // SOPRANO_BACKEND_REDLAND_MODEL_H
 

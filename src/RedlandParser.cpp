@@ -1,4 +1,5 @@
-/* This file is part of Soprano
+/* 
+ * This file is part of Soprano Project
  *
  * Copyright (C) 2006 Duncan Mac-Vicar <duncan@kde.org>
  *
@@ -26,19 +27,22 @@
 #include "RedlandModelFactory.h"
 #include "RedlandParser.h"
 
-using namespace Soprano;
+using namespace Soprano::Backend::Redland;
 
-Model *RedlandParser::parse( const QUrl &url ) const
+RedlandModel *RedlandParser::parse( const QUrl &url ) const
 {
   librdf_world *w = World::self()->worldPtr();
 
   RedlandModelFactory factory;
   
   RedlandModel *model = factory.createMemoryModel( url.toString() );
-  if (!model) return 0L;
+  if ( !model ) 
+  {
+    return 0L;
+  }
 
   librdf_uri *uri = librdf_new_uri( w, (unsigned char *) url.toString().toLatin1().data() );  
-  if (!uri) 
+  if ( !uri ) 
   {
     delete model;
     return 0L;
@@ -46,7 +50,7 @@ Model *RedlandParser::parse( const QUrl &url ) const
 
 
   librdf_parser *parser = librdf_new_parser( w, "rdfxml", "application/rdf+xml", NULL );
-  if (!parser)
+  if ( !parser )
   {
     delete model;
     librdf_free_uri( uri );
@@ -59,8 +63,8 @@ Model *RedlandParser::parse( const QUrl &url ) const
     model = 0L;
   }
 
-  librdf_free_parser( parser );
   librdf_free_uri( uri );
+  librdf_free_parser( parser );
 
   return model;
 }

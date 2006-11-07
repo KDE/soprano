@@ -63,6 +63,8 @@ Statement& Statement::operator=( const Statement& other )
   d->subject = other.subject();
   d->predicate = other.predicate();
   d->object = other.object();
+
+  return *this;
 }
 
 void Statement::setSubject( const Node &subject )

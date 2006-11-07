@@ -1,4 +1,5 @@
-/* This file is part of Soprano
+/* 
+ * This file is part of Soprano Project
  *
  * Copyright (C) 2006 Daniele Galdi <daniele.galdi@gmail.com>
  *
@@ -18,11 +19,12 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#include "Model.h"
-#include "Node.h"
-
 #include <QString>
 #include <QUrl>
+
+#include "Node.h"
+#include "Statement.h"
+#include "Model.h"
 
 using namespace Soprano;
 
@@ -49,3 +51,15 @@ Node Model::createLiteral( const QString &literal )
 {
   return Node( literal, Node::Literal );
 }
+
+bool Model::isEmpty() const
+{
+  return size() == 0;
+}
+
+StatementIterator *Model::listStatements() const
+{
+  return listStatements( Statement() );
+}
+
+

@@ -1,4 +1,5 @@
-/* This file is part of Soprano
+/* 
+ * This file is part of Soprano Project
  *
  * Copyright (C) 2006 Daniele Galdi <daniele.galdi@gmail.com>
  *
@@ -21,7 +22,8 @@
 #include <QtGlobal>
 
 #include "World.h"
-using namespace Soprano;
+
+using namespace Soprano::Backend::Redland;
 
 World *World::m_instance = 0;
 
@@ -52,4 +54,3 @@ librdf_world* World::worldPtr() const
 {
   return m_world;
 }
-

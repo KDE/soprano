@@ -10,6 +10,7 @@ SET(soprano_SRCS
     Parser.cpp
     Manager.cpp
 
+    # RedlandBackend
     World.cpp
     RedlandStatementIterator.cpp
     RedlandUtil.cpp
