@@ -19,14 +19,15 @@
  * Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
+#include <QUrl>
+#include <QtGlobal>
+
 #include "Node.h"
 #include "Query.h"
 #include "Statement.h"
 #include "World.h"
 
 #include "RedlandUtil.h"
-
-#include <QUrl>
 
 using namespace Soprano::Backend::Redland;
 
@@ -80,6 +81,8 @@ librdf_statement *Util::createStatement( const Statement &statement )
   librdf_node *subject = createNode( statement.subject() );
   librdf_node *predicate = createNode( statement.predicate() );
   librdf_node *object = createNode( statement.object() );
+
+  if ( subject == 0L) qDebug("subject == null");
 
   return librdf_new_statement_from_nodes( world, subject, predicate, object );
 }

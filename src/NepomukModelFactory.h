@@ -19,45 +19,42 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#include <QStringList>
-#include <QString>
+#ifndef SOPRANO_BACKEND_NEPOMUK_MODEL_FACTORY_H
+#define SOPRANO_BACKEND_NEPOMUK_MODEL_FACTORY_H
 
-#include "RedlandModelFactory.h"
-#include "NepomukModelFactory.h"
 #include "ModelFactory.h"
-#include "Manager.h"
+#include "NepomukModel.h"
 
-using namespace Soprano;
-using namespace Soprano::Backend::Redland;
-using namespace Soprano::Backend::Nepomuk;
+namespace Soprano
+{
+namespace Backend
+{
+namespace Nepomuk
+{
 
-struct Manager::Private {
-  Private()
-  {}
+class NepomukModelFactory: public ModelFactory
+{
+public:
+  /**
+   * Create a new NepomukModelFactory 
+   */
+  NepomukModelFactory();
+    
+  ~NepomukModelFactory();
 
-  QStringList names;
+  NepomukModel *createMemoryModel( const QString &name ) const;
+
+  NepomukModel *createPersistentModel( const QString &name ) const;
+
+private:
+  NepomukModelFactory( const NepomukModelFactory &other ) {};
+
+  class Private;
+  Private *d;
 };
 
-Manager::Manager()
-{
-  d = new Private;
-  d->names << "Redland";
-  d->names << "Nepomuk";
+}
+}
 }
 
-Manager::~Manager()
-{  
-  delete d;
-}
-
-const QStringList &Manager::listModelFactoryNames() const
-{
-  return d->names;
-}
-
-ModelFactory *Manager::factory( const QString &name ) const
-{
-  if ( name == "Redland" ) return new RedlandModelFactory();
-  if ( name == "Nepomuk" ) return new NepomukModelFactory();
-  return 0L;
-}
+#endif // SOPRANO_BACKEND_NEPOMUK_MODEL_FACTORY_H

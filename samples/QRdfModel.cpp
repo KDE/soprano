@@ -19,7 +19,6 @@
  * Boston, MA 02110-1301, USA.
  */
 
-
 #include <QtGlobal>
 #include <QFile>
 #include <QTextStream>
@@ -40,13 +39,19 @@ main(int argc, char *argv[])
   Node object( QString("Test Model"), Node::Literal );
   Statement st( subject, predicate, object );
 
-  ModelFactory *factory = manager.factory( "Redland" );
+  ModelFactory *factory = manager.factory( "Nepomuk" );
 
   Model *model = factory->createPersistentModel( "test" );
   //Model *model = factory->createMemoryModel( "memory-model" );
-  model->print(); 
+  //model->print(); 
  
-  model->add( st );
+  //model->add( st );
+
+  StatementIterator *iter = model->listStatements();
+  while (iter->hasNext())    
+  {
+    qDebug( iter->next().subject().uri().toString().toLatin1().data() );
+  }
   
   model->print();
 

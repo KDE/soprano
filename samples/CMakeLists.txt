@@ -32,6 +32,7 @@ ADD_EXECUTABLE(qrdfmodel ${qrdfmodel_SRCS})
 TARGET_LINK_LIBRARIES(qrdfmodel ${REDLAND_LIBRARIES})
 TARGET_LINK_LIBRARIES(qrdfmodel ${QT_QTCORE_LIBRARIES})
 TARGET_LINK_LIBRARIES(qrdfmodel soprano)
+TARGET_LINK_LIBRARIES(qrdfmodel knepclient)
 
 #### INSTALL ####
 

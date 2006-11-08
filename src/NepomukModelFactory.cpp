@@ -19,55 +19,33 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#include <QtGlobal>
+#include "NepomukModel.h"
+#include "NepomukModelFactory.h"
 
-#include "RedlandUtil.h"
-#include "RedlandStatementIterator.h"
-#include "Statement.h"
+using namespace Soprano::Backend::Nepomuk;
 
-using namespace Soprano::Backend::Redland;
-
-struct RedlandStatementIterator::Private
+struct NepomukModelFactory::Private
 {
-  Private(): stream(0L)
+  Private()
   {}
-
-  librdf_stream *stream;
 };
 
-RedlandStatementIterator::RedlandStatementIterator( librdf_stream *stream )
+NepomukModelFactory::NepomukModelFactory()
 {
   d = new Private;
-  d->stream = stream;
-  Q_ASSERT( d->stream != 0L);
 }
 
-RedlandStatementIterator::~RedlandStatementIterator()
+NepomukModelFactory::~NepomukModelFactory() 
 {
-  librdf_free_stream( d->stream );
   delete d;
 }
 
-bool RedlandStatementIterator::hasNext() const
+NepomukModel *NepomukModelFactory::createMemoryModel( const QString &name ) const
 {
-  return librdf_stream_end( d->stream) == 0; 
+  return createPersistentModel( name );
 }
 
-const Soprano::Statement RedlandStatementIterator::next() const
+NepomukModel *NepomukModelFactory::createPersistentModel( const QString &name ) const
 {
-  librdf_statement *st = librdf_stream_get_object( d->stream );
-  if ( !st )
-  {
-    // Return a not valid Statement
-    return Soprano::Statement();
-  }
-
-  if ( !librdf_stream_next( d->stream ) )
-  {
-    // The stream has finished
-    return Soprano::Statement();
-  }
-
-  return Util::createStatement( st );
+  return new NepomukModel( name );
 }
-

@@ -23,6 +23,7 @@ SET(soprano_SRCS
     NepomukUtil.cpp
     NepomukModel.cpp
     NepomukStatementIterator.cpp
+    NepomukModelFactory.cpp
    )    
 
 ADD_DEFINITIONS(${REDLAND_CFLAGS})
