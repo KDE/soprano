@@ -19,62 +19,41 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef SOPRANO_BACKEND_NEPOMUK_MODEL_H
-#define SOPRANO_BACKEND_NEPOMUK_MODEL_H
-
 #include <QtGlobal>
-#include <QTextStream>
 
-#include "Model.h"
 #include "Statement.h"
+#include "NepomukUtil.h"
+#include "NepomukStatementIterator.h"
 
-namespace Soprano
+using namespace Soprano::Backend::Nepomuk;
+
+struct NepomukStatementIterator::Private
 {
+  Private()
+  {}
 
-class QueryResult;
-class StatementIterator;
+  RDF::StatementListIterator *iter;
+};
 
-namespace Backend
+NepomukStatementIterator::NepomukStatementIterator( RDF::StatementListIterator *iter )
 {
-namespace Nepomuk
-{
-
-class NepomukModel: public Soprano::Model
-{
-public:
-  NepomukModel( const QString &name );
-
-  NepomukModel( const NepomukModel &other );
-
-  ~NepomukModel();
-
-  Model::ExitCode add( const Statement &st );
-
-  bool contains( const Statement &statement ) const;
-
-  Soprano::QueryResult *executeQuery( const Query &query ) const;
-
-  Soprano::StatementIterator *listStatements( const Statement &partial ) const;
-
-  Model::ExitCode remove( const Statement &st );
-
-  int size() const;
-
-  Model::ExitCode write( QTextStream &os ) const;
-
-  Model::ExitCode print() const;
-
-  const QString &name() const;
-private:
-  class Private;
-  Private *d;
-
-  void init();
-}; 
-
-}
-}
+  d = new Private;
+  d->iter = iter;
 }
 
-#endif // SOPRANO_BACKEND_NEPOMUK_MODEL_H
+NepomukStatementIterator::~NepomukStatementIterator()
+{
+  delete d->iter;
+  delete d;
+}
+
+bool NepomukStatementIterator::hasNext() const
+{
+  return d->iter->hasNext();
+}
+
+const Soprano::Statement NepomukStatementIterator::next() const
+{
+  return Util::createStatement( d->iter->next() );
+}
 

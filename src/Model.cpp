@@ -24,12 +24,35 @@
 
 #include "Node.h"
 #include "Statement.h"
+#include "StatementIterator.h"
 #include "Model.h"
 
 using namespace Soprano;
 
 Model::~Model()
 {
+}
+
+Model::ExitCode Model::add( const Model &model )
+{
+  StatementIterator *stmi = model.listStatements();
+  if ( !stmi )
+  {
+    return Model::ERROR_EXIT;
+  }
+
+  while ( stmi->hasNext() )
+  {
+    if ( add( stmi->next() ) != Model::SUCCESS_EXIT ) 
+    {
+      delete stmi;
+      return Model::ERROR_EXIT;
+    }
+  }
+
+  delete stmi;
+
+  return Model::SUCCESS_EXIT;
 }
 
 Node Model::createProperty( const QString &ns, const QString &value )
@@ -61,5 +84,3 @@ StatementIterator *Model::listStatements() const
 {
   return listStatements( Statement() );
 }
-
-

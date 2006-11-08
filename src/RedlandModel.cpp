@@ -64,33 +64,6 @@ RedlandModel::~RedlandModel()
   delete d;
 }
 
-Model::ExitCode RedlandModel::add( const Model &model )
-{
-  StatementIterator *stmi = model.listStatements();
-  if ( !stmi )
-  {
-    return Model::ERROR_EXIT;
-  }
-
-  while ( stmi->hasNext() )
-  {
-    if ( add( stmi->next() ) != Model::SUCCESS_EXIT ) 
-    {
-      delete stmi;
-      return Model::ERROR_EXIT;
-    }
-  }
-  // Sync the model
-  if ( librdf_model_sync( d->model ) ) 
-  {
-    return Model::ERROR_EXIT;
-  }
-
-  delete stmi;
-
-  return Model::SUCCESS_EXIT;
-}
-
 Model::ExitCode RedlandModel::add( const Statement &st )
 {
   librdf_node *subject = Util::createNode( st.subject() );

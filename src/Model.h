@@ -1,4 +1,5 @@
-/* This file is part of Soprano
+/* 
+ * This file is part of Soprano Project
  *
  * Copyright (C) 2006 Daniele Galdi <daniele.galdi@gmail.com>
  *
@@ -45,7 +46,7 @@ public:
 
   virtual ~Model();
 
-  virtual Model::ExitCode add( const Model &model ) = 0;
+  virtual Model::ExitCode add( const Model &model );
 
   virtual Model::ExitCode add( const Statement &st ) = 0;
   

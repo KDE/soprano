@@ -19,63 +19,43 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef SOPRANO_BACKEND_REDLAND_MODEL_H
-#define SOPRANO_BACKEND_REDLAND_MODEL_H
+#ifndef SOPRANO_BACKEND_NEPOMUK_STATEMENT_ITERATOR_H
+#define SOPRANO_BACKEND_NEPOMUK_STATEMENT_ITERATOR_H
 
-#include <QtGlobal>
-#include <QTextStream>
-#include <redland.h>
+#include <knep/services/statementlistiterator.h>
 
-#include "Model.h"
-#include "Statement.h"
+#include "StatementIterator.h"
 
-namespace Soprano
+using namespace Nepomuk::Backbone::Services;
+
+namespace Soprano 
 {
 
-class QueryResult;
-class StatementIterator;
+class Statement;
 
 namespace Backend
 {
-namespace Redland
+namespace Nepomuk
 {
 
-class RedlandModel: public Soprano::Model
+class NepomukStatementIterator: public Soprano::StatementIterator
 {
 public:
-  RedlandModel( librdf_model *model );
+  NepomukStatementIterator( RDF::StatementListIterator *iter );
 
-  RedlandModel( const RedlandModel &other );
+  ~NepomukStatementIterator();
 
-  ~RedlandModel();
+  bool hasNext() const;
 
-  Model::ExitCode add( const Statement &st );
-
-  bool contains( const Statement &statement ) const;
-
-  Soprano::QueryResult *executeQuery( const Query &query ) const;
-
-  Soprano::StatementIterator *listStatements( const Statement &partial ) const;
-
-  Model::ExitCode remove( const Statement &st );
-
-  int size() const;
-
-  Model::ExitCode write( QTextStream &os ) const;
-
-  Model::ExitCode print() const;
-
-  librdf_model *modelPtr() const;
-
-  librdf_storage *storagePtr() const;
+  const Soprano::Statement next() const;
 private:
   class Private;
   Private *d;
-}; 
+};
 
 }
 }
 }
 
-#endif // SOPRANO_BACKEND_REDLAND_MODEL_H
+#endif // SOPRANO_BACKEND_NEPOMUK_STATEMENT_ITERATOR_H
 

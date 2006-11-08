@@ -26,11 +26,11 @@
 
 #include "Query.h"
 #include "NepomukUtil.h"
+#include "NepomukStatementIterator.h"
 #include "NepomukModel.h"
 
 using namespace Nepomuk::Backbone;
 using namespace Nepomuk::Backbone::Services;
-using namespace Nepomuk::Backbone::Services::RDF;
 
 using namespace Soprano;
 using namespace Soprano::Backend::Nepomuk;
@@ -48,19 +48,27 @@ struct NepomukModel::Private {
 
 NepomukModel::NepomukModel( const QString &name )
 {
-  d = new Private();
-  d->registry = new Registry();
-  d->service = d->registry->discoverServiceByType( "http://nepomuk.semanticdesktop.org/services/storage/rdf/Triple" );
+  init();
   
-  Q_ASSERT( d->service != 0L );
-  d->ts = new TripleService( d->service );
   d->name = name;
+  d->ts->addGraph( name );
 }
 
 NepomukModel::NepomukModel( const NepomukModel &other )
 {
-  // FIXME:
-  Q_ASSERT( false );
+  init();
+  
+  d->name = other.name();
+}
+
+void NepomukModel::init()
+{
+  d = new Private();
+  d->registry = new Registry();
+  d->service = d->registry->discoverServiceByType( "http://nepomuk.semanticdesktop.org/services/storage/rdf/Triple" );
+
+  Q_ASSERT( d->service != 0L );
+  d->ts = new TripleService( d->service );
 }
 
 NepomukModel::~NepomukModel()
@@ -69,11 +77,6 @@ NepomukModel::~NepomukModel()
   delete d->service;
   delete d->registry;
   delete d;
-}
-
-Model::ExitCode NepomukModel::add( const Model &model )
-{
-  // FIXME:
 }
 
 Model::ExitCode NepomukModel::add( const Statement &st )
@@ -87,23 +90,27 @@ Model::ExitCode NepomukModel::add( const Statement &st )
 
 bool NepomukModel::contains( const Statement &statement ) const
 {
-  
+  return d->ts->contains( d->name, Util::createStatement(statement) );
 }
 
 Soprano::QueryResult *NepomukModel::executeQuery( const Query &query ) const
 {
-  
+  // TODO: When query service will be ready
+  return 0L;
 }
 
 Soprano::StatementIterator *NepomukModel::listStatements( const Statement &partial ) const
 {
-  /*int max = 10;
-    StatementList list = tsw.listStatements( name, createStatement(partial), max);*/
+  int max = 20;
+
+  RDF::StatementListIterator *iter = new RDF::StatementListIterator( d->ts->listStatements( d->name, Util::createStatement(partial), max), d->ts);
+
+  return new Nepomuk::NepomukStatementIterator( iter );
 }
 
 Model::ExitCode NepomukModel::remove( const Statement &st )
 {
-  if ( d->ts->removeStatement(d->name, Util::createStatement(st)) )
+  if ( d->ts->removeStatement( d->name, Util::createStatement(st) ) )
   {
     return Model::ERROR_EXIT;
   }
@@ -112,7 +119,7 @@ Model::ExitCode NepomukModel::remove( const Statement &st )
 
 int NepomukModel::size() const
 {
-  
+  return d->ts->size( d->name );
 }
 
 Model::ExitCode NepomukModel::write( QTextStream &os ) const
@@ -124,3 +131,9 @@ Model::ExitCode NepomukModel::print() const
 { 
   return Model::ERROR_EXIT;
 }
+
+const QString &NepomukModel::name() const
+{
+  return d->name;
+} 
+
