@@ -50,7 +50,8 @@ RedlandModelFactory::~RedlandModelFactory()
 
 RedlandModel *RedlandModelFactory::createMemoryModel( const QString &name ) const
 {
-  return createModel( "memory", name, 0L ); 
+  QString dummy;
+  return createModel( "memory", name, &dummy ); 
 }
 
 RedlandModel *RedlandModelFactory::createPersistentModel( const QString &name ) const
