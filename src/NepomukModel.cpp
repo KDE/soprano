@@ -81,6 +81,11 @@ NepomukModel::~NepomukModel()
 
 Model::ExitCode NepomukModel::add( const Statement &st )
 {
+  if ( !st.isValid() )
+  {
+    return Model::ERROR_EXIT;
+  }	
+
   if ( d->ts->addStatement(d->name, Util::createStatement(st)) )
   {
     return Model::ERROR_EXIT;
@@ -90,6 +95,11 @@ Model::ExitCode NepomukModel::add( const Statement &st )
 
 bool NepomukModel::contains( const Statement &statement ) const
 {
+  if ( !statement.isValid() )
+  {
+    return false;
+  }
+	
   return d->ts->contains( d->name, Util::createStatement(statement) );
 }
 
@@ -110,6 +120,11 @@ Soprano::StatementIterator *NepomukModel::listStatements( const Statement &parti
 
 Model::ExitCode NepomukModel::remove( const Statement &st )
 {
+  if ( !st.isValid() )
+  {
+    return Model::ERROR_EXIT;
+  }
+
   if ( d->ts->removeStatement( d->name, Util::createStatement(st) ) )
   {
     return Model::ERROR_EXIT;

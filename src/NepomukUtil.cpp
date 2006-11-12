@@ -77,6 +77,6 @@ Soprano::Node Util::createNode( const RDF::Node &node )
     return Soprano::Node( node.value, Soprano::Node::Blank ); 
   }
 
-  return Soprano::Node( node.value, Soprano::Node::Unknown ); 
+  return Soprano::Node(); 
 }
 

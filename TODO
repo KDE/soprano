@@ -1,7 +1,3 @@
-- Model
-  - class StatementIterator
-  - StatementIterator listStatements();
-  - StatementIterator listStatement( const Statement &partial );
-  - Implements empty methods
-
 - Doxygen comments
+- Plugin architecture
+- Tests
