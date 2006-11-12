@@ -1,5 +1,5 @@
 /* 
- * This file is part of Soprano Project
+ * This file is part of Soprano Project.
  *
  * Copyright (C) 2006 Daniele Galdi <daniele.galdi@gmail.com>
  *
@@ -19,45 +19,19 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#include <QStringList>
-#include <QString>
+#include <QObject>
 
-#include "RedlandModelFactory.h"
-#include "NepomukModelFactory.h"
-#include "ModelFactory.h"
-#include "Manager.h"
+#ifndef NODE_TEST_H
+#define NODE_TEST_H
 
-using namespace Soprano;
-using namespace Soprano::Backend::Redland;
-using namespace Soprano::Backend::Nepomuk;
-
-struct Manager::Private {
-  Private()
-  {}
-
-  QStringList names;
+class NodeTest: public QObject
+{
+  Q_OBJECT
+  private slots:
+  void testCreateEmptyNode();
+  void testCreateResourceNode();
+  void testCreateBlankNode();
+  void testCreateLiteralNode();
 };
 
-Manager::Manager()
-{
-  d = new Private;
-  d->names << "Redland";
-  d->names << "Nepomuk";
-}
-
-Manager::~Manager()
-{
-  delete d;
-}
-
-const QStringList &Manager::listModelFactoryNames() const
-{
-  return d->names;
-}
-
-ModelFactory *Manager::factory( const QString &name ) const
-{
-  if ( name == "Redland" ) return new RedlandModelFactory();
-  if ( name == "Nepomuk" ) return new NepomukModelFactory();
-  return 0L;
-}
+#endif // NODE_TEST_H

@@ -66,6 +66,11 @@ RedlandModel::~RedlandModel()
 
 Model::ExitCode RedlandModel::add( const Statement &st )
 {
+  if ( !st.isValid() ) 
+  {
+    return Model::ERROR_EXIT;
+  }
+
   librdf_node *subject = Util::createNode( st.subject() );
   if ( !subject )
   {
@@ -89,6 +94,9 @@ Model::ExitCode RedlandModel::add( const Statement &st )
 
   if ( librdf_model_add( d->model, subject, predicate, object ) )
   {
+    librdf_free_node( subject );
+    librdf_free_node( predicate );
+    librdf_free_node( object );
     return Model::ERROR_EXIT;
   }
 
@@ -103,7 +111,10 @@ Model::ExitCode RedlandModel::add( const Statement &st )
 
 bool RedlandModel::contains( const Statement &statement ) const
 {
-  if ( !statement.isValid() ) return false;
+  if ( !statement.isValid() ) 
+  {
+    return false;
+  }
 
   librdf_statement *st = Util::createStatement( statement );
   int result = librdf_model_contains_statement( d->model, st );
@@ -130,8 +141,8 @@ Soprano::QueryResult *RedlandModel::executeQuery( const Query &query ) const
 
   librdf_query_results *res = librdf_model_query_execute( d->model, q );
   librdf_free_query( q );
-  
-  if (res == 0L) 
+
+  if ( !res )
   {
     return 0L;
   }
@@ -161,6 +172,11 @@ Soprano::StatementIterator *RedlandModel::listStatements( const Statement &parti
 
 Model::ExitCode RedlandModel::remove( const Statement &st )
 {
+  if ( !st.isValid() )
+  {
+    return Model::ERROR_EXIT;
+  }
+
   librdf_node *subject = Util::createNode( st.subject() );
   if ( !subject )
   {

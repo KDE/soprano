@@ -23,6 +23,7 @@
 #include <QFile>
 #include <QTextStream>
 #include <QUrl>
+#include <iostream>
 
 #include <soprano/Soprano.h>
 
@@ -34,26 +35,45 @@ main(int argc, char *argv[])
   
   Manager manager;
 
-  Node subject( QUrl("http://purl.org/nepomuk#uri:nepomuk:3"), Node::Resource );
-  Node predicate( QUrl("http://purl.org/nepomuk#Model"), Node::Resource );
-  Node object( QString("Test Model"), Node::Literal );
+  Node subject( QUrl("http://purl.org/nepomuk#uri:nepomuk:3") );
+  Node predicate( QUrl("http://purl.org/nepomuk#Model") );
+  Node object( QString("Test Modelssdrgg"), Node::Literal );
   Statement st( subject, predicate, object );
+  
+  //ModelFactory *factory = manager.factory( "Nepomuk" );
+  ModelFactory *factory = manager.factory( "Redland" );
 
-  ModelFactory *factory = manager.factory( "Nepomuk" );
-
-  Model *model = factory->createPersistentModel( "test" );
-  //Model *model = factory->createMemoryModel( "memory-model" );
+  //Model *model = factory->createPersistentModel( "nuovo-graph" );
+  Model *model = factory->createMemoryModel( "memory-model" );
   //model->print(); 
  
-  //model->add( st );
-
-  StatementIterator *iter = model->listStatements();
-  while (iter->hasNext())    
-  {
-    qDebug( iter->next().subject().uri().toString().toLatin1().data() );
-  }
+  model->add( st );
   
+  st.setObject( Node("New Object", Node::Literal) );
+  model->add( st );
+
   model->print();
+		
+  Node dummy;
+  Statement partial( subject, predicate, dummy);
+  StatementIterator *iter = model->listStatements(partial);
+  if ( !iter )
+  {
+    std::cout << "Failure..." << std::endl;
+    return (1);
+  }
+
+  while ( iter->hasNext())    
+  {
+    Statement st = iter->next();
+    std::cout << "subject: " << st.subject().uri().toString().toLatin1().data() << std::endl;
+    std::cout << "predicate: " << st.predicate().uri().toString().toLatin1().data() << std::endl;
+    std::cout << "object: " << st.object().literal().toLatin1().data() << std::endl;
+  }
+  std::cout << std::endl;
+  delete iter;
+  
+  //model->print();
 
   delete model;
   delete factory;

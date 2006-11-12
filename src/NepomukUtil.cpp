@@ -66,7 +66,7 @@ Soprano::Node Util::createNode( const RDF::Node &node )
 {
   if ( node.type == RDF::NodeResource )
   {
-    return Soprano::Node( QUrl(node.value), Soprano::Node::Resource ); 
+    return Soprano::Node( QUrl(node.value) ); 
   }
   if ( node.type == RDF::NodeLiteral )
   {

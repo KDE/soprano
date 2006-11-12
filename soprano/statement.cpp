@@ -1,4 +1,5 @@
-/* This file is part of Soprano
+/* 
+ * This file is part of Soprano Project.
  *
  * Copyright (C) 2006 Daniele Galdi <daniele.galdi@gmail.com>
  *
@@ -65,6 +66,13 @@ Statement& Statement::operator=( const Statement& other )
   d->object = other.object();
 
   return *this;
+}
+
+bool Statement::operator==( const Statement& other )
+{
+  return ( d->subject == other.subject() && 
+           d->predicate == other.predicate() && 
+           d->object == other.object() );
 }
 
 void Statement::setSubject( const Node &subject )

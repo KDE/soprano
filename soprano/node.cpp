@@ -1,4 +1,5 @@
-/* This file is part of Soprano
+/* 
+ * This file is part of Soprano Project
  *
  * Copyright (C) 2006 Daniele Galdi <daniele.galdi@gmail.com>
  *
@@ -22,7 +23,6 @@
 #include <QUrl>
 #include "Node.h"
 
-
 using namespace Soprano;
 
 struct Node::Private
@@ -33,6 +33,9 @@ struct Node::Private
   QUrl uri;
   QString value;
 };
+
+static QUrl emptyQUrl;
+static QString emptyQString;
 
 Node::Node()
 {
@@ -47,11 +50,11 @@ Node::Node( const Node &other )
   d->value = other.literal();
 }
 
-Node::Node( const QUrl &uri, Type type )
+Node::Node( const QUrl &uri )
 {
   d = new Private;
   d->uri = uri;
-  d->type = type;
+  d->type = Node::Resource;
 }
 
 Node::Node( const QString &value, Type type )
@@ -59,6 +62,7 @@ Node::Node( const QString &value, Type type )
   d = new Private;
   d->value = value;
   d->type = type;
+  Q_ASSERT( type == Node::Literal || type == Node::Blank );
 }
 
 Node::~Node()
@@ -98,17 +102,17 @@ Node::Type Node::type() const
 
 const QUrl &Node::uri() const
 {
-  return d->uri;
+  return ( isResource() ? d->uri : emptyQUrl );
 }
 
 const QString &Node::literal() const
 {
-  return d->value;
+  return ( isLiteral() ? d->value : emptyQString );
 }
 
 const QString &Node::blank() const
 {
-  return d->value;
+  return ( isBlank() ? d->value : emptyQString );
 }
 
 Node& Node::operator=( const Node& other )
@@ -121,14 +125,14 @@ Node& Node::operator=( const Node& other )
 
 bool Node::operator==( const Node& other ) const
 {
-    if (d->type != other.d->type)
-        return false;
-    
-    if (d->type == Resource)
-        return d->uri == other.d->uri;
-    else
-        return d->value == other.d->value;
-    
-    // never reached
+  if (d->type != other.d->type)
     return false;
+  
+  if (d->type == Resource)
+    return d->uri == other.d->uri;
+  else
+    return d->value == other.d->value;
+  
+  // never reached
+  return false;
 }

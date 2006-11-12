@@ -1,4 +1,5 @@
-/* This file is part of Soprano
+/* 
+ * This file is part of Soprano Project.
  *
  * Copyright (C) 2006 Daniele Galdi <daniele.galdi@gmail.com>
  *
@@ -21,7 +22,6 @@
 #ifndef SOPRANO_STATEMENT_H
 #define SOPRANO_STATEMENT_H
 
-
 namespace Soprano
 {
 
@@ -30,28 +30,69 @@ class Node;
 class Statement
 {
 public: 
+  
+  /**
+   * Default Constructor, build an Empty(not valid) Statement.
+   */
   Statement();
-  Statement( const Statement &other );
+  
+  /**
+   * Build a Statement with the given subject, predicate and object.
+   *
+   * \param subject The subject.
+   *
+   * \param predicate The predicate.
+   *
+   * \param object The object.
+   */
   Statement( const Node &subject, const Node &predicate, const Node &object );
-  ~Statement();
+  
+  Statement( const Statement &other );
+
+  virtual ~Statement();
 
   Statement& operator=( const Statement& other );
 
+  bool operator==( const Statement& other );
+
+  /**
+   * Change the Statement subject.
+   *
+   * \param subject The new subject.
+   */ 
   void setSubject( const Node &subject );
 
+  /**
+   * \return The subject.
+   */
   const Node &subject() const;
 
+  /**
+   * Change the Statement predicate.
+   *
+   * \param predicate The new predicate.
+   */ 
   void setPredicate( const Node &predicate );
 
+  /**
+   * \return The predicate.
+   */
   const Node &predicate() const;
 
+  /**
+   * Change the Statement object.
+   *
+   * \param object The new object.
+   */ 
   void setObject( const Node &object );
 
+  /**
+   * \return The object.
+   */
   const Node &object() const;
 
   /**
-   * A Statement is valid if contains (subject, predicate, object) and
-   * and all are valid.
+   * A Statement is valid if subject, predicate and object are valid.
    *
    * \return @p true if the Statement is valid, @p false otherwise
    */

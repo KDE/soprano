@@ -1,4 +1,5 @@
-/* This file is part of Soprano
+/* 
+ * This file is part of Soprano Project.
  *
  * Copyright (C) 2006 Daniele Galdi <daniele.galdi@gmail.com>
  *
@@ -38,25 +39,82 @@ public:
     Blank
   };
 
+  /**
+   * Default costructor. 
+   * Represent an Empty node (type == Unknown).
+   */
   Node();
-  Node(const QUrl &uri, Type type);
-  Node(const QString &value, Type type);
-  Node(const Node &other);
+
+  /**
+   * Costructor for Resource node.
+   */
+  Node( const QUrl &uri );
+  
+  /**
+   * Constructor for Literal or Blank node.
+   *
+   * \param value
+   *        The value of a node. Represent a uri string if
+   *        if type is Blank.
+   * 
+   * \param type
+   *        The node type, "must" be Literal or Blank.
+   */
+  Node( const QString &value, Type type );
+  
+  Node( const Node &other );
+  
   virtual ~Node();
 
   Node &operator=( const Node& other );
   bool operator==( const Node& other ) const;
   
+  /**
+   * \return The Node type.
+   */
   Type type() const;
 
+  /**
+   * \return true if the Node is empty.
+   */
   bool isEmpty() const;
+
+  /**
+   * \return true if the Node is a Resource,Literal or Blank.
+   */
   bool isValid() const ;
+
+  /**
+   * \return true if the Node is a Literal.
+   */
   bool isLiteral() const;
+
+  /**
+   * \return true if the Node is a Resource.
+   */
   bool isResource() const;
+
+  /**
+   * \return true if the Node is a Blank node (anonymous).
+   */
   bool isBlank() const;
 
+  /**
+   * \return The URI if the node is a Resource node. 
+   *         An null QUrl otherwise.
+   */
   const QUrl &uri() const;
+
+  /**
+   * \return The Literal value if the node is a Literal node. 
+   *         An null QString otherwise.
+   */
   const QString &literal() const;
+  
+  /**
+   *\return The Blank value if the node is a Blank node. 
+   *        An null QString otherwise.
+   */
   const QString &blank() const;
 
 private:
@@ -66,4 +124,4 @@ private:
 
 }
 
-#endif
+#endif // SOPRANO_NODE_H

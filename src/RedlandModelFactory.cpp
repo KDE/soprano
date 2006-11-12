@@ -51,7 +51,7 @@ RedlandModelFactory::~RedlandModelFactory()
 RedlandModel *RedlandModelFactory::createMemoryModel( const QString &name ) const
 {
   QString dummy;
-  return createModel( "memory", name, &dummy ); 
+  return createModel( "memory", name, dummy ); 
 }
 
 RedlandModel *RedlandModelFactory::createPersistentModel( const QString &name ) const
@@ -60,12 +60,12 @@ RedlandModel *RedlandModelFactory::createPersistentModel( const QString &name ) 
   options.append( d->path );
   options.append("'");
 
-  return createModel( "hashes", name, &options ); 
+  return createModel( "hashes", name, options ); 
 }
 
-RedlandModel *RedlandModelFactory::createModel( const QString &type, const QString &name, QString *options ) const
+RedlandModel *RedlandModelFactory::createModel( const QString &type, const QString &name, const QString &options ) const
 {
-  librdf_storage *storage = librdf_new_storage( d->world, type.toLatin1().data(), name.toLatin1().data(), options->toLatin1().data() );
+  librdf_storage *storage = librdf_new_storage( d->world, type.toLatin1().data(), name.toLatin1().data(), options.toLatin1().data() );
   if ( !storage )
   {
     return 0L;

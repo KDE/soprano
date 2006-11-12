@@ -25,6 +25,7 @@
 #include "Node.h"
 #include "Statement.h"
 #include "StatementIterator.h"
+
 #include "Model.h"
 
 using namespace Soprano;
@@ -43,7 +44,7 @@ Model::ExitCode Model::add( const Model &model )
 
   while ( stmi->hasNext() )
   {
-    if ( add( stmi->next() ) != Model::SUCCESS_EXIT ) 
+    if ( !add( stmi->next() ) ) 
     {
       delete stmi;
       return Model::ERROR_EXIT;
@@ -55,19 +56,23 @@ Model::ExitCode Model::add( const Model &model )
   return Model::SUCCESS_EXIT;
 }
 
-Node Model::createProperty( const QString &ns, const QString &value )
+Node Model::createPredicate( const QString &ns, const QString &value )
 {
-  return Node( QUrl( ns + value), Node::Resource );
+  if ( ns.isNull() ) 
+  {
+    return Node( QUrl( value ) );
+  }
+  return Node( QUrl( ns + "#" + value ) );
 }
 
-Node Model::createBlankNode( const QString &uri )
+Node Model::createBlank( const QString &uri )
 {
   return Node( uri, Node::Blank );
 }
 
 Node Model::createResource( const QUrl &uri )
 {
-  return Node( uri, Node::Resource );
+  return Node( uri );
 }
 
 Node Model::createLiteral( const QString &literal )

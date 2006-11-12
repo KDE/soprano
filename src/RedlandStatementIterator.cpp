@@ -62,11 +62,7 @@ const Soprano::Statement RedlandStatementIterator::next() const
     return Soprano::Statement();
   }
 
-  if ( !librdf_stream_next( d->stream ) )
-  {
-    // The stream has finished
-    return Soprano::Statement();
-  }
+  librdf_stream_next( d->stream );
 
   return Util::createStatement( st );
 }

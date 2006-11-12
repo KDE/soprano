@@ -1,32 +1,21 @@
-INCLUDE_DIRECTORIES(${CMAKE_SOURCE_DIR}/src )
-INCLUDE_DIRECTORIES(${QT_QTCORE_INCLUDE_DIR})
-INCLUDE_DIRECTORIES(${QT_QTTEST_INCLUDE_DIR})
-INCLUDE_DIRECTORIES(${CMAKE_BINARY_DIR}/tests)
+project(sopranotest)
 
-ADD_DEFINITIONS(${REDLAND_CFLAGS})
+# search packages used by KDE
+find_package(KDE4 REQUIRED)
+find_package(Qt4 REQUIRED)
+include(KDE4Defaults)
+include(MacroLibrary)
 
-#FIND_LIBRARY(QRDF_LIBRARY NAMES qrdf PATHS ${CMAKE_BINARY_DIR}/src)
+include_directories(${QT_INCLUDES})
 
-MACRO(MY_AUTOMOC)
-  QT4_GET_MOC_INC_DIRS(_moc_INCS)
-  FOREACH (_current_FILE ${ARGN})
-    GET_FILENAME_COMPONENT(_abs_FILE ${_current_FILE} ABSOLUTE)
-    GET_FILENAME_COMPONENT(_basename ${_current_FILE} NAME_WE)
-    SET(_moc ${CMAKE_CURRENT_BINARY_DIR}/${_basename}.moc)
-    ADD_CUSTOM_COMMAND(OUTPUT ${_moc}
-                       COMMAND ${QT_MOC_EXECUTABLE}
-                       ARGS ${_moc_INCS} -o ${_moc} ${_abs_FILE}
-                       DEPENDS ${_current_FILE}
-    )
-    ADD_FILE_DEPENDENCIES(${_abs_FILE} ${_moc})
-  ENDFOREACH (_current_FILE)
-ENDMACRO(MY_AUTOMOC)
+# Node
+kde4_automoc(nodetest NodeTest.cpp)
+kde4_add_executable(nodetest NodeTest.cpp)
+target_link_libraries(nodetest soprano knepclient ${QT_QTCORE_LIBRARY} ${QT_QTTEST_LIBRARY})
+add_test(nodetest ${EXECUTABLE_OUTPUT_PATH}/nodetest)
 
-#ADD_EXECUTABLE(test_node test_node.cpp)
-#MY_AUTOMOC(test_node.cpp)
-#TARGET_LINK_LIBRARIES(test_node ${QT_QTTEST_LIBRARY} )
-#ADD_DEPENDENCIES(test_node qrdf)
-#FIND_LIBRARY(QRDF_LIBRARY NAMES qrdf PATHS ${CMAKE_BINARY_DIR}/src)
-#TARGET_LINK_LIBRARIES(test_node ${QRDF_LIBRARY} )
-#ADD_TEST(test_node ${EXECUTABLE_OUTPUT_PATH}/test_node)
-
+# Statement
+kde4_automoc(statementtest StatementTest.cpp)
+kde4_add_executable(statementtest StatementTest.cpp)
+target_link_libraries(statementtest soprano knepclient ${QT_QTCORE_LIBRARY} ${QT_QTTEST_LIBRARY})
+add_test(statementtest ${EXECUTABLE_OUTPUT_PATH}/statementtest)

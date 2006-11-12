@@ -36,7 +36,7 @@ Soprano::Node Util::createNode( librdf_node *node )
   if ( librdf_node_is_resource( node ) ) 
   {
     librdf_uri *uri = librdf_node_get_uri( node );
-    return Soprano::Node( QUrl( (const char *)librdf_uri_as_string(uri) ), Node::Resource );
+    return Soprano::Node( QUrl( (const char *)librdf_uri_as_string(uri) ) );
   }
   else if ( librdf_node_is_literal( node ) )
   {
@@ -54,11 +54,7 @@ librdf_node *Util::createNode( const Node &node )
 {
   librdf_world *world = World::self()->worldPtr();
 
-  if ( node.isEmpty() ) 
-  {
-    return 0L;
-  } 
-  else if ( node.isResource() )
+  if ( node.isResource() )
   {
     return librdf_new_node_from_uri_string( world, (unsigned char *)node.uri().toString().toLatin1().data());
   }
@@ -81,8 +77,6 @@ librdf_statement *Util::createStatement( const Statement &statement )
   librdf_node *subject = createNode( statement.subject() );
   librdf_node *predicate = createNode( statement.predicate() );
   librdf_node *object = createNode( statement.object() );
-
-  if ( subject == 0L) qDebug("subject == null");
 
   return librdf_new_statement_from_nodes( world, subject, predicate, object );
 }
