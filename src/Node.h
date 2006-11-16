@@ -48,7 +48,7 @@ public:
   /**
    * Costructor for Resource node.
    */
-  Node( const QUrl &uri );
+  explicit Node( const QUrl &uri );
   
   /**
    * Constructor for Literal or Blank node.

@@ -42,7 +42,7 @@ namespace Nepomuk
 class NepomukModel: public Soprano::Model
 {
 public:
-  NepomukModel( const QString &name );
+  explicit NepomukModel( const QString &name );
 
   NepomukModel( const NepomukModel &other );
 

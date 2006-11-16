@@ -40,7 +40,7 @@ namespace Redland
 class RedlandQueryResult: public Soprano::QueryResult
 {
 public:
-  RedlandQueryResult( librdf_query_results *result );
+  explicit RedlandQueryResult( librdf_query_results *result );
 
   ~RedlandQueryResult();
     

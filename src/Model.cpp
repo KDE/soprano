@@ -62,7 +62,7 @@ Node Model::createPredicate( const QString &ns, const QString &value )
   {
     return Node( QUrl( value ) );
   }
-  return Node( QUrl( ns + "#" + value ) );
+  return Node( QUrl( ns + '#' + value ) );
 }
 
 Node Model::createBlank( const QString &uri )

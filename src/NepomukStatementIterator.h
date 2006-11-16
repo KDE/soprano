@@ -41,7 +41,7 @@ namespace Nepomuk
 class NepomukStatementIterator: public Soprano::StatementIterator
 {
 public:
-  NepomukStatementIterator( RDF::StatementListIterator *iter );
+  explicit NepomukStatementIterator( RDF::StatementListIterator *iter );
 
   ~NepomukStatementIterator();
 

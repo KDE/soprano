@@ -43,7 +43,7 @@ namespace Redland
 class RedlandModel: public Soprano::Model
 {
 public:
-  RedlandModel( librdf_model *model );
+  explicit RedlandModel( librdf_model *model );
 
   RedlandModel( const RedlandModel &other );
 

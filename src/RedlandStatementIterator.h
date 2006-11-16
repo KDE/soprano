@@ -39,7 +39,7 @@ namespace Redland
 class RedlandStatementIterator: public Soprano::StatementIterator
 {
 public:
-  RedlandStatementIterator( librdf_stream *stream );
+  explicit RedlandStatementIterator( librdf_stream *stream );
 
   ~RedlandStatementIterator();
 
