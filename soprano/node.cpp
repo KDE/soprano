@@ -115,6 +115,19 @@ const QString &Node::blank() const
   return ( isBlank() ? d->value : emptyQString );
 }
 
+QString Node::toString() const
+{
+  if ( isLiteral() || isBlank() ) 
+  {
+    return d->value;
+  }
+  if ( isResource() )
+  {
+    return d->uri.toString();
+  }
+  return emptyQString;
+}
+
 Node& Node::operator=( const Node& other )
 {
   d->type = other.type();

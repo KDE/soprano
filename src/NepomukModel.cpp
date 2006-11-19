@@ -22,6 +22,7 @@
 #include <knep/registry.h>
 #include <knep/service.h>
 #include <knep/services/tripleservice.h>
+#include <knep/services/queryservice.h>
 #include <knep/services/statementlistiterator.h>
 
 #include "Query.h"
@@ -39,9 +40,8 @@ struct NepomukModel::Private {
   Private()
   {}
 
-  Registry *registry;
   TripleService *ts;
-  Service *service;
+  QueryService *qs;
 
   QString name;
 };
@@ -64,18 +64,17 @@ NepomukModel::NepomukModel( const NepomukModel &other )
 void NepomukModel::init()
 {
   d = new Private();
-  d->registry = new Registry();
-  d->service = d->registry->discoverServiceByType( "http://nepomuk.semanticdesktop.org/services/storage/rdf/Triple" );
+  
+  Registry registry;
 
-  Q_ASSERT( d->service != 0L );
-  d->ts = new TripleService( d->service );
+  d->ts = new TripleService( registry.discoverServiceByType( "http://nepomuk.semanticdesktop.org/services/storage/rdf/Triple" ) );
+  d->qs = new QueryService( registry.discoverServiceByType( "http://nepomuk.semanticdesktop.org/services/storage/rdf/Query" ) );
 }
 
 NepomukModel::~NepomukModel()
 {
   delete d->ts;
-  delete d->service;
-  delete d->registry;
+  delete d->qs;
   delete d;
 }
 
@@ -105,7 +104,10 @@ bool NepomukModel::contains( const Statement &statement ) const
 
 Soprano::QueryResult *NepomukModel::executeQuery( const Query &query ) const
 {
-  // TODO: When query service will be ready
+  RDF::QueryResult result = d->qs->executeQuery( d->name, query.query(), "rdql", query.offset(), query.limit() );
+
+
+
   return 0L;
 }
 

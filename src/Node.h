@@ -117,6 +117,10 @@ public:
    */
   const QString &blank() const;
 
+  /**
+   *\return A String rappresentation of the Node.
+   */
+  QString toString() const;
 private:
   class Private;
   Private *d;

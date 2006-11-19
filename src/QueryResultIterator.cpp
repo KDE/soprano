@@ -19,17 +19,47 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef SOPRANO_H
-#define SOPRANO_H
+#include "Node.h"
+#include "QueryResultIterator.h"
 
-#include "soprano/Query.h"
-#include "soprano/QueryResult.h"
-#include "soprano/QueryResultIterator.h"
-#include "soprano/Node.h"
-#include "soprano/Statement.h"
-#include "soprano/StatementIterator.h"
-#include "soprano/Model.h"
-#include "soprano/ModelFactory.h"
-#include "soprano/Manager.h"
+using namespace Soprano;
 
-#endif // SOPRANO_H
+struct QueryResultIterator::Private
+{
+  Private() : qr(0L)
+  {}
+
+  QueryResult *qr;
+  QMap<QString, Node> row;
+};
+
+QueryResultIterator::QueryResultIterator( QueryResult *qr )
+{
+  d = new Private();
+  d->qr = qr;
+}
+
+QueryResultIterator::~QueryResultIterator()
+{
+  delete d->qr;
+  delete d;
+}
+
+bool QueryResultIterator::hasNext() const
+{
+  return d->qr->hasNext();
+}
+
+const QMap<QString, Node> &QueryResultIterator::next() const
+{
+  QStringList names = d->qr->getBindingNames();
+  QStringListIterator iter( names );
+  while ( iter.hasNext() )
+  {
+    QString col = iter.next();
+    d->row[ col ] = d->qr->getBinding( col );
+  }
+
+  d->qr->next();
+  return d->row;
+}

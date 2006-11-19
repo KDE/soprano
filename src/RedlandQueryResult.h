@@ -52,6 +52,8 @@ public:
     
   Soprano::Node getBinding( const QString &name ) const;
 
+  const QStringList &getBindingNames() const;
+
   bool isGraph() const;
 
   bool isBinding() const;

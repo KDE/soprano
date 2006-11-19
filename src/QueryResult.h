@@ -21,7 +21,8 @@
 #ifndef SOPRANO_QUERY_RESULT_H
 #define SOPRANO_QUERY_RESULT_H
 
-class QString;
+#include <QString>
+#include <QStringList>
 
 namespace Soprano {
 
@@ -39,6 +40,8 @@ public:
   virtual bool next() const = 0;
 
   virtual Node getBinding( const QString &name ) const = 0;
+
+  virtual const QStringList &getBindingNames() const = 0;
 
   virtual bool isGraph() const = 0;
 

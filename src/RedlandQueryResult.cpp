@@ -1,4 +1,5 @@
-/* This file is part of Soprano
+/* 
+ * This file is part of Soprano Project
  *
  * Copyright (C) 2006 Daniele Galdi <daniele.galdi@gmail.com>
  *
@@ -29,6 +30,8 @@ struct RedlandQueryResult::Private
   Private() : result(0L)
   {}
   librdf_query_results *result;
+
+  QStringList names;
 };
 
 RedlandQueryResult::RedlandQueryResult( librdf_query_results *result )
@@ -36,6 +39,11 @@ RedlandQueryResult::RedlandQueryResult( librdf_query_results *result )
   d = new Private;
   d->result = result;
   Q_ASSERT( d->result != 0L );
+
+  int count = librdf_query_results_get_bindings_count ( result );
+  for (int offset = 0; offset < count; offset++) {
+    d->names.append( QString( librdf_query_results_get_binding_name( result, offset ) ) );
+  }
 }
 
 RedlandQueryResult::~RedlandQueryResult()
@@ -72,6 +80,11 @@ Soprano::Node RedlandQueryResult::getBinding( const QString &name ) const
   librdf_free_node( node );
   
   return tmp;
+}
+
+const QStringList &RedlandQueryResult::getBindingNames() const
+{
+  return d->names;
 }
 
 bool RedlandQueryResult::isGraph() const

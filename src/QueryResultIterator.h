@@ -19,17 +19,40 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef SOPRANO_H
-#define SOPRANO_H
+#ifndef SOPRANO_QUERY_RESULT_ITERATOR_H
+#define SOPRANO_QUERY_RESULT_ITERATOR_H
 
-#include "soprano/Query.h"
-#include "soprano/QueryResult.h"
-#include "soprano/QueryResultIterator.h"
-#include "soprano/Node.h"
-#include "soprano/Statement.h"
-#include "soprano/StatementIterator.h"
-#include "soprano/Model.h"
-#include "soprano/ModelFactory.h"
-#include "soprano/Manager.h"
+#include <QMap>
+#include <QString>
 
-#endif // SOPRANO_H
+#include "QueryResult.h"
+
+namespace Soprano {
+
+class Node;
+
+class QueryResultIterator
+{
+public:
+  QueryResultIterator( QueryResult *qr );
+
+  ~QueryResultIterator();
+
+  /**
+   *\return true if there is another Result
+   */
+  bool hasNext() const;
+
+  /**
+   *\return the Next Row
+   */
+  const QMap<QString, Node> &next() const;
+private:
+  class Private;
+  Private *d;
+};
+
+}
+
+#endif // SOPRANO_QUERY_RESULT_ITERATOR_H
+
