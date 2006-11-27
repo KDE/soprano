@@ -58,6 +58,6 @@ const QStringList &Manager::listModelFactoryNames() const
 ModelFactory *Manager::factory( const QString &name ) const
 {
   if ( name == "Redland" ) return new RedlandModelFactory();
-  if ( name == "Nepomuk" ) return new NepomukModelFactory();
+  //if ( name == "Nepomuk" ) return new NepomukModelFactory();
   return 0L;
 }
