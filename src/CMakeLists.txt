@@ -1,3 +1,4 @@
+include(KDE4Defaults)
 
 SET(soprano_SRCS 
     Query.cpp	    
@@ -21,10 +22,10 @@ SET(soprano_SRCS
     RedlandParser.cpp 
 
     # NepomukBackend
-    NepomukUtil.cpp
-    NepomukModel.cpp
-    NepomukStatementIterator.cpp
-    NepomukModelFactory.cpp
+#    NepomukUtil.cpp
+ #   NepomukModel.cpp
+  #  NepomukStatementIterator.cpp
+   # NepomukModelFactory.cpp
    )    
 
 ADD_DEFINITIONS(${REDLAND_CFLAGS})
