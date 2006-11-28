@@ -40,7 +40,7 @@ class Model
 public:
   enum ExitCode {
     ERROR_EXIT = 0,
-    SUCCESS_EXIT,
+    SUCCESS_EXIT
   };
 
   virtual ~Model();
