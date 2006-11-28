@@ -22,10 +22,10 @@ SET(soprano_SRCS
     RedlandParser.cpp 
 
     # NepomukBackend
-#    NepomukUtil.cpp
- #   NepomukModel.cpp
-  #  NepomukStatementIterator.cpp
-   # NepomukModelFactory.cpp
+    NepomukUtil.cpp
+    NepomukModel.cpp
+    NepomukStatementIterator.cpp
+    NepomukModelFactory.cpp
    )    
 
 ADD_DEFINITIONS(${REDLAND_CFLAGS})
@@ -37,6 +37,7 @@ TARGET_LINK_LIBRARIES(soprano ${RAPTOR_LIBRARIES})
 TARGET_LINK_LIBRARIES(soprano ${RASQAL_LIBRARIES})
 TARGET_LINK_LIBRARIES(soprano ${REDLAND_LIBRARIES})
 TARGET_LINK_LIBRARIES(soprano ${QT_QTCORE_LIBRARY})
+TARGET_LINK_LIBRARIES(soprano knepclient)
 
 INSTALL(TARGETS soprano
 		LIBRARY DESTINATION lib)

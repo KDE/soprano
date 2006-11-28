@@ -22,7 +22,7 @@
 #ifndef SOPRANO_BACKEND_NEPOMUK_UTIL_H
 #define SOPRANO_BACKEND_NEPOMUK_UTIL_H
 
-#include <knep/services/tripleservicepublisher.h>
+#include <knep/services/rdf.h>
 using namespace Nepomuk::Backbone::Services;
 
 namespace Soprano
