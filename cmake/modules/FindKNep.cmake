@@ -1,24 +1,17 @@
-include(CheckIncludeFiles)
+FIND_PATH(KNEP_INCLUDE_DIR knep/knep.h
+   /usr/include
+   /usr/local/include
+   /home/kdedev/test/include
+)
 
-check_include_files("knep/knep.h;/home/kdedev/test/include/knep/knep.h" HAVE_KNEP_KNEP_H)
+FIND_LIBRARY(KNEP_LIBRARIES NAMES knepclient
+   PATHS
+   /usr/lib
+   /usr/local/lib
+   /home/kdedev/test/lib  
+)
 
-if (HAVE_KNEP_KNEP_H)
-   set(KNEP_HEADERS_FOUND TRUE)
-endif (HAVE_KNEP_KNEP_H)
-
-if (KNEP_HEADERS_FOUND)
-   FIND_LIBRARY(KNEP_LIBS NAMES knepclient
-      PATHS
-      /usr/lib
-      /usr/local/lib
-   )
-endif (KNEP_HEADERS_FOUND)
-
-if (KNEP_HEADERS_FOUND)
+if(KNEP_INCLUDE_DIR AND KNEP_LIBRARIES)
    set(KNEP_FOUND TRUE)
-   set(KNEP_LIBS ${KNEP_LIBS})
-   message(STATUS "Found KNepomuk: ${KNEP_LIBS}")
-endif (KNEP_HEADERS_FOUND)
-
-#MARK_AS_ADVANCED(KNEP_LIBS)
-CONFIGURE_FILE(${CMAKE_CURRENT_SOURCE_DIR}/config.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/config.h)
+   message(STATUS "Found KNepomuk: ${KNEP_LIBRARIES}")
+endif(KNEP_INCLUDE_DIR AND KNEP_LIBRARIES)
