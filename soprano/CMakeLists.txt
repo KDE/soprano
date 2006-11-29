@@ -20,17 +20,20 @@ SET(soprano_SRCS
     RedlandModel.cpp
     RedlandModelFactory.cpp
     RedlandParser.cpp 
-
-    # NepomukBackend
-    NepomukUtil.cpp
-    NepomukModel.cpp
-    NepomukStatementIterator.cpp
-    NepomukModelFactory.cpp
    )    
+
+if (KNEP_FOUND)
+   SET(nepomuk_SRCS
+      NepomukUtil.cpp
+      NepomukModel.cpp
+      NepomukStatementIterator.cpp
+      NepomukModelFactory.cpp
+   )
+endif(KNEP_FOUND)
 
 ADD_DEFINITIONS(${REDLAND_CFLAGS})
 
-ADD_LIBRARY(soprano SHARED ${soprano_SRCS})
+ADD_LIBRARY(soprano SHARED ${soprano_SRCS} ${nepomuk_SRCS})
 
 TARGET_LINK_LIBRARIES(soprano ${RAPTOR_LIBRARIES})
 TARGET_LINK_LIBRARIES(soprano ${RASQAL_LIBRARIES})
