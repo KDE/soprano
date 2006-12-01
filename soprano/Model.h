@@ -99,11 +99,15 @@ public:
    *
    * \return All the Statements that match the query. NULL on error.
    */
+  // FIXME: returning a pointer is not a good idea becasue this way the user
+  //        has to delete it manually
   virtual QueryResult *executeQuery( const Query &query ) const = 0;
 
   /**
    * \return An iterator for all the contained Statements. NULL on error.
    */ 
+  // FIXME: returning a pointer is not a good idea becasue this way the user
+  //        has to delete it manually
   StatementIterator *listStatements() const;
 
   /**
@@ -114,6 +118,8 @@ public:
    *
    * \return An iterator for all the matched Statements. NULL on error.
    */
+  // FIXME: returning a pointer is not a good idea becasue this way the user
+  //        has to delete it manually
   virtual StatementIterator *listStatements( const Statement &partial ) const = 0;
 
   /**

@@ -38,7 +38,8 @@ class RedlandModel;
 class RedlandParser: public Soprano::Parser
 {
 public:
-  RedlandModel *parse( const QUrl &url ) const;
+  RedlandParser();
+  RedlandModel *parse( const QString &filePath ) const;
 };
 
 }

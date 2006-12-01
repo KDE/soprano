@@ -46,6 +46,8 @@ public:
 
   RedlandModel *createPersistentModel( const QString &name ) const;
 
+  Parser *createParser() const;
+
 private:
   RedlandModelFactory( const RedlandModelFactory &other ) {};
   RedlandModel *createModel( const QString &type, const QString &name, const QString &options ) const;

@@ -49,3 +49,8 @@ NepomukModel *NepomukModelFactory::createPersistentModel( const QString &name ) 
 {
   return new NepomukModel( name );
 }
+
+Soprano::Parser *NepomukModelFactory::createParser() const
+{
+  return 0;
+}

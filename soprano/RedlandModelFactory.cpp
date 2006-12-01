@@ -22,6 +22,7 @@
 #include <redland.h>
 #include "World.h"
 #include "RedlandModel.h"
+#include "RedlandParser.h"
 #include "RedlandModelFactory.h"
 
 using namespace Soprano::Backend::Redland;
@@ -79,4 +80,10 @@ RedlandModel *RedlandModelFactory::createModel( const QString &type, const QStri
   } 
 
   return new RedlandModel( model );
+}
+
+
+Soprano::Parser *RedlandModelFactory::createParser() const
+{
+  return new RedlandParser();
 }

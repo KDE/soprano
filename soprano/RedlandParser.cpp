@@ -19,7 +19,7 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#include <QUrl>
+
 #include <redland.h>
 
 #include "World.h"
@@ -29,19 +29,23 @@
 
 using namespace Soprano::Backend::Redland;
 
-RedlandModel *RedlandParser::parse( const QUrl &url ) const
+RedlandParser::RedlandParser()
+{
+}
+
+RedlandModel *RedlandParser::parse( const QString &url ) const
 {
   librdf_world *w = World::self()->worldPtr();
 
   RedlandModelFactory factory;
   
-  RedlandModel *model = factory.createMemoryModel( url.toString() );
+  RedlandModel *model = factory.createMemoryModel( url );
   if ( !model ) 
   {
     return 0L;
   }
 
-  librdf_uri *uri = librdf_new_uri( w, (unsigned char *) url.toString().toLatin1().data() );  
+  librdf_uri *uri = librdf_new_uri( w, (unsigned char *) url.toLatin1().data() );  
   if ( !uri ) 
   {
     delete model;

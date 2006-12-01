@@ -46,6 +46,8 @@ public:
 
   NepomukModel *createPersistentModel( const QString &name ) const;
 
+  Parser *createParser() const;
+
 private:
   NepomukModelFactory( const NepomukModelFactory &other ) {};
 

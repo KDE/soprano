@@ -22,7 +22,11 @@
 
 using namespace Soprano;
 
-Parser::~Parser()
+Parser::Parser()
 {
 }
 
+
+Parser::~Parser()
+{
+}

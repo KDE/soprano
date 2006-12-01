@@ -28,6 +28,7 @@ namespace Soprano
 {
 
 class Model;
+class Parser;
 
 class ModelFactory
 {
@@ -53,6 +54,11 @@ public:
    * \return a new Model or NULL on error
    */
   virtual Model *createPersistentModel( const QString &name ) const = 0;
+
+  /**
+   * Create a new Parser
+   */
+  virtual Parser *createParser() const = 0;
 };
 
 }

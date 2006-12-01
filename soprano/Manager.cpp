@@ -31,6 +31,8 @@ using namespace Soprano;
 using namespace Soprano::Backend::Redland;
 using namespace Soprano::Backend::Nepomuk;
 
+Manager* Manager::s_instance = 0;
+
 struct Manager::Private {
   Private()
   {}
@@ -38,8 +40,17 @@ struct Manager::Private {
   QStringList names;
 };
 
+Manager* Manager::instance()
+{
+  if( !s_instance )
+    s_instance = new Manager();
+  return s_instance;
+}
+
 Manager::Manager()
 {
+  s_instance = this;
+
   d = new Private;
   d->names << "Redland";
   d->names << "Nepomuk";
@@ -47,6 +58,7 @@ Manager::Manager()
 
 Manager::~Manager()
 {
+  s_instance = 0;
   delete d;
 }
 
