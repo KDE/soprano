@@ -27,6 +27,8 @@
 #include "RedlandModelFactory.h"
 #include "RedlandParser.h"
 
+#include <QtCore>
+
 using namespace Soprano::Backend::Redland;
 
 RedlandParser::RedlandParser()
@@ -61,7 +63,18 @@ RedlandModel *RedlandParser::parse( const QString &url ) const
     return 0L;
   }
 
-  if ( librdf_parser_parse_into_model( parser, uri, uri, model->modelPtr() ) )
+  QFile f( url );
+  if ( !f.open( QIODevice::ReadOnly ) )
+  {
+    qDebug() << "failed to open " << url << endl;
+    delete model;
+    librdf_free_uri( uri );
+    return 0;
+  }
+  if ( librdf_parser_parse_string_into_model( parser,
+					      reinterpret_cast<unsigned char*>( QTextStream( &f ).readAll().toLocal8Bit().data() ),
+					      uri,
+					      model->modelPtr() ) )
   {
     delete model;
     model = 0L;
