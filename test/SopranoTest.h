@@ -35,6 +35,7 @@ Q_OBJECT
 private Q_SLOTS:
    void testAddStatements();
    void testListStatements();
+   void testRemoveStatement();
 
 protected:
    Soprano::Model* m_model;

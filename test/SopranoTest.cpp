@@ -48,7 +48,6 @@ void SopranoTest::testAddStatements()
   QVERIFY( m_model->add( st4 ) == Soprano::Model::SUCCESS_EXIT );
 }
 
-
 void SopranoTest::testListStatements()
 {
   QUrl subUri = QUrl("uri:soprano:test1");
@@ -68,6 +67,22 @@ void SopranoTest::testListStatements()
   QCOMPARE( cnt, 2 );
 
   delete it;
+}
+
+void SopranoTest::testRemoveStatement()
+{
+  Node subject = m_model->createResource( QUrl("uri:soprano:3") );
+  Node predicate = m_model->createPredicate( "soprano", "predicate" );
+  Node object = m_model->createResource( QUrl("uri:soprano:2") );
+  
+  Statement st(subject, predicate, object);
+  m_model->add( st );
+
+  QVERIFY( m_model->contains(st) );
+
+  m_model->remove( st );
+
+  QVERIFY( !m_model->contains(st) );
 }
 
 #include "SopranoTest.moc"
