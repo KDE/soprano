@@ -50,7 +50,7 @@ RedlandStatementIterator::~RedlandStatementIterator()
 
 bool RedlandStatementIterator::hasNext() const
 {
-  return librdf_stream_end( d->stream) == 0; 
+  return !librdf_stream_end( d->stream ); 
 }
 
 const Soprano::Statement RedlandStatementIterator::next() const
@@ -59,11 +59,15 @@ const Soprano::Statement RedlandStatementIterator::next() const
   if ( !st )
   {
     // Return a not valid Statement
+    // as last last value.
     return Soprano::Statement();
   }
 
+  Statement copy = Util::createStatement( st );
+
+  // Move to the next element
   librdf_stream_next( d->stream );
 
-  return Util::createStatement( st );
+  return copy;
 }
 

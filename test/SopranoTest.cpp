@@ -28,12 +28,14 @@ using namespace Soprano;
 
 void SopranoTest::testAddStatements()
 {
-  Node subject1(QUrl("uri:soprano:test1"));
-  Node subject2(QUrl("uri:soprano:test2"));
-  Node predicate1(QUrl("uri:soprano:predicate1"));
-  Node predicate2(QUrl("uri:soprano:predicate2"));
-  Node object1(QString("Literal value1"));
-  Node object2(QString("Literal value2"));
+  Node subject1 = m_model->createResource( QUrl("uri:soprano:test1") );
+  Node subject2 = m_model->createResource( QUrl("uri:soprano:test2") );
+
+  Node predicate1 = m_model->createPredicate( "soprano", "predicate1" );
+  Node predicate2 = m_model->createPredicate( "soprano", "predicate2" );
+
+  Node object1 = m_model->createLiteral( "Literal value1" );
+  Node object2 = m_model->createLiteral( "Literal value2" );
 
   Statement st1(subject1, predicate1, object1);
   Statement st2(subject2, predicate1, object1);
@@ -56,7 +58,11 @@ void SopranoTest::testListStatements()
   int cnt = 0;
   while( it->hasNext() ) {
     ++cnt;
-    QCOMPARE( it->next().subject().uri(), subUri );
+    Statement st = it->next();
+
+    qDebug() << st.subject().uri();
+
+    QCOMPARE( st.subject().uri(), subUri );
   }
 
   QCOMPARE( cnt, 2 );

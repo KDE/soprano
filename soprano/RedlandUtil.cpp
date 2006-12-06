@@ -19,8 +19,7 @@
  * Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
-#include <QUrl>
-#include <QtGlobal>
+#include <QtCore>
 
 #include "Node.h"
 #include "Query.h"
@@ -66,8 +65,6 @@ librdf_node *Util::createNode( const Node &node )
   {
     return librdf_new_node_from_blank_identifier( world, (unsigned char *) node.blank().toLatin1().data() );
   }
-  else
-    Q_ASSERT(false);
 
   return 0L;
 }
