@@ -37,17 +37,25 @@ RedlandParser::RedlandParser()
 
 RedlandModel *RedlandParser::parse( const QUrl &toparse ) const
 {
+  QUrl tmp(toparse);
+  if (toparse.scheme().isEmpty())
+  {
+    tmp.setScheme("file");
+  }
+
+  qDebug() << tmp.toString();
+
   librdf_world *w = World::self()->worldPtr();
 
   RedlandModelFactory factory;
   
-  RedlandModel *model = factory.createMemoryModel( toparse.toString() );
+  RedlandModel *model = factory.createMemoryModel( tmp.toString() );
   if ( !model ) 
   {
     return 0L;
   }
 
-  librdf_uri *uri = librdf_new_uri( w, (unsigned char *) toparse.toString().toLatin1().data() );  
+  librdf_uri *uri = librdf_new_uri( w, (unsigned char *) tmp.toString().toLatin1().data() );  
   if ( !uri ) 
   {
     delete model;
