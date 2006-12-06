@@ -19,8 +19,6 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#include <QtGlobal>
-
 #include "World.h"
 
 using namespace Soprano::Backend::Redland;
@@ -31,7 +29,6 @@ World *World::self()
 {
   if ( !m_instance )
   {
-    qDebug( "new World()\n" );
     m_instance = new World();
   }
 

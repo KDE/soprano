@@ -35,19 +35,19 @@ RedlandParser::RedlandParser()
 {
 }
 
-RedlandModel *RedlandParser::parse( const QString &url ) const
+RedlandModel *RedlandParser::parse( const QUrl &toparse ) const
 {
   librdf_world *w = World::self()->worldPtr();
 
   RedlandModelFactory factory;
   
-  RedlandModel *model = factory.createMemoryModel( url );
+  RedlandModel *model = factory.createMemoryModel( toparse.toString() );
   if ( !model ) 
   {
     return 0L;
   }
 
-  librdf_uri *uri = librdf_new_uri( w, (unsigned char *) url.toLatin1().data() );  
+  librdf_uri *uri = librdf_new_uri( w, (unsigned char *) toparse.toString().toLatin1().data() );  
   if ( !uri ) 
   {
     delete model;
@@ -63,18 +63,9 @@ RedlandModel *RedlandParser::parse( const QString &url ) const
     return 0L;
   }
 
-  QFile f( url );
-  if ( !f.open( QIODevice::ReadOnly ) )
-  {
-    qDebug() << "failed to open " << url << endl;
-    delete model;
-    librdf_free_uri( uri );
-    return 0;
-  }
-  if ( librdf_parser_parse_string_into_model( parser,
-					      reinterpret_cast<unsigned char*>( QTextStream( &f ).readAll().toLocal8Bit().data() ),
-					      uri,
-					      model->modelPtr() ) )
+  qDebug() << "parser done..";
+
+  if ( librdf_parser_parse_into_model( parser, uri, uri, model->modelPtr() ) )
   {
     delete model;
     model = 0L;

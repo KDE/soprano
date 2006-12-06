@@ -21,7 +21,7 @@
 #ifndef SOPRANO_PARSER_H
 #define SOPRANO_PARSER_H
 
-class QString;
+class QUrl;
 
 namespace Soprano
 {
@@ -32,7 +32,7 @@ class Parser
 {
 public:
   virtual ~Parser();
-  virtual Model *parse( const QString &filePath ) const = 0;
+  virtual Model *parse( const QUrl &uri ) const = 0;
 
 protected:
   explicit Parser();
