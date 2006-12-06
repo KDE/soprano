@@ -43,8 +43,6 @@ RedlandModel *RedlandParser::parse( const QUrl &toparse ) const
     tmp.setScheme("file");
   }
 
-  qDebug() << tmp.toString();
-
   librdf_world *w = World::self()->worldPtr();
 
   RedlandModelFactory factory;
