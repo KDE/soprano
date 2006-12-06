@@ -63,8 +63,6 @@ RedlandModel *RedlandParser::parse( const QUrl &toparse ) const
     return 0L;
   }
 
-  qDebug() << "parser done..";
-
   if ( librdf_parser_parse_into_model( parser, uri, uri, model->modelPtr() ) )
   {
     delete model;
