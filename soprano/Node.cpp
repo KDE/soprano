@@ -25,8 +25,9 @@
 
 using namespace Soprano;
 
-struct Node::Private
+class Node::Private : public QSharedData
 {
+public:
   Private(): type(Unknown)
   {}
   Type type;
@@ -44,10 +45,7 @@ Node::Node()
 
 Node::Node( const Node &other )
 {
-  d = new Private;
-  d->type = other.type();
-  d->uri = other.uri();
-  d->value = other.literal();
+  d = other.d;
 }
 
 Node::Node( const QUrl &uri )
@@ -67,7 +65,6 @@ Node::Node( const QString &value, Type type )
 
 Node::~Node()
 {
-  delete d;
 }
 
 bool Node::isEmpty() const
@@ -130,9 +127,7 @@ QString Node::toString() const
 
 Node& Node::operator=( const Node& other )
 {
-  d->type = other.type();
-  d->uri = other.uri();
-  d->value = other.literal();
+  d = other.d;
   return *this;
 }
 

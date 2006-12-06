@@ -24,10 +24,9 @@
 
 using namespace Soprano;
 
-struct Statement::Private
+class Statement::Private : public QSharedData
 {
-  Private()
-  {}
+public:
   Node subject;
   Node predicate;
   Node object;
@@ -40,10 +39,7 @@ Statement::Statement()
 
 Statement::Statement( const Statement &other )
 {
-  d = new Private;
-  d->subject = other.subject();
-  d->predicate = other.predicate();
-  d->object = other.object();
+  d = other.d;
 }
 
 Statement::Statement( const Node &subject, const Node &predicate, const Node &object )
@@ -56,15 +52,11 @@ Statement::Statement( const Node &subject, const Node &predicate, const Node &ob
 
 Statement::~Statement()
 {
-  delete d;
 }
 
 Statement& Statement::operator=( const Statement& other )
 {
-  d->subject = other.subject();
-  d->predicate = other.predicate();
-  d->object = other.object();
-
+  d = other.d;
   return *this;
 }
 
@@ -77,6 +69,7 @@ bool Statement::operator==( const Statement& other )
 
 void Statement::setSubject( const Node &subject )
 {
+  // d->detach() is called automatically
   d->subject = subject;
 }
 
@@ -87,6 +80,7 @@ const Node &Statement::subject() const
 
 void Statement::setPredicate( const Node &predicate )
 {
+  // d->detach() is called automatically
   d->predicate = predicate;
 }
 
@@ -97,6 +91,7 @@ const Node &Statement::predicate() const
 
 void Statement::setObject( const Node &object )
 {
+  // d->detach() is called automatically
   d->object = object;
 }
 

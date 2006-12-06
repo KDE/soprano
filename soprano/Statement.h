@@ -22,6 +22,8 @@
 #ifndef SOPRANO_STATEMENT_H
 #define SOPRANO_STATEMENT_H
 
+#include <QtCore>
+
 namespace Soprano
 {
 
@@ -100,7 +102,7 @@ public:
 
 private:
   class Private;
-  Private *d;
+  QSharedDataPointer<Private> d;
 };
 
 }

@@ -22,8 +22,7 @@
 #ifndef SOPRANO_NODE_H
 #define SOPRANO_NODE_H
 
-class QString;
-class QUrl;
+#include <QtCore>
 
 namespace Soprano
 {
@@ -123,7 +122,7 @@ public:
   QString toString() const;
 private:
   class Private;
-  Private *d;
+  QSharedDataPointer<Private> d;
 };
 
 }
