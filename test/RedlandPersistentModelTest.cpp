@@ -1,7 +1,7 @@
 /* 
  * This file is part of Soprano Project.
  *
- * Copyright (C) 2006 Sebastian Trueg <strueg@mandriva.com>
+ * Copyright (C) 2006 Daniele Galdi <daniele.galdi@gmail.com>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -19,25 +19,19 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#include <QtTest>
+#include <soprano/Soprano.h>
 
-#ifndef SOPRANO_TEST_H
-#define SOPRANO_TEST_H
+#include "RedlandPersistentModelTest.h"
 
-namespace Soprano {
-  class Model;
+using namespace Soprano;
+
+void RedlandPersistentModelTest::initTestCase()
+{
+  ModelFactory *factory = Manager::instance()->factory( "Redland" );
+  m_model = factory->createPersistentModel( "test" );
 }
 
-class SopranoTest: public QObject
-{
-Q_OBJECT
+QTEST_MAIN(RedlandPersistentModelTest)
 
-private Q_SLOTS:
-   void testAddStatements();
-   void testListStatements();
+#include "RedlandPersistentModelTest.moc"
 
-protected:
-   Soprano::Model* m_model;
-};
-
-#endif

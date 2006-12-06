@@ -26,13 +26,6 @@
 
 using namespace Soprano;
 
-void SopranoTest::initTestCase()
-{
-  ModelFactory *factory = Manager::instance()->factory( "Redland" );
-  m_model = factory->createPersistentModel( "test" );
-}
-
-
 void SopranoTest::testAddStatements()
 {
   Node subject1(QUrl("uri:soprano:test1"));
@@ -70,7 +63,5 @@ void SopranoTest::testListStatements()
 
   delete it;
 }
-
-QTEST_MAIN(SopranoTest)
 
 #include "SopranoTest.moc"

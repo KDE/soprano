@@ -16,6 +16,13 @@ add_test(statementtest ${EXECUTABLE_OUTPUT_PATH}/statementtest)
 
 # general
 kde4_automoc(sopranotest SopranoTest.cpp)
-kde4_add_executable(sopranotest SopranoTest.cpp)
-target_link_libraries(sopranotest soprano ${QT_QTCORE_LIBRARY} ${QT_QTTEST_LIBRARY})
-add_test(sopranotest ${EXECUTABLE_OUTPUT_PATH}/sopranotest)
+kde4_automoc(sopranommtest RedlandMemoryModelTest.cpp)
+kde4_automoc(sopranopmtest RedlandPersistentModelTest.cpp)
+
+kde4_add_executable(sopranommtest SopranoTest.cpp RedlandMemoryModelTest.cpp)
+target_link_libraries(sopranommtest soprano ${QT_QTCORE_LIBRARY} ${QT_QTTEST_LIBRARY})
+add_test(sopranommtest ${EXECUTABLE_OUTPUT_PATH}/sopranommtest)
+
+kde4_add_executable(sopranopmtest SopranoTest.cpp RedlandPersistentModelTest.cpp)
+target_link_libraries(sopranopmtest soprano ${QT_QTCORE_LIBRARY} ${QT_QTTEST_LIBRARY})
+add_test(sopranopmtest ${EXECUTABLE_OUTPUT_PATH}/sopranopmtest)

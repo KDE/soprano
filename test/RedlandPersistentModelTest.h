@@ -1,7 +1,7 @@
 /* 
  * This file is part of Soprano Project.
  *
- * Copyright (C) 2006 Sebastian Trueg <strueg@mandriva.com>
+ * Copyright (C) 2006 Daniele Galdi <daniele.galdi@gmail.com>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -21,23 +21,21 @@
 
 #include <QtTest>
 
-#ifndef SOPRANO_TEST_H
-#define SOPRANO_TEST_H
+#include "SopranoTest.h"
+
+#ifndef REDLAND_PERSISTENT_MODEL_TEST_H
+#define REDLAND_PERSISTENT_MODEL_TEST_H
 
 namespace Soprano {
   class Model;
 }
 
-class SopranoTest: public QObject
+class RedlandPersistentModelTest: public SopranoTest
 {
 Q_OBJECT
 
 private Q_SLOTS:
-   void testAddStatements();
-   void testListStatements();
-
-protected:
-   Soprano::Model* m_model;
+   void initTestCase();
 };
 
-#endif
+#endif // REDLAND_PERSISTENT_MODEL_TEST_H
