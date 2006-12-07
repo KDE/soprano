@@ -40,7 +40,9 @@ private Q_SLOTS:
   void testAddStatements();
 
   void testListStatements();
+
   void testRemoveStatement();
+  void testRemoveAllStatement();
 
 protected:
    Soprano::Model* m_model;

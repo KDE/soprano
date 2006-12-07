@@ -127,9 +127,9 @@ StatementIterator *Model::listStatements( const Node &subject, const Node &predi
   return listStatements( Statement(subject, predicate, object) );
 }
 
-Model::ExitCode Model::removeAll()
+Model::ExitCode Model::removeAll( const Node &subject, const Node &predicate, const Node &object )
 {
-  StatementIterator *iter = listStatements();
+  StatementIterator *iter = listStatements(subject, predicate, object);
   if ( !iter )
   {
     return Model::ERROR_EXIT;
@@ -146,4 +146,9 @@ Model::ExitCode Model::removeAll()
   delete iter;
 
   return Model::SUCCESS_EXIT;
+}
+
+Model::ExitCode Model::removeAll()
+{
+  return removeAll( Node(), Node(), Node() );
 }

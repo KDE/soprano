@@ -166,6 +166,15 @@ public:
   virtual Model::ExitCode remove( const Statement &st ) = 0;
 
   /**
+   * Remove all the statements matching (s, p, o) from this model.
+   *
+   * \param subject The Subject node (can be empty)
+   * \param predicate The Predicate node (can be empty)
+   * \param object The Object node (can be empty)
+   */
+  Model::ExitCode removeAll( const Node &subject, const Node &predicate, const Node &object );
+
+  /**
    * Remove all the statements from this model.
    */
   Model::ExitCode removeAll();

@@ -154,13 +154,28 @@ void SopranoTest::testListStatements()
   m_model->add( st3 );
   m_model->add( st4 );
 
-  /*** Finish precondition ***/
+  /*** Precondition ***/
 
   QUrl subUri = QUrl("uri:soprano:test1");
   StatementIterator* it = m_model->listStatements( Statement( Node(subUri), Node(), Node() ) );
   QVERIFY( it != 0 );
 
   int cnt = 0;
+  while( it->hasNext() ) {
+    ++cnt;
+    Statement st = it->next();
+
+    QCOMPARE( st.subject().uri(), subUri );
+  }
+
+  QCOMPARE( cnt, 2 );
+
+  delete it;
+
+  it = m_model->listStatements( Node(subUri), Node(), Node() );
+  QVERIFY( it != 0 );
+
+  cnt = 0;
   while( it->hasNext() ) {
     ++cnt;
     Statement st = it->next();
@@ -189,6 +204,55 @@ void SopranoTest::testRemoveStatement()
   m_model->remove( st );
 
   QVERIFY( !m_model->contains(st) );
+
+  QVERIFY( m_model->removeAll() == Model::SUCCESS_EXIT );
+}
+
+void SopranoTest::testRemoveAllStatement()
+{
+  Node subject1 = m_model->createResource( QUrl("uri:soprano:test1") );
+  Node subject2 = m_model->createResource( QUrl("uri:soprano:test2") );
+
+  Node predicate1 = m_model->createPredicate( "soprano", "predicate1" );
+  Node predicate2 = m_model->createPredicate( "soprano", "predicate2" );
+
+  Node object1 = m_model->createLiteral( "Literal value1" );
+  Node object2 = m_model->createLiteral( "Literal value2" );
+
+  Statement st1(subject1, predicate1, object1);
+  Statement st2(subject2, predicate1, object1);
+  Statement st3(subject1, predicate2, object2);
+  Statement st4(subject2, predicate2, object2);
+
+  m_model->add( st1 );
+  m_model->add( st2 );
+  m_model->add( st3 );
+  m_model->add( st4 );
+
+  /*** Precondition ***/
+
+  m_model->removeAll( subject1, Node(), Node() );
+
+  QVERIFY( !m_model->contains( st1 ) );
+  QVERIFY( m_model->contains( st2 ) );
+  QVERIFY( !m_model->contains( st3 ) );
+  QVERIFY( m_model->contains( st4 ) );
+
+  m_model->removeAll( Node(), predicate2, Node() );
+
+  QVERIFY( !m_model->contains( st1 ) );
+  QVERIFY( m_model->contains( st2 ) );
+  QVERIFY( !m_model->contains( st3 ) );
+  QVERIFY( !m_model->contains( st4 ) );
+
+  m_model->removeAll( Node(), Node(), object1 );
+
+  QVERIFY( !m_model->contains( st1 ) );
+  QVERIFY( !m_model->contains( st2 ) );
+  QVERIFY( !m_model->contains( st3 ) );
+  QVERIFY( !m_model->contains( st4 ) );
+
+  QVERIFY( m_model->removeAll() == Model::SUCCESS_EXIT );
 }
 
 #include "SopranoTest.moc"
