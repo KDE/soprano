@@ -33,14 +33,12 @@ struct RedlandModelFactory::Private
   {}
 
   librdf_world *world;
-  QString path;
 };
 
 RedlandModelFactory::RedlandModelFactory()
 {
   d = new Private;
   d->world = World::self()->worldPtr();
-  d->path = "/tmp"; // Move to a possible LibConf
   Q_ASSERT( d->world != 0 );
 }
 
@@ -51,14 +49,13 @@ RedlandModelFactory::~RedlandModelFactory()
 
 RedlandModel *RedlandModelFactory::createMemoryModel( const QString &name ) const
 {
-  QString dummy;
-  return createModel( "memory", name, dummy ); 
+  return createModel( "memory", name, QString() ); 
 }
 
-RedlandModel *RedlandModelFactory::createPersistentModel( const QString &name ) const
+RedlandModel *RedlandModelFactory::createPersistentModel( const QString &name, const QString &path ) const
 {
   QString options("hash-type='bdb',dir='");
-  options.append( d->path );
+  options.append( path );
   options.append("'");
 
   return createModel( "hashes", name, options ); 

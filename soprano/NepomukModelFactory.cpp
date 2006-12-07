@@ -1,5 +1,5 @@
 /* 
- * This file is part of Soprano Project
+ * This file is part of Soprano Project.
  *
  * Copyright (C) 2006 Daniele Galdi <daniele.galdi@gmail.com>
  *
@@ -24,20 +24,12 @@
 
 using namespace Soprano::Backend::Nepomuk;
 
-struct NepomukModelFactory::Private
-{
-  Private()
-  {}
-};
-
 NepomukModelFactory::NepomukModelFactory()
 {
-  d = new Private;
 }
 
 NepomukModelFactory::~NepomukModelFactory() 
 {
-  delete d;
 }
 
 NepomukModel *NepomukModelFactory::createMemoryModel( const QString &name ) const
@@ -45,9 +37,9 @@ NepomukModel *NepomukModelFactory::createMemoryModel( const QString &name ) cons
   return createPersistentModel( name );
 }
 
-NepomukModel *NepomukModelFactory::createPersistentModel( const QString &name ) const
+NepomukModel *NepomukModelFactory::createPersistentModel( const QString &name, const QString &path ) const
 {
-  return new NepomukModel( name );
+  return 0L;
 }
 
 Soprano::Parser *NepomukModelFactory::createParser() const

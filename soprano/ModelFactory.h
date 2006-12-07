@@ -53,7 +53,7 @@ public:
    *
    * \return a new Model or NULL on error
    */
-  virtual Model *createPersistentModel( const QString &name ) const = 0;
+  virtual Model *createPersistentModel( const QString &name, const QString &path="." ) const = 0;
 
   /**
    * Create a new Parser

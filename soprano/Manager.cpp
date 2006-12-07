@@ -53,7 +53,9 @@ Manager::Manager()
 
   d = new Private;
   d->names << "Redland";
+#ifdef NEPOMUK
   d->names << "Nepomuk";
+#endif
 }
 
 Manager::~Manager()
@@ -70,6 +72,8 @@ const QStringList &Manager::listModelFactoryNames() const
 ModelFactory *Manager::factory( const QString &name ) const
 {
   if ( name == "Redland" ) return new RedlandModelFactory();
-  //if ( name == "Nepomuk" ) return new NepomukModelFactory();
+#ifdef NEPOMUK
+  if ( name == "Nepomuk" ) return new NepomukModelFactory();
+#endif
   return 0L;
 }

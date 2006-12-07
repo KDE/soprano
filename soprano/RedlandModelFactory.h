@@ -44,7 +44,7 @@ public:
 
   RedlandModel *createMemoryModel( const QString &name ) const;
 
-  RedlandModel *createPersistentModel( const QString &name ) const;
+  RedlandModel *createPersistentModel( const QString &name, const QString &path="." ) const;
 
   Parser *createParser() const;
 

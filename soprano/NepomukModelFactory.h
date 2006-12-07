@@ -44,15 +44,12 @@ public:
 
   NepomukModel *createMemoryModel( const QString &name ) const;
 
-  NepomukModel *createPersistentModel( const QString &name ) const;
+  NepomukModel *createPersistentModel( const QString &name, const QString &path="." ) const;
 
   Parser *createParser() const;
 
 private:
   NepomukModelFactory( const NepomukModelFactory &other ) {};
-
-  class Private;
-  Private *d;
 };
 
 }
