@@ -27,8 +27,8 @@ using namespace Soprano;
 
 void RedlandMemoryModelTest::initTestCase()
 {
-  ModelFactory *factory = Manager::instance()->factory( "Redland" );
-  m_model = factory->createMemoryModel( "test" );
+  m_factory = Manager::instance()->factory( "Redland" );
+  m_model = m_factory->createMemoryModel( "test" );
 }
 
 QTEST_MAIN(RedlandMemoryModelTest)

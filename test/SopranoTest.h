@@ -26,6 +26,7 @@
 
 namespace Soprano {
   class Model;
+  class ModelFactory;
 }
 
 class SopranoTest: public QObject
@@ -33,12 +34,17 @@ class SopranoTest: public QObject
 Q_OBJECT
 
 private Q_SLOTS:
-   void testAddStatements();
-   void testListStatements();
-   void testRemoveStatement();
+  void testAddModel();   
+  void testAddListOfStatement(); 
+  void testAddStatementIterator();
+  void testAddStatements();
+
+  void testListStatements();
+  void testRemoveStatement();
 
 protected:
    Soprano::Model* m_model;
+   Soprano::ModelFactory *m_factory;
 };
 
 #endif

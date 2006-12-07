@@ -23,8 +23,91 @@
 #include <soprano/Soprano.h>
 
 #include <QtCore>
+#include <QList>
 
 using namespace Soprano;
+
+void SopranoTest::testAddModel()
+{
+  Node subject1 = m_model->createResource( QUrl("uri:add:model") );
+
+  Node predicate1 = m_model->createPredicate( "soprano", "predicate1" );
+  Node predicate2 = m_model->createPredicate( "soprano", "predicate2" );
+  Node predicate3 = m_model->createPredicate( "soprano", "predicate3" );
+
+  Node object1 = m_model->createLiteral( "Literal value1" );
+
+  Statement st1(subject1, predicate1, object1);
+  Statement st2(subject1, predicate2, object1);
+  Statement st3(subject1, predicate3, object1);
+
+  Model *memory = m_factory->createMemoryModel( "add-model" );
+  memory->add( st1 );
+  memory->add( st2 );
+ 
+  m_model->add( *memory );
+
+  QVERIFY( m_model->contains( st1 ) );
+  QVERIFY( m_model->contains( st2 ) );
+  QVERIFY( !m_model->contains( st3 ) );
+ 
+  QVERIFY( m_model->removeAll() == Model::SUCCESS_EXIT );
+}
+
+void SopranoTest::testAddListOfStatement()
+{
+  Node subject1 = m_model->createResource( QUrl("uri:add:model") );
+
+  Node predicate1 = m_model->createPredicate( "soprano", "predicate1" );
+  Node predicate2 = m_model->createPredicate( "soprano", "predicate2" );
+  Node predicate3 = m_model->createPredicate( "soprano", "predicate3" );
+
+  Node object1 = m_model->createLiteral( "Literal value1" );
+
+  Statement st1(subject1, predicate1, object1);
+  Statement st2(subject1, predicate2, object1);
+  Statement st3(subject1, predicate3, object1);
+
+  QList<Statement> statements;
+  statements.append( st1 );
+  statements.append( st2 );
+  statements.append( st3 );
+
+  m_model->add( statements );
+
+  QVERIFY( m_model->contains( st1 ) );
+  QVERIFY( m_model->contains( st2 ) );
+  QVERIFY( m_model->contains( st3 ) );
+
+  QVERIFY( m_model->removeAll() == Model::SUCCESS_EXIT );
+}
+
+void SopranoTest::testAddStatementIterator()
+{
+  Node subject1 = m_model->createResource( QUrl("uri:add:model") );
+
+  Node predicate1 = m_model->createPredicate( "soprano", "predicate1" );
+  Node predicate2 = m_model->createPredicate( "soprano", "predicate2" );
+  Node predicate3 = m_model->createPredicate( "soprano", "predicate3" );
+
+  Node object1 = m_model->createLiteral( "Literal value1" );
+
+  Statement st1(subject1, predicate1, object1);
+  Statement st2(subject1, predicate2, object1);
+  Statement st3(subject1, predicate3, object1);
+
+  Model *memory = m_factory->createMemoryModel( "add-model" );
+  memory->add( st1 );
+  memory->add( st2 );
+ 
+  m_model->add( *memory->listStatements() );
+
+  QVERIFY( m_model->contains( st1 ) );
+  QVERIFY( m_model->contains( st2 ) );
+  QVERIFY( !m_model->contains( st3 ) );
+ 
+  QVERIFY( m_model->removeAll() == Model::SUCCESS_EXIT );
+}
 
 void SopranoTest::testAddStatements()
 {
@@ -46,10 +129,33 @@ void SopranoTest::testAddStatements()
   QVERIFY( m_model->add( st2 ) == Soprano::Model::SUCCESS_EXIT );
   QVERIFY( m_model->add( st3 ) == Soprano::Model::SUCCESS_EXIT );
   QVERIFY( m_model->add( st4 ) == Soprano::Model::SUCCESS_EXIT );
+
+  QVERIFY( m_model->removeAll() == Model::SUCCESS_EXIT );
 }
 
 void SopranoTest::testListStatements()
 {
+  Node subject1 = m_model->createResource( QUrl("uri:soprano:test1") );
+  Node subject2 = m_model->createResource( QUrl("uri:soprano:test2") );
+
+  Node predicate1 = m_model->createPredicate( "soprano", "predicate1" );
+  Node predicate2 = m_model->createPredicate( "soprano", "predicate2" );
+
+  Node object1 = m_model->createLiteral( "Literal value1" );
+  Node object2 = m_model->createLiteral( "Literal value2" );
+
+  Statement st1(subject1, predicate1, object1);
+  Statement st2(subject2, predicate1, object1);
+  Statement st3(subject1, predicate2, object2);
+  Statement st4(subject2, predicate2, object2);
+
+  m_model->add( st1 );
+  m_model->add( st2 );
+  m_model->add( st3 );
+  m_model->add( st4 );
+
+  /*** Finish precondition ***/
+
   QUrl subUri = QUrl("uri:soprano:test1");
   StatementIterator* it = m_model->listStatements( Statement( Node(subUri), Node(), Node() ) );
   QVERIFY( it != 0 );
@@ -59,14 +165,14 @@ void SopranoTest::testListStatements()
     ++cnt;
     Statement st = it->next();
 
-    qDebug() << st.subject().uri();
-
     QCOMPARE( st.subject().uri(), subUri );
   }
 
   QCOMPARE( cnt, 2 );
 
   delete it;
+
+  QVERIFY( m_model->removeAll() == Model::SUCCESS_EXIT );
 }
 
 void SopranoTest::testRemoveStatement()

@@ -22,6 +22,8 @@
 #ifndef SOPRANO_MODEL_H
 #define SOPRANO_MODEL_H
 
+#include <QList>
+
 class QString;
 class QTextStream;
 class QUrl;
@@ -46,11 +48,26 @@ public:
   virtual ~Model();
 
   /**
-   * Adds all the input Model Statements to the Model.
+   * Add all the statements in another model to this model.
    *
    * \param model The Model to add.
    */
-  virtual Model::ExitCode add( const Model &model );
+  Model::ExitCode add( const Model &model );
+
+  /**
+   * Add all the statements to the Model, using through the bulk
+   * update interface.
+   *
+   * \param iter An iterator over Statements.
+   */
+  Model::ExitCode add( const StatementIterator &iter );
+
+  /**
+   * Add all the statements to the Model.
+   *
+   * \param statements A list of Statement.
+   */
+  Model::ExitCode add( const QList<Statement> statements );
 
   /**
    * Adds the Statement to the Model.
@@ -58,16 +75,21 @@ public:
    * \param st The Statement to add.
    */
   virtual Model::ExitCode add( const Statement &st ) = 0;
-  
+
   /**
    * Create a Predicate with the given namespace and value.
    * es. createPredicate("http://www.kde.org", "predicate") returns
    *     a predicate node with this value 'http://www.kde.org#predicate'
-   * If the ns is null build the predicate with only the given values.
+   * If the ns is empty build the predicate with only the given values.
    *
    * \return The predicate Node.
    */
   Node createPredicate( const QString &ns, const QString &value );
+
+  /**
+   * \return The predicate Node.
+   */
+  Node createPredicate( const QUrl &uri );
 
   /**
    * \return The blank Node.
@@ -123,11 +145,30 @@ public:
   virtual StatementIterator *listStatements( const Statement &partial ) const = 0;
 
   /**
+   * Return an iterator over the Models statements that "partial"
+   * match the input parameter.
+   *
+   * \param subject The Subject node (can be empty)
+   * \param predicate The Predicate node (can be empty)
+   * \param object The Object node (can be empty)
+   *
+   * \return An iterator for all the matched Statements. NULL on error.
+   */
+  // FIXME: returning a pointer is not a good idea becasue this way the user
+  //        has to delete it manually
+  StatementIterator *listStatements( const Node &subject, const Node &predicate, const Node &object ) const;
+
+  /**
    * Remove the given Statement from the Model.
    *
    * \param st The Statement to remove.
    */
   virtual Model::ExitCode remove( const Statement &st ) = 0;
+
+  /**
+   * Remove all the statements from this model.
+   */
+  Model::ExitCode removeAll();
 
   /**
    * \return The size of the Model (number of Stamenent)

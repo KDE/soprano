@@ -19,8 +19,8 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#include <QString>
-#include <QUrl>
+#include <QtCore>
+#include <QList>
 
 #include "Node.h"
 #include "Statement.h"
@@ -56,6 +56,33 @@ Model::ExitCode Model::add( const Model &model )
   return Model::SUCCESS_EXIT;
 }
 
+Model::ExitCode Model::add( const StatementIterator &iter )
+{
+  while ( iter.hasNext() )
+  {
+    if ( !add( iter.next() ) ) 
+    {
+      return Model::ERROR_EXIT;
+    }
+  }
+
+  return Model::SUCCESS_EXIT;
+}
+
+Model::ExitCode Model::add( const QList<Statement> statements )
+{
+  QListIterator<Statement> iter(statements);
+  while ( iter.hasNext() )
+  {
+    if ( !add( iter.next() ) )
+    {
+      return Model::ERROR_EXIT;
+    }
+  }
+
+  return Model::SUCCESS_EXIT;
+}
+
 Node Model::createPredicate( const QString &ns, const QString &value )
 {
   if ( ns.isNull() ) 
@@ -63,6 +90,11 @@ Node Model::createPredicate( const QString &ns, const QString &value )
     return Node( QUrl( value ) );
   }
   return Node( QUrl( ns + '#' + value ) );
+}
+
+Node Model::createPredicate( const QUrl &uri )
+{
+  return Node( uri );
 }
 
 Node Model::createBlank( const QString &uri )
@@ -88,4 +120,30 @@ bool Model::isEmpty() const
 StatementIterator *Model::listStatements() const
 {
   return listStatements( Statement() );
+}
+
+StatementIterator *Model::listStatements( const Node &subject, const Node &predicate, const Node &object ) const
+{
+  return listStatements( Statement(subject, predicate, object) );
+}
+
+Model::ExitCode Model::removeAll()
+{
+  StatementIterator *iter = listStatements();
+  if ( !iter )
+  {
+    return Model::ERROR_EXIT;
+  }
+
+  while ( iter->hasNext() )
+  {
+    if ( !remove( iter->next() ) )
+    {
+      return Model::ERROR_EXIT;
+    }
+  }
+
+  delete iter;
+
+  return Model::SUCCESS_EXIT;
 }
