@@ -1,5 +1,5 @@
 /* 
- * This file is part of Soprano Project
+ * This file is part of Soprano Project.
  *
  * Copyright (C) 2006 Daniele Galdi <daniele.galdi@gmail.com>
  *
@@ -22,6 +22,7 @@
 #include <QStringList>
 #include <QString>
 
+#include "Config.h"
 #include "RedlandModelFactory.h"
 #include "NepomukModelFactory.h"
 #include "ModelFactory.h"
@@ -53,7 +54,7 @@ Manager::Manager()
 
   d = new Private;
   d->names << "Redland";
-#ifdef NEPOMUK
+#ifdef KNEP_FOUND
   d->names << "Nepomuk";
 #endif
 }
@@ -72,7 +73,7 @@ const QStringList &Manager::listModelFactoryNames() const
 ModelFactory *Manager::factory( const QString &name ) const
 {
   if ( name == "Redland" ) return new RedlandModelFactory();
-#ifdef NEPOMUK
+#ifdef KNEP_FOUND
   if ( name == "Nepomuk" ) return new NepomukModelFactory();
 #endif
   return 0L;

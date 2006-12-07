@@ -19,38 +19,4 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef SOPRANO_MANAGER_H
-#define SOPRANO_MANAGER_H
-
-class QString;
-class QStringList;
-
-namespace Soprano
-{
-
-class ModelFactory;
-
-class Manager
-{
-public:
-  ~Manager();
-
-  static Manager* instance();
-
-  const QStringList &listModelFactoryNames() const;
-
-  ModelFactory *factory( const QString &name ) const;
-
-private:
-  Manager();
-  Manager(const Manager&) {}
-
-  static Manager* s_instance;
-
-  class Private;
-  Private *d;
-};
-
-}
-
-#endif // SOPRANO_MANAGER_H
+#cmakedefine KNEP_FOUND
