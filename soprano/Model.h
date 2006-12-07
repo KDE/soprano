@@ -67,7 +67,7 @@ public:
    *
    * \param statements A list of Statement.
    */
-  Model::ExitCode add( const QList<Statement> statements );
+  Model::ExitCode add( const QList<Statement> &statements );
 
   /**
    * Adds the Statement to the Model.

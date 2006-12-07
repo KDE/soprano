@@ -69,7 +69,7 @@ Model::ExitCode Model::add( const StatementIterator &iter )
   return Model::SUCCESS_EXIT;
 }
 
-Model::ExitCode Model::add( const QList<Statement> statements )
+Model::ExitCode Model::add( const QList<Statement> &statements )
 {
   QListIterator<Statement> iter(statements);
   while ( iter.hasNext() )
