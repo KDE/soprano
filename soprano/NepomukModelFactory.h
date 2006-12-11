@@ -42,9 +42,9 @@ public:
     
   ~NepomukModelFactory();
 
-  NepomukModel *createMemoryModel( const QString &name ) const;
+  Soprano::Model *createMemoryModel( const QString &name ) const;
 
-  NepomukModel *createPersistentModel( const QString &name, const QString &path="." ) const;
+  Soprano::Model *createPersistentModel( const QString &name, const QString &path="." ) const;
 
   Parser *createParser() const;
 

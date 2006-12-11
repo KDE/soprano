@@ -21,8 +21,10 @@
 
 #include "NepomukModel.h"
 #include "NepomukModelFactory.h"
+#include "RedlandModelFactory.h"
 
 using namespace Soprano::Backend::Nepomuk;
+using namespace Soprano::Backend::Redland;
 
 NepomukModelFactory::NepomukModelFactory()
 {
@@ -32,14 +34,15 @@ NepomukModelFactory::~NepomukModelFactory()
 {
 }
 
-NepomukModel *NepomukModelFactory::createMemoryModel( const QString &name ) const
+Soprano::Model *NepomukModelFactory::createMemoryModel( const QString &name ) const
 {
-  return createPersistentModel( name );
+  RedlandModelFactory factory;
+  return factory.createMemoryModel( name );
 }
 
-NepomukModel *NepomukModelFactory::createPersistentModel( const QString &name, const QString &path ) const
+Soprano::Model *NepomukModelFactory::createPersistentModel( const QString &name, const QString &path ) const
 {
-  return 0L;
+  return new NepomukModel( name );
 }
 
 Soprano::Parser *NepomukModelFactory::createParser() const
