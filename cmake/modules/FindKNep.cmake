@@ -13,13 +13,16 @@ FIND_LIBRARY(KNEP_LIBRARIES NAMES knepclient
    ${LIB_INSTALL_DIR}
 )
 
-if(KNEP_INCLUDE_DIR AND KNEP_LIBRARIES)
+if (KNEP_INCLUDE_DIR AND KNEP_LIBRARIES)
    set(KNEP_FOUND TRUE)
-   message(STATUS "Found KNepomuk: ${KNEP_LIBRARIES}")
-else(KNEP_INCLUDE_DIR AND KNEP_LIBRARIES)
-  if(KNep_FIND_REQUIRED)
-    message(FATAL_ERROR "Could not find KNepCLient library.")
-  endif(KNep_FIND_REQUIRED)
 endif(KNEP_INCLUDE_DIR AND KNEP_LIBRARIES)
+
+if(KNEP_FOUND)
+   message(STATUS "Found KNepomuk: ${KNEP_LIBRARIES}")
+#else(P_INCLUDE_DIR AND KNEP_LIBRARIES)
+#  if(KNep_FIND_REQUIRED)
+#    message(FATAL_ERROR "Could not find KNepCLient library.")
+#  endif(KNep_FIND_REQUIRED)
+endif(KNEP_FOUND)
 
 CONFIGURE_FILE(${CMAKE_CURRENT_SOURCE_DIR}/soprano/Config.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/soprano/Config.h)

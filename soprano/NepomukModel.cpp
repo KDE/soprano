@@ -1,5 +1,5 @@
 /* 
- * This file is part of Soprano Project
+ * This file is part of Soprano Project.
  *
  * Copyright (C) 2006 Daniele Galdi <daniele.galdi@gmail.com>
  *
@@ -19,34 +19,32 @@
  * Floor, Boston, MA 02110-1301, USA.
  */
 
-#include <knep/registry.h>
-#include <knep/service.h>
+#include <knep/knep.h>
 #include <knep/services/tripleservice.h>
+#include <knep/services/tripleservicepublisher.h>
 #include <knep/services/queryservice.h>
-#include <knep/services/statementlistiterator.h>
 
 #include "Query.h"
 #include "NepomukUtil.h"
 #include "NepomukStatementIterator.h"
 #include "NepomukModel.h"
 
+using namespace Nepomuk;
 using namespace Nepomuk::Backbone;
-using namespace Nepomuk::Backbone::Services;
-
 using namespace Soprano;
-using namespace Soprano::Backend::Nepomuk;
 
-struct NepomukModel::Private {
-  Private()
+struct Backend::Nepomuk::NepomukModel::Private {
+  Private() : ts(0L), qs(0L), registry(0L)
   {}
 
-  TripleService *ts;
-  QueryService *qs;
+  Services::TripleService *ts;
+  Services::QueryService *qs;
+  Registry *registry;
 
   QString name;
 };
 
-NepomukModel::NepomukModel( const QString &name )
+Backend::Nepomuk::NepomukModel::NepomukModel( const QString &name )
 {
   init();
   
@@ -54,102 +52,110 @@ NepomukModel::NepomukModel( const QString &name )
   d->ts->addGraph( name );
 }
 
-NepomukModel::NepomukModel( const NepomukModel &other )
+Backend::Nepomuk::NepomukModel::NepomukModel( const NepomukModel &other )
 {
   init();
   
   d->name = other.name();
 }
 
-void NepomukModel::init()
+void Backend::Nepomuk::NepomukModel::init()
 {
   d = new Private();
-  
-  Registry registry;
+  d->registry = new Registry();
+  d->ts = new Services::TripleService( d->registry->discoverServiceByType( "http://nepomuk.semanticdesktop.org/services/storage/rdf/Triple" ) );
+  d->qs = new Services::QueryService( d->registry->discoverServiceByType( "http://nepomuk.semanticdesktop.org/services/storage/rdf/Query" ) );
 
-  d->ts = new TripleService( registry.discoverServiceByType( "http://nepomuk.semanticdesktop.org/services/storage/rdf/Triple" ) );
-  d->qs = new QueryService( registry.discoverServiceByType( "http://nepomuk.semanticdesktop.org/services/storage/rdf/Query" ) );
+  Q_ASSERT( d->ts != 0L );
+  Q_ASSERT( d->qs != 0L );
 }
 
-NepomukModel::~NepomukModel()
+Backend::Nepomuk::NepomukModel::~NepomukModel()
 {
   delete d->ts;
   delete d->qs;
+  delete d->registry;
   delete d;
 }
 
-Model::ExitCode NepomukModel::add( const Statement &st )
-{
-  if ( !st.isValid() )
-  {
-    return Model::ERROR_EXIT;
-  }	
-
-  if ( d->ts->addStatement(d->name, Util::createStatement(st)) )
-  {
-    return Model::ERROR_EXIT;
-  }
-  return Model::SUCCESS_EXIT;
-}
-
-bool NepomukModel::contains( const Statement &statement ) const
+Soprano::Model::ExitCode Backend::Nepomuk::NepomukModel::add( const Statement &statement )
 {
   if ( !statement.isValid() )
   {
-    return false;
+    return ERROR_EXIT;
   }
-	
-  return d->ts->contains( d->name, Util::createStatement(statement) );
+
+  if ( d->ts->addStatement( d->name, Util::createStatement( statement ) ) )
+  {
+    return ERROR_EXIT;
+  }
+
+  return SUCCESS_EXIT;
 }
 
-Soprano::QueryResult *NepomukModel::executeQuery( const Query &query ) const
+bool Backend::Nepomuk::NepomukModel::contains( const Statement &statement ) const
 {
-  RDF::QueryResult result = d->qs->executeQuery( d->name, query.query(), "rdql", query.offset(), query.limit() );
+  RDF::Statement converted = Util::createStatement(statement);
+
+  return d->ts->contains( d->name, converted ) == Services::TripleServicePublisher::TRIPLE_ERROR_SUCCESS;
+}
+
+Soprano::QueryResult *Backend::Nepomuk::NepomukModel::executeQuery( const Query &query ) const
+{
+  Q_ASSERT( "not tested" != 0L);
+
+  /*  RDF::QueryResult result = d->qs->executeQuery( d->name, query.query(), "rdql", query.offset(), query.limit() );*/
 
 
 
   return 0L;
 }
 
-Soprano::StatementIterator *NepomukModel::listStatements( const Statement &partial ) const
+Soprano::StatementIterator *Backend::Nepomuk::NepomukModel::listStatements( const Statement &partial ) const
 {
-  int max = 20;
+  Q_ASSERT( "not tested" != 0L);
+
+  /*int max = 20;
 
   RDF::StatementListIterator *iter = new RDF::StatementListIterator( d->ts->listStatements( d->name, Util::createStatement(partial), max), d->ts);
 
-  return new Nepomuk::NepomukStatementIterator( iter );
+  return new Backend::Nepomuk::NepomukStatementIterator( iter );*/
 }
 
-Model::ExitCode NepomukModel::remove( const Statement &st )
+Soprano::Model::ExitCode Backend::Nepomuk::NepomukModel::remove( const Statement &statement )
 {
-  if ( !st.isValid() )
+  Q_ASSERT( "not tested" != 0L);
+
+  if ( !statement.isValid() )
   {
-    return Model::ERROR_EXIT;
+    return ERROR_EXIT;
   }
 
-  if ( d->ts->removeStatement( d->name, Util::createStatement(st) ) )
+  if ( d->ts->removeStatement( d->name, Util::createStatement( statement ) ) )
   {
-    return Model::ERROR_EXIT;
+    return ERROR_EXIT;
   }
-  return Model::SUCCESS_EXIT;
+  return SUCCESS_EXIT;
 }
 
-int NepomukModel::size() const
+int Backend::Nepomuk::NepomukModel::size() const
 {
+  Q_ASSERT( "not tested" != 0L);
+
   return d->ts->size( d->name );
 }
 
-Model::ExitCode NepomukModel::write( QTextStream &os ) const
+Soprano::Model::ExitCode Backend::Nepomuk::NepomukModel::write( QTextStream &os ) const
 {
-  return Model::ERROR_EXIT;
+  return ERROR_EXIT;
 }
 
-Model::ExitCode NepomukModel::print() const
+Soprano::Model::ExitCode Backend::Nepomuk::NepomukModel::print() const
 { 
-  return Model::ERROR_EXIT;
+  return ERROR_EXIT;
 }
 
-const QString &NepomukModel::name() const
+const QString &Backend::Nepomuk::NepomukModel::name() const
 {
   return d->name;
 } 
