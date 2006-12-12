@@ -113,13 +113,10 @@ Soprano::QueryResult *Backend::Nepomuk::NepomukModel::executeQuery( const Query 
 
 Soprano::StatementIterator *Backend::Nepomuk::NepomukModel::listStatements( const Statement &partial ) const
 {
-  Q_ASSERT( "not tested" != 0L);
+  RDF::Statement converted = Util::createStatement(partial);
+  RDF::StatementListIterator *iter = new RDF::StatementListIterator( d->ts->listStatements( d->name, converted, 50), d->ts);
 
-  /*int max = 20;
-
-  RDF::StatementListIterator *iter = new RDF::StatementListIterator( d->ts->listStatements( d->name, Util::createStatement(partial), max), d->ts);
-
-  return new Backend::Nepomuk::NepomukStatementIterator( iter );*/
+  return new Backend::Nepomuk::NepomukStatementIterator( iter );
 }
 
 Soprano::Model::ExitCode Backend::Nepomuk::NepomukModel::remove( const Statement &statement )

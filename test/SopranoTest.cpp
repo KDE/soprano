@@ -159,29 +159,40 @@ void SopranoTest::testAddStatements()
 
 void SopranoTest::testListStatements()
 {
-  /*  Node subject1 = m_model->createResource( QUrl("uri:soprano:test1") );
-  Node subject2 = m_model->createResource( QUrl("uri:soprano:test2") );
+  Node resource_1 = m_model->createResource( QUrl("uri:list:resource1") );
+  Node resource_2 = m_model->createResource( QUrl("uri:list:resource2") );
+  Node resource_3 = m_model->createResource( QUrl("uri:list:resource3") );
 
-  Node predicate1 = m_model->createPredicate( "soprano", "predicate1" );
-  Node predicate2 = m_model->createPredicate( "soprano", "predicate2" );
+  QList<Statement> statements;
+  for (int i=0; i<50; i++) 
+  {
+    Node predicate = m_model->createPredicate( "soprano", "predicate" + i );
+    Node object = m_model->createLiteral( "Literal value " + i );
 
-  Node object1 = m_model->createLiteral( "Literal value1" );
-  Node object2 = m_model->createLiteral( "Literal value2" );
+    statements.append( Statement(resource_1, predicate, object) );
+  }
 
-  Statement st1(subject1, predicate1, object1);
-  Statement st2(subject2, predicate1, object1);
-  Statement st3(subject1, predicate2, object2);
-  Statement st4(subject2, predicate2, object2);
+  for (int i=0; i<50; i++) 
+  {
+    Node predicate = m_model->createPredicate( "soprano", "predicate" + (i + 100) );
+    Node object = m_model->createLiteral( "Literal value " + (i + 100) );
 
-  m_model->add( st1 );
-  m_model->add( st2 );
-  m_model->add( st3 );
-  m_model->add( st4 );*/
+    statements.append( Statement(resource_2, predicate, object) );
+  }
 
-  /*** Precondition ***/
+  for (int i=0; i<20; i++) 
+  {
+    Node predicate = m_model->createPredicate( "soprano", "predicate" + (i + 200) );
+    Node object = m_model->createLiteral( "Literal value " + (i + 200) );
 
-  /*QUrl subUri = QUrl("uri:soprano:test1");
-  StatementIterator* it = m_model->listStatements( Statement( Node(subUri), Node(), Node() ) );
+    statements.append( Statement(resource_3, predicate, object) );
+  }
+
+  m_model->add( statements );
+
+  /* Resource 1 */
+
+  StatementIterator* it = m_model->listStatements( Statement( resource_1, Node(), Node() ) );
   QVERIFY( it != 0 );
 
   int cnt = 0;
@@ -189,14 +200,16 @@ void SopranoTest::testListStatements()
     ++cnt;
     Statement st = it->next();
 
-    QCOMPARE( st.subject().uri(), subUri );
+    QCOMPARE( st.subject(), resource_1 );
   }
 
-  QCOMPARE( cnt, 2 );
+  QCOMPARE( cnt, 50 );
 
   delete it;
 
-  it = m_model->listStatements( Node(subUri), Node(), Node() );
+  /* Resource 2 */
+
+  it = m_model->listStatements( Statement( resource_2, Node(), Node() ) );
   QVERIFY( it != 0 );
 
   cnt = 0;
@@ -204,14 +217,46 @@ void SopranoTest::testListStatements()
     ++cnt;
     Statement st = it->next();
 
-    QCOMPARE( st.subject().uri(), subUri );
+    QCOMPARE( st.subject(), resource_2 );
   }
 
-  QCOMPARE( cnt, 2 );
+  QCOMPARE( cnt, 50 );
 
   delete it;
 
-  QVERIFY( m_model->removeAll() == Model::SUCCESS_EXIT );*/
+  /* Resource 3 */
+
+  it = m_model->listStatements( Statement( resource_3, Node(), Node() ) );
+  QVERIFY( it != 0 );
+
+  cnt = 0;
+  while( it->hasNext() ) {
+    ++cnt;
+    Statement st = it->next();
+
+    QCOMPARE( st.subject(), resource_3 );
+  }
+
+  QCOMPARE( cnt, 20 );
+
+  delete it;
+
+  /* All */
+
+  it = m_model->listStatements();
+  QVERIFY( it != 0 );
+
+  int cnt = 0;
+  while( it->hasNext() ) {
+    ++cnt;
+    Statement st = it->next();
+
+    QVERIFY( statements.indexOf( st ) != -1 || st == *m_st1 || st == *m_st2 || st == *m_st3 || st == *m_st4 );
+  }
+
+  QCOMPARE( cnt, 124 );
+
+  delete it;
 }
 
 void SopranoTest::testRemoveStatement()
