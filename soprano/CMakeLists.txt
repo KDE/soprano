@@ -1,5 +1,12 @@
 include(KDE4Defaults)
 
+include_directories(
+  ${QT_QTCORE_INCLUDE_DIR}
+  ${CMAKE_SOURCE_DIR}
+  ${QT_INCLUDE_DIR}
+  ${CMAKE_INSTALL_PREFIX}/include
+)
+
 SET(soprano_SRCS 
     Query.cpp	    
     QueryResult.cpp  
