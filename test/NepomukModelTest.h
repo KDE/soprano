@@ -35,7 +35,8 @@ class NepomukModelTest: public SopranoTest
 Q_OBJECT
 
 private Q_SLOTS:
-   void initTestCase();
+  void initTestCase();
+  void cleanupTestCase();
 };
 
 #endif // NEPOMUK_MODEL_TEST_H

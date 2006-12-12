@@ -27,6 +27,7 @@
 namespace Soprano {
   class Model;
   class ModelFactory;
+  class Statement;
 }
 
 class SopranoTest: public QObject
@@ -44,7 +45,15 @@ private Q_SLOTS:
   void testRemoveStatement();
   void testRemoveAllStatement();
 
+  void init();
+  void cleanup();
+
 protected:
+   Soprano::Statement* m_st1;
+   Soprano::Statement* m_st2;
+   Soprano::Statement* m_st3;
+   Soprano::Statement* m_st4;
+
    Soprano::Model* m_model;
    Soprano::ModelFactory *m_factory;
 };

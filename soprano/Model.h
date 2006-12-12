@@ -172,7 +172,7 @@ public:
    * \param predicate The Predicate node (can be empty)
    * \param object The Object node (can be empty)
    */
-  Model::ExitCode removeAll( const Node &subject, const Node &predicate, const Node &object );
+  virtual Model::ExitCode removeAll( const Node &subject, const Node &predicate, const Node &object );
 
   /**
    * Remove all the statements from this model.

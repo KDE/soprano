@@ -31,6 +31,12 @@ void RedlandMemoryModelTest::initTestCase()
   m_model = m_factory->createMemoryModel( "test" );
 }
 
+void RedlandMemoryModelTest::cleanupTestCase()
+{
+  delete m_model;
+  delete m_factory;
+}
+
 QTEST_MAIN(RedlandMemoryModelTest)
 
 #include "RedlandMemoryModelTest.moc"

@@ -27,6 +27,38 @@
 
 using namespace Soprano;
 
+void SopranoTest::cleanup()
+{
+  delete m_st1;
+  delete m_st2;
+  delete m_st3;
+  delete m_st4;
+
+  QVERIFY( m_model->removeAll() == Model::SUCCESS_EXIT );
+}
+
+void SopranoTest::init()
+{
+  Node subject1 = m_model->createResource( QUrl("uri:init:test1") );
+  Node subject2 = m_model->createResource( QUrl("uri:init:test2") );
+
+  Node predicate1 = m_model->createPredicate( "soprano", "predicate1" );
+  Node predicate2 = m_model->createPredicate( "soprano", "predicate2" );
+
+  Node object1 = m_model->createLiteral( "Literal value1" );
+  Node object2 = m_model->createLiteral( "Literal value2" );
+
+  m_st1 = new Statement(subject1, predicate1, object1);
+  m_st2 = new Statement(subject2, predicate1, object1);
+  m_st3 = new Statement(subject1, predicate2, object2);
+  m_st4 = new Statement(subject2, predicate2, object2);
+
+  m_model->add( *m_st1 );
+  m_model->add( *m_st2 );
+  m_model->add( *m_st3 );
+  m_model->add( *m_st4 );
+}
+
 void SopranoTest::testAddModel()
 {
   Node subject1 = m_model->createResource( QUrl("uri:add:model") );
@@ -50,13 +82,11 @@ void SopranoTest::testAddModel()
   QVERIFY( m_model->contains( st1 ) );
   QVERIFY( m_model->contains( st2 ) );
   QVERIFY( !m_model->contains( st3 ) );
- 
-  //QVERIFY( m_model->removeAll() == Model::SUCCESS_EXIT );
 }
 
 void SopranoTest::testAddListOfStatement()
 {
-  /*Node subject1 = m_model->createResource( QUrl("uri:add:model") );
+  Node subject1 = m_model->createResource( QUrl("uri:add:model") );
 
   Node predicate1 = m_model->createPredicate( "soprano", "predicate1" );
   Node predicate2 = m_model->createPredicate( "soprano", "predicate2" );
@@ -78,13 +108,11 @@ void SopranoTest::testAddListOfStatement()
   QVERIFY( m_model->contains( st1 ) );
   QVERIFY( m_model->contains( st2 ) );
   QVERIFY( m_model->contains( st3 ) );
-
-  QVERIFY( m_model->removeAll() == Model::SUCCESS_EXIT );*/
 }
 
 void SopranoTest::testAddStatementIterator()
 {
-  /*  Node subject1 = m_model->createResource( QUrl("uri:add:model") );
+  Node subject1 = m_model->createResource( QUrl("uri:add:model") );
 
   Node predicate1 = m_model->createPredicate( "soprano", "predicate1" );
   Node predicate2 = m_model->createPredicate( "soprano", "predicate2" );
@@ -105,13 +133,11 @@ void SopranoTest::testAddStatementIterator()
   QVERIFY( m_model->contains( st1 ) );
   QVERIFY( m_model->contains( st2 ) );
   QVERIFY( !m_model->contains( st3 ) );
- 
-  QVERIFY( m_model->removeAll() == Model::SUCCESS_EXIT );*/
 }
 
 void SopranoTest::testAddStatements()
 {
-  /*  Node subject1 = m_model->createResource( QUrl("uri:soprano:test1") );
+  Node subject1 = m_model->createResource( QUrl("uri:soprano:test1") );
   Node subject2 = m_model->createResource( QUrl("uri:soprano:test2") );
 
   Node predicate1 = m_model->createPredicate( "soprano", "predicate1" );
@@ -129,8 +155,6 @@ void SopranoTest::testAddStatements()
   QVERIFY( m_model->add( st2 ) == Soprano::Model::SUCCESS_EXIT );
   QVERIFY( m_model->add( st3 ) == Soprano::Model::SUCCESS_EXIT );
   QVERIFY( m_model->add( st4 ) == Soprano::Model::SUCCESS_EXIT );
-
-  QVERIFY( m_model->removeAll() == Model::SUCCESS_EXIT );*/
 }
 
 void SopranoTest::testListStatements()
@@ -192,7 +216,7 @@ void SopranoTest::testListStatements()
 
 void SopranoTest::testRemoveStatement()
 {
-  /*  Node subject = m_model->createResource( QUrl("uri:soprano:3") );
+  Node subject = m_model->createResource( QUrl("uri:remove:3") );
   Node predicate = m_model->createPredicate( "soprano", "predicate" );
   Node object = m_model->createResource( QUrl("uri:soprano:2") );
   
@@ -204,55 +228,30 @@ void SopranoTest::testRemoveStatement()
   m_model->remove( st );
 
   QVERIFY( !m_model->contains(st) );
-
-  QVERIFY( m_model->removeAll() == Model::SUCCESS_EXIT );*/
 }
 
 void SopranoTest::testRemoveAllStatement()
 {
-  /*  Node subject1 = m_model->createResource( QUrl("uri:soprano:test1") );
-  Node subject2 = m_model->createResource( QUrl("uri:soprano:test2") );
+  m_model->removeAll( m_st1->subject(), Node(), Node() );
 
-  Node predicate1 = m_model->createPredicate( "soprano", "predicate1" );
-  Node predicate2 = m_model->createPredicate( "soprano", "predicate2" );
+  QVERIFY( !m_model->contains( *m_st1 ) );
+  QVERIFY( m_model->contains( *m_st2 ) );
+  QVERIFY( !m_model->contains( *m_st3 ) );
+  QVERIFY( m_model->contains( *m_st4 ) );
 
-  Node object1 = m_model->createLiteral( "Literal value1" );
-  Node object2 = m_model->createLiteral( "Literal value2" );
+  m_model->removeAll( Node(), m_st3->predicate(), Node() );
 
-  Statement st1(subject1, predicate1, object1);
-  Statement st2(subject2, predicate1, object1);
-  Statement st3(subject1, predicate2, object2);
-  Statement st4(subject2, predicate2, object2);
+  QVERIFY( !m_model->contains( *m_st1 ) );
+  QVERIFY( m_model->contains( *m_st2 ) );
+  QVERIFY( !m_model->contains( *m_st3 ) );
+  QVERIFY( !m_model->contains( *m_st4 ) );
 
-  m_model->add( st1 );
-  m_model->add( st2 );
-  m_model->add( st3 );
-  m_model->add( st4 );*/
+  m_model->removeAll( Node(), Node(), m_st2->object() );
 
-  /*** Precondition ***/
-
-  /*  m_model->removeAll( subject1, Node(), Node() );
-
-  QVERIFY( !m_model->contains( st1 ) );
-  QVERIFY( m_model->contains( st2 ) );
-  QVERIFY( !m_model->contains( st3 ) );
-  QVERIFY( m_model->contains( st4 ) );
-
-  m_model->removeAll( Node(), predicate2, Node() );
-
-  QVERIFY( !m_model->contains( st1 ) );
-  QVERIFY( m_model->contains( st2 ) );
-  QVERIFY( !m_model->contains( st3 ) );
-  QVERIFY( !m_model->contains( st4 ) );
-
-  m_model->removeAll( Node(), Node(), object1 );
-
-  QVERIFY( !m_model->contains( st1 ) );
-  QVERIFY( !m_model->contains( st2 ) );
-  QVERIFY( !m_model->contains( st3 ) );
-  QVERIFY( !m_model->contains( st4 ) );
-
-  QVERIFY( m_model->removeAll() == Model::SUCCESS_EXIT );*/
+  QVERIFY( !m_model->contains( *m_st1 ) );
+  QVERIFY( !m_model->contains( *m_st2 ) );
+  QVERIFY( !m_model->contains( *m_st3 ) );
+  QVERIFY( !m_model->contains( *m_st4 ) );
 }
 
 #include "SopranoTest.moc"

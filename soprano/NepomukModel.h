@@ -58,6 +58,8 @@ public:
 
   Model::ExitCode remove( const Statement &st );
 
+  Model::ExitCode removeAll( const Node &subject, const Node &predicate, const Node &object );
+
   int size() const;
 
   Model::ExitCode write( QTextStream &os ) const;

@@ -97,7 +97,7 @@ bool Backend::Nepomuk::NepomukModel::contains( const Statement &statement ) cons
 {
   RDF::Statement converted = Util::createStatement(statement);
 
-  return d->ts->contains( d->name, converted ) == Services::TripleServicePublisher::TRIPLE_ERROR_SUCCESS;
+  return d->ts->contains( d->name, converted ) == 1;
 }
 
 Soprano::QueryResult *Backend::Nepomuk::NepomukModel::executeQuery( const Query &query ) const
@@ -124,8 +124,6 @@ Soprano::StatementIterator *Backend::Nepomuk::NepomukModel::listStatements( cons
 
 Soprano::Model::ExitCode Backend::Nepomuk::NepomukModel::remove( const Statement &statement )
 {
-  Q_ASSERT( "not tested" != 0L);
-
   if ( !statement.isValid() )
   {
     return ERROR_EXIT;
@@ -138,10 +136,19 @@ Soprano::Model::ExitCode Backend::Nepomuk::NepomukModel::remove( const Statement
   return SUCCESS_EXIT;
 }
 
+Soprano::Model::ExitCode Backend::Nepomuk::NepomukModel::removeAll( const Node &subject, const Node &predicate, const Node &object )
+{
+  Statement st(subject, predicate, object);
+
+  if ( d->ts->removeAllStatements( d->name, Util::createStatement( st ) ) )
+  {
+    return ERROR_EXIT;
+  }
+  return SUCCESS_EXIT;
+}
+
 int Backend::Nepomuk::NepomukModel::size() const
 {
-  Q_ASSERT( "not tested" != 0L);
-
   return d->ts->size( d->name );
 }
 

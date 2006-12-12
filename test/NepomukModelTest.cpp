@@ -33,6 +33,12 @@ void NepomukModelTest::initTestCase()
   Q_ASSERT( m_model != 0L);
 }
 
+void NepomukModelTest::cleanupTestCase()
+{
+  delete m_model;
+  delete m_factory;
+}
+
 QTEST_MAIN(NepomukModelTest)
 
 #include "NepomukModelTest.moc"

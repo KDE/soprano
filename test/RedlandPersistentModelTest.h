@@ -35,7 +35,8 @@ class RedlandPersistentModelTest: public SopranoTest
 Q_OBJECT
 
 private Q_SLOTS:
-   void initTestCase();
+  void initTestCase();
+  void cleanupTestCase(); 
 };
 
 #endif // REDLAND_PERSISTENT_MODEL_TEST_H

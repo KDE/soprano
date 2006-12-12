@@ -31,6 +31,12 @@ void RedlandPersistentModelTest::initTestCase()
   m_model = m_factory->createPersistentModel( "test" );
 }
 
+void RedlandPersistentModelTest::cleanupTestCase()
+{
+  delete m_model;
+  delete m_factory;
+}
+
 QTEST_MAIN(RedlandPersistentModelTest)
 
 #include "RedlandPersistentModelTest.moc"
