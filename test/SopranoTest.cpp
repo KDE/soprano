@@ -246,7 +246,7 @@ void SopranoTest::testListStatements()
   it = m_model->listStatements();
   QVERIFY( it != 0 );
 
-  int cnt = 0;
+  cnt = 0;
   while( it->hasNext() ) {
     ++cnt;
     Statement st = it->next();
