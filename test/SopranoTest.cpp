@@ -313,33 +313,26 @@ void SopranoTest::testRemoveAllStatement()
 
 void SopranoTest::testGraphQuery()
 {
-  /*//Query query("DESCRIBE <uri:init:test1>", Query::SPARQL);
-  Query query("select ?a ?b ?c where {?a ?b ?c .}", Query::SPARQL);
+  Query query("DESCRIBE <uri:init:test1>", Query::SPARQL);
 
   QueryResult *qr = m_model->executeQuery( query );
   QVERIFY( qr != 0L);
 
-  //QVERIFY( qr->isGraph() );
-  //QVERIFY( !qr->isBinding() );
-  //QVERIFY( !qr->isBool() );
-
-  int cnt = 0;
-  QueryResultIterator iter( qr );
-  while ( qr->hasNext() )
-  {
-    ++cnt;
-    //QMap<QString, Node> row = iter.next();
-    qr->next();
-  }
-
-  qDebug() << cnt;
-
-  QVERIFY( cnt == 2 );*/
+  QVERIFY( qr->isGraph() );
+  QVERIFY( !qr->isBinding() );
+  QVERIFY( !qr->isBool() );
 }
 
 void SopranoTest::testBooleanQuery()
 {
+  Query query("ASK {?uri <soprano#predicate1> \"Literal value1\"}", Query::SPARQL);
 
+  QueryResult *qr = m_model->executeQuery( query );
+  QVERIFY( qr != 0L);
+
+  QVERIFY( !qr->isGraph() );
+  QVERIFY( !qr->isBinding() );
+  QVERIFY( qr->isBool() );
 }
 
 void SopranoTest::testQuery()
