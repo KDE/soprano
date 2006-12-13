@@ -52,12 +52,12 @@ bool QueryResultIterator::hasNext() const
 
 const QMap<QString, Node> &QueryResultIterator::next() const
 {
-  QStringList names = d->qr->getBindingNames();
+  QStringList names = d->qr->bindingNames();
   QStringListIterator iter( names );
   while ( iter.hasNext() )
   {
     QString col = iter.next();
-    d->row[ col ] = d->qr->getBinding( col );
+    d->row[ col ] = d->qr->binding( col );
   }
 
   d->qr->next();

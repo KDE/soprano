@@ -43,16 +43,18 @@ public:
   explicit RedlandQueryResult( librdf_query_results *result );
 
   ~RedlandQueryResult();
-    
-  int count() const;
   
   bool hasNext() const;
 
   bool next() const;
     
-  Soprano::Node getBinding( const QString &name ) const;
+  Soprano::Node binding( const QString &name ) const;
 
-  const QStringList &getBindingNames() const;
+  Soprano::Node binding( int offset ) const;
+
+  int bindingCount() const;
+
+  const QStringList &bindingNames() const;
 
   bool isGraph() const;
 

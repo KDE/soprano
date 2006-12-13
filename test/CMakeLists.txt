@@ -14,6 +14,15 @@ kde4_add_executable(statementtest StatementTest.cpp)
 target_link_libraries(statementtest soprano ${QT_QTCORE_LIBRARY} ${QT_QTTEST_LIBRARY})
 add_test(statementtest ${EXECUTABLE_OUTPUT_PATH}/statementtest)
 
+# StatementIterator
+kde4_automoc(StatementIteratorTest.cpp)
+
+# RedlandStatementIterator
+kde4_automoc(RedlandStatementIteratorTest.cpp)
+kde4_add_executable(redlandstitest StatementIteratorTest.cpp RedlandStatementIteratorTest.cpp)
+target_link_libraries(redlandstitest soprano ${QT_QTCORE_LIBRARY} ${QT_QTTEST_LIBRARY})
+add_test(redlandstitest ${EXECUTABLE_OUTPUT_PATH}/redlandstitest)
+
 # general
 kde4_automoc(sopranotest SopranoTest.cpp)
 kde4_automoc(sopranommtest RedlandMemoryModelTest.cpp)

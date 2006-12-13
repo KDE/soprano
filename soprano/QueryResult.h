@@ -1,4 +1,5 @@
-/* This file is part of Soprano
+/* 
+ * This file is part of Soprano Project.
  *
  * Copyright (C) 2006 Daniele Galdi <daniele.galdi@gmail.com>
  *
@@ -32,16 +33,18 @@ class QueryResult
 {
 public:
   virtual ~QueryResult();
-
-  virtual int count() const = 0;
  
   virtual bool hasNext() const = 0;
 
   virtual bool next() const = 0;
 
-  virtual Node getBinding( const QString &name ) const = 0;
+  virtual Node binding( const QString &name ) const = 0;
 
-  virtual const QStringList &getBindingNames() const = 0;
+  virtual Node binding( int offset ) const = 0;
+
+  virtual int bindingCount() const = 0;
+
+  virtual const QStringList &bindingNames() const = 0;
 
   virtual bool isGraph() const = 0;
 

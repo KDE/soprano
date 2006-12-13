@@ -1,7 +1,7 @@
 /* 
  * This file is part of Soprano Project.
  *
- * Copyright (C) 2006 Sebastian Trueg <strueg@mandriva.com>
+ * Copyright (C) 2006 Daniele Galdi <daniele.galdi@gmail.com>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -19,47 +19,25 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#include <QtTest>
+#include <soprano/Soprano.h>
 
-#ifndef SOPRANO_TEST_H
-#define SOPRANO_TEST_H
+#include "RedlandStatementIteratorTest.h"
 
-namespace Soprano {
-  class Model;
-  class ModelFactory;
-  class Statement;
+using namespace Soprano;
+
+void RedlandStatementIteratorTest::initTestCase()
+{
+  m_factory = Manager::instance()->factory( "Redland" );
+  m_model = m_factory->createMemoryModel( "sti-model" );
 }
 
-class SopranoTest: public QObject
+void RedlandStatementIteratorTest::cleanupTestCase()
 {
-Q_OBJECT
+  delete m_model;
+  delete m_factory;
+}
 
-private Q_SLOTS:
-  void testAddModel();   
-  void testAddListOfStatement(); 
-  void testAddStatementIterator();
-  void testAddStatements();
+QTEST_MAIN(RedlandStatementIteratorTest)
 
-  void testListStatements();
+#include "RedlandStatementIteratorTest.moc"
 
-  void testRemoveStatement();
-  void testRemoveAllStatement();
-
-  void testGraphQuery();
-  void testBooleanQuery();
-  void testQuery();
-
-  void init();
-  void cleanup();
-
-protected:
-   Soprano::Statement* m_st1;
-   Soprano::Statement* m_st2;
-   Soprano::Statement* m_st3;
-   Soprano::Statement* m_st4;
-
-   Soprano::Model* m_model;
-   Soprano::ModelFactory *m_factory;
-};
-
-#endif

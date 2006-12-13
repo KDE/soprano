@@ -159,33 +159,45 @@ void SopranoTest::testAddStatements()
 
 void SopranoTest::testListStatements()
 {
+  QList<Statement> statements;
   Node resource_1 = m_model->createResource( QUrl("uri:list:resource1") );
   Node resource_2 = m_model->createResource( QUrl("uri:list:resource2") );
   Node resource_3 = m_model->createResource( QUrl("uri:list:resource3") );
 
-  QList<Statement> statements;
   for (int i=0; i<50; i++) 
   {
-    Node predicate = m_model->createPredicate( "soprano", "predicate" + i );
-    Node object = m_model->createLiteral( "Literal value " + i );
+    QString property = "predicate" + QString::number(i);
+    QString literal = "Literal value" + QString::number(i);
 
-    statements.append( Statement(resource_1, predicate, object) );
+    Node predicate = m_model->createPredicate( "soprano", property);
+    Node object = m_model->createLiteral( literal );
+
+    Statement st(resource_1, predicate, object);
+    statements.append( st );
   }
 
   for (int i=0; i<50; i++) 
   {
-    Node predicate = m_model->createPredicate( "soprano", "predicate" + (i + 100) );
-    Node object = m_model->createLiteral( "Literal value " + (i + 100) );
+    QString property = "predicate" + QString::number(i + 50);
+    QString literal = "Literal value" + QString::number(i + 50);
 
-    statements.append( Statement(resource_2, predicate, object) );
+    Node predicate = m_model->createPredicate( "soprano", property);
+    Node object = m_model->createLiteral( literal );
+
+    Statement st(resource_2, predicate, object);
+    statements.append( st );
   }
 
   for (int i=0; i<20; i++) 
   {
-    Node predicate = m_model->createPredicate( "soprano", "predicate" + (i + 200) );
-    Node object = m_model->createLiteral( "Literal value " + (i + 200) );
+    QString property = "predicate" + QString::number(i + 100);
+    QString literal = "Literal value" + QString::number(i + 100);
 
-    statements.append( Statement(resource_3, predicate, object) );
+    Node predicate = m_model->createPredicate( "soprano", property);
+    Node object = m_model->createLiteral( literal );
+
+    Statement st(resource_3, predicate, object);
+    statements.append( st );
   }
 
   m_model->add( statements );
@@ -297,6 +309,81 @@ void SopranoTest::testRemoveAllStatement()
   QVERIFY( !m_model->contains( *m_st2 ) );
   QVERIFY( !m_model->contains( *m_st3 ) );
   QVERIFY( !m_model->contains( *m_st4 ) );
+}
+
+void SopranoTest::testGraphQuery()
+{
+  /*//Query query("DESCRIBE <uri:init:test1>", Query::SPARQL);
+  Query query("select ?a ?b ?c where {?a ?b ?c .}", Query::SPARQL);
+
+  QueryResult *qr = m_model->executeQuery( query );
+  QVERIFY( qr != 0L);
+
+  //QVERIFY( qr->isGraph() );
+  //QVERIFY( !qr->isBinding() );
+  //QVERIFY( !qr->isBool() );
+
+  int cnt = 0;
+  QueryResultIterator iter( qr );
+  while ( qr->hasNext() )
+  {
+    ++cnt;
+    //QMap<QString, Node> row = iter.next();
+    qr->next();
+  }
+
+  qDebug() << cnt;
+
+  QVERIFY( cnt == 2 );*/
+}
+
+void SopranoTest::testBooleanQuery()
+{
+
+}
+
+void SopranoTest::testQuery()
+{
+  /* SPARQL */
+  Query sparql("select ?b ?c where {<uri:init:test1> ?b ?c .}", Query::SPARQL);
+
+  QueryResult *qr = m_model->executeQuery( sparql );
+  QVERIFY( qr != 0L);
+
+  QVERIFY( !qr->isGraph() );
+  QVERIFY( qr->isBinding() );
+  QVERIFY( !qr->isBool() );
+
+  int cnt = 0;
+  QueryResultIterator iter( qr );
+  while ( iter.hasNext() )
+  {
+    ++cnt;
+    iter.next();
+  }
+
+  QVERIFY( cnt == 2 );
+
+  /* RDQL */
+
+  Query rdql("select ?b ?c where (<uri:init:test1>, ?b, ?c)", Query::RDQL);
+
+  QueryResult *qr2 = m_model->executeQuery( rdql );
+  QVERIFY( qr2 != 0L);
+
+  QVERIFY( !qr2->isGraph() );
+  QVERIFY( qr2->isBinding() );
+  QVERIFY( !qr2->isBool() );
+
+  int cnt2 = 0;
+  QueryResultIterator iter2( qr2 );
+  while ( iter2.hasNext() )
+  {
+    ++cnt2;
+    iter2.next();
+  }
+
+  QVERIFY( cnt2 == 2 );
 }
 
 #include "SopranoTest.moc"

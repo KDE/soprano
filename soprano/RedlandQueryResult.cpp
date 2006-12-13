@@ -40,8 +40,7 @@ RedlandQueryResult::RedlandQueryResult( librdf_query_results *result )
   d->result = result;
   Q_ASSERT( d->result != 0L );
 
-  int count = librdf_query_results_get_bindings_count ( result );
-  for (int offset = 0; offset < count; offset++) {
+  for (int offset = 0; offset < bindingCount(); offset++) {
     d->names.append( QString( librdf_query_results_get_binding_name( result, offset ) ) );
   }
 }
@@ -50,11 +49,6 @@ RedlandQueryResult::~RedlandQueryResult()
 {
   librdf_free_query_results( d->result );
   delete d;
-}
-
-int RedlandQueryResult::count() const
-{
-  return librdf_query_results_get_count( d->result );
 }
 
 bool RedlandQueryResult::hasNext() const
@@ -67,7 +61,7 @@ bool RedlandQueryResult::next() const
   return librdf_query_results_next( d->result ) != 0;
 }
 
-Soprano::Node RedlandQueryResult::getBinding( const QString &name ) const
+Soprano::Node RedlandQueryResult::binding( const QString &name ) const
 {
   librdf_node *node = librdf_query_results_get_binding_value_by_name( d->result, (const char *)name.toLatin1().data() );
   if ( !node )
@@ -82,7 +76,27 @@ Soprano::Node RedlandQueryResult::getBinding( const QString &name ) const
   return tmp;
 }
 
-const QStringList &RedlandQueryResult::getBindingNames() const
+Soprano::Node RedlandQueryResult::binding( int offset ) const
+{
+  librdf_node *node = librdf_query_results_get_binding_value( d->result, offset );
+  if ( !node )
+  {
+    // Return a not valid node (empty)
+    return Soprano::Node();
+  }
+
+  Soprano::Node tmp = Util::createNode( node );
+  librdf_free_node( node );
+  
+  return tmp;
+}
+
+int RedlandQueryResult::bindingCount() const
+{
+  return librdf_query_results_get_count( d->result );
+}
+
+const QStringList &RedlandQueryResult::bindingNames() const
 {
   return d->names;
 }

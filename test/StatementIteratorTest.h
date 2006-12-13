@@ -1,7 +1,7 @@
 /* 
  * This file is part of Soprano Project.
  *
- * Copyright (C) 2006 Sebastian Trueg <strueg@mandriva.com>
+ * Copyright (C) 2006 Daniele Galdi <daniele.galdi@gmail.com>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -21,45 +21,31 @@
 
 #include <QtTest>
 
-#ifndef SOPRANO_TEST_H
-#define SOPRANO_TEST_H
+#ifndef STATEMENT_ITERATOR_TEST_H
+#define STATEMENT_ITERATOR_TEST_H
 
 namespace Soprano {
   class Model;
   class ModelFactory;
   class Statement;
+  class Node;
 }
 
-class SopranoTest: public QObject
+class StatementIteratorTest: public QObject
 {
 Q_OBJECT
 
 private Q_SLOTS:
-  void testAddModel();   
-  void testAddListOfStatement(); 
-  void testAddStatementIterator();
-  void testAddStatements();
-
-  void testListStatements();
-
-  void testRemoveStatement();
-  void testRemoveAllStatement();
-
-  void testGraphQuery();
-  void testBooleanQuery();
-  void testQuery();
+  void testIterator();
 
   void init();
   void cleanup();
 
 protected:
-   Soprano::Statement* m_st1;
-   Soprano::Statement* m_st2;
-   Soprano::Statement* m_st3;
-   Soprano::Statement* m_st4;
-
    Soprano::Model* m_model;
    Soprano::ModelFactory *m_factory;
+
+   QList<Soprano::Statement> m_statements;
 };
 
-#endif
+#endif // STATEMENT_ITERATOR_TEST_H
