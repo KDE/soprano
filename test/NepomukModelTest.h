@@ -21,7 +21,7 @@
 
 #include <QtTest>
 
-#include "SopranoTest.h"
+#include "SopranoModelTest.h"
 
 #ifndef NEPOMUK_MODEL_TEST_H
 #define NEPOMUK_MODEL_TEST_H
@@ -30,7 +30,7 @@ namespace Soprano {
   class Model;
 }
 
-class NepomukModelTest: public SopranoTest
+class NepomukModelTest: public SopranoModelTest
 {
 Q_OBJECT
 

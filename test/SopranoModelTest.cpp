@@ -19,7 +19,7 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#include "SopranoTest.h"
+#include "SopranoModelTest.h"
 #include <soprano/Soprano.h>
 
 #include <QtCore>
@@ -27,7 +27,7 @@
 
 using namespace Soprano;
 
-void SopranoTest::cleanup()
+void SopranoModelTest::cleanup()
 {
   delete m_st1;
   delete m_st2;
@@ -37,7 +37,7 @@ void SopranoTest::cleanup()
   QVERIFY( m_model->removeAll() == Model::SUCCESS_EXIT );
 }
 
-void SopranoTest::init()
+void SopranoModelTest::init()
 {
   Node subject1 = m_model->createResource( QUrl("uri:init:test1") );
   Node subject2 = m_model->createResource( QUrl("uri:init:test2") );
@@ -59,7 +59,7 @@ void SopranoTest::init()
   m_model->add( *m_st4 );
 }
 
-void SopranoTest::testAddModel()
+void SopranoModelTest::testAddModel()
 {
   Node subject1 = m_model->createResource( QUrl("uri:add:model") );
 
@@ -84,7 +84,7 @@ void SopranoTest::testAddModel()
   QVERIFY( !m_model->contains( st3 ) );
 }
 
-void SopranoTest::testAddListOfStatement()
+void SopranoModelTest::testAddListOfStatement()
 {
   Node subject1 = m_model->createResource( QUrl("uri:add:model") );
 
@@ -110,7 +110,7 @@ void SopranoTest::testAddListOfStatement()
   QVERIFY( m_model->contains( st3 ) );
 }
 
-void SopranoTest::testAddStatementIterator()
+void SopranoModelTest::testAddStatementIterator()
 {
   Node subject1 = m_model->createResource( QUrl("uri:add:model") );
 
@@ -135,7 +135,7 @@ void SopranoTest::testAddStatementIterator()
   QVERIFY( !m_model->contains( st3 ) );
 }
 
-void SopranoTest::testAddStatements()
+void SopranoModelTest::testAddStatements()
 {
   Node subject1 = m_model->createResource( QUrl("uri:soprano:test1") );
   Node subject2 = m_model->createResource( QUrl("uri:soprano:test2") );
@@ -157,7 +157,7 @@ void SopranoTest::testAddStatements()
   QVERIFY( m_model->add( st4 ) == Soprano::Model::SUCCESS_EXIT );
 }
 
-void SopranoTest::testListStatements()
+void SopranoModelTest::testListStatements()
 {
   QList<Statement> statements;
   Node resource_1 = m_model->createResource( QUrl("uri:list:resource1") );
@@ -271,7 +271,7 @@ void SopranoTest::testListStatements()
   delete it;
 }
 
-void SopranoTest::testRemoveStatement()
+void SopranoModelTest::testRemoveStatement()
 {
   Node subject = m_model->createResource( QUrl("uri:remove:3") );
   Node predicate = m_model->createPredicate( "soprano", "predicate" );
@@ -287,7 +287,7 @@ void SopranoTest::testRemoveStatement()
   QVERIFY( !m_model->contains(st) );
 }
 
-void SopranoTest::testRemoveAllStatement()
+void SopranoModelTest::testRemoveAllStatement()
 {
   m_model->removeAll( m_st1->subject(), Node(), Node() );
 
@@ -311,7 +311,7 @@ void SopranoTest::testRemoveAllStatement()
   QVERIFY( !m_model->contains( *m_st4 ) );
 }
 
-void SopranoTest::testGraphQuery()
+void SopranoModelTest::testGraphQuery()
 {
   Query query("DESCRIBE <uri:init:test1>", Query::SPARQL);
 
@@ -323,7 +323,7 @@ void SopranoTest::testGraphQuery()
   QVERIFY( !qr->isBool() );
 }
 
-void SopranoTest::testBooleanQuery()
+void SopranoModelTest::testBooleanQuery()
 {
   Query query("ASK {?uri <soprano#predicate1> \"Literal value1\"}", Query::SPARQL);
 
@@ -335,7 +335,7 @@ void SopranoTest::testBooleanQuery()
   QVERIFY( qr->isBool() );
 }
 
-void SopranoTest::testQuery()
+void SopranoModelTest::testQuery()
 {
   /* SPARQL */
   Query sparql("select ?b ?c where {<uri:init:test1> ?b ?c .}", Query::SPARQL);
@@ -379,4 +379,4 @@ void SopranoTest::testQuery()
   QVERIFY( cnt2 == 2 );
 }
 
-#include "SopranoTest.moc"
+#include "SopranoModelTest.moc"

@@ -30,7 +30,7 @@ namespace Soprano {
   class Statement;
 }
 
-class SopranoTest: public QObject
+class SopranoModelTest: public QObject
 {
 Q_OBJECT
 

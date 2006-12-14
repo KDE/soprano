@@ -21,7 +21,7 @@
 
 #include <QtTest>
 
-#include "SopranoTest.h"
+#include "SopranoModelTest.h"
 
 #ifndef REDLAND_MEMORY_MODEL_TEST_H
 #define REDLAND_MEMORY_MODEL_TEST_H
@@ -30,7 +30,7 @@ namespace Soprano {
   class Model;
 }
 
-class RedlandMemoryModelTest: public SopranoTest
+class RedlandMemoryModelTest: public SopranoModelTest
 {
 Q_OBJECT
 
