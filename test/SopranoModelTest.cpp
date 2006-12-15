@@ -321,11 +321,24 @@ void SopranoModelTest::testGraphQuery()
   QVERIFY( qr->isGraph() );
   QVERIFY( !qr->isBinding() );
   QVERIFY( !qr->isBool() );
+
+  Model *model = qr->model();
+  QVERIFY( model != 0L);
+
+  StatementIterator *iter = model->listStatements();
+  int cnt = 0;
+  while ( iter->hasNext() )
+  {
+    ++cnt;
+    Statement st = iter->next();
+  }
+  delete iter;
+  delete model;
 }
 
 void SopranoModelTest::testBooleanQuery()
 {
-  Query query("ASK {?uri <soprano#predicate1> \"Literal value1\"}", Query::SPARQL);
+  /*Query query("ASK {<uri:init:test1> <soprano#predicate1> \"Literal value1\"}", Query::SPARQL);
 
   QueryResult *qr = m_model->executeQuery( query );
   QVERIFY( qr != 0L);
@@ -333,10 +346,14 @@ void SopranoModelTest::testBooleanQuery()
   QVERIFY( !qr->isGraph() );
   QVERIFY( !qr->isBinding() );
   QVERIFY( qr->isBool() );
+
+  QVERIFY( qr->boolValue() );*/
 }
 
 void SopranoModelTest::testQuery()
 {
+  m_model->print();
+
   /* SPARQL */
   Query sparql("select ?b ?c where {<uri:init:test1> ?b ?c .}", Query::SPARQL);
 
@@ -348,12 +365,11 @@ void SopranoModelTest::testQuery()
   QVERIFY( !qr->isBool() );
 
   int cnt = 0;
-  QueryResultIterator iter( qr );
-  while ( iter.hasNext() )
+  while ( qr->next() )
   {
     ++cnt;
-    iter.next();
   }
+  delete qr;
 
   QVERIFY( cnt == 2 );
 
@@ -361,20 +377,19 @@ void SopranoModelTest::testQuery()
 
   Query rdql("select ?b ?c where (<uri:init:test1>, ?b, ?c)", Query::RDQL);
 
-  QueryResult *qr2 = m_model->executeQuery( rdql );
-  QVERIFY( qr2 != 0L);
+  qr = m_model->executeQuery( rdql );
+  QVERIFY( qr != 0L);
 
-  QVERIFY( !qr2->isGraph() );
-  QVERIFY( qr2->isBinding() );
-  QVERIFY( !qr2->isBool() );
+  QVERIFY( !qr->isGraph() );
+  QVERIFY( qr->isBinding() );
+  QVERIFY( !qr->isBool() );
 
   int cnt2 = 0;
-  QueryResultIterator iter2( qr2 );
-  while ( iter2.hasNext() )
+  while ( qr->next() )
   {
     ++cnt2;
-    iter2.next();
   }
+  delete qr;
 
   QVERIFY( cnt2 == 2 );
 }

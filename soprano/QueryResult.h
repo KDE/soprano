@@ -27,14 +27,13 @@
 
 namespace Soprano {
 
+class Model;
 class Node;
 
 class QueryResult
 {
 public:
   virtual ~QueryResult();
- 
-  virtual bool hasNext() const = 0;
 
   virtual bool next() const = 0;
 
@@ -53,6 +52,8 @@ public:
   virtual bool isBool() const = 0;
 
   virtual bool boolValue() const = 0;
+
+  virtual Model *model() const = 0;
 };
 
 }

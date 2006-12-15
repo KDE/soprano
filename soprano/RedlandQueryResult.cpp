@@ -1,5 +1,5 @@
 /* 
- * This file is part of Soprano Project
+ * This file is part of Soprano Project.
  *
  * Copyright (C) 2006 Daniele Galdi <daniele.galdi@gmail.com>
  *
@@ -19,9 +19,12 @@
  * Boston, MA 02110-1301, USA.
  */
 
+#include "Model.h"
 #include "Node.h"
 #include "RedlandUtil.h"
 #include "RedlandQueryResult.h"
+#include "RedlandModelFactory.h"
+#include "RedlandStatementIterator.h"
 
 using namespace Soprano::Backend::Redland;
 
@@ -32,6 +35,7 @@ struct RedlandQueryResult::Private
   librdf_query_results *result;
 
   QStringList names;
+  bool first;
 };
 
 RedlandQueryResult::RedlandQueryResult( librdf_query_results *result )
@@ -43,6 +47,7 @@ RedlandQueryResult::RedlandQueryResult( librdf_query_results *result )
   for (int offset = 0; offset < bindingCount(); offset++) {
     d->names.append( QString( librdf_query_results_get_binding_name( result, offset ) ) );
   }
+  d->first = true;
 }
 
 RedlandQueryResult::~RedlandQueryResult()
@@ -51,14 +56,20 @@ RedlandQueryResult::~RedlandQueryResult()
   delete d;
 }
 
-bool RedlandQueryResult::hasNext() const
-{
-  return librdf_query_results_finished( d->result ) == 0;
-}
-
 bool RedlandQueryResult::next() const
 {
-  return librdf_query_results_next( d->result ) != 0;
+  bool hasNext = librdf_query_results_finished( d->result ) == 0;
+
+  if ( !d->first )
+  {
+    hasNext = ( librdf_query_results_next( d->result ) == 0 );
+  } 
+  else 
+  {
+    d->first = false;
+  }
+
+  return hasNext;
 }
 
 Soprano::Node RedlandQueryResult::binding( const QString &name ) const
@@ -120,3 +131,19 @@ bool RedlandQueryResult::boolValue() const
 {
   return librdf_query_results_get_boolean( d->result ) > 0;
 }
+
+Soprano::Model *RedlandQueryResult::model() const
+{
+  RedlandModelFactory factory;
+  Model *model = factory.createMemoryModel( "query-result-model" );
+
+  librdf_stream *stream = librdf_query_results_as_stream( d->result );
+  if ( !stream )
+  {
+    return model;
+  }
+  
+  model->add( RedlandStatementIterator( stream ) );
+
+  return model;
+} 

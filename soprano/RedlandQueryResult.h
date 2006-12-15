@@ -1,5 +1,5 @@
 /* 
- * This file is part of Soprano Project
+ * This file is part of Soprano Project.
  *
  * Copyright (C) 2006 Daniele Galdi <daniele.galdi@gmail.com>
  *
@@ -31,6 +31,7 @@ namespace Soprano
 {
 
 class Node;
+class Model;
 
 namespace Backend
 {
@@ -43,8 +44,6 @@ public:
   explicit RedlandQueryResult( librdf_query_results *result );
 
   ~RedlandQueryResult();
-  
-  bool hasNext() const;
 
   bool next() const;
     
@@ -63,6 +62,8 @@ public:
   bool isBool() const;
 
   bool boolValue() const;
+
+  Model *model() const;
 
 private:
   class Private;

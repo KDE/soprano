@@ -1,5 +1,5 @@
 /* 
- * This file is part of Soprano Project
+ * This file is part of Soprano Project.
  *
  * Copyright (C) 2006 Daniele Galdi <daniele.galdi@gmail.com>
  *
@@ -132,13 +132,8 @@ Soprano::QueryResult *RedlandModel::executeQuery( const Query &query ) const
   }
 
   librdf_query_set_limit( q , query.limit() );
-  qDebug("set query limit to: %d", query.limit() );
-  
   librdf_query_set_offset( q, query.offset() );
-  qDebug("set query offset: %d", query.offset() );
   
-  qDebug("executeQuery -'%s'\n", query.query().toLatin1().data() );
-
   librdf_query_results *res = librdf_model_query_execute( d->model, q );
   librdf_free_query( q );
 
