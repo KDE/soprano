@@ -1,5 +1,5 @@
 /* 
- * This file is part of Soprano Project
+ * This file is part of Soprano Project.
  *
  * Copyright (C) 2006 Daniele Galdi <daniele.galdi@gmail.com>
  *
@@ -33,7 +33,7 @@ namespace Soprano
 
 class Node;
 class Query;
-class QueryResult;
+class ResultSet;
 class Statement;
 class StatementIterator;
 
@@ -121,9 +121,7 @@ public:
    *
    * \return All the Statements that match the query. NULL on error.
    */
-  // FIXME: returning a pointer is not a good idea becasue this way the user
-  //        has to delete it manually
-  virtual QueryResult *executeQuery( const Query &query ) const = 0;
+  virtual ResultSet executeQuery( const Query &query ) const = 0;
 
   /**
    * \return An iterator for all the contained Statements. NULL on error.

@@ -40,6 +40,8 @@ struct RedlandQueryResult::Private
 
 RedlandQueryResult::RedlandQueryResult( librdf_query_results *result )
 {
+  if ( result == 0L ) return;
+
   d = new Private;
   d->result = result;
   Q_ASSERT( d->result != 0L );
@@ -52,12 +54,20 @@ RedlandQueryResult::RedlandQueryResult( librdf_query_results *result )
 
 RedlandQueryResult::~RedlandQueryResult()
 {
-  librdf_free_query_results( d->result );
-  delete d;
+  if ( d )
+  {
+    librdf_free_query_results( d->result );
+    delete d;
+  }
 }
 
 bool RedlandQueryResult::next() const
 {
+  if ( d == 0L ) 
+  {
+    return false;
+  }
+
   bool hasNext = librdf_query_results_finished( d->result ) == 0;
 
   if ( !d->first )
@@ -67,6 +77,10 @@ bool RedlandQueryResult::next() const
   else 
   {
     d->first = false;
+    if ( isBool() ) 
+    {
+      hasNext = isBool();
+    }
   }
 
   return hasNext;
@@ -135,15 +149,13 @@ bool RedlandQueryResult::boolValue() const
 Soprano::Model *RedlandQueryResult::model() const
 {
   RedlandModelFactory factory;
-  Model *model = factory.createMemoryModel( "query-result-model" );
+  Model *model = factory.createMemoryModel( "query-result" );
 
   librdf_stream *stream = librdf_query_results_as_stream( d->result );
-  if ( !stream )
+  if ( stream )
   {
-    return model;
+    model->add( RedlandStatementIterator( stream ) );
   }
-  
-  model->add( RedlandStatementIterator( stream ) );
 
   return model;
 } 

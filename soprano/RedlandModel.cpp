@@ -20,6 +20,7 @@
  */
 
 #include "Query.h"
+#include "ResultSet.h"
 #include "World.h"
 #include "RedlandUtil.h"
 #include "RedlandQueryResult.h"
@@ -123,12 +124,12 @@ bool RedlandModel::contains( const Statement &statement ) const
   return result != 0;
 }
 
-Soprano::QueryResult *RedlandModel::executeQuery( const Query &query ) const
+Soprano::ResultSet RedlandModel::executeQuery( const Query &query ) const
 {
   librdf_query *q = librdf_new_query( d->world, Util::queryType( query ), 0L, (unsigned char *)query.query().toLatin1().data(), 0L );
   if ( !q )
   {
-    return 0L;
+    return ResultSet( 0L );
   }
 
   librdf_query_set_limit( q , query.limit() );
@@ -137,12 +138,7 @@ Soprano::QueryResult *RedlandModel::executeQuery( const Query &query ) const
   librdf_query_results *res = librdf_model_query_execute( d->model, q );
   librdf_free_query( q );
 
-  if ( !res )
-  {
-    return 0L;
-  }
-
-  return new RedlandQueryResult( res );
+  return ResultSet( new RedlandQueryResult( res ) );
 }
 
 Soprano::StatementIterator *RedlandModel::listStatements( const Statement &partial ) const

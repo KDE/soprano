@@ -31,7 +31,7 @@
 namespace Soprano
 {
 
-class QueryResult;
+class ResultSet;
 class StatementIterator;
 
 namespace Backend
@@ -52,7 +52,7 @@ public:
 
   bool contains( const Statement &statement ) const;
 
-  Soprano::QueryResult *executeQuery( const Query &query ) const;
+  Soprano::ResultSet executeQuery( const Query &query ) const;
 
   Soprano::StatementIterator *listStatements( const Statement &partial ) const;
 

@@ -25,6 +25,7 @@
 #include <knep/services/queryservice.h>
 
 #include "Query.h"
+#include "ResultSet.h"
 #include "NepomukUtil.h"
 #include "NepomukStatementIterator.h"
 #include "NepomukModel.h"
@@ -100,15 +101,11 @@ bool Backend::Nepomuk::NepomukModel::contains( const Statement &statement ) cons
   return d->ts->contains( d->name, converted ) == 1;
 }
 
-Soprano::QueryResult *Backend::Nepomuk::NepomukModel::executeQuery( const Query &query ) const
+Soprano::ResultSet Backend::Nepomuk::NepomukModel::executeQuery( const Query &query ) const
 {
   Q_ASSERT( "not tested" != 0L);
 
   /*  RDF::QueryResult result = d->qs->executeQuery( d->name, query.query(), "rdql", query.offset(), query.limit() );*/
-
-
-
-  return 0L;
 }
 
 Soprano::StatementIterator *Backend::Nepomuk::NepomukModel::listStatements( const Statement &partial ) const

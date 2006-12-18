@@ -9,7 +9,8 @@ include_directories(
 
 SET(soprano_SRCS 
     Query.cpp	    
-    QueryResult.cpp  
+    QueryResult.cpp
+    ResultSet.cpp  
     Node.cpp
     Statement.cpp
     StatementIterator.cpp
@@ -55,7 +56,7 @@ INSTALL(TARGETS soprano
 INSTALL(FILES 
 	Parser.h
 	Query.h
-	QueryResult.h
+	ResultSet.h
 	Node.h
 	Statement.h
 	StatementIterator.h

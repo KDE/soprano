@@ -1,5 +1,5 @@
 /* 
- * This file is part of Soprano Project
+ * This file is part of Soprano Project.
  *
  * Copyright (C) 2006 Daniele Galdi <daniele.galdi@gmail.com>
  *
@@ -19,17 +19,49 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef SOPRANO_H
-#define SOPRANO_H
+#ifndef SOPRANO_RESULT_SET_H
+#define SOPRANO_RESULT_SET_H
 
-#include <soprano/Query.h>
-#include <soprano/ResultSet.h>
-#include <soprano/Node.h>
-#include <soprano/Statement.h>
-#include <soprano/StatementIterator.h>
-#include <soprano/Model.h>
-#include <soprano/ModelFactory.h>
-#include <soprano/Manager.h>
-#include <soprano/Parser.h>
+#include <QString>
+#include <QStringList>
 
-#endif // SOPRANO_H
+namespace Soprano {
+
+class Model;
+class Node;
+class QueryResult;
+
+class ResultSet
+{
+public:
+  explicit ResultSet( QueryResult *qr );
+
+  virtual ~ResultSet();
+
+  bool next() const;
+
+  Node binding( const QString &name ) const;
+
+  Node binding( int offset ) const;
+
+  int bindingCount() const;
+
+  const QStringList &bindingNames() const;
+
+  bool isGraph() const;
+
+  bool isBinding() const;
+
+  bool isBool() const;
+
+  bool boolValue() const;
+
+  Model *model() const;
+private:
+  QueryResult *d;
+};
+
+}
+
+#endif // SOPRANO_RESULT_SET_H
+
