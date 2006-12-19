@@ -19,43 +19,30 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef SOPRANO_BACKEND_NEPOMUK_STATEMENT_ITERATOR_H
-#define SOPRANO_BACKEND_NEPOMUK_STATEMENT_ITERATOR_H
+#ifndef SOPRANO_STATEMENT_ITERATOR_PRIVATE_H
+#define SOPRANO_STATEMENT_ITERATOR_PRIVATE_H
 
-#include <knep/services/statementlistiterator.h>
-
-#include "StatementIteratorPrivate.h"
-
-using namespace Nepomuk::Backbone::Services;
-
-namespace Soprano 
-{
+namespace Soprano {
 
 class Statement;
 
-namespace Backend
-{
-namespace Nepomuk
-{
-
-class NepomukStatementIterator: public Soprano::StatementIteratorPrivate
+class StatementIteratorPrivate
 {
 public:
-  explicit NepomukStatementIterator( RDF::StatementListIterator *iter );
+  virtual ~StatementIteratorPrivate();
 
-  ~NepomukStatementIterator();
+  /**
+   *\return true if there is another Statement
+   */
+  virtual  bool hasNext() const = 0;
 
-  bool hasNext() const;
-
-  const Soprano::Statement next() const;
-private:
-  class Private;
-  Private *d;
+  /**
+   *\return the Next Statement
+   */
+  virtual const Statement next() const = 0;
 };
 
 }
-}
-}
 
-#endif // SOPRANO_BACKEND_NEPOMUK_STATEMENT_ITERATOR_H
+#endif // SOPRANO_STATEMENT_ITERATOR_PRIVATE_H
 

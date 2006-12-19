@@ -54,7 +54,7 @@ public:
 
   Soprano::ResultSet executeQuery( const Query &query ) const;
 
-  Soprano::StatementIterator *listStatements( const Statement &partial ) const;
+  Soprano::StatementIterator listStatements( const Statement &partial ) const;
 
   Model::ExitCode remove( const Statement &st );
 

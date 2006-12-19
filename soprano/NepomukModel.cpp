@@ -26,6 +26,7 @@
 
 #include "Query.h"
 #include "ResultSet.h"
+#include "StatementIterator.h"
 #include "NepomukUtil.h"
 #include "NepomukStatementIterator.h"
 #include "NepomukModel.h"
@@ -108,12 +109,12 @@ Soprano::ResultSet Backend::Nepomuk::NepomukModel::executeQuery( const Query &qu
   /*  RDF::QueryResult result = d->qs->executeQuery( d->name, query.query(), "rdql", query.offset(), query.limit() );*/
 }
 
-Soprano::StatementIterator *Backend::Nepomuk::NepomukModel::listStatements( const Statement &partial ) const
+Soprano::StatementIterator Backend::Nepomuk::NepomukModel::listStatements( const Statement &partial ) const
 {
   RDF::Statement converted = Util::createStatement(partial);
   RDF::StatementListIterator *iter = new RDF::StatementListIterator( d->ts->listStatements( d->name, converted, 50), d->ts);
 
-  return new Backend::Nepomuk::NepomukStatementIterator( iter );
+  return StatementIterator( new Backend::Nepomuk::NepomukStatementIterator( iter ) );
 }
 
 Soprano::Model::ExitCode Backend::Nepomuk::NepomukModel::remove( const Statement &statement )

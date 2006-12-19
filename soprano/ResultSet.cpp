@@ -29,20 +29,18 @@ using namespace Soprano;
 
 ResultSet::ResultSet( QueryResult *qr ): d(qr) 
 {
-  Q_ASSERT( qr != 0L );
 }
 
 ResultSet::~ResultSet()
 {
-  if ( d ) 
-  {
-    delete d;
-  }
+  if ( d == 0L ) return; 
+
+  delete d;
 }
 
 bool ResultSet::next() const
 {
-  return d->next();
+  return d == 0L ? false : d->next();
 }
 
 Soprano::Node ResultSet::binding( const QString &name ) const

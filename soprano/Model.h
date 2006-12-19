@@ -126,9 +126,7 @@ public:
   /**
    * \return An iterator for all the contained Statements. NULL on error.
    */ 
-  // FIXME: returning a pointer is not a good idea becasue this way the user
-  //        has to delete it manually
-  StatementIterator *listStatements() const;
+  StatementIterator listStatements() const;
 
   /**
    * Return an iterator over the Models statements that "partial"
@@ -138,9 +136,7 @@ public:
    *
    * \return An iterator for all the matched Statements. NULL on error.
    */
-  // FIXME: returning a pointer is not a good idea becasue this way the user
-  //        has to delete it manually
-  virtual StatementIterator *listStatements( const Statement &partial ) const = 0;
+  virtual StatementIterator listStatements( const Statement &partial ) const = 0;
 
   /**
    * Return an iterator over the Models statements that "partial"
@@ -152,9 +148,7 @@ public:
    *
    * \return An iterator for all the matched Statements. NULL on error.
    */
-  // FIXME: returning a pointer is not a good idea becasue this way the user
-  //        has to delete it manually
-  StatementIterator *listStatements( const Node &subject, const Node &predicate, const Node &object ) const;
+  StatementIterator listStatements( const Node &subject, const Node &predicate, const Node &object ) const;
 
   /**
    * Remove the given Statement from the Model.

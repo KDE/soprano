@@ -24,7 +24,7 @@
 
 #include <redland.h>
 
-#include "StatementIterator.h"
+#include "StatementIteratorPrivate.h"
 
 namespace Soprano 
 {
@@ -36,7 +36,7 @@ namespace Backend
 namespace Redland
 {
 
-class RedlandStatementIterator: public Soprano::StatementIterator
+class RedlandStatementIterator: public Soprano::StatementIteratorPrivate
 {
 public:
   explicit RedlandStatementIterator( librdf_stream *stream );

@@ -21,6 +21,7 @@
 
 #include "Model.h"
 #include "Node.h"
+#include "StatementIterator.h"
 #include "RedlandUtil.h"
 #include "RedlandQueryResult.h"
 #include "RedlandModelFactory.h"
@@ -40,8 +41,6 @@ struct RedlandQueryResult::Private
 
 RedlandQueryResult::RedlandQueryResult( librdf_query_results *result )
 {
-  if ( result == 0L ) return;
-
   d = new Private;
   d->result = result;
   Q_ASSERT( d->result != 0L );
@@ -54,20 +53,12 @@ RedlandQueryResult::RedlandQueryResult( librdf_query_results *result )
 
 RedlandQueryResult::~RedlandQueryResult()
 {
-  if ( d )
-  {
-    librdf_free_query_results( d->result );
-    delete d;
-  }
+  librdf_free_query_results( d->result );
+  delete d;
 }
 
 bool RedlandQueryResult::next() const
 {
-  if ( d == 0L ) 
-  {
-    return false;
-  }
-
   bool hasNext = librdf_query_results_finished( d->result ) == 0;
 
   if ( !d->first )
@@ -154,7 +145,7 @@ Soprano::Model *RedlandQueryResult::model() const
   librdf_stream *stream = librdf_query_results_as_stream( d->result );
   if ( stream )
   {
-    model->add( RedlandStatementIterator( stream ) );
+    model->add( StatementIterator( new RedlandStatementIterator( stream ) ) );
   }
 
   return model;

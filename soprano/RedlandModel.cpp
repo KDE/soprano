@@ -21,6 +21,7 @@
 
 #include "Query.h"
 #include "ResultSet.h"
+#include "StatementIterator.h"
 #include "World.h"
 #include "RedlandUtil.h"
 #include "RedlandQueryResult.h"
@@ -141,24 +142,24 @@ Soprano::ResultSet RedlandModel::executeQuery( const Query &query ) const
   return ResultSet( new RedlandQueryResult( res ) );
 }
 
-Soprano::StatementIterator *RedlandModel::listStatements( const Statement &partial ) const
+Soprano::StatementIterator RedlandModel::listStatements( const Statement &partial ) const
 {
   librdf_statement *st = Util::createStatement( partial );
   if ( !st )
   {
-    return 0L;
+    return StatementIterator( 0L );
   }
   
   librdf_stream *stream = librdf_model_find_statements( d->model, st );
   if ( !stream )
   {
     librdf_free_statement( st );
-    return 0L;
+    return StatementIterator( 0L );
   }
 
   librdf_free_statement( st );
 
-  return new RedlandStatementIterator( stream );
+  return StatementIterator( new RedlandStatementIterator( stream ) );
 }
 
 Model::ExitCode RedlandModel::remove( const Statement &st )

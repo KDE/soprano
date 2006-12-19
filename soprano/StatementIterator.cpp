@@ -1,4 +1,5 @@
-/* This file is part of Soprano
+/* 
+ * This file is part of Soprano Project.
  *
  * Copyright (C) 2006 Daniele Galdi <daniele.galdi@gmail.com>
  *
@@ -18,9 +19,28 @@
  * Boston, MA 02110-1301, USA.
  */
 
+#include "Statement.h"
+#include "StatementIteratorPrivate.h"
 #include "StatementIterator.h"
+
 using namespace Soprano;
+
+StatementIterator::StatementIterator( StatementIteratorPrivate *sti ): d(sti)
+{
+}
 
 StatementIterator::~StatementIterator()
 {
+  if ( d == 0L) return;
+  delete d;
+}
+
+bool StatementIterator::hasNext() const
+{
+  return d == 0L ? false : d->hasNext();
+}
+
+const Soprano::Statement StatementIterator::next() const
+{
+  return d->next();
 }

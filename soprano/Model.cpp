@@ -36,22 +36,15 @@ Model::~Model()
 
 Model::ExitCode Model::add( const Model &model )
 {
-  StatementIterator *stmi = model.listStatements();
-  if ( !stmi )
-  {
-    return Model::ERROR_EXIT;
-  }
+  StatementIterator stmi = model.listStatements();
 
-  while ( stmi->hasNext() )
+  while ( stmi.hasNext() )
   {
-    if ( !add( stmi->next() ) ) 
+    if ( !add( stmi.next() ) ) 
     {
-      delete stmi;
       return Model::ERROR_EXIT;
     }
   }
-
-  delete stmi;
 
   return Model::SUCCESS_EXIT;
 }
@@ -117,33 +110,26 @@ bool Model::isEmpty() const
   return size() == 0;
 }
 
-StatementIterator *Model::listStatements() const
+StatementIterator Model::listStatements() const
 {
   return listStatements( Statement() );
 }
 
-StatementIterator *Model::listStatements( const Node &subject, const Node &predicate, const Node &object ) const
+StatementIterator Model::listStatements( const Node &subject, const Node &predicate, const Node &object ) const
 {
   return listStatements( Statement(subject, predicate, object) );
 }
 
 Model::ExitCode Model::removeAll( const Node &subject, const Node &predicate, const Node &object )
 {
-  StatementIterator *iter = listStatements(subject, predicate, object);
-  if ( !iter )
+  StatementIterator iter = listStatements(subject, predicate, object);
+  while ( iter.hasNext() )
   {
-    return Model::ERROR_EXIT;
-  }
-
-  while ( iter->hasNext() )
-  {
-    if ( !remove( iter->next() ) )
+    if ( !remove( iter.next() ) )
     {
       return Model::ERROR_EXIT;
     }
   }
-
-  delete iter;
 
   return Model::SUCCESS_EXIT;
 }

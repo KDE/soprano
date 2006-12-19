@@ -1,5 +1,5 @@
 /* 
- * This file is part of Soprano Project
+ * This file is part of Soprano Project.
  *
  * Copyright (C) 2006 Daniele Galdi <daniele.galdi@gmail.com>
  *
@@ -25,21 +25,27 @@
 namespace Soprano {
 
 class Statement;
+class StatementIteratorPrivate;
 
 class StatementIterator
 {
 public:
+  explicit StatementIterator( StatementIteratorPrivate *sti );
+
   virtual ~StatementIterator();
 
   /**
    *\return true if there is another Statement
    */
-  virtual  bool hasNext() const = 0;
+  bool hasNext() const;
 
   /**
    *\return the Next Statement
    */
-  virtual const Statement next() const = 0;
+  const Statement next() const;
+
+private:
+  StatementIteratorPrivate *d;
 };
 
 }

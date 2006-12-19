@@ -84,33 +84,29 @@ void StatementIteratorTest::testIterator()
   Node resource_2 = m_model->createResource( QUrl("uri:list:resource2") );
   Node resource_3 = m_model->createResource( QUrl("uri:list:resource3") );
 
-  StatementIterator *sti = m_model->listStatements();
+  StatementIterator sti = m_model->listStatements();
 
   int cnt = 0;
-  while ( sti->hasNext() )
+  while ( sti.hasNext() )
   {
     ++cnt;
-    sti->next();
+    sti.next();
   }
 
   QVERIFY( cnt == m_statements.size() );
 
-  delete sti;
-
   /* Resource 1 */
 
-  sti = m_model->listStatements( resource_1, Node(), Node() );
+  StatementIterator sti2 = m_model->listStatements( resource_1, Node(), Node() );
 
   cnt = 0;
-  while ( sti->hasNext() )
+  while ( sti2.hasNext() )
   {
     ++cnt;
-    sti->next();
+    sti2.next();
   }
 
   QVERIFY( cnt == 50 );
-
-  delete sti;
 }
 
 #include "StatementIteratorTest.moc"

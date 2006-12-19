@@ -1,5 +1,5 @@
 /* 
- * This file is part of Soprano Project
+ * This file is part of Soprano Project.
  *
  * Copyright (C) 2006 Daniele Galdi <daniele.galdi@gmail.com>
  *
@@ -39,7 +39,6 @@ RedlandStatementIterator::RedlandStatementIterator( librdf_stream *stream )
 {
   d = new Private;
   d->stream = stream;
-  Q_ASSERT( d->stream != 0L );
 }
 
 RedlandStatementIterator::~RedlandStatementIterator()

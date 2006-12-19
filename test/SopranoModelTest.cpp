@@ -128,7 +128,7 @@ void SopranoModelTest::testAddStatementIterator()
   memory->add( st1 );
   memory->add( st2 );
  
-  m_model->add( *memory->listStatements() );
+  m_model->add( memory->listStatements() );
 
   QVERIFY( m_model->contains( st1 ) );
   QVERIFY( m_model->contains( st2 ) );
@@ -204,71 +204,59 @@ void SopranoModelTest::testListStatements()
 
   /* Resource 1 */
 
-  StatementIterator* it = m_model->listStatements( Statement( resource_1, Node(), Node() ) );
-  QVERIFY( it != 0 );
+  StatementIterator it1 = m_model->listStatements( Statement( resource_1, Node(), Node() ) );
 
   int cnt = 0;
-  while( it->hasNext() ) {
+  while( it1.hasNext() ) {
     ++cnt;
-    Statement st = it->next();
+    Statement st = it1.next();
 
     QCOMPARE( st.subject(), resource_1 );
   }
 
   QCOMPARE( cnt, 50 );
 
-  delete it;
-
   /* Resource 2 */
 
-  it = m_model->listStatements( Statement( resource_2, Node(), Node() ) );
-  QVERIFY( it != 0 );
+  StatementIterator it2 = m_model->listStatements( Statement( resource_2, Node(), Node() ) );
 
   cnt = 0;
-  while( it->hasNext() ) {
+  while( it2.hasNext() ) {
     ++cnt;
-    Statement st = it->next();
+    Statement st = it2.next();
 
     QCOMPARE( st.subject(), resource_2 );
   }
 
   QCOMPARE( cnt, 50 );
 
-  delete it;
-
   /* Resource 3 */
 
-  it = m_model->listStatements( Statement( resource_3, Node(), Node() ) );
-  QVERIFY( it != 0 );
+  StatementIterator it3 = m_model->listStatements( Statement( resource_3, Node(), Node() ) );
 
   cnt = 0;
-  while( it->hasNext() ) {
+  while( it3.hasNext() ) {
     ++cnt;
-    Statement st = it->next();
+    Statement st = it3.next();
 
     QCOMPARE( st.subject(), resource_3 );
   }
 
   QCOMPARE( cnt, 20 );
 
-  delete it;
-
   /* All */
 
-  it = m_model->listStatements();
-  QVERIFY( it != 0 );
+  StatementIterator it4 = m_model->listStatements();
 
   cnt = 0;
-  while( it->hasNext() ) {
+  while( it4.hasNext() ) {
     ++cnt;
-    Statement st = it->next();
+    Statement st = it4.next();
 
     QVERIFY( statements.indexOf( st ) != -1 || st == *m_st1 || st == *m_st2 || st == *m_st3 || st == *m_st4 );
   }
 
   QCOMPARE( cnt, 124 );
-
-  delete it;
 }
 
 void SopranoModelTest::testRemoveStatement()

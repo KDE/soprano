@@ -14,6 +14,7 @@ SET(soprano_SRCS
     Node.cpp
     Statement.cpp
     StatementIterator.cpp
+    StatementIteratorPrivate.cpp
     Model.cpp
     ModelFactory.cpp
     Parser.cpp
