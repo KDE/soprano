@@ -22,11 +22,13 @@
 #ifndef SOPRANO_STATEMENT_ITERATOR_PRIVATE_H
 #define SOPRANO_STATEMENT_ITERATOR_PRIVATE_H
 
+#include <QtCore>
+
 namespace Soprano {
 
 class Statement;
 
-class StatementIteratorPrivate
+class StatementIteratorPrivate : public QSharedData
 {
 public:
   virtual ~StatementIteratorPrivate();

@@ -29,10 +29,13 @@ StatementIterator::StatementIterator( StatementIteratorPrivate *sti ): d(sti)
 {
 }
 
+StatementIterator::StatementIterator( const StatementIterator &sti )
+{
+  d = sti.d;
+}
+
 StatementIterator::~StatementIterator()
 {
-  if ( d == 0L) return;
-  delete d;
 }
 
 bool StatementIterator::hasNext() const

@@ -22,6 +22,8 @@
 #ifndef SOPRANO_STATEMENT_ITERATOR_H
 #define SOPRANO_STATEMENT_ITERATOR_H
 
+#include <QtCore>
+
 namespace Soprano {
 
 class Statement;
@@ -31,6 +33,8 @@ class StatementIterator
 {
 public:
   explicit StatementIterator( StatementIteratorPrivate *sti );
+
+  StatementIterator( const StatementIterator &sti );
 
   virtual ~StatementIterator();
 
@@ -45,7 +49,7 @@ public:
   const Statement next() const;
 
 private:
-  StatementIteratorPrivate *d;
+  QSharedDataPointer<StatementIteratorPrivate> d;
 };
 
 }
