@@ -25,6 +25,11 @@
 
 using namespace Soprano;
 
+StatementIterator::StatementIterator()
+  : d(0)
+{
+}
+
 StatementIterator::StatementIterator( StatementIteratorPrivate *sti ): d(sti)
 {
 }
@@ -36,6 +41,12 @@ StatementIterator::StatementIterator( const StatementIterator &sti )
 
 StatementIterator::~StatementIterator()
 {
+}
+
+StatementIterator& StatementIterator::operator=( const StatementIterator& other )
+{
+  d = other.d;
+  return *this;
 }
 
 bool StatementIterator::hasNext() const

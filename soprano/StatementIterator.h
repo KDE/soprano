@@ -32,11 +32,14 @@ class StatementIteratorPrivate;
 class StatementIterator
 {
 public:
-  explicit StatementIterator( StatementIteratorPrivate *sti );
+  StatementIterator();
+  StatementIterator( StatementIteratorPrivate *sti );
 
   StatementIterator( const StatementIterator &sti );
 
   virtual ~StatementIterator();
+
+  StatementIterator& operator=( const StatementIterator& );
 
   /**
    *\return true if there is another Statement
