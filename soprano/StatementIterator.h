@@ -52,13 +52,17 @@ public:
   const Statement next() const;
 
   /**
-   *\return true if the StatementIterator is a valid Iterator.
+   *\return true if the Iterator is valid
    */
   bool isValid() const;
 
+  /**
+   *\return true if the Iterator is empty
+   */
+  bool isEmpty() const;
+
 private:
   QSharedDataPointer<StatementIteratorPrivate> d;
-  bool m_valid;
 };
 
 }

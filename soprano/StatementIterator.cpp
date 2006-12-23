@@ -25,19 +25,16 @@
 
 using namespace Soprano;
 
-StatementIterator::StatementIterator()
-  : d( 0L ), m_valid( false )
+StatementIterator::StatementIterator() : d( 0L )
 {
 }
 
-StatementIterator::StatementIterator( StatementIteratorPrivate *sti ): d( sti ), m_valid( sti != 0L )
+StatementIterator::StatementIterator( StatementIteratorPrivate *sti ) : d( sti )
 {
 }
 
-StatementIterator::StatementIterator( const StatementIterator &other )
+StatementIterator::StatementIterator( const StatementIterator &other ) : d( other.d )
 {
-  d = other.d;
-  m_valid = other.m_valid;
 }
 
 StatementIterator::~StatementIterator()
@@ -47,7 +44,6 @@ StatementIterator::~StatementIterator()
 StatementIterator& StatementIterator::operator=( const StatementIterator& other )
 {
   d = other.d;
-  m_valid = other.m_valid;
   return *this;
 }
 
@@ -58,10 +54,15 @@ bool StatementIterator::hasNext() const
 
 const Soprano::Statement StatementIterator::next() const
 {
-  return d->next();
+  return isValid() ? d->next() : Statement();
 }
 
 bool StatementIterator::isValid() const
 {
-  return m_valid;
+  return !isEmpty();
+}
+
+bool StatementIterator::isEmpty() const
+{
+  return d == 0L;
 }

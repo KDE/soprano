@@ -27,24 +27,18 @@
 
 using namespace Soprano::Backend::Redland;
 
-RedlandStatementIterator::RedlandStatementIterator( librdf_model *model )
+RedlandStatementIterator::RedlandStatementIterator( librdf_stream *stream ): m_stream( stream )
 {
-  m_model = model;
-  m_stream = librdf_model_as_stream( model );
 }
 
 RedlandStatementIterator::~RedlandStatementIterator()
 {
-  librdf_storage *storage = librdf_model_get_storage( m_model );
-
-  librdf_free_stream ( m_stream );
-  librdf_free_model( m_model );
-  librdf_free_storage( storage );
+  //librdf_free_stream( m_stream );
 }
 
 bool RedlandStatementIterator::hasNext() const
 {
-  return librdf_stream_end( m_stream ) == 0; 
+  return librdf_stream_end( m_stream ) == 0;
 }
 
 const Soprano::Statement RedlandStatementIterator::next() const
@@ -64,4 +58,3 @@ const Soprano::Statement RedlandStatementIterator::next() const
 
   return copy;
 }
-

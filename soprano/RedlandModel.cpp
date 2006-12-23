@@ -38,6 +38,8 @@ struct RedlandModel::Private {
   librdf_world *world;
   librdf_model *model;
   librdf_storage *storage;
+
+  QList<librdf_stream *> streams;
 };
 
 RedlandModel::RedlandModel( librdf_model *model )
@@ -61,6 +63,12 @@ RedlandModel::RedlandModel( const RedlandModel &other )
 
 RedlandModel::~RedlandModel()
 {
+  QListIterator<librdf_stream *> iter( d->streams );
+  while ( iter.hasNext() )
+  {
+    librdf_free_stream( iter.next() );    
+  }
+
   librdf_free_model( d->model );
   librdf_free_storage( d->storage );
   delete d;
@@ -159,25 +167,9 @@ Soprano::StatementIterator RedlandModel::listStatements( const Statement &partia
 
   librdf_free_statement( st );
 
-  // Create a memory model
-  librdf_storage *storage = librdf_new_storage( World::self()->worldPtr(), (char *)"memory", 0L, 0L );
-  if ( !storage )
-  {
-    return StatementIterator();
-  }
+  d->streams.append( stream );
 
-  librdf_model *memory = librdf_new_model( World::self()->worldPtr(), storage, 0L);
-  if ( !memory )
-  {
-    librdf_free_storage( storage );
-    return StatementIterator();
-  }
-
-  librdf_model_add_statements( memory, stream );
-
-  librdf_free_stream( stream );
-
-  return StatementIterator( new RedlandStatementIterator( memory ) );
+  return StatementIterator( new RedlandStatementIterator( stream ) );;
 }
 
 Model::ExitCode RedlandModel::remove( const Statement &st )

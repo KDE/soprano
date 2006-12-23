@@ -39,16 +39,16 @@ namespace Redland
 class RedlandStatementIterator: public Soprano::StatementIteratorPrivate
 {
 public:
-  explicit RedlandStatementIterator( librdf_model *model );
+  explicit RedlandStatementIterator( librdf_stream *stream );
 
   ~RedlandStatementIterator();
 
   bool hasNext() const;
 
   const Soprano::Statement next() const;
+
 private:
   librdf_stream *m_stream;
-  librdf_model *m_model;
 };
 
 }
