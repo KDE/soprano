@@ -159,7 +159,25 @@ Soprano::StatementIterator RedlandModel::listStatements( const Statement &partia
 
   librdf_free_statement( st );
 
-  return StatementIterator( new RedlandStatementIterator( stream ) );
+  // Create a memory model
+  librdf_storage *storage = librdf_new_storage( World::self()->worldPtr(), (char *)"memory", 0L, 0L );
+  if ( !storage )
+  {
+    return StatementIterator();
+  }
+
+  librdf_model *memory = librdf_new_model( World::self()->worldPtr(), storage, 0L);
+  if ( !memory )
+  {
+    librdf_free_storage( storage );
+    return StatementIterator();
+  }
+
+  librdf_model_add_statements( memory, stream );
+
+  librdf_free_stream( stream );
+
+  return StatementIterator( new RedlandStatementIterator( memory ) );
 }
 
 Model::ExitCode RedlandModel::remove( const Statement &st )
