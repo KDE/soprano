@@ -1,5 +1,5 @@
 /* 
- * This file is part of Soprano Project
+ * This file is part of Soprano Project.
  *
  * Copyright (C) 2006 Daniele Galdi <daniele.galdi@gmail.com>
  *
@@ -47,8 +47,7 @@ public:
 
   const Soprano::Statement next() const;
 private:
-  class Private;
-  Private *d;
+  librdf_stream *m_stream;
 };
 
 }

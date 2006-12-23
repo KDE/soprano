@@ -147,14 +147,14 @@ Soprano::StatementIterator RedlandModel::listStatements( const Statement &partia
   librdf_statement *st = Util::createStatement( partial );
   if ( !st )
   {
-    return StatementIterator( 0L );
+    return StatementIterator();
   }
   
   librdf_stream *stream = librdf_model_find_statements( d->model, st );
   if ( !stream )
   {
     librdf_free_statement( st );
-    return StatementIterator( 0L );
+    return StatementIterator();
   }
 
   librdf_free_statement( st );

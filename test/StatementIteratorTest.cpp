@@ -109,4 +109,31 @@ void StatementIteratorTest::testIterator()
   QVERIFY( cnt == 50 );
 }
 
+void StatementIteratorTest::testSharedStuffs()
+{
+  qDebug() << "before->listStatements()";
+  StatementIterator iter1 = m_model->listStatements();
+  qDebug() << "after->listStatements()";
+
+  int cnt = 0;
+  if ( iter1.hasNext() )
+  {
+    ++cnt;
+    iter1.next();
+  }
+
+  qDebug() << "before =";
+  StatementIterator iter2(iter1);
+  qDebug() << "after =";
+
+  while ( iter2.hasNext() )
+  {
+      ++cnt;
+      iter2.next();
+  }
+
+  QVERIFY( cnt == m_statements.size() );
+  qDebug() << "endTest";
+}
+
 #include "StatementIteratorTest.moc"

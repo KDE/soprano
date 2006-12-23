@@ -37,6 +37,7 @@ Q_OBJECT
 
 private Q_SLOTS:
   void testIterator();
+  void testSharedStuffs();
 
   void init();
   void cleanup();

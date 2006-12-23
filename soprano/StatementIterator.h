@@ -51,8 +51,14 @@ public:
    */
   const Statement next() const;
 
+  /**
+   *\return true if the StatementIterator is a valid Iterator.
+   */
+  bool isValid() const;
+
 private:
   QSharedDataPointer<StatementIteratorPrivate> d;
+  bool m_valid;
 };
 
 }

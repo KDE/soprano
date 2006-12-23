@@ -27,45 +27,35 @@
 
 using namespace Soprano::Backend::Redland;
 
-struct RedlandStatementIterator::Private
-{
-  Private(): stream(0L)
-  {}
-
-  librdf_stream *stream;
-};
-
 RedlandStatementIterator::RedlandStatementIterator( librdf_stream *stream )
 {
-  d = new Private;
-  d->stream = stream;
+  m_stream = stream;
 }
 
 RedlandStatementIterator::~RedlandStatementIterator()
 {
-  librdf_free_stream( d->stream );
-  delete d;
+  librdf_free_stream( m_stream );
 }
 
 bool RedlandStatementIterator::hasNext() const
 {
-  return librdf_stream_end( d->stream ) == 0; 
+  return librdf_stream_end( m_stream ) == 0; 
 }
 
 const Soprano::Statement RedlandStatementIterator::next() const
 {
-  librdf_statement *st = librdf_stream_get_object( d->stream );
+  librdf_statement *st = librdf_stream_get_object( m_stream );
   if ( !st )
   {
     // Return a not valid Statement
-    // as last last value.
+    // as last value.
     return Soprano::Statement();
   }
 
   Statement copy = Util::createStatement( st );
 
   // Move to the next element
-  librdf_stream_next( d->stream );
+  librdf_stream_next( m_stream );
 
   return copy;
 }
