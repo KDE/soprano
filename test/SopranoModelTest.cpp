@@ -82,6 +82,8 @@ void SopranoModelTest::testAddModel()
   QVERIFY( m_model->contains( st1 ) );
   QVERIFY( m_model->contains( st2 ) );
   QVERIFY( !m_model->contains( st3 ) );
+
+  delete memory;
 }
 
 void SopranoModelTest::testAddListOfStatement()
