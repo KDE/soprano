@@ -35,6 +35,9 @@ class SopranoModelTest: public QObject
 Q_OBJECT
 
 private Q_SLOTS:
+  void init();
+  void cleanup();
+
   void testAddModel();   
   void testAddListOfStatement(); 
   void testAddStatementIterator();
@@ -49,8 +52,7 @@ private Q_SLOTS:
   void testBooleanQuery();
   void testQuery();
 
-  void init();
-  void cleanup();
+  void testCloseStatementIteratorOnModelDelete();
 
 protected:
    Soprano::Statement* m_st1;

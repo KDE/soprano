@@ -135,6 +135,8 @@ void SopranoModelTest::testAddStatementIterator()
   QVERIFY( m_model->contains( st1 ) );
   QVERIFY( m_model->contains( st2 ) );
   QVERIFY( !m_model->contains( st3 ) );
+
+  delete memory;
 }
 
 void SopranoModelTest::testAddStatements()
@@ -380,6 +382,37 @@ void SopranoModelTest::testQuery()
   }
 
   QVERIFY( cnt2 == 2 );
+}
+
+void SopranoModelTest::testCloseStatementIteratorOnModelDelete()
+{
+  Node subject1 = m_model->createResource( QUrl("uri:add:model") );
+
+  Node predicate1 = m_model->createPredicate( "soprano", "predicate1" );
+  Node predicate2 = m_model->createPredicate( "soprano", "predicate2" );
+  Node predicate3 = m_model->createPredicate( "soprano", "predicate3" );
+
+  Node object1 = m_model->createLiteral( "Literal value1" );
+
+  Statement st1(subject1, predicate1, object1);
+  Statement st2(subject1, predicate2, object1);
+  Statement st3(subject1, predicate3, object1);
+
+  Model *model = m_factory->createPersistentModel( "test-close" );
+  model->add( st1 );
+  model->add( st2 );
+ 
+  StatementIterator it = model->listStatements();
+  int cnt = 0;
+  while( it.hasNext() ) 
+  {
+    it.next();
+    cnt++;
+  }
+  
+  delete model;
+
+  QVERIFY( cnt == 2 );
 }
 
 #include "SopranoModelTest.moc"
