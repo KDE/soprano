@@ -37,6 +37,7 @@ RedlandStatementIterator::~RedlandStatementIterator()
 {
   librdf_storage *storage = librdf_model_get_storage( m_model );
 
+  librdf_free_stream ( m_stream );
   librdf_free_model( m_model );
   librdf_free_storage( storage );
 }

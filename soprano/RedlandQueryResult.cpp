@@ -156,6 +156,7 @@ Soprano::Model *RedlandQueryResult::model() const
 
   librdf_stream *stream = librdf_query_results_as_stream( d->result );
   librdf_model_add_statements( memory, stream );
+  librdf_free_stream( stream );
 
   return new RedlandModel( memory );
 } 
