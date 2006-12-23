@@ -35,7 +35,10 @@ RedlandStatementIterator::RedlandStatementIterator( librdf_model *model )
 
 RedlandStatementIterator::~RedlandStatementIterator()
 {
+  librdf_storage *storage = librdf_model_get_storage( m_model );
+
   librdf_free_model( m_model );
+  librdf_free_storage( storage );
 }
 
 bool RedlandStatementIterator::hasNext() const
