@@ -1,5 +1,5 @@
 /* 
- * This file is part of Soprano Project
+ * This file is part of Soprano Project.
  *
  * Copyright (C) 2006 Daniele Galdi <daniele.galdi@gmail.com>
  *
@@ -27,24 +27,12 @@
 
 using namespace Soprano::Backend::Redland;
 
-struct RedlandModelFactory::Private
-{
-  Private(): world(0L)
-  {}
-
-  librdf_world *world;
-};
-
 RedlandModelFactory::RedlandModelFactory()
 {
-  d = new Private;
-  d->world = World::self()->worldPtr();
-  Q_ASSERT( d->world != 0 );
 }
 
 RedlandModelFactory::~RedlandModelFactory() 
 {
-  delete d;
 }
 
 RedlandModel *RedlandModelFactory::createMemoryModel( const QString &name ) const
@@ -63,13 +51,13 @@ RedlandModel *RedlandModelFactory::createPersistentModel( const QString &name, c
 
 RedlandModel *RedlandModelFactory::createModel( const QString &type, const QString &name, const QString &options ) const
 {
-  librdf_storage *storage = librdf_new_storage( d->world, type.toLatin1().data(), name.toLatin1().data(), options.toLatin1().data() );
+  librdf_storage *storage = librdf_new_storage( World::self()->worldPtr(), type.toLatin1().data(), name.toLatin1().data(), options.toLatin1().data() );
   if ( !storage )
   {
     return 0L;
   } 
 
-  librdf_model *model = librdf_new_model( d->world, storage, 0L );
+  librdf_model *model = librdf_new_model( World::self()->worldPtr(), storage, 0L );
   if ( !model )
   {
     librdf_free_storage( storage );

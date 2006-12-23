@@ -51,9 +51,6 @@ public:
 private:
   RedlandModelFactory( const RedlandModelFactory &other ) {};
   RedlandModel *createModel( const QString &type, const QString &name, const QString &options ) const;
-
-  class Private;
-  Private *d;
 };
 
 }
