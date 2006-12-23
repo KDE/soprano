@@ -40,6 +40,8 @@ RedlandModel *RedlandParser::parse( const QUrl &toparse ) const
   QUrl tmp(toparse);
   if (toparse.scheme().isEmpty())
   {
+    // we need to help the stupid librdf file url handling
+    tmp.setPath( QFileInfo( toparse.toLocalFile() ).absoluteFilePath() );
     tmp.setScheme("file");
   }
 
