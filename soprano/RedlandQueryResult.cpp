@@ -26,6 +26,7 @@
 #include "RedlandQueryResult.h"
 #include "RedlandModelFactory.h"
 #include "RedlandStatementIterator.h"
+#include "World.h"
 
 using namespace Soprano::Backend::Redland;
 
@@ -139,14 +140,22 @@ bool RedlandQueryResult::boolValue() const
 
 Soprano::Model *RedlandQueryResult::model() const
 {
-  RedlandModelFactory factory;
-  Model *model = factory.createMemoryModel( "query-result" );
-
-  librdf_stream *stream = librdf_query_results_as_stream( d->result );
-  if ( stream )
+  // Create a memory model
+  librdf_storage *storage = librdf_new_storage( World::self()->worldPtr(), (char *)"memory", 0L, 0L );
+  if ( !storage )
   {
-    model->add( StatementIterator( new RedlandStatementIterator( stream ) ) );
+    return 0L;
   }
 
-  return model;
+  librdf_model *memory = librdf_new_model( World::self()->worldPtr(), storage, 0L);
+  if ( !memory )
+  {
+    librdf_free_storage( storage );
+    return 0L;
+  }
+
+  librdf_stream *stream = librdf_query_results_as_stream( d->result );
+  librdf_model_add_statements( memory, stream );
+
+  return new RedlandModel( memory );
 } 
