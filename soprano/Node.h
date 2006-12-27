@@ -1,4 +1,4 @@
-/* 
+/*
  * This file is part of Soprano Project.
  *
  * Copyright (C) 2006 Daniele Galdi <daniele.galdi@gmail.com>
@@ -23,11 +23,12 @@
 #define SOPRANO_NODE_H
 
 #include <QtCore>
+#include <soprano/soprano_export.h>
 
 namespace Soprano
 {
 
-class Node
+class SOPRANO_EXPORT Node
 {
 public:
 
@@ -39,7 +40,7 @@ public:
   };
 
   /**
-   * Default costructor. 
+   * Default costructor.
    * Represent an Empty node (type == Unknown).
    */
   Node();
@@ -48,26 +49,26 @@ public:
    * Costructor for Resource node.
    */
   Node( const QUrl &uri );
-  
+
   /**
    * Constructor for Literal or Blank node.
    *
    * \param value
    *        The value of a node. Represent a uri string if
    *        if type is Blank.
-   * 
+   *
    * \param type
    *        The node type, "must" be Literal or Blank.
    */
   Node( const QString &value, Type type );
-  
+
   Node( const Node &other );
-  
+
   virtual ~Node();
 
   Node &operator=( const Node& other );
   bool operator==( const Node& other ) const;
-  
+
   /**
    * \return The Node type.
    */
@@ -99,19 +100,19 @@ public:
   bool isBlank() const;
 
   /**
-   * \return The URI if the node is a Resource node. 
+   * \return The URI if the node is a Resource node.
    *         An null QUrl otherwise.
    */
   const QUrl &uri() const;
 
   /**
-   * \return The Literal value if the node is a Literal node. 
+   * \return The Literal value if the node is a Literal node.
    *         An null QString otherwise.
    */
   const QString &literal() const;
-  
+
   /**
-   *\return The Blank value if the node is a Blank node. 
+   *\return The Blank value if the node is a Blank node.
    *        An null QString otherwise.
    */
   const QString &blank() const;

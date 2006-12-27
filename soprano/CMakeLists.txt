@@ -65,4 +65,5 @@ INSTALL(FILES
 	ModelFactory.h
 	Manager.h
 	Soprano.h
+	soprano_export.h
 	DESTINATION ${INCLUDE_INSTALL_DIR}/soprano)

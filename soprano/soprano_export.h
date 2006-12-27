@@ -1,7 +1,7 @@
 /*
- * This file is part of Soprano Project.
+ * This file is part of Soprano Project
  *
- * Copyright (C) 2006 Daniele Galdi <daniele.galdi@gmail.com>
+ * Copyright (C) 2006 Kevin Ottens <ervin@kde.org>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -19,50 +19,11 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef SOPRANO_RESULT_SET_H
-#define SOPRANO_RESULT_SET_H
+#ifndef SOPRANO_EXPORT_H
+#define SOPRANO_EXPORT_H
 
-#include <QString>
-#include <QStringList>
-#include <soprano/soprano_export.h>
+#include <QtGlobal>
 
-namespace Soprano {
+#define SOPRANO_EXPORT Q_DECL_EXPORT
 
-class Model;
-class Node;
-class QueryResult;
-
-class SOPRANO_EXPORT ResultSet
-{
-public:
-  explicit ResultSet( QueryResult *qr );
-
-  virtual ~ResultSet();
-
-  bool next() const;
-
-  Node binding( const QString &name ) const;
-
-  Node binding( int offset ) const;
-
-  int bindingCount() const;
-
-  const QStringList &bindingNames() const;
-
-  bool isGraph() const;
-
-  bool isBinding() const;
-
-  bool isBool() const;
-
-  bool boolValue() const;
-
-  Model *model() const;
-private:
-  QueryResult *d;
-};
-
-}
-
-#endif // SOPRANO_RESULT_SET_H
-
+#endif

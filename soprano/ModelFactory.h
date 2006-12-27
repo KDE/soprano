@@ -1,4 +1,4 @@
-/* 
+/*
  * This file is part of Soprano Project
  *
  * Copyright (C) 2006 Daniele Galdi <daniele.galdi@gmail.com>
@@ -23,6 +23,7 @@
 #define SOPRANO_MODEL_FACTORY_H
 
 #include <QString>
+#include <soprano/soprano_export.h>
 
 namespace Soprano
 {
@@ -30,7 +31,7 @@ namespace Soprano
 class Model;
 class Parser;
 
-class ModelFactory
+class SOPRANO_EXPORT ModelFactory
 {
 public:
   virtual ~ModelFactory();

@@ -1,4 +1,4 @@
-/* 
+/*
  * This file is part of Soprano Project
  *
  * Copyright (C) 2006 Daniele Galdi <daniele.galdi@gmail.com>
@@ -22,12 +22,14 @@
 #ifndef SOPRANO_QUERY_H
 #define SOPRANO_QUERY_H
 
+#include <soprano/soprano_export.h>
+
 class QString;
 
 namespace Soprano
 {
 
-class Query
+class SOPRANO_EXPORT Query
 {
 public:
   enum QueryType {
@@ -40,7 +42,7 @@ public:
   Query( const QString &query, QueryType type, int limit, int offset );
 
   Query( const Query &other );
-  
+
   ~Query();
 
   QueryType type() const;

@@ -21,6 +21,8 @@
 #ifndef SOPRANO_PARSER_H
 #define SOPRANO_PARSER_H
 
+#include <soprano/soprano_export.h>
+
 class QUrl;
 
 namespace Soprano
@@ -28,7 +30,7 @@ namespace Soprano
 
 class Model;
 
-class Parser
+class SOPRANO_EXPORT Parser
 {
 public:
   virtual ~Parser();

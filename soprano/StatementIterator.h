@@ -1,4 +1,4 @@
-/* 
+/*
  * This file is part of Soprano Project.
  *
  * Copyright (C) 2006 Daniele Galdi <daniele.galdi@gmail.com>
@@ -23,13 +23,14 @@
 #define SOPRANO_STATEMENT_ITERATOR_H
 
 #include <QtCore>
+#include <soprano/soprano_export.h>
 
 namespace Soprano {
 
 class Statement;
 class StatementIteratorPrivate;
 
-class StatementIterator
+class SOPRANO_EXPORT StatementIterator
 {
 public:
   StatementIterator();

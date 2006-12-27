@@ -1,4 +1,4 @@
-/* 
+/*
  * This file is part of Soprano Project.
  *
  * Copyright (C) 2006 Daniele Galdi <daniele.galdi@gmail.com>
@@ -23,6 +23,7 @@
 #define SOPRANO_MODEL_H
 
 #include <QList>
+#include <soprano/soprano_export.h>
 
 class QString;
 class QTextStream;
@@ -37,7 +38,7 @@ class ResultSet;
 class Statement;
 class StatementIterator;
 
-class Model
+class SOPRANO_EXPORT Model
 {
 public:
   enum ExitCode {
@@ -115,7 +116,7 @@ public:
    * \return true if the Model contains the given Statement.
    */
   virtual bool contains( const Statement &statement ) const = 0;
-  
+
   /**
    * Execute the given query over the Model.
    *
@@ -125,7 +126,7 @@ public:
 
   /**
    * \return An iterator for all the contained Statements. NULL on error.
-   */ 
+   */
   StatementIterator listStatements() const;
 
   /**
@@ -181,14 +182,14 @@ public:
    *
    * \param The stream.
    *
-   * \return Model::ERROR_EXIT if not implemented or an Error occurred. 
+   * \return Model::ERROR_EXIT if not implemented or an Error occurred.
    */
   virtual Model::ExitCode write( QTextStream &os ) const = 0;
 
   /**
    * Print the Model to the stdout.
    *
-   * \return Model::ERROR_EXIT if not implemented or an Error occurred. 
+   * \return Model::ERROR_EXIT if not implemented or an Error occurred.
    */
   virtual Model::ExitCode print() const = 0;
 };

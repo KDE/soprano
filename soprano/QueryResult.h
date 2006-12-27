@@ -1,4 +1,4 @@
-/* 
+/*
  * This file is part of Soprano Project.
  *
  * Copyright (C) 2006 Daniele Galdi <daniele.galdi@gmail.com>
@@ -24,13 +24,14 @@
 
 #include <QString>
 #include <QStringList>
+#include <soprano/soprano_export.h>
 
 namespace Soprano {
 
 class Model;
 class Node;
 
-class QueryResult
+class SOPRANO_EXPORT QueryResult
 {
 public:
   virtual ~QueryResult();

@@ -1,4 +1,4 @@
-/* 
+/*
  * This file is part of Soprano Project.
  *
  * Copyright (C) 2006 Daniele Galdi <daniele.galdi@gmail.com>
@@ -22,6 +22,8 @@
 #ifndef SOPRANO_MANAGER_H
 #define SOPRANO_MANAGER_H
 
+#include <soprano/soprano_export.h>
+
 class QString;
 class QStringList;
 
@@ -30,7 +32,7 @@ namespace Soprano
 
 class ModelFactory;
 
-class Manager
+class SOPRANO_EXPORT Manager
 {
 public:
   ~Manager();

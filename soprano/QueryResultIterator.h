@@ -1,4 +1,4 @@
-/* 
+/*
  * This file is part of Soprano Project
  *
  * Copyright (C) 2006 Daniele Galdi <daniele.galdi@gmail.com>
@@ -24,6 +24,7 @@
 
 #include <QMap>
 #include <QString>
+#include <soprano/soprano_export.h>
 
 #include "QueryResult.h"
 
@@ -31,7 +32,7 @@ namespace Soprano {
 
 class Node;
 
-class QueryResultIterator
+class SOPRANO_EXPORT QueryResultIterator
 {
 public:
   QueryResultIterator( QueryResult *qr );

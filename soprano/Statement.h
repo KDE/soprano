@@ -1,4 +1,4 @@
-/* 
+/*
  * This file is part of Soprano Project.
  *
  * Copyright (C) 2006 Daniele Galdi <daniele.galdi@gmail.com>
@@ -23,21 +23,22 @@
 #define SOPRANO_STATEMENT_H
 
 #include <QtCore>
+#include <soprano/soprano_export.h>
 
 namespace Soprano
 {
 
 class Node;
 
-class Statement
+class SOPRANO_EXPORT Statement
 {
-public: 
-  
+public:
+
   /**
    * Default Constructor, build an Empty(not valid) Statement.
    */
   Statement();
-  
+
   /**
    * Build a Statement with the given subject, predicate and object.
    *
@@ -48,7 +49,7 @@ public:
    * \param object The object.
    */
   Statement( const Node &subject, const Node &predicate, const Node &object );
-  
+
   Statement( const Statement &other );
 
   virtual ~Statement();
@@ -61,7 +62,7 @@ public:
    * Change the Statement subject.
    *
    * \param subject The new subject.
-   */ 
+   */
   void setSubject( const Node &subject );
 
   /**
@@ -73,7 +74,7 @@ public:
    * Change the Statement predicate.
    *
    * \param predicate The new predicate.
-   */ 
+   */
   void setPredicate( const Node &predicate );
 
   /**
@@ -85,7 +86,7 @@ public:
    * Change the Statement object.
    *
    * \param object The new object.
-   */ 
+   */
   void setObject( const Node &object );
 
   /**
