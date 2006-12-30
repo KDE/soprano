@@ -44,8 +44,6 @@ class NepomukModel: public Soprano::Model
 public:
   explicit NepomukModel( const QString &name );
 
-  NepomukModel( const NepomukModel &other );
-
   ~NepomukModel();
 
   Model::ExitCode add( const Statement &st );

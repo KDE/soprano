@@ -38,7 +38,7 @@ RedlandParser::RedlandParser()
 RedlandModel *RedlandParser::parse( const QUrl &toparse ) const
 {
   QUrl tmp(toparse);
-  if (toparse.scheme().isEmpty())
+  if ( toparse.scheme().isEmpty() )
   {
     // we need to help the stupid librdf file url handling
     tmp.setPath( QFileInfo( toparse.toLocalFile() ).absoluteFilePath() );
@@ -47,38 +47,48 @@ RedlandModel *RedlandParser::parse( const QUrl &toparse ) const
 
   librdf_world *w = World::self()->worldPtr();
 
-  RedlandModelFactory factory;
-  
-  RedlandModel *model = factory.createMemoryModel( tmp.toString() );
-  if ( !model ) 
+  // Create a memory model
+  librdf_storage *storage = librdf_new_storage( w, (char *)"memory", 0L, 0L );
+  if ( !storage )
   {
+    return 0L;
+  }
+
+  librdf_model *model = librdf_new_model( w, storage, 0L);
+  if ( !model )
+  {
+    librdf_free_storage( storage );
     return 0L;
   }
 
   librdf_uri *uri = librdf_new_uri( w, (unsigned char *) tmp.toString().toLatin1().data() );  
   if ( !uri ) 
   {
-    delete model;
+    librdf_free_model( model );
+    librdf_free_storage( storage );
     return 0L;
   }
-
 
   librdf_parser *parser = librdf_new_parser( w, "rdfxml", "application/rdf+xml", NULL );
   if ( !parser )
   {
-    delete model;
+    librdf_free_model( model );
+    librdf_free_storage( storage );
     librdf_free_uri( uri );
     return 0L;
   }
 
-  if ( librdf_parser_parse_into_model( parser, uri, uri, model->modelPtr() ) )
+  if ( librdf_parser_parse_into_model( parser, uri, uri, model ) )
   {
-    delete model;
-    model = 0L;
+    librdf_free_model( model );
+    librdf_free_storage( storage );
+    librdf_free_uri( uri );
+    librdf_free_parser( parser );
+    return 0L;
   }
 
   librdf_free_uri( uri );
   librdf_free_parser( parser );
 
-  return model;
+  return new RedlandModel( model, storage );
 }

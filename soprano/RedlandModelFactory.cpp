@@ -64,7 +64,7 @@ RedlandModel *RedlandModelFactory::createModel( const QString &type, const QStri
     return 0L;
   } 
 
-  return new RedlandModel( model );
+  return new RedlandModel( model, storage );
 }
 
 

@@ -69,9 +69,9 @@ bool RedlandQueryResult::next() const
   else 
   {
     d->first = false;
-    if ( isBool() ) 
+    if ( isBool() || isGraph() ) 
     {
-      hasNext = isBool();
+      hasNext = true;
     }
   }
 
@@ -158,5 +158,5 @@ Soprano::Model *RedlandQueryResult::model() const
   librdf_model_add_statements( memory, stream );
   librdf_free_stream( stream );
 
-  return new RedlandModel( memory );
+  return new RedlandModel( memory, storage );
 } 

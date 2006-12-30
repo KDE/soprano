@@ -41,7 +41,6 @@ public:
   librdf_world* worldPtr() const;
 private:
   World();
-  World( const World &other ) {};
 
   librdf_world * m_world;
 

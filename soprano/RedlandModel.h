@@ -43,9 +43,9 @@ namespace Redland
 class RedlandModel: public Soprano::Model
 {
 public:
-  explicit RedlandModel( librdf_model *model );
+  RedlandModel();
 
-  RedlandModel( const RedlandModel &other );
+  RedlandModel( librdf_model *model, librdf_storage *storage );
 
   ~RedlandModel();
 
@@ -65,9 +65,6 @@ public:
 
   Model::ExitCode print() const;
 
-  librdf_model *modelPtr() const;
-
-  librdf_storage *storagePtr() const;
 private:
   class Private;
   Private *d;

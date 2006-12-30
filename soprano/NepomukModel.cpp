@@ -54,13 +54,6 @@ Backend::Nepomuk::NepomukModel::NepomukModel( const QString &name )
   d->ts->addGraph( name );
 }
 
-Backend::Nepomuk::NepomukModel::NepomukModel( const NepomukModel &other )
-{
-  init();
-  
-  d->name = other.name();
-}
-
 void Backend::Nepomuk::NepomukModel::init()
 {
   d = new Private();

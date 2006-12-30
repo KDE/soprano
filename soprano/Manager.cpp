@@ -24,13 +24,14 @@
 
 #include "Config.h"
 #include "RedlandModelFactory.h"
+
+#ifdef KNEP_FOUND
 #include "NepomukModelFactory.h"
-#include "ModelFactory.h"
+#endif
+
 #include "Manager.h"
 
 using namespace Soprano;
-using namespace Soprano::Backend::Redland;
-using namespace Soprano::Backend::Nepomuk;
 
 Manager* Manager::s_instance = 0;
 
@@ -72,9 +73,9 @@ const QStringList &Manager::listModelFactoryNames() const
 
 ModelFactory *Manager::factory( const QString &name ) const
 {
-  if ( name == "Redland" ) return new RedlandModelFactory();
+  if ( name == "Redland" ) return new Soprano::Backend::Redland::RedlandModelFactory();
 #ifdef KNEP_FOUND
-  if ( name == "Nepomuk" ) return new NepomukModelFactory();
+  if ( name == "Nepomuk" ) return new Soprano::Backend::Nepomuk::NepomukModelFactory();
 #endif
   return 0L;
 }

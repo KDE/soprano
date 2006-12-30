@@ -47,9 +47,6 @@ public:
   Soprano::Model *createPersistentModel( const QString &name, const QString &path="." ) const;
 
   Parser *createParser() const;
-
-private:
-  NepomukModelFactory( const NepomukModelFactory &other ) {};
 };
 
 }

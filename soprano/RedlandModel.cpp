@@ -42,23 +42,12 @@ struct RedlandModel::Private {
   QList<librdf_stream *> streams;
 };
 
-RedlandModel::RedlandModel( librdf_model *model )
+RedlandModel::RedlandModel( librdf_model *model, librdf_storage *storage )
 {
   d = new Private;
+  d->world = World::self()->worldPtr();
   d->model = model; 
-  d->world = World::self()->worldPtr();
-  d->storage = librdf_model_get_storage( model );
-}
-
-RedlandModel::RedlandModel( const RedlandModel &other )
-{
-  d = new Private;
-  d->world = World::self()->worldPtr();
-  d->model = librdf_new_model_from_model( other.modelPtr() );
-  d->storage = librdf_new_storage_from_storage( other.storagePtr() );
-
-  // Init a Storage<->Model relation
-  librdf_storage_open( d->storage, d->model );
+  d->storage = storage;
 }
 
 RedlandModel::~RedlandModel()
@@ -249,14 +238,4 @@ Model::ExitCode RedlandModel::print() const
   librdf_model_print( d->model, stdout );
 
   return Model::SUCCESS_EXIT;
-}
-
-librdf_model *RedlandModel::modelPtr() const
-{
-  return d->model;
-}
-
-librdf_storage *RedlandModel::storagePtr() const
-{
-  return d->storage;
 }

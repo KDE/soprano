@@ -120,12 +120,12 @@ public:
   /**
    * Execute the given query over the Model.
    *
-   * \return All the Statements that match the query. NULL on error.
+   * \return All the Statements that match the query.
    */
   virtual ResultSet executeQuery( const Query &query ) const = 0;
 
   /**
-   * \return An iterator for all the contained Statements. NULL on error.
+   * \return An iterator for all the contained Statements.
    */
   StatementIterator listStatements() const;
 
@@ -135,7 +135,7 @@ public:
    *
    * \param partial The partial Statement to match.
    *
-   * \return An iterator for all the matched Statements. NULL on error.
+   * \return An iterator for all the matched Statements.
    */
   virtual StatementIterator listStatements( const Statement &partial ) const = 0;
 
@@ -147,7 +147,7 @@ public:
    * \param predicate The Predicate node (can be empty)
    * \param object The Object node (can be empty)
    *
-   * \return An iterator for all the matched Statements. NULL on error.
+   * \return An iterator for all the matched Statements.
    */
   StatementIterator listStatements( const Node &subject, const Node &predicate, const Node &object ) const;
 
@@ -173,7 +173,8 @@ public:
   Model::ExitCode removeAll();
 
   /**
-   * \return The size of the Model (number of Stamenent)
+   * \return The size of the Model (number of Stamenent). 
+   *         -1 if not supported.
    */
   virtual int size() const = 0;
 
