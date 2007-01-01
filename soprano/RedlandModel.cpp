@@ -156,6 +156,18 @@ Soprano::StatementIterator RedlandModel::listStatements( const Statement &partia
 
   librdf_free_statement( st );
 
+  // Remove exausted streams
+  QListIterator<librdf_stream *> iter( d->streams );
+  while ( iter.hasNext() )
+  {
+    librdf_stream *tmp = iter.next();
+    if ( librdf_stream_end( tmp ) )
+    {
+      d->streams.removeAll( tmp );
+      librdf_free_stream( tmp );
+    }
+  }
+  
   d->streams.append( stream );
 
   return StatementIterator( new RedlandStatementIterator( stream ) );;
