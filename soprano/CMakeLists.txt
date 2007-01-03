@@ -27,7 +27,8 @@ SET(soprano_SRCS
     RedlandQueryResult.cpp
     RedlandModel.cpp
     RedlandModelFactory.cpp
-    RedlandParser.cpp 
+    RedlandParser.cpp
+    redland_stream_adapter.c 
    )    
 
 if (KNEP_FOUND)

@@ -68,6 +68,8 @@ public:
 private:
   class Private;
   Private *d;
+
+friend class RedlandStatementIterator;
 }; 
 
 }

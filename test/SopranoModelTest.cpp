@@ -398,7 +398,7 @@ void SopranoModelTest::testCloseStatementIteratorOnModelDelete()
   Statement st2(subject1, predicate2, object1);
   Statement st3(subject1, predicate3, object1);
 
-  Model *model = m_factory->createPersistentModel( "test-close" );
+  Model *model = m_factory->createMemoryModel( "test-close-statement-iterator-on-model-delete" );
   model->add( st1 );
   model->add( st2 );
  
@@ -413,6 +413,9 @@ void SopranoModelTest::testCloseStatementIteratorOnModelDelete()
   delete model;
 
   QVERIFY( cnt == 2 );
+
+  QVERIFY( !it.hasNext() );
+  QVERIFY( !it.next().isValid() );
 }
 
 #include "SopranoModelTest.moc"

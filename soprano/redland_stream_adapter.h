@@ -1,4 +1,4 @@
-/* 
+/*
  * This file is part of Soprano Project.
  *
  * Copyright (C) 2006 Daniele Galdi <daniele.galdi@gmail.com>
@@ -19,42 +19,34 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef SOPRANO_BACKEND_REDLAND_STATEMENT_ITERATOR_H
-#define SOPRANO_BACKEND_REDLAND_STATEMENT_ITERATOR_H
+#ifndef REDLAND_STREAM_ADAPTER_H
+#define REDLAND_STREAM_ADAPTER_H
 
 #include <redland.h>
-#include "redland_stream_adapter.h"
 
-#include "StatementIteratorPrivate.h"
+#ifdef __cplusplus
+extern "C" {
+#endif
 
-namespace Soprano 
-{
-
-class Statement;
-
-namespace Backend
-{
-namespace Redland
-{
-
-class RedlandStatementIterator: public Soprano::StatementIteratorPrivate
-{
-public:
-  explicit RedlandStatementIterator( stream_adapter *s );
-
-  ~RedlandStatementIterator();
-
-  bool hasNext() const;
-
-  const Soprano::Statement next() const;
-
-private:
-  stream_adapter *m_stream;
+struct stream_adapter_s {
+  librdf_stream *impl;
 };
 
-}
-}
-}
+typedef struct stream_adapter_s stream_adapter;
 
-#endif // SOPRANO_BACKEND_REDLAND_STATEMENT_ITERATOR_H
+void free_stream_adapter_backend( stream_adapter *s );
+
+void free_stream_adapter( stream_adapter *s );
+
+librdf_statement *stream_adapter_get_object( stream_adapter *s );
+
+void stream_adapter_next( stream_adapter *s );
+
+int stream_adapter_end( stream_adapter *s );
+
+#ifdef __cplusplus
+}
+#endif
+
+#endif /* REDLAND_STREAM_ADAPTER_H */
 

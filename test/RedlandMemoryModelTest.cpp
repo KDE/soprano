@@ -28,7 +28,7 @@ using namespace Soprano;
 void RedlandMemoryModelTest::initTestCase()
 {
   m_factory = Manager::instance()->factory( "Redland" );
-  m_model = m_factory->createMemoryModel( "test" );
+  m_model = m_factory->createMemoryModel( "memory-model-test" );
 }
 
 void RedlandMemoryModelTest::cleanupTestCase()

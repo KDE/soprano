@@ -28,7 +28,7 @@ using namespace Soprano;
 void RedlandPersistentModelTest::initTestCase()
 {
   m_factory = Manager::instance()->factory( "Redland" );
-  m_model = m_factory->createPersistentModel( "test" );
+  m_model = m_factory->createPersistentModel( "persistent-model-test" );
 }
 
 void RedlandPersistentModelTest::cleanupTestCase()

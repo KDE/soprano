@@ -28,6 +28,8 @@
 #include "RedlandStatementIterator.h"
 #include "RedlandModel.h"
 
+#include "redland_stream_adapter.h"
+
 using namespace Soprano;
 using namespace Soprano::Backend::Redland;
 
@@ -39,7 +41,7 @@ struct RedlandModel::Private {
   librdf_model *model;
   librdf_storage *storage;
 
-  QList<librdf_stream *> streams;
+  QList<stream_adapter *> streams;
 };
 
 RedlandModel::RedlandModel( librdf_model *model, librdf_storage *storage )
@@ -52,10 +54,17 @@ RedlandModel::RedlandModel( librdf_model *model, librdf_storage *storage )
 
 RedlandModel::~RedlandModel()
 {
-  QListIterator<librdf_stream *> iter( d->streams );
+  QListIterator<stream_adapter *> iter( d->streams );
   while ( iter.hasNext() )
   {
-    librdf_free_stream( iter.next() );    
+    stream_adapter *stream = iter.next();
+    if ( !stream->impl )
+    {
+      // Statement is dead!
+      free_stream_adapter( stream );
+    } else {
+      free_stream_adapter_backend( stream);
+    }
   }
 
   librdf_free_model( d->model );
@@ -156,21 +165,12 @@ Soprano::StatementIterator RedlandModel::listStatements( const Statement &partia
 
   librdf_free_statement( st );
 
-  // Remove exausted streams
-  QListIterator<librdf_stream *> iter( d->streams );
-  while ( iter.hasNext() )
-  {
-    librdf_stream *tmp = iter.next();
-    if ( librdf_stream_end( tmp ) )
-    {
-      d->streams.removeAll( tmp );
-      librdf_free_stream( tmp );
-    }
-  }
-  
-  d->streams.append( stream );
+  stream_adapter *s = (stream_adapter *) malloc( sizeof( stream_adapter ) );
+  s->impl = stream;
 
-  return StatementIterator( new RedlandStatementIterator( stream ) );;
+  d->streams.append( s );
+
+  return StatementIterator( new RedlandStatementIterator( s ) );;
 }
 
 Model::ExitCode RedlandModel::remove( const Statement &st )

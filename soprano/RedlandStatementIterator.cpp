@@ -21,29 +21,38 @@
 
 #include <QtGlobal>
 
+#include "Statement.h"
+
 #include "RedlandUtil.h"
 #include "RedlandStatementIterator.h"
-#include "Statement.h"
+
+#include "redland_stream_adapter.h"
 
 using namespace Soprano::Backend::Redland;
 
-RedlandStatementIterator::RedlandStatementIterator( librdf_stream *stream ): m_stream( stream )
+RedlandStatementIterator::RedlandStatementIterator( stream_adapter *s ): m_stream( s )
 {
 }
 
 RedlandStatementIterator::~RedlandStatementIterator()
 {
-  //librdf_free_stream( m_stream );
+  if ( !m_stream->impl )
+  {
+    // Model is dead!
+    free_stream_adapter( m_stream );
+  } else {
+    free_stream_adapter_backend( m_stream);
+  }
 }
 
 bool RedlandStatementIterator::hasNext() const
 {
-  return librdf_stream_end( m_stream ) == 0;
+  return stream_adapter_end( m_stream ) == 0;
 }
 
 const Soprano::Statement RedlandStatementIterator::next() const
 {
-  librdf_statement *st = librdf_stream_get_object( m_stream );
+  librdf_statement *st = stream_adapter_get_object( m_stream );
   if ( !st )
   {
     // Return a not valid Statement
@@ -54,7 +63,7 @@ const Soprano::Statement RedlandStatementIterator::next() const
   Statement copy = Util::createStatement( st );
 
   // Move to the next element
-  librdf_stream_next( m_stream );
+  stream_adapter_next( m_stream );
 
   return copy;
 }
