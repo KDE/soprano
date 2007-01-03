@@ -1,3 +1,14 @@
 - Doxygen comments
-- Remove pointer in return value on model
 - Complete the nepomuk backend
+- Add Model methods:
+	#define LIBRDF_MODEL_FEATURE_CONTEXTS "http://feature.librdf.org/model-contexts"
+
+	- Model::ExitCode add(const Statement &statement, const Node &context );
+	- Model::ExitCode add(const StatementIterator &iter, const Node &context );
+	- Model::ExitCode remove(const Statement &statement, const Node &context );
+	- Model::ExitCode remove(const Node &context );
+	- bool contains(const Node &context );
+	- QList<Node> contexts()
+	- StatementIteraror listStatements( const Node &context );
+	- StatementIteraror listStatements( const Statement &partial, const Node &context );
+
