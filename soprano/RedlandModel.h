@@ -22,12 +22,15 @@
 #ifndef SOPRANO_BACKEND_REDLAND_MODEL_H
 #define SOPRANO_BACKEND_REDLAND_MODEL_H
 
+#define LIBRDF_MODEL_FEATURE_CONTEXTS "http://feature.librdf.org/model-contexts"
+
 #include <QtGlobal>
 #include <QTextStream>
 #include <redland.h>
 
 #include "Model.h"
 #include "Statement.h"
+#include "Node.h"
 
 namespace Soprano
 {
@@ -49,15 +52,29 @@ public:
 
   ~RedlandModel();
 
-  Model::ExitCode add( const Statement &st );
+  Model::ExitCode add( const Statement &statement, const Node &context );
+
+  Model::ExitCode add( const Statement &statement );
+
+  virtual QList<Node> contexts() const;
 
   bool contains( const Statement &statement ) const;
 
+  bool contains( const Node &context ) const;
+
   Soprano::ResultSet executeQuery( const Query &query ) const;
+
+  Soprano::StatementIterator listStatements( const Node &context ) const;
+
+  Soprano::StatementIterator listStatements( const Statement &partial, const Node &context ) const;
 
   Soprano::StatementIterator listStatements( const Statement &partial ) const;
 
-  Model::ExitCode remove( const Statement &st );
+  Model::ExitCode remove(const Statement &statement, const Node &context );
+
+  Model::ExitCode remove( const Statement &statement );
+
+  Model::ExitCode remove( const Node &context );
 
   int size() const;
 

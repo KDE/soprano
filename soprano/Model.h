@@ -49,33 +49,65 @@ public:
   virtual ~Model();
 
   /**
-   * Add all the statements in another model to this model.
+   * Add all the Statements present in the given Model to the
+   * current Model.
    *
    * \param model The Model to add.
    */
   Model::ExitCode add( const Model &model );
 
   /**
-   * Add all the statements to the Model, using through the bulk
-   * update interface.
+   * Add Statements to the Model.
    *
-   * \param iter An iterator over Statements.
+   * \param iter The StatementIterator to add.
    */
   Model::ExitCode add( const StatementIterator &iter );
+  
+  /**
+   * Add Statements to the Model with a Context.
+   *
+   * If Context is empty, this is equivalent to add( const StatementIterator &iter ).
+   *
+   * \param iter The StatementIterator to add.
+   * \param context The Context node.
+   */
+  Model::ExitCode add( const StatementIterator &iter, const Node &context );
 
   /**
-   * Add all the statements to the Model.
+   * Add all Statements to the Model.
    *
-   * \param statements A list of Statement.
+   * \param statements A list of Statements to add.
    */
   Model::ExitCode add( const QList<Statement> &statements );
 
   /**
-   * Adds the Statement to the Model.
+   * Add all Statements to the Model.
    *
-   * \param st The Statement to add.
+   * If Context is empty, this is equivalent to add( const QList<Statement> &statements ).
+   *
+   * \param statements A list of Statements to add.
+   * \param context The Context node.
    */
-  virtual Model::ExitCode add( const Statement &st ) = 0;
+  Model::ExitCode add( const QList<Statement> &statements, const Node &context );
+
+  /**
+   * Add the Statement to the Model.
+   *
+   * \param statement The Statement to add.
+   */
+  virtual Model::ExitCode add( const Statement &statement ) = 0;
+
+  /**
+   * Add a statement to a model with a context. 
+   * It must be a complete statement - all of subject, predicate, object
+   * parts must be present. 
+   *
+   * If context is empty this is equivalent to add( const Statement &statement ).
+   *
+   * \param statement The Statement to add.
+   * \param context The Context node.
+   */
+  virtual Model::ExitCode add( const Statement &statement, const Node &context ) = 0;
 
   /**
    * Create a Predicate with the given namespace and value.
@@ -110,12 +142,22 @@ public:
   /**
    * \return true if the Model doesn't contains any Statement.
    */
-  bool isEmpty() const;
+  virtual bool isEmpty() const;
+
+  /**
+   * \return A List of Context Nodes.
+   */
+  virtual QList<Node> contexts() const = 0;
 
   /**
    * \return true if the Model contains the given Statement.
    */
   virtual bool contains( const Statement &statement ) const = 0;
+
+  /**
+   * \return true if the Model contains the given Context node.
+   */
+  virtual bool contains( const Node &context ) const = 0;
 
   /**
    * Execute the given query over the Model.
@@ -125,12 +167,35 @@ public:
   virtual ResultSet executeQuery( const Query &query ) const = 0;
 
   /**
-   * \return An iterator for all the contained Statements.
+   * \return An iterator for all Model Statements.
    */
-  StatementIterator listStatements() const;
+  virtual StatementIterator listStatements() const;
 
   /**
-   * Return an iterator over the Models statements that "partial"
+   * List all statements in a model context.
+   *
+   * \param partial The partial Statement to match.
+   * \param context The Context Node.
+   *
+   * \return An iterator for all Context Model Statements.
+   */
+  virtual StatementIterator listStatements( const Node &context ) const = 0;
+
+  /**
+   * Return an iterator over Model Statements that "partial"
+   * match the input Statement, in the given Context.
+   *
+   * If Context is empty, this is equivalent to listStatements( const Statement &partial ).
+   *
+   * \param partial The partial Statement to match.
+   * \param context The Context Node.
+   *
+   * \return An iterator for all the matched Statements.
+   */
+  virtual StatementIterator listStatements( const Statement &partial, const Node &context ) const = 0;
+
+  /**
+   * Return an iterator over Model Statements that "partial"
    * match the input Statement.
    *
    * \param partial The partial Statement to match.
@@ -140,7 +205,7 @@ public:
   virtual StatementIterator listStatements( const Statement &partial ) const = 0;
 
   /**
-   * Return an iterator over the Models statements that "partial"
+   * Return an iterator over Model statements that "partial"
    * match the input parameter.
    *
    * \param subject The Subject node (can be empty)
@@ -152,11 +217,32 @@ public:
   StatementIterator listStatements( const Node &subject, const Node &predicate, const Node &object ) const;
 
   /**
-   * Remove the given Statement from the Model.
+   * Remove a Statement from the Model in a Context. 
+   * It must be a complete statement - all of subject, predicate, object
+   *  parts must be present. 
    *
-   * \param st The Statement to remove.
+   * If Context is Empty, this is equivalent to remove(const Statement &statement)
+   *
+   * \param statement The Statement to remove.
+   * \param context The Context node.
    */
-  virtual Model::ExitCode remove( const Statement &st ) = 0;
+  virtual Model::ExitCode remove(const Statement &statement, const Node &context ) = 0;
+
+  /**
+   * Remove a Statement from the Model in a Context. 
+   * It must be a complete statement - all of subject, predicate, object
+   *  parts must be present. 
+   *
+   * \param statement The Statement to remove.
+   */
+  virtual Model::ExitCode remove( const Statement &statement ) = 0;
+
+  /**
+   * Remove Statements from a Model with the given Context.
+   *
+   * \param context The Context.
+   */
+  virtual Model::ExitCode remove( const Node &context ) = 0;
 
   /**
    * Remove all the statements matching (s, p, o) from this model.

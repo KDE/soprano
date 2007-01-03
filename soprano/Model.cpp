@@ -37,7 +37,11 @@ Model::~Model()
 Model::ExitCode Model::add( const Model &model )
 {
   StatementIterator stmi = model.listStatements();
-
+  if ( !stmi.isValid() )
+  {
+    return Model::ERROR_EXIT;
+  }
+ 
   while ( stmi.hasNext() )
   {
     if ( !add( stmi.next() ) ) 
@@ -49,11 +53,48 @@ Model::ExitCode Model::add( const Model &model )
   return Model::SUCCESS_EXIT;
 }
 
+Model::ExitCode Model::add( const StatementIterator &iter, const Node &context )
+{
+  if ( !iter.isValid() )
+  {
+    return Model::ERROR_EXIT;
+  }
+
+  while ( iter.hasNext() )
+  {
+    if ( !add( iter.next(), context ) ) 
+    {
+      return Model::ERROR_EXIT;
+    }
+  }
+
+  return Model::SUCCESS_EXIT;
+}
+
 Model::ExitCode Model::add( const StatementIterator &iter )
 {
+  if ( !iter.isValid() )
+  {
+    return Model::ERROR_EXIT;
+  }
+
   while ( iter.hasNext() )
   {
     if ( !add( iter.next() ) ) 
+    {
+      return Model::ERROR_EXIT;
+    }
+  }
+
+  return Model::SUCCESS_EXIT;
+}
+
+Model::ExitCode Model::add( const QList<Statement> &statements, const Node &context )
+{
+  QListIterator<Statement> iter(statements);
+  while ( iter.hasNext() )
+  {
+    if ( !add( iter.next(), context ) )
     {
       return Model::ERROR_EXIT;
     }

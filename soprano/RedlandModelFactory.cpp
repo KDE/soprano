@@ -42,7 +42,7 @@ RedlandModel *RedlandModelFactory::createMemoryModel( const QString &name ) cons
 
 RedlandModel *RedlandModelFactory::createPersistentModel( const QString &name, const QString &path ) const
 {
-  QString options("hash-type='bdb',dir='");
+  QString options("hash-type='bdb',contexts='yes',dir='");
   options.append( path );
   options.append("'");
 

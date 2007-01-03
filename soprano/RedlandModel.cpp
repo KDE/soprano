@@ -72,49 +72,77 @@ RedlandModel::~RedlandModel()
   delete d;
 }
 
-Model::ExitCode RedlandModel::add( const Statement &st )
+Model::ExitCode RedlandModel::add( const Statement &statement )
 {
-  if ( !st.isValid() ) 
+  if ( !statement.isValid() ) 
   {
     return Model::ERROR_EXIT;
   }
 
-  librdf_node *subject = Util::createNode( st.subject() );
-  if ( !subject )
-  {
-    return Model::ERROR_EXIT;
-  }
-
-  librdf_node *predicate = Util::createNode( st.predicate() );
-  if ( !predicate )
-  {
-    librdf_free_node( subject );
-    return Model::ERROR_EXIT;
-  }
-
-  librdf_node *object = Util::createNode( st.object() );
-  if ( !object )
-  {
-    librdf_free_node( subject );
-    librdf_free_node( predicate );
-    return Model::ERROR_EXIT;
-  }
-
+  librdf_node *subject = Util::createNode( statement.subject() );
+  librdf_node *predicate = Util::createNode( statement.predicate() );
+  librdf_node *object = Util::createNode( statement.object() );
+  
   if ( librdf_model_add( d->model, subject, predicate, object ) )
   {
     librdf_free_node( subject );
     librdf_free_node( predicate );
     librdf_free_node( object );
+    
     return Model::ERROR_EXIT;
   }
 
   // Sync the model
-  if ( librdf_model_sync( d->model ) ) 
+  //if ( librdf_model_sync( d->model ) ) 
+  //{
+  //  return Model::ERROR_EXIT;
+  //}
+  
+  return Model::SUCCESS_EXIT;
+}
+
+Model::ExitCode RedlandModel::add( const Statement &statement, const Node &context )
+{
+  if ( !statement.isValid() ) 
   {
     return Model::ERROR_EXIT;
   }
-  
+
+  librdf_node *ctx = Util::createNode( context );
+  librdf_statement *st = Util::createStatement( statement );
+
+  if ( librdf_model_context_add_statement( d->model, ctx, st ) )
+  {
+    librdf_free_node( ctx );
+    librdf_free_statement( st );
+    
+    return Model::ERROR_EXIT;
+  }
+
+  librdf_free_node( ctx );
+  librdf_free_statement( st );
+
   return Model::SUCCESS_EXIT;
+}
+
+QList<Node> RedlandModel::contexts() const
+{
+  QList<Node> contexts;
+
+  librdf_iterator *iter = librdf_model_get_contexts( d->model );
+  if (!iter) 
+  {
+    return contexts;
+  }
+
+  while ( librdf_iterator_end( iter ) == 0 )
+  {
+    librdf_node *ctx = (librdf_node *)librdf_iterator_get_context( iter );
+    contexts.append( Util::createNode( ctx ) );
+    librdf_iterator_next( iter );
+  }  
+
+  return contexts;
 }
 
 bool RedlandModel::contains( const Statement &statement ) const
@@ -127,6 +155,20 @@ bool RedlandModel::contains( const Statement &statement ) const
   librdf_statement *st = Util::createStatement( statement );
   int result = librdf_model_contains_statement( d->model, st );
   librdf_free_statement( st );
+
+  return result != 0;
+}
+
+bool RedlandModel::contains( const Node &context ) const
+{
+  if ( !context.isValid() ) 
+  {
+    return false;
+  }
+
+  librdf_node *ctx = Util::createNode( context );
+  int result = librdf_model_contains_context( d->model, ctx );
+  librdf_free_node( ctx );
 
   return result != 0;
 }
@@ -148,6 +190,57 @@ Soprano::ResultSet RedlandModel::executeQuery( const Query &query ) const
   return ResultSet( new RedlandQueryResult( res ) );
 }
 
+Soprano::StatementIterator RedlandModel::listStatements( const Node &context ) const
+{
+  if ( !context.isValid() )
+  {
+    return StatementIterator();
+  }
+
+  librdf_node *ctx = Util::createNode( context );
+
+  librdf_stream *stream = librdf_model_context_as_stream( d->model, ctx );
+  if ( !stream )
+  {
+    return StatementIterator();
+  }
+  librdf_free_node( ctx );
+
+  stream_adapter *s = (stream_adapter *) malloc( sizeof( stream_adapter ) );
+  s->impl = stream;
+
+  d->streams.append( s );
+
+  return StatementIterator( new RedlandStatementIterator( s ) );;
+}
+
+Soprano::StatementIterator RedlandModel::listStatements( const Statement &partial, const Node &context ) const
+{
+  librdf_statement *st = Util::createStatement( partial );
+  if ( !st )
+  {
+    return StatementIterator();
+  }
+
+  librdf_node *ctx = Util::createNode( context );
+
+  librdf_stream *stream = librdf_model_find_statements_in_context( d->model, st, ctx );
+  if ( !stream )
+  {
+    librdf_free_statement( st );
+    return StatementIterator();
+  }
+  librdf_free_node( ctx );
+  librdf_free_statement( st );
+
+  stream_adapter *s = (stream_adapter *) malloc( sizeof( stream_adapter ) );
+  s->impl = stream;
+
+  d->streams.append( s );
+
+  return StatementIterator( new RedlandStatementIterator( s ) );;
+}
+
 Soprano::StatementIterator RedlandModel::listStatements( const Statement &partial ) const
 {
   librdf_statement *st = Util::createStatement( partial );
@@ -162,7 +255,6 @@ Soprano::StatementIterator RedlandModel::listStatements( const Statement &partia
     librdf_free_statement( st );
     return StatementIterator();
   }
-
   librdf_free_statement( st );
 
   stream_adapter *s = (stream_adapter *) malloc( sizeof( stream_adapter ) );
@@ -173,56 +265,92 @@ Soprano::StatementIterator RedlandModel::listStatements( const Statement &partia
   return StatementIterator( new RedlandStatementIterator( s ) );;
 }
 
-Model::ExitCode RedlandModel::remove( const Statement &st )
+Model::ExitCode RedlandModel::remove( const Statement &statement, const Node &context ) 
 {
-  if ( !st.isValid() )
+  if ( !statement.isValid() )
   {
     return Model::ERROR_EXIT;
   }
 
-  librdf_node *subject = Util::createNode( st.subject() );
-  if ( !subject )
-  {
-    return Model::ERROR_EXIT;
-  }
+  librdf_node *ctx = Util::createNode( context );
 
-  librdf_node *predicate = Util::createNode( st.predicate() );
-  if ( !predicate )
-  {
-    librdf_free_node( subject );
-    return Model::ERROR_EXIT;
-  }
+  librdf_node *subject = Util::createNode( statement.subject() );
+  librdf_node *predicate = Util::createNode( statement.predicate() );
+  librdf_node *object = Util::createNode( statement.object() );
 
-  librdf_node *object = Util::createNode( st.object() );
-  if ( !object )
-  {
-    librdf_free_node( subject );
-    librdf_free_node( predicate );
-    return Model::ERROR_EXIT;
-  }
+  librdf_statement *st = librdf_new_statement_from_nodes( d->world , subject, predicate, object );
 
-  librdf_statement *statement = librdf_new_statement_from_nodes( d->world , subject, predicate, object );
-  if ( !statement )
+  if ( librdf_model_context_remove_statement( d->model, ctx, st ) )
   {
-    librdf_free_node( subject );
-    librdf_free_node( predicate );
-    librdf_free_node( object );
-    return Model::ERROR_EXIT;
-  }
-
-  if ( librdf_model_remove_statement( d->model, statement ) )
-  {
-    librdf_free_statement( statement );
+    librdf_free_node( ctx );
+    librdf_free_statement( st );
     return Model::ERROR_EXIT;
   }
   
-  librdf_free_statement( statement );
+  librdf_free_node( ctx );
+  librdf_free_statement( st );
   
   // Sync the model
-  if ( librdf_model_sync( d->model ) )
+  //if ( librdf_model_sync( d->model ) )
+  //{
+  //  return Model::ERROR_EXIT;
+  //}
+
+  return Model::SUCCESS_EXIT;
+}
+
+Model::ExitCode RedlandModel::remove( const Statement &statement )
+{
+  if ( !statement.isValid() )
   {
     return Model::ERROR_EXIT;
   }
+
+  librdf_node *subject = Util::createNode( statement.subject() );
+  librdf_node *predicate = Util::createNode( statement.predicate() );
+  librdf_node *object = Util::createNode( statement.object() );
+
+  librdf_statement *st = librdf_new_statement_from_nodes( d->world , subject, predicate, object );
+
+  if ( librdf_model_remove_statement( d->model, st ) )
+  {
+    librdf_free_statement( st );
+    return Model::ERROR_EXIT;
+  }
+  
+  librdf_free_statement( st );
+  
+  // Sync the model
+  //if ( librdf_model_sync( d->model ) )
+  //{
+  //  return Model::ERROR_EXIT;
+  //}
+
+  return Model::SUCCESS_EXIT;
+}
+
+Model::ExitCode RedlandModel::remove( const Node &context )
+{
+  if ( !context.isValid() )
+  {
+    return Model::ERROR_EXIT;
+  }
+
+  librdf_node *ctx = Util::createNode( context );
+
+  if (  librdf_model_context_remove_statements( d->model, ctx ) )
+  {
+    librdf_free_node( ctx );
+    return Model::ERROR_EXIT;
+  }
+
+  librdf_free_node( ctx );
+
+  // Sync the model
+  //if ( librdf_model_sync( d->model ) )
+  //{
+  //  return Model::ERROR_EXIT;
+  //}
 
   return Model::SUCCESS_EXIT;
 }
