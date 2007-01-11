@@ -244,6 +244,10 @@ public:
    */
   virtual Model::ExitCode remove( const Node &context ) = 0;
 
+  virtual Model::ExitCode removeAll( const Statement &statement, const Node &context );
+
+  virtual Model::ExitCode removeAll( const Statement &statement );
+
   /**
    * Remove all the statements matching (s, p, o) from this model.
    *

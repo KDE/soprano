@@ -23,6 +23,7 @@
 #define SOPRANO_BACKEND_REDLAND_UTIL_H
 
 #include <redland.h>
+#include <soprano/soprano_export.h>
 
 namespace Soprano
 {
@@ -39,15 +40,15 @@ namespace Redland
 class Util
 {
 public:
-  static Soprano::Node createNode( librdf_node *node );
+  static SOPRANO_EXPORT Soprano::Node createNode( librdf_node *node );
 
-  static librdf_node *createNode( const Node &node );
+  static SOPRANO_EXPORT librdf_node *createNode( const Node &node );
 
-  static Soprano::Statement createStatement( librdf_statement *st );
+  static SOPRANO_EXPORT Soprano::Statement createStatement( librdf_statement *st );
   
-  static librdf_statement *createStatement( const Statement &statement );
+  static SOPRANO_EXPORT librdf_statement *createStatement( const Statement &statement );
 
-  static const char *queryType( const Query &query );
+  static SOPRANO_EXPORT const char *queryType( const Query &query );
 };
 
 }
