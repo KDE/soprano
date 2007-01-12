@@ -35,8 +35,6 @@ public:
   QString value;
 };
 
-static QUrl emptyQUrl;
-static QString emptyQString;
 
 Node::Node()
 {
@@ -51,16 +49,20 @@ Node::Node( const Node &other )
 Node::Node( const QUrl &uri )
 {
   d = new Private;
-  d->uri = uri;
-  d->type = Node::Resource;
+  if( !uri.isEmpty() ) {
+    d->uri = uri;
+    d->type = Node::Resource;
+  }
 }
 
 Node::Node( const QString &value, Type type )
 {
   d = new Private;
-  d->value = value;
   d->type = type;
-  Q_ASSERT( type == Node::Literal || type == Node::Blank );
+  if( type == Resource )
+    d->uri = value;
+  else
+    d->value = value;
 }
 
 Node::~Node()
@@ -99,17 +101,18 @@ Node::Type Node::type() const
 
 const QUrl &Node::uri() const
 {
-  return ( isResource() ? d->uri : emptyQUrl );
+  // d->uri is only defined for Resource Nodes
+  return d->uri;
 }
 
 const QString &Node::literal() const
 {
-  return ( isLiteral() ? d->value : emptyQString );
+  return d->value;
 }
 
 const QString &Node::blank() const
 {
-  return ( isBlank() ? d->value : emptyQString );
+  return d->value;
 }
 
 QString Node::toString() const
@@ -122,7 +125,7 @@ QString Node::toString() const
   {
     return d->uri.toString();
   }
-  return emptyQString;
+  return QString();
 }
 
 Node& Node::operator=( const Node& other )

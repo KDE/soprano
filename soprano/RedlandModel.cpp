@@ -224,7 +224,15 @@ Soprano::StatementIterator RedlandModel::listStatements( const Statement &partia
 
   librdf_node *ctx = Util::createNode( context );
 
-  librdf_stream *stream = librdf_model_find_statements_in_context( d->model, st, ctx );
+  // FIXME: context support does not work, redland API claims that librdf_model_find_statements_in_context
+  // with a NULL context is the same as librdf_model_find_statements. Well, in practive it is not.
+  // I did not test non-empty contexts yet but for now we use a hack here
+  librdf_stream *stream = 0;
+  if( context.isEmpty() )
+    stream = librdf_model_find_statements( d->model, st );    
+  else
+    stream = librdf_model_find_statements_in_context( d->model, st, ctx );
+
   if ( !stream )
   {
     librdf_free_statement( st );

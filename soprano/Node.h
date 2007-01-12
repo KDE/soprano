@@ -41,12 +41,15 @@ public:
 
   /**
    * Default costructor.
-   * Represent an Empty node (type == Unknown).
+   * Creates an empty, invalid node (type == Unknown).
    */
   Node();
 
   /**
    * Costructor for Resource node.
+   * \param uri If not empty this will create a Node of type Resource
+   *            If the \a uri is empty an empty, invalid Node will be
+   *            created.
    */
   Node( const QUrl &uri );
 
@@ -55,10 +58,14 @@ public:
    *
    * \param value
    *        The value of a node. Represent a uri string if
-   *        if type is Blank.
+   *        if type is Blank or Resource.
    *
    * \param type
-   *        The node type, "must" be Literal or Blank.
+   *        The node type, if Resource the value will be 
+   *        converted to a QUrl.
+   *
+   * Caution: This constructor allows to create Nodes with
+   *          empty uris or values.
    */
   Node( const QString &value, Type type );
 
