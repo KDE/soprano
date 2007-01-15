@@ -42,8 +42,9 @@ class SOPRANO_EXPORT Model
 {
 public:
   enum ExitCode {
-    ERROR_EXIT = 0,
-    SUCCESS_EXIT
+    SUCCESS_EXIT = 0,
+    ERROR_EXIT,
+    EXIT_INVALID_STATEMENT
   };
 
   virtual ~Model();

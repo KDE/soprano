@@ -76,7 +76,7 @@ Model::ExitCode RedlandModel::add( const Statement &statement )
 {
   if ( !statement.isValid() ) 
   {
-    return Model::ERROR_EXIT;
+    return Model::EXIT_INVALID_STATEMENT;
   }
 
   librdf_node *subject = Util::createNode( statement.subject() );
@@ -105,7 +105,7 @@ Model::ExitCode RedlandModel::add( const Statement &statement, const Node &conte
 {
   if ( !statement.isValid() ) 
   {
-    return Model::ERROR_EXIT;
+    return Model::EXIT_INVALID_STATEMENT;
   }
 
   librdf_node *ctx = Util::createNode( context );
@@ -113,13 +113,13 @@ Model::ExitCode RedlandModel::add( const Statement &statement, const Node &conte
 
   if ( librdf_model_context_add_statement( d->model, ctx, st ) )
   {
-    librdf_free_node( ctx );
+    //    librdf_free_node( ctx );
     librdf_free_statement( st );
     
     return Model::ERROR_EXIT;
   }
 
-  librdf_free_node( ctx );
+  //  librdf_free_node( ctx );
   librdf_free_statement( st );
 
   return Model::SUCCESS_EXIT;
@@ -277,7 +277,7 @@ Model::ExitCode RedlandModel::remove( const Statement &statement, const Node &co
 {
   if ( !statement.isValid() )
   {
-    return Model::ERROR_EXIT;
+    return Model::EXIT_INVALID_STATEMENT;
   }
 
   librdf_node *ctx = Util::createNode( context );
@@ -311,7 +311,7 @@ Model::ExitCode RedlandModel::remove( const Statement &statement )
 {
   if ( !statement.isValid() )
   {
-    return Model::ERROR_EXIT;
+    return Model::EXIT_INVALID_STATEMENT;
   }
 
   librdf_node *subject = Util::createNode( statement.subject() );

@@ -44,9 +44,10 @@ Model::ExitCode Model::add( const Model &model )
  
   while ( stmi.hasNext() )
   {
-    if ( !add( stmi.next() ) ) 
+    Model::ExitCode c = add( stmi.next() );
+    if ( SUCCESS_EXIT != c ) 
     {
-      return Model::ERROR_EXIT;
+      return c;
     }
   }
 
@@ -62,9 +63,10 @@ Model::ExitCode Model::add( const StatementIterator &iter, const Node &context )
 
   while ( iter.hasNext() )
   {
-    if ( !add( iter.next(), context ) ) 
+    Model::ExitCode c = add( iter.next(), context );
+    if ( SUCCESS_EXIT != c ) 
     {
-      return Model::ERROR_EXIT;
+      return c;
     }
   }
 
@@ -80,9 +82,10 @@ Model::ExitCode Model::add( const StatementIterator &iter )
 
   while ( iter.hasNext() )
   {
-    if ( !add( iter.next() ) ) 
+    Model::ExitCode c = add( iter.next() );
+    if ( SUCCESS_EXIT != c ) 
     {
-      return Model::ERROR_EXIT;
+      return c;
     }
   }
 
@@ -91,12 +94,13 @@ Model::ExitCode Model::add( const StatementIterator &iter )
 
 Model::ExitCode Model::add( const QList<Statement> &statements, const Node &context )
 {
-  QListIterator<Statement> iter(statements);
-  while ( iter.hasNext() )
+  for( QList<Statement>::const_iterator it = statements.constBegin();
+       it != statements.constEnd(); ++it )
   {
-    if ( !add( iter.next(), context ) )
+    Model::ExitCode c = add( *it, context );
+    if ( SUCCESS_EXIT != c ) 
     {
-      return Model::ERROR_EXIT;
+      return c;
     }
   }
 
@@ -105,12 +109,15 @@ Model::ExitCode Model::add( const QList<Statement> &statements, const Node &cont
 
 Model::ExitCode Model::add( const QList<Statement> &statements )
 {
+  // FIXME: why not call add with an empty context here?
+
   QListIterator<Statement> iter(statements);
   while ( iter.hasNext() )
   {
-    if ( !add( iter.next() ) )
+    Model::ExitCode c = add( iter.next() );
+    if ( SUCCESS_EXIT != c ) 
     {
-      return Model::ERROR_EXIT;
+      return c;
     }
   }
 
@@ -166,9 +173,10 @@ Model::ExitCode Model::removeAll( const Statement &statement, const Node &contex
   StatementIterator iter = listStatements(statement, context);
   while ( iter.hasNext() )
   {
-    if ( !remove( iter.next() ) )
+    Model::ExitCode c = remove( iter.next() );
+    if ( c != SUCCESS_EXIT )
     {
-      return Model::ERROR_EXIT;
+      return c;
     }
   }
 
