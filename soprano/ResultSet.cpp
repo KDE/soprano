@@ -27,14 +27,17 @@
 
 using namespace Soprano;
 
+ResultSet::ResultSet()
+  : d(0)
+{
+}
+
 ResultSet::ResultSet( QueryResult *qr ): d(qr) 
 {
 }
 
 ResultSet::~ResultSet()
 {
-  if ( d == 0L ) return; 
-
   delete d;
 }
 

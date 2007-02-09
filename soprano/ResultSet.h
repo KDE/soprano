@@ -35,7 +35,8 @@ class QueryResult;
 class SOPRANO_EXPORT ResultSet
 {
 public:
-  explicit ResultSet( QueryResult *qr );
+  ResultSet();
+  ResultSet( QueryResult *qr );
 
   virtual ~ResultSet();
 

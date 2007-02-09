@@ -67,7 +67,7 @@ public:
    * Caution: This constructor allows to create Nodes with
    *          empty uris or values.
    */
-  Node( const QString &value, Type type );
+  Node( const QString &value, Type type = Literal );
 
   Node( const Node &other );
 
