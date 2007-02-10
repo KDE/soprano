@@ -83,6 +83,9 @@ Model::ExitCode RedlandModel::add( const Statement &statement )
   librdf_node *predicate = Util::createNode( statement.predicate() );
   librdf_node *object = Util::createNode( statement.object() );
   
+  // FIXME: sure that the nodes need not to be freed after a successful adding?
+  // FIXME: freeing null nodes throws a warning message in librdf.
+
   if ( librdf_model_add( d->model, subject, predicate, object ) )
   {
     librdf_free_node( subject );
