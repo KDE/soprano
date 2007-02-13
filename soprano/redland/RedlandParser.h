@@ -1,7 +1,8 @@
 /* 
  * This file is part of Soprano Project
  *
- * Copyright (C) 2006 Daniele Galdi <daniele.galdi@gmail.com>
+ * Copyright (C) 2006 Duncan Mac-Vicar <duncan@kde.org>
+ * Copyright (C) 2007 Sebastian Trueg <trueg@kde.org>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -19,38 +20,29 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef SOPRANO_BACKEND_NEPOMUK_MODEL_FACTORY_H
-#define SOPRANO_BACKEND_NEPOMUK_MODEL_FACTORY_H
+#ifndef SOPRANO_BACKEND_REDLAND_PARSER_H
+#define SOPRANO_BACKEND_REDLAND_PARSER_H
 
-#include "ModelFactory.h"
-#include "NepomukModel.h"
+#include <QUrl>
+
+#include "Parser.h"
 
 namespace Soprano
 {
-namespace Backend
-{
-namespace Nepomuk
+namespace Redland
 {
 
-class NepomukModelFactory: public ModelFactory
+class RedlandModel;
+
+class RedlandParser: public Soprano::Parser
 {
 public:
-  /**
-   * Create a new NepomukModelFactory 
-   */
-  NepomukModelFactory();
-    
-  ~NepomukModelFactory();
-
-  Soprano::Model *createMemoryModel( const QString &name ) const;
-
-  Soprano::Model *createPersistentModel( const QString &name, const QString &path="." ) const;
-
-  Parser *createParser() const;
+  RedlandParser();
+  RedlandModel *parse( const QUrl &uri ) const;
 };
 
 }
 }
-}
 
-#endif // SOPRANO_BACKEND_NEPOMUK_MODEL_FACTORY_H
+#endif // SOPRANO_BACKEND_REDLAND_PARSER_H
+

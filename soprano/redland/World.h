@@ -1,7 +1,8 @@
 /* 
  * This file is part of Soprano Project
  *
- * Copyright (C) 2006 Duncan Mac-Vicar <duncan@kde.org>
+ * Copyright (C) 2006 Daniele Galdi <daniele.galdi@gmail.com>
+ * Copyright (C) 2007 Sebastian Trueg <trueg@kde.org>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -19,32 +20,34 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef SOPRANO_BACKEND_REDLAND_PARSER_H
-#define SOPRANO_BACKEND_REDLAND_PARSER_H
+#ifndef SOPRANO_BACKEND_REDLAND_WORLD_H
+#define SOPRANO_BACKEND_REDLAND_WORLD_H
 
-#include <QUrl>
-
-#include "Parser.h"
+#include <redland.h>
 
 namespace Soprano
-{
-namespace Backend
 {
 namespace Redland
 {
 
-class RedlandModel;
-
-class RedlandParser: public Soprano::Parser
+class World
 {
 public:
-  RedlandParser();
-  RedlandModel *parse( const QUrl &uri ) const;
+  static World *self();
+
+  ~World();
+
+  librdf_world* worldPtr() const;
+private:
+  World();
+
+  librdf_world * m_world;
+
+  static World *m_instance;
 };
 
 }
 }
-}
 
-#endif // SOPRANO_BACKEND_REDLAND_PARSER_H
+#endif // SOPRANO_BACKEND_REDLAND_WORLD_H
 

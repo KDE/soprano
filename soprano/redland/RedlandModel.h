@@ -2,6 +2,7 @@
  * This file is part of Soprano Project
  *
  * Copyright (C) 2006 Daniele Galdi <daniele.galdi@gmail.com>
+ * Copyright (C) 2007 Sebastian Trueg <trueg@kde.org>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -38,8 +39,6 @@ namespace Soprano
 class ResultSet;
 class StatementIterator;
 
-namespace Backend
-{
 namespace Redland
 {
 
@@ -51,6 +50,8 @@ public:
   RedlandModel( librdf_model *model, librdf_storage *storage );
 
   ~RedlandModel();
+
+  librdf_model *redlandModel() const;
 
   Model::ExitCode add( const Statement &statement, const Node &context );
 
@@ -89,7 +90,6 @@ private:
 friend class RedlandStatementIterator;
 }; 
 
-}
 }
 }
 

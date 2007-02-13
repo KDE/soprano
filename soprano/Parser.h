@@ -1,6 +1,7 @@
 /* This file is part of Soprano
  *
  * Copyright (C) 2006 Daniele Galdi <daniele.galdi@gmail.com>
+ * Copyright (C) 2007 Sebastian Trueg <trueg@kde.org>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -37,7 +38,7 @@ public:
   virtual Model *parse( const QUrl &uri ) const = 0;
 
 protected:
-  explicit Parser();
+  Parser();
 };
 
 }

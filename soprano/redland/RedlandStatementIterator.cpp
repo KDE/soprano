@@ -2,6 +2,7 @@
  * This file is part of Soprano Project.
  *
  * Copyright (C) 2006 Daniele Galdi <daniele.galdi@gmail.com>
+ * Copyright (C) 2007 Sebastian Trueg <trueg@kde.org>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -28,7 +29,8 @@
 
 #include "redland_stream_adapter.h"
 
-using namespace Soprano::Backend::Redland;
+namespace Soprano {
+  namespace Redland {
 
 RedlandStatementIterator::RedlandStatementIterator( stream_adapter *s ): m_stream( s )
 {
@@ -52,6 +54,8 @@ bool RedlandStatementIterator::hasNext() const
 
 const Soprano::Statement RedlandStatementIterator::next() const
 {
+  // FIXME: use librdf_stream_get_context to get the context of the statement
+
   librdf_statement *st = stream_adapter_get_object( m_stream );
   if ( !st )
   {
@@ -66,4 +70,7 @@ const Soprano::Statement RedlandStatementIterator::next() const
   stream_adapter_next( m_stream );
 
   return copy;
+}
+
+}
 }

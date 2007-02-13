@@ -28,8 +28,62 @@
 #include <soprano/Statement.h>
 #include <soprano/StatementIterator.h>
 #include <soprano/Model.h>
-#include <soprano/ModelFactory.h>
-#include <soprano/Manager.h>
 #include <soprano/Parser.h>
+#include <soprano/backend.h>
+#include <soprano/pluginmanager.h>
+
+namespace Soprano {
+  /**
+   * Find a backend plugin by its name.
+   *
+   * \return the backend specified by \a name or null if could not
+   * be found.
+   */
+  SOPRANO_EXPORT const Backend* discoverBackendByName( const QString& name );
+  
+  /**
+   * Find a backend plugin by its features.
+   *
+   * \return a backend that supports the features defined in \a features.
+   */
+  SOPRANO_EXPORT const Backend* discoverBackendByFeatures( const QStringList& features );
+
+  /**
+   * By default and if available backend "redland" is used.
+   */
+  SOPRANO_EXPORT void setUsedBackend( const Backend* );
+
+  SOPRANO_EXPORT const Backend* usedBackend();
+
+  /**
+   * Creates a simple memory model
+   * The caller takes ownership and has to care about deletion.
+   */
+  SOPRANO_EXPORT Model* createModel();
+
+  /**
+   * Creates a new RDF storage using the backend set via setUsedBackend.
+   * The caller takes ownership and has to care about deletion.
+   *
+   * \param name The name of the storage
+   *
+   * \param options Specify optional options for the created model. Options are key/value
+   *        pairs in the form of "key=value".
+   *        Possible options may include (options always depend on the implementation)
+   *        \li storagePath Where to store the data on the local harddrive
+   *        \li storageType The database backend used, i.e. berkdb or sqlite or memory
+   *
+   * \sa Model, Backend::createModel
+   */
+  SOPRANO_EXPORT Model* createModel( const QString& name, const QStringList& options = QStringList() );
+
+  /**
+   * Create a new RDF parser using the backend set via setUsedBackend.
+   * The caller takes ownership and has to care about deletion.
+   *
+   * \param options optional options. Unused for now.
+   */
+  SOPRANO_EXPORT Parser* createParser( const QStringList& options = QStringList() );
+}
 
 #endif // SOPRANO_H

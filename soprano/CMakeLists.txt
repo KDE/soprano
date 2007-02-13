@@ -1,3 +1,5 @@
+project(soprano_core)
+
 include(KDE4Defaults)
 
 include_directories(
@@ -16,41 +18,19 @@ SET(soprano_SRCS
     StatementIterator.cpp
     StatementIteratorPrivate.cpp
     Model.cpp
-    ModelFactory.cpp
     Parser.cpp
-    Manager.cpp
+    pluginmanager.cpp
+    backend.cpp
+    soprano.cpp
+)    
 
-    # RedlandBackend
-    RedlandUtil.cpp
-    World.cpp
-    RedlandStatementIterator.cpp
-    RedlandQueryResult.cpp
-    RedlandModel.cpp
-    RedlandModelFactory.cpp
-    RedlandParser.cpp
-    redland_stream_adapter.c 
-   )    
+qt4_automoc(${soprano_SRCS})
 
-if (KNEP_FOUND)
-   SET(nepomuk_SRCS
-      NepomukUtil.cpp
-      NepomukModel.cpp
-      NepomukStatementIterator.cpp
-      NepomukModelFactory.cpp
-   )
-endif(KNEP_FOUND)
+ADD_LIBRARY(soprano SHARED ${soprano_SRCS})
 
-ADD_DEFINITIONS(${REDLAND_CFLAGS})
-ADD_LIBRARY(soprano SHARED ${soprano_SRCS} ${nepomuk_SRCS})
-
-TARGET_LINK_LIBRARIES(soprano ${REDLAND_LIBRARIES})
 TARGET_LINK_LIBRARIES(soprano ${QT_QTCORE_LIBRARY})
-if (KNEP_FOUND)
-TARGET_LINK_LIBRARIES(soprano ${KNEP_LIBRARIES})
-INCLUDE_DIRECTORIES(${KNEPCLIENT_INCLUDE_DIR})
-endif (KNEP_FOUND)
 
-set_target_properties(soprano PROPERTIES VERSION 1.0.0 SOVERSION 1)
+set_target_properties(soprano PROPERTIES VERSION 2.0.0 SOVERSION 2)
 
 INSTALL(TARGETS soprano
 		LIBRARY DESTINATION ${LIB_INSTALL_DIR})
@@ -63,8 +43,10 @@ INSTALL(FILES
 	Statement.h
 	StatementIterator.h
 	Model.h
-	ModelFactory.h
-	Manager.h
+	pluginmanager.h
 	Soprano.h
 	soprano_export.h
+	backend.h
 	DESTINATION ${INCLUDE_INSTALL_DIR}/soprano)
+
+add_subdirectory(redland)

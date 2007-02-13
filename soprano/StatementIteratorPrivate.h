@@ -2,6 +2,7 @@
  * This file is part of Soprano Project.
  *
  * Copyright (C) 2006 Daniele Galdi <daniele.galdi@gmail.com>
+ * Copyright (C) 2007 Sebastian Trueg <trueg@kde.org>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -24,11 +25,15 @@
 
 #include <QtCore>
 
+#include <soprano/soprano_export.h>
+
 namespace Soprano {
 
 class Statement;
 
-class StatementIteratorPrivate : public QSharedData
+// FIXME: not a good idea to name a public member of the API "Private"!
+
+class SOPRANO_EXPORT StatementIteratorPrivate : public QSharedData
 {
 public:
   virtual ~StatementIteratorPrivate();

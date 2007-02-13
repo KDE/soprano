@@ -30,6 +30,8 @@ namespace Soprano
 
 class Node;
 
+// FIXME: add context directly to the statement
+
 class SOPRANO_EXPORT Statement
 {
 public:

@@ -2,6 +2,7 @@
  * This file is part of Soprano Project
  *
  * Copyright (C) 2006 Daniele Galdi <daniele.galdi@gmail.com>
+ * Copyright (C) 2007 Sebastian Trueg <trueg@kde.org>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -28,7 +29,8 @@
 
 #include "RedlandUtil.h"
 
-using namespace Soprano::Backend::Redland;
+namespace Soprano {
+  namespace Redland {
 
 Soprano::Node Util::createNode( librdf_node *node )
 {
@@ -102,3 +104,21 @@ const char *Util::queryType( const Query &query )
   return 0L;
 }
 
+void Util::freeNode( librdf_node* node )
+{
+  if( node ) {
+    librdf_free_node( node );
+  }
+}
+
+
+void Util::freeStatement( librdf_statement* statement )
+{
+  if( statement ) {
+    librdf_free_statement( statement );
+  }
+}
+
+
+}
+}

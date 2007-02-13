@@ -2,6 +2,7 @@
  * This file is part of Soprano Project.
  *
  * Copyright (C) 2006 Daniele Galdi <daniele.galdi@gmail.com>
+ * Copyright (C) 2007 Sebastian Trueg <trueg@kde.org>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -19,60 +20,39 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef SOPRANO_BACKEND_REDLAND_QUERY_RESULT_H
-#define SOPRANO_BACKEND_REDLAND_QUERY_RESULT_H
+#ifndef SOPRANO_BACKEND_REDLAND_STATEMENT_ITERATOR_H
+#define SOPRANO_BACKEND_REDLAND_STATEMENT_ITERATOR_H
 
 #include <redland.h>
-#include <QString>
+#include "redland_stream_adapter.h"
 
-#include "QueryResult.h"
+#include "StatementIteratorPrivate.h"
 
 namespace Soprano 
 {
 
-class Node;
-class Model;
+class Statement;
 
-namespace Backend
-{
 namespace Redland
 {
 
-class RedlandQueryResult: public Soprano::QueryResult
+class RedlandStatementIterator: public Soprano::StatementIteratorPrivate
 {
 public:
-  explicit RedlandQueryResult( librdf_query_results *result );
+  explicit RedlandStatementIterator( stream_adapter *s );
 
-  ~RedlandQueryResult();
+  ~RedlandStatementIterator();
 
-  bool next() const;
-    
-  Soprano::Node binding( const QString &name ) const;
+  bool hasNext() const;
 
-  Soprano::Node binding( int offset ) const;
-
-  int bindingCount() const;
-
-  const QStringList &bindingNames() const;
-
-  bool isGraph() const;
-
-  bool isBinding() const;
-
-  bool isBool() const;
-
-  bool boolValue() const;
-
-  Model *model() const;
+  const Soprano::Statement next() const;
 
 private:
-  class Private;
-  Private *d;
+  stream_adapter *m_stream;
 };
- 
-}
+
 }
 }
 
-#endif // SOPRANO_BACKEND_REDLAND_QUERY_RESULT_H
+#endif // SOPRANO_BACKEND_REDLAND_STATEMENT_ITERATOR_H
 

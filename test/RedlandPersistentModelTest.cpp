@@ -27,14 +27,14 @@ using namespace Soprano;
 
 void RedlandPersistentModelTest::initTestCase()
 {
-  m_factory = Manager::instance()->factory( "Redland" );
-  m_model = m_factory->createPersistentModel( "persistent-model-test" );
+  Soprano::setUsedBackend( Soprano::discoverBackendByName( "redland" ) );
+  m_model = Soprano::createModel( "persistent-model-test" );
+  QVERIFY( m_model != 0 );
 }
 
 void RedlandPersistentModelTest::cleanupTestCase()
 {
   delete m_model;
-  delete m_factory;
 }
 
 QTEST_MAIN(RedlandPersistentModelTest)

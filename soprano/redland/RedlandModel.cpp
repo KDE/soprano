@@ -2,6 +2,7 @@
  * This file is part of Soprano Project.
  *
  * Copyright (C) 2006 Daniele Galdi <daniele.galdi@gmail.com>
+ * Copyright (C) 2007 Sebastian Trueg <trueg@kde.org>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -30,11 +31,11 @@
 
 #include "redland_stream_adapter.h"
 
-using namespace Soprano;
-using namespace Soprano::Backend::Redland;
+namespace Soprano {
+  namespace Redland {
 
 struct RedlandModel::Private {
-  Private(): world(0L), model(0L), storage(0L) 
+  Private(): world(0L), model(0L)
   {}
 
   librdf_world *world;
@@ -69,7 +70,13 @@ RedlandModel::~RedlandModel()
 
   librdf_free_model( d->model );
   librdf_free_storage( d->storage );
+
   delete d;
+}
+
+librdf_model *RedlandModel::redlandModel() const
+{
+  return d->model;
 }
 
 Model::ExitCode RedlandModel::add( const Statement &statement )
@@ -88,9 +95,9 @@ Model::ExitCode RedlandModel::add( const Statement &statement )
 
   if ( librdf_model_add( d->model, subject, predicate, object ) )
   {
-    librdf_free_node( subject );
-    librdf_free_node( predicate );
-    librdf_free_node( object );
+    Util::freeNode( subject );
+    Util::freeNode( predicate );
+    Util::freeNode( object );
     
     return Model::ERROR_EXIT;
   }
@@ -116,14 +123,14 @@ Model::ExitCode RedlandModel::add( const Statement &statement, const Node &conte
 
   if ( librdf_model_context_add_statement( d->model, ctx, st ) )
   {
-    //    librdf_free_node( ctx );
-    librdf_free_statement( st );
+    //    Util::freeNode( ctx );
+    Util::freeStatement( st );
     
     return Model::ERROR_EXIT;
   }
 
-  //  librdf_free_node( ctx );
-  librdf_free_statement( st );
+  //  Util::freeNode( ctx );
+  Util::freeStatement( st );
 
   return Model::SUCCESS_EXIT;
 }
@@ -157,7 +164,7 @@ bool RedlandModel::contains( const Statement &statement ) const
 
   librdf_statement *st = Util::createStatement( statement );
   int result = librdf_model_contains_statement( d->model, st );
-  librdf_free_statement( st );
+  Util::freeStatement( st );
 
   return result != 0;
 }
@@ -171,7 +178,7 @@ bool RedlandModel::contains( const Node &context ) const
 
   librdf_node *ctx = Util::createNode( context );
   int result = librdf_model_contains_context( d->model, ctx );
-  librdf_free_node( ctx );
+  Util::freeNode( ctx );
 
   return result != 0;
 }
@@ -207,14 +214,14 @@ Soprano::StatementIterator RedlandModel::listStatements( const Node &context ) c
   {
     return StatementIterator();
   }
-  librdf_free_node( ctx );
+  Util::freeNode( ctx );
 
   stream_adapter *s = (stream_adapter *) malloc( sizeof( stream_adapter ) );
   s->impl = stream;
 
   d->streams.append( s );
 
-  return StatementIterator( new RedlandStatementIterator( s ) );;
+  return StatementIterator( new RedlandStatementIterator( s ) );
 }
 
 Soprano::StatementIterator RedlandModel::listStatements( const Statement &partial, const Node &context ) const
@@ -238,11 +245,11 @@ Soprano::StatementIterator RedlandModel::listStatements( const Statement &partia
 
   if ( !stream )
   {
-    librdf_free_statement( st );
+    Util::freeStatement( st );
     return StatementIterator();
   }
-  librdf_free_node( ctx );
-  librdf_free_statement( st );
+  Util::freeNode( ctx );
+  Util::freeStatement( st );
 
   stream_adapter *s = (stream_adapter *) malloc( sizeof( stream_adapter ) );
   s->impl = stream;
@@ -263,10 +270,10 @@ Soprano::StatementIterator RedlandModel::listStatements( const Statement &partia
   librdf_stream *stream = librdf_model_find_statements( d->model, st );
   if ( !stream )
   {
-    librdf_free_statement( st );
+    Util::freeStatement( st );
     return StatementIterator();
   }
-  librdf_free_statement( st );
+  Util::freeStatement( st );
 
   stream_adapter *s = (stream_adapter *) malloc( sizeof( stream_adapter ) );
   s->impl = stream;
@@ -293,13 +300,13 @@ Model::ExitCode RedlandModel::remove( const Statement &statement, const Node &co
 
   if ( librdf_model_context_remove_statement( d->model, ctx, st ) )
   {
-    librdf_free_node( ctx );
-    librdf_free_statement( st );
+    Util::freeNode( ctx );
+    Util::freeStatement( st );
     return Model::ERROR_EXIT;
   }
   
-  librdf_free_node( ctx );
-  librdf_free_statement( st );
+  Util::freeNode( ctx );
+  Util::freeStatement( st );
   
   // Sync the model
   //if ( librdf_model_sync( d->model ) )
@@ -325,11 +332,11 @@ Model::ExitCode RedlandModel::remove( const Statement &statement )
 
   if ( librdf_model_remove_statement( d->model, st ) )
   {
-    librdf_free_statement( st );
+    Util::freeStatement( st );
     return Model::ERROR_EXIT;
   }
   
-  librdf_free_statement( st );
+  Util::freeStatement( st );
   
   // Sync the model
   //if ( librdf_model_sync( d->model ) )
@@ -351,11 +358,11 @@ Model::ExitCode RedlandModel::remove( const Node &context )
 
   if (  librdf_model_context_remove_statements( d->model, ctx ) )
   {
-    librdf_free_node( ctx );
+    Util::freeNode( ctx );
     return Model::ERROR_EXIT;
   }
 
-  librdf_free_node( ctx );
+  Util::freeNode( ctx );
 
   // Sync the model
   //if ( librdf_model_sync( d->model ) )
@@ -389,4 +396,7 @@ Model::ExitCode RedlandModel::print() const
   librdf_model_print( d->model, stdout );
 
   return Model::SUCCESS_EXIT;
+}
+
+}
 }

@@ -1,0 +1,31 @@
+project(soprano_redland)
+
+include_directories(
+  ${QT_QTCORE_INCLUDE_DIR}
+  ${CMAKE_SOURCE_DIR}
+  ${QT_INCLUDE_DIR}
+  ${CMAKE_INSTALL_PREFIX}/include
+  ${soprano_core_SOURCE_DIR}
+)
+
+set(redland_backend_SRC
+  RedlandUtil.cpp
+  World.cpp
+  RedlandStatementIterator.cpp
+  RedlandQueryResult.cpp
+  RedlandModel.cpp
+  RedlandParser.cpp
+  redland_stream_adapter.c 
+  redlandbackend.cpp
+)    
+
+qt4_automoc(${redland_backend_SRC})
+
+add_library(soprano_redlandbackend SHARED ${redland_backend_SRC})
+
+TARGET_LINK_LIBRARIES(soprano_redlandbackend soprano ${REDLAND_LIBRARIES})
+
+ADD_DEFINITIONS(${REDLAND_CFLAGS})
+
+INSTALL(TARGETS soprano_redlandbackend
+		LIBRARY DESTINATION ${LIB_INSTALL_DIR}/soprano)

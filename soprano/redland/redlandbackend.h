@@ -1,7 +1,7 @@
 /* 
- * This file is part of Soprano Project
+ * This file is part of Soprano Project.
  *
- * Copyright (C) 2006 Daniele Galdi <daniele.galdi@gmail.com>
+ * Copyright (C) 2007 Sebastian Trueg <trueg@kde.org>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -19,37 +19,33 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef SOPRANO_BACKEND_REDLAND_WORLD_H
-#define SOPRANO_BACKEND_REDLAND_WORLD_H
+#ifndef _REDLAND_BACKEND_H_
+#define _REDLAND_BACKEND_H_
 
-#include <redland.h>
+#include <soprano/backend.h>
+#include <soprano/soprano_export.h>
+
+#include <QObject>
 
 namespace Soprano
 {
-namespace Backend
-{
-namespace Redland
-{
+  namespace Redland
+    {
+      class SOPRANO_EXPORT BackendPlugin : public QObject, public Soprano::Backend
+	{
+	  Q_OBJECT
+	  Q_INTERFACES(Soprano::Backend)
 
-class World
-{
-public:
-  static World *self();
+	public:
+	  BackendPlugin();
 
-  ~World();
+	  Model* createModel() const;
+	  Model* createModel( const QString& name, const QStringList& options = QStringList() ) const;
+	  Parser* createParser( const QStringList& options = QStringList() ) const;
 
-  librdf_world* worldPtr() const;
-private:
-  World();
-
-  librdf_world * m_world;
-
-  static World *m_instance;
-};
-
-}
-}
+	  QStringList features() const;
+	};
+    }
 }
 
-#endif // SOPRANO_BACKEND_REDLAND_WORLD_H
-
+#endif

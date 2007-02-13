@@ -19,12 +19,13 @@
  * Boston, MA 02110-1301, USA.
  */
 
+#ifndef REDLAND_MEMORY_MODEL_TEST_H
+#define REDLAND_MEMORY_MODEL_TEST_H
+
 #include <QtTest>
 
 #include "SopranoModelTest.h"
 
-#ifndef REDLAND_MEMORY_MODEL_TEST_H
-#define REDLAND_MEMORY_MODEL_TEST_H
 
 namespace Soprano {
   class Model;

@@ -28,10 +28,21 @@
 
 #include "Model.h"
 
-using namespace Soprano;
+namespace Soprano {
+
+class Model::Private
+{
+public:
+};
+
+Model::Model()
+{
+  d = new Private;
+}
 
 Model::~Model()
 {
+  delete d;
 }
 
 Model::ExitCode Model::add( const Model &model )
@@ -197,4 +208,6 @@ Model::ExitCode Model::removeAll( const Node &subject, const Node &predicate, co
 Model::ExitCode Model::removeAll()
 {
   return removeAll( Node(), Node(), Node() );
+}
+
 }

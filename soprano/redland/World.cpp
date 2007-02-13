@@ -1,6 +1,8 @@
-/* This file is part of Soprano
+/* 
+ * This file is part of Soprano Project
  *
  * Copyright (C) 2006 Daniele Galdi <daniele.galdi@gmail.com>
+ * Copyright (C) 2007 Sebastian Trueg <trueg@kde.org>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -18,9 +20,39 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#include "ModelFactory.h"
-using namespace Soprano;
+#include "World.h"
 
-ModelFactory::~ModelFactory() 
+namespace Soprano {
+  namespace Redland {
+
+World *World::m_instance = 0;
+
+World *World::self()
 {
+  if ( !m_instance )
+  {
+    m_instance = new World();
+  }
+
+  return m_instance;
+}
+
+World::World()
+{
+  m_world = librdf_new_world();
+  librdf_world_open( m_world );
+}
+
+World::~World()
+{
+  librdf_free_world( m_world );
+  m_instance = 0;
+}
+
+librdf_world* World::worldPtr() const
+{
+  return m_world;
+}
+
+}
 }

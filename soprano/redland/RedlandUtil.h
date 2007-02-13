@@ -2,6 +2,7 @@
  * This file is part of Soprano Project
  *
  * Copyright (C) 2006 Daniele Galdi <daniele.galdi@gmail.com>
+ * Copyright (C) 2007 Sebastian Trueg <trueg@kde.org>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -28,31 +29,39 @@
 namespace Soprano
 {
 
-class Node;
-class Query;
-class Statement;
+  class Node;
+  class Query;
+  class Statement;
 
-namespace Backend
-{
-namespace Redland
-{
+  namespace Redland
+    {
 
-class Util
-{
-public:
-  static SOPRANO_EXPORT Soprano::Node createNode( librdf_node *node );
+      namespace Util
+	{
+	  Soprano::Node createNode( librdf_node *node );
 
-  static SOPRANO_EXPORT librdf_node *createNode( const Node &node );
+	  librdf_node *createNode( const Node &node );
 
-  static SOPRANO_EXPORT Soprano::Statement createStatement( librdf_statement *st );
+	  Soprano::Statement createStatement( librdf_statement *st );
   
-  static SOPRANO_EXPORT librdf_statement *createStatement( const Statement &statement );
+	  librdf_statement *createStatement( const Statement &statement );
 
-  static SOPRANO_EXPORT const char *queryType( const Query &query );
-};
+	  const char *queryType( const Query &query );
 
-}
-}
+	  /**
+	   * Calls librdf_free_node if \a node is not null.
+	   * The only reason for this method are the stupid asserts that clutter stderr.
+	   */
+	  void freeNode( librdf_node* node );
+
+	  /**
+	   * Calls librdf_free_statement if \a statement is not null.
+	   * The only reason for this method are the stupid asserts that clutter stderr.
+	   */
+	  void freeStatement( librdf_statement* statement );
+	};
+
+    }
 }
 
 #endif // SOPRANO_BACKEND_REDLAND_UTIL_H

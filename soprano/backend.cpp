@@ -1,7 +1,7 @@
-/* 
+/*
  * This file is part of Soprano Project.
  *
- * Copyright (C) 2006 Daniele Galdi <daniele.galdi@gmail.com>
+ * Copyright (C) 2007 Sebastian Trueg <trueg@kde.org>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -19,33 +19,44 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#include "NepomukModel.h"
-#include "NepomukModelFactory.h"
-#include "RedlandModelFactory.h"
+#include "backend.h"
 
-using namespace Soprano::Backend::Nepomuk;
-using namespace Soprano::Backend::Redland;
-
-NepomukModelFactory::NepomukModelFactory()
+class Soprano::Backend::Private
 {
+public:
+  QString name;
+};
+
+
+Soprano::Backend::Backend( const QString& name )
+{
+  d = new Private;
+  d->name = name;
 }
 
-NepomukModelFactory::~NepomukModelFactory() 
+
+Soprano::Backend::~Backend()
 {
+  delete d;
 }
 
-Soprano::Model *NepomukModelFactory::createMemoryModel( const QString &name ) const
+
+const QString& Soprano::Backend::backendName() const
 {
-  RedlandModelFactory factory;
-  return factory.createMemoryModel( name );
+  return d->name;
 }
 
-Soprano::Model *NepomukModelFactory::createPersistentModel( const QString &name, const QString &path ) const
+
+bool Soprano::Backend::hasFeature( const QString& feature ) const
 {
-  return new NepomukModel( name );
+  return features().contains( feature );
 }
 
-Soprano::Parser *NepomukModelFactory::createParser() const
+
+bool Soprano::Backend::hasFeatures( const QStringList& featureList ) const
 {
-  return 0;
+  for( QStringList::const_iterator it = featureList.begin(); it != featureList.end(); ++it )
+    if( !hasFeature( *it ) )
+      return false;
+  return true;
 }

@@ -2,6 +2,7 @@
  * This file is part of Soprano Project
  *
  * Copyright (C) 2006 Duncan Mac-Vicar <duncan@kde.org>
+ * Copyright (C) 2007 Sebastian Trueg <trueg@kde.org>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -24,12 +25,12 @@
 
 #include "World.h"
 #include "RedlandModel.h"
-#include "RedlandModelFactory.h"
 #include "RedlandParser.h"
 
 #include <QtCore>
 
-using namespace Soprano::Backend::Redland;
+namespace Soprano {
+  namespace Redland {
 
 RedlandParser::RedlandParser()
 {
@@ -90,5 +91,8 @@ RedlandModel *RedlandParser::parse( const QUrl &toparse ) const
   librdf_free_uri( uri );
   librdf_free_parser( parser );
 
-  return new RedlandModel( model, storage );
+  return new RedlandModel( model, 0 );
+}
+
+}
 }

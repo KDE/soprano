@@ -2,6 +2,7 @@
  * This file is part of Soprano Project.
  *
  * Copyright (C) 2006 Daniele Galdi <daniele.galdi@gmail.com>
+ * Copyright (C) 2007 Sebastian Trueg <trueg@kde.org>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -24,11 +25,12 @@
 #include "StatementIterator.h"
 #include "RedlandUtil.h"
 #include "RedlandQueryResult.h"
-#include "RedlandModelFactory.h"
 #include "RedlandStatementIterator.h"
 #include "World.h"
+#include "RedlandModel.h"
 
-using namespace Soprano::Backend::Redland;
+namespace Soprano {
+  namespace Redland {
 
 struct RedlandQueryResult::Private
 {
@@ -44,6 +46,7 @@ RedlandQueryResult::RedlandQueryResult( librdf_query_results *result )
 {
   d = new Private;
   d->result = result;
+
   Q_ASSERT( d->result != 0L );
 
   for (int offset = 0; offset < bindingCount(); offset++) {
@@ -88,7 +91,7 @@ Soprano::Node RedlandQueryResult::binding( const QString &name ) const
   }
 
   Soprano::Node tmp = Util::createNode( node );
-  librdf_free_node( node );
+  Util::freeNode( node );
   
   return tmp;
 }
@@ -103,7 +106,7 @@ Soprano::Node RedlandQueryResult::binding( int offset ) const
   }
 
   Soprano::Node tmp = Util::createNode( node );
-  librdf_free_node( node );
+  Util::freeNode( node );
   
   return tmp;
 }
@@ -141,22 +144,23 @@ bool RedlandQueryResult::boolValue() const
 Soprano::Model *RedlandQueryResult::model() const
 {
   // Create a memory model
-  librdf_storage *storage = librdf_new_storage( World::self()->worldPtr(), (char *)"memory", 0L, 0L );
-  if ( !storage )
-  {
-    return 0L;
+  librdf_storage *storage = librdf_new_storage( World::self()->worldPtr(), (char *)"memory", 0, 0 );
+  if ( !storage ) {
+    return 0;
   }
 
-  librdf_model *memory = librdf_new_model( World::self()->worldPtr(), storage, 0L);
-  if ( !memory )
-  {
+  librdf_model *model = librdf_new_model( World::self()->worldPtr(), storage, 0 );
+  if ( !model ) {
     librdf_free_storage( storage );
-    return 0L;
+    return 0;
   }
 
   librdf_stream *stream = librdf_query_results_as_stream( d->result );
-  librdf_model_add_statements( memory, stream );
+  librdf_model_add_statements( model, stream );
   librdf_free_stream( stream );
 
-  return new RedlandModel( memory, storage );
+  return new RedlandModel( model, storage );
 } 
+
+}
+}

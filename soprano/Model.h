@@ -47,6 +47,8 @@ public:
     EXIT_INVALID_STATEMENT
   };
 
+  Model();
+
   virtual ~Model();
 
   /**
@@ -55,6 +57,7 @@ public:
    *
    * \param model The Model to add.
    */
+  // FIXME: why is this not a virtual method? There is for example librdf_add_submodel
   Model::ExitCode add( const Model &model );
 
   /**
@@ -284,6 +287,10 @@ public:
    * \return Model::ERROR_EXIT if not implemented or an Error occurred.
    */
   virtual Model::ExitCode print() const = 0;
+
+ private:
+  class Private;
+  Private* d;
 };
 
 }

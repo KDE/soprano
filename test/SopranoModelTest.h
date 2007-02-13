@@ -24,9 +24,10 @@
 #ifndef SOPRANO_TEST_H
 #define SOPRANO_TEST_H
 
+#include <soprano/backend.h>
+
 namespace Soprano {
   class Model;
-  class ModelFactory;
   class Statement;
 }
 
@@ -61,7 +62,6 @@ protected:
    Soprano::Statement* m_st4;
 
    Soprano::Model* m_model;
-   Soprano::ModelFactory *m_factory;
 };
 
 #endif

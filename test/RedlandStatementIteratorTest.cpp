@@ -27,14 +27,14 @@ using namespace Soprano;
 
 void RedlandStatementIteratorTest::initTestCase()
 {
-  m_factory = Manager::instance()->factory( "Redland" );
-  m_model = m_factory->createMemoryModel( "sti-model" );
+  Soprano::setUsedBackend( Soprano::discoverBackendByName( "redland" ) );
+  m_model = Soprano::createModel();
+  QVERIFY( m_model != 0 );
 }
 
 void RedlandStatementIteratorTest::cleanupTestCase()
 {
   delete m_model;
-  delete m_factory;
 }
 
 QTEST_MAIN(RedlandStatementIteratorTest)
