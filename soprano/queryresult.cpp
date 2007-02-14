@@ -2,7 +2,6 @@
  * This file is part of Soprano Project.
  *
  * Copyright (C) 2006 Daniele Galdi <daniele.galdi@gmail.com>
- * Copyright (C) 2007 Sebastian Trueg <trueg@kde.org>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -20,39 +19,8 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef SOPRANO_BACKEND_REDLAND_STATEMENT_ITERATOR_H
-#define SOPRANO_BACKEND_REDLAND_STATEMENT_ITERATOR_H
+#include "queryresult.h"
 
-#include <redland.h>
-#include "redland_stream_adapter.h"
-
-#include "StatementIteratorPrivate.h"
-
-namespace Soprano 
+Soprano::QueryResult::~QueryResult()
 {
-
-class Statement;
-
-namespace Redland
-{
-
-class RedlandStatementIterator: public Soprano::StatementIteratorPrivate
-{
-public:
-  explicit RedlandStatementIterator( stream_adapter *s );
-
-  ~RedlandStatementIterator();
-
-  bool hasNext() const;
-
-  const Soprano::Statement next() const;
-
-private:
-  stream_adapter *m_stream;
-};
-
 }
-}
-
-#endif // SOPRANO_BACKEND_REDLAND_STATEMENT_ITERATOR_H
-

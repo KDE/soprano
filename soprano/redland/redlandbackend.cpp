@@ -26,9 +26,9 @@
 
 #include <redland.h>
 
-#include "World.h"
-#include "RedlandModel.h"
-#include "RedlandParser.h"
+#include "redlandworld.h"
+#include "redlandmodel.h"
+#include "redlandparser.h"
 
 
 Q_EXPORT_PLUGIN2(soprano_redlandbackend, Soprano::Redland::BackendPlugin)

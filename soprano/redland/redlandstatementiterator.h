@@ -20,57 +20,39 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#include <QtGlobal>
+#ifndef SOPRANO_BACKEND_REDLAND_STATEMENT_ITERATOR_H
+#define SOPRANO_BACKEND_REDLAND_STATEMENT_ITERATOR_H
 
-#include "Statement.h"
-
-#include "RedlandUtil.h"
-#include "RedlandStatementIterator.h"
-
+#include <redland.h>
 #include "redland_stream_adapter.h"
 
-namespace Soprano {
-  namespace Redland {
+#include "statementiteratorprivate.h"
 
-RedlandStatementIterator::RedlandStatementIterator( stream_adapter *s ): m_stream( s )
+namespace Soprano 
 {
-}
 
-RedlandStatementIterator::~RedlandStatementIterator()
+class Statement;
+
+namespace Redland
 {
-  if ( !m_stream->impl )
-  {
-    // Model is dead!
-    free_stream_adapter( m_stream );
-  } else {
-    free_stream_adapter_backend( m_stream);
-  }
-}
 
-bool RedlandStatementIterator::hasNext() const
+class RedlandStatementIterator: public Soprano::StatementIteratorPrivate
 {
-  return stream_adapter_end( m_stream ) == 0;
-}
+public:
+  explicit RedlandStatementIterator( stream_adapter *s );
 
-const Soprano::Statement RedlandStatementIterator::next() const
-{
-  // FIXME: use librdf_stream_get_context to get the context of the statement
+  ~RedlandStatementIterator();
 
-  librdf_statement *st = stream_adapter_get_object( m_stream );
-  if ( !st )
-  {
-    // Return a not valid Statement
-    // as last value.
-    return Soprano::Statement();
-  }
+  bool hasNext() const;
 
-  Statement copy = Util::createStatement( st );
+  const Soprano::Statement next() const;
 
-  // Move to the next element
-  stream_adapter_next( m_stream );
-
-  return copy;
-}
+private:
+  stream_adapter *m_stream;
+};
 
 }
 }
+
+#endif // SOPRANO_BACKEND_REDLAND_STATEMENT_ITERATOR_H
+

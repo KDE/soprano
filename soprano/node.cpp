@@ -21,7 +21,8 @@
 
 #include <QString>
 #include <QUrl>
-#include "Node.h"
+
+#include "node.h"
 
 using namespace Soprano;
 

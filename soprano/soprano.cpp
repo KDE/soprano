@@ -19,7 +19,7 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#include "Soprano.h"
+#include "soprano.h"
 #include "pluginmanager.h"
 #include "backend.h"
 

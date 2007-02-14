@@ -22,12 +22,12 @@
 
 #include <QtCore>
 
-#include "Node.h"
-#include "Query.h"
-#include "Statement.h"
-#include "World.h"
+#include "node.h"
+#include "query.h"
+#include "statement.h"
+#include "redlandworld.h"
 
-#include "RedlandUtil.h"
+#include "redlandutil.h"
 
 namespace Soprano {
   namespace Redland {

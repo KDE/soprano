@@ -19,50 +19,76 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#include "Statement.h"
-#include "StatementIteratorPrivate.h"
-#include "StatementIterator.h"
+#include "model.h"
+#include "node.h"
+#include "queryresult.h"
 
-using namespace Soprano;
+#include "resultset.h"
 
-StatementIterator::StatementIterator() : d( 0L )
+namespace Soprano {
+
+ResultSet::ResultSet()
+  : d(0)
 {
 }
 
-StatementIterator::StatementIterator( StatementIteratorPrivate *sti ) : d( sti )
+ResultSet::ResultSet( QueryResult *qr ): d(qr) 
 {
 }
 
-StatementIterator::StatementIterator( const StatementIterator &other ) : d( other.d )
+ResultSet::~ResultSet()
 {
+  delete d;
 }
 
-StatementIterator::~StatementIterator()
+bool ResultSet::next() const
 {
+  return d == 0L ? false : d->next();
 }
 
-StatementIterator& StatementIterator::operator=( const StatementIterator& other )
+Soprano::Node ResultSet::binding( const QString &name ) const
 {
-  d = other.d;
-  return *this;
+  return d->binding( name );
 }
 
-bool StatementIterator::hasNext() const
+Soprano::Node ResultSet::binding( int offset ) const
 {
-  return isValid() ? d->hasNext() : false;
+  return d->binding( offset );
 }
 
-const Soprano::Statement StatementIterator::next() const
+int ResultSet::bindingCount() const
 {
-  return isValid() ? d->next() : Statement();
+  return d->bindingCount();
 }
 
-bool StatementIterator::isValid() const
+const QStringList &ResultSet::bindingNames() const
 {
-  return !isEmpty();
+  return d->bindingNames();
 }
 
-bool StatementIterator::isEmpty() const
+bool ResultSet::isGraph() const
 {
-  return d == 0L;
+  return d->isGraph();
+}
+
+bool ResultSet::isBinding() const
+{
+  return d->isBinding();
+}
+
+bool ResultSet::isBool() const
+{
+  return d->isBool();
+}
+
+bool ResultSet::boolValue() const
+{
+  return d->boolValue();
+}
+
+Soprano::Model *ResultSet::model() const
+{
+  return d->model();
+} 
+
 }

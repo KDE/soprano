@@ -20,7 +20,7 @@
  */
 
 #include "StatementIteratorTest.h"
-#include <soprano/Soprano.h>
+#include <soprano/soprano.h>
 
 #include <QtCore>
 #include <QList>

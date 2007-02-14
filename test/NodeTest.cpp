@@ -22,7 +22,7 @@
 #include <QtTest>
 #include <QtCore>
 
-#include "soprano/Node.h"
+#include <soprano/node.h>
 
 #include "NodeTest.h"
 

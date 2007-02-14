@@ -2,6 +2,7 @@
  * This file is part of Soprano Project.
  *
  * Copyright (C) 2006 Daniele Galdi <daniele.galdi@gmail.com>
+ * Copyright (C) 2007 Sebastian Trueg <trueg@kde.org>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -19,9 +20,57 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#include "QueryResult.h"
-using namespace Soprano;
+#ifndef SOPRANO_BACKEND_REDLAND_QUERY_RESULT_H
+#define SOPRANO_BACKEND_REDLAND_QUERY_RESULT_H
 
-QueryResult::~QueryResult()
+#include <redland.h>
+#include <QString>
+
+#include "queryresult.h"
+
+namespace Soprano 
 {
+
+class Node;
+class Model;
+
+namespace Redland
+{
+
+class RedlandQueryResult: public Soprano::QueryResult
+{
+public:
+  RedlandQueryResult( librdf_query_results *result );
+
+  ~RedlandQueryResult();
+
+  bool next() const;
+    
+  Soprano::Node binding( const QString &name ) const;
+
+  Soprano::Node binding( int offset ) const;
+
+  int bindingCount() const;
+
+  const QStringList &bindingNames() const;
+
+  bool isGraph() const;
+
+  bool isBinding() const;
+
+  bool isBool() const;
+
+  bool boolValue() const;
+
+  Model *model() const;
+
+private:
+  class Private;
+  Private *d;
+};
+ 
 }
+}
+
+#endif // SOPRANO_BACKEND_REDLAND_QUERY_RESULT_H
+

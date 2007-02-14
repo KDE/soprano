@@ -20,7 +20,7 @@
  */
 
 #include "SopranoModelTest.h"
-#include <soprano/Soprano.h>
+#include <soprano/soprano.h>
 
 #include <QtCore>
 #include <QList>

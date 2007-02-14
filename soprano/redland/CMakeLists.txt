@@ -9,12 +9,12 @@ include_directories(
 )
 
 set(redland_backend_SRC
-  RedlandUtil.cpp
-  World.cpp
-  RedlandStatementIterator.cpp
-  RedlandQueryResult.cpp
-  RedlandModel.cpp
-  RedlandParser.cpp
+  redlandutil.cpp
+  redlandworld.cpp
+  redlandstatementiterator.cpp
+  redlandqueryresult.cpp
+  redlandmodel.cpp
+  redlandparser.cpp
   redland_stream_adapter.c 
   redlandbackend.cpp
 )    

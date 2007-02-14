@@ -23,9 +23,9 @@
 
 #include <redland.h>
 
-#include "World.h"
-#include "RedlandModel.h"
-#include "RedlandParser.h"
+#include "redlandworld.h"
+#include "redlandmodel.h"
+#include "redlandparser.h"
 
 #include <QtCore>
 

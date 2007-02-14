@@ -1,8 +1,7 @@
 /* 
- * This file is part of Soprano Project
+ * This file is part of Soprano Project.
  *
  * Copyright (C) 2006 Daniele Galdi <daniele.galdi@gmail.com>
- * Copyright (C) 2007 Sebastian Trueg <trueg@kde.org>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -20,39 +19,52 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#include "World.h"
+#include "statement.h"
+#include "statementiteratorprivate.h"
+#include "statementiterator.h"
 
 namespace Soprano {
-  namespace Redland {
 
-World *World::m_instance = 0;
-
-World *World::self()
+StatementIterator::StatementIterator() : d( 0L )
 {
-  if ( !m_instance )
-  {
-    m_instance = new World();
-  }
-
-  return m_instance;
 }
 
-World::World()
+StatementIterator::StatementIterator( StatementIteratorPrivate *sti ) : d( sti )
 {
-  m_world = librdf_new_world();
-  librdf_world_open( m_world );
 }
 
-World::~World()
+StatementIterator::StatementIterator( const StatementIterator &other ) : d( other.d )
 {
-  librdf_free_world( m_world );
-  m_instance = 0;
 }
 
-librdf_world* World::worldPtr() const
+StatementIterator::~StatementIterator()
 {
-  return m_world;
 }
 
+StatementIterator& StatementIterator::operator=( const StatementIterator& other )
+{
+  d = other.d;
+  return *this;
 }
+
+bool StatementIterator::hasNext() const
+{
+  return isValid() ? d->hasNext() : false;
+}
+
+const Soprano::Statement StatementIterator::next() const
+{
+  return isValid() ? d->next() : Statement();
+}
+
+bool StatementIterator::isValid() const
+{
+  return !isEmpty();
+}
+
+bool StatementIterator::isEmpty() const
+{
+  return d == 0L;
+}
+
 }

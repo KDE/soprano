@@ -19,7 +19,7 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#include <soprano/Soprano.h>
+#include <soprano/soprano.h>
 
 #include "RedlandMemoryModelTest.h"
 

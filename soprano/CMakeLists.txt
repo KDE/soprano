@@ -10,15 +10,15 @@ include_directories(
 )
 
 SET(soprano_SRCS 
-    Query.cpp	    
-    QueryResult.cpp
-    ResultSet.cpp  
-    Node.cpp
-    Statement.cpp
-    StatementIterator.cpp
-    StatementIteratorPrivate.cpp
-    Model.cpp
-    Parser.cpp
+    query.cpp	    
+    queryresult.cpp
+    resultset.cpp  
+    node.cpp
+    statement.cpp
+    statementiterator.cpp
+    statementiteratorprivate.cpp
+    model.cpp
+    parser.cpp
     pluginmanager.cpp
     backend.cpp
     soprano.cpp
@@ -36,15 +36,15 @@ INSTALL(TARGETS soprano
 		LIBRARY DESTINATION ${LIB_INSTALL_DIR})
 
 INSTALL(FILES 
-	Parser.h
-	Query.h
-	ResultSet.h
-	Node.h
-	Statement.h
-	StatementIterator.h
-	Model.h
+	parser.h
+	query.h
+	resultset.h
+	node.h
+	statement.h
+	statementiterator.h
+	model.h
 	pluginmanager.h
-	Soprano.h
+	soprano.h
 	soprano_export.h
 	backend.h
 	DESTINATION ${INCLUDE_INSTALL_DIR}/soprano)

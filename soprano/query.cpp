@@ -20,7 +20,7 @@
 
 #include <QString>
 
-#include "Query.h"
+#include "query.h"
 
 using namespace Soprano;
 

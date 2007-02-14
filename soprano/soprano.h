@@ -22,13 +22,13 @@
 #ifndef SOPRANO_H
 #define SOPRANO_H
 
-#include <soprano/Query.h>
-#include <soprano/ResultSet.h>
-#include <soprano/Node.h>
-#include <soprano/Statement.h>
-#include <soprano/StatementIterator.h>
-#include <soprano/Model.h>
-#include <soprano/Parser.h>
+#include <soprano/query.h>
+#include <soprano/resultset.h>
+#include <soprano/node.h>
+#include <soprano/statement.h>
+#include <soprano/statementiterator.h>
+#include <soprano/model.h>
+#include <soprano/parser.h>
 #include <soprano/backend.h>
 #include <soprano/pluginmanager.h>
 

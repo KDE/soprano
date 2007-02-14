@@ -1,8 +1,7 @@
 /* 
- * This file is part of Soprano Project
+ * This file is part of Soprano Project.
  *
- * Copyright (C) 2006 Duncan Mac-Vicar <duncan@kde.org>
- * Copyright (C) 2007 Sebastian Trueg <trueg@kde.org>
+ * Copyright (C) 2006 Daniele Galdi <daniele.galdi@gmail.com>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -20,29 +19,8 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef SOPRANO_BACKEND_REDLAND_PARSER_H
-#define SOPRANO_BACKEND_REDLAND_PARSER_H
+#include "statementiteratorprivate.h"
 
-#include <QUrl>
-
-#include "Parser.h"
-
-namespace Soprano
+Soprano::StatementIteratorPrivate::~StatementIteratorPrivate()
 {
-namespace Redland
-{
-
-class RedlandModel;
-
-class RedlandParser: public Soprano::Parser
-{
-public:
-  RedlandParser();
-  RedlandModel *parse( const QUrl &uri ) const;
-};
-
 }
-}
-
-#endif // SOPRANO_BACKEND_REDLAND_PARSER_H
-

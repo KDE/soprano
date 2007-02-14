@@ -22,11 +22,11 @@
 #include <QtCore>
 #include <QList>
 
-#include "Node.h"
-#include "Statement.h"
-#include "StatementIterator.h"
+#include "node.h"
+#include "statement.h"
+#include "statementiterator.h"
 
-#include "Model.h"
+#include "model.h"
 
 namespace Soprano {
 

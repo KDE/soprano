@@ -19,8 +19,8 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#include "Node.h"
-#include "Statement.h"
+#include "node.h"
+#include "statement.h"
 
 using namespace Soprano;
 

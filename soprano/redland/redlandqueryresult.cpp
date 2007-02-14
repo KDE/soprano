@@ -20,14 +20,14 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#include "Model.h"
-#include "Node.h"
-#include "StatementIterator.h"
-#include "RedlandUtil.h"
-#include "RedlandQueryResult.h"
-#include "RedlandStatementIterator.h"
-#include "World.h"
-#include "RedlandModel.h"
+#include "model.h"
+#include "node.h"
+#include "statementiterator.h"
+#include "redlandutil.h"
+#include "redlandqueryresult.h"
+#include "redlandstatementiterator.h"
+#include "redlandworld.h"
+#include "redlandmodel.h"
 
 namespace Soprano {
   namespace Redland {

@@ -1,7 +1,7 @@
 /* 
- * This file is part of Soprano Project.
+ * This file is part of Soprano Project
  *
- * Copyright (C) 2006 Daniele Galdi <daniele.galdi@gmail.com>
+ * Copyright (C) 2006 Duncan Mac-Vicar <duncan@kde.org>
  * Copyright (C) 2007 Sebastian Trueg <trueg@kde.org>
  *
  * This library is free software; you can redistribute it and/or
@@ -20,57 +20,29 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef SOPRANO_BACKEND_REDLAND_QUERY_RESULT_H
-#define SOPRANO_BACKEND_REDLAND_QUERY_RESULT_H
+#ifndef SOPRANO_BACKEND_REDLAND_PARSER_H
+#define SOPRANO_BACKEND_REDLAND_PARSER_H
 
-#include <redland.h>
-#include <QString>
+#include <QUrl>
 
-#include "QueryResult.h"
+#include "parser.h"
 
-namespace Soprano 
+namespace Soprano
 {
-
-class Node;
-class Model;
-
 namespace Redland
 {
 
-class RedlandQueryResult: public Soprano::QueryResult
+class RedlandModel;
+
+class RedlandParser: public Soprano::Parser
 {
 public:
-  RedlandQueryResult( librdf_query_results *result );
-
-  ~RedlandQueryResult();
-
-  bool next() const;
-    
-  Soprano::Node binding( const QString &name ) const;
-
-  Soprano::Node binding( int offset ) const;
-
-  int bindingCount() const;
-
-  const QStringList &bindingNames() const;
-
-  bool isGraph() const;
-
-  bool isBinding() const;
-
-  bool isBool() const;
-
-  bool boolValue() const;
-
-  Model *model() const;
-
-private:
-  class Private;
-  Private *d;
+  RedlandParser();
+  RedlandModel *parse( const QUrl &uri ) const;
 };
- 
+
 }
 }
 
-#endif // SOPRANO_BACKEND_REDLAND_QUERY_RESULT_H
+#endif // SOPRANO_BACKEND_REDLAND_PARSER_H
 

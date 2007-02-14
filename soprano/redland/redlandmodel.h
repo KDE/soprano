@@ -29,9 +29,9 @@
 #include <QTextStream>
 #include <redland.h>
 
-#include "Model.h"
-#include "Statement.h"
-#include "Node.h"
+#include "model.h"
+#include "statement.h"
+#include "node.h"
 
 namespace Soprano
 {

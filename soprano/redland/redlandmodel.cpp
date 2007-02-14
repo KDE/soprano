@@ -20,14 +20,14 @@
  * Floor, Boston, MA 02110-1301, USA.
  */
 
-#include "Query.h"
-#include "ResultSet.h"
-#include "StatementIterator.h"
-#include "World.h"
-#include "RedlandUtil.h"
-#include "RedlandQueryResult.h"
-#include "RedlandStatementIterator.h"
-#include "RedlandModel.h"
+#include "query.h"
+#include "resultset.h"
+#include "statementiterator.h"
+#include "redlandworld.h"
+#include "redlandutil.h"
+#include "redlandqueryresult.h"
+#include "redlandstatementiterator.h"
+#include "redlandmodel.h"
 
 #include "redland_stream_adapter.h"
 
