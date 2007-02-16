@@ -31,6 +31,7 @@
 #include <soprano/parser.h>
 #include <soprano/backend.h>
 #include <soprano/pluginmanager.h>
+#include <soprano/error.h>
 
 namespace Soprano {
   /**

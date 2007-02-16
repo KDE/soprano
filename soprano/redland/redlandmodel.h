@@ -53,9 +53,9 @@ public:
 
   librdf_model *redlandModel() const;
 
-  Model::ExitCode add( const Statement &statement, const Node &context );
+  ErrorCode add( const Statement &statement, const Node &context );
 
-  Model::ExitCode add( const Statement &statement );
+  ErrorCode add( const Statement &statement );
 
   virtual QList<Node> contexts() const;
 
@@ -71,17 +71,17 @@ public:
 
   Soprano::StatementIterator listStatements( const Statement &partial ) const;
 
-  Model::ExitCode remove(const Statement &statement, const Node &context );
+  ErrorCode remove(const Statement &statement, const Node &context );
 
-  Model::ExitCode remove( const Statement &statement );
+  ErrorCode remove( const Statement &statement );
 
-  Model::ExitCode remove( const Node &context );
+  ErrorCode remove( const Node &context );
 
   int size() const;
 
-  Model::ExitCode write( QTextStream &os ) const;
+  ErrorCode write( QTextStream &os ) const;
 
-  Model::ExitCode print() const;
+  ErrorCode print() const;
 
 private:
   class Private;

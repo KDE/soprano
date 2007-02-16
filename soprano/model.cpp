@@ -45,94 +45,94 @@ Model::~Model()
   delete d;
 }
 
-Model::ExitCode Model::add( const Model &model )
+ErrorCode Model::add( const Model &model )
 {
   StatementIterator stmi = model.listStatements();
   if ( !stmi.isValid() )
   {
-    return Model::ERROR_EXIT;
+    return ERROR_UNKNOW;
   }
  
   while ( stmi.hasNext() )
   {
-    Model::ExitCode c = add( stmi.next() );
-    if ( SUCCESS_EXIT != c ) 
+    ErrorCode c = add( stmi.next() );
+    if ( ERROR_NONE != c ) 
     {
       return c;
     }
   }
 
-  return Model::SUCCESS_EXIT;
+  return ERROR_NONE;
 }
 
-Model::ExitCode Model::add( const StatementIterator &iter, const Node &context )
+ErrorCode Model::add( const StatementIterator &iter, const Node &context )
 {
   if ( !iter.isValid() )
   {
-    return Model::ERROR_EXIT;
+    return ERROR_UNKNOW;
   }
 
   while ( iter.hasNext() )
   {
-    Model::ExitCode c = add( iter.next(), context );
-    if ( SUCCESS_EXIT != c ) 
+    ErrorCode c = add( iter.next(), context );
+    if ( ERROR_NONE != c ) 
     {
       return c;
     }
   }
 
-  return Model::SUCCESS_EXIT;
+  return ERROR_NONE;
 }
 
-Model::ExitCode Model::add( const StatementIterator &iter )
+ErrorCode Model::add( const StatementIterator &iter )
 {
   if ( !iter.isValid() )
   {
-    return Model::ERROR_EXIT;
+    return ERROR_UNKNOW;
   }
 
   while ( iter.hasNext() )
   {
-    Model::ExitCode c = add( iter.next() );
-    if ( SUCCESS_EXIT != c ) 
+    ErrorCode c = add( iter.next() );
+    if ( ERROR_NONE != c ) 
     {
       return c;
     }
   }
 
-  return Model::SUCCESS_EXIT;
+  return ERROR_NONE;
 }
 
-Model::ExitCode Model::add( const QList<Statement> &statements, const Node &context )
+ErrorCode Model::add( const QList<Statement> &statements, const Node &context )
 {
   for( QList<Statement>::const_iterator it = statements.constBegin();
        it != statements.constEnd(); ++it )
   {
-    Model::ExitCode c = add( *it, context );
-    if ( SUCCESS_EXIT != c ) 
+    ErrorCode c = add( *it, context );
+    if ( ERROR_NONE != c ) 
     {
       return c;
     }
   }
 
-  return Model::SUCCESS_EXIT;
+  return ERROR_NONE;
 }
 
-Model::ExitCode Model::add( const QList<Statement> &statements )
+ErrorCode Model::add( const QList<Statement> &statements )
 {
   // FIXME: why not call add with an empty context here?
 
   QListIterator<Statement> iter(statements);
   while ( iter.hasNext() )
   {
-    Model::ExitCode c = add( iter.next() );
-    if ( SUCCESS_EXIT != c ) 
+    ErrorCode c = add( iter.next() );
+    if ( ERROR_NONE != c ) 
     {
       return c;
     }
   }
 
-  return Model::SUCCESS_EXIT;
+  return ERROR_NONE;
 }
 
 Node Model::createPredicate( const QString &ns, const QString &value )
@@ -179,33 +179,33 @@ StatementIterator Model::listStatements( const Node &subject, const Node &predic
   return listStatements( Statement(subject, predicate, object) );
 }
 
-Model::ExitCode Model::removeAll( const Statement &statement, const Node &context )
+ErrorCode Model::removeAll( const Statement &statement, const Node &context )
 {
   StatementIterator iter = listStatements(statement, context);
   while ( iter.hasNext() )
   {
-    Model::ExitCode c = remove( iter.next() );
-    if ( c != SUCCESS_EXIT )
+    ErrorCode c = remove( iter.next() );
+    if ( c != ERROR_NONE )
     {
       return c;
     }
   }
 
-  return Model::SUCCESS_EXIT;
+  return ERROR_NONE;
 }
 
 
-Model::ExitCode Model::removeAll( const Statement &statement )
+ErrorCode Model::removeAll( const Statement &statement )
 {
   return removeAll( statement, Node() );
 }
 
-Model::ExitCode Model::removeAll( const Node &subject, const Node &predicate, const Node &object )
+ErrorCode Model::removeAll( const Node &subject, const Node &predicate, const Node &object )
 {
   return removeAll( Statement( subject, predicate, object ) );
 }
 
-Model::ExitCode Model::removeAll()
+ErrorCode Model::removeAll()
 {
   return removeAll( Node(), Node(), Node() );
 }

@@ -30,7 +30,7 @@ using namespace Soprano;
 void StatementIteratorTest::cleanup()
 {
   m_statements.clear();
-  QVERIFY( m_model->removeAll() == Model::SUCCESS_EXIT );
+  QVERIFY( m_model->removeAll() == ERROR_NONE );
 }
 
 void StatementIteratorTest::init()

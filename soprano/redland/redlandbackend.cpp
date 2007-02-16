@@ -113,6 +113,8 @@ Soprano::Model* Soprano::Redland::BackendPlugin::createModel( const QString& nam
 
   QString os = createRedlandOptionString( oh );
 
+  qDebug() << "(Soprano::Redland::BackendPlugin) creating model " << name << " of type " << storageType << " with options " << os << endl;
+
   // create a new storage
   librdf_storage* storage = librdf_new_storage( World::self()->worldPtr(), 
 						storageType.toLatin1().data(), 

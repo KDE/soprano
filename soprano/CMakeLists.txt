@@ -22,6 +22,7 @@ SET(soprano_SRCS
     pluginmanager.cpp
     backend.cpp
     soprano.cpp
+    error.cpp
 )    
 
 qt4_automoc(${soprano_SRCS})
@@ -47,6 +48,7 @@ INSTALL(FILES
 	soprano.h
 	soprano_export.h
 	backend.h
+	error.h
 	DESTINATION ${INCLUDE_INSTALL_DIR}/soprano)
 
 add_subdirectory(redland)

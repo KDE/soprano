@@ -36,7 +36,7 @@ void SopranoModelTest::cleanup()
   delete m_st3;
   delete m_st4;
 
-  QVERIFY( m_model->removeAll() == Model::SUCCESS_EXIT );
+  QVERIFY( m_model->removeAll() == ERROR_NONE );
 }
 
 void SopranoModelTest::init()
@@ -157,10 +157,10 @@ void SopranoModelTest::testAddStatements()
   Statement st3(subject1, predicate2, object2);
   Statement st4(subject2, predicate2, object2);
 
-  QVERIFY( m_model->add( st1 ) == Soprano::Model::SUCCESS_EXIT );
-  QVERIFY( m_model->add( st2 ) == Soprano::Model::SUCCESS_EXIT );
-  QVERIFY( m_model->add( st3 ) == Soprano::Model::SUCCESS_EXIT );
-  QVERIFY( m_model->add( st4 ) == Soprano::Model::SUCCESS_EXIT );
+  QVERIFY( m_model->add( st1 ) == Soprano::ERROR_NONE );
+  QVERIFY( m_model->add( st2 ) == Soprano::ERROR_NONE );
+  QVERIFY( m_model->add( st3 ) == Soprano::ERROR_NONE );
+  QVERIFY( m_model->add( st4 ) == Soprano::ERROR_NONE );
 }
 
 void SopranoModelTest::testListStatements()

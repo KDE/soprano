@@ -79,11 +79,11 @@ librdf_model *RedlandModel::redlandModel() const
   return d->model;
 }
 
-Model::ExitCode RedlandModel::add( const Statement &statement )
+ErrorCode RedlandModel::add( const Statement &statement )
 {
   if ( !statement.isValid() ) 
   {
-    return Model::EXIT_INVALID_STATEMENT;
+    return ERROR_INVALID_STATEMENT;
   }
 
   librdf_node *subject = Util::createNode( statement.subject() );
@@ -99,23 +99,23 @@ Model::ExitCode RedlandModel::add( const Statement &statement )
     Util::freeNode( predicate );
     Util::freeNode( object );
     
-    return Model::ERROR_EXIT;
+    return ERROR_UNKNOW;
   }
 
   // Sync the model
   //if ( librdf_model_sync( d->model ) ) 
   //{
-  //  return Model::ERROR_EXIT;
+  //  return ERROR_UNKNOW;
   //}
   
-  return Model::SUCCESS_EXIT;
+  return ERROR_NONE;
 }
 
-Model::ExitCode RedlandModel::add( const Statement &statement, const Node &context )
+ErrorCode RedlandModel::add( const Statement &statement, const Node &context )
 {
   if ( !statement.isValid() ) 
   {
-    return Model::EXIT_INVALID_STATEMENT;
+    return ERROR_INVALID_STATEMENT;
   }
 
   librdf_node *ctx = Util::createNode( context );
@@ -126,13 +126,13 @@ Model::ExitCode RedlandModel::add( const Statement &statement, const Node &conte
     //    Util::freeNode( ctx );
     Util::freeStatement( st );
     
-    return Model::ERROR_EXIT;
+    return ERROR_UNKNOW;
   }
 
   //  Util::freeNode( ctx );
   Util::freeStatement( st );
 
-  return Model::SUCCESS_EXIT;
+  return ERROR_NONE;
 }
 
 QList<Node> RedlandModel::contexts() const
@@ -283,11 +283,11 @@ Soprano::StatementIterator RedlandModel::listStatements( const Statement &partia
   return StatementIterator( new RedlandStatementIterator( s ) );;
 }
 
-Model::ExitCode RedlandModel::remove( const Statement &statement, const Node &context ) 
+ErrorCode RedlandModel::remove( const Statement &statement, const Node &context ) 
 {
   if ( !statement.isValid() )
   {
-    return Model::EXIT_INVALID_STATEMENT;
+    return ERROR_INVALID_STATEMENT;
   }
 
   librdf_node *ctx = Util::createNode( context );
@@ -302,7 +302,7 @@ Model::ExitCode RedlandModel::remove( const Statement &statement, const Node &co
   {
     Util::freeNode( ctx );
     Util::freeStatement( st );
-    return Model::ERROR_EXIT;
+    return ERROR_UNKNOW;
   }
   
   Util::freeNode( ctx );
@@ -311,17 +311,17 @@ Model::ExitCode RedlandModel::remove( const Statement &statement, const Node &co
   // Sync the model
   //if ( librdf_model_sync( d->model ) )
   //{
-  //  return Model::ERROR_EXIT;
+  //  return ERROR_UNKNOW;
   //}
 
-  return Model::SUCCESS_EXIT;
+  return ERROR_NONE;
 }
 
-Model::ExitCode RedlandModel::remove( const Statement &statement )
+ErrorCode RedlandModel::remove( const Statement &statement )
 {
   if ( !statement.isValid() )
   {
-    return Model::EXIT_INVALID_STATEMENT;
+    return ERROR_INVALID_STATEMENT;
   }
 
   librdf_node *subject = Util::createNode( statement.subject() );
@@ -333,7 +333,7 @@ Model::ExitCode RedlandModel::remove( const Statement &statement )
   if ( librdf_model_remove_statement( d->model, st ) )
   {
     Util::freeStatement( st );
-    return Model::ERROR_EXIT;
+    return ERROR_UNKNOW;
   }
   
   Util::freeStatement( st );
@@ -341,17 +341,17 @@ Model::ExitCode RedlandModel::remove( const Statement &statement )
   // Sync the model
   //if ( librdf_model_sync( d->model ) )
   //{
-  //  return Model::ERROR_EXIT;
+  //  return ERROR_UNKNOW;
   //}
 
-  return Model::SUCCESS_EXIT;
+  return ERROR_NONE;
 }
 
-Model::ExitCode RedlandModel::remove( const Node &context )
+ErrorCode RedlandModel::remove( const Node &context )
 {
   if ( !context.isValid() )
   {
-    return Model::ERROR_EXIT;
+    return ERROR_UNKNOW;
   }
 
   librdf_node *ctx = Util::createNode( context );
@@ -359,7 +359,7 @@ Model::ExitCode RedlandModel::remove( const Node &context )
   if (  librdf_model_context_remove_statements( d->model, ctx ) )
   {
     Util::freeNode( ctx );
-    return Model::ERROR_EXIT;
+    return ERROR_UNKNOW;
   }
 
   Util::freeNode( ctx );
@@ -367,10 +367,10 @@ Model::ExitCode RedlandModel::remove( const Node &context )
   // Sync the model
   //if ( librdf_model_sync( d->model ) )
   //{
-  //  return Model::ERROR_EXIT;
+  //  return ERROR_UNKNOW;
   //}
 
-  return Model::SUCCESS_EXIT;
+  return ERROR_NONE;
 }
 
 int RedlandModel::size() const
@@ -378,7 +378,7 @@ int RedlandModel::size() const
   return librdf_model_size( d->model );
 }
 
-Model::ExitCode RedlandModel::write( QTextStream &os ) const
+ErrorCode RedlandModel::write( QTextStream &os ) const
 {
   unsigned char *serialized = librdf_model_to_string( d->model, 0L, 0L, 0L, 0L  );
   QString tmp( (const char *) serialized );
@@ -388,14 +388,14 @@ Model::ExitCode RedlandModel::write( QTextStream &os ) const
 
   free( serialized );
 
-  return Model::SUCCESS_EXIT;
+  return ERROR_NONE;
 }
 
-Model::ExitCode RedlandModel::print() const
+ErrorCode RedlandModel::print() const
 {
   librdf_model_print( d->model, stdout );
 
-  return Model::SUCCESS_EXIT;
+  return ERROR_NONE;
 }
 
 }

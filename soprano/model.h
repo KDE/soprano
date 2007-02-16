@@ -25,6 +25,8 @@
 #include <QList>
 #include <soprano/soprano_export.h>
 
+#include <soprano/error.h>
+
 class QString;
 class QTextStream;
 class QUrl;
@@ -41,12 +43,6 @@ class StatementIterator;
 class SOPRANO_EXPORT Model
 {
 public:
-  enum ExitCode {
-    SUCCESS_EXIT = 0,
-    ERROR_EXIT,
-    EXIT_INVALID_STATEMENT
-  };
-
   Model();
 
   virtual ~Model();
@@ -58,14 +54,14 @@ public:
    * \param model The Model to add.
    */
   // FIXME: why is this not a virtual method? There is for example librdf_add_submodel
-  Model::ExitCode add( const Model &model );
+  ErrorCode add( const Model &model );
 
   /**
    * Add Statements to the Model.
    *
    * \param iter The StatementIterator to add.
    */
-  Model::ExitCode add( const StatementIterator &iter );
+  ErrorCode add( const StatementIterator &iter );
   
   /**
    * Add Statements to the Model with a Context.
@@ -75,14 +71,14 @@ public:
    * \param iter The StatementIterator to add.
    * \param context The Context node.
    */
-  Model::ExitCode add( const StatementIterator &iter, const Node &context );
+  ErrorCode add( const StatementIterator &iter, const Node &context );
 
   /**
    * Add all Statements to the Model.
    *
    * \param statements A list of Statements to add.
    */
-  Model::ExitCode add( const QList<Statement> &statements );
+  ErrorCode add( const QList<Statement> &statements );
 
   /**
    * Add all Statements to the Model.
@@ -92,14 +88,14 @@ public:
    * \param statements A list of Statements to add.
    * \param context The Context node.
    */
-  Model::ExitCode add( const QList<Statement> &statements, const Node &context );
+  ErrorCode add( const QList<Statement> &statements, const Node &context );
 
   /**
    * Add the Statement to the Model.
    *
    * \param statement The Statement to add.
    */
-  virtual Model::ExitCode add( const Statement &statement ) = 0;
+  virtual ErrorCode add( const Statement &statement ) = 0;
 
   /**
    * Add a statement to a model with a context. 
@@ -111,7 +107,7 @@ public:
    * \param statement The Statement to add.
    * \param context The Context node.
    */
-  virtual Model::ExitCode add( const Statement &statement, const Node &context ) = 0;
+  virtual ErrorCode add( const Statement &statement, const Node &context ) = 0;
 
   /**
    * Create a Predicate with the given namespace and value.
@@ -230,7 +226,7 @@ public:
    * \param statement The Statement to remove.
    * \param context The Context node.
    */
-  virtual Model::ExitCode remove(const Statement &statement, const Node &context ) = 0;
+  virtual ErrorCode remove(const Statement &statement, const Node &context ) = 0;
 
   /**
    * Remove a Statement from the Model in a Context. 
@@ -239,18 +235,18 @@ public:
    *
    * \param statement The Statement to remove.
    */
-  virtual Model::ExitCode remove( const Statement &statement ) = 0;
+  virtual ErrorCode remove( const Statement &statement ) = 0;
 
   /**
    * Remove Statements from a Model with the given Context.
    *
    * \param context The Context.
    */
-  virtual Model::ExitCode remove( const Node &context ) = 0;
+  virtual ErrorCode remove( const Node &context ) = 0;
 
-  virtual Model::ExitCode removeAll( const Statement &statement, const Node &context );
+  virtual ErrorCode removeAll( const Statement &statement, const Node &context );
 
-  virtual Model::ExitCode removeAll( const Statement &statement );
+  virtual ErrorCode removeAll( const Statement &statement );
 
   /**
    * Remove all the statements matching (s, p, o) from this model.
@@ -259,12 +255,12 @@ public:
    * \param predicate The Predicate node (can be empty)
    * \param object The Object node (can be empty)
    */
-  virtual Model::ExitCode removeAll( const Node &subject, const Node &predicate, const Node &object );
+  virtual ErrorCode removeAll( const Node &subject, const Node &predicate, const Node &object );
 
   /**
    * Remove all the statements from this model.
    */
-  Model::ExitCode removeAll();
+  ErrorCode removeAll();
 
   /**
    * \return The size of the Model (number of Stamenent). 
@@ -277,16 +273,16 @@ public:
    *
    * \param The stream.
    *
-   * \return Model::ERROR_EXIT if not implemented or an Error occurred.
+   * \return ERROR_UNKNOW if not implemented or an Error occurred.
    */
-  virtual Model::ExitCode write( QTextStream &os ) const = 0;
+  virtual ErrorCode write( QTextStream &os ) const = 0;
 
   /**
    * Print the Model to the stdout.
    *
-   * \return Model::ERROR_EXIT if not implemented or an Error occurred.
+   * \return ERROR_UNKNOW if not implemented or an Error occurred.
    */
-  virtual Model::ExitCode print() const = 0;
+  virtual ErrorCode print() const = 0;
 
  private:
   class Private;
