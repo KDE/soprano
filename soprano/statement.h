@@ -110,5 +110,7 @@ private:
 
 }
 
+SOPRANO_EXPORT QDebug operator<<( QDebug s, const Soprano::Statement& );
+
 #endif // SOPRANO_STATEMENT_H
 

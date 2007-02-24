@@ -148,3 +148,23 @@ bool Node::operator==( const Node& other ) const
   // never reached
   return false;
 }
+
+
+QDebug operator<<( QDebug s, const Soprano::Node& n )
+{
+  switch(n.type()) {
+  case Soprano::Node::Unknown:
+    s.nospace() << "(null)";
+    break;
+  case Soprano::Node::Blank:
+    s.nospace() << "(blank)";
+    break;
+  case Soprano::Node::Literal:
+    s.nospace() << n.literal();
+    break;
+  default:
+    s.nospace() << n.uri();
+    break;
+  }
+  return s.space();
+}

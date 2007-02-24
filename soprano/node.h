@@ -135,4 +135,6 @@ private:
 
 }
 
+SOPRANO_EXPORT QDebug operator<<( QDebug s, const Soprano::Node& );
+
 #endif // SOPRANO_NODE_H

@@ -104,3 +104,10 @@ bool Statement::isValid() const
 {
   return ( d->subject.isValid() && d->predicate.isValid() && d->object.isValid() );
 }
+
+
+QDebug operator<<( QDebug s, const Soprano::Statement& sm )
+{
+  s.nospace() << "[(" << sm.subject() << "," << sm.predicate() << "," << sm.object() << ")->" << "FIXME:add direct context support" << "]";
+  return s.space();
+}
