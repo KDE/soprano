@@ -34,18 +34,18 @@ namespace Soprano {
 
 Soprano::Node Util::createNode( librdf_node *node )
 {
-  if ( librdf_node_is_resource( node ) ) 
-  {
+  if ( librdf_node_is_resource( node ) ) {
     librdf_uri *uri = librdf_node_get_uri( node );
     return Soprano::Node( QUrl( (const char *)librdf_uri_as_string(uri) ) );
   }
-  else if ( librdf_node_is_literal( node ) )
-  {
-    return Soprano::Node( (const char *)librdf_node_get_literal_value( node ), Node::Literal );
-  }
-  else if ( librdf_node_is_blank( node ) )
-  {
+  else if ( librdf_node_is_blank( node ) ) {
     return Soprano::Node( (const char *)librdf_node_get_blank_identifier( node ), Node::Blank );
+  }
+  else if ( librdf_node_is_literal( node ) ) {
+    return Soprano::Node( (const char *)librdf_node_get_literal_value( node ), 
+			  Node::Literal,
+			  QUrl::fromEncoded( (const char *)librdf_uri_as_string( librdf_node_get_literal_value_datatype_uri( node ) ), QUrl::StrictMode ),
+			  librdf_node_get_literal_value_language( node ) );
   }
 
   return Soprano::Node();
@@ -55,17 +55,17 @@ librdf_node *Util::createNode( const Node &node )
 {
   librdf_world *world = World::self()->worldPtr();
 
-  if ( node.isResource() )
-  {
+  if ( node.isResource() ) {
     return librdf_new_node_from_uri_string( world, (unsigned char *)node.uri().toString().toLatin1().data());
   }
-  else if ( node.isLiteral() )
-  {
-    return librdf_new_node_from_literal( world, (unsigned char *)node.literal().toLatin1().data(), 0L, 0L );
-  }
-  else if ( node.isBlank() )
-  {
+  else if ( node.isBlank() ) {
     return librdf_new_node_from_blank_identifier( world, (unsigned char *) node.blank().toLatin1().data() );
+  }
+  else if ( node.isLiteral() ) {
+    return librdf_new_node_from_typed_literal( world, 
+					       (unsigned char *)node.literal().toLatin1().data(), 
+					       node.language().toLatin1().data(),
+					       librdf_new_uri( world, (const unsigned char*)node.dataType().toString().toLatin1().data() ) );
   }
 
   return 0L;

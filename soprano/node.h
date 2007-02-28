@@ -64,10 +64,17 @@ public:
    *        The node type, if Resource the value will be 
    *        converted to a QUrl.
    *
+   * \param datatype The type URI of the literal value.
+   *
+   * \param language The language of the literal value.
+   *
    * Caution: This constructor allows to create Nodes with
    *          empty uris or values.
    */
-  Node( const QString &value, Type type = Literal );
+  Node( const QString &value, 
+	Type type = Literal, 
+	const QUrl& datatype = QUrl(),
+	const QString& language = QString() );
 
   Node( const Node &other );
 
@@ -125,9 +132,26 @@ public:
   const QString &blank() const;
 
   /**
-   *\return A String rappresentation of the Node.
+   * \return The datatype URI of a literal node, i.e. the XML schema type
+   *         or an empty value if the node is not a literal.
+   */
+  const QUrl &dataType() const;
+
+  /**
+   * Each literal value can have an associated language, thus each property
+   * can be stored for different languages. An empty language refers to the
+   * default language.
+   *
+   * \return A string representing the language of the literal value
+   *         or an empty string if the node is not a literal.
+   */
+  const QString &language() const;
+
+  /**
+   *\return A String representation of the Node.
    */
   QString toString() const;
+
 private:
   class Private;
   QSharedDataPointer<Private> d;

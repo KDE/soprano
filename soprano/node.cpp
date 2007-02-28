@@ -34,6 +34,8 @@ public:
   Type type;
   QUrl uri;
   QString value;
+  QUrl datatype;
+  QString language;
 };
 
 
@@ -56,7 +58,7 @@ Node::Node( const QUrl &uri )
   }
 }
 
-Node::Node( const QString &value, Type type )
+Node::Node( const QString &value, Type type, const QUrl& datatype, const QString& lang )
 {
   d = new Private;
   d->type = type;
@@ -64,6 +66,11 @@ Node::Node( const QString &value, Type type )
     d->uri = value;
   else
     d->value = value;
+
+  if( type == Literal ) {
+    d->datatype = datatype;
+    d->language = lang;
+  }
 }
 
 Node::~Node()
@@ -116,6 +123,16 @@ const QString &Node::blank() const
   return d->value;
 }
 
+const QUrl &Node::dataType() const
+{
+  return d->datatype;
+}
+
+const QString &Node::language() const
+{
+  return d->language;
+}
+
 QString Node::toString() const
 {
   if ( isLiteral() || isBlank() ) 
@@ -161,6 +178,8 @@ QDebug operator<<( QDebug s, const Soprano::Node& n )
     break;
   case Soprano::Node::Literal:
     s.nospace() << n.literal();
+    if( !n.language().isEmpty() )
+      s.nospace() << " (" << n.language() << ")";
     break;
   default:
     s.nospace() << n.uri();
