@@ -59,7 +59,7 @@ namespace Soprano
 	   * The only reason for this method are the stupid asserts that clutter stderr.
 	   */
 	  void freeStatement( librdf_statement* statement );
-	};
+	}
 
     }
 }
