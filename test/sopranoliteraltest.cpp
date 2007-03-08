@@ -83,11 +83,12 @@ void SopranoLiteralTest::testDataTypes()
   QVERIFY( it.isValid() );
   QVERIFY( !it.isEmpty() );
   QVERIFY( it.hasNext() );
-  QCOMPARE( it.next().object().literal(), value.toString() );
+  Statement s2 = it.next();
+  QCOMPARE( s2.object().literal(), value.toString() );
+  QCOMPARE( s2.object().dataType(), object.dataType() );
 }
 
 
 QTEST_MAIN(SopranoLiteralTest)
 
 #include "sopranoliteraltest.moc"
-
