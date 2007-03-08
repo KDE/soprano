@@ -8,6 +8,12 @@ kde4_add_executable(nodetest RUN_UNINSTALLED NodeTest.cpp)
 target_link_libraries(nodetest soprano ${QT_QTCORE_LIBRARY} ${QT_QTTEST_LIBRARY})
 add_test(nodetest ${EXECUTABLE_OUTPUT_PATH}/nodetest)
 
+# Literals
+kde4_automoc(literaltest sopranoliteraltest.cpp)
+kde4_add_executable(literaltest RUN_UNINSTALLED sopranoliteraltest.cpp)
+target_link_libraries(literaltest soprano ${QT_QTCORE_LIBRARY} ${QT_QTTEST_LIBRARY})
+add_test(literaltest ${EXECUTABLE_OUTPUT_PATH}/literaltest)
+
 # Statement
 kde4_automoc(statementtest StatementTest.cpp)
 kde4_add_executable(statementtest RUN_UNINSTALLED StatementTest.cpp)
