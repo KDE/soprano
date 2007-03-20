@@ -31,7 +31,7 @@ namespace Soprano
 {
   namespace Redland
     {
-      class SOPRANO_EXPORT BackendPlugin : public QObject, public Soprano::Backend
+      class REDLANDBACKEND_EXPORT BackendPlugin : public QObject, public Soprano::Backend
 	{
 	  Q_OBJECT
 	  Q_INTERFACES(Soprano::Backend)

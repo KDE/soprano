@@ -34,7 +34,8 @@
 namespace Soprano {
   namespace Redland {
 
-struct RedlandModel::Private {
+class RedlandModel::Private {
+public:
   Private(): world(0L), model(0L)
   {}
 

@@ -24,8 +24,9 @@
 
 using namespace Soprano;
 
-struct Query::Private
+class Query::Private
 {
+public:
   Private() : limit(-1), offset(-1)
   {}
   int limit;

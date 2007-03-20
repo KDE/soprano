@@ -31,7 +31,11 @@ ADD_LIBRARY(soprano SHARED ${soprano_SRCS})
 
 TARGET_LINK_LIBRARIES(soprano ${QT_QTCORE_LIBRARY})
 
-set_target_properties(soprano PROPERTIES VERSION 2.0.0 SOVERSION 2)
+set_target_properties(soprano PROPERTIES
+        VERSION 2.0.0
+        SOVERSION 2
+        DEFINE_SYMBOL MAKE_SOPRANO_LIB
+)
 
 INSTALL(TARGETS soprano
 		LIBRARY DESTINATION ${LIB_INSTALL_DIR})

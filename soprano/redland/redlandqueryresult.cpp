@@ -32,8 +32,9 @@
 namespace Soprano {
   namespace Redland {
 
-struct RedlandQueryResult::Private
+class RedlandQueryResult::Private
 {
+public:
   Private() : result(0L)
   {}
   librdf_query_results *result;

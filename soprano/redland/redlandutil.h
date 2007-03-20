@@ -24,7 +24,6 @@
 #define SOPRANO_BACKEND_REDLAND_UTIL_H
 
 #include <redland.h>
-#include <soprano/soprano_export.h>
 
 namespace Soprano
 {
