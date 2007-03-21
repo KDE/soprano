@@ -4,9 +4,10 @@ include_directories(
   ${QT_QTCORE_INCLUDE_DIR}
   ${CMAKE_SOURCE_DIR}
   ${QT_INCLUDE_DIR}
-  ${CMAKE_INSTALL_PREFIX}/include
   ${soprano_core_SOURCE_DIR}
+  ${soprano_redland_BINARY_DIR}
   ${REDLAND_INCLUDE_DIR}
+  ${CMAKE_INSTALL_PREFIX}/include
 )
 
 set(redland_backend_SRC
@@ -33,7 +34,7 @@ set_target_properties(soprano_redlandbackend PROPERTIES
 )
 
 INSTALL(TARGETS soprano_redlandbackend
-	LIBRARY DESTINATION ${LIB_INSTALL_DIR}/soprano
+	LIBRARY DESTINATION lib/soprano
 	RUNTIME DESTINATION bin
-	ARCHIVE DESTINATION ${LIB_INSTALL_DIR}/soprano
+	ARCHIVE DESTINATION lib/soprano
 )

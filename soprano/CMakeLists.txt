@@ -1,10 +1,9 @@
 project(soprano_core)
 
-include(KDE4Defaults)
-
 include_directories(
   ${QT_QTCORE_INCLUDE_DIR}
   ${CMAKE_SOURCE_DIR}
+  ${soprano_core_BINARY_DIR}
   ${QT_INCLUDE_DIR}
   ${CMAKE_INSTALL_PREFIX}/include
 )
@@ -38,9 +37,9 @@ set_target_properties(soprano PROPERTIES
 )
 
 INSTALL(TARGETS soprano
-	LIBRARY DESTINATION ${LIB_INSTALL_DIR}
+	LIBRARY DESTINATION lib
 	RUNTIME DESTINATION bin
-	ARCHIVE DESTINATION ${LIB_INSTALL_DIR}
+	ARCHIVE DESTINATION lib
 )
 
 INSTALL(FILES 
@@ -56,6 +55,6 @@ INSTALL(FILES
 	soprano_export.h
 	backend.h
 	error.h
-	DESTINATION ${INCLUDE_INSTALL_DIR}/soprano)
+	DESTINATION include/soprano)
 
 add_subdirectory(redland)
