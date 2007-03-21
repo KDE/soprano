@@ -1,5 +1,7 @@
 project(soprano_redland)
 
+find_package(Redland REQUIRED) 
+
 include_directories(
   ${QT_QTCORE_INCLUDE_DIR}
   ${CMAKE_SOURCE_DIR}
