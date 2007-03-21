@@ -36,7 +36,7 @@ else (REDLAND_LIBRARIES AND REDLAND_INCLUDE_DIR)
     /usr/X11/include
   )
 
-  find_library(REDLAND_LIBRARIES NAMES rdf
+  find_library(REDLAND_LIBRARIES NAMES rdf librdf
     PATHS
     ${_REDLANDLinkDir}
   )

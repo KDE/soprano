@@ -83,8 +83,8 @@ void Soprano::PluginManager::loadAllPlugins()
   QStringList libDirs;
   libDirs << "/usr/lib" << "/usr/lib64" << "/usr/local/lib" << "/usr/local/lib64";
 
-  char* libPath = getenv( "LD_LIBRARY_PATH" );
-  if( libPath ) {
+  QByteArray libPath = qgetenv( "LD_LIBRARY_PATH" );
+  if( !libPath.isEmpty() ) {
     libDirs += QString::fromLocal8Bit( libPath ).split(":");
   }
 
