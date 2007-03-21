@@ -29,6 +29,31 @@
 
 #include <stdlib.h>
 
+#ifdef Q_OS_WIN
+#ifndef WIN32_LEAN_AND_MEAN
+#define WIN32_LEAN_AND_MEAN
+#endif
+#include <windows.h>
+static QStringList libDirs = QStringList();
+BOOL WINAPI DllMain(HINSTANCE hinstDLL,DWORD fdwReason,LPVOID)
+{
+    if(fdwReason == DLL_PROCESS_ATTACH) {
+        WCHAR szFile1[MAX_PATH];
+        if(GetModuleFileNameW(hinstDLL, szFile1, MAX_PATH)) {
+            QString path = QString::fromUtf16((unsigned short*)szFile1);
+            int idx = path.lastIndexOf('\\');
+            if(idx != -1)
+                path = path.left(idx);
+            libDirs += path;
+            libDirs += path + "\\..\\lib";
+        }
+    }
+    return TRUE;
+}
+
+#else
+static QStringList libDirs = QString("/usr/lib /usr/lib64 /usr/local/lib /usr/local/lib64").split(' ');
+#endif
 
 class Soprano::PluginManager::Private
 {
@@ -77,11 +102,6 @@ Soprano::PluginManager::~PluginManager()
 void Soprano::PluginManager::loadAllPlugins()
 {
   qDebug() << "(Soprano::PluginManager) loading all plugins" << endl;
-
-  // FIXME: we need a way to define where plugins are installed (something like <prefix>/lib/soprano/)
-  // or a generic way to determine all the search paths.
-  QStringList libDirs;
-  libDirs << "/usr/lib" << "/usr/lib64" << "/usr/local/lib" << "/usr/local/lib64";
 
   QByteArray libPath = qgetenv( "LD_LIBRARY_PATH" );
   if( !libPath.isEmpty() ) {
