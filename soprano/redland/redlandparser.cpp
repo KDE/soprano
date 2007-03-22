@@ -1,4 +1,4 @@
-/* 
+/*
  * This file is part of Soprano Project
  *
  * Copyright (C) 2006 Duncan Mac-Vicar <duncan@kde.org>
@@ -42,14 +42,13 @@ RedlandModel *RedlandParser::parse( const QUrl &toparse ) const
   if ( toparse.scheme().isEmpty() )
   {
     // we need to help the stupid librdf file url handling
-    tmp.setPath( QFileInfo( toparse.toLocalFile() ).absoluteFilePath() );
     tmp.setScheme("file");
   }
 
   librdf_world *w = World::self()->worldPtr();
 
   // Create a memory model
-  librdf_storage *storage = librdf_new_storage(world, "hashes", NULL, "hash-type='memory',contexts='yes'");
+  librdf_storage *storage = librdf_new_storage( w, "hashes", NULL, "hash-type='memory',contexts='yes'" );
   if ( !storage )
   {
     return 0L;
@@ -62,8 +61,8 @@ RedlandModel *RedlandParser::parse( const QUrl &toparse ) const
     return 0L;
   }
 
-  librdf_uri *uri = librdf_new_uri( w, (unsigned char *) tmp.toString().toLatin1().data() );  
-  if ( !uri ) 
+  librdf_uri *uri = librdf_new_uri( w, (unsigned char *) tmp.toString().toLatin1().data() );
+  if ( !uri )
   {
     librdf_free_model( model );
     librdf_free_storage( storage );
