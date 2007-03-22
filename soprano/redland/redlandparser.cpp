@@ -49,7 +49,7 @@ RedlandModel *RedlandParser::parse( const QUrl &toparse ) const
   librdf_world *w = World::self()->worldPtr();
 
   // Create a memory model
-  librdf_storage *storage = librdf_new_storage( w, (char *)"memory", 0L, 0L );
+  librdf_storage *storage = librdf_new_storage(world, "hashes", NULL, "hash-type='memory',contexts='yes'");
   if ( !storage )
   {
     return 0L;
@@ -91,7 +91,7 @@ RedlandModel *RedlandParser::parse( const QUrl &toparse ) const
   librdf_free_uri( uri );
   librdf_free_parser( parser );
 
-  return new RedlandModel( model, 0 );
+  return new RedlandModel( model, storage );
 }
 
 }
