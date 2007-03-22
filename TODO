@@ -1,7 +1,1 @@
 - Doxygen comments
-- Complete the nepomuk backend
-- Add Model methods:
-	- QList<Node> contexts()
-	- StatementIteraror listStatements( const Node &context );
-	- StatementIteraror listStatements( const Statement &partial, const Node &context );
-
