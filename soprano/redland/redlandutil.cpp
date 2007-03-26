@@ -42,9 +42,14 @@ Soprano::Node Util::createNode( librdf_node *node )
     return Soprano::Node( (const char *)librdf_node_get_blank_identifier( node ), Node::Blank );
   }
   else if ( librdf_node_is_literal( node ) ) {
+    librdf_uri* datatype = librdf_node_get_literal_value_datatype_uri( node );
+    if ( !datatype )
+    {
+      return Soprano::Node( (const char *)librdf_node_get_literal_value( node ), Node::Literal );
+    }
     return Soprano::Node( (const char *)librdf_node_get_literal_value( node ), 
 			  Node::Literal,
-			  QUrl::fromEncoded( (const char *)librdf_uri_as_string( librdf_node_get_literal_value_datatype_uri( node ) ), QUrl::StrictMode ),
+			  QUrl::fromEncoded( (const char *)librdf_uri_as_string( datatype ), QUrl::StrictMode ),
 			  librdf_node_get_literal_value_language( node ) );
   }
 

@@ -8,21 +8,34 @@ include_directories(
   ${CMAKE_INSTALL_PREFIX}/include
 )
 
-SET(soprano_SRCS 
-    query.cpp	    
+SET(soprano_SRCS
+    query.cpp
+    query.h
     queryresult.cpp
-    resultset.cpp  
+    queryresult.h
+    resultset.cpp
+    resultset.h
     node.cpp
+    node.h
     statement.cpp
+    statement.h
     statementiterator.cpp
+    statementiterator.h
     statementiteratorprivate.cpp
+    statementiteratorprivate.h
     model.cpp
+    model.h
     parser.cpp
+    parser.h
     pluginmanager.cpp
+    pluginmanager.h
     backend.cpp
+    backend.h
     soprano.cpp
+    soprano.h
     error.cpp
-)    
+    error.h
+)
 
 qt4_automoc(${soprano_SRCS})
 

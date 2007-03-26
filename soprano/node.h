@@ -33,10 +33,10 @@ class SOPRANO_EXPORT Node
 public:
 
   enum Type {
-    Unknown = 0,
-    Resource,
-    Literal,
-    Blank
+    Unknown = 0, /* To catch uninitialised nodes */
+    Resource,    /* rdf:Resource (& rdf:Property) - has a URI */
+    Literal,     /* rdf:Literal - has an XML string, language, XML space */
+    Blank        /* blank node has an identifier string */
   };
 
   /**
@@ -71,10 +71,10 @@ public:
    * Caution: This constructor allows to create Nodes with
    *          empty uris or values.
    */
-  Node( const QString &value, 
-	Type type = Literal, 
-	const QUrl& datatype = QUrl(),
-	const QString& language = QString() );
+  Node( const QString &value,
+        Type type = Literal,
+        const QUrl& datatype = QUrl(),
+        const QString& language = QString() );
 
   Node( const Node &other );
 

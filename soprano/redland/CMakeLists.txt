@@ -16,14 +16,22 @@ include_directories(
 
 set(redland_backend_SRC
   redlandutil.cpp
+  redlandutil.h
   redlandworld.cpp
+  redlandworld.h
   redlandstatementiterator.cpp
+  redlandstatementiterator.h
   redlandqueryresult.cpp
+  redlandqueryresult.h
   redlandmodel.cpp
+  redlandmodel.h
   redlandparser.cpp
-  redland_stream_adapter.c 
+  redlandparser.h
+  redland_stream_adapter.c
+  redland_stream_adapter.h
   redlandbackend.cpp
-)    
+  redlandbackend.h
+)
 
 qt4_automoc(${redland_backend_SRC})
 

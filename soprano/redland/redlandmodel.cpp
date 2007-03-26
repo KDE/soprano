@@ -36,7 +36,7 @@ namespace Soprano {
 
 class RedlandModel::Private {
 public:
-  Private(): world(0L), model(0L)
+  Private(): world(0L), model(0L), storage(0L)
   {}
 
   librdf_world *world;
@@ -50,8 +50,11 @@ RedlandModel::RedlandModel( librdf_model *model, librdf_storage *storage )
 {
   d = new Private;
   d->world = World::self()->worldPtr();
-  d->model = model; 
+  d->model = model;
   d->storage = storage;
+
+  Q_ASSERT( model != 0L );
+  Q_ASSERT( storage != 0L );
 }
 
 RedlandModel::~RedlandModel()
@@ -82,55 +85,72 @@ librdf_model *RedlandModel::redlandModel() const
 
 ErrorCode RedlandModel::add( const Statement &statement )
 {
-  if ( !statement.isValid() ) 
+  if ( !statement.isValid() )
   {
     return ERROR_INVALID_STATEMENT;
   }
 
   librdf_node *subject = Util::createNode( statement.subject() );
+  if ( !subject )
+  {
+    return ERROR_UNKNOW;
+  }
+
   librdf_node *predicate = Util::createNode( statement.predicate() );
+  if ( !predicate )
+  {
+    Util::freeNode( subject );
+    return ERROR_UNKNOW;
+  }
+
   librdf_node *object = Util::createNode( statement.object() );
-  
-  // FIXME: sure that the nodes need not to be freed after a successful adding?
-  // FIXME: freeing null nodes throws a warning message in librdf.
+  if ( !object )
+  {
+    Util::freeNode( subject );
+    Util::freeNode( predicate );
+    return ERROR_UNKNOW;
+  }
 
   if ( librdf_model_add( d->model, subject, predicate, object ) )
   {
     Util::freeNode( subject );
     Util::freeNode( predicate );
     Util::freeNode( object );
-    
     return ERROR_UNKNOW;
   }
 
-  // Sync the model
-  //if ( librdf_model_sync( d->model ) ) 
+  //if ( librdf_model_sync( d->model ) )
   //{
   //  return ERROR_UNKNOW;
   //}
-  
+
   return ERROR_NONE;
 }
 
 ErrorCode RedlandModel::add( const Statement &statement, const Node &context )
 {
-  if ( !statement.isValid() ) 
+  if ( !statement.isValid() )
   {
     return ERROR_INVALID_STATEMENT;
   }
 
   librdf_node *ctx = Util::createNode( context );
-  librdf_statement *st = Util::createStatement( statement );
 
-  if ( librdf_model_context_add_statement( d->model, ctx, st ) )
+  librdf_statement *st = Util::createStatement( statement );
+  if ( !st )
   {
-    //    Util::freeNode( ctx );
-    Util::freeStatement( st );
-    
+    Util::freeNode( ctx );
     return ERROR_UNKNOW;
   }
 
-  //  Util::freeNode( ctx );
+  if ( librdf_model_context_add_statement( d->model, ctx, st ) )
+  {
+    Util::freeNode( ctx );
+    Util::freeStatement( st );
+    return ERROR_UNKNOW;
+  }
+
+  Util::freeNode( ctx );
   Util::freeStatement( st );
 
   return ERROR_NONE;
@@ -141,7 +161,7 @@ QList<Node> RedlandModel::contexts() const
   QList<Node> contexts;
 
   librdf_iterator *iter = librdf_model_get_contexts( d->model );
-  if (!iter) 
+  if (!iter)
   {
     return contexts;
   }
@@ -151,19 +171,24 @@ QList<Node> RedlandModel::contexts() const
     librdf_node *ctx = (librdf_node *)librdf_iterator_get_context( iter );
     contexts.append( Util::createNode( ctx ) );
     librdf_iterator_next( iter );
-  }  
+  }
 
   return contexts;
 }
 
 bool RedlandModel::contains( const Statement &statement ) const
 {
-  if ( !statement.isValid() ) 
+  if ( !statement.isValid() )
   {
     return false;
   }
 
   librdf_statement *st = Util::createStatement( statement );
+  if ( !st )
+  {
+    return false;
+  }
+
   int result = librdf_model_contains_statement( d->model, st );
   Util::freeStatement( st );
 
@@ -172,12 +197,17 @@ bool RedlandModel::contains( const Statement &statement ) const
 
 bool RedlandModel::contains( const Node &context ) const
 {
-  if ( !context.isValid() ) 
+  if ( !context.isValid() )
   {
     return false;
   }
 
   librdf_node *ctx = Util::createNode( context );
+  if ( !ctx )
+  {
+    return false;
+  }
+
   int result = librdf_model_contains_context( d->model, ctx );
   Util::freeNode( ctx );
 
@@ -194,8 +224,13 @@ Soprano::ResultSet RedlandModel::executeQuery( const Query &query ) const
 
   librdf_query_set_limit( q , query.limit() );
   librdf_query_set_offset( q, query.offset() );
-  
+
   librdf_query_results *res = librdf_model_query_execute( d->model, q );
+  if ( !res )
+  {
+    return ResultSet( 0L );
+  }
+
   librdf_free_query( q );
 
   return ResultSet( new RedlandQueryResult( res ) );
@@ -240,12 +275,13 @@ Soprano::StatementIterator RedlandModel::listStatements( const Statement &partia
   // I did not test non-empty contexts yet but for now we use a hack here
   librdf_stream *stream = 0;
   if( context.isEmpty() )
-    stream = librdf_model_find_statements( d->model, st );    
+    stream = librdf_model_find_statements( d->model, st );
   else
     stream = librdf_model_find_statements_in_context( d->model, st, ctx );
 
   if ( !stream )
   {
+    Util::freeNode( ctx );
     Util::freeStatement( st );
     return StatementIterator();
   }
@@ -305,10 +341,10 @@ ErrorCode RedlandModel::remove( const Statement &statement, const Node &context 
     Util::freeStatement( st );
     return ERROR_UNKNOW;
   }
-  
+
   Util::freeNode( ctx );
   Util::freeStatement( st );
-  
+
   // Sync the model
   //if ( librdf_model_sync( d->model ) )
   //{
@@ -330,15 +366,22 @@ ErrorCode RedlandModel::remove( const Statement &statement )
   librdf_node *object = Util::createNode( statement.object() );
 
   librdf_statement *st = librdf_new_statement_from_nodes( d->world , subject, predicate, object );
+  if ( !st )
+  {
+    Util::freeNode( subject );
+    Util::freeNode( predicate );
+    Util::freeNode( object );
+    return ERROR_UNKNOW;
+  }
 
   if ( librdf_model_remove_statement( d->model, st ) )
   {
     Util::freeStatement( st );
     return ERROR_UNKNOW;
   }
-  
+
   Util::freeStatement( st );
-  
+
   // Sync the model
   //if ( librdf_model_sync( d->model ) )
   //{
