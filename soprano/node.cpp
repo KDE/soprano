@@ -38,6 +38,7 @@ public:
   QString language;
 };
 
+static const QString empty;
 
 Node::Node()
 {
@@ -113,14 +114,15 @@ const QUrl &Node::uri() const
   return d->uri;
 }
 
+  static const QString nil;
 const QString &Node::literal() const
 {
-  return d->value;
+  return ( isLiteral() ? d->value : empty );
 }
 
 const QString &Node::blank() const
 {
-  return d->value;
+  return ( isBlank() ? d->value : empty );
 }
 
 const QUrl &Node::dataType() const
