@@ -52,7 +52,7 @@ static QHash<QString, QString> parseOptions( const QStringList& options )
 
       // support some default Soprano options
       if( key == "storagePath" )
-	key = "dir";
+		key = "dir";
 
       oh[key] = value;
     }
@@ -83,7 +83,7 @@ Soprano::Redland::BackendPlugin::BackendPlugin()
 Soprano::Model* Soprano::Redland::BackendPlugin::createModel() const
 {
   // create a new storage
-  librdf_storage* storage = librdf_new_storage( World::self()->worldPtr(), "memory", 0, 0 );
+  librdf_storage* storage = librdf_new_storage( World::self()->worldPtr(), "hashes", NULL, "hash-type='memory',contexts='yes'" );
   if( !storage ) {
     qDebug() << "(Soprano::Redland) storage creation failed!" << endl;
     return 0;
