@@ -1,4 +1,4 @@
-/* 
+/*
  * This file is part of Soprano Project.
  *
  * Copyright (C) 2006 Daniele Galdi <daniele.galdi@gmail.com>
@@ -15,7 +15,7 @@
  * Library General Public License for more details.
  *
  * You should have received a copy of the GNU Library General Public
- * License along with this library; see the file COPYING.LIB.  If not, 
+ * License along with this library; see the file COPYING.LIB.  If not,
  * write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301, USA.
  */
@@ -28,22 +28,31 @@
 #include "redlandqueryresult.h"
 #include "redlandstatementiterator.h"
 #include "redlandmodel.h"
+#include "mutexlocker.h"
 
 #include "redland_stream_adapter.h"
+
+#include <QMutex>
+
 
 namespace Soprano {
   namespace Redland {
 
 class RedlandModel::Private {
 public:
-  Private(): world(0L), model(0L), storage(0L)
-  {}
+    Private() :
+        world(0),
+        model(0),
+        storage(0)
+    {}
 
-  librdf_world *world;
-  librdf_model *model;
-  librdf_storage *storage;
+    librdf_world *world;
+    librdf_model *model;
+    librdf_storage *storage;
 
-  QList<stream_adapter *> streams;
+    QList<stream_adapter *> streams;
+
+    QMutex modelMutex;
 };
 
 RedlandModel::RedlandModel( librdf_model *model, librdf_storage *storage )
@@ -90,6 +99,8 @@ ErrorCode RedlandModel::add( const Statement &statement )
     return ERROR_INVALID_STATEMENT;
   }
 
+  MutexLocker lock( &d->modelMutex );
+
   librdf_node *subject = Util::createNode( statement.subject() );
   if ( !subject )
   {
@@ -134,6 +145,8 @@ ErrorCode RedlandModel::add( const Statement &statement, const Node &context )
     return ERROR_INVALID_STATEMENT;
   }
 
+  MutexLocker lock( &d->modelMutex );
+
   librdf_node *ctx = Util::createNode( context );
 
   librdf_statement *st = Util::createStatement( statement );
@@ -160,6 +173,8 @@ QList<Node> RedlandModel::contexts() const
 {
   QList<Node> contexts;
 
+  MutexLocker lock( &d->modelMutex );
+
   librdf_iterator *iter = librdf_model_get_contexts( d->model );
   if (!iter)
   {
@@ -183,6 +198,8 @@ bool RedlandModel::contains( const Statement &statement ) const
     return false;
   }
 
+  MutexLocker lock( &d->modelMutex );
+
   librdf_statement *st = Util::createStatement( statement );
   if ( !st )
   {
@@ -202,6 +219,8 @@ bool RedlandModel::contains( const Node &context ) const
     return false;
   }
 
+  MutexLocker lock( &d->modelMutex );
+
   librdf_node *ctx = Util::createNode( context );
   if ( !ctx )
   {
@@ -216,6 +235,8 @@ bool RedlandModel::contains( const Node &context ) const
 
 Soprano::ResultSet RedlandModel::executeQuery( const Query &query ) const
 {
+  MutexLocker lock( &d->modelMutex );
+
   librdf_query *q = librdf_new_query( d->world, Util::queryType( query ), 0L, (unsigned char *)query.query().toLatin1().data(), 0L );
   if ( !q )
   {
@@ -238,6 +259,8 @@ Soprano::ResultSet RedlandModel::executeQuery( const Query &query ) const
 
 Soprano::StatementIterator RedlandModel::listStatements( const Node &context ) const
 {
+  MutexLocker lock( &d->modelMutex );
+
   if ( !context.isValid() )
   {
     return StatementIterator();
@@ -262,6 +285,8 @@ Soprano::StatementIterator RedlandModel::listStatements( const Node &context ) c
 
 Soprano::StatementIterator RedlandModel::listStatements( const Statement &partial, const Node &context ) const
 {
+  MutexLocker lock( &d->modelMutex );
+
   librdf_statement *st = Util::createStatement( partial );
   if ( !st )
   {
@@ -298,12 +323,14 @@ Soprano::StatementIterator RedlandModel::listStatements( const Statement &partia
 
 Soprano::StatementIterator RedlandModel::listStatements( const Statement &partial ) const
 {
+  MutexLocker lock( &d->modelMutex );
+
   librdf_statement *st = Util::createStatement( partial );
   if ( !st )
   {
     return StatementIterator();
   }
-  
+
   librdf_stream *stream = librdf_model_find_statements( d->model, st );
   if ( !stream )
   {
@@ -320,8 +347,10 @@ Soprano::StatementIterator RedlandModel::listStatements( const Statement &partia
   return StatementIterator( new RedlandStatementIterator( s ) );;
 }
 
-ErrorCode RedlandModel::remove( const Statement &statement, const Node &context ) 
+ErrorCode RedlandModel::remove( const Statement &statement, const Node &context )
 {
+  MutexLocker lock( &d->modelMutex );
+
   if ( !statement.isValid() )
   {
     return ERROR_INVALID_STATEMENT;
@@ -356,6 +385,8 @@ ErrorCode RedlandModel::remove( const Statement &statement, const Node &context 
 
 ErrorCode RedlandModel::remove( const Statement &statement )
 {
+  MutexLocker lock( &d->modelMutex );
+
   if ( !statement.isValid() )
   {
     return ERROR_INVALID_STATEMENT;
@@ -393,6 +424,8 @@ ErrorCode RedlandModel::remove( const Statement &statement )
 
 ErrorCode RedlandModel::remove( const Node &context )
 {
+  MutexLocker lock( &d->modelMutex );
+
   if ( !context.isValid() )
   {
     return ERROR_UNKNOW;
@@ -419,11 +452,14 @@ ErrorCode RedlandModel::remove( const Node &context )
 
 int RedlandModel::size() const
 {
+  MutexLocker lock( &d->modelMutex );
   return librdf_model_size( d->model );
 }
 
 ErrorCode RedlandModel::write( QTextStream &os ) const
 {
+  MutexLocker lock( &d->modelMutex );
+
   unsigned char *serialized = librdf_model_to_string( d->model, 0L, 0L, 0L, 0L  );
   QString tmp( (const char *) serialized );
 
@@ -437,6 +473,8 @@ ErrorCode RedlandModel::write( QTextStream &os ) const
 
 ErrorCode RedlandModel::print() const
 {
+  MutexLocker lock( &d->modelMutex );
+
   librdf_model_print( d->model, stdout );
 
   return ERROR_NONE;

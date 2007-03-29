@@ -30,6 +30,7 @@ set(redland_backend_SRC
   redland_stream_adapter.c
   redland_stream_adapter.h
   redlandbackend.cpp
+  mutexlocker.cpp
   redlandbackend.h
 )
 

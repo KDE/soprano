@@ -1,4 +1,4 @@
-/* 
+/*
  * This file is part of Soprano Project
  *
  * Copyright (C) 2006 Daniele Galdi <daniele.galdi@gmail.com>
@@ -38,7 +38,6 @@ public:
   QString language;
 };
 
-static const QString empty;
 
 Node::Node()
 {
@@ -114,15 +113,15 @@ const QUrl &Node::uri() const
   return d->uri;
 }
 
-  static const QString nil;
+
 const QString &Node::literal() const
 {
-  return ( isLiteral() ? d->value : empty );
+  return d->value;
 }
 
 const QString &Node::blank() const
 {
-  return ( isBlank() ? d->value : empty );
+  return d->value;
 }
 
 const QUrl &Node::dataType() const
@@ -137,7 +136,7 @@ const QString &Node::language() const
 
 QString Node::toString() const
 {
-  if ( isLiteral() || isBlank() ) 
+  if ( isLiteral() || isBlank() )
   {
     return d->value;
   }
@@ -158,12 +157,12 @@ bool Node::operator==( const Node& other ) const
 {
   if (d->type != other.d->type)
     return false;
-  
+
   if (d->type == Resource)
     return d->uri == other.d->uri;
   else
     return d->value == other.d->value;
-  
+
   // never reached
   return false;
 }
