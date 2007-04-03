@@ -1,4 +1,4 @@
-/* 
+/*
  * This file is part of Soprano Project
  *
  * Copyright (C) 2006 Daniele Galdi <daniele.galdi@gmail.com>
@@ -22,19 +22,16 @@
 
 #include "redlandworld.h"
 
+#include <QObject>
+
+Q_GLOBAL_STATIC( Soprano::Redland::World, worldInstance );
+
 namespace Soprano {
   namespace Redland {
 
-World *World::m_instance = 0;
-
 World *World::self()
 {
-  if ( !m_instance )
-  {
-    m_instance = new World();
-  }
-
-  return m_instance;
+  return worldInstance();
 }
 
 World::World()
@@ -46,7 +43,6 @@ World::World()
 World::~World()
 {
   librdf_free_world( m_world );
-  m_instance = 0;
 }
 
 librdf_world* World::worldPtr() const

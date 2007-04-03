@@ -48,7 +48,7 @@ public:
 
   int bindingCount() const;
 
-  const QStringList &bindingNames() const;
+  QStringList bindingNames() const;
 
   bool isGraph() const;
 

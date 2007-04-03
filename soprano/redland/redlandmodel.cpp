@@ -240,7 +240,7 @@ Soprano::ResultSet RedlandModel::executeQuery( const Query &query ) const
   librdf_query *q = librdf_new_query( d->world, Util::queryType( query ), 0L, (unsigned char *)query.query().toLatin1().data(), 0L );
   if ( !q )
   {
-    return ResultSet( 0L );
+    return ResultSet();
   }
 
   librdf_query_set_limit( q , query.limit() );
@@ -249,7 +249,7 @@ Soprano::ResultSet RedlandModel::executeQuery( const Query &query ) const
   librdf_query_results *res = librdf_model_query_execute( d->model, q );
   if ( !res )
   {
-    return ResultSet( 0L );
+    return ResultSet();
   }
 
   librdf_free_query( q );

@@ -1,4 +1,4 @@
-/* 
+/*
  * This file is part of Soprano Project.
  *
  * Copyright (C) 2006 Daniele Galdi <daniele.galdi@gmail.com>
@@ -28,67 +28,67 @@
 namespace Soprano {
 
 ResultSet::ResultSet()
-  : d(0)
+    : d(0)
 {
 }
 
-ResultSet::ResultSet( QueryResult *qr ): d(qr) 
+ResultSet::ResultSet( QueryResult *qr ): d(qr)
 {
 }
 
 ResultSet::~ResultSet()
 {
-  delete d;
+    delete d;
 }
 
 bool ResultSet::next() const
 {
-  return d == 0L ? false : d->next();
+    return ( d ? d->next() : false );
 }
 
 Soprano::Node ResultSet::binding( const QString &name ) const
 {
-  return d->binding( name );
+    return ( d ? d->binding( name ) : Node() );
 }
 
 Soprano::Node ResultSet::binding( int offset ) const
 {
-  return d->binding( offset );
+    return ( d ? d->binding( offset ) : Node() );
 }
 
 int ResultSet::bindingCount() const
 {
-  return d->bindingCount();
+    return ( d ? d->bindingCount() : 0 );
 }
 
-const QStringList &ResultSet::bindingNames() const
+QStringList ResultSet::bindingNames() const
 {
-  return d->bindingNames();
+    return ( d ? d->bindingNames() : QStringList() );
 }
 
 bool ResultSet::isGraph() const
 {
-  return d->isGraph();
+    return ( d ? d->isGraph() : false );
 }
 
 bool ResultSet::isBinding() const
 {
-  return d->isBinding();
+    return ( d ? d->isBinding() : false );
 }
 
 bool ResultSet::isBool() const
 {
-  return d->isBool();
+    return ( d ? d->isBool() : false );
 }
 
 bool ResultSet::boolValue() const
 {
-  return d->boolValue();
+    return ( d ? d->boolValue() : false );
 }
 
 Soprano::Model *ResultSet::model() const
 {
-  return d->model();
-} 
+    return ( d ? d->model() : 0 );
+}
 
 }

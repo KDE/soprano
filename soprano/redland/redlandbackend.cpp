@@ -1,4 +1,4 @@
-/* 
+/*
  * This file is part of Soprano Project.
  *
  * Copyright (C) 2007 Sebastian Trueg <trueg@kde.org>
@@ -52,7 +52,7 @@ static QHash<QString, QString> parseOptions( const QStringList& options )
 
       // support some default Soprano options
       if( key == "storagePath" )
-		key = "dir";
+          key = "dir";
 
       oh[key] = value;
     }
@@ -116,9 +116,9 @@ Soprano::Model* Soprano::Redland::BackendPlugin::createModel( const QString& nam
   qDebug() << "(Soprano::Redland::BackendPlugin) creating model " << name << " of type " << storageType << " with options " << os << endl;
 
   // create a new storage
-  librdf_storage* storage = librdf_new_storage( World::self()->worldPtr(), 
-						storageType.toLatin1().data(), 
-						name.toLatin1().data(), 
+  librdf_storage* storage = librdf_new_storage( World::self()->worldPtr(),
+						storageType.toLatin1().data(),
+						name.toLatin1().data(),
 						os.toLatin1().data() );
   if( !storage ) {
     qDebug() << "(Soprano::Redland) storage creation failed!" << endl;

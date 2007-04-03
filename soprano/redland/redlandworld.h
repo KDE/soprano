@@ -27,27 +27,22 @@
 
 namespace Soprano
 {
-namespace Redland
-{
+    namespace Redland
+	{
+	    class World
+		{
+		public:
+		    World();
+		    ~World();
 
-class World
-{
-public:
-  static World *self();
+		    static World *self();
 
-  ~World();
+		    librdf_world* worldPtr() const;
 
-  librdf_world* worldPtr() const;
-private:
-  World();
-
-  librdf_world * m_world;
-
-  static World *m_instance;
-};
-
-}
+		private:
+		    librdf_world * m_world;
+		};
+	}
 }
 
 #endif // SOPRANO_BACKEND_REDLAND_WORLD_H
-
