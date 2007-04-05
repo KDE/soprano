@@ -1,0 +1,17 @@
+TEST TO DO:
+
+Full class:
+
+- Node
+- Statement
+- Query
+
+Interface:
+
+- Parser
+- Model
+
+Full class with QSharedPointer and backend:
+
+- ResultSet
+- StatementIterator
