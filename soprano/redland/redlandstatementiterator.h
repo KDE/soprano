@@ -45,7 +45,7 @@ public:
 
   bool hasNext() const;
 
-  const Soprano::Statement next() const;
+  Soprano::Statement next() const;
 
 private:
   stream_adapter *m_stream;

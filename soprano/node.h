@@ -117,25 +117,25 @@ public:
    * \return The URI if the node is a Resource node.
    *         An null QUrl otherwise.
    */
-  const QUrl &uri() const;
+  QUrl uri() const;
 
   /**
    * \return The Literal value if the node is a Literal node.
    *         An null QString otherwise.
    */
-  const QString &literal() const;
+  QString literal() const;
 
   /**
    *\return The Blank value if the node is a Blank node.
    *        An null QString otherwise.
    */
-  const QString &blank() const;
+  QString blank() const;
 
   /**
    * \return The datatype URI of a literal node, i.e. the XML schema type
    *         or an empty value if the node is not a literal.
    */
-  const QUrl &dataType() const;
+  QUrl dataType() const;
 
   /**
    * Each literal value can have an associated language, thus each property
@@ -145,7 +145,7 @@ public:
    * \return A string representing the language of the literal value
    *         or an empty string if the node is not a literal.
    */
-  const QString &language() const;
+  QString language() const;
 
   /**
    *\return A String representation of the Node.

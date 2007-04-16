@@ -50,7 +50,7 @@ public:
   /**
    *\return the Next Statement
    */
-  const Statement next() const;
+  Statement next() const;
 
   /**
    *\return true if the Iterator is valid

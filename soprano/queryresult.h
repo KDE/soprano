@@ -44,7 +44,7 @@ public:
 
   virtual int bindingCount() const = 0;
 
-  virtual const QStringList &bindingNames() const = 0;
+  virtual QStringList bindingNames() const = 0;
 
   virtual bool isGraph() const = 0;
 

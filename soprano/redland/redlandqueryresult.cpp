@@ -117,7 +117,7 @@ int RedlandQueryResult::bindingCount() const
   return librdf_query_results_get_count( d->result );
 }
 
-const QStringList &RedlandQueryResult::bindingNames() const
+QStringList RedlandQueryResult::bindingNames() const
 {
   return d->names;
 }

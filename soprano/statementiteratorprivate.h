@@ -46,7 +46,7 @@ public:
   /**
    *\return the Next Statement
    */
-  virtual const Statement next() const = 0;
+  virtual Statement next() const = 0;
 };
 
 }

@@ -63,7 +63,7 @@ namespace Soprano
       Backend( const QString& name );
       virtual ~Backend();
 
-      const QString& backendName() const;
+      QString backendName() const;
 
       /**
        * Creates a simple memory model

@@ -70,7 +70,7 @@ public:
   /**
    * \return The subject.
    */
-  const Node &subject() const;
+  Node subject() const;
 
   /**
    * Change the Statement predicate.
@@ -82,7 +82,7 @@ public:
   /**
    * \return The predicate.
    */
-  const Node &predicate() const;
+  Node predicate() const;
 
   /**
    * Change the Statement object.
@@ -94,7 +94,7 @@ public:
   /**
    * \return The object.
    */
-  const Node &object() const;
+  Node object() const;
 
   /**
    * A Statement is valid if subject, predicate and object are valid.

@@ -70,7 +70,7 @@ Query::QueryType Query::type() const
   return d->type;
 }
 
-const QString &Query::query() const
+QString Query::query() const
 {
   return d->query;
 }

@@ -52,7 +52,7 @@ bool RedlandStatementIterator::hasNext() const
   return stream_adapter_end( m_stream ) == 0;
 }
 
-const Soprano::Statement RedlandStatementIterator::next() const
+Soprano::Statement RedlandStatementIterator::next() const
 {
   // FIXME: use librdf_stream_get_context to get the context of the statement
 

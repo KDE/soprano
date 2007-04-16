@@ -41,7 +41,7 @@ Soprano::Backend::~Backend()
 }
 
 
-const QString& Soprano::Backend::backendName() const
+QString Soprano::Backend::backendName() const
 {
   return d->name;
 }

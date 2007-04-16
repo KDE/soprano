@@ -107,29 +107,29 @@ Node::Type Node::type() const
   return d->type;
 }
 
-const QUrl &Node::uri() const
+QUrl Node::uri() const
 {
   // d->uri is only defined for Resource Nodes
   return d->uri;
 }
 
 
-const QString &Node::literal() const
+QString Node::literal() const
 {
   return d->value;
 }
 
-const QString &Node::blank() const
+QString Node::blank() const
 {
   return d->value;
 }
 
-const QUrl &Node::dataType() const
+QUrl Node::dataType() const
 {
   return d->datatype;
 }
 
-const QString &Node::language() const
+QString Node::language() const
 {
   return d->language;
 }

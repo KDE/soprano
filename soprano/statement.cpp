@@ -73,7 +73,7 @@ void Statement::setSubject( const Node &subject )
   d->subject = subject;
 }
 
-const Node &Statement::subject() const
+Node Statement::subject() const
 {
   return d->subject;
 }
@@ -84,7 +84,7 @@ void Statement::setPredicate( const Node &predicate )
   d->predicate = predicate;
 }
 
-const Node &Statement::predicate() const
+Node Statement::predicate() const
 {
   return d->predicate;
 }
@@ -95,7 +95,7 @@ void Statement::setObject( const Node &object )
   d->object = object;
 }
 
-const Node &Statement::object() const
+Node Statement::object() const
 {
   return d->object;
 }

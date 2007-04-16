@@ -47,7 +47,7 @@ public:
 
   QueryType type() const;
 
-  const QString &query() const;
+  QString query() const;
 
   int limit() const;
 

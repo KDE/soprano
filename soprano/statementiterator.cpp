@@ -52,7 +52,7 @@ bool StatementIterator::hasNext() const
   return isValid() ? d->hasNext() : false;
 }
 
-const Soprano::Statement StatementIterator::next() const
+Soprano::Statement StatementIterator::next() const
 {
   return isValid() ? d->next() : Statement();
 }
