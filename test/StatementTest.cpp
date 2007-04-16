@@ -1,4 +1,4 @@
-/* 
+/*
  * This file is part of Soprano Project.
  *
  * Copyright (C) 2006 Daniele Galdi <daniele.galdi@gmail.com>
@@ -19,12 +19,13 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#include <QtTest>
-#include <QtCore>
+#include "StatementTest.h"
+
+#include <QtTest/QTest>
+#include <QtCore/QUrl>
+#include <QtCore/QCoreApplication>
 
 #include <soprano/soprano.h>
-
-#include "StatementTest.h"
 
 using namespace Soprano;
 
@@ -33,7 +34,7 @@ void StatementTest::testCreateEmptyStatement()
   Statement st;
   QVERIFY( !st.isValid() );
 }
-  
+
 void StatementTest::testCreateStatement()
 {
   Node subject(QUrl("uri:soprano:test"));
@@ -41,10 +42,10 @@ void StatementTest::testCreateStatement()
   Node object(QString("Literal value"));
 
   Statement st(subject, predicate, object);
-  
+
   QVERIFY( st.isValid() );
 }
-  
+
 void StatementTest::testStatementInvariant()
 {
   Node subject(QUrl("uri:soprano:test"));
@@ -52,9 +53,9 @@ void StatementTest::testStatementInvariant()
   Node object(QString("Literal value"));
 
   Statement st(subject, predicate, object);
-  
+
   QVERIFY( st.isValid() );
-  
+
   Node s;
   st.setSubject( s );
   QVERIFY( !st.isValid() );

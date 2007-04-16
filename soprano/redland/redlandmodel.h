@@ -25,8 +25,9 @@
 
 #define LIBRDF_MODEL_FEATURE_CONTEXTS "http://feature.librdf.org/model-contexts"
 
-#include <QtGlobal>
-#include <QTextStream>
+#include <QtCore/QtGlobal>
+#include <QtCore/QTextStream>
+
 #include <redland.h>
 
 #include "model.h"

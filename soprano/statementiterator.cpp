@@ -1,4 +1,4 @@
-/* 
+/*
  * This file is part of Soprano Project.
  *
  * Copyright (C) 2006 Daniele Galdi <daniele.galdi@gmail.com>
@@ -19,9 +19,10 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#include "statement.h"
-#include "statementiteratorprivate.h"
 #include "statementiterator.h"
+#include "statementiteratorprivate.h"
+#include "statement.h"
+
 
 namespace Soprano {
 

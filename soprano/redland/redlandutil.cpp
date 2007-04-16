@@ -1,4 +1,4 @@
-/* 
+/*
  * This file is part of Soprano Project
  *
  * Copyright (C) 2006 Daniele Galdi <daniele.galdi@gmail.com>
@@ -15,19 +15,18 @@
  * Library General Public License for more details.
  *
  * You should have received a copy of the GNU Library General Public
- * License along with this library; see the file COPYING.LIB.  If 
- * not, write to the Free Software Foundation, Inc., 51 Franklin 
+ * License along with this library; see the file COPYING.LIB.  If
+ * not, write to the Free Software Foundation, Inc., 51 Franklin
  * Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
-#include <QtCore>
+#include "redlandutil.h"
 
 #include "node.h"
 #include "query.h"
 #include "statement.h"
 #include "redlandworld.h"
 
-#include "redlandutil.h"
 
 namespace Soprano {
   namespace Redland {
@@ -47,7 +46,7 @@ Soprano::Node Util::createNode( librdf_node *node )
     {
       return Soprano::Node( (const char *)librdf_node_get_literal_value( node ), Node::Literal );
     }
-    return Soprano::Node( (const char *)librdf_node_get_literal_value( node ), 
+    return Soprano::Node( (const char *)librdf_node_get_literal_value( node ),
 			  Node::Literal,
 			  QUrl::fromEncoded( (const char *)librdf_uri_as_string( datatype ), QUrl::StrictMode ),
 			  librdf_node_get_literal_value_language( node ) );
@@ -67,8 +66,8 @@ librdf_node *Util::createNode( const Node &node )
     return librdf_new_node_from_blank_identifier( world, (unsigned char *) node.blank().toLatin1().data() );
   }
   else if ( node.isLiteral() ) {
-    return librdf_new_node_from_typed_literal( world, 
-					       (unsigned char *)node.literal().toLatin1().data(), 
+    return librdf_new_node_from_typed_literal( world,
+					       (unsigned char *)node.literal().toLatin1().data(),
 					       node.language().toLatin1().data(),
 					       librdf_new_uri( world, (const unsigned char*)node.dataType().toString().toLatin1().data() ) );
   }

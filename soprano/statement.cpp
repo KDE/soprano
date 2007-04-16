@@ -1,4 +1,4 @@
-/* 
+/*
  * This file is part of Soprano Project.
  *
  * Copyright (C) 2006 Daniele Galdi <daniele.galdi@gmail.com>
@@ -19,8 +19,11 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#include "node.h"
 #include "statement.h"
+#include "node.h"
+
+#include <QtCore/QDebug>
+
 
 using namespace Soprano;
 
@@ -62,8 +65,8 @@ Statement& Statement::operator=( const Statement& other )
 
 bool Statement::operator==( const Statement& other )
 {
-  return ( d->subject == other.subject() && 
-           d->predicate == other.predicate() && 
+  return ( d->subject == other.subject() &&
+           d->predicate == other.predicate() &&
            d->object == other.object() );
 }
 

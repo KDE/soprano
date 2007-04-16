@@ -20,6 +20,8 @@
  * Floor, Boston, MA 02110-1301, USA.
  */
 
+#include "redlandmodel.h"
+
 #include "query.h"
 #include "resultset.h"
 #include "statementiterator.h"
@@ -27,12 +29,11 @@
 #include "redlandutil.h"
 #include "redlandqueryresult.h"
 #include "redlandstatementiterator.h"
-#include "redlandmodel.h"
 #include "mutexlocker.h"
 
 #include "redland_stream_adapter.h"
 
-#include <QMutex>
+#include <QtCore/QMutex>
 
 
 namespace Soprano {

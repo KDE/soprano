@@ -1,4 +1,4 @@
-/* 
+/*
  * This file is part of Soprano Project.
  *
  * Copyright (C) 2006 Daniele Galdi <daniele.galdi@gmail.com>
@@ -20,12 +20,12 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#include <QtGlobal>
+#include "redlandstatementiterator.h"
 
 #include "statement.h"
-
 #include "redlandutil.h"
-#include "redlandstatementiterator.h"
+
+#include <QtCore/QtGlobal>
 
 #include "redland_stream_adapter.h"
 

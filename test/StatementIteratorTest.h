@@ -19,7 +19,8 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#include <QtTest>
+#include <QtCore/QObject>
+#include <QtCore/QList>
 
 #ifndef STATEMENT_ITERATOR_TEST_H
 #define STATEMENT_ITERATOR_TEST_H

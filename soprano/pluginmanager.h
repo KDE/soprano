@@ -22,7 +22,7 @@
 #ifndef _SOPRANO_PLUGIN_MANAGER_H_
 #define _SOPRANO_PLUGIN_MANAGER_H_
 
-#include <QObject>
+#include <QtCore/QObject>
 
 #include <soprano/soprano_export.h>
 
@@ -61,7 +61,7 @@ namespace Soprano
       void loadPlugins( const QString& path );
 
       class Private;
-      Private* d;
+      Private* const d;
     };
 }
 

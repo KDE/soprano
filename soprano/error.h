@@ -24,7 +24,7 @@
 
 #include <soprano/soprano_export.h>
 
-#include <QString>
+#include <QtCore/QString>
 
 namespace Soprano {
   enum ErrorCode {

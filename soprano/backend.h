@@ -24,7 +24,7 @@
 
 #include <soprano/soprano_export.h>
 
-#include <QStringList>
+#include <QtCore/QStringList>
 
 namespace Soprano
 {
@@ -108,7 +108,7 @@ namespace Soprano
 
     private:
       class Private;
-      Private* d;
+      Private* const d;
     };
 }
 

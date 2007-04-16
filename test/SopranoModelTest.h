@@ -19,7 +19,7 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#include <QtTest>
+#include <QtCore/QObject>
 
 #ifndef SOPRANO_TEST_H
 #define SOPRANO_TEST_H

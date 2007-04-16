@@ -19,76 +19,104 @@
  * Boston, MA 02110-1301, USA.
  */
 
+#include "resultset.h"
+
 #include "model.h"
 #include "node.h"
 #include "queryresult.h"
 
-#include "resultset.h"
+#include <QtCore/QSharedData>
+
 
 namespace Soprano {
 
-ResultSet::ResultSet()
-    : d(0)
+class ResultSet::Private : public QSharedData
 {
+public:
+    Private()
+        : queryResult( 0 ) {
+    }
+
+    ~Private() {
+        delete queryResult;
+    }
+
+    QueryResult* queryResult;
+};
+
+ResultSet::ResultSet()
+{
+    d = new Private;
 }
 
-ResultSet::ResultSet( QueryResult *qr ): d(qr)
+ResultSet::ResultSet( QueryResult *qr )
 {
+    d = new Private;
+    d->queryResult = qr;
+}
+
+ResultSet::ResultSet( const ResultSet& other)
+{
+    d = other.d;
 }
 
 ResultSet::~ResultSet()
 {
-    delete d;
+}
+
+ResultSet& ResultSet::operator=( const ResultSet& other )
+{
+    d = other.d;
 }
 
 bool ResultSet::next() const
 {
-    return ( d ? d->next() : false );
+    return ( d->queryResult ? d->queryResult->next() : false );
 }
 
 Soprano::Node ResultSet::binding( const QString &name ) const
 {
-    return ( d ? d->binding( name ) : Node() );
+    return ( d->queryResult ? d->queryResult->binding( name ) : Node() );
 }
 
 Soprano::Node ResultSet::binding( int offset ) const
 {
-    return ( d ? d->binding( offset ) : Node() );
+    return ( d->queryResult ? d->queryResult->binding( offset ) : Node() );
 }
 
 int ResultSet::bindingCount() const
 {
-    return ( d ? d->bindingCount() : 0 );
+    return ( d->queryResult ? d->queryResult->bindingCount() : 0 );
 }
 
 QStringList ResultSet::bindingNames() const
 {
-    return ( d ? d->bindingNames() : QStringList() );
+    return ( d->queryResult ? d->queryResult->bindingNames() : QStringList() );
 }
 
 bool ResultSet::isGraph() const
 {
-    return ( d ? d->isGraph() : false );
+    return ( d->queryResult ? d->queryResult->isGraph() : false );
 }
 
 bool ResultSet::isBinding() const
 {
-    return ( d ? d->isBinding() : false );
+    return ( d->queryResult ? d->queryResult->isBinding() : false );
 }
 
 bool ResultSet::isBool() const
 {
-    return ( d ? d->isBool() : false );
+    return ( d->queryResult ? d->queryResult->isBool() : false );
 }
 
 bool ResultSet::boolValue() const
 {
-    return ( d ? d->boolValue() : false );
+    return ( d->queryResult ? d->queryResult->boolValue() : false );
 }
 
 Soprano::Model *ResultSet::model() const
 {
-    return ( d ? d->model() : 0 );
+    return ( d->queryResult ? d->queryResult->model() : 0 );
 }
 
 }

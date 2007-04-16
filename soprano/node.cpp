@@ -19,8 +19,9 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#include <QString>
-#include <QUrl>
+#include <QtCore/QString>
+#include <QtCore/QUrl>
+#include <QtCore/QDebug>
 
 #include "node.h"
 

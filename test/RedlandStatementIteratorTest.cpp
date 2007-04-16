@@ -1,4 +1,4 @@
-/* 
+/*
  * This file is part of Soprano Project.
  *
  * Copyright (C) 2006 Daniele Galdi <daniele.galdi@gmail.com>
@@ -19,9 +19,12 @@
  * Boston, MA 02110-1301, USA.
  */
 
+#include "RedlandStatementIteratorTest.h"
+
 #include <soprano/soprano.h>
 
-#include "RedlandStatementIteratorTest.h"
+#include <QtTest/QTest>
+#include <QtCore/QCoreApplication>
 
 using namespace Soprano;
 

@@ -1,4 +1,4 @@
-/* 
+/*
  * This file is part of Soprano Project
  *
  * Copyright (C) 2006 Daniele Galdi <daniele.galdi@gmail.com>
@@ -19,14 +19,14 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#include <QtCore>
-#include <QList>
+#include "model.h"
 
 #include "node.h"
 #include "statement.h"
 #include "statementiterator.h"
 
-#include "model.h"
+#include <QtCore/QList>
+
 
 namespace Soprano {
 
@@ -36,8 +36,8 @@ public:
 };
 
 Model::Model()
+    : d( new Private() )
 {
-  d = new Private;
 }
 
 Model::~Model()
@@ -52,11 +52,11 @@ ErrorCode Model::add( const Model &model )
   {
     return ERROR_UNKNOW;
   }
- 
+
   while ( stmi.hasNext() )
   {
     ErrorCode c = add( stmi.next() );
-    if ( ERROR_NONE != c ) 
+    if ( ERROR_NONE != c )
     {
       return c;
     }
@@ -75,7 +75,7 @@ ErrorCode Model::add( const StatementIterator &iter, const Node &context )
   while ( iter.hasNext() )
   {
     ErrorCode c = add( iter.next(), context );
-    if ( ERROR_NONE != c ) 
+    if ( ERROR_NONE != c )
     {
       return c;
     }
@@ -94,7 +94,7 @@ ErrorCode Model::add( const StatementIterator &iter )
   while ( iter.hasNext() )
   {
     ErrorCode c = add( iter.next() );
-    if ( ERROR_NONE != c ) 
+    if ( ERROR_NONE != c )
     {
       return c;
     }
@@ -109,7 +109,7 @@ ErrorCode Model::add( const QList<Statement> &statements, const Node &context )
        it != statements.constEnd(); ++it )
   {
     ErrorCode c = add( *it, context );
-    if ( ERROR_NONE != c ) 
+    if ( ERROR_NONE != c )
     {
       return c;
     }
@@ -126,7 +126,7 @@ ErrorCode Model::add( const QList<Statement> &statements )
   while ( iter.hasNext() )
   {
     ErrorCode c = add( iter.next() );
-    if ( ERROR_NONE != c ) 
+    if ( ERROR_NONE != c )
     {
       return c;
     }
@@ -137,7 +137,7 @@ ErrorCode Model::add( const QList<Statement> &statements )
 
 Node Model::createPredicate( const QString &ns, const QString &value )
 {
-  if ( ns.isNull() ) 
+  if ( ns.isNull() )
   {
     return Node( QUrl( value ) );
   }

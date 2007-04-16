@@ -1,4 +1,4 @@
-/* 
+/*
  * This file is part of Soprano Project.
  *
  * Copyright (C) 2006 Daniele Galdi <daniele.galdi@gmail.com>
@@ -19,9 +19,9 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#include <soprano/soprano.h>
-
 #include "RedlandMemoryModelTest.h"
+
+#include <soprano/soprano.h>
 
 using namespace Soprano;
 

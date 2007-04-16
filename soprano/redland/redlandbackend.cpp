@@ -30,6 +30,9 @@
 #include "redlandmodel.h"
 #include "redlandparser.h"
 
+#include <QtCore/QtPlugin>
+#include <QtCore/QDebug>
+
 
 Q_EXPORT_PLUGIN2(soprano_redlandbackend, Soprano::Redland::BackendPlugin)
 

@@ -18,9 +18,9 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#include <QString>
-
 #include "query.h"
+
+#include <QtCore/QString>
 
 using namespace Soprano;
 
@@ -36,15 +36,15 @@ public:
 };
 
 Query::Query( const QString &query, QueryType type )
+    : d( new Private() )
 {
-  d = new Private;
   d->query = query;
   d->type = type;
 }
 
 Query::Query( const QString &query, QueryType type, int limit, int offset )
+    : d( new Private() )
 {
-  d = new Private;
   d->query = query;
   d->type = type;
   d->limit = limit;
@@ -52,8 +52,8 @@ Query::Query( const QString &query, QueryType type, int limit, int offset )
 }
 
 Query::Query( const Query &other )
+    : d( new Private() )
 {
-  d = new Private;
   d->query = other.query();
   d->type = other.type();
   d->limit = other.limit();

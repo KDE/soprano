@@ -19,8 +19,6 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#include <QtTest>
-
 #include "StatementIteratorTest.h"
 
 #ifndef REDLAND_STATEMENT_ITERATOR_TEST_H

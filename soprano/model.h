@@ -22,9 +22,9 @@
 #ifndef SOPRANO_MODEL_H
 #define SOPRANO_MODEL_H
 
-#include <QList>
-#include <soprano/soprano_export.h>
+#include <QtCore/QList>
 
+#include <soprano/soprano_export.h>
 #include <soprano/error.h>
 
 class QString;
@@ -286,7 +286,7 @@ public:
 
  private:
   class Private;
-  Private* d;
+  Private* const d;
 };
 
 }

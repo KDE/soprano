@@ -58,7 +58,7 @@ public:
   void setOffset(int offset);
 private:
   class Private;
-  Private *d;
+  Private* const d;
 };
 
 }

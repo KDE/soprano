@@ -1,4 +1,4 @@
-/* 
+/*
  * This file is part of Soprano Project.
  *
  * Copyright (C) 2006 Daniele Galdi <daniele.galdi@gmail.com>
@@ -20,11 +20,12 @@
  * Boston, MA 02110-1301, USA.
  */
 
+#include "redlandqueryresult.h"
+
 #include "model.h"
 #include "node.h"
 #include "statementiterator.h"
 #include "redlandutil.h"
-#include "redlandqueryresult.h"
 #include "redlandstatementiterator.h"
 #include "redlandworld.h"
 #include "redlandmodel.h"
@@ -69,11 +70,11 @@ bool RedlandQueryResult::next() const
   if ( !d->first )
   {
     hasNext = ( librdf_query_results_next( d->result ) == 0 );
-  } 
-  else 
+  }
+  else
   {
     d->first = false;
-    if ( isBool() || isGraph() ) 
+    if ( isBool() || isGraph() )
     {
       hasNext = true;
     }
@@ -93,7 +94,7 @@ Soprano::Node RedlandQueryResult::binding( const QString &name ) const
 
   Soprano::Node tmp = Util::createNode( node );
   Util::freeNode( node );
-  
+
   return tmp;
 }
 
@@ -108,7 +109,7 @@ Soprano::Node RedlandQueryResult::binding( int offset ) const
 
   Soprano::Node tmp = Util::createNode( node );
   Util::freeNode( node );
-  
+
   return tmp;
 }
 
@@ -161,7 +162,7 @@ Soprano::Model *RedlandQueryResult::model() const
   librdf_free_stream( stream );
 
   return new RedlandModel( model, storage );
-} 
+}
 
 }
 }

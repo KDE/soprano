@@ -29,8 +29,8 @@ public:
 
 
 Soprano::Backend::Backend( const QString& name )
+    : d( new Private() )
 {
-  d = new Private;
   d->name = name;
 }
 

@@ -1,4 +1,4 @@
-/* 
+/*
  * This file is part of Soprano Project.
  *
  * Copyright (C) 2007 Sebastian Trueg <trueg@kde.org>
@@ -19,9 +19,14 @@
  * Boston, MA 02110-1301, USA.
  */
 
+#include "sopranoliteraltest.h"
+
 #include <soprano/soprano.h>
 
-#include "sopranoliteraltest.h"
+#include <QtTest/QTest>
+#include <QtCore/QVariant>
+#include <QtCore/QCoreApplication>
+
 
 using namespace Soprano;
 

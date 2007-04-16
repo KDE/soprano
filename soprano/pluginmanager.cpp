@@ -79,14 +79,14 @@ const Soprano::Backend* Soprano::PluginManager::discoverBackendByFeatures( const
     if( b->hasFeatures( features ) )
       return b;
   }
-  return 0;    
+  return 0;
 }
 
 
 Soprano::PluginManager::PluginManager( QObject* parent )
-  : QObject( parent )
+  : QObject( parent ),
+    d( new Private )
 {
-  d = new Private;
 }
 
 
@@ -127,7 +127,7 @@ void Soprano::PluginManager::loadPlugins( const QString& path )
       Backend* backend = qobject_cast<Backend*>( plugin );
       if( backend ) {
 	qDebug() << "(Soprano::PluginManager) found plugin " << backend->backendName() << endl;
-	d->backends.insert( backend->backendName(), backend );	
+	d->backends.insert( backend->backendName(), backend );
       }
       else {
 	qDebug() << "(Soprano::PluginManager) found no backend plugin at " << loader.fileName() << endl;

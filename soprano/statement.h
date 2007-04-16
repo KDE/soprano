@@ -22,7 +22,8 @@
 #ifndef SOPRANO_STATEMENT_H
 #define SOPRANO_STATEMENT_H
 
-#include <QtCore>
+#include <QtCore/QSharedDataPointer>
+
 #include <soprano/soprano_export.h>
 
 namespace Soprano

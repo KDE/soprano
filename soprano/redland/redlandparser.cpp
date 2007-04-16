@@ -20,14 +20,14 @@
  * Boston, MA 02110-1301, USA.
  */
 
-
-#include <redland.h>
+#include "redlandparser.h"
 
 #include "redlandworld.h"
 #include "redlandmodel.h"
-#include "redlandparser.h"
 
-#include <QtCore>
+#include <redland.h>
+
+#include <QtCore/QUrl>
 
 namespace Soprano {
   namespace Redland {
@@ -36,7 +36,7 @@ RedlandParser::RedlandParser()
 {
 }
 
-RedlandModel *RedlandParser::parse( const QUrl &toparse ) const
+Model *RedlandParser::parse( const QUrl &toparse ) const
 {
   QUrl tmp(toparse);
   if ( toparse.scheme().isEmpty() )

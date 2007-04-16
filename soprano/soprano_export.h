@@ -23,7 +23,7 @@
 #define SOPRANO_EXPORT_H
 
 /* needed for KDE_EXPORT and KDE_IMPORT macros */
-#include <QtGlobal>
+#include <QtCore/QtGlobal>
 
 #if defined Q_OS_WIN
 

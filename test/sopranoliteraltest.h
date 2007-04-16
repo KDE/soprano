@@ -22,7 +22,7 @@
 #ifndef SOPRANO_LITERAL_TEST_H
 #define SOPRANO_LITERAL_TEST_H
 
-#include <QtTest>
+#include <QtCore/QObject>
 
 namespace Soprano {
   class Model;

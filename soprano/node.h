@@ -22,7 +22,8 @@
 #ifndef SOPRANO_NODE_H
 #define SOPRANO_NODE_H
 
-#include <QtCore>
+#include <QtCore/QUrl>
+#include <QtCore/QSharedDataPointer>
 #include <soprano/soprano_export.h>
 
 namespace Soprano
@@ -45,6 +46,8 @@ public:
    */
   Node();
 
+  // This constructor is non-explicit for a reason: it makes creating
+  // Statements much much easier and more readable
   /**
    * Costructor for Resource node.
    * \param uri If not empty this will create a Node of type Resource

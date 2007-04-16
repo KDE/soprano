@@ -22,8 +22,10 @@
 #ifndef SOPRANO_RESULT_SET_H
 #define SOPRANO_RESULT_SET_H
 
-#include <QString>
-#include <QStringList>
+#include <QtCore/QString>
+#include <QtCore/QStringList>
+#include <QtCore/QSharedDataPointer>
+
 #include <soprano/soprano_export.h>
 
 namespace Soprano {
@@ -36,9 +38,12 @@ class SOPRANO_EXPORT ResultSet
 {
 public:
   ResultSet();
+  ResultSet( const ResultSet& );
   ResultSet( QueryResult *qr );
 
   virtual ~ResultSet();
+
+  ResultSet& operator=( const ResultSet& );
 
   bool next() const;
 
@@ -60,7 +65,8 @@ public:
 
   Model *model() const;
 private:
-  QueryResult *d;
+  class Private;
+  QSharedDataPointer<Private> d;
 };
 
 }

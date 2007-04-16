@@ -1,4 +1,4 @@
-/* 
+/*
  * This file is part of Soprano Project.
  *
  * Copyright (C) 2006 Sebastian Trueg <strueg@mandriva.com>
@@ -22,8 +22,9 @@
 #include "SopranoModelTest.h"
 #include <soprano/soprano.h>
 
-#include <QtCore>
-#include <QList>
+#include <QtTest/QTest>
+#include <QtCore/QList>
+
 
 // FIXME: Use the QTest framework to create data tables
 
@@ -78,7 +79,7 @@ void SopranoModelTest::testAddModel()
   Model *memory = Soprano::createModel();
   memory->add( st1 );
   memory->add( st2 );
- 
+
   m_model->add( *memory );
 
   QVERIFY( m_model->contains( st1 ) );
@@ -131,7 +132,7 @@ void SopranoModelTest::testAddStatementIterator()
   Model *memory = Soprano::createModel();
   memory->add( st1 );
   memory->add( st2 );
- 
+
   m_model->add( memory->listStatements() );
 
   QVERIFY( m_model->contains( st1 ) );
@@ -170,7 +171,7 @@ void SopranoModelTest::testListStatements()
   Node resource_2 = m_model->createResource( QUrl("uri:list:resource2") );
   Node resource_3 = m_model->createResource( QUrl("uri:list:resource3") );
 
-  for (int i=0; i<50; i++) 
+  for (int i=0; i<50; i++)
   {
     QString property = "predicate" + QString::number(i);
     QString literal = "Literal value" + QString::number(i);
@@ -182,7 +183,7 @@ void SopranoModelTest::testListStatements()
     statements.append( st );
   }
 
-  for (int i=0; i<50; i++) 
+  for (int i=0; i<50; i++)
   {
     QString property = "predicate" + QString::number(i + 50);
     QString literal = "Literal value" + QString::number(i + 50);
@@ -194,7 +195,7 @@ void SopranoModelTest::testListStatements()
     statements.append( st );
   }
 
-  for (int i=0; i<20; i++) 
+  for (int i=0; i<20; i++)
   {
     QString property = "predicate" + QString::number(i + 100);
     QString literal = "Literal value" + QString::number(i + 100);
@@ -270,7 +271,7 @@ void SopranoModelTest::testRemoveStatement()
   Node subject = m_model->createResource( QUrl("uri:remove:3") );
   Node predicate = m_model->createPredicate( "soprano", "predicate" );
   Node object = m_model->createResource( QUrl("uri:soprano:2") );
-  
+
   Statement st(subject, predicate, object);
   m_model->add( st );
 
@@ -327,7 +328,7 @@ void SopranoModelTest::testGraphQuery()
     Statement st = iter->next();
   }
   QVERIFY ( cnt == 2 );
-  
+
   delete iter;
   delete model;*/
 }
@@ -403,15 +404,15 @@ void SopranoModelTest::testCloseStatementIteratorOnModelDelete()
   Model *model = Soprano::createModel();
   model->add( st1 );
   model->add( st2 );
- 
+
   StatementIterator it = model->listStatements();
   int cnt = 0;
-  while( it.hasNext() ) 
+  while( it.hasNext() )
   {
     it.next();
     cnt++;
   }
-  
+
   delete model;
 
  QVERIFY( cnt == 2 );

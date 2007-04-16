@@ -1,4 +1,4 @@
-/* 
+/*
  * This file is part of Soprano Project.
  *
  * Copyright (C) 2006 Daniele Galdi <daniele.galdi@gmail.com>
@@ -22,8 +22,8 @@
 #include "StatementIteratorTest.h"
 #include <soprano/soprano.h>
 
-#include <QtCore>
-#include <QList>
+#include <QtTest/QTest>
+#include <QtCore/QList>
 
 using namespace Soprano;
 
@@ -39,7 +39,7 @@ void StatementIteratorTest::init()
   Node resource_2 = m_model->createResource( QUrl("uri:list:resource2") );
   Node resource_3 = m_model->createResource( QUrl("uri:list:resource3") );
 
-  for (int i=0; i<50; i++) 
+  for (int i=0; i<50; i++)
   {
     QString property = "predicate" + QString::number(i);
     QString literal = "Literal value" + QString::number(i);
@@ -51,7 +51,7 @@ void StatementIteratorTest::init()
     m_statements.append( st );
   }
 
-  for (int i=0; i<50; i++) 
+  for (int i=0; i<50; i++)
   {
     QString property = "predicate" + QString::number(i + 50);
     QString literal = "Literal value" + QString::number(i + 50);
@@ -63,7 +63,7 @@ void StatementIteratorTest::init()
     m_statements.append( st );
   }
 
-  for (int i=0; i<20; i++) 
+  for (int i=0; i<20; i++)
   {
     QString property = "predicate" + QString::number(i + 100);
     QString literal = "Literal value" + QString::number(i + 100);
