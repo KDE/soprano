@@ -116,12 +116,16 @@ QUrl Node::uri() const
 
 QString Node::literal() const
 {
-  return d->value;
+  if ( isLiteral() )
+      return d->value;
+  return QString();
 }
 
 QString Node::blank() const
 {
-  return d->value;
+  if ( isBlank() )
+    return d->value;
+  return QString();
 }
 
 QUrl Node::dataType() const
