@@ -67,6 +67,7 @@ ResultSet::~ResultSet()
 ResultSet& ResultSet::operator=( const ResultSet& other )
 {
     d = other.d;
+    return *this;
 }
 
 bool ResultSet::next() const
