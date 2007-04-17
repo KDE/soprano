@@ -23,7 +23,7 @@
 #ifndef SOPRANO_STATEMENT_ITERATOR_PRIVATE_H
 #define SOPRANO_STATEMENT_ITERATOR_PRIVATE_H
 
-#include <QtCore>
+#include <QtCore/QSharedData>
 
 #include <soprano/soprano_export.h>
 

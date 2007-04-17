@@ -19,11 +19,12 @@
  * Boston, MA 02110-1301, USA.
  */
 
+#include "node.h"
+
 #include <QtCore/QString>
 #include <QtCore/QUrl>
 #include <QtCore/QDebug>
 
-#include "node.h"
 
 using namespace Soprano;
 
