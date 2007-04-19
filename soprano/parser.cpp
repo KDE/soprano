@@ -66,7 +66,7 @@ Model* Parser::parseString( const QString& data, const QUrl& baseUri, RdfSeriali
 }
 
 
-QString Parser::serializationMimeType( Parser::RdfSerialization serialization )
+QString Soprano::serializationMimeType( RdfSerialization serialization )
 {
     switch( serialization ) {
     case RDF_XML:
