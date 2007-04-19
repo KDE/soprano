@@ -25,10 +25,16 @@
 
 #include <redland.h>
 
+#include <QtCore/QStringList>
+
+
 namespace Soprano
 {
     namespace Redland
 	{
+	    class RedlandModel;
+	    class RedlandParser;
+
 	    class World
 		{
 		public:
@@ -38,6 +44,10 @@ namespace Soprano
 		    static World *self();
 
 		    librdf_world* worldPtr() const;
+
+		    RedlandModel* createModel() const;
+		    RedlandModel* createModel( const QString& name, const QStringList& options = QStringList() ) const;
+		    RedlandParser* createParser( const QStringList& options = QStringList() ) const;
 
 		private:
 		    librdf_world * m_world;

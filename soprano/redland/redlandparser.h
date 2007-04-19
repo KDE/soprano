@@ -23,25 +23,27 @@
 #ifndef SOPRANO_BACKEND_REDLAND_PARSER_H
 #define SOPRANO_BACKEND_REDLAND_PARSER_H
 
-#include <QUrl>
+#include <QtCore/QUrl>
 
 #include "parser.h"
 
-namespace Soprano
-{
-namespace Redland
-{
-
-class RedlandModel;
-
-class RedlandParser: public Soprano::Parser
-{
-public:
-  RedlandParser();
-  Model *parse( const QUrl &uri ) const;
-};
-
-}
+namespace Soprano {
+    namespace Redland {
+	class RedlandParser: public Soprano::Parser
+	    {
+	    public:
+		RedlandParser();
+		Model* parseFile( const QString& filename, 
+				  const QUrl& baseUri, 
+				  RdfSerialization serialization = AUTO_DETECTION ) const;
+		Model* parseString( const QString& data, 
+				    const QUrl& baseUri, 
+				    RdfSerialization serialization = AUTO_DETECTION ) const;
+		Model* parseStream( QTextStream*, 
+				    const QUrl& baseUri, 
+				    RdfSerialization serialization = AUTO_DETECTION ) const;
+	    };
+    }
 }
 
 #endif // SOPRANO_BACKEND_REDLAND_PARSER_H

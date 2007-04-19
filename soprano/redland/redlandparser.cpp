@@ -24,74 +24,115 @@
 
 #include "redlandworld.h"
 #include "redlandmodel.h"
+#include "redlandbackend.h"
 
 #include <redland.h>
 
 #include <QtCore/QUrl>
 
-namespace Soprano {
-  namespace Redland {
 
-RedlandParser::RedlandParser()
+Soprano::Redland::RedlandParser::RedlandParser()
 {
 }
 
-Model *RedlandParser::parse( const QUrl &toparse ) const
+
+Soprano::Model*
+Soprano::Redland::RedlandParser::parseFile( const QString& filename,
+                                            const QUrl& baseUri,
+                                            RdfSerialization serialization ) const
 {
-  QUrl tmp(toparse);
-  if ( toparse.scheme().isEmpty() )
-  {
-    // we need to help the stupid librdf file url handling
-    tmp.setScheme("file");
-  }
+    QUrl uri( QUrl::fromLocalFile( filename ) );
+    if ( uri.scheme().isEmpty() ) {
+        // we need to help the stupid librdf file url handling
+        uri.setScheme("file");
+    }
 
-  librdf_world *w = World::self()->worldPtr();
+    RedlandModel* model = World::self()->createModel();
+    if ( !model ) {
+        return 0;
+    }
 
-  // Create a memory model
-  librdf_storage *storage = librdf_new_storage( w, "hashes", NULL, "hash-type='memory',contexts='yes'" );
-  if ( !storage )
-  {
-    return 0L;
-  }
+    librdf_uri* redlandUri = librdf_new_uri( World::self()->worldPtr(),
+                                             (unsigned char *) uri.toString().toLatin1().data() );
+    if ( !redlandUri ) {
+        return 0;
+    }
 
-  librdf_model *model = librdf_new_model( w, storage, 0L);
-  if ( !model )
-  {
-    librdf_free_storage( storage );
-    return 0L;
-  }
+    librdf_parser *parser = librdf_new_parser( World::self()->worldPtr(),
+                                               0, // use all factories
+                                               serializationMimeType( serialization ).toLatin1().data(),
+                                               0 ); // what is the URI of the syntax used for?
+    if ( !parser ) {
+        librdf_free_uri( redlandUri );
+        delete model;
+        return 0;
+    }
 
-  librdf_uri *uri = librdf_new_uri( w, (unsigned char *) tmp.toString().toLatin1().data() );
-  if ( !uri )
-  {
-    librdf_free_model( model );
-    librdf_free_storage( storage );
-    return 0L;
-  }
+    librdf_uri* redlandBaseUri = 0;
+    if ( !baseUri.toString().isEmpty() ) {
+        redlandBaseUri = librdf_new_uri( World::self()->worldPtr(),
+                                         (unsigned char *) baseUri.toString().toLatin1().data() );
+    }
 
-  librdf_parser *parser = librdf_new_parser( w, "rdfxml", "application/rdf+xml", NULL );
-  if ( !parser )
-  {
-    librdf_free_model( model );
-    librdf_free_storage( storage );
-    librdf_free_uri( uri );
-    return 0L;
-  }
+    if ( librdf_parser_parse_into_model( parser, redlandUri, redlandBaseUri, model->redlandModel() ) ) {
+        librdf_free_uri( redlandUri );
+        librdf_free_parser( parser );
+        delete model;
+        return 0;
+    }
 
-  if ( librdf_parser_parse_into_model( parser, uri, uri, model ) )
-  {
-    librdf_free_model( model );
-    librdf_free_storage( storage );
-    librdf_free_uri( uri );
+    librdf_free_uri( redlandUri );
     librdf_free_parser( parser );
-    return 0L;
-  }
 
-  librdf_free_uri( uri );
-  librdf_free_parser( parser );
-
-  return new RedlandModel( model, storage );
+    return model;
 }
 
+
+Soprano::Model*
+Soprano::Redland::RedlandParser::parseString( const QString& data,
+                                              const QUrl& baseUri,
+                                              RdfSerialization serialization ) const
+{
+    RedlandModel* model = World::self()->createModel();
+    if ( !model ) {
+        return 0;
+    }
+
+    librdf_parser* parser = librdf_new_parser( World::self()->worldPtr(),
+                                               0, // use all factories
+                                               serializationMimeType( serialization ).toLatin1().data(),
+                                               0 ); // what is the URI of the syntax used for?
+    if ( !parser ) {
+        delete model;
+        return 0;
+    }
+
+    librdf_uri* redlandBaseUri = 0;
+    if ( !baseUri.toString().isEmpty() ) {
+        redlandBaseUri = librdf_new_uri( World::self()->worldPtr(),
+                                         (unsigned char *) baseUri.toString().toLatin1().data() );
+    }
+
+    // FIXME: do we need to convert the string data into something else than UTF8 with some serialization
+    if ( librdf_parser_parse_string_into_model( parser,
+                                                ( const unsigned char* )data.toUtf8().data(),
+                                                redlandBaseUri,
+                                                model->redlandModel() ) ) {
+        librdf_free_parser( parser );
+        delete model;
+        return 0;
+    }
+
+    librdf_free_parser( parser );
+
+    return model;
 }
+
+
+Soprano::Model*
+Soprano::Redland::RedlandParser::parseStream( QTextStream* stream,
+                                              const QUrl& baseUri,
+                                              RdfSerialization serialization ) const
+{
+    return parseString( stream->readAll(), baseUri, serialization );
 }
