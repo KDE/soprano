@@ -37,18 +37,24 @@ namespace Soprano
      * Different types of RDF serialization.
      */
     enum RdfSerialization {
-	AUTO_DETECTION = 0, /**< The parser is supposed to auto detect the serialization type. Might not be reliable. */
-	RDF_XML,            /**< Standard RDF/XML serialization */
-	N_TRIPLES,          /**< N-Triples as defined by W3: http://www.w3.org/TR/rdf-testcases/#ntriples */
-	TURTLE,             /**< Turtle - Terse RDF Triple Language: http://www.dajobe.org/2004/01/turtle/ */
-	TRIG                /**< TriG - Turtle + Named Graphs: http://sites.wiwiss.fu-berlin.de/suhl/bizer/TriG/ */
+	UNKNOWN = 0, /**< The serialization is unknown. */
+	RDF_XML,     /**< Standard RDF/XML serialization */
+	N_TRIPLES,   /**< N-Triples as defined by W3: http://www.w3.org/TR/rdf-testcases/#ntriples */
+	TURTLE,      /**< Turtle - Terse RDF Triple Language: http://www.dajobe.org/2004/01/turtle/ */
+	TRIG         /**< TriG - Turtle + Named Graphs: http://sites.wiwiss.fu-berlin.de/suhl/bizer/TriG/ */
     };
 
     /**
-     * \return The mimetype of serialization or an empty string is serialization is AUTO_DETECTION
+     * \return The mimetype of serialization or an empty string is serialization is UNKNOWN
      */
     QString serializationMimeType( RdfSerialization serialization );
 
+    /**
+     * Parse a mimetype and match it to the RdfSerialization enum.
+     * \return the RdfSerialization type that matches mimetype or UNKNOWN if the mimetype 
+     * could not be parsed.
+     */
+    RdfSerialization mimeTypeToSerialization( const QString& mimetype );
 
     class SOPRANO_EXPORT Parser
 	{
@@ -71,8 +77,10 @@ namespace Soprano
 	     * \param filename The name (path) of the file to parse
 	     * \param baseUri The base URI to be used for relative references.
 	     * \param serialization The serialization used in the file.
+	     * If UNKNOWN the parser is supposed to auto detect the serialization type. 
+	     * Might not be reliable.
 	     */
-	    virtual Model* parseFile( const QString& filename, const QUrl& baseUri, RdfSerialization serialization = AUTO_DETECTION ) const;
+	    virtual Model* parseFile( const QString& filename, const QUrl& baseUri, RdfSerialization serialization = UNKNOWN ) const;
 
 	    /**
 	     * Parse an RDF model which has been serialized into a string,
@@ -83,8 +91,10 @@ namespace Soprano
 	     * \param data The serialized RDF string.
 	     * \param baseUri The base URI to be used for relative references.
 	     * \param serialization The serialization used for the string data.
+	     * If UNKNOWN the parser is supposed to auto detect the serialization type. 
+	     * Might not be reliable.
 	     */
-	    virtual Model* parseString( const QString& data, const QUrl& baseUri, RdfSerialization serialization = AUTO_DETECTION ) const;
+	    virtual Model* parseString( const QString& data, const QUrl& baseUri, RdfSerialization serialization = UNKNOWN ) const;
 
 	    /**
 	     * Read a serialized RDF model from a test stream,
@@ -93,8 +103,10 @@ namespace Soprano
 	     * \param stream The text stream to read the serialized RDF data from.
 	     * \param baseUri The base URI to be used for relative references.
 	     * \param serialization The serialization used for the string data from the stream.
+	     * If UNKNOWN the parser is supposed to auto detect the serialization type. 
+	     * Might not be reliable.
 	     */ 
-	    virtual Model* parseStream( QTextStream* stream, const QUrl& baseUri, RdfSerialization serialization = AUTO_DETECTION ) const = 0;
+	    virtual Model* parseStream( QTextStream* stream, const QUrl& baseUri, RdfSerialization serialization = UNKNOWN ) const = 0;
 
 	protected:
 	    Parser();

@@ -35,13 +35,13 @@ namespace Soprano {
 		RedlandParser();
 		Model* parseFile( const QString& filename, 
 				  const QUrl& baseUri, 
-				  RdfSerialization serialization = AUTO_DETECTION ) const;
+				  RdfSerialization serialization = UNKNOWN ) const;
 		Model* parseString( const QString& data, 
 				    const QUrl& baseUri, 
-				    RdfSerialization serialization = AUTO_DETECTION ) const;
+				    RdfSerialization serialization = UNKNOWN ) const;
 		Model* parseStream( QTextStream*, 
 				    const QUrl& baseUri, 
-				    RdfSerialization serialization = AUTO_DETECTION ) const;
+				    RdfSerialization serialization = UNKNOWN ) const;
 	    };
     }
 }

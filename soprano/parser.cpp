@@ -81,3 +81,22 @@ QString Soprano::serializationMimeType( RdfSerialization serialization )
         return QString();
     }
 }
+
+
+RdfSerialization Soprano::mimeTypeToSerialization( const QString& mimetype )
+{
+    if ( mimetype == "application/rdf+xml" ||
+         mimetype == "text/rdf" ) {
+        return RDF_XML;
+    }
+    else if ( mimetype == "text/plain" ) {
+        // FIXME: does this make sense? Probably not!
+        return N_TRIPLES;
+    }
+    else if ( mimetype == "application/x-turtle" ) {
+        return TURTLE;
+    }
+    else if ( mimetype == "application/x-trig" ) {
+        return TRIG;
+    }
+}
