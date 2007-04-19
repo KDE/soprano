@@ -71,6 +71,8 @@ QString Soprano::serializationMimeType( RdfSerialization serialization )
     switch( serialization ) {
     case RDF_XML:
         return QString::fromLatin1( "application/rdf+xml" );
+    case N3:
+        return QString::fromLatin1( "text/rdf+n3" );
     case N_TRIPLES:
         return QString::fromLatin1( "text/plain" );
     case TURTLE:
@@ -89,8 +91,12 @@ RdfSerialization Soprano::mimeTypeToSerialization( const QString& mimetype )
          mimetype == "text/rdf" ) {
         return RDF_XML;
     }
-    else if ( mimetype == "text/plain" ) {
-        // FIXME: does this make sense? Probably not!
+    else if ( mimetype == "text/rdf+n3" ||
+              mimetype == "text/n3" ) {
+        return N3;
+    }
+    // FIXME: what about text/plain?
+    else if ( mimetype == "application/n-triples" ) {
         return N_TRIPLES;
     }
     else if ( mimetype == "application/x-turtle" ) {

@@ -36,9 +36,11 @@ namespace Soprano
     /**
      * Different types of RDF serialization.
      */
+    // FIXME: what about the used charsets? Should we and if so, how should we include them?
     enum RdfSerialization {
 	UNKNOWN = 0, /**< The serialization is unknown. */
 	RDF_XML,     /**< Standard RDF/XML serialization */
+	N3,          /**< Notation 3: http://www.w3.org/DesignIssues/Notation3 */
 	N_TRIPLES,   /**< N-Triples as defined by W3: http://www.w3.org/TR/rdf-testcases/#ntriples */
 	TURTLE,      /**< Turtle - Terse RDF Triple Language: http://www.dajobe.org/2004/01/turtle/ */
 	TRIG         /**< TriG - Turtle + Named Graphs: http://sites.wiwiss.fu-berlin.de/suhl/bizer/TriG/ */
