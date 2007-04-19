@@ -103,6 +103,7 @@ namespace Soprano
        */
       virtual QStringList features() const = 0;
 
+      // FIXME: make the features an enumeration
       bool hasFeature( const QString& feature ) const;
       bool hasFeatures( const QStringList& feature ) const;
 

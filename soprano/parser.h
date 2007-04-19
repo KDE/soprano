@@ -38,13 +38,14 @@ namespace Soprano
      */
     // FIXME: what about the used charsets? Should we and if so, how should we include them?
     enum RdfSerialization {
-	UNKNOWN = 0, /**< The serialization is unknown. */
-	RDF_XML,     /**< Standard RDF/XML serialization */
-	N3,          /**< Notation 3: http://www.w3.org/DesignIssues/Notation3 */
-	N_TRIPLES,   /**< N-Triples as defined by W3: http://www.w3.org/TR/rdf-testcases/#ntriples */
-	TURTLE,      /**< Turtle - Terse RDF Triple Language: http://www.dajobe.org/2004/01/turtle/ */
-	TRIG         /**< TriG - Turtle + Named Graphs: http://sites.wiwiss.fu-berlin.de/suhl/bizer/TriG/ */
+	UNKNOWN = 0x0,   /**< The serialization is unknown. */
+	RDF_XML = 0x1,   /**< Standard RDF/XML serialization */
+	N3 = 0x2,        /**< Notation 3: http://www.w3.org/DesignIssues/Notation3 */
+	N_TRIPLES = 0x4, /**< N-Triples as defined by W3: http://www.w3.org/TR/rdf-testcases/#ntriples */
+	TURTLE = 0x8,    /**< Turtle - Terse RDF Triple Language: http://www.dajobe.org/2004/01/turtle/ */
+	TRIG = 0x10      /**< TriG - Turtle + Named Graphs: http://sites.wiwiss.fu-berlin.de/suhl/bizer/TriG/ */
     };
+    Q_DECLARE_FLAGS(RdfSerializations, RdfSerialization)
 
     /**
      * \return The mimetype of serialization or an empty string is serialization is UNKNOWN
@@ -62,6 +63,12 @@ namespace Soprano
 	{
 	public:
 	    virtual ~Parser();
+
+	    /**
+	     * The serialiazation types supported by this parser.
+	     * \return A combination of RdfSerialization types.
+	     */
+	    virtual RdfSerializations supportedSerializations() const = 0;
 
 	    /**
 	     * \deprecated
@@ -113,8 +120,9 @@ namespace Soprano
 	protected:
 	    Parser();
 	};
-
 }
+
+Q_DECLARE_OPERATORS_FOR_FLAGS(Soprano::RdfSerializations)
 
 #endif // SOPRANO_PARSER_H
 

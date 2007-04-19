@@ -33,6 +33,9 @@ namespace Soprano {
 	    {
 	    public:
 		RedlandParser();
+
+		RdfSerializations supportedSerializations() const;
+
 		Model* parseFile( const QString& filename, 
 				  const QUrl& baseUri, 
 				  RdfSerialization serialization = UNKNOWN ) const;

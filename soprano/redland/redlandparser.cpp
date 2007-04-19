@@ -36,6 +36,12 @@ Soprano::Redland::RedlandParser::RedlandParser()
 }
 
 
+Soprano::RdfSerializations Soprano::Redland::RedlandParser::supportedSerializations() const
+{
+    return RDF_XML|N_TRIPLES|TURTLE;
+}
+
+
 Soprano::Model*
 Soprano::Redland::RedlandParser::parseFile( const QString& filename,
                                             const QUrl& baseUri,
