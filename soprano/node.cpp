@@ -1,7 +1,8 @@
 /*
  * This file is part of Soprano Project
  *
- * Copyright (C) 2006 Daniele Galdi <daniele.galdi@gmail.com>
+ * Copyright (C) 2006-2007 Daniele Galdi <daniele.galdi@gmail.com>
+ * Copyright (C) 2007 Sebastian Trueg <trueg@kde.org>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -31,48 +32,45 @@ using namespace Soprano;
 class Node::Private : public QSharedData
 {
 public:
-  Private(): type(Unknown)
-  {}
-  Type type;
-  QUrl uri;
-  QString value;
-  QUrl datatype;
-  QString language;
+    Private()
+        : type(EmptyNode) {}
+
+    Type type;
+    QUrl uri;
+    QString value;
+    QUrl dataType;
+    QString language;
 };
 
 
 Node::Node()
 {
-  d = new Private;
+    d = new Private;
 }
 
 Node::Node( const Node &other )
 {
-  d = other.d;
+    d = other.d;
 }
 
-Node::Node( const QUrl &uri )
+Node::Node( const QUrl &uri, Type type )
 {
-  d = new Private;
-  if( !uri.isEmpty() ) {
-    d->uri = uri;
-    d->type = Node::Resource;
-  }
+    d = new Private;
+    if( !uri.isEmpty() &&
+        type != LiteralNode &&
+        type != EmptyNode ) {
+        d->uri = uri;
+        d->type = type;
+    }
 }
 
-Node::Node( const QString &value, Type type, const QUrl& datatype, const QString& lang )
+Node::Node( const QString &value, const QUrl& datatype, const QString& lang )
 {
-  d = new Private;
-  d->type = type;
-  if( type == Resource )
-    d->uri = value;
-  else
+    d = new Private;
+    d->type = LiteralNode;
     d->value = value;
-
-  if( type == Literal ) {
-    d->datatype = datatype;
+    d->dataType = datatype;
     d->language = lang;
-  }
 }
 
 Node::~Node()
@@ -81,116 +79,113 @@ Node::~Node()
 
 bool Node::isEmpty() const
 {
-  return ( d->type == Node::Unknown );
+    return ( d->type == Node::EmptyNode );
 }
 
 bool Node::isValid() const
 {
-  return !isEmpty();
+    return !isEmpty();
 }
 
 bool Node::isLiteral() const
 {
-  return ( d->type == Node::Literal );
+    return ( d->type == Node::LiteralNode );
 }
 
 bool Node::isResource() const
 {
-  return ( d->type == Node::Resource );
+    return ( d->type == Node::ResourceNode );
 }
 
 bool Node::isBlank() const
 {
-  return ( d->type == Node::Blank );
+    return ( d->type == Node::BlankNode );
 }
 
 Node::Type Node::type() const
 {
-  return d->type;
+    return d->type;
 }
 
 QUrl Node::uri() const
 {
-  // d->uri is only defined for Resource Nodes
-  return d->uri;
+    // d->uri is only defined for Resource and blank Nodes
+    return d->uri;
 }
 
 
 QString Node::literal() const
 {
-  if ( isLiteral() )
-      return d->value;
-  return QString();
-}
-
-QString Node::blank() const
-{
-  if ( isBlank() )
-    return d->value;
-  return QString();
+    if ( isLiteral() ) {
+        return d->value;
+    }
+    return QString();
 }
 
 QUrl Node::dataType() const
 {
-  return d->datatype;
+    return d->dataType;
 }
 
 QString Node::language() const
 {
-  return d->language;
+    return d->language;
 }
 
 QString Node::toString() const
 {
-  if ( isLiteral() || isBlank() )
-  {
-    return d->value;
-  }
-  if ( isResource() )
-  {
-    return d->uri.toString();
-  }
-  return QString();
+    if ( isLiteral() ) {
+        return d->value;
+    }
+    if ( isResource() || isBlank() ) {
+        return d->uri.toString();
+    }
+    return QString();
 }
 
 Node& Node::operator=( const Node& other )
 {
-  d = other.d;
-  return *this;
+    d = other.d;
+    return *this;
 }
 
 bool Node::operator==( const Node& other ) const
 {
-  if (d->type != other.d->type)
+    if (d->type != other.d->type) {
+        return false;
+    }
+
+    if (d->type == ResourceNode) {
+        return d->uri == other.d->uri;
+    }
+    else {
+        return ( d->value == other.d->value &&
+                 d->dataType == other.d->dataType &&
+                 d->language == other.d->language );
+    }
+
+    // never reached
     return false;
-
-  if (d->type == Resource)
-    return d->uri == other.d->uri;
-  else
-    return d->value == other.d->value;
-
-  // never reached
-  return false;
 }
 
 
 QDebug operator<<( QDebug s, const Soprano::Node& n )
 {
-  switch(n.type()) {
-  case Soprano::Node::Unknown:
-    s.nospace() << "(null)";
-    break;
-  case Soprano::Node::Blank:
-    s.nospace() << "(blank)";
-    break;
-  case Soprano::Node::Literal:
-    s.nospace() << n.literal();
-    if( !n.language().isEmpty() )
-      s.nospace() << " (" << n.language() << ")";
-    break;
-  default:
-    s.nospace() << n.uri();
-    break;
-  }
-  return s.space();
+    switch(n.type()) {
+    case Soprano::Node::EmptyNode:
+        s.nospace() << "(empty)";
+        break;
+//     case Soprano::Node::BlankNode:
+//         s.nospace() << "(blank)";
+//         break;
+    case Soprano::Node::LiteralNode:
+        s.nospace() << n.literal();
+        if( !n.language().isEmpty() )
+            s.nospace() << " (" << n.language() << ")";
+        break;
+    default:
+        s.nospace() << n.uri();
+        break;
+    }
+    return s.space();
 }

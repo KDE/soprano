@@ -42,14 +42,14 @@ void SopranoModelTest::cleanup()
 
 void SopranoModelTest::init()
 {
-  Node subject1 = m_model->createResource( QUrl("uri:init:test1") );
-  Node subject2 = m_model->createResource( QUrl("uri:init:test2") );
+  Node subject1( QUrl("uri:init:test1") );
+  Node subject2( QUrl("uri:init:test2") );
 
-  Node predicate1 = m_model->createPredicate( "soprano", "predicate1" );
-  Node predicate2 = m_model->createPredicate( "soprano", "predicate2" );
+  Node predicate1( QUrl( "soprano#predicate1" ) );
+  Node predicate2( QUrl( "soprano#predicate2" ) );
 
-  Node object1 = m_model->createLiteral( "Literal value1" );
-  Node object2 = m_model->createLiteral( "Literal value2" );
+  Node object1( "Literal value1" );
+  Node object2( "Literal value2" );
 
   m_st1 = new Statement(subject1, predicate1, object1);
   m_st2 = new Statement(subject2, predicate1, object1);
@@ -64,13 +64,13 @@ void SopranoModelTest::init()
 
 void SopranoModelTest::testAddModel()
 {
-  Node subject1 = m_model->createResource( QUrl("uri:add:model") );
+  Node subject1( QUrl("uri:add:model") );
 
-  Node predicate1 = m_model->createPredicate( "soprano", "predicate1" );
-  Node predicate2 = m_model->createPredicate( "soprano", "predicate2" );
-  Node predicate3 = m_model->createPredicate( "soprano", "predicate3" );
+  Node predicate1( QUrl( "soprano#predicate1" ) );
+  Node predicate2( QUrl( "soprano#predicate2" ) );
+  Node predicate3( QUrl( "soprano#predicate3" ) );
 
-  Node object1 = m_model->createLiteral( "Literal value1" );
+  Node object1( "Literal value1" );
 
   Statement st1(subject1, predicate1, object1);
   Statement st2(subject1, predicate2, object1);
@@ -91,13 +91,13 @@ void SopranoModelTest::testAddModel()
 
 void SopranoModelTest::testAddListOfStatement()
 {
-  Node subject1 = m_model->createResource( QUrl("uri:add:model") );
+  Node subject1( QUrl("uri:add:model") );
 
-  Node predicate1 = m_model->createPredicate( "soprano", "predicate1" );
-  Node predicate2 = m_model->createPredicate( "soprano", "predicate2" );
-  Node predicate3 = m_model->createPredicate( "soprano", "predicate3" );
+  Node predicate1( QUrl( "soprano#predicate1" ) );
+  Node predicate2( QUrl( "soprano#predicate2" ) );
+  Node predicate3( QUrl( "soprano#predicate3" ) );
 
-  Node object1 = m_model->createLiteral( "Literal value1" );
+  Node object1( "Literal value1" );
 
   Statement st1(subject1, predicate1, object1);
   Statement st2(subject1, predicate2, object1);
@@ -117,13 +117,13 @@ void SopranoModelTest::testAddListOfStatement()
 
 void SopranoModelTest::testAddStatementIterator()
 {
-  Node subject1 = m_model->createResource( QUrl("uri:add:model") );
+  Node subject1( QUrl("uri:add:model") );
 
-  Node predicate1 = m_model->createPredicate( "soprano", "predicate1" );
-  Node predicate2 = m_model->createPredicate( "soprano", "predicate2" );
-  Node predicate3 = m_model->createPredicate( "soprano", "predicate3" );
+  Node predicate1( QUrl( "soprano#predicate1" ) );
+  Node predicate2( QUrl( "soprano#predicate2" ) );
+  Node predicate3( QUrl( "soprano#predicate3" ) );
 
-  Node object1 = m_model->createLiteral( "Literal value1" );
+  Node object1( "Literal value1" );
 
   Statement st1(subject1, predicate1, object1);
   Statement st2(subject1, predicate2, object1);
@@ -144,14 +144,14 @@ void SopranoModelTest::testAddStatementIterator()
 
 void SopranoModelTest::testAddStatements()
 {
-  Node subject1 = m_model->createResource( QUrl("uri:soprano:test1") );
-  Node subject2 = m_model->createResource( QUrl("uri:soprano:test2") );
+  Node subject1( QUrl("uri:soprano:test1") );
+  Node subject2( QUrl("uri:soprano:test2") );
 
-  Node predicate1 = m_model->createPredicate( "soprano", "predicate1" );
-  Node predicate2 = m_model->createPredicate( "soprano", "predicate2" );
+  Node predicate1( QUrl( "soprano#predicate1" ) );
+  Node predicate2( QUrl( "soprano#predicate2" ) );
 
-  Node object1 = m_model->createLiteral( "Literal value1" );
-  Node object2 = m_model->createLiteral( "Literal value2" );
+  Node object1( "Literal value1" );
+  Node object2( "Literal value2" );
 
   Statement st1(subject1, predicate1, object1);
   Statement st2(subject2, predicate1, object1);
@@ -167,17 +167,17 @@ void SopranoModelTest::testAddStatements()
 void SopranoModelTest::testListStatements()
 {
   QList<Statement> statements;
-  Node resource_1 = m_model->createResource( QUrl("uri:list:resource1") );
-  Node resource_2 = m_model->createResource( QUrl("uri:list:resource2") );
-  Node resource_3 = m_model->createResource( QUrl("uri:list:resource3") );
+  Node resource_1( QUrl("uri:list:resource1") );
+  Node resource_2( QUrl("uri:list:resource2") );
+  Node resource_3( QUrl("uri:list:resource3") );
 
   for (int i=0; i<50; i++)
   {
     QString property = "predicate" + QString::number(i);
     QString literal = "Literal value" + QString::number(i);
 
-    Node predicate = m_model->createPredicate( "soprano", property);
-    Node object = m_model->createLiteral( literal );
+    Node predicate( QUrl( "soprano#" + property) );
+    Node object( literal );
 
     Statement st(resource_1, predicate, object);
     statements.append( st );
@@ -188,8 +188,8 @@ void SopranoModelTest::testListStatements()
     QString property = "predicate" + QString::number(i + 50);
     QString literal = "Literal value" + QString::number(i + 50);
 
-    Node predicate = m_model->createPredicate( "soprano", property);
-    Node object = m_model->createLiteral( literal );
+    Node predicate( QUrl( "soprano#" + property) );
+    Node object( literal );
 
     Statement st(resource_2, predicate, object);
     statements.append( st );
@@ -200,8 +200,8 @@ void SopranoModelTest::testListStatements()
     QString property = "predicate" + QString::number(i + 100);
     QString literal = "Literal value" + QString::number(i + 100);
 
-    Node predicate = m_model->createPredicate( "soprano", property);
-    Node object = m_model->createLiteral( literal );
+    Node predicate( QUrl( "soprano#" + property) );
+    Node object( literal );
 
     Statement st(resource_3, predicate, object);
     statements.append( st );
@@ -268,9 +268,9 @@ void SopranoModelTest::testListStatements()
 
 void SopranoModelTest::testRemoveStatement()
 {
-  Node subject = m_model->createResource( QUrl("uri:remove:3") );
-  Node predicate = m_model->createPredicate( "soprano", "predicate" );
-  Node object = m_model->createResource( QUrl("uri:soprano:2") );
+  Node subject( QUrl("uri:remove:3") );
+  Node predicate( QUrl( "soprano#predicate" ) );
+  Node object( QUrl("uri:soprano:2") );
 
   Statement st(subject, predicate, object);
   m_model->add( st );
@@ -389,13 +389,13 @@ void SopranoModelTest::testQuery()
 
 void SopranoModelTest::testCloseStatementIteratorOnModelDelete()
 {
-  Node subject1 = m_model->createResource( QUrl("uri:add:model") );
+  Node subject1( QUrl("uri:add:model") );
 
-  Node predicate1 = m_model->createPredicate( "soprano", "predicate1" );
-  Node predicate2 = m_model->createPredicate( "soprano", "predicate2" );
-  Node predicate3 = m_model->createPredicate( "soprano", "predicate3" );
+  Node predicate1( QUrl( "soprano#predicate1" ) );
+  Node predicate2( QUrl( "soprano#predicate2" ) );
+  Node predicate3( QUrl( "soprano#predicate3" ) );
 
-  Node object1 = m_model->createLiteral( "Literal value1" );
+  Node object1( "Literal value1" );
 
   Statement st1(subject1, predicate1, object1);
   Statement st2(subject1, predicate2, object1);

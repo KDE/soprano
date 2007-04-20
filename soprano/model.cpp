@@ -2,6 +2,7 @@
  * This file is part of Soprano Project
  *
  * Copyright (C) 2006 Daniele Galdi <daniele.galdi@gmail.com>
+ * Copyright (C) 2007 Sebastian Trueg <trueg@kde.org>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -30,184 +31,155 @@
 
 namespace Soprano {
 
-class Model::Private
-{
-public:
-};
-
-Model::Model()
-    : d( new Private() )
-{
-}
-
-Model::~Model()
-{
-  delete d;
-}
-
-ErrorCode Model::add( const Model &model )
-{
-  StatementIterator stmi = model.listStatements();
-  if ( !stmi.isValid() )
-  {
-    return ERROR_UNKNOW;
-  }
-
-  while ( stmi.hasNext() )
-  {
-    ErrorCode c = add( stmi.next() );
-    if ( ERROR_NONE != c )
+    class Model::Private
     {
-      return c;
-    }
-  }
+    public:
+    };
 
-  return ERROR_NONE;
-}
-
-ErrorCode Model::add( const StatementIterator &iter, const Node &context )
-{
-  if ( !iter.isValid() )
-  {
-    return ERROR_UNKNOW;
-  }
-
-  while ( iter.hasNext() )
-  {
-    ErrorCode c = add( iter.next(), context );
-    if ( ERROR_NONE != c )
+    Model::Model()
+        : d( new Private() )
     {
-      return c;
     }
-  }
 
-  return ERROR_NONE;
-}
-
-ErrorCode Model::add( const StatementIterator &iter )
-{
-  if ( !iter.isValid() )
-  {
-    return ERROR_UNKNOW;
-  }
-
-  while ( iter.hasNext() )
-  {
-    ErrorCode c = add( iter.next() );
-    if ( ERROR_NONE != c )
+    Model::~Model()
     {
-      return c;
+        delete d;
     }
-  }
 
-  return ERROR_NONE;
-}
-
-ErrorCode Model::add( const QList<Statement> &statements, const Node &context )
-{
-  for( QList<Statement>::const_iterator it = statements.constBegin();
-       it != statements.constEnd(); ++it )
-  {
-    ErrorCode c = add( *it, context );
-    if ( ERROR_NONE != c )
+    ErrorCode Model::add( const Model &model )
     {
-      return c;
+        StatementIterator stmi = model.listStatements();
+        if ( !stmi.isValid() )
+        {
+            return ERROR_UNKNOW;
+        }
+
+        while ( stmi.hasNext() )
+        {
+            ErrorCode c = add( stmi.next() );
+            if ( ERROR_NONE != c )
+            {
+                return c;
+            }
+        }
+
+        return ERROR_NONE;
     }
-  }
 
-  return ERROR_NONE;
-}
-
-ErrorCode Model::add( const QList<Statement> &statements )
-{
-  // FIXME: why not call add with an empty context here?
-
-  QListIterator<Statement> iter(statements);
-  while ( iter.hasNext() )
-  {
-    ErrorCode c = add( iter.next() );
-    if ( ERROR_NONE != c )
+    ErrorCode Model::add( const StatementIterator &iter, const Node &context )
     {
-      return c;
+        if ( !iter.isValid() )
+        {
+            return ERROR_UNKNOW;
+        }
+
+        while ( iter.hasNext() )
+        {
+            ErrorCode c = add( iter.next(), context );
+            if ( ERROR_NONE != c )
+            {
+                return c;
+            }
+        }
+
+        return ERROR_NONE;
     }
-  }
 
-  return ERROR_NONE;
-}
-
-Node Model::createPredicate( const QString &ns, const QString &value )
-{
-  if ( ns.isNull() )
-  {
-    return Node( QUrl( value ) );
-  }
-  return Node( QUrl( ns + '#' + value ) );
-}
-
-Node Model::createPredicate( const QUrl &uri )
-{
-  return Node( uri );
-}
-
-Node Model::createBlank( const QString &uri )
-{
-  return Node( uri, Node::Blank );
-}
-
-Node Model::createResource( const QUrl &uri )
-{
-  return Node( uri );
-}
-
-Node Model::createLiteral( const QString &literal )
-{
-  return Node( literal, Node::Literal );
-}
-
-bool Model::isEmpty() const
-{
-  return size() == 0;
-}
-
-StatementIterator Model::listStatements() const
-{
-  return listStatements( Statement() );
-}
-
-StatementIterator Model::listStatements( const Node &subject, const Node &predicate, const Node &object ) const
-{
-  return listStatements( Statement(subject, predicate, object) );
-}
-
-ErrorCode Model::removeAll( const Statement &statement, const Node &context )
-{
-  StatementIterator iter = listStatements(statement, context);
-  while ( iter.hasNext() )
-  {
-    ErrorCode c = remove( iter.next() );
-    if ( c != ERROR_NONE )
+    ErrorCode Model::add( const StatementIterator &iter )
     {
-      return c;
+        if ( !iter.isValid() )
+        {
+            return ERROR_UNKNOW;
+        }
+
+        while ( iter.hasNext() )
+        {
+            ErrorCode c = add( iter.next() );
+            if ( ERROR_NONE != c )
+            {
+                return c;
+            }
+        }
+
+        return ERROR_NONE;
     }
-  }
 
-  return ERROR_NONE;
-}
+    ErrorCode Model::add( const QList<Statement> &statements, const Node &context )
+    {
+        for( QList<Statement>::const_iterator it = statements.constBegin();
+             it != statements.constEnd(); ++it )
+        {
+            ErrorCode c = add( *it, context );
+            if ( ERROR_NONE != c )
+            {
+                return c;
+            }
+        }
+
+        return ERROR_NONE;
+    }
+
+    ErrorCode Model::add( const QList<Statement> &statements )
+    {
+        // FIXME: why not call add with an empty context here?
+
+        QListIterator<Statement> iter(statements);
+        while ( iter.hasNext() )
+        {
+            ErrorCode c = add( iter.next() );
+            if ( ERROR_NONE != c )
+            {
+                return c;
+            }
+        }
+
+        return ERROR_NONE;
+    }
+
+    bool Model::isEmpty() const
+    {
+        return size() == 0;
+    }
+
+    StatementIterator Model::listStatements() const
+    {
+        return listStatements( Statement() );
+    }
+
+    StatementIterator Model::listStatements( const Node &subject, const Node &predicate, const Node &object ) const
+    {
+        return listStatements( Statement(subject, predicate, object) );
+    }
+
+    ErrorCode Model::removeAll( const Statement &statement, const Node &context )
+    {
+        StatementIterator iter = listStatements(statement, context);
+        while ( iter.hasNext() )
+        {
+            ErrorCode c = remove( iter.next() );
+            if ( c != ERROR_NONE )
+            {
+                return c;
+            }
+        }
+
+        return ERROR_NONE;
+    }
 
 
-ErrorCode Model::removeAll( const Statement &statement )
-{
-  return removeAll( statement, Node() );
-}
+    ErrorCode Model::removeAll( const Statement &statement )
+    {
+        return removeAll( statement, Node() );
+    }
 
-ErrorCode Model::removeAll( const Node &subject, const Node &predicate, const Node &object )
-{
-  return removeAll( Statement( subject, predicate, object ) );
-}
+    ErrorCode Model::removeAll( const Node &subject, const Node &predicate, const Node &object )
+    {
+        return removeAll( Statement( subject, predicate, object ) );
+    }
 
-ErrorCode Model::removeAll()
-{
-  return removeAll( Node(), Node(), Node() );
-}
+    ErrorCode Model::removeAll()
+    {
+        return removeAll( Node(), Node(), Node() );
+    }
 
 }

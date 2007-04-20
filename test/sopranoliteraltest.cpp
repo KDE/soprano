@@ -75,7 +75,6 @@ void SopranoLiteralTest::testDataTypes()
   Node predicate( QUrl("http://iamarandomuri/yesmadam/" + QString(QTest::currentDataTag())) );
 
   Node object( value.toString(),
-	       Node::Literal,
 	       QUrl( xmlSchemaNs + dataType ) );
 
   Statement s( subject, predicate, object );

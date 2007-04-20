@@ -1,4 +1,4 @@
-/* 
+/*
  * This file is part of Soprano Project.
  *
  * Copyright (C) 2006 Daniele Galdi <daniele.galdi@gmail.com>
@@ -31,7 +31,7 @@ using namespace Soprano;
 void NodeTest::testCreateEmptyNode()
 {
   Node node;
-  QVERIFY( node.type() == Node::Unknown );
+  QVERIFY( node.type() == Node::EmptyNode );
   QVERIFY( !node.isValid() );
 }
 
@@ -39,36 +39,33 @@ void NodeTest::testCreateResourceNode()
 {
   QUrl uri("uri:soprano:test");
   Node node( uri );
-  
-  QVERIFY( node.type() == Node::Resource );
+
+  QCOMPARE( node.type(), Node::ResourceNode );
   QVERIFY( node.isValid() );
-  QVERIFY( node.uri() == uri );
-  QVERIFY( node.literal().isNull() );
-  QVERIFY( node.blank().isNull() );
+  QCOMPARE( node.uri(), uri );
+  QVERIFY( node.literal().isEmpty() );
 }
 
 void NodeTest::testCreateLiteralNode()
 {
   QString literal("Literal value");
-  Node node( literal, Node::Literal );
-  
-  QVERIFY( node.type() == Node::Literal );
+  Node node( literal );
+
+  QCOMPARE( node.type(), Node::LiteralNode );
   QVERIFY( node.isValid() );
-  QVERIFY( node.literal() == literal );
-  QVERIFY( node.blank().isNull() );
-  QVERIFY( !node.uri().isValid() );
+  QCOMPARE( node.literal(), literal );
+  QVERIFY( node.uri().isEmpty() );
 }
 
 void NodeTest::testCreateBlankNode()
 {
   QUrl uri("uri:soprano:test");
-  Node node(uri.toString(), Node::Blank);
-  
-  QVERIFY( node.type() == Node::Blank );
+  Node node( uri, Node::BlankNode );
+
+  QCOMPARE( node.type(), Node::BlankNode );
   QVERIFY( node.isValid() );
-  QVERIFY( node.blank() == uri.toString() );
-  QVERIFY( node.literal().isNull() );  
-  QVERIFY( !node.uri().isValid() );
+  QCOMPARE( node.uri(), uri );
+  QVERIFY( node.literal().isNull() );
 }
 
 QTEST_MAIN(NodeTest)

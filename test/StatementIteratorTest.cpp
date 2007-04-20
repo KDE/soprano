@@ -35,17 +35,17 @@ void StatementIteratorTest::cleanup()
 
 void StatementIteratorTest::init()
 {
-  Node resource_1 = m_model->createResource( QUrl("uri:list:resource1") );
-  Node resource_2 = m_model->createResource( QUrl("uri:list:resource2") );
-  Node resource_3 = m_model->createResource( QUrl("uri:list:resource3") );
+  Node resource_1( QUrl("uri:list:resource1") );
+  Node resource_2( QUrl("uri:list:resource2") );
+  Node resource_3( QUrl("uri:list:resource3") );
 
   for (int i=0; i<50; i++)
   {
     QString property = "predicate" + QString::number(i);
     QString literal = "Literal value" + QString::number(i);
 
-    Node predicate = m_model->createPredicate( "soprano", property);
-    Node object = m_model->createLiteral( literal );
+    Node predicate( QUrl( "soprano#" + property ) );
+    Node object( literal );
 
     Statement st(resource_1, predicate, object);
     m_statements.append( st );
@@ -56,8 +56,8 @@ void StatementIteratorTest::init()
     QString property = "predicate" + QString::number(i + 50);
     QString literal = "Literal value" + QString::number(i + 50);
 
-    Node predicate = m_model->createPredicate( "soprano", property);
-    Node object = m_model->createLiteral( literal );
+    Node predicate( QUrl( "soprano#" + property ) );
+    Node object( literal );
 
     Statement st(resource_2, predicate, object);
     m_statements.append( st );
@@ -68,8 +68,8 @@ void StatementIteratorTest::init()
     QString property = "predicate" + QString::number(i + 100);
     QString literal = "Literal value" + QString::number(i + 100);
 
-    Node predicate = m_model->createPredicate( "soprano", property);
-    Node object = m_model->createLiteral( literal );
+    Node predicate( QUrl( "soprano#" + property ) );
+    Node object( literal );
 
     Statement st(resource_3, predicate, object);
     m_statements.append( st );
@@ -80,9 +80,9 @@ void StatementIteratorTest::init()
 
 void StatementIteratorTest::testIterator()
 {
-  Node resource_1 = m_model->createResource( QUrl("uri:list:resource1") );
-  Node resource_2 = m_model->createResource( QUrl("uri:list:resource2") );
-  Node resource_3 = m_model->createResource( QUrl("uri:list:resource3") );
+  Node resource_1( QUrl("uri:list:resource1") );
+  Node resource_2( QUrl("uri:list:resource2") );
+  Node resource_3( QUrl("uri:list:resource3") );
 
   StatementIterator sti = m_model->listStatements();
 

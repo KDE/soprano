@@ -2,6 +2,7 @@
  * This file is part of Soprano Project.
  *
  * Copyright (C) 2006 Daniele Galdi <daniele.galdi@gmail.com>
+ * Copyright (C) 2007 Sebastian Trueg <trueg@kde.org>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -40,6 +41,7 @@ class ResultSet;
 class Statement;
 class StatementIterator;
 
+// FIXME: what about a QList<Statement> allStatements method?
 class SOPRANO_EXPORT Model
 {
 public:
@@ -108,36 +110,6 @@ public:
    * \param context The Context node.
    */
   virtual ErrorCode add( const Statement &statement, const Node &context ) = 0;
-
-  /**
-   * Create a Predicate with the given namespace and value.
-   * es. createPredicate("http://www.kde.org", "predicate") returns
-   *     a predicate node with this value 'http://www.kde.org#predicate'
-   * If the ns is empty build the predicate with only the given values.
-   *
-   * \return The predicate Node.
-   */
-  Node createPredicate( const QString &ns, const QString &value );
-
-  /**
-   * \return The predicate Node.
-   */
-  Node createPredicate( const QUrl &uri );
-
-  /**
-   * \return The blank Node.
-   */
-  Node createBlank( const QString &uri );
-
-  /**
-   * \return The resource Node.
-   */
-  Node createResource( const QUrl &uri );
-
-  /**
-   * \return The literal Node.
-   */
-  Node createLiteral( const QString &literal );
 
   /**
    * \return true if the Model doesn't contains any Statement.
