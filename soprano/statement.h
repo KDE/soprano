@@ -1,5 +1,4 @@
-/*
- * This file is part of Soprano Project.
+/* This file is part of Soprano Project.
  *
  * Copyright (C) 2006 Daniele Galdi <daniele.galdi@gmail.com>
  *
@@ -24,14 +23,12 @@
 
 #include <QtCore/QSharedDataPointer>
 
+
+#include <soprano/node.h>
 #include <soprano/soprano_export.h>
 
 namespace Soprano
 {
-
-class Node;
-
-// FIXME: add context directly to the statement
 
 class SOPRANO_EXPORT Statement
 {
@@ -50,8 +47,10 @@ public:
    * \param predicate The predicate.
    *
    * \param object The object.
+   *
+   * \param context The context node.
    */
-  Statement( const Node &subject, const Node &predicate, const Node &object );
+  Statement( const Node &subject, const Node &predicate, const Node &object, const Node &context = Node() );
 
   Statement( const Statement &other );
 
@@ -96,6 +95,18 @@ public:
    * \return The object.
    */
   Node object() const;
+
+  /**
+   * Change the Statement context.
+   *
+   * \param context The new Context.
+   */
+  void setContext( const Node &context );
+
+  /**
+   * \return The Context node.
+   */
+  const Node &context() const;
 
   /**
    * A Statement is valid if subject, predicate and object are valid.

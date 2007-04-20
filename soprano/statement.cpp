@@ -19,8 +19,9 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#include "statement.h"
 #include "node.h"
+
+#include "statement.h"
 
 #include <QtCore/QDebug>
 
@@ -33,6 +34,7 @@ public:
   Node subject;
   Node predicate;
   Node object;
+  Node context;
 };
 
 Statement::Statement()
@@ -45,12 +47,13 @@ Statement::Statement( const Statement &other )
   d = other.d;
 }
 
-Statement::Statement( const Node &subject, const Node &predicate, const Node &object )
+Statement::Statement( const Node &subject, const Node &predicate, const Node &object, const Node &context)
 {
   d = new Private;
   d->subject = subject;
   d->predicate = predicate;
   d->object = object;
+  d->context = context;
 }
 
 Statement::~Statement()
@@ -67,7 +70,8 @@ bool Statement::operator==( const Statement& other )
 {
   return ( d->subject == other.subject() &&
            d->predicate == other.predicate() &&
-           d->object == other.object() );
+           d->object == other.object() &&
+           d->context == other.context() );
 }
 
 void Statement::setSubject( const Node &subject )
@@ -103,14 +107,31 @@ Node Statement::object() const
   return d->object;
 }
 
+void Statement::setContext( const Node &context )
+{
+  // d->detach() is called automatically
+  d->context = context;
+}
+
+const Node &Statement::context() const
+{
+   return d->context;
+}
+
 bool Statement::isValid() const
 {
-  return ( d->subject.isValid() && d->predicate.isValid() && d->object.isValid() );
+   bool valid = d->subject.isValid() && d->predicate.isValid() && d->object.isValid();
+
+   if ( d->context.isValid() )
+   {
+      return valid && d->context.isResource();
+   }
+   return valid;
 }
 
 
 QDebug operator<<( QDebug s, const Soprano::Statement& sm )
 {
-  s.nospace() << "[(" << sm.subject() << "," << sm.predicate() << "," << sm.object() << ")->" << "FIXME:add direct context support" << "]";
+  s.nospace() << "[(" << sm.subject() << "," << sm.predicate() << "," << sm.object() << "," << sm.context() << ")]";
   return s.space();
 }
