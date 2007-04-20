@@ -50,14 +50,14 @@ namespace Soprano
     /**
      * \return The mimetype of serialization or an empty string is serialization is UNKNOWN
      */
-    QString serializationMimeType( RdfSerialization serialization );
+    SOPRANO_EXPORT QString serializationMimeType( RdfSerialization serialization );
 
     /**
      * Parse a mimetype and match it to the RdfSerialization enum.
      * \return the RdfSerialization type that matches mimetype or UNKNOWN if the mimetype 
      * could not be parsed.
      */
-    RdfSerialization mimeTypeToSerialization( const QString& mimetype );
+    SOPRANO_EXPORT RdfSerialization mimeTypeToSerialization( const QString& mimetype );
 
     class SOPRANO_EXPORT Parser
 	{
