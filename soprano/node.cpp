@@ -118,12 +118,19 @@ Soprano::LiteralValue Soprano::Node::literal() const
     if ( isLiteral() ) {
         return d->value;
     }
-    return LiteralValue();
+    else {
+        return LiteralValue();
+    }
 }
 
 QUrl Soprano::Node::dataType() const
 {
-    return d->value.dataTypeUri();
+    if ( isLiteral() ) {
+        return d->value.dataTypeUri();
+    }
+    else {
+        return QUrl();
+    }
 }
 
 QString Soprano::Node::language() const
@@ -136,10 +143,12 @@ QString Soprano::Node::toString() const
     if ( isLiteral() ) {
         return d->value.toString();
     }
-    if ( isResource() || isBlank() ) {
+    else if ( isResource() || isBlank() ) {
         return d->uri.toString();
     }
-    return QString();
+    else {
+        return QString();
+    }
 }
 
 Soprano::Node& Soprano::Node::operator=( const Node& other )
