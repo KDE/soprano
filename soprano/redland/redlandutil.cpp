@@ -28,17 +28,14 @@
 #include "redlandworld.h"
 
 
-namespace Soprano {
-  namespace Redland {
-
-Soprano::Node Util::createNode( librdf_node *node )
+Soprano::Node Soprano::Redland::Util::createNode( librdf_node *node )
 {
   if ( librdf_node_is_resource( node ) ) {
     librdf_uri *uri = librdf_node_get_uri( node );
-    return Soprano::Node( QUrl( (const char *)librdf_uri_as_string(uri) ) );
+    return Soprano::Node( QUrl::fromEncoded( (const char *)librdf_uri_as_string(uri), QUrl::StrictMode ) );
   }
   else if ( librdf_node_is_blank( node ) ) {
-    return Soprano::Node( QUrl( (const char *)librdf_node_get_blank_identifier( node ) ), Node::BlankNode );
+    return Soprano::Node( QUrl::fromEncoded( (const char *)librdf_node_get_blank_identifier( node ), QUrl::StrictMode ), Node::BlankNode );
   }
   else if ( librdf_node_is_literal( node ) ) {
     librdf_uri* datatype = librdf_node_get_literal_value_datatype_uri( node );
@@ -46,35 +43,36 @@ Soprano::Node Util::createNode( librdf_node *node )
     {
       return Soprano::Node( Soprano::LiteralValue( (const char *)librdf_node_get_literal_value( node ) ) );
     }
-    return Soprano::Node( Soprano::LiteralValue::fromString( (const char *)librdf_node_get_literal_value( node ),
-                                                             QUrl::fromEncoded( (const char *)librdf_uri_as_string( datatype ), QUrl::StrictMode ) ),
-			  librdf_node_get_literal_value_language( node ) );
+    return Soprano::Node( Soprano::LiteralValue::fromString( QString::fromUtf8( (const char *)librdf_node_get_literal_value( node ) ),
+                                                             QUrl::fromEncoded( (const char *)librdf_uri_as_string( datatype ),
+                                                                                QUrl::StrictMode ) ),
+			  QString::fromUtf8( librdf_node_get_literal_value_language( node ) ) );
   }
 
   return Soprano::Node();
 }
 
-librdf_node *Util::createNode( const Node &node )
+librdf_node *Soprano::Redland::Util::createNode( const Node &node )
 {
   librdf_world *world = World::self()->worldPtr();
 
   if ( node.isResource() ) {
-    return librdf_new_node_from_uri_string( world, (unsigned char *)node.uri().toString().toLatin1().data());
+    return librdf_new_node_from_uri_string( world, (unsigned char *)node.uri().toEncoded().data() );
   }
   else if ( node.isBlank() ) {
-    return librdf_new_node_from_blank_identifier( world, (unsigned char *) node.uri().toString().toLatin1().data() );
+    return librdf_new_node_from_blank_identifier( world, (unsigned char *) node.uri().toEncoded().data() );
   }
   else if ( node.isLiteral() ) {
     return librdf_new_node_from_typed_literal( world,
-					       (unsigned char *)node.literal().toString().toLatin1().data(),
-					       node.language().toLatin1().data(),
-					       librdf_new_uri( world, (const unsigned char*)node.dataType().toString().toLatin1().data() ) );
+					       (unsigned char *)node.literal().toString().toUtf8().data(),
+					       node.language().toUtf8().data(),
+					       librdf_new_uri( world, (const unsigned char*)node.dataType().toEncoded().data() ) );
   }
 
-  return 0L;
+  return 0;
 }
 
-librdf_statement *Util::createStatement( const Statement &statement )
+librdf_statement *Soprano::Redland::Util::createStatement( const Statement &statement )
 {
   librdf_world *world = World::self()->worldPtr();
 
@@ -85,7 +83,7 @@ librdf_statement *Util::createStatement( const Statement &statement )
   return librdf_new_statement_from_nodes( world, subject, predicate, object );
 }
 
-Soprano::Statement Util::createStatement( librdf_statement *st )
+Soprano::Statement Soprano::Redland::Util::createStatement( librdf_statement *st )
 {
   librdf_node *subject = librdf_statement_get_subject( st );
   librdf_node *predicate = librdf_statement_get_predicate( st );
@@ -94,7 +92,7 @@ Soprano::Statement Util::createStatement( librdf_statement *st )
   return Soprano::Statement( createNode( subject), createNode( predicate), createNode( object ) );
 }
 
-const char *Util::queryType( const Query &query )
+const char *Soprano::Redland::Util::queryType( const Query &query )
 {
   if ( query.type() == Query::RDQL )
   {
@@ -107,7 +105,7 @@ const char *Util::queryType( const Query &query )
   return 0L;
 }
 
-void Util::freeNode( librdf_node* node )
+void Soprano::Redland::Util::freeNode( librdf_node* node )
 {
   if( node ) {
     librdf_free_node( node );
@@ -115,13 +113,9 @@ void Util::freeNode( librdf_node* node )
 }
 
 
-void Util::freeStatement( librdf_statement* statement )
+void Soprano::Redland::Util::freeStatement( librdf_statement* statement )
 {
   if( statement ) {
     librdf_free_statement( statement );
   }
-}
-
-
-}
 }
