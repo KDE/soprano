@@ -2,6 +2,7 @@
  * This file is part of Soprano Project.
  *
  * Copyright (C) 2006 Daniele Galdi <daniele.galdi@gmail.com>
+ * Copyright (C) 2007 Sebastian Trueg <trueg@kde.org>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -23,14 +24,13 @@
 
 #include "model.h"
 #include "node.h"
+#include "statement.h"
 #include "queryresult.h"
 
 #include <QtCore/QSharedData>
 
 
-namespace Soprano {
-
-class ResultSet::Private : public QSharedData
+class Soprano::ResultSet::Private : public QSharedData
 {
 public:
     Private()
@@ -44,80 +44,99 @@ public:
     QueryResult* queryResult;
 };
 
-ResultSet::ResultSet()
+
+Soprano::ResultSet::ResultSet()
 {
     d = new Private;
 }
 
-ResultSet::ResultSet( QueryResult *qr )
+
+Soprano::ResultSet::ResultSet( QueryResult *qr )
 {
     d = new Private;
     d->queryResult = qr;
 }
 
-ResultSet::ResultSet( const ResultSet& other)
+
+Soprano::ResultSet::ResultSet( const ResultSet& other)
 {
     d = other.d;
 }
 
-ResultSet::~ResultSet()
+
+Soprano::ResultSet::~ResultSet()
 {
 }
 
-ResultSet& ResultSet::operator=( const ResultSet& other )
+
+Soprano::ResultSet& Soprano::ResultSet::operator=( const ResultSet& other )
 {
     d = other.d;
     return *this;
 }
 
-bool ResultSet::next() const
+
+bool Soprano::ResultSet::next()
 {
     return ( d->queryResult ? d->queryResult->next() : false );
 }
 
-Soprano::Node ResultSet::binding( const QString &name ) const
+
+Soprano::Statement Soprano::ResultSet::currentStatement() const
+{
+    return ( d->queryResult ? d->queryResult->currentStatement() : Statement() );
+}
+
+
+Soprano::Node Soprano::ResultSet::binding( const QString &name ) const
 {
     return ( d->queryResult ? d->queryResult->binding( name ) : Node() );
 }
 
-Soprano::Node ResultSet::binding( int offset ) const
+
+Soprano::Node Soprano::ResultSet::binding( int offset ) const
 {
     return ( d->queryResult ? d->queryResult->binding( offset ) : Node() );
 }
 
-int ResultSet::bindingCount() const
+
+int Soprano::ResultSet::bindingCount() const
 {
     return ( d->queryResult ? d->queryResult->bindingCount() : 0 );
 }
 
-QStringList ResultSet::bindingNames() const
+
+QStringList Soprano::ResultSet::bindingNames() const
 {
     return ( d->queryResult ? d->queryResult->bindingNames() : QStringList() );
 }
 
-bool ResultSet::isGraph() const
+
+bool Soprano::ResultSet::isGraph() const
 {
     return ( d->queryResult ? d->queryResult->isGraph() : false );
 }
 
-bool ResultSet::isBinding() const
+
+bool Soprano::ResultSet::isBinding() const
 {
     return ( d->queryResult ? d->queryResult->isBinding() : false );
 }
 
-bool ResultSet::isBool() const
+
+bool Soprano::ResultSet::isBool() const
 {
     return ( d->queryResult ? d->queryResult->isBool() : false );
 }
 
-bool ResultSet::boolValue() const
+
+bool Soprano::ResultSet::boolValue() const
 {
     return ( d->queryResult ? d->queryResult->boolValue() : false );
 }
 
-Soprano::Model *ResultSet::model() const
+
+Soprano::Model *Soprano::ResultSet::model() const
 {
     return ( d->queryResult ? d->queryResult->model() : 0 );
-}
-
 }

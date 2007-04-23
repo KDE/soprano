@@ -2,6 +2,7 @@
  * This file is part of Soprano Project.
  *
  * Copyright (C) 2006 Daniele Galdi <daniele.galdi@gmail.com>
+ * Copyright (C) 2007 Sebastian Trueg <trueg@kde.org>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -28,34 +29,37 @@
 
 namespace Soprano {
 
-class Model;
-class Node;
+    class Model;
+    class Node;
+    class Statement;
 
-class SOPRANO_EXPORT QueryResult
-{
-public:
-  virtual ~QueryResult();
+    class SOPRANO_EXPORT QueryResult
+	{
+	public:
+	    virtual ~QueryResult();
 
-  virtual bool next() const = 0;
+	    virtual bool next() = 0;
 
-  virtual Node binding( const QString &name ) const = 0;
+	    virtual Statement currentStatement() const = 0;
 
-  virtual Node binding( int offset ) const = 0;
+	    virtual Node binding( const QString &name ) const = 0;
 
-  virtual int bindingCount() const = 0;
+	    virtual Node binding( int offset ) const = 0;
 
-  virtual QStringList bindingNames() const = 0;
+	    virtual int bindingCount() const = 0;
 
-  virtual bool isGraph() const = 0;
+	    virtual QStringList bindingNames() const = 0;
 
-  virtual bool isBinding() const = 0;
+	    virtual bool isGraph() const = 0;
 
-  virtual bool isBool() const = 0;
+	    virtual bool isBinding() const = 0;
 
-  virtual bool boolValue() const = 0;
+	    virtual bool isBool() const = 0;
 
-  virtual Model *model() const = 0;
-};
+	    virtual bool boolValue() const = 0;
+
+	    virtual Model *model() const = 0;
+	};
 
 }
 

@@ -30,139 +30,203 @@
 #include "redlandworld.h"
 #include "redlandmodel.h"
 
-namespace Soprano {
-  namespace Redland {
+#include "redland_stream_adapter.h"
 
-class RedlandQueryResult::Private
+#include <redland.h>
+
+class Soprano::Redland::RedlandQueryResult::Private
 {
 public:
-  Private() : result(0L)
-  {}
-  librdf_query_results *result;
+    Private()
+        : result( 0 ),
+          stream( 0 )
+    {}
 
-  QStringList names;
-  bool first;
+    librdf_query_results *result;
+
+    librdf_stream* stream;
+
+    QStringList names;
+    bool first;
 };
 
-RedlandQueryResult::RedlandQueryResult( librdf_query_results *result )
+
+Soprano::Redland::RedlandQueryResult::RedlandQueryResult( librdf_query_results *result )
 {
-  d = new Private;
-  d->result = result;
+    d = new Private;
+    d->result = result;
 
-  Q_ASSERT( d->result != 0L );
+    Q_ASSERT( d->result != 0L );
 
-  for (int offset = 0; offset < bindingCount(); offset++) {
-    d->names.append( QString( librdf_query_results_get_binding_name( result, offset ) ) );
-  }
-  d->first = true;
-}
-
-RedlandQueryResult::~RedlandQueryResult()
-{
-  librdf_free_query_results( d->result );
-  delete d;
-}
-
-bool RedlandQueryResult::next() const
-{
-  bool hasNext = librdf_query_results_finished( d->result ) == 0;
-
-  if ( !d->first )
-  {
-    hasNext = ( librdf_query_results_next( d->result ) == 0 );
-  }
-  else
-  {
-    d->first = false;
-    if ( isBool() || isGraph() )
-    {
-      hasNext = true;
+    for (int offset = 0; offset < bindingCount(); offset++) {
+        d->names.append( QString( librdf_query_results_get_binding_name( result, offset ) ) );
     }
-  }
-
-  return hasNext;
+    d->first = true;
 }
 
-Soprano::Node RedlandQueryResult::binding( const QString &name ) const
+
+Soprano::Redland::RedlandQueryResult::~RedlandQueryResult()
 {
-  librdf_node *node = librdf_query_results_get_binding_value_by_name( d->result, (const char *)name.toLatin1().data() );
-  if ( !node )
-  {
-    // Return a not valid node (empty)
-    return Soprano::Node();
-  }
+    librdf_free_query_results( d->result );
+    if ( d->stream ) {
+        librdf_free_stream( d->stream );
+    }
 
-  Soprano::Node tmp = Util::createNode( node );
-  Util::freeNode( node );
-
-  return tmp;
+    delete d;
 }
 
-Soprano::Node RedlandQueryResult::binding( int offset ) const
+
+bool Soprano::Redland::RedlandQueryResult::next()
 {
-  librdf_node *node = librdf_query_results_get_binding_value( d->result, offset );
-  if ( !node )
-  {
-    // Return a not valid node (empty)
-    return Soprano::Node();
-  }
+    if ( isBool() ) {
+        return false;
+    }
+    else if ( isBinding() ) {
+        bool hasNext = librdf_query_results_finished( d->result ) == 0;
 
-  Soprano::Node tmp = Util::createNode( node );
-  Util::freeNode( node );
+        if ( !d->first ) {
+            hasNext = ( librdf_query_results_next( d->result ) == 0 );
+        }
+        else {
+            d->first = false;
+        }
 
-  return tmp;
+        return hasNext;
+    }
+    else if ( isGraph() ) {
+        if ( d->first ) {
+            d->stream = librdf_query_results_as_stream( d->result );
+            d->first = false;
+        }
+        else if ( d->stream ) {
+            return librdf_stream_end( d->stream ) == 0;
+        }
+        else {
+            // we cannot reuse a result and it has already been used in model()
+            return false;
+        }
+    }
 }
 
-int RedlandQueryResult::bindingCount() const
+
+Soprano::Statement Soprano::Redland::RedlandQueryResult::currentStatement() const
 {
-  return librdf_query_results_get_count( d->result );
+    if ( d->stream ) {
+        librdf_statement *st = librdf_stream_get_object( d->stream );
+
+        if ( !st ) {
+            return Soprano::Statement();
+        }
+        else {
+            Statement copy = Util::createStatement( st );
+
+            // Move to the next element
+            librdf_stream_next( d->stream );
+
+            return copy;
+        }
+    }
+    else {
+        return Statement();
+    }
 }
 
-QStringList RedlandQueryResult::bindingNames() const
+Soprano::Node Soprano::Redland::RedlandQueryResult::binding( const QString &name ) const
 {
-  return d->names;
+    librdf_node *node = librdf_query_results_get_binding_value_by_name( d->result, (const char *)name.toLatin1().data() );
+    if ( !node )
+    {
+        // Return a not valid node (empty)
+        return Soprano::Node();
+    }
+
+    Soprano::Node tmp = Util::createNode( node );
+    Util::freeNode( node );
+
+    return tmp;
 }
 
-bool RedlandQueryResult::isGraph() const
+
+Soprano::Node Soprano::Redland::RedlandQueryResult::binding( int offset ) const
 {
-  return librdf_query_results_is_graph( d->result ) != 0;
+    librdf_node *node = librdf_query_results_get_binding_value( d->result, offset );
+    if ( !node )
+    {
+        // Return a not valid node (empty)
+        return Soprano::Node();
+    }
+
+    Soprano::Node tmp = Util::createNode( node );
+    Util::freeNode( node );
+
+    return tmp;
 }
 
-bool RedlandQueryResult::isBinding() const
+
+int Soprano::Redland::RedlandQueryResult::bindingCount() const
 {
-  return librdf_query_results_is_bindings( d->result ) != 0;
+    return librdf_query_results_get_count( d->result );
 }
 
-bool RedlandQueryResult::isBool() const
+
+QStringList Soprano::Redland::RedlandQueryResult::bindingNames() const
 {
-  return librdf_query_results_is_boolean( d->result ) != 0;
+    return d->names;
 }
 
-bool RedlandQueryResult::boolValue() const
+
+bool Soprano::Redland::RedlandQueryResult::isGraph() const
 {
-  return librdf_query_results_get_boolean( d->result ) > 0;
+    return librdf_query_results_is_graph( d->result ) != 0;
 }
 
-Soprano::Model *RedlandQueryResult::model() const
+
+bool Soprano::Redland::RedlandQueryResult::isBinding() const
 {
-  // Create a memory model
-  librdf_storage *storage = librdf_new_storage( World::self()->worldPtr(), (char *)"memory", 0, 0 );
-  if ( !storage ) {
-    return 0;
-  }
-
-  librdf_model *model = librdf_new_model( World::self()->worldPtr(), storage, 0 );
-  if ( !model ) {
-    librdf_free_storage( storage );
-    return 0;
-  }
-
-  librdf_stream *stream = librdf_query_results_as_stream( d->result );
-  librdf_model_add_statements( model, stream );
-  librdf_free_stream( stream );
-
-  return new RedlandModel( model, storage );
+    return librdf_query_results_is_bindings( d->result ) != 0;
 }
 
+
+bool Soprano::Redland::RedlandQueryResult::isBool() const
+{
+    return librdf_query_results_is_boolean( d->result ) != 0;
 }
+
+
+bool Soprano::Redland::RedlandQueryResult::boolValue() const
+{
+    return librdf_query_results_get_boolean( d->result ) > 0;
+}
+
+
+Soprano::Model *Soprano::Redland::RedlandQueryResult::model() const
+{
+    if ( !isGraph() ) {
+        return 0;
+    }
+
+    // we cannot reuse a result. :(
+    if ( !d->first ) {
+        return 0;
+    }
+
+    d->first = false;
+
+    // Create a memory model
+    librdf_storage *storage = librdf_new_storage( World::self()->worldPtr(), (char *)"memory", 0, 0 );
+    if ( !storage ) {
+        return 0;
+    }
+
+    librdf_model *model = librdf_new_model( World::self()->worldPtr(), storage, 0 );
+    if ( !model ) {
+        librdf_free_storage( storage );
+        return 0;
+    }
+
+    librdf_stream *stream = librdf_query_results_as_stream( d->result );
+    librdf_model_add_statements( model, stream );
+    librdf_free_stream( stream );
+
+    return new RedlandModel( model, storage );
 }

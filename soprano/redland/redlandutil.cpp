@@ -80,6 +80,8 @@ librdf_statement *Soprano::Redland::Util::createStatement( const Statement &stat
   librdf_node *predicate = createNode( statement.predicate() );
   librdf_node *object = createNode( statement.object() );
 
+  // FIXME: what about the context?
+
   return librdf_new_statement_from_nodes( world, subject, predicate, object );
 }
 

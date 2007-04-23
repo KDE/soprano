@@ -28,48 +28,47 @@
 
 #include "queryresult.h"
 
-namespace Soprano 
-{
+namespace Soprano {
+    class Node;
+    class Model;
 
-class Node;
-class Model;
+    namespace Redland {
 
-namespace Redland
-{
+	class RedlandQueryResult: public Soprano::QueryResult
+	    {
+	    public:
+		RedlandQueryResult( librdf_query_results *result );
 
-class RedlandQueryResult: public Soprano::QueryResult
-{
-public:
-  RedlandQueryResult( librdf_query_results *result );
+		~RedlandQueryResult();
 
-  ~RedlandQueryResult();
-
-  bool next() const;
+		bool next();
     
-  Soprano::Node binding( const QString &name ) const;
+		Statement currentStatement() const;
 
-  Soprano::Node binding( int offset ) const;
+		Soprano::Node binding( const QString &name ) const;
 
-  int bindingCount() const;
+		Soprano::Node binding( int offset ) const;
 
-  QStringList bindingNames() const;
+		int bindingCount() const;
 
-  bool isGraph() const;
+		QStringList bindingNames() const;
 
-  bool isBinding() const;
+		bool isGraph() const;
 
-  bool isBool() const;
+		bool isBinding() const;
 
-  bool boolValue() const;
+		bool isBool() const;
 
-  Model *model() const;
+		bool boolValue() const;
 
-private:
-  class Private;
-  Private *d;
-};
+		Model *model() const;
+
+	    private:
+		class Private;
+		Private *d;
+	    };
  
-}
+    }
 }
 
 #endif // SOPRANO_BACKEND_REDLAND_QUERY_RESULT_H

@@ -24,6 +24,7 @@
 
 #include <QtTest/QTest>
 #include <QtCore/QList>
+#include <QtCore/QDebug>
 
 
 // FIXME: Use the QTest framework to create data tables
@@ -308,29 +309,35 @@ void SopranoModelTest::testRemoveAllStatement()
 
 void SopranoModelTest::testGraphQuery()
 {
-  /*Query query("DESCRIBE ?a", Query::SPARQL);
+    Query query("CONSTRUCT { ?s ?p ?o } WHERE { ?s ?p ?o . }", Query::SPARQL);
 
-  ResultSet rs = m_model->executeQuery( query );
-  QVERIFY( !rs.next() );
+    ResultSet rs = m_model->executeQuery( query );
+    QVERIFY( rs.isGraph() );
+    QVERIFY( !rs.isBinding() );
+    QVERIFY( !rs.isBool() );
 
-  QVERIFY( rs.isGraph() );
-  QVERIFY( !rs.isBinding() );
-  QVERIFY( !rs.isBool() );
+    // test the model creation
+    Model *model = rs.model();
+    QVERIFY( model != 0L);
 
-  Model *model = rs.model();
-  QVERIFY( model != 0L);
+    StatementIterator iter = model->listStatements();
+    int cnt = 0;
+    while ( iter.hasNext() ) {
+        ++cnt;
+        Statement st = iter.next();
+    }
+    QCOMPARE ( cnt, 4 );
 
-  StatementIterator *iter = model->listStatements();
-  int cnt = 0;
-  while ( iter->hasNext() )
-  {
-    ++cnt;
-    Statement st = iter->next();
-  }
-  QVERIFY ( cnt == 2 );
+    delete model;
 
-  delete iter;
-  delete model;*/
+    // test the iteration
+    rs = m_model->executeQuery( query );
+    cnt = 0;
+    while ( rs.next() ) {
+        ++cnt;
+        Statement st = rs.currentStatement();
+    }
+    QCOMPARE( cnt, 4 );
 }
 
 void SopranoModelTest::testBooleanQuery()
@@ -338,7 +345,7 @@ void SopranoModelTest::testBooleanQuery()
   Query query("ASK {?a ?b ?c}", Query::SPARQL);
 
   ResultSet res = m_model->executeQuery( query );
-  QVERIFY( res.next() );
+  QVERIFY( !res.next() );
 
   QVERIFY( !res.isGraph() );
   QVERIFY( !res.isBinding() );

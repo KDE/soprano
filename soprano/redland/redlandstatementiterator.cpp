@@ -29,30 +29,31 @@
 
 #include "redland_stream_adapter.h"
 
-namespace Soprano {
-  namespace Redland {
 
-RedlandStatementIterator::RedlandStatementIterator( stream_adapter *s ): m_stream( s )
+Soprano::Redland::RedlandStatementIterator::RedlandStatementIterator( stream_adapter *s ): m_stream( s )
 {
 }
 
-RedlandStatementIterator::~RedlandStatementIterator()
+
+Soprano::Redland::RedlandStatementIterator::~RedlandStatementIterator()
 {
-  if ( !m_stream->impl )
-  {
-    // Model is dead!
-    free_stream_adapter( m_stream );
-  } else {
-    free_stream_adapter_backend( m_stream);
+  if ( !m_stream->impl ) {
+      // Model is dead!
+      free_stream_adapter( m_stream );
+  }
+  else {
+      free_stream_adapter_backend( m_stream );
   }
 }
 
-bool RedlandStatementIterator::hasNext() const
+
+bool Soprano::Redland::RedlandStatementIterator::hasNext() const
 {
   return stream_adapter_end( m_stream ) == 0;
 }
 
-Soprano::Statement RedlandStatementIterator::next() const
+
+Soprano::Statement Soprano::Redland::RedlandStatementIterator::next() const
 {
   // FIXME: use librdf_stream_get_context to get the context of the statement
 
@@ -70,7 +71,4 @@ Soprano::Statement RedlandStatementIterator::next() const
   stream_adapter_next( m_stream );
 
   return copy;
-}
-
-}
 }

@@ -2,6 +2,7 @@
  * This file is part of Soprano Project.
  *
  * Copyright (C) 2006 Daniele Galdi <daniele.galdi@gmail.com>
+ * Copyright (C) 2007 Sebastian Trueg <trueg@kde.org>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -34,6 +35,7 @@ namespace Soprano {
     class Model;
     class Node;
     class QueryResult;
+    class Statement;
 
     class SOPRANO_EXPORT ResultSet
     {
@@ -46,7 +48,18 @@ namespace Soprano {
 
 	ResultSet& operator=( const ResultSet& );
 
-	bool next() const;
+	/**
+	 * Advance to the next entry (statement or bindingset)
+	 * \return true if the end of the ResultSet was not reached yet.
+	 * false if no more entries are found or if the ResultSet was
+	 * already invalidated by a call to model.
+	 */
+	bool next();
+
+	/**
+	 * Retrieve the current Statement after a call to next.
+	 */
+	Statement currentStatement() const;
 
 	Node binding( const QString &name ) const;
 
@@ -65,11 +78,17 @@ namespace Soprano {
 	bool boolValue() const;
 
 	/**
+	 * Retrieve a Model containing all Statements from a graph query.
+	 *
+	 * After calling this method the ResultSet is invalidated, i.e. can not
+	 * be reused.
+	 *
+	 * \return A new Model containing all result Statements from the graph query
+	 * or 0 in case this ResultSet does not represent a graph query or next has
+	 * already been called to iterate over the results.
 	 * Caution: the caller has to take care of deleting the 
 	 * returned model!
 	 */
-	// FIXME: what about scalability here? Wouldn't it make more
-	// sense to have some kind of iterator here instead of a model?
 	Model *model() const;
 
     private:

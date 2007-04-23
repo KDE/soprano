@@ -73,12 +73,11 @@ RedlandModel::~RedlandModel()
   while ( iter.hasNext() )
   {
     stream_adapter *stream = iter.next();
-    if ( !stream->impl )
-    {
-      // Statement is dead!
-      free_stream_adapter( stream );
-    } else {
-      free_stream_adapter_backend( stream);
+    if ( !stream->impl ) {
+        free_stream_adapter( stream );
+    }
+    else {
+        free_stream_adapter_backend( stream );
     }
   }
 
