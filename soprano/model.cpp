@@ -47,16 +47,13 @@ Soprano::Model::~Model()
 Soprano::ErrorCode Soprano::Model::add( const Model &model )
 {
     StatementIterator stmi = model.listStatements();
-    if ( !stmi.isValid() )
-    {
+    if ( !stmi.isValid() ) {
         return ERROR_UNKNOW;
     }
 
-    while ( stmi.hasNext() )
-    {
+    while ( stmi.hasNext() ) {
         ErrorCode c = add( stmi.next() );
-        if ( ERROR_NONE != c )
-        {
+        if ( ERROR_NONE != c ) {
             return c;
         }
     }
@@ -66,16 +63,13 @@ Soprano::ErrorCode Soprano::Model::add( const Model &model )
 
 Soprano::ErrorCode Soprano::Model::add( const StatementIterator &iter, const Node &context )
 {
-    if ( !iter.isValid() )
-    {
+    if ( !iter.isValid() ) {
         return ERROR_UNKNOW;
     }
 
-    while ( iter.hasNext() )
-    {
+    while ( iter.hasNext() ) {
         ErrorCode c = add( iter.next(), context );
-        if ( ERROR_NONE != c )
-        {
+        if ( ERROR_NONE != c ) {
             return c;
         }
     }
@@ -85,16 +79,13 @@ Soprano::ErrorCode Soprano::Model::add( const StatementIterator &iter, const Nod
 
 Soprano::ErrorCode Soprano::Model::add( const StatementIterator &iter )
 {
-    if ( !iter.isValid() )
-    {
+    if ( !iter.isValid() ) {
         return ERROR_UNKNOW;
     }
 
-    while ( iter.hasNext() )
-    {
+    while ( iter.hasNext() ) {
         ErrorCode c = add( iter.next() );
-        if ( ERROR_NONE != c )
-        {
+        if ( ERROR_NONE != c ) {
             return c;
         }
     }
@@ -105,11 +96,9 @@ Soprano::ErrorCode Soprano::Model::add( const StatementIterator &iter )
 Soprano::ErrorCode Soprano::Model::add( const QList<Statement> &statements, const Node &context )
 {
     for( QList<Statement>::const_iterator it = statements.constBegin();
-         it != statements.constEnd(); ++it )
-    {
+         it != statements.constEnd(); ++it ) {
         ErrorCode c = add( *it, context );
-        if ( ERROR_NONE != c )
-        {
+        if ( ERROR_NONE != c ) {
             return c;
         }
     }
@@ -122,11 +111,9 @@ Soprano::ErrorCode Soprano::Model::add( const QList<Statement> &statements )
     // FIXME: why not call add with an empty context here?
 
     QListIterator<Statement> iter(statements);
-    while ( iter.hasNext() )
-    {
+    while ( iter.hasNext() ) {
         ErrorCode c = add( iter.next() );
-        if ( ERROR_NONE != c )
-        {
+        if ( ERROR_NONE != c ) {
             return c;
         }
     }
@@ -152,11 +139,9 @@ Soprano::StatementIterator Soprano::Model::listStatements( const Node &subject, 
 Soprano::ErrorCode Soprano::Model::removeAll( const Statement &statement, const Node &context )
 {
     StatementIterator iter = listStatements(statement, context);
-    while ( iter.hasNext() )
-    {
+    while ( iter.hasNext() ) {
         ErrorCode c = remove( iter.next() );
-        if ( c != ERROR_NONE )
-        {
+        if ( c != ERROR_NONE ) {
             return c;
         }
     }
