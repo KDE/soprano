@@ -29,157 +29,153 @@
 #include <QtCore/QList>
 
 
-namespace Soprano {
+class Soprano::Model::Private
+{
+public:
+};
 
-    class Model::Private
-    {
-    public:
-    };
+Soprano::Model::Model()
+    : d( new Private() )
+{
+}
 
-    Model::Model()
-        : d( new Private() )
+Soprano::Model::~Model()
+{
+    delete d;
+}
+
+Soprano::ErrorCode Soprano::Model::add( const Model &model )
+{
+    StatementIterator stmi = model.listStatements();
+    if ( !stmi.isValid() )
     {
+        return ERROR_UNKNOW;
     }
 
-    Model::~Model()
+    while ( stmi.hasNext() )
     {
-        delete d;
-    }
-
-    ErrorCode Model::add( const Model &model )
-    {
-        StatementIterator stmi = model.listStatements();
-        if ( !stmi.isValid() )
+        ErrorCode c = add( stmi.next() );
+        if ( ERROR_NONE != c )
         {
-            return ERROR_UNKNOW;
+            return c;
         }
+    }
 
-        while ( stmi.hasNext() )
+    return ERROR_NONE;
+}
+
+Soprano::ErrorCode Soprano::Model::add( const StatementIterator &iter, const Node &context )
+{
+    if ( !iter.isValid() )
+    {
+        return ERROR_UNKNOW;
+    }
+
+    while ( iter.hasNext() )
+    {
+        ErrorCode c = add( iter.next(), context );
+        if ( ERROR_NONE != c )
         {
-            ErrorCode c = add( stmi.next() );
-            if ( ERROR_NONE != c )
-            {
-                return c;
-            }
+            return c;
         }
-
-        return ERROR_NONE;
     }
 
-    ErrorCode Model::add( const StatementIterator &iter, const Node &context )
+    return ERROR_NONE;
+}
+
+Soprano::ErrorCode Soprano::Model::add( const StatementIterator &iter )
+{
+    if ( !iter.isValid() )
     {
-        if ( !iter.isValid() )
+        return ERROR_UNKNOW;
+    }
+
+    while ( iter.hasNext() )
+    {
+        ErrorCode c = add( iter.next() );
+        if ( ERROR_NONE != c )
         {
-            return ERROR_UNKNOW;
+            return c;
         }
+    }
 
-        while ( iter.hasNext() )
+    return ERROR_NONE;
+}
+
+Soprano::ErrorCode Soprano::Model::add( const QList<Statement> &statements, const Node &context )
+{
+    for( QList<Statement>::const_iterator it = statements.constBegin();
+         it != statements.constEnd(); ++it )
+    {
+        ErrorCode c = add( *it, context );
+        if ( ERROR_NONE != c )
         {
-            ErrorCode c = add( iter.next(), context );
-            if ( ERROR_NONE != c )
-            {
-                return c;
-            }
+            return c;
         }
-
-        return ERROR_NONE;
     }
 
-    ErrorCode Model::add( const StatementIterator &iter )
+    return ERROR_NONE;
+}
+
+Soprano::ErrorCode Soprano::Model::add( const QList<Statement> &statements )
+{
+    // FIXME: why not call add with an empty context here?
+
+    QListIterator<Statement> iter(statements);
+    while ( iter.hasNext() )
     {
-        if ( !iter.isValid() )
+        ErrorCode c = add( iter.next() );
+        if ( ERROR_NONE != c )
         {
-            return ERROR_UNKNOW;
+            return c;
         }
+    }
 
-        while ( iter.hasNext() )
+    return ERROR_NONE;
+}
+
+bool Soprano::Model::isEmpty() const
+{
+    return size() == 0;
+}
+
+Soprano::StatementIterator Soprano::Model::listStatements() const
+{
+    return listStatements( Statement() );
+}
+
+Soprano::StatementIterator Soprano::Model::listStatements( const Node &subject, const Node &predicate, const Node &object ) const
+{
+    return listStatements( Statement(subject, predicate, object) );
+}
+
+Soprano::ErrorCode Soprano::Model::removeAll( const Statement &statement, const Node &context )
+{
+    StatementIterator iter = listStatements(statement, context);
+    while ( iter.hasNext() )
+    {
+        ErrorCode c = remove( iter.next() );
+        if ( c != ERROR_NONE )
         {
-            ErrorCode c = add( iter.next() );
-            if ( ERROR_NONE != c )
-            {
-                return c;
-            }
+            return c;
         }
-
-        return ERROR_NONE;
     }
 
-    ErrorCode Model::add( const QList<Statement> &statements, const Node &context )
-    {
-        for( QList<Statement>::const_iterator it = statements.constBegin();
-             it != statements.constEnd(); ++it )
-        {
-            ErrorCode c = add( *it, context );
-            if ( ERROR_NONE != c )
-            {
-                return c;
-            }
-        }
-
-        return ERROR_NONE;
-    }
-
-    ErrorCode Model::add( const QList<Statement> &statements )
-    {
-        // FIXME: why not call add with an empty context here?
-
-        QListIterator<Statement> iter(statements);
-        while ( iter.hasNext() )
-        {
-            ErrorCode c = add( iter.next() );
-            if ( ERROR_NONE != c )
-            {
-                return c;
-            }
-        }
-
-        return ERROR_NONE;
-    }
-
-    bool Model::isEmpty() const
-    {
-        return size() == 0;
-    }
-
-    StatementIterator Model::listStatements() const
-    {
-        return listStatements( Statement() );
-    }
-
-    StatementIterator Model::listStatements( const Node &subject, const Node &predicate, const Node &object ) const
-    {
-        return listStatements( Statement(subject, predicate, object) );
-    }
-
-    ErrorCode Model::removeAll( const Statement &statement, const Node &context )
-    {
-        StatementIterator iter = listStatements(statement, context);
-        while ( iter.hasNext() )
-        {
-            ErrorCode c = remove( iter.next() );
-            if ( c != ERROR_NONE )
-            {
-                return c;
-            }
-        }
-
-        return ERROR_NONE;
-    }
+    return ERROR_NONE;
+}
 
 
-    ErrorCode Model::removeAll( const Statement &statement )
-    {
-        return removeAll( statement, Node() );
-    }
+Soprano::ErrorCode Soprano::Model::removeAll( const Statement &statement )
+{
+    return removeAll( statement, Node() );
+}
 
-    ErrorCode Model::removeAll( const Node &subject, const Node &predicate, const Node &object )
-    {
-        return removeAll( Statement( subject, predicate, object ) );
-    }
+Soprano::ErrorCode Soprano::Model::removeAll( const Node &subject, const Node &predicate, const Node &object )
+{
+    return removeAll( Statement( subject, predicate, object ) );
+}
 
-    ErrorCode Model::removeAll()
-    {
-        return removeAll( Node(), Node(), Node() );
-    }
-
+Soprano::ErrorCode Soprano::Model::removeAll()
+{
+    return removeAll( Node(), Node(), Node() );
 }
