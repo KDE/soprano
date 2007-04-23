@@ -64,6 +64,12 @@ namespace Soprano {
 
 	bool boolValue() const;
 
+	/**
+	 * Caution: the caller has to take care of deleting the 
+	 * returned model!
+	 */
+	// FIXME: what about scalability here? Wouldn't it make more
+	// sense to have some kind of iterator here instead of a model?
 	Model *model() const;
 
     private:
