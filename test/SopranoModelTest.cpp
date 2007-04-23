@@ -177,7 +177,7 @@ void SopranoModelTest::testListStatements()
     QString literal = "Literal value" + QString::number(i);
 
     Node predicate( QUrl( "soprano#" + property) );
-    Node object( literal );
+    Node object = LiteralValue( literal );
 
     Statement st(resource_1, predicate, object);
     statements.append( st );
@@ -189,7 +189,7 @@ void SopranoModelTest::testListStatements()
     QString literal = "Literal value" + QString::number(i + 50);
 
     Node predicate( QUrl( "soprano#" + property) );
-    Node object( literal );
+    Node object = LiteralValue( literal );
 
     Statement st(resource_2, predicate, object);
     statements.append( st );
@@ -201,7 +201,7 @@ void SopranoModelTest::testListStatements()
     QString literal = "Literal value" + QString::number(i + 100);
 
     Node predicate( QUrl( "soprano#" + property) );
-    Node object( literal );
+    Node object = LiteralValue( literal );
 
     Statement st(resource_3, predicate, object);
     statements.append( st );

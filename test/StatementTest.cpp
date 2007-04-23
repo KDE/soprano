@@ -39,7 +39,7 @@ void StatementTest::testCreateStatement()
 {
   Node subject(QUrl("uri:soprano:test"));
   Node predicate(QUrl("uri:soprano:predicate"));
-  Node object(QString("Literal value"));
+  Node object(LiteralValue("Literal value"));
 
   Statement st(subject, predicate, object);
 
@@ -50,7 +50,7 @@ void StatementTest::testStatementInvariant()
 {
   Node subject(QUrl("uri:soprano:test"));
   Node predicate(QUrl("uri:soprano:predicate"));
-  Node object(QString("Literal value"));
+  Node object(LiteralValue("Literal value"));
 
   Statement st(subject, predicate, object);
 

@@ -42,6 +42,7 @@ class Statement;
 class StatementIterator;
 
 // FIXME: what about a QList<Statement> allStatements method?
+// FIXME: add remove( QList<Statement> ) method (and then use it in the Soprano RDF repo)
 class SOPRANO_EXPORT Model
 {
 public:

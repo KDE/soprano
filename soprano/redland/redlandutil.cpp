@@ -44,10 +44,10 @@ Soprano::Node Util::createNode( librdf_node *node )
     librdf_uri* datatype = librdf_node_get_literal_value_datatype_uri( node );
     if ( !datatype )
     {
-      return Soprano::Node( QString( (const char *)librdf_node_get_literal_value( node ) ) );
+      return Soprano::Node( Soprano::LiteralValue( (const char *)librdf_node_get_literal_value( node ) ) );
     }
-    return Soprano::Node( (const char *)librdf_node_get_literal_value( node ),
-			  QUrl::fromEncoded( (const char *)librdf_uri_as_string( datatype ), QUrl::StrictMode ),
+    return Soprano::Node( Soprano::LiteralValue::fromString( (const char *)librdf_node_get_literal_value( node ),
+                                                             QUrl::fromEncoded( (const char *)librdf_uri_as_string( datatype ), QUrl::StrictMode ) ),
 			  librdf_node_get_literal_value_language( node ) );
   }
 
@@ -66,7 +66,7 @@ librdf_node *Util::createNode( const Node &node )
   }
   else if ( node.isLiteral() ) {
     return librdf_new_node_from_typed_literal( world,
-					       (unsigned char *)node.literal().toLatin1().data(),
+					       (unsigned char *)node.literal().toString().toLatin1().data(),
 					       node.language().toLatin1().data(),
 					       librdf_new_uri( world, (const unsigned char*)node.dataType().toString().toLatin1().data() ) );
   }

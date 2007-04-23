@@ -31,29 +31,29 @@ using namespace Soprano;
 class Statement::Private : public QSharedData
 {
 public:
-  Node subject;
-  Node predicate;
-  Node object;
-  Node context;
+    Node subject;
+    Node predicate;
+    Node object;
+    Node context;
 };
 
 Statement::Statement()
 {
-  d = new Private;
+    d = new Private;
 }
 
 Statement::Statement( const Statement &other )
 {
-  d = other.d;
+    d = other.d;
 }
 
 Statement::Statement( const Node &subject, const Node &predicate, const Node &object, const Node &context)
 {
-  d = new Private;
-  d->subject = subject;
-  d->predicate = predicate;
-  d->object = object;
-  d->context = context;
+    d = new Private;
+    d->subject = subject;
+    d->predicate = predicate;
+    d->object = object;
+    d->context = context;
 }
 
 Statement::~Statement()
@@ -62,76 +62,85 @@ Statement::~Statement()
 
 Statement& Statement::operator=( const Statement& other )
 {
-  d = other.d;
-  return *this;
+    d = other.d;
+    return *this;
 }
 
 bool Statement::operator==( const Statement& other )
 {
-  return ( d->subject == other.subject() &&
-           d->predicate == other.predicate() &&
-           d->object == other.object() &&
-           d->context == other.context() );
+    return ( d->subject == other.subject() &&
+             d->predicate == other.predicate() &&
+             d->object == other.object() &&
+             d->context == other.context() );
 }
 
 void Statement::setSubject( const Node &subject )
 {
-  // d->detach() is called automatically
-  d->subject = subject;
+    // d->detach() is called automatically
+    d->subject = subject;
 }
 
 Node Statement::subject() const
 {
-  return d->subject;
+    return d->subject;
 }
 
 void Statement::setPredicate( const Node &predicate )
 {
-  // d->detach() is called automatically
-  d->predicate = predicate;
+    // d->detach() is called automatically
+    d->predicate = predicate;
 }
 
 Node Statement::predicate() const
 {
-  return d->predicate;
+    return d->predicate;
 }
 
 void Statement::setObject( const Node &object )
 {
-  // d->detach() is called automatically
-  d->object = object;
+    // d->detach() is called automatically
+    d->object = object;
 }
 
 Node Statement::object() const
 {
-  return d->object;
+    return d->object;
 }
 
 void Statement::setContext( const Node &context )
 {
-  // d->detach() is called automatically
-  d->context = context;
+    // d->detach() is called automatically
+    d->context = context;
 }
 
 const Node &Statement::context() const
 {
-   return d->context;
+    return d->context;
 }
 
 bool Statement::isValid() const
 {
-   bool valid = d->subject.isValid() && d->predicate.isValid() && d->object.isValid();
+    bool valid = d->subject.isValid() && d->predicate.isValid() && d->object.isValid();
 
-   if ( d->context.isValid() )
-   {
-      return valid && d->context.isResource();
-   }
-   return valid;
+    if ( d->context.isValid() )
+    {
+        return valid && d->context.isResource();
+    }
+    return valid;
+}
+
+
+bool Soprano::Statement::operator==( const Statement& other ) const
+{
+    return ( d->subject == other.d->subject &&
+             d->predicate == other.d->predicate &&
+             d->object == other.d->object &&
+             d->context == other.d->context );
 }
 
 
 QDebug operator<<( QDebug s, const Soprano::Statement& sm )
 {
-  s.nospace() << "[(" << sm.subject() << "," << sm.predicate() << "," << sm.object() << "," << sm.context() << ")]";
-  return s.space();
+    s.nospace() << "[(" << sm.subject() << "," << sm.predicate() << "," << sm.object() << "," << sm.context() << ")]";
+    return s.space();
 }

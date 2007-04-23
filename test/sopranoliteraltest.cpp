@@ -30,7 +30,7 @@
 
 using namespace Soprano;
 
-Q_DECLARE_METATYPE(QVariant)
+Q_DECLARE_METATYPE(Soprano::LiteralValue)
 
 void SopranoLiteralTest::initTestCase()
 {
@@ -48,19 +48,19 @@ void SopranoLiteralTest::cleanupTestCase()
 void SopranoLiteralTest::testDataTypes_data()
 {
   QTest::addColumn<QString>( "dataType" );
-  QTest::addColumn<QVariant>( "value" );
+  QTest::addColumn<LiteralValue>( "value" );
 
-  QTest::newRow( "int" ) << "int" << QVariant( (int)-17 );
-  QTest::newRow( "long" ) << "long" << QVariant( (qlonglong)17927948235235LL );
-  QTest::newRow( "unsignedInt" ) << "unsignedInt" << QVariant( (unsigned int)17 );
-  QTest::newRow( "unsignedLong" ) << "unsignedLong" << QVariant( (qulonglong)17927948235235LL );
-  QTest::newRow( "double" ) << "double" << QVariant( (double)325423.43252 );
-  QTest::newRow( "string" ) << "string" << QVariant( QString("Hello World") );
-  QTest::newRow( "date" ) << "date" << QVariant( QDate::currentDate() );
-  QTest::newRow( "time" ) << "time" << QVariant( QTime::currentTime() );
-  QTest::newRow( "dateTime" ) << "dateTime" << QVariant( QDateTime::currentDateTime() );
-  QTest::newRow( "boolean-false" ) << "boolean" << QVariant( false );
-  QTest::newRow( "boolean-true" ) << "boolean" << QVariant( true );
+  QTest::newRow( "int" ) << "int" << LiteralValue( (int)-17 );
+  QTest::newRow( "long" ) << "long" << LiteralValue( (qlonglong)17927948235235LL );
+  QTest::newRow( "unsignedInt" ) << "unsignedInt" << LiteralValue( (unsigned int)17 );
+  QTest::newRow( "unsignedLong" ) << "unsignedLong" << LiteralValue( (qulonglong)17927948235235LL );
+  QTest::newRow( "double" ) << "double" << LiteralValue( (double)325423.43252 );
+  QTest::newRow( "string" ) << "string" << LiteralValue( QString("Hello World") );
+  QTest::newRow( "date" ) << "date" << LiteralValue( QDate::currentDate() );
+  QTest::newRow( "time" ) << "time" << LiteralValue( QTime::currentTime() );
+  QTest::newRow( "dateTime" ) << "dateTime" << LiteralValue( QDateTime::currentDateTime() );
+  QTest::newRow( "boolean-false" ) << "boolean" << LiteralValue( false );
+  QTest::newRow( "boolean-true" ) << "boolean" << LiteralValue( true );
 }
 
 
@@ -69,13 +69,12 @@ void SopranoLiteralTest::testDataTypes()
   const QString xmlSchemaNs( "http://www.w3.org/2001/XMLSchema#" );
 
   QFETCH(QString, dataType);
-  QFETCH(QVariant, value);
+  QFETCH(LiteralValue, value);
 
   Node subject( QUrl("http://iamarandomuri/yessir") );
   Node predicate( QUrl("http://iamarandomuri/yesmadam/" + QString(QTest::currentDataTag())) );
 
-  Node object( value.toString(),
-	       QUrl( xmlSchemaNs + dataType ) );
+  Node object( value );
 
   Statement s( subject, predicate, object );
 
@@ -88,8 +87,9 @@ void SopranoLiteralTest::testDataTypes()
   QVERIFY( !it.isEmpty() );
   QVERIFY( it.hasNext() );
   Statement s2 = it.next();
-  QCOMPARE( s2.object().literal(), value.toString() );
+  QCOMPARE( s2.object().literal().toString(), value.toString() );
   QCOMPARE( s2.object().dataType(), object.dataType() );
+  QCOMPARE( s2.object().literal().dataTypeUri().toString(), xmlSchemaNs + dataType );
 }
 
 

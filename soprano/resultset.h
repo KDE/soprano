@@ -28,48 +28,49 @@
 
 #include <soprano/soprano_export.h>
 
+// FIXME: The ResultSet itself should not behave like an iterator if possible
 namespace Soprano {
 
-class Model;
-class Node;
-class QueryResult;
+    class Model;
+    class Node;
+    class QueryResult;
 
-class SOPRANO_EXPORT ResultSet
-{
-public:
-  ResultSet();
-  ResultSet( const ResultSet& );
-  ResultSet( QueryResult *qr );
+    class SOPRANO_EXPORT ResultSet
+    {
+    public:
+	ResultSet();
+	ResultSet( const ResultSet& );
+	ResultSet( QueryResult *qr );
 
-  virtual ~ResultSet();
+	virtual ~ResultSet();
 
-  ResultSet& operator=( const ResultSet& );
+	ResultSet& operator=( const ResultSet& );
 
-  bool next() const;
+	bool next() const;
 
-  Node binding( const QString &name ) const;
+	Node binding( const QString &name ) const;
 
-  Node binding( int offset ) const;
+	Node binding( int offset ) const;
 
-  int bindingCount() const;
+	int bindingCount() const;
 
-  QStringList bindingNames() const;
+	QStringList bindingNames() const;
 
-  bool isGraph() const;
+	bool isGraph() const;
 
-  bool isBinding() const;
+	bool isBinding() const;
 
-  bool isBool() const;
+	bool isBool() const;
 
-  bool boolValue() const;
+	bool boolValue() const;
 
-  Model *model() const;
-private:
-  class Private;
-  QSharedDataPointer<Private> d;
-};
+	Model *model() const;
+
+    private:
+	class Private;
+	QSharedDataPointer<Private> d;
+    };
 
 }
 
 #endif // SOPRANO_RESULT_SET_H
-

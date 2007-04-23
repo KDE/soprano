@@ -25,11 +25,12 @@
 
 #include <QtCore/QUrl>
 #include <QtCore/QSharedDataPointer>
-#include <soprano/soprano_export.h>
+
+#include "soprano_export.h"
+#include "literalvalue.h"
 
 namespace Soprano
 {
-
     class SOPRANO_EXPORT Node
 	{
 	public:
@@ -47,6 +48,8 @@ namespace Soprano
 	     */
 	    Node();
 
+	    // This constructor is non-explicit for a reason: it makes creating
+	    // Statements much much easier and more readable
 	    /**
 	     * Creates a resource or blank node.
 	     *
@@ -55,31 +58,35 @@ namespace Soprano
 	     * \param type ResourceNode or BlankNode. Otherwise an empty node will
 	     *             be created.
 	     */
-	    explicit Node( const QUrl &uri, Type type = ResourceNode );
+	    Node( const QUrl &uri, Type type = ResourceNode );
 
 	    /**
 	     * Creates a literal node.
 	     *
-	     * \param value
-	     *        The value of a node. Represent a uri string if
-	     *        if type is Blank or Resource.
-	     *
-	     * \param datatype The type URI of the literal value.
+	     * \param value The value of a node. If empty the node will become
+	     *              an empty node.
 	     *
 	     * \param language The language of the literal value.
 	     *
 	     * Caution: This constructor allows to create Nodes with
 	     *          empty uris or values.
 	     */
-	    explicit Node( const QString &value,
-			   const QUrl& datatype = QUrl(),
-			   const QString& language = QString() );
+	    Node( const LiteralValue& value,
+		  const QString& language = QString() );
 
 	    Node( const Node &other );
 
-	    virtual ~Node();
+	    ~Node();
 
-	    Node &operator=( const Node& other );
+	    Node& operator=( const Node& other );
+
+	    /**
+	     * Assigns resource to this node and makes it a ResourceNode.
+	     */
+	    Node& operator=( const QUrl& resource );
+
+	    Node& operator=( const LiteralValue& literal );
+
 	    bool operator==( const Node& other ) const;
 
 	    /**
@@ -122,11 +129,12 @@ namespace Soprano
 	     * \return The Literal value if the node is a Literal node.
 	     *         An null QString otherwise.
 	     */
-	    QString literal() const;
+	    LiteralValue literal() const;
 
 	    /**
 	     * \return The datatype URI of a literal node, i.e. the XML schema type
 	     *         or an empty value if the node is not a literal.
+	     * \sa LiteralValue::dataTypeUri
 	     */
 	    QUrl dataType() const;
 

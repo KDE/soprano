@@ -35,6 +35,10 @@ SET(soprano_SRCS
     soprano.h
     error.cpp
     error.h
+    literalvalue.cpp
+    literalvalue.h
+    datetime.cpp
+    version.cpp
 )
 
 qt4_automoc(${soprano_SRCS})
@@ -44,8 +48,8 @@ ADD_LIBRARY(soprano SHARED ${soprano_SRCS})
 TARGET_LINK_LIBRARIES(soprano ${QT_QTCORE_LIBRARY})
 
 set_target_properties(soprano PROPERTIES
-        VERSION 2.0.0
-        SOVERSION 2
+        VERSION 3.0.0
+        SOVERSION 3
         DEFINE_SYMBOL MAKE_SOPRANO_LIB
 )
 
@@ -68,6 +72,8 @@ INSTALL(FILES
 	soprano_export.h
 	backend.h
 	error.h
+	literalvalue.h
+	version.h
 	DESTINATION include/soprano)
 
 add_subdirectory(redland)

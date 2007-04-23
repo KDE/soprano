@@ -30,95 +30,97 @@
 namespace Soprano
 {
 
-class SOPRANO_EXPORT Statement
-{
-public:
+    class SOPRANO_EXPORT Statement
+	{
+	public:
 
-  /**
-   * Default Constructor, build an Empty(not valid) Statement.
-   */
-  Statement();
+	    /**
+	     * Default Constructor, build an Empty(not valid) Statement.
+	     */
+	    Statement();
 
-  /**
-   * Build a Statement with the given subject, predicate and object.
-   *
-   * \param subject The subject.
-   *
-   * \param predicate The predicate.
-   *
-   * \param object The object.
-   *
-   * \param context The context node.
-   */
-  Statement( const Node &subject, const Node &predicate, const Node &object, const Node &context = Node() );
+	    /**
+	     * Build a Statement with the given subject, predicate and object.
+	     *
+	     * \param subject The subject.
+	     *
+	     * \param predicate The predicate.
+	     *
+	     * \param object The object.
+	     *
+	     * \param context The context node.
+	     */
+	    Statement( const Node &subject, const Node &predicate, const Node &object, const Node &context = Node() );
 
-  Statement( const Statement &other );
+	    Statement( const Statement &other );
 
-  virtual ~Statement();
+	    virtual ~Statement();
 
-  Statement& operator=( const Statement& other );
+	    Statement& operator=( const Statement& other );
 
-  bool operator==( const Statement& other );
+	    bool operator==( const Statement& other );
 
-  /**
-   * Change the Statement subject.
-   *
-   * \param subject The new subject.
-   */
-  void setSubject( const Node &subject );
+	    /**
+	     * Change the Statement subject.
+	     *
+	     * \param subject The new subject.
+	     */
+	    void setSubject( const Node &subject );
 
-  /**
-   * \return The subject.
-   */
-  Node subject() const;
+	    /**
+	     * \return The subject.
+	     */
+	    Node subject() const;
 
-  /**
-   * Change the Statement predicate.
-   *
-   * \param predicate The new predicate.
-   */
-  void setPredicate( const Node &predicate );
+	    /**
+	     * Change the Statement predicate.
+	     *
+	     * \param predicate The new predicate.
+	     */
+	    void setPredicate( const Node &predicate );
 
-  /**
-   * \return The predicate.
-   */
-  Node predicate() const;
+	    /**
+	     * \return The predicate.
+	     */
+	    Node predicate() const;
 
-  /**
-   * Change the Statement object.
-   *
-   * \param object The new object.
-   */
-  void setObject( const Node &object );
+	    /**
+	     * Change the Statement object.
+	     *
+	     * \param object The new object.
+	     */
+	    void setObject( const Node &object );
 
-  /**
-   * \return The object.
-   */
-  Node object() const;
+	    /**
+	     * \return The object.
+	     */
+	    Node object() const;
 
-  /**
-   * Change the Statement context.
-   *
-   * \param context The new Context.
-   */
-  void setContext( const Node &context );
+	    /**
+	     * Change the Statement context.
+	     *
+	     * \param context The new Context.
+	     */
+	    void setContext( const Node &context );
 
-  /**
-   * \return The Context node.
-   */
-  const Node &context() const;
+	    /**
+	     * \return The Context node.
+	     */
+	    const Node &context() const;
 
-  /**
-   * A Statement is valid if subject, predicate and object are valid.
-   *
-   * \return @p true if the Statement is valid, @p false otherwise
-   */
-  bool isValid() const;
+	    /**
+	     * A Statement is valid if subject, predicate and object are valid.
+	     *
+	     * \return @p true if the Statement is valid, @p false otherwise
+	     */
+	    bool isValid() const;
 
-private:
-  class Private;
-  QSharedDataPointer<Private> d;
-};
+	    bool operator==( const Statement& other ) const;
+
+	private:
+	    class Private;
+	    QSharedDataPointer<Private> d;
+	};
 
 }
 

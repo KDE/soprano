@@ -43,17 +43,18 @@ void NodeTest::testCreateResourceNode()
   QCOMPARE( node.type(), Node::ResourceNode );
   QVERIFY( node.isValid() );
   QCOMPARE( node.uri(), uri );
-  QVERIFY( node.literal().isEmpty() );
+  QVERIFY( !node.literal().isValid() );
 }
 
 void NodeTest::testCreateLiteralNode()
 {
   QString literal("Literal value");
-  Node node( literal );
+  LiteralValue lv( literal );
+  Node node( lv );
 
   QCOMPARE( node.type(), Node::LiteralNode );
   QVERIFY( node.isValid() );
-  QCOMPARE( node.literal(), literal );
+  QCOMPARE( node.literal().toString(), literal );
   QVERIFY( node.uri().isEmpty() );
 }
 
@@ -65,7 +66,7 @@ void NodeTest::testCreateBlankNode()
   QCOMPARE( node.type(), Node::BlankNode );
   QVERIFY( node.isValid() );
   QCOMPARE( node.uri(), uri );
-  QVERIFY( node.literal().isNull() );
+  QVERIFY( !node.literal().isValid() );
 }
 
 QTEST_MAIN(NodeTest)

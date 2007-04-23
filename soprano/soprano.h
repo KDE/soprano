@@ -25,6 +25,7 @@
 #include <soprano/query.h>
 #include <soprano/resultset.h>
 #include <soprano/node.h>
+#include <soprano/literalvalue.h>
 #include <soprano/statement.h>
 #include <soprano/statementiterator.h>
 #include <soprano/model.h>

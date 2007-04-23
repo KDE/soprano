@@ -27,9 +27,8 @@
 #include <QtCore/QDebug>
 
 
-using namespace Soprano;
 
-class Node::Private : public QSharedData
+class Soprano::Node::Private : public QSharedData
 {
 public:
     Private()
@@ -37,23 +36,22 @@ public:
 
     Type type;
     QUrl uri;
-    QString value;
-    QUrl dataType;
+    LiteralValue value;
     QString language;
 };
 
 
-Node::Node()
+Soprano::Node::Node()
 {
     d = new Private;
 }
 
-Node::Node( const Node &other )
+Soprano::Node::Node( const Node &other )
 {
     d = other.d;
 }
 
-Node::Node( const QUrl &uri, Type type )
+Soprano::Node::Node( const QUrl &uri, Type type )
 {
     d = new Private;
     if( !uri.isEmpty() &&
@@ -64,78 +62,79 @@ Node::Node( const QUrl &uri, Type type )
     }
 }
 
-Node::Node( const QString &value, const QUrl& datatype, const QString& lang )
+Soprano::Node::Node( const LiteralValue& value, const QString& lang )
 {
     d = new Private;
-    d->type = LiteralNode;
-    d->value = value;
-    d->dataType = datatype;
-    d->language = lang;
+    if ( value.isValid() ) {
+        d->type = LiteralNode;
+        d->value = value;
+        d->language = lang;
+    }
 }
 
-Node::~Node()
+Soprano::Node::~Node()
 {
 }
 
-bool Node::isEmpty() const
+bool Soprano::Node::isEmpty() const
 {
-    return ( d->type == Node::EmptyNode );
+    return ( d->type == Soprano::Node::EmptyNode );
 }
 
-bool Node::isValid() const
+bool Soprano::Node::isValid() const
 {
     return !isEmpty();
 }
 
-bool Node::isLiteral() const
+bool Soprano::Node::isLiteral() const
 {
-    return ( d->type == Node::LiteralNode );
+    return ( d->type == Soprano::Node::LiteralNode );
 }
 
-bool Node::isResource() const
+bool Soprano::Node::isResource() const
 {
-    return ( d->type == Node::ResourceNode );
+    return ( d->type == Soprano::Node::ResourceNode );
 }
 
-bool Node::isBlank() const
+bool Soprano::Node::isBlank() const
 {
-    return ( d->type == Node::BlankNode );
+    return ( d->type == Soprano::Node::BlankNode );
 }
 
-Node::Type Node::type() const
+Soprano::Node::Type Soprano::Node::type() const
 {
     return d->type;
 }
 
-QUrl Node::uri() const
+QUrl Soprano::Node::uri() const
 {
     // d->uri is only defined for Resource and blank Nodes
     return d->uri;
 }
 
 
-QString Node::literal() const
+Soprano::LiteralValue Soprano::Node::literal() const
 {
     if ( isLiteral() ) {
         return d->value;
     }
-    return QString();
+    return LiteralValue();
 }
 
-QUrl Node::dataType() const
+QUrl Soprano::Node::dataType() const
 {
-    return d->dataType;
+    return d->value.dataTypeUri();
 }
 
-QString Node::language() const
+QString Soprano::Node::language() const
 {
     return d->language;
 }
 
-QString Node::toString() const
+QString Soprano::Node::toString() const
 {
     if ( isLiteral() ) {
-        return d->value;
+        return d->value.toString();
     }
     if ( isResource() || isBlank() ) {
         return d->uri.toString();
@@ -143,13 +142,30 @@ QString Node::toString() const
     return QString();
 }
 
-Node& Node::operator=( const Node& other )
+Soprano::Node& Soprano::Node::operator=( const Node& other )
 {
     d = other.d;
     return *this;
 }
 
-bool Node::operator==( const Node& other ) const
+Soprano::Node& Soprano::Node::operator=( const QUrl& resource )
+{
+    d->uri = resource;
+    d->type = resource.isEmpty() ? EmptyNode : ResourceNode;
+    d->value = LiteralValue();
+    d->language.truncate( 0 );
+    return *this;
+}
+
+Soprano::Node& Soprano::Node::operator=( const LiteralValue& literal )
+{
+    d->value = literal;
+    d->uri = QUrl();
+    d->type = literal.isValid() ? LiteralNode : EmptyNode;
+    return *this;
+}
+
+bool Soprano::Node::operator==( const Node& other ) const
 {
     if (d->type != other.d->type) {
         return false;
@@ -160,7 +176,6 @@ bool Node::operator==( const Node& other ) const
     }
     else {
         return ( d->value == other.d->value &&
-                 d->dataType == other.d->dataType &&
                  d->language == other.d->language );
     }
 
@@ -175,11 +190,11 @@ QDebug operator<<( QDebug s, const Soprano::Node& n )
     case Soprano::Node::EmptyNode:
         s.nospace() << "(empty)";
         break;
-//     case Soprano::Node::BlankNode:
+//     case Soprano::Soprano::Node::BlankNode:
 //         s.nospace() << "(blank)";
 //         break;
     case Soprano::Node::LiteralNode:
-        s.nospace() << n.literal();
+        s.nospace() << n.literal().toString();
         if( !n.language().isEmpty() )
             s.nospace() << " (" << n.language() << ")";
         break;

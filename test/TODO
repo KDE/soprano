@@ -15,3 +15,5 @@ Full class with QSharedPointer and backend:
 
 - ResultSet
 - StatementIterator
+
+Improved literal test including xml schema type uri conversion 
