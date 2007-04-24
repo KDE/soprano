@@ -113,7 +113,7 @@ void Statement::setContext( const Node &context )
     d->context = context;
 }
 
-const Node &Statement::context() const
+Node Statement::context() const
 {
     return d->context;
 }

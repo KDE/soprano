@@ -106,7 +106,7 @@ namespace Soprano
 	    /**
 	     * \return The Context node.
 	     */
-	    const Node &context() const;
+	    Node context() const;
 
 	    /**
 	     * A Statement is valid if subject, predicate and object are valid.
