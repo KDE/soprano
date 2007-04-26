@@ -87,6 +87,17 @@ void SopranoModelTest::testAddModel()
   QVERIFY( m_model->contains( st2 ) );
   QVERIFY( !m_model->contains( st3 ) );
 
+  // partial statement match
+  Statement stPartial1( subject1, Node(), object1 );
+  Statement stPartial2( subject1, Node(), Node() );
+  Statement stPartial3;
+  Statement stPartial4( subject1, Node(), QUrl( "soprao#notInTheStore" ) );
+
+  QVERIFY( m_model->contains( stPartial1 ) );
+  QVERIFY( m_model->contains( stPartial2 ) );
+  QVERIFY( m_model->contains( stPartial3 ) );
+  QVERIFY( !m_model->contains( stPartial4 ) );
+
   delete memory;
 }
 

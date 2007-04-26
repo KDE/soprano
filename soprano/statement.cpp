@@ -74,6 +74,14 @@ bool Statement::operator==( const Statement& other )
              d->context == other.context() );
 }
 
+bool Soprano::Statement::matches( const Statement& other ) const
+{
+    return ( d->subject.matches( other.subject() ) &&
+             d->predicate.matches( other.predicate() ) &&
+             d->object.matches( other.object() ) &&
+             d->context.matches( other.context() ) );
+}
+
 void Statement::setSubject( const Node &subject )
 {
     // d->detach() is called automatically

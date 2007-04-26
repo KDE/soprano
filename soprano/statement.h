@@ -61,6 +61,15 @@ namespace Soprano
 	    bool operator==( const Statement& other );
 
 	    /**
+	     * Match this statement against other. The only difference
+	     * to operator== is that empty nodes are matched as wildcards,
+	     * i.e. they match any other node.
+	     *
+	     * \return true if this statement matches other, false if not.
+	     */
+	    bool matches( const Statement& other ) const;
+
+	    /**
 	     * Change the Statement subject.
 	     *
 	     * \param subject The new subject.

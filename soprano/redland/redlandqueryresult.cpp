@@ -224,9 +224,14 @@ Soprano::Model *Soprano::Redland::RedlandQueryResult::model() const
         return 0;
     }
 
-    librdf_stream *stream = librdf_query_results_as_stream( d->result );
-    librdf_model_add_statements( model, stream );
-    librdf_free_stream( stream );
-
-    return new RedlandModel( model, storage );
+    if ( librdf_stream *stream = librdf_query_results_as_stream( d->result ) ) {
+        librdf_model_add_statements( model, stream );
+        librdf_free_stream( stream );
+        return new RedlandModel( model, storage );
+    }
+    else {
+        librdf_free_model( model );
+        librdf_free_storage( storage );
+        return 0;
+    }
 }

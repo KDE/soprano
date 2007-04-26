@@ -2,6 +2,7 @@
  * This file is part of Soprano Project.
  *
  * Copyright (C) 2006 Daniele Galdi <daniele.galdi@gmail.com>
+ * Copyright (C) 2007 Sebastian Trueg <trueg@kde.org>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -24,48 +25,46 @@
 #include "statement.h"
 
 
-namespace Soprano {
-
-StatementIterator::StatementIterator() : d( 0L )
+Soprano::StatementIterator::StatementIterator()
 {
 }
 
-StatementIterator::StatementIterator( StatementIteratorPrivate *sti ) : d( sti )
+Soprano::StatementIterator::StatementIterator( StatementIteratorPrivate *sti )
+    : d( sti )
 {
 }
 
-StatementIterator::StatementIterator( const StatementIterator &other ) : d( other.d )
+Soprano::StatementIterator::StatementIterator( const StatementIterator &other )
+    : d( other.d )
 {
 }
 
-StatementIterator::~StatementIterator()
+Soprano::StatementIterator::~StatementIterator()
 {
 }
 
-StatementIterator& StatementIterator::operator=( const StatementIterator& other )
+Soprano::StatementIterator& Soprano::StatementIterator::operator=( const StatementIterator& other )
 {
   d = other.d;
   return *this;
 }
 
-bool StatementIterator::hasNext() const
+bool Soprano::StatementIterator::hasNext() const
 {
   return isValid() ? d->hasNext() : false;
 }
 
-Soprano::Statement StatementIterator::next() const
+Soprano::Statement Soprano::StatementIterator::next() const
 {
   return isValid() ? d->next() : Statement();
 }
 
-bool StatementIterator::isValid() const
+bool Soprano::StatementIterator::isValid() const
 {
   return !isEmpty();
 }
 
-bool StatementIterator::isEmpty() const
+bool Soprano::StatementIterator::isEmpty() const
 {
-  return d == 0L;
-}
-
+  return d == 0;
 }

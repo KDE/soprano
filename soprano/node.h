@@ -90,6 +90,15 @@ namespace Soprano
 	    bool operator==( const Node& other ) const;
 
 	    /**
+	     * Match this node against other. The only difference
+	     * to operator== is that empty nodes are matched as wildcards,
+	     * i.e. they match any other node.
+	     *
+	     * \return true if this node matches other, false if not.
+	     */
+	    bool matches( const Node& other ) const;
+
+	    /**
 	     * \return The Node type.
 	     */
 	    Type type() const;

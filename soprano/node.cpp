@@ -193,6 +193,17 @@ bool Soprano::Node::operator==( const Node& other ) const
 }
 
 
+bool Soprano::Node::matches( const Node& other ) const
+{
+    if ( isEmpty() || other.isEmpty() ) {
+        return true;
+    }
+    else {
+        return operator==( other );
+    }
+}
+
+
 QDebug operator<<( QDebug s, const Soprano::Node& n )
 {
     switch(n.type()) {
