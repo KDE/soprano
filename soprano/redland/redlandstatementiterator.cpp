@@ -55,17 +55,18 @@ bool Soprano::Redland::RedlandStatementIterator::hasNext() const
 
 Soprano::Statement Soprano::Redland::RedlandStatementIterator::next() const
 {
-  // FIXME: use librdf_stream_get_context to get the context of the statement
-
   librdf_statement *st = stream_adapter_get_object( m_stream );
-  if ( !st )
-  {
+  if ( !st ) {
     // Return a not valid Statement
     // as last value.
     return Soprano::Statement();
   }
 
   Statement copy = Util::createStatement( st );
+  if ( librdf_node* context = stream_adapter_get_context( m_stream ) ) {
+      copy.setContext( Util::createNode( context ) );
+      Util::freeNode( context );
+  }
 
   // Move to the next element
   stream_adapter_next( m_stream );

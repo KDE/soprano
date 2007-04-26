@@ -2,6 +2,7 @@
  * This file is part of Soprano Project.
  *
  * Copyright (C) 2006 Daniele Galdi <daniele.galdi@gmail.com>
+ * Copyright (C) 2007 Sebastian Trueg <trueg@kde.org>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -39,6 +40,8 @@ void free_stream_adapter_backend( stream_adapter *s );
 void free_stream_adapter( stream_adapter *s );
 
 librdf_statement *stream_adapter_get_object( stream_adapter *s );
+
+librdf_node *stream_adapter_get_context( stream_adapter *s );
 
 void stream_adapter_next( stream_adapter *s );
 
