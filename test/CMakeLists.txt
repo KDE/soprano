@@ -45,3 +45,9 @@ add_test(sopranommtest ${EXECUTABLE_OUTPUT_PATH}/sopranommtest)
 add_executable(sopranopmtest SopranoModelTest.cpp RedlandPersistentModelTest.cpp)
 target_link_libraries(sopranopmtest soprano ${QT_QTCORE_LIBRARY} ${QT_QTTEST_LIBRARY})
 add_test(sopranopmtest ${EXECUTABLE_OUTPUT_PATH}/sopranopmtest)
+
+# scaling
+qt4_automoc(storagescalingtest storagescalingtest.cpp)
+add_executable(storagescalingtest storagescalingtest.cpp)
+target_link_libraries(storagescalingtest soprano ${QT_QTCORE_LIBRARY} ${QT_QTTEST_LIBRARY})
+add_test(nodetest ${EXECUTABLE_OUTPUT_PATH}/storagescalingtest)

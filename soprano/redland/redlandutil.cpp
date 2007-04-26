@@ -57,16 +57,16 @@ librdf_node *Soprano::Redland::Util::createNode( const Node &node )
   librdf_world *world = World::self()->worldPtr();
 
   if ( node.isResource() ) {
-    return librdf_new_node_from_uri_string( world, (unsigned char *)node.uri().toEncoded().data() );
+      return librdf_new_node_from_uri_string( world, (unsigned char *)node.uri().toEncoded().data() );
   }
   else if ( node.isBlank() ) {
-    return librdf_new_node_from_blank_identifier( world, (unsigned char *) node.uri().toEncoded().data() );
+      return librdf_new_node_from_blank_identifier( world, (unsigned char *) node.uri().toEncoded().data() );
   }
   else if ( node.isLiteral() ) {
-    return librdf_new_node_from_typed_literal( world,
-					       (unsigned char *)node.literal().toString().toUtf8().data(),
-					       node.language().toUtf8().data(),
-					       librdf_new_uri( world, (const unsigned char*)node.dataType().toEncoded().data() ) );
+      return librdf_new_node_from_typed_literal( world,
+                                                 (unsigned char *)node.literal().toString().toUtf8().data(),
+                                                 node.language().toUtf8().data(),
+                                                 librdf_new_uri( world, (const unsigned char*)node.dataType().toEncoded().data() ) );
   }
 
   return 0;
@@ -79,8 +79,6 @@ librdf_statement *Soprano::Redland::Util::createStatement( const Statement &stat
   librdf_node *subject = createNode( statement.subject() );
   librdf_node *predicate = createNode( statement.predicate() );
   librdf_node *object = createNode( statement.object() );
-
-  // FIXME: what about the context?
 
   return librdf_new_statement_from_nodes( world, subject, predicate, object );
 }
