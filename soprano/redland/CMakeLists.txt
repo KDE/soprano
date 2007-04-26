@@ -27,8 +27,6 @@ set(redland_backend_SRC
   redlandmodel.h
   redlandparser.cpp
   redlandparser.h
-  redland_stream_adapter.c
-  redland_stream_adapter.h
   redlandbackend.cpp
   mutexlocker.cpp
   redlandbackend.h

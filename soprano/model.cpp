@@ -138,21 +138,22 @@ Soprano::StatementIterator Soprano::Model::listStatements( const Node &subject, 
 
 Soprano::ErrorCode Soprano::Model::removeAll( const Statement &statement, const Node &context )
 {
-    StatementIterator iter = listStatements(statement, context);
-    while ( iter.hasNext() ) {
-        ErrorCode c = remove( iter.next() );
-        if ( c != ERROR_NONE ) {
-            return c;
-        }
-    }
-
-    return ERROR_NONE;
+    Statement s( statement );
+    s.setContext( context );
+    return removeAll( s );
 }
 
 
 Soprano::ErrorCode Soprano::Model::removeAll( const Statement &statement )
 {
-    return removeAll( statement, Node() );
+    StatementIterator iter = listStatements(statement);
+    while ( iter.hasNext() ) {
+       ErrorCode c = remove( iter.next() );
+        if ( c != ERROR_NONE ) {
+            return c;
+        }
+    }
+    return ERROR_NONE;
 }
 
 Soprano::ErrorCode Soprano::Model::removeAll( const Node &subject, const Node &predicate, const Node &object )
@@ -162,5 +163,5 @@ Soprano::ErrorCode Soprano::Model::removeAll( const Node &subject, const Node &p
 
 Soprano::ErrorCode Soprano::Model::removeAll()
 {
-    return removeAll( Node(), Node(), Node() );
+    return removeAll( Statement() );
 }

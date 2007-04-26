@@ -424,19 +424,186 @@ void SopranoModelTest::testCloseStatementIteratorOnModelDelete()
   model->add( st2 );
 
   StatementIterator it = model->listStatements();
-  int cnt = 0;
-  while( it.hasNext() )
-  {
-    it.next();
-    cnt++;
-  }
+  QVERIFY( it.hasNext() );
 
   delete model;
 
- QVERIFY( cnt == 2 );
-
   QVERIFY( !it.hasNext() );
   QVERIFY( !it.next().isValid() );
+}
+
+static bool checkSingleIt( StatementIterator it, const Statement& st )
+{
+    if ( it.hasNext() ) {
+        if ( it.next() != st ) {
+            return false;
+        }
+        else {
+            return !it.hasNext();
+        }
+    }
+    else {
+        return false;
+    }
+}
+
+static bool check3It( StatementIterator it, const Statement& s1, const Statement& s2, const Statement& s3 )
+{
+    int cnt = 0;
+    bool haveS1 = false;
+    bool haveS2 = false;
+    bool haveS3 = false;
+    while ( it.hasNext() ) {
+        Statement s = it.next();
+        if ( s == s1 )
+            haveS1 = true;
+        else if ( s == s2 )
+            haveS2 = true;
+        else if ( s == s3 )
+            haveS3 = true;
+        ++cnt;
+    }
+
+    return ( cnt == 3 && haveS1 && haveS2 && haveS3 );
+}
+
+
+void SopranoModelTest::testContexts()
+{
+    Node subject1( QUrl( "soprano#subject1" ) );
+    Node subject2( QUrl( "soprano#subject2" ) );
+    Node subject3( QUrl( "soprano#subject3" ) );
+
+    Node predicate1( QUrl( "soprano#predicate1" ) );
+    Node predicate2( QUrl( "soprano#predicate2" ) );
+    Node predicate3( QUrl( "soprano#predicate3" ) );
+
+    Node object1( "literal 1" );
+    Node object2( "literal 2" );
+    Node object3( "literal 3" );
+
+    Node context1( QUrl( "soprano::context1" ) );
+    Node context2( QUrl( "soprano::context2" ) );
+    Node context3( QUrl( "soprano::context3" ) );
+
+    Statement s1_c1( subject1, predicate1, object1, context1 );
+    Statement s2_c1( subject1, predicate2, object1, context1 );
+    Statement s3_c1( subject1, predicate3, object1, context1 );
+
+    Statement s1_c2( subject1, predicate1, object2, context2 );
+    Statement s2_c2( subject1, predicate2, object2, context2 );
+    Statement s3_c2( subject1, predicate3, object2, context2 );
+
+    Statement s1_c3( subject1, predicate1, object3, context3 );
+    Statement s2_c3( subject1, predicate2, object3, context3 );
+    Statement s3_c3( subject1, predicate3, object3, context3 );
+
+    Statement s1_c0( subject1, predicate1, object3 );
+    Statement s2_c0( subject1, predicate2, object3 );
+    Statement s3_c0( subject1, predicate3, object3 );
+
+    // add all the statements (do not add context3 yet, it is used below)
+    QVERIFY( m_model->add( s1_c1 ) == ERROR_NONE );
+    QVERIFY( m_model->add( s2_c1 ) == ERROR_NONE );
+    QVERIFY( m_model->add( s3_c1 ) == ERROR_NONE );
+
+    QVERIFY( m_model->add( s1_c2 ) == ERROR_NONE );
+    QVERIFY( m_model->add( s2_c2 ) == ERROR_NONE );
+    QVERIFY( m_model->add( s3_c2 ) == ERROR_NONE );
+
+    QVERIFY( m_model->add( s1_c0 ) == ERROR_NONE );
+    QVERIFY( m_model->add( s2_c0 ) == ERROR_NONE );
+    QVERIFY( m_model->add( s3_c0 ) == ERROR_NONE );
+
+    // check contains plain
+    QVERIFY( m_model->contains( s1_c1 ) );
+    QVERIFY( m_model->contains( s2_c1 ) );
+    QVERIFY( m_model->contains( s3_c1 ) );
+
+    QVERIFY( m_model->contains( s1_c2 ) );
+    QVERIFY( m_model->contains( s2_c2 ) );
+    QVERIFY( m_model->contains( s3_c2 ) );
+
+    QVERIFY( m_model->contains( s1_c0 ) );
+    QVERIFY( m_model->contains( s2_c0 ) );
+    QVERIFY( m_model->contains( s3_c0 ) );
+
+    // check contains with wildcard for context
+    QVERIFY( m_model->contains( Statement( s1_c1.subject(), s1_c1.predicate(), s1_c1.object() ) ) );
+    QVERIFY( m_model->contains( Statement( s2_c1.subject(), s2_c1.predicate(), s2_c1.object() ) ) );
+    QVERIFY( m_model->contains( Statement( s3_c1.subject(), s3_c1.predicate(), s3_c1.object() ) ) );
+
+    QVERIFY( m_model->contains( Statement( s1_c2.subject(), s1_c2.predicate(), s1_c2.object() ) ) );
+    QVERIFY( m_model->contains( Statement( s2_c2.subject(), s2_c2.predicate(), s2_c2.object() ) ) );
+    QVERIFY( m_model->contains( Statement( s3_c2.subject(), s3_c2.predicate(), s3_c2.object() ) ) );
+
+    // check listStatements single
+    checkSingleIt( m_model->listStatements( s1_c1 ), s1_c1 );
+    checkSingleIt( m_model->listStatements( s2_c1 ), s2_c1 );
+    checkSingleIt( m_model->listStatements( s3_c1 ), s3_c1 );
+
+    checkSingleIt( m_model->listStatements( s1_c2 ), s1_c2 );
+    checkSingleIt( m_model->listStatements( s2_c2 ), s2_c2 );
+    checkSingleIt( m_model->listStatements( s3_c2 ), s3_c2 );
+
+    checkSingleIt( m_model->listStatements( s1_c0 ), s1_c0 );
+    checkSingleIt( m_model->listStatements( s2_c0 ), s2_c0 );
+    checkSingleIt( m_model->listStatements( s3_c0 ), s3_c0 );
+
+    // check listStatements with wildcard for object (one context)
+    checkSingleIt( m_model->listStatements( Statement( s1_c1.subject(), s1_c1.predicate(), Node(), s1_c1.context() ) ), s1_c1 );
+    checkSingleIt( m_model->listStatements( Statement( s2_c1.subject(), s2_c1.predicate(), Node(), s2_c1.context() ) ), s2_c1 );
+    checkSingleIt( m_model->listStatements( Statement( s3_c1.subject(), s3_c1.predicate(), Node(), s3_c1.context() ) ), s3_c1 );
+
+    checkSingleIt( m_model->listStatements( Statement( s1_c2.subject(), s1_c2.predicate(), Node(), s1_c2.context() ) ), s1_c2 );
+    checkSingleIt( m_model->listStatements( Statement( s2_c2.subject(), s2_c2.predicate(), Node(), s2_c2.context() ) ), s2_c2 );
+    checkSingleIt( m_model->listStatements( Statement( s3_c2.subject(), s3_c2.predicate(), Node(), s3_c2.context() ) ), s3_c2 );
+
+    // the one without the context should return all three variants, i.e. 3 statements (different contexts)
+    check3It( m_model->listStatements( Statement( s1_c0.subject(), s1_c0.predicate(), Node(), s1_c0.context() ) ),
+              s1_c1, s1_c2, s1_c0 );
+    check3It( m_model->listStatements( Statement( s2_c0.subject(), s2_c0.predicate(), Node(), s2_c0.context() ) ),
+              s2_c1, s2_c2, s2_c0 );
+    check3It( m_model->listStatements( Statement( s3_c0.subject(), s3_c0.predicate(), Node(), s3_c0.context() ) ),
+              s1_c0, s3_c2, s3_c0 );
+
+    // check remove context
+    QVERIFY( m_model->remove( context1 ) == ERROR_NONE );
+    QVERIFY( !m_model->contains( s1_c1 ) );
+    QVERIFY( !m_model->contains( s2_c1 ) );
+    QVERIFY( !m_model->contains( s3_c1 ) );
+
+    QVERIFY( m_model->contains( s1_c2 ) );
+    QVERIFY( m_model->contains( s2_c2 ) );
+    QVERIFY( m_model->contains( s3_c2 ) );
+
+    QVERIFY( m_model->contains( s1_c0 ) );
+    QVERIFY( m_model->contains( s2_c0 ) );
+    QVERIFY( m_model->contains( s3_c0 ) );
+
+    // check remove with context
+    QVERIFY( m_model->remove( s1_c2 ) == ERROR_NONE );
+    QVERIFY( !m_model->contains( s1_c2 ) );
+    QVERIFY( m_model->contains( s2_c2 ) );
+    QVERIFY( m_model->contains( s3_c2 ) );
+
+    QVERIFY( m_model->contains( s1_c0 ) );
+    QVERIFY( m_model->contains( s2_c0 ) );
+    QVERIFY( m_model->contains( s3_c0 ) );
+
+    // check remove without context
+    QVERIFY( m_model->add( s1_c3 ) == ERROR_NONE );
+    QVERIFY( m_model->add( s2_c3 ) == ERROR_NONE );
+    QVERIFY( m_model->add( s3_c3 ) == ERROR_NONE );
+
+    QVERIFY( m_model->contains( s1_c3 ) );
+    QVERIFY( m_model->contains( s2_c3 ) );
+    QVERIFY( m_model->contains( s3_c3 ) );
+
+    QVERIFY( m_model->removeAll( s1_c0 ) == ERROR_NONE );
+
+    QVERIFY( !m_model->contains( s1_c0 ) );
+    QVERIFY( !m_model->contains( s1_c3 ) );
 }
 
 #include "SopranoModelTest.moc"

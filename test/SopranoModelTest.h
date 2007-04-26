@@ -55,6 +55,8 @@ private Q_SLOTS:
 
   void testCloseStatementIteratorOnModelDelete();
 
+  void testContexts();
+
 protected:
    Soprano::Statement* m_st1;
    Soprano::Statement* m_st2;

@@ -33,11 +33,12 @@ namespace Soprano {
     class Model;
 
     namespace Redland {
+	class RedlandModel;
 
 	class RedlandQueryResult: public Soprano::QueryResult
 	    {
 	    public:
-		RedlandQueryResult( librdf_query_results *result );
+		RedlandQueryResult( const RedlandModel* model, librdf_query_results *result );
 
 		~RedlandQueryResult();
 
@@ -62,6 +63,8 @@ namespace Soprano {
 		bool boolValue() const;
 
 		Model *model() const;
+
+		void close() const;
 
 	    private:
 		class Private;

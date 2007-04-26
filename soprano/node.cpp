@@ -179,19 +179,29 @@ bool Soprano::Node::operator==( const Node& other ) const
     if (d->type != other.d->type) {
         return false;
     }
-
-    if (d->type == ResourceNode) {
+    else if (d->type == ResourceNode) {
         return d->uri == other.d->uri;
     }
     else {
         return ( d->value == other.d->value &&
                  d->language == other.d->language );
     }
-
-    // never reached
-    return false;
 }
 
+bool Soprano::Node::operator!=( const Node& other ) const
+{
+    if (d->type != other.d->type) {
+        return true;
+    }
+
+    else if (d->type == ResourceNode) {
+        return d->uri != other.d->uri;
+    }
+    else {
+        return ( d->value != other.d->value ||
+                 d->language != other.d->language );
+    }
+}
 
 bool Soprano::Node::matches( const Node& other ) const
 {

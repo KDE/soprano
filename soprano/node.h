@@ -88,6 +88,7 @@ namespace Soprano
 	    Node& operator=( const LiteralValue& literal );
 
 	    bool operator==( const Node& other ) const;
+	    bool operator!=( const Node& other ) const;
 
 	    /**
 	     * Match this node against other. The only difference

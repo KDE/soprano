@@ -37,61 +37,67 @@
 namespace Soprano
 {
 
-class ResultSet;
-class StatementIterator;
+    class ResultSet;
+    class StatementIterator;
 
-namespace Redland
-{
+    namespace Redland {
 
-class RedlandModel: public Soprano::Model
-{
-public:
-  RedlandModel();
+	class RedlandStatementIterator;
+	class RedlandQueryResult;
 
-  RedlandModel( librdf_model *model, librdf_storage *storage );
+	class RedlandModel: public Soprano::Model
+	    {
+	    public:
+		RedlandModel();
 
-  ~RedlandModel();
+		RedlandModel( librdf_model *model, librdf_storage *storage );
 
-  librdf_model *redlandModel() const;
+		~RedlandModel();
 
-  ErrorCode add( const Statement &statement, const Node &context );
+		librdf_model *redlandModel() const;
 
-  ErrorCode add( const Statement &statement );
+		ErrorCode add( const Statement &statement, const Node &context );
 
-  virtual QList<Node> contexts() const;
+		ErrorCode add( const Statement &statement );
 
-  bool contains( const Statement &statement ) const;
+		virtual QList<Node> contexts() const;
 
-  bool contains( const Node &context ) const;
+		bool contains( const Statement &statement ) const;
 
-  Soprano::ResultSet executeQuery( const Query &query ) const;
+		bool contains( const Node &context ) const;
 
-  Soprano::StatementIterator listStatements( const Node &context ) const;
+		Soprano::ResultSet executeQuery( const Query &query ) const;
 
-  Soprano::StatementIterator listStatements( const Statement &partial, const Node &context ) const;
+		Soprano::StatementIterator listStatements( const Node &context ) const;
 
-  Soprano::StatementIterator listStatements( const Statement &partial ) const;
+		Soprano::StatementIterator listStatements( const Statement &partial, const Node &context ) const;
 
-  ErrorCode remove(const Statement &statement, const Node &context );
+		Soprano::StatementIterator listStatements( const Statement &partial ) const;
 
-  ErrorCode remove( const Statement &statement );
+		ErrorCode remove(const Statement &statement, const Node &context );
 
-  ErrorCode remove( const Node &context );
+		ErrorCode remove( const Statement &statement );
 
-  int size() const;
+		ErrorCode remove( const Node &context );
 
-  ErrorCode write( QTextStream &os ) const;
+		int size() const;
 
-  ErrorCode print() const;
+		ErrorCode write( QTextStream &os ) const;
 
-private:
-  class Private;
-  Private *d;
+		ErrorCode print() const;
 
-friend class RedlandStatementIterator;
-}; 
+	    private:
+		class Private;
+		Private *d;
 
-}
+		void removeIterator( RedlandStatementIterator* it ) const;
+		void removeQueryResult( RedlandQueryResult* r ) const;
+
+		friend class RedlandStatementIterator;
+		friend class RedlandQueryResult;
+	    }; 
+
+    }
 }
 
 #endif // SOPRANO_BACKEND_REDLAND_MODEL_H

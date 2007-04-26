@@ -24,52 +24,65 @@
 
 #include "statement.h"
 #include "redlandutil.h"
+#include "redlandmodel.h"
 
 #include <QtCore/QtGlobal>
+#include <QtCore/QSharedData>
+#include <QtCore/QDebug>
 
-#include "redland_stream_adapter.h"
 
-
-Soprano::Redland::RedlandStatementIterator::RedlandStatementIterator( stream_adapter *s ): m_stream( s )
+Soprano::Redland::RedlandStatementIterator::RedlandStatementIterator( const RedlandModel* model, librdf_stream *s )
+    : m_model( model ),
+      m_stream( s )
 {
 }
 
 
 Soprano::Redland::RedlandStatementIterator::~RedlandStatementIterator()
 {
-  if ( !m_stream->impl ) {
-      // Model is dead!
-      free_stream_adapter( m_stream );
-  }
-  else {
-      free_stream_adapter_backend( m_stream );
-  }
+    if ( m_model ) {
+        m_model->removeIterator( this );
+    }
+    close();
 }
 
 
 bool Soprano::Redland::RedlandStatementIterator::hasNext() const
 {
-  return stream_adapter_end( m_stream ) == 0;
+  return ( m_stream ? librdf_stream_end( m_stream ) == 0 : false );
 }
 
 
 Soprano::Statement Soprano::Redland::RedlandStatementIterator::next() const
 {
-  librdf_statement *st = stream_adapter_get_object( m_stream );
-  if ( !st ) {
-    // Return a not valid Statement
-    // as last value.
-    return Soprano::Statement();
-  }
+    if ( !hasNext() ) {
+        return Statement();
+    }
 
-  Statement copy = Util::createStatement( st );
-  if ( librdf_node* context = stream_adapter_get_context( m_stream ) ) {
-      copy.setContext( Util::createNode( context ) );
-      Util::freeNode( context );
-  }
+    librdf_statement *st = librdf_stream_get_object( m_stream );
+    if ( !st ) {
+        // Return a not valid Statement
+        // as last value.
+        return Soprano::Statement();
+    }
 
-  // Move to the next element
-  stream_adapter_next( m_stream );
+    Statement copy = Util::createStatement( st );
+    if ( librdf_node* context = static_cast<librdf_node*>( librdf_stream_get_context( m_stream ) ) ) {
+        copy.setContext( Util::createNode( context ) );
+    }
 
-  return copy;
+    // Move to the next element
+    librdf_stream_next( m_stream );
+
+    return copy;
+}
+
+
+void Soprano::Redland::RedlandStatementIterator::close() const
+{
+    if( m_stream ) {
+        librdf_free_stream( m_stream );
+        m_stream = 0;
+    }
+    m_model = 0;
 }

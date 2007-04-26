@@ -24,34 +24,37 @@
 #define SOPRANO_BACKEND_REDLAND_STATEMENT_ITERATOR_H
 
 #include <redland.h>
-#include "redland_stream_adapter.h"
 
 #include "statementiteratorprivate.h"
 
+#include <QtCore/QSharedDataPointer>
+
 namespace Soprano 
 {
+    class Statement;
 
-class Statement;
+    namespace Redland {
+	class RedlandModel;
 
-namespace Redland
-{
+	class RedlandStatementIterator: public Soprano::StatementIteratorPrivate
+	    {
+	    public:
+		explicit RedlandStatementIterator( const RedlandModel* model, librdf_stream *s );
 
-class RedlandStatementIterator: public Soprano::StatementIteratorPrivate
-{
-public:
-  explicit RedlandStatementIterator( stream_adapter *s );
+		~RedlandStatementIterator();
 
-  ~RedlandStatementIterator();
+		bool hasNext() const;
 
-  bool hasNext() const;
+		Soprano::Statement next() const;
 
-  Soprano::Statement next() const;
+		void close() const;
 
-private:
-  stream_adapter *m_stream;
-};
+	    private:
+		mutable const RedlandModel* m_model;
+		mutable librdf_stream* m_stream;
+	    };
 
-}
+    }
 }
 
 #endif // SOPRANO_BACKEND_REDLAND_STATEMENT_ITERATOR_H

@@ -74,6 +74,14 @@ bool Statement::operator==( const Statement& other )
              d->context == other.context() );
 }
 
+bool Statement::operator!=( const Statement& other )
+{
+    return ( d->subject != other.subject() ||
+             d->predicate != other.predicate() ||
+             d->object != other.object() ||
+             d->context != other.context() );
+}
+
 bool Soprano::Statement::matches( const Statement& other ) const
 {
     return ( d->subject.matches( other.subject() ) &&

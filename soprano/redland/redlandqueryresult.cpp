@@ -30,8 +30,6 @@
 #include "redlandworld.h"
 #include "redlandmodel.h"
 
-#include "redland_stream_adapter.h"
-
 #include <redland.h>
 
 class Soprano::Redland::RedlandQueryResult::Private
@@ -48,12 +46,15 @@ public:
 
     QStringList names;
     bool first;
+
+    const RedlandModel* model;
 };
 
 
-Soprano::Redland::RedlandQueryResult::RedlandQueryResult( librdf_query_results *result )
+Soprano::Redland::RedlandQueryResult::RedlandQueryResult( const RedlandModel* model, librdf_query_results *result )
 {
     d = new Private;
+    d->model = model;
     d->result = result;
 
     Q_ASSERT( d->result != 0L );
@@ -67,18 +68,31 @@ Soprano::Redland::RedlandQueryResult::RedlandQueryResult( librdf_query_results *
 
 Soprano::Redland::RedlandQueryResult::~RedlandQueryResult()
 {
-    librdf_free_query_results( d->result );
-    if ( d->stream ) {
-        librdf_free_stream( d->stream );
-    }
-
+    d->model->removeQueryResult( this );
     delete d;
+}
+
+
+void Soprano::Redland::RedlandQueryResult::close() const
+{
+    if ( d->result ) {
+        librdf_free_query_results( d->result );
+        if ( d->stream ) {
+            librdf_free_stream( d->stream );
+            d->stream = 0;
+        }
+        d->result = 0;
+    }
+    d->model = 0;
 }
 
 
 bool Soprano::Redland::RedlandQueryResult::next()
 {
-    if ( isBool() ) {
+    if ( !d->result ) {
+        return false;
+    }
+    else if ( isBool() ) {
         return false;
     }
     else if ( isBinding() ) {
@@ -133,39 +147,54 @@ Soprano::Statement Soprano::Redland::RedlandQueryResult::currentStatement() cons
 
 Soprano::Node Soprano::Redland::RedlandQueryResult::binding( const QString &name ) const
 {
-    librdf_node *node = librdf_query_results_get_binding_value_by_name( d->result, (const char *)name.toLatin1().data() );
-    if ( !node )
-    {
-        // Return a not valid node (empty)
-        return Soprano::Node();
+    if ( d->result ) {
+        librdf_node *node = librdf_query_results_get_binding_value_by_name( d->result, (const char *)name.toLatin1().data() );
+        if ( !node )
+        {
+            // Return a not valid node (empty)
+            return Soprano::Node();
+        }
+
+        Soprano::Node tmp = Util::createNode( node );
+        Util::freeNode( node );
+
+        return tmp;
     }
-
-    Soprano::Node tmp = Util::createNode( node );
-    Util::freeNode( node );
-
-    return tmp;
+    else {
+        return Node();
+    }
 }
 
 
 Soprano::Node Soprano::Redland::RedlandQueryResult::binding( int offset ) const
 {
-    librdf_node *node = librdf_query_results_get_binding_value( d->result, offset );
-    if ( !node )
-    {
-        // Return a not valid node (empty)
-        return Soprano::Node();
+    if ( d->result ) {
+        librdf_node *node = librdf_query_results_get_binding_value( d->result, offset );
+        if ( !node )
+        {
+            // Return a not valid node (empty)
+            return Soprano::Node();
+        }
+
+        Soprano::Node tmp = Util::createNode( node );
+        Util::freeNode( node );
+
+        return tmp;
     }
-
-    Soprano::Node tmp = Util::createNode( node );
-    Util::freeNode( node );
-
-    return tmp;
+    else {
+        return Node();
+    }
 }
 
 
 int Soprano::Redland::RedlandQueryResult::bindingCount() const
 {
-    return librdf_query_results_get_count( d->result );
+    if ( d->result ) {
+        return librdf_query_results_get_count( d->result );
+    }
+    else {
+        return 0;
+    }
 }
 
 
@@ -177,25 +206,45 @@ QStringList Soprano::Redland::RedlandQueryResult::bindingNames() const
 
 bool Soprano::Redland::RedlandQueryResult::isGraph() const
 {
-    return librdf_query_results_is_graph( d->result ) != 0;
+    if ( d->result ) {
+        return librdf_query_results_is_graph( d->result ) != 0;
+    }
+    else {
+        return false;
+    }
 }
 
 
 bool Soprano::Redland::RedlandQueryResult::isBinding() const
 {
-    return librdf_query_results_is_bindings( d->result ) != 0;
+    if ( d->result ) {
+        return librdf_query_results_is_bindings( d->result ) != 0;
+    }
+    else {
+        return false;
+    }
 }
 
 
 bool Soprano::Redland::RedlandQueryResult::isBool() const
 {
-    return librdf_query_results_is_boolean( d->result ) != 0;
+    if ( d->result ) {
+        return librdf_query_results_is_boolean( d->result ) != 0;
+    }
+    else {
+        return false;
+    }
 }
 
 
 bool Soprano::Redland::RedlandQueryResult::boolValue() const
 {
-    return librdf_query_results_get_boolean( d->result ) > 0;
+    if ( d->result ) {
+        return librdf_query_results_get_boolean( d->result ) > 0;
+    }
+    else {
+        return false;
+    }
 }
 
 

@@ -59,6 +59,7 @@ namespace Soprano
 	    Statement& operator=( const Statement& other );
 
 	    bool operator==( const Statement& other );
+	    bool operator!=( const Statement& other );
 
 	    /**
 	     * Match this statement against other. The only difference

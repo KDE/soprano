@@ -31,8 +31,6 @@
 #include "redlandstatementiterator.h"
 #include "mutexlocker.h"
 
-#include "redland_stream_adapter.h"
-
 #include <QtCore/QMutex>
 #include <QtCore/QDebug>
 
@@ -49,9 +47,10 @@ public:
     librdf_model *model;
     librdf_storage *storage;
 
-    QList<stream_adapter *> streams;
-
     QMutex modelMutex;
+
+    QList<RedlandStatementIterator*> iterators;
+    QList<RedlandQueryResult*> results;
 };
 
 Soprano::Redland::RedlandModel::RedlandModel( librdf_model *model, librdf_storage *storage )
@@ -67,16 +66,13 @@ Soprano::Redland::RedlandModel::RedlandModel( librdf_model *model, librdf_storag
 
 Soprano::Redland::RedlandModel::~RedlandModel()
 {
-    QListIterator<stream_adapter *> iter( d->streams );
-    while ( iter.hasNext() )
-    {
-        stream_adapter *stream = iter.next();
-        if ( !stream->impl ) {
-            free_stream_adapter( stream );
-        }
-        else {
-            free_stream_adapter_backend( stream );
-        }
+    for ( QList<RedlandStatementIterator*>::iterator it = d->iterators.begin();
+          it != d->iterators.end(); ++it ) {
+        ( *it )->close();
+    }
+    for ( QList<RedlandQueryResult*>::iterator it = d->results.begin();
+          it != d->results.end(); ++it ) {
+        ( *it )->close();
     }
 
     librdf_free_model( d->model );
@@ -84,6 +80,7 @@ Soprano::Redland::RedlandModel::~RedlandModel()
 
     delete d;
 }
+
 
 librdf_model *Soprano::Redland::RedlandModel::redlandModel() const
 {
@@ -159,28 +156,7 @@ bool Soprano::Redland::RedlandModel::contains( const Statement &statement ) cons
 {
     // FIXME: looks as if librdf_model_contains_statement does not support
     // empty nodes and also there is no context support for contains.
-    if ( statement.isValid() && statement.context().isEmpty() ) {
-        MutexLocker lock( &d->modelMutex );
-
-        librdf_statement *st = Util::createStatement( statement );
-        if ( !st ) {
-            return false;
-        }
-
-        int result = librdf_model_contains_statement( d->model, st );
-        Util::freeStatement( st );
-
-        return result != 0;
-    }
-    else {
-        StatementIterator it = listStatements( statement );
-        while ( it.hasNext() ) {
-            if ( statement.matches( it.next() ) ) {
-                return true;
-            }
-        }
-        return false;
-    }
+    return listStatements( statement ).hasNext();
 }
 
 bool Soprano::Redland::RedlandModel::contains( const Node &context ) const
@@ -225,7 +201,10 @@ Soprano::ResultSet Soprano::Redland::RedlandModel::executeQuery( const Query &qu
 
     librdf_free_query( q );
 
-    return ResultSet( new RedlandQueryResult( res ) );
+    RedlandQueryResult* result = new RedlandQueryResult( this, res );
+    d->results.append( result );
+
+    return ResultSet( result );
 }
 
 Soprano::StatementIterator Soprano::Redland::RedlandModel::listStatements( const Node &context ) const
@@ -246,12 +225,10 @@ Soprano::StatementIterator Soprano::Redland::RedlandModel::listStatements( const
     }
     Util::freeNode( ctx );
 
-    stream_adapter *s = (stream_adapter *) malloc( sizeof( stream_adapter ) );
-    s->impl = stream;
+    RedlandStatementIterator* it = new RedlandStatementIterator( this, stream );
+    d->iterators.append( it );
 
-    d->streams.append( s );
-
-    return StatementIterator( new RedlandStatementIterator( s ) );
+    return StatementIterator( it );
 }
 
 Soprano::StatementIterator Soprano::Redland::RedlandModel::listStatements( const Statement &partial, const Node &context ) const
@@ -290,12 +267,10 @@ Soprano::StatementIterator Soprano::Redland::RedlandModel::listStatements( const
     Util::freeNode( ctx );
     Util::freeStatement( st );
 
-    stream_adapter *s = (stream_adapter *) malloc( sizeof( stream_adapter ) );
-    s->impl = stream;
+    RedlandStatementIterator* it = new RedlandStatementIterator( this, stream );
+    d->iterators.append( it );
 
-    d->streams.append( s );
-
-    return StatementIterator( new RedlandStatementIterator( s ) );;
+    return StatementIterator( it );
 }
 
 Soprano::ErrorCode Soprano::Redland::RedlandModel::remove( const Statement &statement, const Node &context )
@@ -401,4 +376,16 @@ Soprano::ErrorCode Soprano::Redland::RedlandModel::print() const
     librdf_model_print( d->model, stdout );
 
     return ERROR_NONE;
+}
+
+
+void Soprano::Redland::RedlandModel::removeIterator( RedlandStatementIterator* it ) const
+{
+    d->iterators.removeAll( it );
+}
+
+
+void Soprano::Redland::RedlandModel::removeQueryResult( RedlandQueryResult* r ) const
+{
+    d->results.removeAll( r );
 }
