@@ -3,6 +3,7 @@ project(soprano_tests)
 include_directories(
   ${soprano_tests_BINARY_DIR}
   ${CMAKE_SOURCE_DIR}
+  ${CMAKE_SOURCE_DIR}/qrdf
   ${QT_INCLUDES}
 )
 

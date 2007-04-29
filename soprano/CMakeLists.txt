@@ -4,6 +4,7 @@ include_directories(
   ${QT_QTCORE_INCLUDE_DIR}
   ${CMAKE_SOURCE_DIR}
   ${soprano_core_BINARY_DIR}
+  ${CMAKE_SOURCE_DIR}/qrdf
   ${QT_INCLUDE_DIR}
   ${CMAKE_INSTALL_PREFIX}/include
 )

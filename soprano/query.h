@@ -22,7 +22,7 @@
 #ifndef SOPRANO_QUERY_H
 #define SOPRANO_QUERY_H
 
-#include <soprano/soprano_export.h>
+#include "soprano/soprano_export.h"
 
 class QString;
 
