@@ -1,4 +1,4 @@
-project(Soprano) 
+project(soprano) 
 
 enable_testing()
  
