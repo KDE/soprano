@@ -11,6 +11,7 @@ include_directories(
   ${soprano_core_SOURCE_DIR}
   ${soprano_redland_BINARY_DIR}
   ${REDLAND_INCLUDE_DIR}
+  ${RASQAL_INCLUDE_DIR}
   ${CMAKE_INSTALL_PREFIX}/include
 )
 
