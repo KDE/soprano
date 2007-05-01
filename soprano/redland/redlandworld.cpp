@@ -30,7 +30,7 @@
 #include <QtCore/QDebug>
 
 
-Q_GLOBAL_STATIC( Soprano::Redland::World, worldInstance );
+Q_GLOBAL_STATIC( Soprano::Redland::World, worldInstance )
 
 
 static QHash<QString, QString> parseOptions( const QStringList& options )
