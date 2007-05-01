@@ -46,7 +46,7 @@ set_target_properties(soprano_redlandbackend PROPERTIES
 )
 
 INSTALL(TARGETS soprano_redlandbackend
-	LIBRARY DESTINATION lib/soprano
+	LIBRARY DESTINATION ${LIB_DESTINATION}/soprano
 	RUNTIME DESTINATION bin/soprano
 	ARCHIVE DESTINATION lib/soprano
 )
