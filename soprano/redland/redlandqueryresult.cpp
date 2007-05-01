@@ -120,6 +120,7 @@ bool Soprano::Redland::RedlandQueryResult::next()
             return false;
         }
     }
+    return false;
 }
 
 
