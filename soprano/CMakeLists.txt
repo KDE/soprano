@@ -1,7 +1,9 @@
 project(soprano_core)
 
-set(CMAKE_DEBUG_POSTFIX "d")
-
+if (WIN32)
+ set(CMAKE_DEBUG_POSTFIX "d")
+endif (WIN32)
+ 
 include_directories(
   ${QT_QTCORE_INCLUDE_DIR}
   ${CMAKE_SOURCE_DIR}
