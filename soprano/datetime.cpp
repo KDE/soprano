@@ -19,6 +19,29 @@
 
 #include <stdlib.h>
 
+// from QT 4.3
+#ifndef Q_FUNC_INFO
+#if defined(Q_CC_GNU) || defined(Q_CC_HPACC)
+#  define Q_FUNC_INFO __PRETTY_FUNCTION__
+#elif defined(_MSC_VER) && _MSC_VER > 1300
+#  define Q_FUNC_INFO __FUNCSIG__
+#else
+    /* These two macros makes it possible to turn the builtin line expander into a
+     * string literal. */
+#   define QT_STRINGIFY2(x) #x
+#   define QT_STRINGIFY(x) QT_STRINGIFY2(x)
+#   define Q_FUNC_INFO __FILE__ ":" QT_STRINGIFY(__LINE__)
+/*
+   The MIPSpro compiler postpones macro expansion, and therefore macros must be in scope
+   when being used
+*/
+#   if !defined(Q_CC_MIPS)
+#       undef QT_STRINGIFY2
+#       undef QT_STRINGIFY
+#   endif
+#endif
+#endif
+
 
 QTime Soprano::DateTime::fromTimeString( const QString& s )
 {
