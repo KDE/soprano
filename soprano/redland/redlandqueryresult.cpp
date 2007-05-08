@@ -37,7 +37,8 @@ class Soprano::Redland::RedlandQueryResult::Private
 public:
     Private()
         : result( 0 ),
-          stream( 0 )
+          stream( 0 ),
+          first( true )
     {}
 
     librdf_query_results *result;
@@ -57,12 +58,14 @@ Soprano::Redland::RedlandQueryResult::RedlandQueryResult( const RedlandModel* mo
     d->model = model;
     d->result = result;
 
-    Q_ASSERT( d->result != 0L );
+    Q_ASSERT( d->result != 0 );
 
-    for (int offset = 0; offset < bindingCount(); offset++) {
-        d->names.append( QString( librdf_query_results_get_binding_name( result, offset ) ) );
+    const char** names = 0;
+    if ( !librdf_query_results_get_bindings( d->result, &names, 0 ) ) {
+        for ( ; *names; names++ ) {
+            d->names.append( QString::fromUtf8( *names ) );
+        }
     }
-    d->first = true;
 }
 
 
@@ -112,7 +115,8 @@ bool Soprano::Redland::RedlandQueryResult::next()
             d->stream = librdf_query_results_as_stream( d->result );
             d->first = false;
         }
-        else if ( d->stream ) {
+
+        if ( d->stream ) {
             return librdf_stream_end( d->stream ) == 0;
         }
         else {
@@ -150,8 +154,7 @@ Soprano::Node Soprano::Redland::RedlandQueryResult::binding( const QString &name
 {
     if ( d->result ) {
         librdf_node *node = librdf_query_results_get_binding_value_by_name( d->result, (const char *)name.toLatin1().data() );
-        if ( !node )
-        {
+        if ( !node ) {
             // Return a not valid node (empty)
             return Soprano::Node();
         }
@@ -171,8 +174,7 @@ Soprano::Node Soprano::Redland::RedlandQueryResult::binding( int offset ) const
 {
     if ( d->result ) {
         librdf_node *node = librdf_query_results_get_binding_value( d->result, offset );
-        if ( !node )
-        {
+        if ( !node ) {
             // Return a not valid node (empty)
             return Soprano::Node();
         }
@@ -190,12 +192,8 @@ Soprano::Node Soprano::Redland::RedlandQueryResult::binding( int offset ) const
 
 int Soprano::Redland::RedlandQueryResult::bindingCount() const
 {
-    if ( d->result ) {
-        return librdf_query_results_get_count( d->result );
-    }
-    else {
-        return 0;
-    }
+    // CAUTION: It seems that, at least in Redland 1.0.5, librdf_query_results_get_count is broken
+    return d->names.count();
 }
 
 

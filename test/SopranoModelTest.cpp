@@ -386,6 +386,18 @@ void SopranoModelTest::testQuery()
 
   QVERIFY( cnt == 4 );
 
+  // test bindings
+  rs1 = m_model->executeQuery( sparql );
+  qDebug() << rs1.bindingNames();
+  while ( rs1.next() ) {
+      QCOMPARE( rs1.bindingCount(), 2 );
+      QCOMPARE( rs1.binding( 0 ), rs1.binding( "b" ) );
+      QCOMPARE( rs1.binding( 1 ), rs1.binding( "c" ) );
+      QCOMPARE( rs1.bindingNames().count(), 2 );
+      QCOMPARE( rs1.bindingNames()[0], QString( "b" ) );
+      QCOMPARE( rs1.bindingNames()[1], QString( "c" ) );
+  }
+
   /* RDQL */
 
   Query rdql("select ?b ?c where (<uri:init:test1>, ?b, ?c)", Query::RDQL);

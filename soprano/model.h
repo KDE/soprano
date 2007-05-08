@@ -41,7 +41,6 @@ namespace Soprano
     class StatementIterator;
 
 // FIXME: what about a QList<Statement> allStatements method?
-// FIXME: add remove( QList<Statement> ) method (and then use it in the Soprano RDF repo)
     class SOPRANO_EXPORT Model
 	{
 	public:
@@ -201,13 +200,20 @@ namespace Soprano
 	    virtual ErrorCode remove(const Statement &statement, const Node &context ) = 0;
 
 	    /**
-	     * Remove a Statement from the Model in a Context. 
+	     * Remove a Statement from the Model. 
 	     * It must be a complete statement - all of subject, predicate, object
-	     *  parts must be present. 
+	     * parts must be present. 
 	     *
 	     * \param statement The Statement to remove.
 	     */
 	    virtual ErrorCode remove( const Statement &statement ) = 0;
+
+	    /**
+	     * Remove a list of Statements from the Model. 
+	     * 
+	     * \param statements The Statements to remove.
+	     */
+	    virtual ErrorCode remove( const QList<Statement> &statements );
 
 	    /**
 	     * Remove Statements from a Model with the given Context.

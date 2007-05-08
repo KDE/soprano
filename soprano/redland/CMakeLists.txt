@@ -29,7 +29,6 @@ set(redland_backend_SRC
   redlandparser.cpp
   redlandparser.h
   redlandbackend.cpp
-  mutexlocker.cpp
   redlandbackend.h
 )
 

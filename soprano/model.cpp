@@ -165,3 +165,15 @@ Soprano::ErrorCode Soprano::Model::removeAll()
 {
     return removeAll( Statement() );
 }
+
+Soprano::ErrorCode Soprano::Model::remove( const QList<Statement> &statements )
+{
+    for ( QList<Statement>::const_iterator it = statements.constBegin();
+          it != statements.constEnd(); ++it ) {
+        ErrorCode c = remove( *it );
+        if ( c != ERROR_NONE ) {
+            return c;
+        }
+    }
+    return ERROR_NONE;
+}

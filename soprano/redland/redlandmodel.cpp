@@ -29,9 +29,10 @@
 #include "redlandutil.h"
 #include "redlandqueryresult.h"
 #include "redlandstatementiterator.h"
-#include "mutexlocker.h"
 
-#include <QtCore/QMutex>
+#include <QtCore/QReadWriteLock>
+#include <QtCore/QReadLocker>
+#include <QtCore/QWriteLocker>
 #include <QtCore/QDebug>
 
 
@@ -47,7 +48,7 @@ public:
     librdf_model *model;
     librdf_storage *storage;
 
-    QMutex modelMutex;
+    QReadWriteLock readWriteLock;
 
     QList<RedlandStatementIterator*> iterators;
     QList<RedlandQueryResult*> results;
@@ -93,7 +94,7 @@ Soprano::ErrorCode Soprano::Redland::RedlandModel::add( const Statement &stateme
         return ERROR_INVALID_STATEMENT;
     }
 
-    MutexLocker lock( &d->modelMutex );
+    QWriteLocker lock( &d->readWriteLock );
 
     librdf_statement* redlandStatement = Util::createStatement( statement );
     if ( !redlandStatement ) {
@@ -134,7 +135,7 @@ QList<Soprano::Node> Soprano::Redland::RedlandModel::contexts() const
 {
     QList<Node> contexts;
 
-    MutexLocker lock( &d->modelMutex );
+    QReadLocker lock( &d->readWriteLock );
 
     librdf_iterator *iter = librdf_model_get_contexts( d->model );
     if (!iter)
@@ -166,7 +167,7 @@ bool Soprano::Redland::RedlandModel::contains( const Node &context ) const
         return false;
     }
 
-    MutexLocker lock( &d->modelMutex );
+    QReadLocker lock( &d->readWriteLock );
 
     librdf_node *ctx = Util::createNode( context );
     if ( !ctx )
@@ -182,7 +183,7 @@ bool Soprano::Redland::RedlandModel::contains( const Node &context ) const
 
 Soprano::ResultSet Soprano::Redland::RedlandModel::executeQuery( const Query &query ) const
 {
-    MutexLocker lock( &d->modelMutex );
+    QReadLocker lock( &d->readWriteLock );
 
     librdf_query *q = librdf_new_query( d->world, Util::queryType( query ), 0L, (unsigned char *)query.query().toLatin1().data(), 0L );
     if ( !q )
@@ -209,7 +210,7 @@ Soprano::ResultSet Soprano::Redland::RedlandModel::executeQuery( const Query &qu
 
 Soprano::StatementIterator Soprano::Redland::RedlandModel::listStatements( const Node &context ) const
 {
-    MutexLocker lock( &d->modelMutex );
+    QReadLocker lock( &d->readWriteLock );
 
     if ( !context.isValid() )
     {
@@ -240,7 +241,7 @@ Soprano::StatementIterator Soprano::Redland::RedlandModel::listStatements( const
 
 Soprano::StatementIterator Soprano::Redland::RedlandModel::listStatements( const Statement &partial ) const
 {
-    MutexLocker lock( &d->modelMutex );
+    QReadLocker lock( &d->readWriteLock );
 
     librdf_statement *st = Util::createStatement( partial );
     if ( !st ) {
@@ -282,7 +283,7 @@ Soprano::ErrorCode Soprano::Redland::RedlandModel::remove( const Statement &stat
 
 Soprano::ErrorCode Soprano::Redland::RedlandModel::remove( const Statement &statement )
 {
-    MutexLocker lock( &d->modelMutex );
+    QWriteLocker lock( &d->readWriteLock );
 
     if ( !statement.isValid() ) {
         return ERROR_INVALID_STATEMENT;
@@ -322,7 +323,7 @@ Soprano::ErrorCode Soprano::Redland::RedlandModel::remove( const Statement &stat
 
 Soprano::ErrorCode Soprano::Redland::RedlandModel::remove( const Node &context )
 {
-    MutexLocker lock( &d->modelMutex );
+    QWriteLocker lock( &d->readWriteLock );
 
     if ( !context.isValid() )
     {
@@ -350,13 +351,13 @@ Soprano::ErrorCode Soprano::Redland::RedlandModel::remove( const Node &context )
 
 int Soprano::Redland::RedlandModel::size() const
 {
-    MutexLocker lock( &d->modelMutex );
+    QReadLocker lock( &d->readWriteLock );
     return librdf_model_size( d->model );
 }
 
 Soprano::ErrorCode Soprano::Redland::RedlandModel::write( QTextStream &os ) const
 {
-    MutexLocker lock( &d->modelMutex );
+    QReadLocker lock( &d->readWriteLock );
 
     unsigned char *serialized = librdf_model_to_string( d->model, 0L, 0L, 0L, 0L  );
     QString tmp( (const char *) serialized );
@@ -371,7 +372,7 @@ Soprano::ErrorCode Soprano::Redland::RedlandModel::write( QTextStream &os ) cons
 
 Soprano::ErrorCode Soprano::Redland::RedlandModel::print() const
 {
-    MutexLocker lock( &d->modelMutex );
+    QReadLocker lock( &d->readWriteLock );
 
     librdf_model_print( d->model, stdout );
 
