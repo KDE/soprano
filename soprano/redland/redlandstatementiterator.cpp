@@ -31,9 +31,10 @@
 #include <QtCore/QDebug>
 
 
-Soprano::Redland::RedlandStatementIterator::RedlandStatementIterator( const RedlandModel* model, librdf_stream *s )
+Soprano::Redland::RedlandStatementIterator::RedlandStatementIterator( const RedlandModel* model, librdf_stream *s, const Node& forceContext )
     : m_model( model ),
-      m_stream( s )
+      m_stream( s ),
+      m_forceContext( forceContext )
 {
 }
 
@@ -69,6 +70,9 @@ Soprano::Statement Soprano::Redland::RedlandStatementIterator::next() const
     Statement copy = Util::createStatement( st );
     if ( librdf_node* context = static_cast<librdf_node*>( librdf_stream_get_context( m_stream ) ) ) {
         copy.setContext( Util::createNode( context ) );
+    }
+    else if ( m_forceContext.isValid() ) {
+        copy.setContext( m_forceContext );
     }
 
     // Move to the next element

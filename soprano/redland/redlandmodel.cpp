@@ -226,7 +226,8 @@ Soprano::StatementIterator Soprano::Redland::RedlandModel::listStatements( const
     }
     Util::freeNode( ctx );
 
-    RedlandStatementIterator* it = new RedlandStatementIterator( this, stream );
+    // see listStatements( Statement ) for details on the context hack
+    RedlandStatementIterator* it = new RedlandStatementIterator( this, stream, context );
     d->iterators.append( it );
 
     return StatementIterator( it );
@@ -252,6 +253,7 @@ Soprano::StatementIterator Soprano::Redland::RedlandModel::listStatements( const
 
     // FIXME: context support does not work, redland API claims that librdf_model_find_statements_in_context
     // with a NULL context is the same as librdf_model_find_statements. Well, in practice it is not.
+    // We even have to set the context on all statements if we only search in one context!
     librdf_stream *stream = 0;
     if( partial.context().isEmpty() ) {
         stream = librdf_model_find_statements( d->model, st );
@@ -268,7 +270,7 @@ Soprano::StatementIterator Soprano::Redland::RedlandModel::listStatements( const
     Util::freeNode( ctx );
     Util::freeStatement( st );
 
-    RedlandStatementIterator* it = new RedlandStatementIterator( this, stream );
+    RedlandStatementIterator* it = new RedlandStatementIterator( this, stream, partial.context() );
     d->iterators.append( it );
 
     return StatementIterator( it );

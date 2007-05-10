@@ -26,6 +26,7 @@
 #include <redland.h>
 
 #include "statementiteratorprivate.h"
+#include "node.h"
 
 #include <QtCore/QSharedDataPointer>
 
@@ -39,7 +40,11 @@ namespace Soprano
 	class RedlandStatementIterator: public Soprano::StatementIteratorPrivate
 	    {
 	    public:
-		explicit RedlandStatementIterator( const RedlandModel* model, librdf_stream *s );
+		/**
+		 * param forceContext Since redland does not set a context if we list statements from one specific context
+		 * we have to force it this way.
+		 */
+		explicit RedlandStatementIterator( const RedlandModel* model, librdf_stream *s, const Node& forceContext = Node() );
 
 		~RedlandStatementIterator();
 
@@ -52,6 +57,7 @@ namespace Soprano
 	    private:
 		mutable const RedlandModel* m_model;
 		mutable librdf_stream* m_stream;
+		Node m_forceContext;
 	    };
 
     }

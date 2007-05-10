@@ -278,6 +278,64 @@ void SopranoModelTest::testListStatements()
   QCOMPARE( cnt, 124 );
 }
 
+void SopranoModelTest::testListStatementsWithContext()
+{
+    // we do not want the normal test statements
+    m_model->removeAll();
+
+    QList<Statement> statements;
+    Node context1( QUrl("uri:list:resource1") );
+    Node context2( QUrl("uri:list:resource2") );
+    Node context3( QUrl("uri:list:resource3") );
+
+    for (int i=0; i<10; i++)
+    {
+        QUrl subject = "soprano#subject" + QString::number(i);
+        QUrl predicate = "soprano#predicate" + QString::number(i);
+        LiteralValue object = "Literal value" + QString::number(i);
+
+        statements.append( Statement( subject, predicate, object, context1 ) );
+        statements.append( Statement( subject, predicate, object, context2 ) );
+        statements.append( Statement( subject, predicate, object, context3 ) );
+    }
+
+    QVERIFY( m_model->add( statements ) == ERROR_NONE );
+
+    // list all of them
+    StatementIterator it = m_model->listStatements( Statement() );
+    int cnt = 0;
+    while( it.hasNext() ) {
+        ++cnt;
+        Statement st = it.next();
+        QVERIFY( st.context().isValid() );
+    }
+
+    QCOMPARE( cnt, 30 );
+
+    // with context as wildcard
+    it = m_model->listStatements( Statement( Node(), Node(), Node(), context1 ) );
+    cnt = 0;
+    while( it.hasNext() ) {
+        ++cnt;
+        Statement st = it.next();
+        QCOMPARE( st.context(), context1 );
+    }
+
+    QCOMPARE( cnt, 10 );
+
+
+    // and the full context
+    it = m_model->listStatements( context2 );
+    cnt = 0;
+    while( it.hasNext() ) {
+        ++cnt;
+        Statement st = it.next();
+        QCOMPARE( st.context(), context2 );
+    }
+
+    QCOMPARE( cnt, 10 );
+}
+
 void SopranoModelTest::testRemoveStatement()
 {
   Node subject( QUrl("uri:remove:3") );
