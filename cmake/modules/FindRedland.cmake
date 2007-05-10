@@ -35,17 +35,38 @@ else (REDLAND_LIBRARIES AND REDLAND_INCLUDE_DIR and RASQUAL_INCLUDE_DIR)
     set(RASQAL_DEFINITIONS ${_RASQALCflags} CACHE INTERNAL "The compilation flags for rasqal")
   endif (NOT WIN32)
 
-  find_path(REDLAND_INCLUDE_DIR redland.h
-    PATHS
-    ${_REDLANDIncDir}
-    /usr/X11/include
-  )
+  # now a hack for win32 (only?)
+  # soprano only includes <redland.h> instead <redland/redland.h>
+  if(WIN32)
+    find_path(REDLAND_INCLUDE_DIR_TMP redland/redland.h
+      PATHS
+      ${_REDLANDIncDir}
+      /usr/X11/include
+    )
+    if(REDLAND_INCLUDE_DIR_TMP)
+      set(REDLAND_INCLUDE_DIR ${REDLAND_INCLUDE_DIR_TMP}/redland CACHE PATH "Path to a file.")
+    endif(REDLAND_INCLUDE_DIR_TMP)
 
-  find_path(RASQAL_INCLUDE_DIR rasqal.h
-    PATHS
-    ${_RASQALIncDir}
-    /usr/X11/include
-  )
+    find_path(RASQAL_INCLUDE_DIR_TMP redland/rasqal.h
+      PATHS
+      ${_REDLANDIncDir}
+      /usr/X11/include
+    )
+    if(RASQAL_INCLUDE_DIR_TMP)
+      set(RASQAL_INCLUDE_DIR ${RASQAL_INCLUDE_DIR_TMP}/redland CACHE PATH "Path to a file.")
+    endif(RASQAL_INCLUDE_DIR_TMP)
+  else(WIN32)
+    find_path(REDLAND_INCLUDE_DIR redland.h
+      PATHS
+      ${_REDLANDIncDir}
+      /usr/X11/include
+    )
+    find_path(RASQAL_INCLUDE_DIR rasqal.h
+      PATHS
+      ${_RASQALIncDir}
+      /usr/X11/include
+    )
+  endif(WIN32)
 
   find_library(REDLAND_LIBRARIES NAMES rdf librdf
     PATHS
