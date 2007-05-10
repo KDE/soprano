@@ -361,15 +361,14 @@ Soprano::ErrorCode Soprano::Redland::RedlandModel::write( QTextStream &os ) cons
 {
     QReadLocker lock( &d->readWriteLock );
 
-    unsigned char *serialized = librdf_model_to_string( d->model, 0L, 0L, 0L, 0L  );
-    QString tmp( (const char *) serialized );
-
-    os << tmp;
-    os.flush();
-
-    free( serialized );
-
-    return ERROR_NONE;
+    if ( unsigned char *serialized = librdf_model_to_string( d->model, 0, 0, 0, 0  ) ) {
+        os << ( const char* )serialized;
+        free( serialized );
+        return ERROR_NONE;
+    }
+    else {
+        return ERROR_UNKNOW;
+    }
 }
 
 Soprano::ErrorCode Soprano::Redland::RedlandModel::print() const
