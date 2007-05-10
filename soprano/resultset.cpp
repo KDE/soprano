@@ -33,8 +33,8 @@
 class Soprano::ResultSet::Private : public QSharedData
 {
 public:
-    Private()
-        : queryResult( 0 ) {
+    Private( QueryResult* qr = 0 )
+        : queryResult( qr ) {
     }
 
     ~Private() {
@@ -53,12 +53,11 @@ Soprano::ResultSet::ResultSet()
 
 Soprano::ResultSet::ResultSet( QueryResult *qr )
 {
-    d = new Private;
-    d->queryResult = qr;
+    d = new Private( qr );
 }
 
 
-Soprano::ResultSet::ResultSet( const ResultSet& other)
+Soprano::ResultSet::ResultSet( const ResultSet& other )
 {
     d = other.d;
 }
@@ -78,7 +77,9 @@ Soprano::ResultSet& Soprano::ResultSet::operator=( const ResultSet& other )
 
 bool Soprano::ResultSet::next()
 {
-    return ( d->queryResult ? d->queryResult->next() : false );
+    // make sure the data is not detached
+    const ResultSet* that = const_cast<const ResultSet*>( this );
+    return ( that->d->queryResult ? that->d->queryResult->next() : false );
 }
 
 
