@@ -260,8 +260,8 @@ Soprano::Model *Soprano::Redland::RedlandQueryResult::model() const
 
     d->first = false;
 
-    // Create a memory model
-    librdf_storage *storage = librdf_new_storage( World::self()->worldPtr(), (char *)"memory", 0, 0 );
+    // Create a memory model with context support and type hashes
+    librdf_storage *storage = librdf_new_storage( World::self()->worldPtr(), "hashes", NULL, "hash-type='memory',contexts='yes'");
     if ( !storage ) {
         return 0;
     }
