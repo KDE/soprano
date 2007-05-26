@@ -61,6 +61,7 @@ namespace Soprano {
    * Creates a simple memory model
    * The caller takes ownership and has to care about deletion.
    */
+  // FIXME: Isn't the notion of a "memory model" already way to implementation-specific?
   SOPRANO_EXPORT Model* createModel();
 
   /**
