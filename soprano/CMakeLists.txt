@@ -4,6 +4,11 @@ if (WIN32)
  set(CMAKE_DEBUG_POSTFIX "d")
 endif (WIN32)
  
+if (APPLE)
+ set(CMAKE_INSTALL_NAME_DIR ${LIB_INSTALL_DIR})
+ set(CMAKE_BUILD_WITH_INSTALL_RPATH TRUE)
+endif (APPLE)
+
 include_directories(
   ${QT_QTCORE_INCLUDE_DIR}
   ${CMAKE_SOURCE_DIR}
@@ -56,6 +61,7 @@ set_target_properties(soprano PROPERTIES
         VERSION 3.0.0
         SOVERSION 3
         DEFINE_SYMBOL MAKE_SOPRANO_LIB
+	INSTALL_NAME_DIR ${LIB_DESTINATION}
 )
 
 INSTALL(TARGETS soprano
