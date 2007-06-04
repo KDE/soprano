@@ -29,7 +29,6 @@ namespace Soprano {
   class Model;
   class ModelFactory;
   class Statement;
-  class Node;
 }
 
 class StatementIteratorTest: public QObject

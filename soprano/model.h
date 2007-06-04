@@ -28,9 +28,7 @@
 #include <soprano/soprano_export.h>
 #include <soprano/error.h>
 
-class QString;
 class QTextStream;
-class QUrl;
 
 namespace Soprano
 {
