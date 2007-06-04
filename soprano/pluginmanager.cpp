@@ -21,6 +21,7 @@
 
 #include "pluginmanager.h"
 #include "backend.h"
+#include "config.h"
 
 #include <QHash>
 #include <QDir>
@@ -29,38 +30,25 @@
 
 #include <stdlib.h>
 
-#ifdef Q_OS_WIN
-#ifndef WIN32_LEAN_AND_MEAN
-#define WIN32_LEAN_AND_MEAN
-#endif
-#include <windows.h>
-static QStringList libDirs = QStringList();
-BOOL WINAPI DllMain(HINSTANCE hinstDLL,DWORD fdwReason,LPVOID)
-{
-    if(fdwReason == DLL_PROCESS_ATTACH) {
-        WCHAR szFile1[MAX_PATH];
-        if(GetModuleFileNameW(hinstDLL, szFile1, MAX_PATH)) {
-            QString path = QString::fromUtf16((unsigned short*)szFile1);
-            int idx = path.lastIndexOf('\\');
-            if(idx != -1)
-                path = path.left(idx);
-            libDirs += path;
-            libDirs += path + "\\..\\lib";
-        }
-    }
-    return TRUE;
-}
-
-#else
-static QStringList libDirs = QString("/usr/lib /usr/lib64 /usr/local/lib /usr/local/lib64").split(' ');
-#endif
-
 class Soprano::PluginManager::Private
 {
 public:
   QHash<QString, Backend*> backends;
 };
 
+const QStringList Soprano::PluginManager::libraryPath() 
+{
+  QStringList pluginPaths;
+
+  pluginPaths += QString(SOPRANO_DIR);
+
+  QByteArray libPath = qgetenv( "SOPRANO_LIBRARY_PATH" );
+  if( !libPath.isEmpty() ) {
+    pluginPaths += QString::fromLocal8Bit( libPath ).split(":");
+  }
+  
+  return pluginPaths;  
+}
 
 const Soprano::Backend* Soprano::PluginManager::discoverBackendByName( const QString& name )
 {
@@ -103,12 +91,8 @@ void Soprano::PluginManager::loadAllPlugins()
 {
   qDebug() << "(Soprano::PluginManager) loading all plugins" << endl;
 
-  QByteArray libPath = qgetenv( "LD_LIBRARY_PATH" );
-  if( !libPath.isEmpty() ) {
-    libDirs += QString::fromLocal8Bit( libPath ).split(":");
-  }
-
-  for( QStringList::const_iterator it = libDirs.begin(); it != libDirs.end(); ++it ) {
+  QStringList libPath = libraryPath();
+  for( QStringList::const_iterator it = libPath.begin(); it != libPath.end(); ++it ) {
     if( QFile::exists( *it + "/soprano" ) )
       loadPlugins( *it + "/soprano" );
   }
@@ -126,12 +110,12 @@ void Soprano::PluginManager::loadPlugins( const QString& path )
     if( plugin ) {
       Backend* backend = qobject_cast<Backend*>( plugin );
       if( backend ) {
-	qDebug() << "(Soprano::PluginManager) found plugin " << backend->backendName() << endl;
-	d->backends.insert( backend->backendName(), backend );
+	    qDebug() << "(Soprano::PluginManager) found plugin " << backend->backendName() << endl;
+	    d->backends.insert( backend->backendName(), backend );
       }
       else {
-	qDebug() << "(Soprano::PluginManager) found no backend plugin at " << loader.fileName() << endl;
-	delete plugin;
+	    qDebug() << "(Soprano::PluginManager) found no backend plugin at " << loader.fileName() << endl;
+	    delete plugin;
       }
     }
     else

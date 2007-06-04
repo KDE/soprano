@@ -60,6 +60,8 @@ namespace Soprano
       void loadAllPlugins();
       void loadPlugins( const QString& path );
 
+      const QStringList libraryPath();
+
       class Private;
       Private* const d;
     };

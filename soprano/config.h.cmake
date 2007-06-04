@@ -1,0 +1,1 @@
+#define SOPRANO_DIR "${LIB_DESTINATION}"

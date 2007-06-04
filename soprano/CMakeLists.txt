@@ -18,6 +18,8 @@ include_directories(
   ${CMAKE_INSTALL_PREFIX}/include
 )
 
+configure_file(config.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/config.h)
+
 SET(soprano_SRCS
     query.cpp
     query.h
