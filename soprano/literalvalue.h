@@ -298,7 +298,7 @@ namespace Soprano
 	    /**
 	     * Create a LiteralValue object by parsing string \a value based on \a dataTypeUri.
 	     * If \a type is unknown it will be stored as a string value with the plain
-	     * \a dataTypeUri as type. Thus, unkown literal types can still be used without
+	     * \a dataTypeUri as type. Thus, unknown literal types can still be used without
 	     * automatic type conversion. Be aware that changing the value will also change
 	     * the type.
 	     */
