@@ -19,9 +19,8 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#include "node.h"
-
 #include "statement.h"
+#include "node.h"
 
 #include <QtCore/QDebug>
 
