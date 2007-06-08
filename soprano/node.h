@@ -25,6 +25,7 @@
 
 #include <QtCore/QUrl>
 #include <QtCore/QSharedDataPointer>
+#include <QtCore/QTextStream>
 
 #include "soprano_export.h"
 #include "literalvalue.h"
@@ -171,5 +172,6 @@ namespace Soprano
 }
 
 SOPRANO_EXPORT QDebug operator<<( QDebug s, const Soprano::Node& );
+SOPRANO_EXPORT QTextStream& operator<<( QTextStream& s, const Soprano::Node& );
 
 #endif // SOPRANO_NODE_H

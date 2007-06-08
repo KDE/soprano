@@ -234,3 +234,25 @@ QDebug operator<<( QDebug s, const Soprano::Node& n )
     }
     return s.space();
 }
+
+
+QTextStream& operator<<( QTextStream& s, const Soprano::Node& n )
+{
+    switch(n.type()) {
+    case Soprano::Node::EmptyNode:
+        s << "(empty)";
+        break;
+//     case Soprano::Soprano::Node::BlankNode:
+//         s.nospace() << "(blank)";
+//         break;
+    case Soprano::Node::LiteralNode:
+        s << n.literal().toString();
+        if( !n.language().isEmpty() )
+            s << " (" << n.language() << ")";
+        break;
+    default:
+        s << n.uri();
+        break;
+    }
+    return s;
+}
