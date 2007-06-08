@@ -251,7 +251,7 @@ QTextStream& operator<<( QTextStream& s, const Soprano::Node& n )
             s << " (" << n.language() << ")";
         break;
     default:
-        s << n.uri();
+        s << n.uri().toString();
         break;
     }
     return s;
