@@ -156,13 +156,13 @@ bool Soprano::Statement::operator==( const Statement& other ) const
 
 QDebug operator<<( QDebug s, const Soprano::Statement& sm )
 {
-    s.nospace() << "[(" << sm.subject() << "," << sm.predicate() << "," << sm.object() << "," << sm.context() << ")]";
+    s.nospace() << "[" << sm.subject() << "," << sm.predicate() << "," << sm.object() << "," << sm.context() << "]";
     return s.space();
 }
 
 
 QTextStream& operator<<( QTextStream& s, const Soprano::Statement& sm )
 {
-    s << "[(" << sm.subject() << "," << sm.predicate() << "," << sm.object() << "," << sm.context() << ")]";
+    s << "[ " << sm.subject() << ", " << sm.predicate() << ", " << sm.object() << ", " << sm.context() << " ]";
     return s;
 }

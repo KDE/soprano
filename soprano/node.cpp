@@ -246,12 +246,15 @@ QTextStream& operator<<( QTextStream& s, const Soprano::Node& n )
 //         s.nospace() << "(blank)";
 //         break;
     case Soprano::Node::LiteralNode:
-        s << n.literal().toString();
+        s << '\"' << n.literal().toString() << "\"^^<" << n.literal().dataTypeUri().toString() << '>';
         if( !n.language().isEmpty() )
             s << " (" << n.language() << ")";
         break;
     default:
-        s << n.uri().toString();
+        s << '<' << n.uri().toString() << '>';
+        if ( n.isBlank() ) {
+            s << " (blank)";
+        }
         break;
     }
     return s;
