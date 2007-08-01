@@ -79,11 +79,11 @@ else (REDLAND_LIBRARIES AND REDLAND_INCLUDE_DIR and RASQUAL_INCLUDE_DIR)
 
   if (REDLAND_FOUND)
     if (NOT Redland_FIND_QUIETLY)
-      message(STATUS "Found REDLAND: ${REDLAND_LIBRARIES}")
+      message(STATUS "Found Redland: ${REDLAND_LIBRARIES}")
     endif (NOT Redland_FIND_QUIETLY)
   else (REDLAND_FOUND)
     if (Redland_FIND_REQUIRED)
-      message(FATAL_ERROR "Could NOT find REDLAND")
+      message(FATAL_ERROR "Could NOT find Redland")
     endif (Redland_FIND_REQUIRED)
   endif (REDLAND_FOUND)
 

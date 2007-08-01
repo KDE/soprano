@@ -1,7 +1,6 @@
-/* 
+/*
  * This file is part of Soprano Project.
  *
- * Copyright (C) 2006 Daniele Galdi <daniele.galdi@gmail.com>
  * Copyright (C) 2007 Sebastian Trueg <trueg@kde.org>
  *
  * This library is free software; you can redistribute it and/or
@@ -20,37 +19,32 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef SOPRANO_STATEMENT_ITERATOR_PRIVATE_H
-#define SOPRANO_STATEMENT_ITERATOR_PRIVATE_H
+#ifndef _THREESTORE_RESULT_ITERATOR_H_
+#define _THREESTORE_RESULT_ITERATOR_H_
 
-#include <QtCore/QSharedData>
-
-#include <soprano/soprano_export.h>
+#include "statementiteratorprivate.h"
+#include "resultset.h"
 
 namespace Soprano {
 
-class Statement;
+    class Statement;
 
-// FIXME: not a good idea to name a public member of the API "Private"!
+    namespace ThreeStore {
+	class ResultIterator : public Soprano::StatementIteratorPrivate
+	{
+	public:
+	    ResultIterator( const ResultSet& );
+	    ~ResultIterator();
 
-class SOPRANO_EXPORT StatementIteratorPrivate : public QSharedData
-{
-public:
-  virtual ~StatementIteratorPrivate();
+	    bool hasNext() const;
 
-  /**
-   *\return true if there is another Statement
-   */
-  virtual  bool hasNext() const = 0;
+	    Soprano::Statement next() const;
 
-  /**
-   *\return the Next Statement
-   */
-  // FIXME: this method being const does not make sense
-  virtual Statement next() const = 0;
-};
-
+	private:
+	    mutable ResultSet m_result;
+	    mutable int m_hasNext;
+	};
+    }
 }
 
-#endif // SOPRANO_STATEMENT_ITERATOR_PRIVATE_H
-
+#endif

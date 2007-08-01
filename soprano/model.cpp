@@ -61,6 +61,13 @@ Soprano::ErrorCode Soprano::Model::add( const Model &model )
     return ERROR_NONE;
 }
 
+Soprano::ErrorCode Soprano::Model::add( const Statement &statement, const Node &context )
+{
+    Statement s( statement );
+    s.setContext( context );
+    return add( s );
+}
+
 Soprano::ErrorCode Soprano::Model::add( const StatementIterator &iter, const Node &context )
 {
     if ( !iter.isValid() ) {
@@ -126,14 +133,47 @@ bool Soprano::Model::isEmpty() const
     return size() == 0;
 }
 
+bool Soprano::Model::contains( const Statement &statement ) const
+{
+    return !listStatements( statement ).isEmpty();
+}
+
+
+bool Soprano::Model::contains( const Node &context ) const
+{
+    return !listStatements( context ).isEmpty();
+}
+
 Soprano::StatementIterator Soprano::Model::listStatements() const
 {
     return listStatements( Statement() );
 }
 
+
+Soprano::StatementIterator Soprano::Model::listStatements( const Node &context ) const
+{
+    return listStatements( Statement( Node(), Node(), Node(), context ) );
+}
+
+
 Soprano::StatementIterator Soprano::Model::listStatements( const Node &subject, const Node &predicate, const Node &object ) const
 {
     return listStatements( Statement(subject, predicate, object) );
+}
+
+
+Soprano::StatementIterator Soprano::Model::listStatements( const Statement &partial, const Node &context ) const
+{
+    Statement s( partial );
+    s.setContext( context );
+    return listStatements( s );
+}
+
+Soprano::ErrorCode Soprano::Model::remove( const Statement &statement, const Node &context )
+{
+    Statement s( statement );
+    s.setContext( context );
+    return remove( s );
 }
 
 Soprano::ErrorCode Soprano::Model::removeAll( const Statement &statement, const Node &context )
@@ -176,4 +216,20 @@ Soprano::ErrorCode Soprano::Model::remove( const QList<Statement> &statements )
         }
     }
     return ERROR_NONE;
+}
+
+
+Soprano::ErrorCode Soprano::Model::write( QTextStream &os ) const
+{
+    StatementIterator it = listStatements();
+    while ( it.hasNext() ) {
+        os << it.next() << endl;
+    }
+}
+
+
+Soprano::ErrorCode Soprano::Model::print() const
+{
+    QTextStream os( stdout );
+    write( os );
 }

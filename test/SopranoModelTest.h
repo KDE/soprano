@@ -1,7 +1,7 @@
 /* 
  * This file is part of Soprano Project.
  *
- * Copyright (C) 2006 Sebastian Trueg <strueg@mandriva.com>
+ * Copyright (C) 2006-2007 Sebastian Trueg <strueg@mandriva.com>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -33,7 +33,10 @@ namespace Soprano {
 
 class SopranoModelTest: public QObject
 {
-Q_OBJECT
+    Q_OBJECT
+
+public:
+    SopranoModelTest();
 
 private Q_SLOTS:
   void init();

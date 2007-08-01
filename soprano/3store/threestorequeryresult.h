@@ -1,7 +1,6 @@
-/* 
+/*
  * This file is part of Soprano Project.
  *
- * Copyright (C) 2006 Daniele Galdi <daniele.galdi@gmail.com>
  * Copyright (C) 2007 Sebastian Trueg <trueg@kde.org>
  *
  * This library is free software; you can redistribute it and/or
@@ -20,37 +19,60 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef SOPRANO_STATEMENT_ITERATOR_PRIVATE_H
-#define SOPRANO_STATEMENT_ITERATOR_PRIVATE_H
+#ifndef THREE_STORE_QUERY_RESULT_H
+#define THREE_STORE_QUERY_RESULT_H
 
-#include <QtCore/QSharedData>
+#include "queryresult.h"
 
-#include <soprano/soprano_export.h>
+extern "C" {
+#include <rasqal.h>
+#include <3store3/datatypes.h>
+}
+
 
 namespace Soprano {
 
-class Statement;
+    class Model;
+    class Node;
+    class Statement;
 
-// FIXME: not a good idea to name a public member of the API "Private"!
+    namespace ThreeStore {
 
-class SOPRANO_EXPORT StatementIteratorPrivate : public QSharedData
-{
-public:
-  virtual ~StatementIteratorPrivate();
+	class QueryResult : public Soprano::QueryResult
+	{
+	public:
+	    QueryResult( ts_result* );
+	    ~QueryResult();
 
-  /**
-   *\return true if there is another Statement
-   */
-  virtual  bool hasNext() const = 0;
+	    bool next();
 
-  /**
-   *\return the Next Statement
-   */
-  // FIXME: this method being const does not make sense
-  virtual Statement next() const = 0;
-};
+	    Statement currentStatement() const;
 
+	    Node binding( const QString &name ) const;
+
+	    Node binding( int offset ) const;
+
+	    int bindingCount() const;
+
+	    QStringList bindingNames() const;
+
+	    bool isGraph() const;
+
+	    bool isBinding() const;
+
+	    bool isBool() const;
+
+	    bool boolValue() const;
+
+	    Model* model() const;
+
+	private:
+	    class Private;
+	    Private* d;
+	};
+
+    }
 }
 
-#endif // SOPRANO_STATEMENT_ITERATOR_PRIVATE_H
+#endif
 

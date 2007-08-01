@@ -90,3 +90,4 @@ INSTALL(FILES
 	DESTINATION include/soprano)
 
 add_subdirectory(redland)
+add_subdirectory(3store)

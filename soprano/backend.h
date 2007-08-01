@@ -68,6 +68,8 @@ namespace Soprano
       /**
        * Creates a simple memory model
        * The caller takes ownership and has to care about deletion.
+       *
+       * \return A new memory model or 0 if the backend does not support memory models.
        */
       virtual Model* createModel() const = 0;
 
@@ -80,8 +82,14 @@ namespace Soprano
        * \param options Specify optional options for the created model. Options are key/value
        *        pairs in the form of "key=value".
        *        Possible options may include (options always depend on the implementation)
-       *        \li storagePath Where to store the data on the local harddrive
-       *        \li storageType The database backend used, i.e. berkdb or sqlite or memory
+       *        \li storagePath Where to store the data on the local harddrive (Redland)
+       *        \li storageType The database backend used, i.e. berkdb or sqlite or memory (Redland)
+       *        \li host The host to connect to (3Store)
+       *        \li user The username to use with the database (3Store)
+       *        \li password The password to use with the database user (3Store)
+       *
+       * In case of the 3Store backend if no options are given it tries to connect to a local mysql service 
+       * as the current user.
        */
       virtual Model* createModel( const QString& name, const QStringList& options = QStringList() ) const = 0;
 

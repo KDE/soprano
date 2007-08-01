@@ -2,6 +2,7 @@
  * This file is part of Soprano Project
  *
  * Copyright (C) 2006 Daniele Galdi <daniele.galdi@gmail.com>
+ * Copyright (C) 2007 Sebastian Trueg <trueg@kde.org>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -26,41 +27,44 @@
 
 class QString;
 
+// FIXME: Is the Query class really useful? Is it really used?
 namespace Soprano
 {
+    class SOPRANO_EXPORT Query
+    {
+    public:
+	enum QueryType {
+	    SPARQL = 0,
+	    RDQL
+	};
 
-class SOPRANO_EXPORT Query
-{
-public:
-  enum QueryType {
-    SPARQL = 0,
-    RDQL
-  };
+	Query( const QString &query, QueryType type);
 
-  Query( const QString &query, QueryType type);
+	Query( const QString &query, QueryType type, int limit, int offset );
 
-  Query( const QString &query, QueryType type, int limit, int offset );
+	Query( const Query &other );
 
-  Query( const Query &other );
+	~Query();
 
-  ~Query();
+	QueryType type() const;
 
-  QueryType type() const;
+	QString query() const;
 
-  QString query() const;
+	int limit() const;
 
-  int limit() const;
+	void setLimit(int limit);
 
-  void setLimit(int limit);
+	int offset() const;
 
-  int offset() const;
+	void setOffset(int offset);
 
-  void setOffset(int offset);
-private:
-  class Private;
-  Private* const d;
-};
+	static QString queryTypeToString( QueryType queryType);
+	static int queryTypeFromString( const QString& );
 
+    private:
+	class Private;
+	Private* const d;
+    };
 }
 
 #endif

@@ -33,18 +33,27 @@ add_executable(redlandstitest StatementIteratorTest.cpp RedlandStatementIterator
 target_link_libraries(redlandstitest soprano ${QT_QTCORE_LIBRARY} ${QT_QTTEST_LIBRARY})
 add_test(redlandstitest ${EXECUTABLE_OUTPUT_PATH}/redlandstitest)
 
-# general
+# general model test
 qt4_automoc(sopranotest SopranoModelTest.cpp)
-qt4_automoc(sopranommtest RedlandMemoryModelTest.cpp)
-qt4_automoc(sopranopmtest RedlandPersistentModelTest.cpp)
+add_library(sopranomodeltest STATIC SopranoModelTest.cpp)
+target_link_libraries(sopranomodeltest soprano ${QT_QTCORE_LIBRARY} ${QT_QTTEST_LIBRARY})
 
-add_executable(sopranommtest SopranoModelTest.cpp RedlandMemoryModelTest.cpp)
-target_link_libraries(sopranommtest soprano ${QT_QTCORE_LIBRARY} ${QT_QTTEST_LIBRARY})
+# redland model tests
+qt4_automoc(sopranommtest RedlandMemoryModelTest.cpp)
+add_executable(sopranommtest RedlandMemoryModelTest.cpp)
+target_link_libraries(sopranommtest sopranomodeltest)
 add_test(sopranommtest ${EXECUTABLE_OUTPUT_PATH}/sopranommtest)
 
-add_executable(sopranopmtest SopranoModelTest.cpp RedlandPersistentModelTest.cpp)
-target_link_libraries(sopranopmtest soprano ${QT_QTCORE_LIBRARY} ${QT_QTTEST_LIBRARY})
+qt4_automoc(sopranopmtest RedlandPersistentModelTest.cpp)
+add_executable(sopranopmtest RedlandPersistentModelTest.cpp)
+target_link_libraries(sopranopmtest sopranomodeltest)
 add_test(sopranopmtest ${EXECUTABLE_OUTPUT_PATH}/sopranopmtest)
+
+# 3Store model test
+qt4_automoc(tstoremodeltest 3storemodeltest.cpp)
+add_executable(tstoremodeltest 3storemodeltest.cpp)
+target_link_libraries(tstoremodeltest sopranomodeltest)
+add_test(tstoremodeltest ${EXECUTABLE_OUTPUT_PATH}/tstoremodeltest)
 
 # scaling
 qt4_automoc(storagescalingtest storagescalingtest.cpp)

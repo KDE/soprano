@@ -101,12 +101,12 @@ namespace Soprano
 	     * It must be a complete statement - all of subject, predicate, object
 	     * parts must be present. 
 	     *
-	     * If context is empty this is equivalent to add( const Statement &statement ).
-	     *
 	     * \param statement The Statement to add.
-	     * \param context The Context node.
+	     * \param context The Context node which overwrites the statement's context.
+	     *
+	     * \deprecated Use add( const Statement& )
 	     */
-	    virtual ErrorCode add( const Statement &statement, const Node &context ) = 0;
+	    virtual ErrorCode add( const Statement &statement, const Node &context );
 
 	    /**
 	     * \return true if the Model doesn't contains any Statement.
@@ -119,14 +119,18 @@ namespace Soprano
 	    virtual QList<Node> contexts() const = 0;
 
 	    /**
+	     * The default implementation is simply based on listStatements( const Statement& ).
+	     *
 	     * \return true if the Model contains the given Statement.
 	     */
-	    virtual bool contains( const Statement &statement ) const = 0;
+	    virtual bool contains( const Statement &statement ) const;
 
 	    /**
+	     * The default implementation is simply based on listStatements( const Node& ).
+	     *
 	     * \return true if the Model contains the given Context node.
 	     */
-	    virtual bool contains( const Node &context ) const = 0;
+	    virtual bool contains( const Node &context ) const;
 
 	    /**
 	     * Execute the given query over the Model.
@@ -142,25 +146,26 @@ namespace Soprano
 
 	    /**
 	     * List all statements in a model context.
+	     * The default implementation just calls listStatements( const Statement& ).
 	     *
 	     * \param context The Context Node.
 	     *
 	     * \return An iterator for all Context Model Statements.
 	     */
-	    virtual StatementIterator listStatements( const Node &context ) const = 0;
+	    virtual StatementIterator listStatements( const Node &context ) const;
 
 	    /**
 	     * Return an iterator over Model Statements that "partial"
 	     * match the input Statement, in the given Context.
 	     *
-	     * If context is empty, this is equivalent to listStatements( const Statement &partial ).
-	     *
 	     * \param partial The partial Statement to match.
-	     * \param context The Context Node.
+	     * \param context The Context node which overwrites the statement's context.
 	     *
 	     * \return An iterator for all the matched Statements.
+	     *
+	     * \deprecated Use listStatements( const Statement& )
 	     */
-	    virtual StatementIterator listStatements( const Statement &partial, const Node &context ) const = 0;
+	    virtual StatementIterator listStatements( const Statement &partial, const Node &context ) const;
 
 	    /**
 	     * Return an iterator over Model Statements that "partial"
@@ -181,21 +186,22 @@ namespace Soprano
 	     * \param object The Object node (can be empty)
 	     *
 	     * \return An iterator for all the matched Statements.
+	     *
+	     * \deprecated Use listStatements( const Statement& )
 	     */
-	    // FIXME: REMOVEME
 	    StatementIterator listStatements( const Node &subject, const Node &predicate, const Node &object ) const;
 
 	    /**
 	     * Remove a Statement from the Model in a Context. 
 	     * It must be a complete statement - all of subject, predicate, object
-	     *  parts must be present. 
-	     *
-	     * If Context is Empty, this is equivalent to remove(const Statement &statement)
+	     * parts must be present.
 	     *
 	     * \param statement The Statement to remove.
-	     * \param context The Context node.
+	     * \param context The Context node which overwrites the statement's context.
+	     *
+	     * \deprecated Use remove( const Statement& )
 	     */
-	    virtual ErrorCode remove(const Statement &statement, const Node &context ) = 0;
+	    virtual ErrorCode remove(const Statement &statement, const Node &context );
 
 	    /**
 	     * Remove a Statement from the Model. 
@@ -220,6 +226,9 @@ namespace Soprano
 	     */
 	    virtual ErrorCode remove( const Node &context ) = 0;
 
+	    /**
+	     * \deprecated Use removeAll( const Statement& )
+	     */
 	    virtual ErrorCode removeAll( const Statement &statement, const Node &context );
 
 	    virtual ErrorCode removeAll( const Statement &statement );
@@ -245,20 +254,22 @@ namespace Soprano
 	    virtual int size() const = 0;
 
 	    /**
-	     * Write a model to a textstream.
+	     * Write a model to a textstream. The default implementation uses listStatements
+	     * to get all statements in the model which might be very inefficient.
 	     *
 	     * \param The stream.
 	     *
-	     * \return ERROR_UNKNOW if not implemented or an Error occurred.
+	     * \return ERROR_UNKNOW if an Error occurred.
 	     */
-	    virtual ErrorCode write( QTextStream &os ) const = 0;
+	    virtual ErrorCode write( QTextStream &os ) const;
 
 	    /**
-	     * Print the Model to the stdout.
+	     * Print the Model to the stdout. The default implementation uses listStatements
+	     * to get all statements in the model which might be very inefficient.
 	     *
-	     * \return ERROR_UNKNOW if not implemented or an Error occurred.
+	     * \return ERROR_UNKNOW if an Error occurred.
 	     */
-	    virtual ErrorCode print() const = 0;
+	    virtual ErrorCode print() const;
 
 	private:
 	    class Private;

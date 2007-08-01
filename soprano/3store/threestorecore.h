@@ -1,7 +1,6 @@
-/* 
+/*
  * This file is part of Soprano Project.
  *
- * Copyright (C) 2006 Daniele Galdi <daniele.galdi@gmail.com>
  * Copyright (C) 2007 Sebastian Trueg <trueg@kde.org>
  *
  * This library is free software; you can redistribute it and/or
@@ -20,37 +19,35 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef SOPRANO_STATEMENT_ITERATOR_PRIVATE_H
-#define SOPRANO_STATEMENT_ITERATOR_PRIVATE_H
+#ifndef _THREESTORE_CORE_H_
+#define _THREESTORE_CORE_H_
 
-#include <QtCore/QSharedData>
+#include <QtCore/QObject>
 
-#include <soprano/soprano_export.h>
 
 namespace Soprano {
+    namespace ThreeStore {
 
-class Statement;
+	class Model;
 
-// FIXME: not a good idea to name a public member of the API "Private"!
+	class Core : public QObject
+	{
+	public:
+	    Core();
+	    ~Core();
 
-class SOPRANO_EXPORT StatementIteratorPrivate : public QSharedData
-{
-public:
-  virtual ~StatementIteratorPrivate();
+	    static Core* instance();
 
-  /**
-   *\return true if there is another Statement
-   */
-  virtual  bool hasNext() const = 0;
+	    Model* createModel( const QString& host,
+				const QString& db,
+				const QString& user,
+				const QString& passwd );
 
-  /**
-   *\return the Next Statement
-   */
-  // FIXME: this method being const does not make sense
-  virtual Statement next() const = 0;
-};
-
+	private:
+	    class Private;
+	    Private* d;
+	};
+    }
 }
 
-#endif // SOPRANO_STATEMENT_ITERATOR_PRIVATE_H
-
+#endif

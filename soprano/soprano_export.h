@@ -47,10 +47,21 @@
 # endif
 #endif
 
+#ifndef THREESTOREBACKEND_EXPORT
+# if defined(MAKE_REDLANDBACKEND_LIB)
+   /* We are building this library */ 
+#  define THREESTOREBACKEND_EXPORT Q_DECL_EXPORT
+# else
+   /* We are using this library */ 
+#  define THREESTOREBACKEND_EXPORT Q_DECL_IMPORT
+# endif
+#endif
+
 #else /* UNIX */
 
 #define SOPRANO_EXPORT Q_DECL_EXPORT
 #define REDLANDBACKEND_EXPORT Q_DECL_EXPORT
+#define THREESTOREBACKEND_EXPORT Q_DECL_EXPORT
 
 #endif
 

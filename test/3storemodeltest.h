@@ -1,7 +1,6 @@
 /* 
  * This file is part of Soprano Project.
  *
- * Copyright (C) 2006 Daniele Galdi <daniele.galdi@gmail.com>
  * Copyright (C) 2007 Sebastian Trueg <trueg@kde.org>
  *
  * This library is free software; you can redistribute it and/or
@@ -20,37 +19,24 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef SOPRANO_STATEMENT_ITERATOR_PRIVATE_H
-#define SOPRANO_STATEMENT_ITERATOR_PRIVATE_H
+#include <QtTest>
 
-#include <QtCore/QSharedData>
+#include "SopranoModelTest.h"
 
-#include <soprano/soprano_export.h>
+#ifndef _3STORE_MODEL_TEST_H_
+#define _3STORE_MODEL_TEST_H_
 
 namespace Soprano {
-
-class Statement;
-
-// FIXME: not a good idea to name a public member of the API "Private"!
-
-class SOPRANO_EXPORT StatementIteratorPrivate : public QSharedData
-{
-public:
-  virtual ~StatementIteratorPrivate();
-
-  /**
-   *\return true if there is another Statement
-   */
-  virtual  bool hasNext() const = 0;
-
-  /**
-   *\return the Next Statement
-   */
-  // FIXME: this method being const does not make sense
-  virtual Statement next() const = 0;
-};
-
+  class Model;
 }
 
-#endif // SOPRANO_STATEMENT_ITERATOR_PRIVATE_H
+class TStoreModelTest: public SopranoModelTest
+{
+    Q_OBJECT
 
+private Q_SLOTS:
+    void initTestCase();
+    void cleanupTestCase(); 
+};
+
+#endif

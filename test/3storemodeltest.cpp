@@ -1,7 +1,6 @@
-/* 
+/*
  * This file is part of Soprano Project.
  *
- * Copyright (C) 2006 Daniele Galdi <daniele.galdi@gmail.com>
  * Copyright (C) 2007 Sebastian Trueg <trueg@kde.org>
  *
  * This library is free software; you can redistribute it and/or
@@ -20,37 +19,27 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef SOPRANO_STATEMENT_ITERATOR_PRIVATE_H
-#define SOPRANO_STATEMENT_ITERATOR_PRIVATE_H
+#include "3storemodeltest.h"
 
-#include <QtCore/QSharedData>
+#include <soprano/soprano.h>
 
-#include <soprano/soprano_export.h>
+using namespace Soprano;
 
-namespace Soprano {
-
-class Statement;
-
-// FIXME: not a good idea to name a public member of the API "Private"!
-
-class SOPRANO_EXPORT StatementIteratorPrivate : public QSharedData
+void TStoreModelTest::initTestCase()
 {
-public:
-  virtual ~StatementIteratorPrivate();
-
-  /**
-   *\return true if there is another Statement
-   */
-  virtual  bool hasNext() const = 0;
-
-  /**
-   *\return the Next Statement
-   */
-  // FIXME: this method being const does not make sense
-  virtual Statement next() const = 0;
-};
-
+    const Soprano::Backend* b = Soprano::discoverBackendByName( "3store" );
+    QVERIFY( b != 0 );
+    Soprano::setUsedBackend( b );
+    m_model = Soprano::createModel( "3storetestdb2", QString( "user=rdf,password=rdf" ).split( "," ) );
+    QVERIFY( m_model != 0 );
 }
 
-#endif // SOPRANO_STATEMENT_ITERATOR_PRIVATE_H
+void TStoreModelTest::cleanupTestCase()
+{
+    delete m_model;
+}
+
+QTEST_MAIN(TStoreModelTest)
+
+#include "3storemodeltest.moc"
 

@@ -56,8 +56,6 @@ namespace Soprano
 
 		librdf_model *redlandModel() const;
 
-		ErrorCode add( const Statement &statement, const Node &context );
-
 		ErrorCode add( const Statement &statement );
 
 		virtual QList<Node> contexts() const;
@@ -70,11 +68,7 @@ namespace Soprano
 
 		Soprano::StatementIterator listStatements( const Node &context ) const;
 
-		Soprano::StatementIterator listStatements( const Statement &partial, const Node &context ) const;
-
 		Soprano::StatementIterator listStatements( const Statement &partial ) const;
-
-		ErrorCode remove(const Statement &statement, const Node &context );
 
 		ErrorCode remove( const Statement &statement );
 

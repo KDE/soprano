@@ -25,11 +25,18 @@
 #include <QtTest/QTest>
 #include <QtCore/QList>
 #include <QtCore/QDebug>
+#include <QtCore/QFile>
+#include <QtCore/QTextStream>
 
 
 // FIXME: Use the QTest framework to create data tables
 
 using namespace Soprano;
+
+SopranoModelTest::SopranoModelTest()
+    : m_model( 0 )
+{
+}
 
 void SopranoModelTest::cleanup()
 {
@@ -78,6 +85,8 @@ void SopranoModelTest::testAddModel()
   Statement st3(subject1, predicate3, object1);
 
   Model *memory = Soprano::createModel();
+  QVERIFY( memory );
+
   memory->add( st1 );
   memory->add( st2 );
 
@@ -142,6 +151,8 @@ void SopranoModelTest::testAddStatementIterator()
   Statement st3(subject1, predicate3, object1);
 
   Model *memory = Soprano::createModel();
+  QVERIFY( memory );
+
   memory->add( st1 );
   memory->add( st2 );
 
@@ -225,12 +236,21 @@ void SopranoModelTest::testListStatements()
 
   StatementIterator it1 = m_model->listStatements( Statement( resource_1, Node(), Node() ) );
 
+    QFile f( "/tmp/testdump" );
+  f.open( QIODevice::WriteOnly );
+  QTextStream fs( &f );
+
   int cnt = 0;
   while( it1.hasNext() ) {
     ++cnt;
     Statement st = it1.next();
 
+    if ( st.subject() != resource_1 ) {
+        qDebug() << st.subject() << "vs." << resource_1;
+    }
     QCOMPARE( st.subject(), resource_1 );
+
+    fs << st << endl;
   }
 
   QCOMPARE( cnt, 50 );
@@ -411,7 +431,7 @@ void SopranoModelTest::testGraphQuery()
 
 void SopranoModelTest::testBooleanQuery()
 {
-  Query query("ASK {?a ?b ?c}", Query::SPARQL);
+  Query query("ASK where {?a ?b ?c}", Query::SPARQL);
 
   ResultSet res = m_model->executeQuery( query );
   QVERIFY( !res.next() );
@@ -490,6 +510,8 @@ void SopranoModelTest::testCloseStatementIteratorOnModelDelete()
   Statement st3(subject1, predicate3, object1);
 
   Model *model = Soprano::createModel();
+  QVERIFY( model );
+
   model->add( st1 );
   model->add( st2 );
 

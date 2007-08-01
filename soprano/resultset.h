@@ -54,6 +54,7 @@ namespace Soprano {
 	 * false if no more entries are found or if the ResultSet was
 	 * already invalidated by a call to model.
 	 */
+	// FIXME: make this match the StatementIterator model or the other way around
 	bool next();
 
 	/**

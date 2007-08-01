@@ -1,7 +1,6 @@
-/* 
+/*
  * This file is part of Soprano Project.
  *
- * Copyright (C) 2006 Daniele Galdi <daniele.galdi@gmail.com>
  * Copyright (C) 2007 Sebastian Trueg <trueg@kde.org>
  *
  * This library is free software; you can redistribute it and/or
@@ -20,37 +19,40 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef SOPRANO_STATEMENT_ITERATOR_PRIVATE_H
-#define SOPRANO_STATEMENT_ITERATOR_PRIVATE_H
+#include "threestoreresultiterator.h"
 
-#include <QtCore/QSharedData>
+#include "statement.h"
+#include "resultset.h"
 
-#include <soprano/soprano_export.h>
 
-namespace Soprano {
-
-class Statement;
-
-// FIXME: not a good idea to name a public member of the API "Private"!
-
-class SOPRANO_EXPORT StatementIteratorPrivate : public QSharedData
+Soprano::ThreeStore::ResultIterator::ResultIterator( const ResultSet& r )
+    : Soprano::StatementIteratorPrivate(),
+      m_result( r ),
+      m_hasNext( -1 )
 {
-public:
-  virtual ~StatementIteratorPrivate();
-
-  /**
-   *\return true if there is another Statement
-   */
-  virtual  bool hasNext() const = 0;
-
-  /**
-   *\return the Next Statement
-   */
-  // FIXME: this method being const does not make sense
-  virtual Statement next() const = 0;
-};
-
 }
 
-#endif // SOPRANO_STATEMENT_ITERATOR_PRIVATE_H
 
+Soprano::ThreeStore::ResultIterator::~ResultIterator()
+{
+}
+
+
+bool Soprano::ThreeStore::ResultIterator::hasNext() const
+{
+    if ( m_hasNext < 0 ) {
+        m_hasNext = ( m_result.next() ? 1 : 0 );
+    }
+    return ( m_hasNext > 0 );
+}
+
+
+Soprano::Statement Soprano::ThreeStore::ResultIterator::next() const
+{
+    Soprano::Statement s;
+    if ( hasNext() ) {
+        s = m_result.currentStatement();
+        m_hasNext = ( m_result.next() ? 1 : 0 );
+    }
+    return s;
+}

@@ -1,7 +1,6 @@
 /* 
  * This file is part of Soprano Project.
  *
- * Copyright (C) 2006 Daniele Galdi <daniele.galdi@gmail.com>
  * Copyright (C) 2007 Sebastian Trueg <trueg@kde.org>
  *
  * This library is free software; you can redistribute it and/or
@@ -20,37 +19,33 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef SOPRANO_STATEMENT_ITERATOR_PRIVATE_H
-#define SOPRANO_STATEMENT_ITERATOR_PRIVATE_H
+#ifndef _THREE_STORE_BACKEND_H_
+#define _THREE_STORE_BACKEND_H_
 
-#include <QtCore/QSharedData>
-
+#include <soprano/backend.h>
 #include <soprano/soprano_export.h>
 
-namespace Soprano {
+#include <QObject>
 
-class Statement;
-
-// FIXME: not a good idea to name a public member of the API "Private"!
-
-class SOPRANO_EXPORT StatementIteratorPrivate : public QSharedData
+namespace Soprano
 {
-public:
-  virtual ~StatementIteratorPrivate();
+  namespace ThreeStore
+    {
+      class THREESTOREBACKEND_EXPORT BackendPlugin : public QObject, public Soprano::Backend
+	{
+	  Q_OBJECT
+	  Q_INTERFACES(Soprano::Backend)
 
-  /**
-   *\return true if there is another Statement
-   */
-  virtual  bool hasNext() const = 0;
+	public:
+	  BackendPlugin();
 
-  /**
-   *\return the Next Statement
-   */
-  // FIXME: this method being const does not make sense
-  virtual Statement next() const = 0;
-};
+	  Model* createModel() const;
+	  Model* createModel( const QString& name, const QStringList& options = QStringList() ) const;
+	  Parser* createParser( const QStringList& options = QStringList() ) const;
 
+	  QStringList features() const;
+	};
+    }
 }
 
-#endif // SOPRANO_STATEMENT_ITERATOR_PRIVATE_H
-
+#endif

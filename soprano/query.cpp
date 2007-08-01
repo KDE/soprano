@@ -1,6 +1,7 @@
 /* This file is part of Soprano
  *
  * Copyright (C) 2006 Daniele Galdi <daniele.galdi@gmail.com>
+ * Copyright (C) 2007 Sebastian Trueg <trueg@kde.org>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -22,9 +23,8 @@
 
 #include <QtCore/QString>
 
-using namespace Soprano;
 
-class Query::Private
+class Soprano::Query::Private
 {
 public:
   Private() : limit(-1), offset(-1)
@@ -35,14 +35,14 @@ public:
   QueryType type;
 };
 
-Query::Query( const QString &query, QueryType type )
+Soprano::Query::Query( const QString &query, QueryType type )
     : d( new Private() )
 {
   d->query = query;
   d->type = type;
 }
 
-Query::Query( const QString &query, QueryType type, int limit, int offset )
+Soprano::Query::Query( const QString &query, QueryType type, int limit, int offset )
     : d( new Private() )
 {
   d->query = query;
@@ -51,7 +51,7 @@ Query::Query( const QString &query, QueryType type, int limit, int offset )
   d->offset = offset;
 }
 
-Query::Query( const Query &other )
+Soprano::Query::Query( const Query &other )
     : d( new Private() )
 {
   d->query = other.query();
@@ -60,38 +60,63 @@ Query::Query( const Query &other )
   d->offset = other.offset();
 }
 
-Query::~Query()
+Soprano::Query::~Query()
 {
   delete d;
 }
 
-Query::QueryType Query::type() const
+Soprano::Query::QueryType Soprano::Query::type() const
 {
   return d->type;
 }
 
-QString Query::query() const
+QString Soprano::Query::query() const
 {
   return d->query;
 }
 
-int Query::limit() const
+int Soprano::Query::limit() const
 {
   return d->limit;
 }
 
-void Query::setLimit(int limit)
+void Soprano::Query::setLimit(int limit)
 {
   d->limit = limit;
 }
 
-int Query::offset() const
+int Soprano::Query::offset() const
 {
   return d->offset;
 }
 
-void Query::setOffset(int offset)
+void Soprano::Query::setOffset(int offset)
 {
   d->offset = offset;
 }
 
+
+QString Soprano::Query::queryTypeToString( QueryType queryType )
+{
+    switch( queryType ) {
+    case SPARQL:
+        return "sparql";
+    case RDQL:
+        return "rdql";
+    }
+}
+
+
+int Soprano::Query::queryTypeFromString( const QString& s )
+{
+    QString sn( s.toLower() );
+    if ( sn == "sparql" ) {
+        return SPARQL;
+    }
+    else if ( sn == "rdql" ) {
+        return RDQL;
+    }
+    else {
+        return -1;
+    }
+}

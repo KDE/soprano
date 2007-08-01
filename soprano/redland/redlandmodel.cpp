@@ -124,12 +124,6 @@ Soprano::ErrorCode Soprano::Redland::RedlandModel::add( const Statement &stateme
     return ERROR_NONE;
 }
 
-Soprano::ErrorCode Soprano::Redland::RedlandModel::add( const Statement &statement, const Node &context )
-{
-    Statement s( statement );
-    s.setContext( context );
-    return add( s );
-}
 
 QList<Soprano::Node> Soprano::Redland::RedlandModel::contexts() const
 {
@@ -233,13 +227,6 @@ Soprano::StatementIterator Soprano::Redland::RedlandModel::listStatements( const
     return StatementIterator( it );
 }
 
-Soprano::StatementIterator Soprano::Redland::RedlandModel::listStatements( const Statement &partial, const Node &context ) const
-{
-    Statement s( partial );
-    s.setContext( context );
-    return listStatements( s );
-}
-
 Soprano::StatementIterator Soprano::Redland::RedlandModel::listStatements( const Statement &partial ) const
 {
     QReadLocker lock( &d->readWriteLock );
@@ -274,13 +261,6 @@ Soprano::StatementIterator Soprano::Redland::RedlandModel::listStatements( const
     d->iterators.append( it );
 
     return StatementIterator( it );
-}
-
-Soprano::ErrorCode Soprano::Redland::RedlandModel::remove( const Statement &statement, const Node &context )
-{
-    Statement s( statement );
-    s.setContext( context );
-    return remove( s );
 }
 
 Soprano::ErrorCode Soprano::Redland::RedlandModel::remove( const Statement &statement )
