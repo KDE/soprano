@@ -122,6 +122,8 @@ Soprano::ErrorCode Soprano::Redland::RedlandModel::add( const Statement &stateme
     //  return ERROR_UNKNOW;
     //}
 
+    emit statementsAdded();
+
     return ERROR_NONE;
 }
 
@@ -301,6 +303,9 @@ Soprano::ErrorCode Soprano::Redland::RedlandModel::remove( const Statement &stat
     //  return ERROR_UNKNOW;
     //}
 
+    // FIXME: check if we really deleted something
+    emit statementsRemoved();
+
     return ERROR_NONE;
 }
 
@@ -328,6 +333,9 @@ Soprano::ErrorCode Soprano::Redland::RedlandModel::remove( const Node &context )
     //{
     //  return ERROR_UNKNOW;
     //}
+
+    // FIXME: check if we really deleted something
+    emit statementsRemoved();
 
     return ERROR_NONE;
 }
