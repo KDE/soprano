@@ -35,6 +35,8 @@ namespace Soprano {
      */
     class SOPRANO_EXPORT FilterModel : public Model
     {
+	Q_OBJECT
+
     public:
 	/**
 	 * Create a new FilterModel which works on parent.

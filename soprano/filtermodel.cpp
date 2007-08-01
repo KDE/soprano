@@ -159,6 +159,8 @@ Soprano::ErrorCode Soprano::FilterModel::print() const
 
 void Soprano::FilterModel::setupDefaultConnections()
 {
-//     connect( d->parent, SIGNAL(statementsAdded()), this, SIGNAL(statementsAdded()) );
-//     connect( d->parent, SIGNAL(statementsRemoved()), this, SIGNAL(statementsRemoved()) );
+    connect( d->parent, SIGNAL(statementsAdded()), this, SIGNAL(statementsAdded()) );
+    connect( d->parent, SIGNAL(statementsRemoved()), this, SIGNAL(statementsRemoved()) );
 }
+
+#include "filtermodel.moc"
