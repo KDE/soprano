@@ -22,7 +22,7 @@
 #ifndef _SOPRANO_THREE_STORE_MODEL_H_
 #define _SOPRANO_THREE_STORE_MODEL_H_
 
-#include "model.h"
+#include "storagemodel.h"
 #include "node.h"
 #include "statement.h"
 
@@ -34,7 +34,7 @@ extern "C" {
 namespace Soprano {
     namespace ThreeStore {
 
-	class Model : public Soprano::Model
+	class Model : public Soprano::StorageModel
 	{
 	public:
 	    Model( ts_connection* conn );

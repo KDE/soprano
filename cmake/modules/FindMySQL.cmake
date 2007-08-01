@@ -31,11 +31,11 @@ find_library(MYSQL_EMBEDDED_LIBRARIES NAMES mysqld
    /opt/mysql/lib/mysql
 )
 
-macro_push_required_vars()
-set( CMAKE_REQUIRED_INCLUDES ${MYSQL_INCLUDE_DIR} )
-set( CMAKE_REQUIRED_LIBRARIES ${MYSQL_EMBEDDED_LIBRARIES} )
-check_cxx_source_compiles( "#include <mysql.h>\nint main() { int i = MYSQL_OPT_USE_EMBEDDED_CONNECTION; }" HAVE_MYSQL_OPT_EMBEDDED_CONNECTION )
-macro_pop_required_vars()
+#macro_push_required_vars()
+#set( CMAKE_REQUIRED_INCLUDES ${MYSQL_INCLUDE_DIR} )
+#set( CMAKE_REQUIRED_LIBRARIES ${MYSQL_EMBEDDED_LIBRARIES} )
+#check_cxx_source_compiles( "#include <mysql.h>\nint main() { int i = MYSQL_OPT_USE_EMBEDDED_CONNECTION; }" HAVE_MYSQL_OPT_EMBEDDED_CONNECTION )
+#macro_pop_required_vars()
 
 if(MYSQL_INCLUDE_DIR AND MYSQL_LIBRARIES)
    set(MYSQL_FOUND TRUE)

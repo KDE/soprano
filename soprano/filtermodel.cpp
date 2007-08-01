@@ -55,6 +55,24 @@ Soprano::Model* Soprano::FilterModel::parent() const
 }
 
 
+Soprano::ErrorCode Soprano::FilterModel::add( const Model &model )
+{
+    return d->parent->add( model );
+}
+
+
+Soprano::ErrorCode Soprano::FilterModel::add( const StatementIterator &iter )
+{
+    return d->parent->add( iter );
+}
+
+
+Soprano::ErrorCode Soprano::FilterModel::add( const QList<Statement> &statements )
+{
+    return d->parent->add( statements );
+}
+
+
 Soprano::ErrorCode Soprano::FilterModel::add( const Statement &statement )
 {
     return d->parent->add( statement );

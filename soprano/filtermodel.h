@@ -49,6 +49,24 @@ namespace Soprano {
 
 	/**
 	 * Default implementation simple pipes the call through to the parent model.
+	 * \sa Model::add( const Model& )
+	 */
+	virtual ErrorCode add( const Model &model );
+
+	/**
+	 * Default implementation simple pipes the call through to the parent model.
+	 * \sa Model::add( const StatementIterator& )
+	 */
+	virtual ErrorCode add( const StatementIterator &iter );
+
+	/**
+	 * Default implementation simple pipes the call through to the parent model.
+	 * \sa Model::add( const QList<Statement>& )
+	 */
+	virtual ErrorCode add( const QList<Statement> &statements );
+
+	/**
+	 * Default implementation simple pipes the call through to the parent model.
 	 * \sa Model::add( const Statement &statement )
 	 */
 	virtual ErrorCode add( const Statement &statement );

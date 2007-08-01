@@ -30,7 +30,7 @@
 
 #include <redland.h>
 
-#include "model.h"
+#include "storagemodel.h"
 #include "statement.h"
 #include "node.h"
 
@@ -45,7 +45,7 @@ namespace Soprano
 	class RedlandStatementIterator;
 	class RedlandQueryResult;
 
-	class RedlandModel: public Soprano::Model
+	class RedlandModel: public Soprano::StorageModel
 	    {
 	    public:
 		RedlandModel();

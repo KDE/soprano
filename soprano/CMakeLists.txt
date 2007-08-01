@@ -53,6 +53,8 @@ SET(soprano_SRCS
     version.cpp
     filtermodel.h
     filtermodel.cpp
+    storagemodel.h
+    storagemodel.cpp
 )
 
 qt4_automoc(${soprano_SRCS})

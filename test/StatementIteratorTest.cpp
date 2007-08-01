@@ -97,7 +97,7 @@ void StatementIteratorTest::testIterator()
 
   /* Resource 1 */
 
-  StatementIterator sti2 = m_model->listStatements( resource_1, Node(), Node() );
+  StatementIterator sti2 = m_model->listStatements( Statement( resource_1, Node(), Node() ) );
 
   cnt = 0;
   while ( sti2.hasNext() )

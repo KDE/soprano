@@ -104,7 +104,7 @@ public:
 
 
 Soprano::ThreeStore::Model::Model( ts_connection* conn )
-    : Soprano::Model(),
+    : Soprano::StorageModel(),
       d( new Private() )
 {
     d->connection = conn;

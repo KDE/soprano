@@ -55,6 +55,7 @@ public:
 };
 
 Soprano::Redland::RedlandModel::RedlandModel( librdf_model *model, librdf_storage *storage )
+    : StorageModel()
 {
     d = new Private;
     d->world = World::self()->worldPtr();

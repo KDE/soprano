@@ -374,21 +374,21 @@ void SopranoModelTest::testRemoveStatement()
 
 void SopranoModelTest::testRemoveAllStatement()
 {
-  m_model->removeAll( m_st1->subject(), Node(), Node() );
+  m_model->removeAll( Statement( m_st1->subject(), Node(), Node() ) );
 
   QVERIFY( !m_model->contains( *m_st1 ) );
   QVERIFY( m_model->contains( *m_st2 ) );
   QVERIFY( !m_model->contains( *m_st3 ) );
   QVERIFY( m_model->contains( *m_st4 ) );
 
-  m_model->removeAll( Node(), m_st3->predicate(), Node() );
+  m_model->removeAll( Statement( Node(), m_st3->predicate(), Node() ) );
 
   QVERIFY( !m_model->contains( *m_st1 ) );
   QVERIFY( m_model->contains( *m_st2 ) );
   QVERIFY( !m_model->contains( *m_st3 ) );
   QVERIFY( !m_model->contains( *m_st4 ) );
 
-  m_model->removeAll( Node(), Node(), m_st2->object() );
+  m_model->removeAll( Statement( Node(), Node(), m_st2->object() ) );
 
   QVERIFY( !m_model->contains( *m_st1 ) );
   QVERIFY( !m_model->contains( *m_st2 ) );
