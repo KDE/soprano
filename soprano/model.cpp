@@ -233,3 +233,5 @@ Soprano::ErrorCode Soprano::Model::print() const
     QTextStream os( stdout );
     write( os );
 }
+
+#include "model.moc"

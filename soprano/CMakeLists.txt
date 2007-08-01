@@ -51,6 +51,8 @@ SET(soprano_SRCS
     literalvalue.h
     datetime.cpp
     version.cpp
+    filtermodel.h
+    filtermodel.cpp
 )
 
 qt4_automoc(${soprano_SRCS})
