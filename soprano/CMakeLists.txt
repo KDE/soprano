@@ -84,6 +84,8 @@ INSTALL(FILES
 	statement.h
 	statementiterator.h
 	model.h
+	filtermodel.h
+	storagemodel.h
 	pluginmanager.h
 	soprano.h
 	soprano_export.h
