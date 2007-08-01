@@ -56,25 +56,19 @@ namespace Soprano
 
 		librdf_model *redlandModel() const;
 
-		ErrorCode add( const Statement &statement );
+		ErrorCode addStatement( const Statement &statement );
 
-		virtual QList<Node> contexts() const;
+		virtual QList<Node> listContexts() const;
 
-		bool contains( const Statement &statement ) const;
-
-		bool contains( const Node &context ) const;
+		bool containsStatements( const Statement &statement ) const;
 
 		Soprano::ResultSet executeQuery( const Query &query ) const;
 
-		Soprano::StatementIterator listStatements( const Node &context ) const;
-
 		Soprano::StatementIterator listStatements( const Statement &partial ) const;
 
-		ErrorCode remove( const Statement &statement );
+		ErrorCode removeStatements( const Statement &statement );
 
-		ErrorCode remove( const Node &context );
-
-		int size() const;
+		int statementCount() const;
 
 		ErrorCode write( QTextStream &os ) const;
 
@@ -86,6 +80,8 @@ namespace Soprano
 
 		void removeIterator( RedlandStatementIterator* it ) const;
 		void removeQueryResult( RedlandQueryResult* r ) const;
+
+		ErrorCode removeStatement( const Statement& );
 
 		friend class RedlandStatementIterator;
 		friend class RedlandQueryResult;

@@ -25,18 +25,13 @@
 
 using namespace Soprano;
 
-void TStoreModelTest::initTestCase()
+
+Soprano::Model* TStoreModelTest::createModel( const QString& name )
 {
     const Soprano::Backend* b = Soprano::discoverBackendByName( "3store" );
-    QVERIFY( b != 0 );
+    Q_ASSERT( b != 0 );
     Soprano::setUsedBackend( b );
-    m_model = Soprano::createModel( "3storetestdb2", QString( "user=rdf,password=rdf" ).split( "," ) );
-    QVERIFY( m_model != 0 );
-}
-
-void TStoreModelTest::cleanupTestCase()
-{
-    delete m_model;
+    return Soprano::createModel( name, QString( "user=rdf,password=rdf" ).split( "," ) );
 }
 
 QTEST_MAIN(TStoreModelTest)

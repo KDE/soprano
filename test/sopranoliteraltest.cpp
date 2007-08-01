@@ -79,7 +79,7 @@ void SopranoLiteralTest::testDataTypes()
   Statement s( subject, predicate, object );
 
   // add the value
-  QVERIFY( m_model->add( s ) == 0 );
+  QVERIFY( m_model->addStatement( s ) == 0 );
 
   // and retrieve it
   StatementIterator it = m_model->listStatements( Statement( subject, predicate, Node() ) );

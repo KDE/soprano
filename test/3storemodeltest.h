@@ -34,9 +34,8 @@ class TStoreModelTest: public SopranoModelTest
 {
     Q_OBJECT
 
-private Q_SLOTS:
-    void initTestCase();
-    void cleanupTestCase(); 
+protected:
+  virtual Soprano::Model* createModel( const QString& name );
 };
 
 #endif

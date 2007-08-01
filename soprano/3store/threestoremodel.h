@@ -40,25 +40,19 @@ namespace Soprano {
 	    Model( ts_connection* conn );
 	    ~Model();
 
-	    ErrorCode add( const Statement &statement );
-	    ErrorCode add( const StatementIterator &iter );
-	    ErrorCode add( const QList<Statement> &statements );
+	    ErrorCode addStatement( const Statement &statement );
 
-	    QList<Node> contexts() const;
+	    QList<Node> listContexts() const;
 
-	    bool contains( const Statement &statement ) const;
+	    bool containsStatements( const Statement &statement ) const;
 
 	    Soprano::ResultSet executeQuery( const Query &query ) const;
 
 	    Soprano::StatementIterator listStatements( const Statement &partial ) const;
 
-	    ErrorCode remove( const Statement &statement );
+	    ErrorCode removeStatements( const Statement &statement );
 
-	    ErrorCode remove( const Node &context );
-
-	    ErrorCode removeAll( const Statement &statement );
-
-	    int size() const;
+	    int statementCount() const;
 
 	private:
 	    class Private;

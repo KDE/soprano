@@ -39,75 +39,14 @@ namespace Soprano {
 	virtual ~StorageModel();
 
 	/**
-	 * Default implements is based on Model::add(const Statement&)
-	 */
-	virtual ErrorCode add( const Model &model );
-
-	/**
-	 * Default implements is based on Model::add(const Statement&)
-	 */
-	virtual ErrorCode add( const StatementIterator &iter );
-
-	/**
-	 * Default implements is based on Model::add(const Statement&)
-	 */
-	virtual ErrorCode add( const QList<Statement> &statements );
-
-	virtual ErrorCode add( const Statement &statement ) = 0;
-
-	/**
-	 * Default implementation is based on Model::size
+	 * Default implementation is based on Model::statementCount
 	 */
 	virtual bool isEmpty() const;
 	
 	/**
 	 * Default implementation is based on Model::listStatements
 	 */
-	virtual bool contains( const Statement &statement ) const;
-
-	/**
-	 * Default implementation is based on Model::listStatements
-	 */
-	virtual bool contains( const Node &context ) const;
-
-	/**
-	 * Default implementation is based on Model::listStatements
-	 */
-	virtual StatementIterator listStatements() const;
-
-	/**
-	 * Default implementation is based on Model::listStatements
-	 */
-	virtual StatementIterator listStatements( const Node &context ) const;
-
-	virtual StatementIterator listStatements( const Statement &partial ) const = 0;
-
-	/**
-	 * Default implementation is based on Model::listStatements and remove(const Statement&)
-	 */
-	virtual ErrorCode removeAll( const Statement &statement );
-
-	/**
-	 * Default implementation is based on Model::removeAll(const Statement&)
-	 */
-	virtual ErrorCode removeAll();
-
-	virtual ErrorCode remove( const Statement &statement ) = 0;
-
-	/**
-	 * Default implementation is based on Model::remove(const Statement&)
-	 */
-	virtual ErrorCode remove( const QList<Statement> &statements );
-
-	/**
-	 * Default implementation is based on Model::listStatements
-	 */
-	virtual ErrorCode write( QTextStream &os ) const;
-
-	/**
-	 * Default implementation is based on Model::write
-	 */
-	virtual ErrorCode print() const;
+	virtual bool containsStatements( const Statement &statement ) const;
 
     protected:
 	StorageModel();

@@ -64,7 +64,7 @@ void StorageScalingTest::testScaling()
     // hardcore!
     const int max = 1000000;
     for ( m_counter = 0; m_counter < max; ++m_counter ) {
-        QVERIFY( m_model->add( Statement( QUrl( QString( "http://soprano.org/hardcore/subject%1" ).arg( m_counter ) ),
+        QVERIFY( m_model->addStatement( Statement( QUrl( QString( "http://soprano.org/hardcore/subject%1" ).arg( m_counter ) ),
                                           QUrl( QString( "http://soprano.org/hardcore/predicate%1" ).arg( m_counter ) ),
                                           LiteralValue( QString( "object%1" ).arg( m_counter ) ) ) ) == 0 );
         fprintf( stderr, "Cnt: %d\r", m_counter );

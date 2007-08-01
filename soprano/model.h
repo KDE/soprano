@@ -39,7 +39,6 @@ namespace Soprano
     class Statement;
     class StatementIterator;
 
-// FIXME: what about a QList<Statement> allStatements method?
     /**
      * A Model is the central RDF storage class in Soprano. It is a queryable
      * collection of statements.
@@ -52,33 +51,26 @@ namespace Soprano
 	virtual ~Model();
 
 	/**
-	 * Add all the Statements present in the given Model to the
-	 * current Model.
-	 *
-	 * \param model The Model to add.
-	 */
-	virtual ErrorCode add( const Model &model ) = 0;
-
-	/**
-	 * Add Statements to the Model.
-	 *
-	 * \param iter The StatementIterator to add.
-	 */
-	virtual ErrorCode add( const StatementIterator &iter ) = 0;
-
-	/**
-	 * Add all Statements to the Model.
-	 *
-	 * \param statements A list of Statements to add.
-	 */
-	virtual ErrorCode add( const QList<Statement> &statements ) = 0;
-
-	/**
 	 * Add the Statement to the Model.
 	 *
 	 * \param statement The Statement to add.
 	 */
-	virtual ErrorCode add( const Statement &statement ) = 0;
+	virtual ErrorCode addStatement( const Statement &statement ) = 0;
+
+	/**
+	 * Convinience method which adds all statements in model to this Model.
+	 */
+	ErrorCode addModel( const Model &model );
+
+	/**
+	 * Convinience method which adds all statements in iter to this Model.
+	 */
+	ErrorCode addStatements( const StatementIterator &iter );
+
+	/**
+	 * Convinience method which adds all %statements in statements to this Model.
+	 */
+	ErrorCode addStatements( const QList<Statement> &statements );
 
 	/**
 	 * \return true if the Model doesn't contains any Statement.
@@ -88,21 +80,19 @@ namespace Soprano
 	/**
 	 * \return A List of Context Nodes.
 	 */
-	virtual QList<Node> contexts() const = 0;
+	virtual QList<Node> listContexts() const = 0;
 
 	/**
 	 * The default implementation is simply based on listStatements( const Statement& ).
 	 *
 	 * \return true if the Model contains the given Statement.
 	 */
-	virtual bool contains( const Statement &statement ) const = 0;
+	virtual bool containsStatements( const Statement &statement ) const = 0;
 
 	/**
-	 * The default implementation is simply based on listStatements( const Node& ).
-	 *
-	 * \return true if the Model contains the given Context node.
+	 * Convinience method which is based on containsStatements
 	 */
-	virtual bool contains( const Node &context ) const = 0;
+	bool containsContext( const Node &context ) const;
 
 	/**
 	 * Execute the given query over the Model.
@@ -110,21 +100,6 @@ namespace Soprano
 	 * \return All the Statements that match the query.
 	 */
 	virtual ResultSet executeQuery( const Query &query ) const = 0;
-
-	/**
-	 * \return An iterator for all Model Statements.
-	 */
-	virtual StatementIterator listStatements() const = 0;
-
-	/**
-	 * List all statements in a model context.
-	 * The default implementation just calls listStatements( const Statement& ).
-	 *
-	 * \param context The Context Node.
-	 *
-	 * \return An iterator for all Context Model Statements.
-	 */
-	virtual StatementIterator listStatements( const Node &context ) const = 0;
 
 	/**
 	 * Return an iterator over Model Statements that "partial"
@@ -137,63 +112,58 @@ namespace Soprano
 	virtual StatementIterator listStatements( const Statement &partial ) const = 0;
 
 	/**
-	 * Remove a Statement from the Model. 
-	 * It must be a complete statement - all of subject, predicate, object
-	 * parts must be present. 
-	 *
-	 * \param statement The Statement to remove.
+	 * Convinience method which lists all statements in this Model.
 	 */
-	virtual ErrorCode remove( const Statement &statement ) = 0;
+	StatementIterator listStatements() const;
 
 	/**
-	 * Remove a list of Statements from the Model. 
-	 * 
-	 * \param statements The Statements to remove.
+	 * Convinience method which lists all statements in context.
 	 */
-	virtual ErrorCode remove( const QList<Statement> &statements ) = 0;
-
-	/**
-	 * Remove Statements from a Model with the given Context.
-	 *
-	 * \param context The Context.
-	 */
-	virtual ErrorCode remove( const Node &context ) = 0;
+	StatementIterator listStatementsInContext( const Node &context ) const;
 
 	/**
 	 * Remove all statements that match the partial statement.
+	 *
 	 * \param statement A possible partially defined statement that serves as
 	 * a filter for all statements that should be removed.
 	 */
-	virtual ErrorCode removeAll( const Statement &statement ) = 0;
+	virtual ErrorCode removeStatements( const Statement &statement ) = 0;
 
 	/**
-	 * Remove all the statements from this model.
+	 * Convinience method which removes all %statements in statements.
 	 */
-	virtual ErrorCode removeAll() = 0;
+	ErrorCode removeStatements( const QList<Statement> &statements );
+
+        /**
+	 * Convinience method that removes all statements in the context.
+	 */
+	ErrorCode removeContext( const Node& );
 
 	/**
-	 * \return The size of the Model (number of Stamenent). 
+	 * Convinience method that clear the Model of all statements
+	 */
+	ErrorCode removeAllStatements();
+
+	/**
+	 * The number of statements stored in this Model.
+	 * \return The size of the Model. 
 	 *         -1 if not supported.
 	 */
-	virtual int size() const = 0;
+	virtual int statementCount() const = 0;
 
 	/**
-	 * Write a model to a textstream. The default implementation uses listStatements
-	 * to get all statements in the model which might be very inefficient.
+	 * Write all statements in this Model to os.
 	 *
-	 * \param The stream.
-	 *
-	 * \return ERROR_UNKNOW if an Error occurred.
+	 * Default implementation is based on Model::listStatements
 	 */
-	virtual ErrorCode write( QTextStream &os ) const = 0;
+	virtual ErrorCode write( QTextStream &os ) const;
 
 	/**
-	 * Print the Model to the stdout. The default implementation uses listStatements
-	 * to get all statements in the model which might be very inefficient.
+	 * Print all statements in this Model to stdout.
 	 *
-	 * \return ERROR_UNKNOW if an Error occurred.
+	 * Default implementation is based on Model::write
 	 */
-	virtual ErrorCode print() const = 0;
+	virtual ErrorCode print() const;
 
     signals:
 	/**

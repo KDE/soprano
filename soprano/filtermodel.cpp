@@ -80,31 +80,10 @@ void Soprano::FilterModel::setParentModel( Model* model )
 }
 
 
-Soprano::ErrorCode Soprano::FilterModel::add( const Model &model )
+Soprano::ErrorCode Soprano::FilterModel::addStatement( const Statement &statement )
 {
     Q_ASSERT( d->parent );
-    return d->parent->add( model );
-}
-
-
-Soprano::ErrorCode Soprano::FilterModel::add( const StatementIterator &iter )
-{
-    Q_ASSERT( d->parent );
-    return d->parent->add( iter );
-}
-
-
-Soprano::ErrorCode Soprano::FilterModel::add( const QList<Statement> &statements )
-{
-    Q_ASSERT( d->parent );
-    return d->parent->add( statements );
-}
-
-
-Soprano::ErrorCode Soprano::FilterModel::add( const Statement &statement )
-{
-    Q_ASSERT( d->parent );
-    return d->parent->add( statement );
+    return d->parent->addStatement( statement );
 }
 
 
@@ -115,24 +94,17 @@ bool Soprano::FilterModel::isEmpty() const
 }
 
 
-QList<Soprano::Node> Soprano::FilterModel::contexts() const
+QList<Soprano::Node> Soprano::FilterModel::listContexts() const
 {
     Q_ASSERT( d->parent );
-    return d->parent->contexts();
+    return d->parent->listContexts();
 }
 
 
-bool Soprano::FilterModel::contains( const Statement &statement ) const
+bool Soprano::FilterModel::containsStatements( const Statement &statement ) const
 {
     Q_ASSERT( d->parent );
-    return d->parent->contains( statement );
-}
-
-
-bool Soprano::FilterModel::contains( const Node &context ) const
-{
-    Q_ASSERT( d->parent );
-    return d->parent->contains( context );
+    return d->parent->containsStatements( statement );
 }
 
 
@@ -143,20 +115,6 @@ Soprano::ResultSet Soprano::FilterModel::executeQuery( const Query &query ) cons
 }
 
 
-Soprano::StatementIterator Soprano::FilterModel::listStatements() const
-{
-    Q_ASSERT( d->parent );
-    return d->parent->listStatements();
-}
-
-
-Soprano::StatementIterator Soprano::FilterModel::listStatements( const Node &context ) const
-{
-    Q_ASSERT( d->parent );
-    return d->parent->listStatements( context );
-}
-
-
 Soprano::StatementIterator Soprano::FilterModel::listStatements( const Statement &partial ) const
 {
     Q_ASSERT( d->parent );
@@ -164,59 +122,17 @@ Soprano::StatementIterator Soprano::FilterModel::listStatements( const Statement
 }
 
 
-Soprano::ErrorCode Soprano::FilterModel::remove( const Statement &statement )
+Soprano::ErrorCode Soprano::FilterModel::removeStatements( const Statement &statement )
 {
     Q_ASSERT( d->parent );
-    return d->parent->remove( statement );
+    return d->parent->removeStatements( statement );
 }
 
 
-Soprano::ErrorCode Soprano::FilterModel::remove( const QList<Statement> &statements )
+int Soprano::FilterModel::statementCount() const
 {
     Q_ASSERT( d->parent );
-    return d->parent->remove( statements );
-}
-
-
-Soprano::ErrorCode Soprano::FilterModel::remove( const Node &context )
-{
-    Q_ASSERT( d->parent );
-    return d->parent->remove( context );
-}
-
-
-Soprano::ErrorCode Soprano::FilterModel::removeAll( const Statement &statement )
-{
-    Q_ASSERT( d->parent );
-    return d->parent->removeAll( statement );
-}
-
-
-Soprano::ErrorCode Soprano::FilterModel::removeAll()
-{
-    Q_ASSERT( d->parent );
-    return d->parent->removeAll();
-}
-
-
-int Soprano::FilterModel::size() const
-{
-    Q_ASSERT( d->parent );
-    return d->parent->size();
-}
-
-
-Soprano::ErrorCode Soprano::FilterModel::write( QTextStream &os ) const
-{
-    Q_ASSERT( d->parent );
-    return d->parent->write( os );
-}
-
-
-Soprano::ErrorCode Soprano::FilterModel::print() const
-{
-    Q_ASSERT( d->parent );
-    return d->parent->print();
+    return d->parent->statementCount();
 }
 
 

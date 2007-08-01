@@ -25,17 +25,15 @@
 
 using namespace Soprano;
 
-void RedlandPersistentModelTest::initTestCase()
+
+Soprano::Model* RedlandPersistentModelTest::createModel( const QString& name )
 {
-  Soprano::setUsedBackend( Soprano::discoverBackendByName( "redland" ) );
-  m_model = Soprano::createModel( "persistent-model-test" );
-  QVERIFY( m_model != 0 );
+    Soprano::setUsedBackend( Soprano::discoverBackendByName( "redland" ) );
+    Soprano::Model* m = Soprano::createModel( name );
+    m->removeAllStatements();
+    return m;
 }
 
-void RedlandPersistentModelTest::cleanupTestCase()
-{
-  delete m_model;
-}
 
 QTEST_MAIN(RedlandPersistentModelTest)
 

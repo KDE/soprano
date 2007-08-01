@@ -118,7 +118,7 @@ Soprano::ThreeStore::Model::~Model()
 }
 
 
-Soprano::ErrorCode Soprano::ThreeStore::Model::add( const Statement &statement )
+Soprano::ErrorCode Soprano::ThreeStore::Model::addStatement( const Statement &statement )
 {
     return ( ts_assert_triple( d->connection,
                                d->ensureNode( statement.context() ),
@@ -132,39 +132,7 @@ Soprano::ErrorCode Soprano::ThreeStore::Model::add( const Statement &statement )
 }
 
 
-Soprano::ErrorCode Soprano::ThreeStore::Model::add( const StatementIterator &iter )
-{
-    ErrorCode c( ERROR_NONE );
-
-    ts_assert_block_mode( d->connection, TS_BLOCK_MODE_START );
-    while ( iter.hasNext() ) {
-        if ( ( c = add( iter.next() ) ) != ERROR_NONE ) {
-            break;
-        }
-    }
-    ts_assert_block_mode( d->connection, TS_BLOCK_MODE_COMMIT );
-
-    return c;
-}
-
-
-Soprano::ErrorCode Soprano::ThreeStore::Model::add( const QList<Statement> &statements )
-{
-    ErrorCode c( ERROR_NONE );
-
-    ts_assert_block_mode( d->connection, TS_BLOCK_MODE_START );
-    for ( QList<Statement>::const_iterator it = statements.constBegin(); it != statements.constEnd(); ++it ) {
-        if ( ( c = add( *it ) ) != ERROR_NONE ) {
-            break;
-        }
-    }
-    ts_assert_block_mode( d->connection, TS_BLOCK_MODE_COMMIT );
-
-    return c;
-}
-
-
-QList<Soprano::Node> Soprano::ThreeStore::Model::contexts() const
+QList<Soprano::Node> Soprano::ThreeStore::Model::listContexts() const
 {
     // FIXME: maybe use ts_mysql_query for this or use "select ?g where { graph ?g }" (although I dont think the latter is supported by rasqal)
     ResultSet r = executeQuery( Query( "select ?g where { graph ?g }", Query::SPARQL ) );
@@ -176,7 +144,7 @@ QList<Soprano::Node> Soprano::ThreeStore::Model::contexts() const
 }
 
 
-bool Soprano::ThreeStore::Model::contains( const Statement &statement ) const
+bool Soprano::ThreeStore::Model::containsStatements( const Statement &statement ) const
 {
     // our listStatements does not support fully defined statements
     if ( statement.isValid() ) {
@@ -192,7 +160,7 @@ bool Soprano::ThreeStore::Model::contains( const Statement &statement ) const
         return false;
     }
     else {
-        return Soprano::Model::contains( statement );
+        return Soprano::Model::containsStatements( statement );
     }
 }
 
@@ -233,40 +201,14 @@ Soprano::StatementIterator Soprano::ThreeStore::Model::listStatements( const Sta
 }
 
 
-Soprano::ErrorCode Soprano::ThreeStore::Model::remove( const Statement &statement )
+Soprano::ErrorCode Soprano::ThreeStore::Model::removeStatements( const Statement &statement )
 {
-    if ( statement.isValid() ) {
-        return removeAll( statement );
-    }
-    else {
-        return ERROR_INVALID_STATEMENT;
-    }
+    // FIXME
+    return ERROR_UNKNOW;
 }
 
 
-Soprano::ErrorCode Soprano::ThreeStore::Model::remove( const Node &context )
-{
-    // FIXME: unsure if this works
-    if ( context.isValid() ) {
-        executeQuery( Query( QString( "delete graph %1" ).arg( context.uri().toString() ), Query::SPARQL ) );
-        // FIXME: check if it succeeded
-        return ERROR_NONE;
-    }
-    else {
-        return ERROR_UNKNOW;
-    }
-}
-
-
-Soprano::ErrorCode Soprano::ThreeStore::Model::removeAll( const Statement &statement )
-{
-    // FIXME: unsure if this works
-    executeQuery( Query( QString( "delete where { %1 . }" ).arg( statementToConstructGraphPattern( statement ) ), Query::SPARQL ) );
-    return ERROR_NONE;
-}
-
-
-int Soprano::ThreeStore::Model::size() const
+int Soprano::ThreeStore::Model::statementCount() const
 {
     return -1;
 }

@@ -62,6 +62,9 @@ private Q_SLOTS:
   void testContexts();
 
 protected:
+  virtual Soprano::Model* createModel( const QString& name ) = 0;
+
+private:
    Soprano::Statement* m_st1;
    Soprano::Statement* m_st2;
    Soprano::Statement* m_st3;

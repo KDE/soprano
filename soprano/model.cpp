@@ -44,4 +44,112 @@ Soprano::Model::~Model()
     delete d;
 }
 
+
+
+bool Soprano::Model::containsContext( const Node &context ) const
+{
+    return !listStatementsInContext( context ).isEmpty();
+}
+
+Soprano::StatementIterator Soprano::Model::listStatements() const
+{
+    return listStatements( Statement() );
+}
+
+
+Soprano::StatementIterator Soprano::Model::listStatementsInContext( const Node &context ) const
+{
+    return listStatements( Statement( Node(), Node(), Node(), context ) );
+}
+
+
+Soprano::ErrorCode Soprano::Model::removeStatements( const QList<Statement> &statements )
+{
+    for ( QList<Statement>::const_iterator it = statements.constBegin();
+          it != statements.constEnd(); ++it ) {
+        ErrorCode c = removeStatements( *it );
+        if ( c != ERROR_NONE ) {
+            return c;
+        }
+    }
+    return ERROR_NONE;
+}
+
+
+Soprano::ErrorCode Soprano::Model::removeContext( const Node& context )
+{
+    return removeStatements( Statement( Node(), Node(), Node(), context ) );
+}
+
+
+Soprano::ErrorCode Soprano::Model::removeAllStatements()
+{
+    return removeStatements( Statement() );
+}
+
+
+Soprano::ErrorCode Soprano::Model::addModel( const Model &model )
+{
+    StatementIterator stmi = model.listStatements( Statement() );
+    if ( !stmi.isValid() ) {
+        return ERROR_UNKNOW;
+    }
+
+    while ( stmi.hasNext() ) {
+        ErrorCode c = addStatement( stmi.next() );
+        if ( ERROR_NONE != c ) {
+            return c;
+        }
+    }
+
+    return ERROR_NONE;
+}
+
+Soprano::ErrorCode Soprano::Model::addStatements( const StatementIterator &iter )
+{
+    if ( !iter.isValid() ) {
+        return ERROR_UNKNOW;
+    }
+
+    while ( iter.hasNext() ) {
+        ErrorCode c = addStatement( iter.next() );
+        if ( ERROR_NONE != c ) {
+            return c;
+        }
+    }
+
+    return ERROR_NONE;
+}
+
+Soprano::ErrorCode Soprano::Model::addStatements( const QList<Statement> &statements )
+{
+    // FIXME: why not call add with an empty context here?
+
+    QListIterator<Statement> iter(statements);
+    while ( iter.hasNext() ) {
+        ErrorCode c = addStatement( iter.next() );
+        if ( ERROR_NONE != c ) {
+            return c;
+        }
+    }
+
+    return ERROR_NONE;
+}
+
+
+Soprano::ErrorCode Soprano::Model::write( QTextStream &os ) const
+{
+    StatementIterator it = listStatements();
+    while ( it.hasNext() ) {
+        os << it.next() << endl;
+    }
+}
+
+
+Soprano::ErrorCode Soprano::Model::print() const
+{
+    QTextStream os( stdout );
+    write( os );
+}
+
 #include "model.moc"

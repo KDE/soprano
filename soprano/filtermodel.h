@@ -46,27 +46,9 @@ namespace Soprano {
 
 	/**
 	 * Default implementation simple pipes the call through to the parent model.
-	 * \sa Model::add( const Model& )
-	 */
-	virtual ErrorCode add( const Model &model );
-
-	/**
-	 * Default implementation simple pipes the call through to the parent model.
-	 * \sa Model::add( const StatementIterator& )
-	 */
-	virtual ErrorCode add( const StatementIterator &iter );
-
-	/**
-	 * Default implementation simple pipes the call through to the parent model.
-	 * \sa Model::add( const QList<Statement>& )
-	 */
-	virtual ErrorCode add( const QList<Statement> &statements );
-
-	/**
-	 * Default implementation simple pipes the call through to the parent model.
 	 * \sa Model::add( const Statement &statement )
 	 */
-	virtual ErrorCode add( const Statement &statement );
+	virtual ErrorCode addStatement( const Statement &statement );
 
 	/**
 	 * Default implementation simple pipes the call through to the parent model.
@@ -76,21 +58,15 @@ namespace Soprano {
 
 	/**
 	 * Default implementation simple pipes the call through to the parent model.
-	 * \sa Model::contexts()
+	 * \sa Model::listContexts()
 	 */
-	virtual QList<Node> contexts() const;
+	virtual QList<Node> listContexts() const;
 
 	/**
 	 * Default implementation simple pipes the call through to the parent model.
-	 * \sa Model::contains( const Statement &statement )
+	 * \sa Model::containsStatements( const Statement &statement )
 	 */
-	virtual bool contains( const Statement &statement ) const;
-
-	/**
-	 * Default implementation simple pipes the call through to the parent model.
-	 * \sa Model::contains( const Node &context )
-	 */
-	virtual bool contains( const Node &context ) const;
+	virtual bool containsStatements( const Statement &statement ) const;
 
 	/**
 	 * Default implementation simple pipes the call through to the parent model.
@@ -100,69 +76,21 @@ namespace Soprano {
 
 	/**
 	 * Default implementation simple pipes the call through to the parent model.
-	 * \sa Model::listStatements()
-	 */
-	virtual StatementIterator listStatements() const;
-
-	/**
-	 * Default implementation simple pipes the call through to the parent model.
-	 * \sa Model::listStatements( const Node &context )
-	 */
-	virtual StatementIterator listStatements( const Node &context ) const;
-
-	/**
-	 * Default implementation simple pipes the call through to the parent model.
 	 * \sa Model::listStatements( const Statement &partial )
 	 */
 	virtual StatementIterator listStatements( const Statement &partial ) const;
 
 	/**
 	 * Default implementation simple pipes the call through to the parent model.
-	 * \sa Model::remove( const Statement &statement )
+	 * \sa Model::removeStatements( const Statement &statement )
 	 */
-	virtual ErrorCode remove( const Statement &statement );
+	virtual ErrorCode removeStatements( const Statement &statement );
 
 	/**
 	 * Default implementation simple pipes the call through to the parent model.
-	 * \sa Model::remove( const QList<Statement> &statements )
+	 * \sa Model::statementCount()
 	 */
-	virtual ErrorCode remove( const QList<Statement> &statements );
-
-	/**
-	 * Default implementation simple pipes the call through to the parent model.
-	 * \sa Model::remove( const Node &context )
-	 */
-	virtual ErrorCode remove( const Node &context );
-
-	/**
-	 * Default implementation simple pipes the call through to the parent model.
-	 * \sa Model::removeAll( const Statement &statement )
-	 */
-	virtual ErrorCode removeAll( const Statement &statement );
-
-	/**
-	 * Default implementation simple pipes the call through to the parent model.
-	 * \sa Model::removeAll()
-	 */
-	ErrorCode removeAll();
-
-	/**
-	 * Default implementation simple pipes the call through to the parent model.
-	 * \sa Model::size()
-	 */
-	virtual int size() const;
-
-	/**
-	 * Default implementation simple pipes the call through to the parent model.
-	 * \sa Model::write
-	 */
-	virtual ErrorCode write( QTextStream &os ) const;
-
-	/**
-	 * Default implementation simple pipes the call through to the parent model.
-	 * \sa Model::print
-	 */
-	virtual ErrorCode print() const;
+	virtual int statementCount() const;
 
     protected:
 	/**
