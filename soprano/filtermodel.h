@@ -38,14 +38,11 @@ namespace Soprano {
 	Q_OBJECT
 
     public:
-	/**
-	 * Create a new FilterModel which works on parent.
-	 * \param parent The parent Model.
-	 */
-	FilterModel( Model* parent );
 	virtual ~FilterModel();
 
-	Model* parent() const;
+	void setParentModel( Model* );
+
+	Model* parentModel() const;
 
 	/**
 	 * Default implementation simple pipes the call through to the parent model.
@@ -169,12 +166,30 @@ namespace Soprano {
 
     protected:
 	/**
-	 * Simply pipes the Model signals from the parent through to this
-	 * instance.
-	 * Call this in the constructor if you have no need to modify the 
-	 * results of the signals.
+	 * Create an empty filter model.
 	 */
-	void setupDefaultConnections();
+	FilterModel();
+
+	/**
+	 * Create a new FilterModel which works on parent.
+	 * \param parent The parent Model.
+	 */
+	FilterModel( Model* parent );
+
+    protected Q_SLOTS:
+	/**
+	 * This slot gets connected to Model::statementsAdded of the parent
+	 * model.
+	 * The default implementation simply re-emits the signal.
+	 */
+	virtual void slotStatementsAdded();
+
+	/**
+	 * This slot gets connected to Model::statementsRemoved of the parent
+	 * model.
+	 * The default implementation simply re-emits the signal.
+	 */
+	virtual void slotStatementsRemoved();
 
     private:
 	class Private;
