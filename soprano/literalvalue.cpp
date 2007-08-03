@@ -21,6 +21,7 @@
 
 #include "literalvalue.h"
 #include "datetime.h"
+#include "xmls.h"
 
 #include <QtCore/QUrl>
 #include <QtCore/QString>
@@ -471,6 +472,7 @@ Soprano::LiteralValue Soprano::LiteralValue::fromString( const QString& value, c
 }
 
 
+// FIXME: use Soprano::Vocabulary::XMLSchema
 static const char* XS_NAMESPACE = "http://www.w3.org/2001/XMLSchema#";
 
 QVariant::Type Soprano::LiteralValue::typeFromDataTypeUri( const QUrl& dataTypeUri )

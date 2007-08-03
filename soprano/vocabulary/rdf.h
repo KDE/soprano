@@ -19,6 +19,23 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#include "rdf.h"
-#include "rdfs.h"
-#include "xmls.h"
+#ifndef _SOPRANO_RDF_H_
+#define _SOPRANO_RDF_H_
+
+#include <QtCore/QUrl>
+
+// FIXME: add all the missing URIs
+namespace Soprano {
+    namespace Vocabulary {
+	namespace RDF {
+	    /**
+	     * The RDF namespace (http://www.w3.org/1999/02/22-rdf-syntax-ns#)
+	     */
+	    QUrl NAMESPACE();
+	    QUrl TYPE();
+	    QUrl PROPERTY();
+	}
+    }
+}
+
+#endif

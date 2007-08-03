@@ -19,6 +19,32 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#include "rdf.h"
-#include "rdfs.h"
-#include "xmls.h"
+#ifndef _SOPRANO_XMLS_H_
+#define _SOPRANO_XMLS_H_
+
+#include <QtCore/QUrl>
+
+namespace Soprano {
+    namespace Vocabulary {
+	namespace XMLSchema {
+            QUrl NAMESPACE();
+            QUrl INT();
+            QUrl INTEGER();
+	    QUrl NEGATIVEINTEGER();
+	    QUrl DECIMAL();
+	    QUrl SHORT();
+            QUrl LONG();
+	    QUrl UNSIGNEDINT();
+	    QUrl UNSIGNEDSHORT();
+	    QUrl UNSIGNEDLONG();
+            QUrl STRING();
+            QUrl DOUBLE();
+            QUrl BOOLEAN();
+            QUrl DATE();
+            QUrl DATETIME();
+	    QUrl TIME();
+        }
+    }
+}
+
+#endif

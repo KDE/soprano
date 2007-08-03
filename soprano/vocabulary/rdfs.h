@@ -19,6 +19,33 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#include "rdf.h"
-#include "rdfs.h"
-#include "xmls.h"
+#ifndef _SOPRANO_RDFS_H_
+#define _SOPRANO_RDFS_H_
+
+#include <QtCore/QUrl>
+
+
+namespace Soprano {
+    namespace Vocabulary {
+	namespace RDFS {
+	    QUrl NAMESPACE();
+	    QUrl CLASS();
+	    QUrl COMMENT();
+	    QUrl DATATYPE();
+	    QUrl DOMAIN();
+	    QUrl RANGE();
+	    QUrl LABEL();
+	    QUrl SUBCLASSOF();
+	    QUrl SUBPROPERTYOF();
+	    QUrl SEEALSO();
+	    QUrl RESOURCE();
+	    QUrl MEMBER();
+	    QUrl LITERAL();
+	    QUrl ISDEFINEDBY();
+	    QUrl CONTAINER();
+	    QUrl CONTAINERMEMBERSHIPPROPERTY();
+	}
+    }
+}
+
+#endif

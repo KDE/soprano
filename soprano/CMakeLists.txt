@@ -13,6 +13,7 @@ include_directories(
   ${QT_QTCORE_INCLUDE_DIR}
   ${CMAKE_SOURCE_DIR}
   ${soprano_core_BINARY_DIR}
+  ${soprano_core_SOURCE_DIR}/vocabulary
   ${CMAKE_SOURCE_DIR}/soprano
   ${QT_INCLUDE_DIR}
   ${CMAKE_INSTALL_PREFIX}/include
@@ -56,6 +57,9 @@ SET(soprano_SRCS
     storagemodel.h
     storagemodel.cpp
     rdfschemawrapper.cpp
+    vocabulary/rdf.cpp
+    vocabulary/rdfs.cpp
+    vocabulary/xmls.cpp
 )
 
 qt4_automoc(${soprano_SRCS})
@@ -95,7 +99,9 @@ INSTALL(FILES
 	literalvalue.h
 	version.h
 	rdfschemawrapper.h
-	vocabulary.h
+	vocabulary/rdf.h
+	vocabulary/rdfs.h
+	vocabulary/xmls.h
 	DESTINATION include/soprano)
 
 add_subdirectory(redland)

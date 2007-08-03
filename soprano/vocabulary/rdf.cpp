@@ -20,5 +20,37 @@
  */
 
 #include "rdf.h"
-#include "rdfs.h"
-#include "xmls.h"
+
+class Rdf
+{
+public:
+    Rdf()
+        : rdfNamespace( "http://www.w3.org/1999/02/22-rdf-syntax-ns#" ),
+          rdfType( "http://www.w3.org/1999/02/22-rdf-syntax-ns#type" ),
+          rdfProperty( "http://www.w3.org/1999/02/22-rdf-syntax-ns#Property" ) {
+    }
+
+    QUrl rdfNamespace;
+    QUrl rdfType;
+    QUrl rdfProperty;
+};
+
+Q_GLOBAL_STATIC( Rdf, rdf );
+
+
+QUrl Soprano::Vocabulary::RDF::NAMESPACE()
+{
+    return rdf()->rdfNamespace;
+}
+
+
+QUrl Soprano::Vocabulary::RDF::TYPE()
+{
+    return rdf()->rdfType;
+}
+
+
+QUrl Soprano::Vocabulary::RDF::PROPERTY()
+{
+    return rdf()->rdfProperty;
+}
