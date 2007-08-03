@@ -188,7 +188,7 @@ namespace Soprano {
 	virtual bool isClass( const Node& resource ) const;
 
 	/**
-	 * Checks whether the supplied resource represents a proerty.
+	 * Checks whether the supplied resource represents a property.
 	 *
 	 * \param resource The resource to check.
 	 *
