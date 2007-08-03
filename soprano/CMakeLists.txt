@@ -55,6 +55,7 @@ SET(soprano_SRCS
     filtermodel.cpp
     storagemodel.h
     storagemodel.cpp
+    rdfschemawrapper.cpp
 )
 
 qt4_automoc(${soprano_SRCS})
@@ -93,6 +94,8 @@ INSTALL(FILES
 	error.h
 	literalvalue.h
 	version.h
+	rdfschemawrapper.h
+	vocabulary.h
 	DESTINATION include/soprano)
 
 add_subdirectory(redland)
