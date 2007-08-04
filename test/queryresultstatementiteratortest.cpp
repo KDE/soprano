@@ -154,6 +154,17 @@ void QueryResultStatementIteratorTest::testAssignment()
     QVERIFY( it1.next() );
     QVERIFY( !it1.next() );
     QVERIFY( !it2.next() );
+
+    // now test the same with a simple StatementIterator
+    StatementIterator it3 = it1;
+    QVERIFY( !it3.next() );
+
+    QueryResultIterator resultIt2( new DummyQueryResult( sl ) );
+    it3 = QueryResultStatementIterator( resultIt2 );
+    for ( uint i = 0; i < sl.count(); ++i ) {
+        QVERIFY( it3.next() );
+    }
+    QVERIFY( !it3.next() );
 }
 
 QTEST_MAIN(QueryResultStatementIteratorTest)
