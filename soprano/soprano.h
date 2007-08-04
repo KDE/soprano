@@ -28,7 +28,11 @@
 #include <soprano/literalvalue.h>
 #include <soprano/statement.h>
 #include <soprano/statementiterator.h>
+#include <soprano/simplestatementiterator.h>
+#include <soprano/queryresultstatementiterator.h>
 #include <soprano/model.h>
+#include <soprano/storagemodel.h>
+#include <soprano/filtermodel.h>
 #include <soprano/parser.h>
 #include <soprano/backend.h>
 #include <soprano/pluginmanager.h>
