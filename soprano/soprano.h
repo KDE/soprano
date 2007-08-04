@@ -23,7 +23,7 @@
 #define SOPRANO_H
 
 #include <soprano/query.h>
-#include <soprano/resultset.h>
+#include <soprano/queryresultiterator.h>
 #include <soprano/node.h>
 #include <soprano/literalvalue.h>
 #include <soprano/statement.h>

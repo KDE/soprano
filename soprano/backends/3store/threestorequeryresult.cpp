@@ -135,7 +135,7 @@ public:
 
 
 Soprano::ThreeStore::QueryResult::QueryResult( ts_result* r )
-    : Soprano::QueryResult(),
+    : Soprano::QueryResultIteratorBackend(),
       d(  new Private() )
 {
     d->result = r;

@@ -26,7 +26,7 @@
 #include <redland.h>
 #include <QString>
 
-#include "queryresult.h"
+#include "queryresultiteratorbackend.h"
 
 namespace Soprano {
     class Node;
@@ -35,7 +35,7 @@ namespace Soprano {
     namespace Redland {
 	class RedlandModel;
 
-	class RedlandQueryResult: public Soprano::QueryResult
+	class RedlandQueryResult: public Soprano::QueryResultIteratorBackend
 	    {
 	    public:
 		RedlandQueryResult( const RedlandModel* model, librdf_query_results *result );

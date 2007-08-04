@@ -22,10 +22,9 @@
 #include "threestoreresultiterator.h"
 
 #include "statement.h"
-#include "resultset.h"
 
 
-Soprano::ThreeStore::ResultIterator::ResultIterator( const ResultSet& r )
+Soprano::ThreeStore::ResultIterator::ResultIterator( const QueryResultIterator& r )
     : Soprano::StatementIteratorBackend(),
       m_result( r )
 {

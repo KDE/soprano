@@ -33,10 +33,10 @@ namespace Soprano {
     class Node;
     class Statement;
 
-    class SOPRANO_EXPORT QueryResult
+    class SOPRANO_EXPORT QueryResultIteratorBackend
 	{
 	public:
-	    virtual ~QueryResult();
+	    virtual ~QueryResultIteratorBackend();
 
 	    virtual bool next() = 0;
 
@@ -59,6 +59,9 @@ namespace Soprano {
 	    virtual bool boolValue() const = 0;
 
 	    virtual Model *model() = 0;
+
+	protected:
+	    QueryResultIteratorBackend();
 	};
 
 }

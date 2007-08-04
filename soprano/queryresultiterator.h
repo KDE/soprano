@@ -33,30 +33,35 @@ namespace Soprano {
 
     class Model;
     class Node;
-    class QueryResult;
+    class QueryResultIteratorBackend;
     class Statement;
 
-    // FIXME: how about renaming it to something like ResultIterator?
-    class SOPRANO_EXPORT ResultSet
+    /**
+     * An iterator for query results.
+     *
+     * Be aware that iterators in Soprano are shared objects which means
+     * that copies of one iterator object work on the same data.
+     */
+    class SOPRANO_EXPORT QueryResultIterator
     {
     public:
-	ResultSet();
-	ResultSet( const ResultSet& );
+	QueryResultIterator();
+	QueryResultIterator( const QueryResultIterator& );
 
 	/**
-	 * Create a new ResultSet which uses qr as backend.
-	 * ResultSet will take ownership of the QueryResult.
+	 * Create a new QueryResultIterator which uses qr as backend.
+	 * QueryResultIterator will take ownership of the QueryResultIteratorBackend.
 	 */
-	ResultSet( QueryResult *qr );
+	QueryResultIterator( QueryResultIteratorBackend *qr );
 
-	virtual ~ResultSet();
+	virtual ~QueryResultIterator();
 
-	ResultSet& operator=( const ResultSet& );
+	QueryResultIterator& operator=( const QueryResultIterator& );
 
 	/**
 	 * Advance to the next entry (statement or bindingset)
-	 * \return true if the end of the ResultSet was not reached yet.
-	 * false if no more entries are found or if the ResultSet was
+	 * \return true if the end of the QueryResultIterator was not reached yet.
+	 * false if no more entries are found or if the QueryResultIterator was
 	 * already invalidated by a call to model.
 	 */
 	bool next();
@@ -85,11 +90,11 @@ namespace Soprano {
 	/**
 	 * Retrieve a Model containing all Statements from a graph query.
 	 *
-	 * After calling this method the ResultSet is invalidated, i.e. can not
+	 * After calling this method the QueryResultIterator is invalidated, i.e. can not
 	 * be reused.
 	 *
 	 * \return A new Model containing all result Statements from the graph query
-	 * or 0 in case this ResultSet does not represent a graph query or next has
+	 * or 0 in case this QueryResultIterator does not represent a graph query or next has
 	 * already been called to iterate over the results.
 	 * Caution: the caller has to take care of deleting the 
 	 * returned model!

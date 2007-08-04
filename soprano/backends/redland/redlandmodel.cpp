@@ -23,7 +23,7 @@
 #include "redlandmodel.h"
 
 #include "query.h"
-#include "resultset.h"
+#include "queryresultiterator.h"
 #include "statementiterator.h"
 #include "redlandworld.h"
 #include "redlandutil.h"
@@ -181,14 +181,14 @@ bool Soprano::Redland::RedlandModel::containsStatements( const Statement &statem
 }
 
 
-Soprano::ResultSet Soprano::Redland::RedlandModel::executeQuery( const Query &query ) const
+Soprano::QueryResultIterator Soprano::Redland::RedlandModel::executeQuery( const Query &query ) const
 {
     QReadLocker lock( &d->readWriteLock );
 
     librdf_query *q = librdf_new_query( d->world, Util::queryType( query ), 0L, (unsigned char *)query.query().toLatin1().data(), 0L );
     if ( !q )
     {
-        return ResultSet();
+        return QueryResultIterator();
     }
 
     librdf_query_set_limit( q , query.limit() );
@@ -197,7 +197,7 @@ Soprano::ResultSet Soprano::Redland::RedlandModel::executeQuery( const Query &qu
     librdf_query_results *res = librdf_model_query_execute( d->model, q );
     if ( !res )
     {
-        return ResultSet();
+        return QueryResultIterator();
     }
 
     librdf_free_query( q );
@@ -205,7 +205,7 @@ Soprano::ResultSet Soprano::Redland::RedlandModel::executeQuery( const Query &qu
     RedlandQueryResult* result = new RedlandQueryResult( this, res );
     d->results.append( result );
 
-    return ResultSet( result );
+    return QueryResultIterator( result );
 }
 
 

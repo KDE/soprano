@@ -22,7 +22,7 @@
 #ifndef THREE_STORE_QUERY_RESULT_H
 #define THREE_STORE_QUERY_RESULT_H
 
-#include "queryresult.h"
+#include "queryresultiteratorbackend.h"
 
 extern "C" {
 #include <rasqal.h>
@@ -38,7 +38,7 @@ namespace Soprano {
 
     namespace ThreeStore {
 
-	class QueryResult : public Soprano::QueryResult
+	class QueryResult : public Soprano::QueryResultIteratorBackend
 	{
 	public:
 	    QueryResult( ts_result* );

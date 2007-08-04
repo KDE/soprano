@@ -20,20 +20,19 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#include "resultset.h"
-
+#include "queryresultiterator.h"
+#include "queryresultiteratorbackend.h"
 #include "model.h"
 #include "node.h"
 #include "statement.h"
-#include "queryresult.h"
 
 #include <QtCore/QSharedData>
 
 
-class Soprano::ResultSet::Private : public QSharedData
+class Soprano::QueryResultIterator::Private : public QSharedData
 {
 public:
-    Private( QueryResult* qr = 0 )
+    Private( QueryResultIteratorBackend* qr = 0 )
         : queryResult( qr ) {
     }
 
@@ -41,41 +40,41 @@ public:
         delete queryResult;
     }
 
-    QueryResult* queryResult;
+    QueryResultIteratorBackend* queryResult;
 };
 
 
-Soprano::ResultSet::ResultSet()
+Soprano::QueryResultIterator::QueryResultIterator()
 {
     d = new Private;
 }
 
 
-Soprano::ResultSet::ResultSet( QueryResult *qr )
+Soprano::QueryResultIterator::QueryResultIterator( QueryResultIteratorBackend *qr )
 {
     d = new Private( qr );
 }
 
 
-Soprano::ResultSet::ResultSet( const ResultSet& other )
+Soprano::QueryResultIterator::QueryResultIterator( const QueryResultIterator& other )
 {
     d = other.d;
 }
 
 
-Soprano::ResultSet::~ResultSet()
+Soprano::QueryResultIterator::~QueryResultIterator()
 {
 }
 
 
-Soprano::ResultSet& Soprano::ResultSet::operator=( const ResultSet& other )
+Soprano::QueryResultIterator& Soprano::QueryResultIterator::operator=( const QueryResultIterator& other )
 {
     d = other.d;
     return *this;
 }
 
 
-bool Soprano::ResultSet::next()
+bool Soprano::QueryResultIterator::next()
 {
     // some evil hacking to avoid detachment of the shared data
     const Private* cd = d.constData();
@@ -83,61 +82,61 @@ bool Soprano::ResultSet::next()
 }
 
 
-Soprano::Statement Soprano::ResultSet::currentStatement() const
+Soprano::Statement Soprano::QueryResultIterator::currentStatement() const
 {
     return ( d->queryResult ? d->queryResult->currentStatement() : Statement() );
 }
 
 
-Soprano::Node Soprano::ResultSet::binding( const QString &name ) const
+Soprano::Node Soprano::QueryResultIterator::binding( const QString &name ) const
 {
     return ( d->queryResult ? d->queryResult->binding( name ) : Node() );
 }
 
 
-Soprano::Node Soprano::ResultSet::binding( int offset ) const
+Soprano::Node Soprano::QueryResultIterator::binding( int offset ) const
 {
     return ( d->queryResult ? d->queryResult->binding( offset ) : Node() );
 }
 
 
-int Soprano::ResultSet::bindingCount() const
+int Soprano::QueryResultIterator::bindingCount() const
 {
     return ( d->queryResult ? d->queryResult->bindingCount() : 0 );
 }
 
 
-QStringList Soprano::ResultSet::bindingNames() const
+QStringList Soprano::QueryResultIterator::bindingNames() const
 {
     return ( d->queryResult ? d->queryResult->bindingNames() : QStringList() );
 }
 
 
-bool Soprano::ResultSet::isGraph() const
+bool Soprano::QueryResultIterator::isGraph() const
 {
     return ( d->queryResult ? d->queryResult->isGraph() : false );
 }
 
 
-bool Soprano::ResultSet::isBinding() const
+bool Soprano::QueryResultIterator::isBinding() const
 {
     return ( d->queryResult ? d->queryResult->isBinding() : false );
 }
 
 
-bool Soprano::ResultSet::isBool() const
+bool Soprano::QueryResultIterator::isBool() const
 {
     return ( d->queryResult ? d->queryResult->isBool() : false );
 }
 
 
-bool Soprano::ResultSet::boolValue() const
+bool Soprano::QueryResultIterator::boolValue() const
 {
     return ( d->queryResult ? d->queryResult->boolValue() : false );
 }
 
 
-Soprano::Model *Soprano::ResultSet::model()
+Soprano::Model *Soprano::QueryResultIterator::model()
 {
     // some evil hacking to avoid detachment of the shared data
     const Private* cd = d.constData();

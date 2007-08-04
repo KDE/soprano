@@ -402,7 +402,7 @@ void SopranoModelTest::testGraphQuery()
 {
     Query query("CONSTRUCT { ?s ?p ?o } WHERE { ?s ?p ?o . }", Query::SPARQL);
 
-    ResultSet rs = m_model->executeQuery( query );
+    QueryResultIterator rs = m_model->executeQuery( query );
     QVERIFY( rs.isGraph() );
     QVERIFY( !rs.isBinding() );
     QVERIFY( !rs.isBool() );
@@ -435,7 +435,7 @@ void SopranoModelTest::testBooleanQuery()
 {
     Query query("ASK where {?a ?b ?c}", Query::SPARQL);
 
-    ResultSet res = m_model->executeQuery( query );
+    QueryResultIterator res = m_model->executeQuery( query );
     QVERIFY( !res.next() );
 
     QVERIFY( !res.isGraph() );
@@ -452,7 +452,7 @@ void SopranoModelTest::testQuery()
     /* SPARQL */
     Query sparql("select ?b ?c where {?a ?b ?c .}", Query::SPARQL);
 
-    ResultSet rs1 = m_model->executeQuery( sparql );
+    QueryResultIterator rs1 = m_model->executeQuery( sparql );
 
     int cnt = 0;
     while ( rs1.next() )
@@ -482,7 +482,7 @@ void SopranoModelTest::testQuery()
 
     Query rdql("select ?b ?c where (<uri:init:test1>, ?b, ?c)", Query::RDQL);
 
-    ResultSet rs2 = m_model->executeQuery( rdql );
+    QueryResultIterator rs2 = m_model->executeQuery( rdql );
 
     int cnt2 = 0;
     while ( rs2.next() )

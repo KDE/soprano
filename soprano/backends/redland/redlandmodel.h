@@ -37,7 +37,7 @@
 namespace Soprano
 {
 
-    class ResultSet;
+    class QueryResultIterator;
     class StatementIterator;
 
     namespace Redland {
@@ -62,7 +62,7 @@ namespace Soprano
 
 		bool containsStatements( const Statement &statement ) const;
 
-		Soprano::ResultSet executeQuery( const Query &query ) const;
+		Soprano::QueryResultIterator executeQuery( const Query &query ) const;
 
 		Soprano::StatementIterator listStatements( const Statement &partial ) const;
 

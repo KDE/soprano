@@ -24,10 +24,10 @@ configure_file(config.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/config.h)
 SET(soprano_SRCS
     query.cpp
     query.h
-    queryresult.cpp
-    queryresult.h
-    resultset.cpp
-    resultset.h
+    queryresultiterator.cpp
+    queryresultiterator.h
+    queryresultiteratorbackend.cpp
+    queryresultiteratorbackend.h
     node.cpp
     node.h
     statement.cpp
@@ -84,10 +84,12 @@ INSTALL(TARGETS soprano
 INSTALL(FILES 
 	parser.h
 	query.h
-	resultset.h
+	queryresultiterator.h
+	queryresultiteratorbackend.h
 	node.h
 	statement.h
 	statementiterator.h
+	statementiteratorbackend.h
 	model.h
 	filtermodel.h
 	storagemodel.h

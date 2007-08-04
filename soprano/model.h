@@ -36,7 +36,7 @@ namespace Soprano
 {
     class Node;
     class Query;
-    class ResultSet;
+    class QueryResultIterator;
     class Statement;
     class StatementIterator;
 
@@ -100,7 +100,7 @@ namespace Soprano
 	 *
 	 * \return All the Statements that match the query.
 	 */
-	virtual ResultSet executeQuery( const Query &query ) const = 0;
+	virtual QueryResultIterator executeQuery( const Query &query ) const = 0;
 
 	/**
 	 * Return an iterator over Model Statements that "partial"

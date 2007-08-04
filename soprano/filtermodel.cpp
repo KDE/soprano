@@ -21,7 +21,7 @@
 
 #include "filtermodel.h"
 #include "statement.h"
-#include "resultset.h"
+#include "queryresultiterator.h"
 #include "statementiterator.h"
 
 #include <QtCore/QList>
@@ -108,7 +108,7 @@ bool Soprano::FilterModel::containsStatements( const Statement &statement ) cons
 }
 
 
-Soprano::ResultSet Soprano::FilterModel::executeQuery( const Query &query ) const
+Soprano::QueryResultIterator Soprano::FilterModel::executeQuery( const Query &query ) const
 {
     Q_ASSERT( d->parent );
     return d->parent->executeQuery( query );

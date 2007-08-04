@@ -23,7 +23,7 @@
 #include "threestorequeryresult.h"
 #include "threestoreresultiterator.h"
 
-#include "resultset.h"
+#include "queryresultiterator.h"
 #include "statementiterator.h"
 #include "query.h"
 
@@ -135,7 +135,7 @@ Soprano::ErrorCode Soprano::ThreeStore::Model::addStatement( const Statement &st
 QList<Soprano::Node> Soprano::ThreeStore::Model::listContexts() const
 {
     // FIXME: maybe use ts_mysql_query for this or use "select ?g where { graph ?g }" (although I dont think the latter is supported by rasqal)
-    ResultSet r = executeQuery( Query( "select ?g where { graph ?g }", Query::SPARQL ) );
+    QueryResultIterator r = executeQuery( Query( "select ?g where { graph ?g }", Query::SPARQL ) );
     QList<Soprano::Node> ng;
     while ( r.next() ) {
         ng.append( r.binding( 0 ) );
@@ -165,7 +165,7 @@ bool Soprano::ThreeStore::Model::containsStatements( const Statement &statement 
 }
 
 
-Soprano::ResultSet Soprano::ThreeStore::Model::executeQuery( const Query &query ) const
+Soprano::QueryResultIterator Soprano::ThreeStore::Model::executeQuery( const Query &query ) const
 {
     qDebug() << "(Soprano::ThreeStore::Model) executing query: " << query.query();
 
@@ -176,10 +176,10 @@ Soprano::ResultSet Soprano::ThreeStore::Model::executeQuery( const Query &query 
                                     "3store:default#");
 
     if ( ts_result* res = ts_query_execute( d->connection, q ) ) {
-        return ResultSet( new ThreeStore::QueryResult( res ) );
+        return QueryResultIterator( new ThreeStore::QueryResult( res ) );
     }
     else {
-        return ResultSet( 0 );
+        return QueryResultIterator( 0 );
     }
 }
 
@@ -195,7 +195,7 @@ Soprano::StatementIterator Soprano::ThreeStore::Model::listStatements( const Sta
         query += QString( "%2 . }" ).arg( statementToConstructGraphPattern( partial ) );
     }
 
-    ResultSet r = executeQuery( Query( query, Query::SPARQL ) );
+    QueryResultIterator r = executeQuery( Query( query, Query::SPARQL ) );
 
     return Soprano::StatementIterator( new ThreeStore::ResultIterator( r ) );
 }

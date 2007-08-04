@@ -30,6 +30,12 @@ namespace Soprano {
     class Statement;
     class StatementIteratorBackend;
 
+    /**
+     * An iterator that provides a stream of Statements.
+     *
+     * Be aware that iterators in Soprano are shared objects which means
+     * that copies of one iterator object work on the same data.
+     */
     class SOPRANO_EXPORT StatementIterator
     {
     public:
