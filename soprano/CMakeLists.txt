@@ -36,6 +36,7 @@ SET(soprano_SRCS
     statementiterator.h
     statementiteratorbackend.cpp
     statementiteratorbackend.h
+    simplestatementiterator.cpp
     model.cpp
     model.h
     parser.cpp
@@ -57,6 +58,7 @@ SET(soprano_SRCS
     storagemodel.h
     storagemodel.cpp
     rdfschemawrapper.cpp
+    simplestatementiterator.h
     vocabulary/rdf.cpp
     vocabulary/rdfs.cpp
     vocabulary/xmls.cpp

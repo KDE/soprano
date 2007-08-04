@@ -60,3 +60,9 @@ qt4_automoc(storagescalingtest storagescalingtest.cpp)
 add_executable(storagescalingtest storagescalingtest.cpp)
 target_link_libraries(storagescalingtest soprano ${QT_QTCORE_LIBRARY} ${QT_QTTEST_LIBRARY})
 add_test(nodetest ${EXECUTABLE_OUTPUT_PATH}/storagescalingtest)
+
+# SimpleStatementIterator
+qt4_automoc(simplestatementiteratortest simplestatementiteratortest.cpp)
+add_executable(simplestatementiteratortest simplestatementiteratortest.cpp)
+target_link_libraries(simplestatementiteratortest soprano ${QT_QTCORE_LIBRARY} ${QT_QTTEST_LIBRARY})
+add_test(simplestatementiteratortest ${EXECUTABLE_OUTPUT_PATH}/simplestatementiteratortest)

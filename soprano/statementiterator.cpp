@@ -25,9 +25,6 @@
 #include "statement.h"
 
 
-// This is a dummy shared class that is never intended to be detached
-// since we cannot actually copy the backend. So we only use the ref-count
-// feature of QSharedData
 class Soprano::StatementIterator::Private : public QSharedData
 {
 public:
@@ -65,8 +62,16 @@ Soprano::StatementIterator::~StatementIterator()
 
 Soprano::StatementIterator& Soprano::StatementIterator::operator=( const StatementIterator& other )
 {
-  d = other.d;
-  return *this;
+    d = other.d;
+    return *this;
+}
+
+void Soprano::StatementIterator::setBackend( StatementIteratorBackend* b )
+{
+    if ( d->backend != b ) {
+        // now we want it to detach
+        d->backend = b;
+    }
 }
 
 bool Soprano::StatementIterator::next()
@@ -88,10 +93,10 @@ Soprano::Statement Soprano::StatementIterator::operator*() const
 
 bool Soprano::StatementIterator::isValid() const
 {
-  return !isEmpty();
+    return !isEmpty();
 }
 
 bool Soprano::StatementIterator::isEmpty() const
 {
-  return d->backend == 0;
+    return d->backend == 0;
 }
