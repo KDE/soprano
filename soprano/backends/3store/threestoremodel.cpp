@@ -21,11 +21,11 @@
 
 #include "threestoremodel.h"
 #include "threestorequeryresult.h"
-#include "threestoreresultiterator.h"
 
 #include "queryresultiterator.h"
 #include "statementiterator.h"
 #include "query.h"
+#include "queryresultstatementiterator.h"
 
 #include <QtCore/QDebug>
 
@@ -197,7 +197,7 @@ Soprano::StatementIterator Soprano::ThreeStore::Model::listStatements( const Sta
 
     QueryResultIterator r = executeQuery( Query( query, Query::SPARQL ) );
 
-    return Soprano::StatementIterator( new ThreeStore::ResultIterator( r ) );
+    return Soprano::QueryResultStatementIterator( r );
 }
 
 

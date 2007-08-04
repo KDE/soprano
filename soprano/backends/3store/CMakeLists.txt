@@ -19,7 +19,6 @@ if(TSTORE_FOUND)
   set(tstore_backend_SRC
     threestoreutil.cpp
     threestoreutil.h
-    threestoreresultiterator.cpp
     threestorequeryresult.cpp
     threestorequeryresult.h
     threestoremodel.cpp

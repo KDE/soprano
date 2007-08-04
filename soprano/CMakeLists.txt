@@ -37,6 +37,7 @@ SET(soprano_SRCS
     statementiteratorbackend.cpp
     statementiteratorbackend.h
     simplestatementiterator.cpp
+    queryresultstatementiterator.cpp
     model.cpp
     model.h
     parser.cpp
@@ -92,6 +93,8 @@ INSTALL(FILES
 	statement.h
 	statementiterator.h
 	statementiteratorbackend.h
+	simplestatementiterator.h
+	queryresultstatementiterator.h
 	model.h
 	filtermodel.h
 	storagemodel.h

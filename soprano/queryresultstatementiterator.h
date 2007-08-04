@@ -19,41 +19,40 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef _SOPRANO_SIMPLE_STATEMENT_ITERATOR_H_
-#define _SOPRANO_SIMPLE_STATEMENT_ITERATOR_H_
+#ifndef _QUERY_RESULT_STATEMENT_ITERATOR_H_
+#define _QUERY_RESULT_STATEMENT_ITERATOR_H_
 
 #include "statementiterator.h"
-#include "soprano_export.h"
-
-#include <QtCore/QList>
+#include "queryresultiterator.h"
 
 namespace Soprano {
 
+    class Statement;
+
     /**
-     * The most simple version of a StatementIterator simply iterates over
-     * a list of Statements.
+     * A simple wrapper iterator that iterates over the results of a 
+     * SPARQL describe or construct query.
      *
-     * The SimpleStatementIterator has been designed as a trivial extension
+     * The QueryResultStatementIterator has been designed as a trivial extension
      * to StatementIterator and can be used as a drop-in-replacement as shown
      * below:
      * \code
-     * QList<Statement> list;
-     * SimpleStatementIterator it( list );
+     * QueryResultStatementIterator it( result );
      *
      * // it and it2 iterate over the exact same data
      * StatementIterator it2 = it;
      * \endcode
      */
-    class SOPRANO_EXPORT SimpleStatementIterator : public StatementIterator
+    class QueryResultStatementIterator : public Soprano::StatementIterator
     {
     public:
-	SimpleStatementIterator();
-	SimpleStatementIterator( const QList<Statement>& );
-	SimpleStatementIterator( const SimpleStatementIterator& );
-	virtual ~SimpleStatementIterator();
+	QueryResultStatementIterator();
+	QueryResultStatementIterator( const QueryResultIterator& );
+	QueryResultStatementIterator( const QueryResultStatementIterator& );
+	virtual ~QueryResultStatementIterator();
 
-	SimpleStatementIterator& operator=( const QList<Statement>& );
-	SimpleStatementIterator& operator=( const SimpleStatementIterator& );
+	QueryResultStatementIterator& operator=( const QueryResultIterator& );
+	QueryResultStatementIterator& operator=( const QueryResultStatementIterator& );
 
     private:
 	class Private;
