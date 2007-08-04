@@ -28,6 +28,7 @@
 
 #include "soprano_export.h"
 #include "error.h"
+#include "rdfschemawrapper.h"
 
 class QTextStream;
 
@@ -43,7 +44,7 @@ namespace Soprano
      * A Model is the central RDF storage class in Soprano. It is a queryable
      * collection of statements.
      */
-    class SOPRANO_EXPORT Model : public QObject
+    class SOPRANO_EXPORT Model : public QObject, public RdfSchemaWrapper
     {
 	Q_OBJECT
 

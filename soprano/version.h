@@ -25,10 +25,10 @@
 #include "soprano_export.h"
 
 /// @brief Soprano version as string at compile time.
-#define SOPRANO_VERSION_STRING "0.9.0"
+#define SOPRANO_VERSION_STRING "1.9.0"
 
 /// @brief The major Soprano version number at compile time
-#define SOPRANO_VERSION_MAJOR 0
+#define SOPRANO_VERSION_MAJOR 1
 
 /// @brief The minor Soprano version number at compile time
 #define SOPRANO_VERSION_MINOR 9

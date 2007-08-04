@@ -104,5 +104,4 @@ INSTALL(FILES
 	vocabulary/xmls.h
 	DESTINATION include/soprano)
 
-add_subdirectory(redland)
-add_subdirectory(3store)
+add_subdirectory(backends)

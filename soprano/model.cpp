@@ -35,7 +35,9 @@ public:
 };
 
 Soprano::Model::Model()
-    : d( new Private() )
+    : QObject( 0 ),
+      RdfSchemaWrapper( this ),
+      d( new Private() )
 {
 }
 
