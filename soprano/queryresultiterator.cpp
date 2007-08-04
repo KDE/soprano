@@ -134,11 +134,3 @@ bool Soprano::QueryResultIterator::boolValue() const
 {
     return ( d->queryResult ? d->queryResult->boolValue() : false );
 }
-
-
-Soprano::Model *Soprano::QueryResultIterator::model()
-{
-    // some evil hacking to avoid detachment of the shared data
-    const Private* cd = d.constData();
-    return ( cd->queryResult ? cd->queryResult->model() : 0 );
-}

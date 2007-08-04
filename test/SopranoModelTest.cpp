@@ -407,28 +407,12 @@ void SopranoModelTest::testGraphQuery()
     QVERIFY( !rs.isBinding() );
     QVERIFY( !rs.isBool() );
 
-    // test the model creation
-    Model *model = rs.model();
-    QVERIFY( model != 0L);
-
-    StatementIterator iter = model->listStatements();
     int cnt = 0;
-    while ( iter.next() ) {
-        ++cnt;
-        Statement st = *iter;
-    }
-    QCOMPARE ( cnt, 4 );
-
-    delete model;
-
-    // test the iteration
-    rs = m_model->executeQuery( query );
-    cnt = 0;
     while ( rs.next() ) {
         ++cnt;
         Statement st = rs.currentStatement();
     }
-    QCOMPARE( cnt, 4 );
+    QCOMPARE ( cnt, 4 );
 }
 
 void SopranoModelTest::testBooleanQuery()

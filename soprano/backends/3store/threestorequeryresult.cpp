@@ -245,11 +245,3 @@ bool Soprano::ThreeStore::QueryResult::boolValue() const
     // FIXME: do we need to cache this value or is it returned multiple times?
     return ts_result_fetch_row( d->result );
 }
-
-
-Soprano::Model* Soprano::ThreeStore::QueryResult::model()
-{
-    // no memory models :(
-    // FIXME: fix API
-    return 0;
-}

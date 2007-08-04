@@ -247,39 +247,39 @@ bool Soprano::Redland::RedlandQueryResult::boolValue() const
 }
 
 
-Soprano::Model *Soprano::Redland::RedlandQueryResult::model()
-{
-    if ( !isGraph() ) {
-        return 0;
-    }
+// Soprano::Model *Soprano::Redland::RedlandQueryResult::model()
+// {
+//     if ( !isGraph() ) {
+//         return 0;
+//     }
 
-    // we cannot reuse a result. :(
-    if ( !d->first ) {
-        return 0;
-    }
+//     // we cannot reuse a result. :(
+//     if ( !d->first ) {
+//         return 0;
+//     }
 
-    d->first = false;
+//     d->first = false;
 
-    // Create a memory model with context support and type hashes
-    librdf_storage *storage = librdf_new_storage( World::self()->worldPtr(), "hashes", NULL, "hash-type='memory',contexts='yes'");
-    if ( !storage ) {
-        return 0;
-    }
+//     // Create a memory model with context support and type hashes
+//     librdf_storage *storage = librdf_new_storage( World::self()->worldPtr(), "hashes", NULL, "hash-type='memory',contexts='yes'");
+//     if ( !storage ) {
+//         return 0;
+//     }
 
-    librdf_model *model = librdf_new_model( World::self()->worldPtr(), storage, 0 );
-    if ( !model ) {
-        librdf_free_storage( storage );
-        return 0;
-    }
+//     librdf_model *model = librdf_new_model( World::self()->worldPtr(), storage, 0 );
+//     if ( !model ) {
+//         librdf_free_storage( storage );
+//         return 0;
+//     }
 
-    if ( librdf_stream *stream = librdf_query_results_as_stream( d->result ) ) {
-        librdf_model_add_statements( model, stream );
-        librdf_free_stream( stream );
-        return new RedlandModel( model, storage );
-    }
-    else {
-        librdf_free_model( model );
-        librdf_free_storage( storage );
-        return 0;
-    }
-}
+//     if ( librdf_stream *stream = librdf_query_results_as_stream( d->result ) ) {
+//         librdf_model_add_statements( model, stream );
+//         librdf_free_stream( stream );
+//         return new RedlandModel( model, storage );
+//     }
+//     else {
+//         librdf_free_model( model );
+//         librdf_free_storage( storage );
+//         return 0;
+//     }
+// }

@@ -62,8 +62,6 @@ namespace Soprano {
 
 		bool boolValue() const;
 
-		Model *model();
-
 		void close() const;
 
 	    private:

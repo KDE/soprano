@@ -87,20 +87,6 @@ namespace Soprano {
 
 	bool boolValue() const;
 
-	/**
-	 * Retrieve a Model containing all Statements from a graph query.
-	 *
-	 * After calling this method the QueryResultIterator is invalidated, i.e. can not
-	 * be reused.
-	 *
-	 * \return A new Model containing all result Statements from the graph query
-	 * or 0 in case this QueryResultIterator does not represent a graph query or next has
-	 * already been called to iterate over the results.
-	 * Caution: the caller has to take care of deleting the 
-	 * returned model!
-	 */
-	Model *model();
-
     private:
 	class Private;
 	QSharedDataPointer<Private> d;
