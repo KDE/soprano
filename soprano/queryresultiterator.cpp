@@ -134,3 +134,14 @@ bool Soprano::QueryResultIterator::boolValue() const
 {
     return ( d->queryResult ? d->queryResult->boolValue() : false );
 }
+
+
+bool Soprano::QueryResultIterator::isValid() const
+{
+    return !isEmpty();
+}
+
+bool Soprano::QueryResultIterator::isEmpty() const
+{
+    return d->queryResult == 0;
+}

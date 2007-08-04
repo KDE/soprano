@@ -87,6 +87,16 @@ namespace Soprano {
 
 	bool boolValue() const;
 
+	/**
+	 *\return true if the Iterator is valid
+	 */
+	bool isValid() const;
+
+	/**
+	 *\return true if the Iterator is empty
+	 */
+	bool isEmpty() const;
+
     private:
 	class Private;
 	QSharedDataPointer<Private> d;
