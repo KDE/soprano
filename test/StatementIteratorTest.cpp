@@ -87,10 +87,8 @@ void StatementIteratorTest::testIterator()
   StatementIterator sti = m_model->listStatements();
 
   int cnt = 0;
-  while ( sti.hasNext() )
-  {
+  while ( sti.next() ) {
     ++cnt;
-    sti.next();
   }
 
   QVERIFY( cnt == m_statements.size() );
@@ -100,10 +98,8 @@ void StatementIteratorTest::testIterator()
   StatementIterator sti2 = m_model->listStatements( Statement( resource_1, Node(), Node() ) );
 
   cnt = 0;
-  while ( sti2.hasNext() )
-  {
+  while ( sti2.next() ) {
     ++cnt;
-    sti2.next();
   }
 
   QVERIFY( cnt == 50 );
@@ -114,17 +110,13 @@ void StatementIteratorTest::testSharedStuffs()
   StatementIterator iter1 = m_model->listStatements();
 
   int cnt = 0;
-  if ( iter1.hasNext() )
-  {
+  if ( iter1.next() ) {
     ++cnt;
-    iter1.next();
   }
 
   StatementIterator iter2 = iter1;
-  while ( iter2.hasNext() )
-  {
+  while ( iter2.next() ) {
       ++cnt;
-      iter2.next();
   }
 
   QVERIFY( cnt == m_statements.size() );

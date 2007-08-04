@@ -243,9 +243,9 @@ void SopranoModelTest::testListStatements()
     QTextStream fs( &f );
 
     int cnt = 0;
-    while( it1.hasNext() ) {
+    while( it1.next() ) {
         ++cnt;
-        Statement st = it1.next();
+        Statement st = *it1;
 
         if ( st.subject() != resource_1 ) {
             qDebug() << st.subject() << "vs." << resource_1;
@@ -262,9 +262,9 @@ void SopranoModelTest::testListStatements()
     StatementIterator it2 = m_model->listStatements( Statement( resource_2, Node(), Node() ) );
 
     cnt = 0;
-    while( it2.hasNext() ) {
+    while( it2.next() ) {
         ++cnt;
-        Statement st = it2.next();
+        Statement st = *it2;
 
         QCOMPARE( st.subject(), resource_2 );
     }
@@ -276,9 +276,9 @@ void SopranoModelTest::testListStatements()
     StatementIterator it3 = m_model->listStatements( Statement( resource_3, Node(), Node() ) );
 
     cnt = 0;
-    while( it3.hasNext() ) {
+    while( it3.next() ) {
         ++cnt;
-        Statement st = it3.next();
+        Statement st = *it3;
 
         QCOMPARE( st.subject(), resource_3 );
     }
@@ -290,9 +290,9 @@ void SopranoModelTest::testListStatements()
     StatementIterator it4 = m_model->listStatements();
 
     cnt = 0;
-    while( it4.hasNext() ) {
+    while( it4.next() ) {
         ++cnt;
-        Statement st = it4.next();
+        Statement st = *it4;
 
         QVERIFY( statements.indexOf( st ) != -1 || st == *m_st1 || st == *m_st2 || st == *m_st3 || st == *m_st4 );
     }
@@ -326,9 +326,9 @@ void SopranoModelTest::testListStatementsWithContext()
     // list all of them
     StatementIterator it = m_model->listStatements( Statement() );
     int cnt = 0;
-    while( it.hasNext() ) {
+    while( it.next() ) {
         ++cnt;
-        Statement st = it.next();
+        Statement st = *it;
         QVERIFY( st.context().isValid() );
     }
 
@@ -337,9 +337,9 @@ void SopranoModelTest::testListStatementsWithContext()
     // with context as wildcard
     it = m_model->listStatements( Statement( Node(), Node(), Node(), context1 ) );
     cnt = 0;
-    while( it.hasNext() ) {
+    while( it.next() ) {
         ++cnt;
-        Statement st = it.next();
+        Statement st = *it;
         QCOMPARE( st.context(), context1 );
     }
 
@@ -349,9 +349,9 @@ void SopranoModelTest::testListStatementsWithContext()
     // and the full context
     it = m_model->listStatementsInContext( context2 );
     cnt = 0;
-    while( it.hasNext() ) {
+    while( it.next() ) {
         ++cnt;
-        Statement st = it.next();
+        Statement st = *it;
         QCOMPARE( st.context(), context2 );
     }
 
@@ -413,9 +413,9 @@ void SopranoModelTest::testGraphQuery()
 
     StatementIterator iter = model->listStatements();
     int cnt = 0;
-    while ( iter.hasNext() ) {
+    while ( iter.next() ) {
         ++cnt;
-        Statement st = iter.next();
+        Statement st = *iter;
     }
     QCOMPARE ( cnt, 4 );
 
@@ -518,22 +518,22 @@ void SopranoModelTest::testCloseStatementIteratorOnModelDelete()
     model->addStatement( st2 );
 
     StatementIterator it = model->listStatements();
-    QVERIFY( it.hasNext() );
+    QVERIFY( it.next() );
 
     delete model;
 
-    QVERIFY( !it.hasNext() );
-    QVERIFY( !it.next().isValid() );
+    QVERIFY( !it.current().isValid() );
+    QVERIFY( !it.next() );
 }
 
 static bool checkSingleIt( StatementIterator it, const Statement& st )
 {
-    if ( it.hasNext() ) {
-        if ( it.next() != st ) {
+    if ( it.next() ) {
+        if ( *it != st ) {
             return false;
         }
         else {
-            return !it.hasNext();
+            return !it.next();
         }
     }
     else {
@@ -547,8 +547,8 @@ static bool check3It( StatementIterator it, const Statement& s1, const Statement
     bool haveS1 = false;
     bool haveS2 = false;
     bool haveS3 = false;
-    while ( it.hasNext() ) {
-        Statement s = it.next();
+    while ( it.next() ) {
+        Statement s = *it;
         if ( s == s1 )
             haveS1 = true;
         else if ( s == s2 )
@@ -694,15 +694,7 @@ void SopranoModelTest::testContexts()
     QVERIFY( m_model->containsStatements( s2_c3 ) );
     QVERIFY( m_model->containsStatements( s3_c3 ) );
 
-    Soprano::StatementIterator it = m_model->listStatements( s1_c0 );
-    while ( it.hasNext() )
-        qDebug() << it.next();
-
     QVERIFY( m_model->removeStatements( s1_c0 ) == ERROR_NONE );
-
-    it = m_model->listStatements( s1_c0 );
-    while ( it.hasNext() )
-        qDebug() << it.next();
 
     QVERIFY( !m_model->containsStatements( s1_c0 ) );
     QVERIFY( !m_model->containsStatements( s1_c3 ) );

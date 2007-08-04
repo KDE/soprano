@@ -85,8 +85,8 @@ void SopranoLiteralTest::testDataTypes()
   StatementIterator it = m_model->listStatements( Statement( subject, predicate, Node() ) );
   QVERIFY( it.isValid() );
   QVERIFY( !it.isEmpty() );
-  QVERIFY( it.hasNext() );
-  Statement s2 = it.next();
+  QVERIFY( it.next() );
+  Statement s2 = *it;
   QCOMPARE( s2.object().literal().toString(), value.toString() );
   QCOMPARE( s2.object().dataType(), object.dataType() );
   QCOMPARE( s2.object().literal().dataTypeUri().toString(), xmlSchemaNs + dataType );
