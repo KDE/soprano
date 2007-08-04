@@ -25,7 +25,7 @@
 
 #include <redland.h>
 
-#include "statementiteratorprivate.h"
+#include "statementiteratorbackend.h"
 #include "node.h"
 
 #include <QtCore/QSharedDataPointer>
@@ -37,7 +37,7 @@ namespace Soprano
     namespace Redland {
 	class RedlandModel;
 
-	class RedlandStatementIterator: public Soprano::StatementIteratorPrivate
+	class RedlandStatementIterator: public Soprano::StatementIteratorBackend
 	    {
 	    public:
 		/**
@@ -48,9 +48,9 @@ namespace Soprano
 
 		~RedlandStatementIterator();
 
-		bool hasNext() const;
+		bool next();
 
-		Soprano::Statement next() const;
+		Soprano::Statement current() const;
 
 		void close() const;
 
@@ -58,6 +58,7 @@ namespace Soprano
 		mutable const RedlandModel* m_model;
 		mutable librdf_stream* m_stream;
 		Node m_forceContext;
+		bool m_initialized;
 	    };
 
     }

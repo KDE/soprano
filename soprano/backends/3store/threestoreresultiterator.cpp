@@ -26,9 +26,8 @@
 
 
 Soprano::ThreeStore::ResultIterator::ResultIterator( const ResultSet& r )
-    : Soprano::StatementIteratorPrivate(),
-      m_result( r ),
-      m_hasNext( -1 )
+    : Soprano::StatementIteratorBackend(),
+      m_result( r )
 {
 }
 
@@ -38,21 +37,13 @@ Soprano::ThreeStore::ResultIterator::~ResultIterator()
 }
 
 
-bool Soprano::ThreeStore::ResultIterator::hasNext() const
+bool Soprano::ThreeStore::ResultIterator::next()
 {
-    if ( m_hasNext < 0 ) {
-        m_hasNext = ( m_result.next() ? 1 : 0 );
-    }
-    return ( m_hasNext > 0 );
+    return m_result.next();
 }
 
 
-Soprano::Statement Soprano::ThreeStore::ResultIterator::next() const
+Soprano::Statement Soprano::ThreeStore::ResultIterator::current() const
 {
-    Soprano::Statement s;
-    if ( hasNext() ) {
-        s = m_result.currentStatement();
-        m_hasNext = ( m_result.next() ? 1 : 0 );
-    }
-    return s;
+    return m_result.currentStatement();
 }

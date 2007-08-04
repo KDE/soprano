@@ -247,7 +247,7 @@ bool Soprano::Redland::RedlandQueryResult::boolValue() const
 }
 
 
-Soprano::Model *Soprano::Redland::RedlandQueryResult::model() const
+Soprano::Model *Soprano::Redland::RedlandQueryResult::model()
 {
     if ( !isGraph() ) {
         return 0;

@@ -177,7 +177,7 @@ bool Soprano::Redland::RedlandModel::containsStatements( const Statement &statem
 
     // FIXME: looks as if librdf_model_contains_statement does not support
     // empty nodes and also there is no context support for contains.
-    return listStatements( statement ).hasNext();
+    return listStatements( statement ).next();
 }
 
 
@@ -320,9 +320,9 @@ Soprano::ErrorCode Soprano::Redland::RedlandModel::removeStatements( const State
         QWriteLocker lock( &d->readWriteLock );
 
         int cnt = 0;
-        while ( it.hasNext() ) {
+        while ( it.next() ) {
             ++cnt;
-            ErrorCode error = removeStatement( it.next() );
+            ErrorCode error = removeStatement( *it );
             if ( error != ERROR_NONE ) {
                 return error;
             }

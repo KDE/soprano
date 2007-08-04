@@ -58,7 +58,7 @@ namespace Soprano {
 
 	    virtual bool boolValue() const = 0;
 
-	    virtual Model *model() const = 0;
+	    virtual Model *model() = 0;
 	};
 
 }

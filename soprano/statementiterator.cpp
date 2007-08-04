@@ -21,17 +21,37 @@
  */
 
 #include "statementiterator.h"
-#include "statementiteratorprivate.h"
+#include "statementiteratorbackend.h"
 #include "statement.h"
 
 
+// This is a dummy shared class that is never intended to be detached
+// since we cannot actually copy the backend. So we only use the ref-count
+// feature of QSharedData
+class Soprano::StatementIterator::Private : public QSharedData
+{
+public:
+    Private()
+        : backend( 0 ) {
+    }
+
+    ~Private() {
+        delete backend;
+    }
+
+    StatementIteratorBackend* backend;
+};
+
+
 Soprano::StatementIterator::StatementIterator()
+    : d( new Private() )
 {
 }
 
-Soprano::StatementIterator::StatementIterator( StatementIteratorPrivate *sti )
-    : d( sti )
+Soprano::StatementIterator::StatementIterator( StatementIteratorBackend *sti )
+    : d( new Private() )
 {
+    d->backend = sti;
 }
 
 Soprano::StatementIterator::StatementIterator( const StatementIterator &other )
@@ -49,14 +69,21 @@ Soprano::StatementIterator& Soprano::StatementIterator::operator=( const Stateme
   return *this;
 }
 
-bool Soprano::StatementIterator::hasNext() const
+bool Soprano::StatementIterator::next()
 {
-  return isValid() ? d->hasNext() : false;
+    // some evil hacking to avoid detachment of the shared data
+    const Private* cd = d.constData();
+    return isValid() ? cd->backend->next() : false;
 }
 
-Soprano::Statement Soprano::StatementIterator::next() const
+Soprano::Statement Soprano::StatementIterator::current() const
 {
-  return isValid() ? d->next() : Statement();
+    return isValid() ? d->backend->current() : Statement();
+}
+
+Soprano::Statement Soprano::StatementIterator::operator*() const
+{
+    return current();
 }
 
 bool Soprano::StatementIterator::isValid() const
@@ -66,5 +93,5 @@ bool Soprano::StatementIterator::isValid() const
 
 bool Soprano::StatementIterator::isEmpty() const
 {
-  return d == 0;
+  return d->backend == 0;
 }

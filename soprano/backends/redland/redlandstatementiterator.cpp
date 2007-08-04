@@ -34,7 +34,8 @@
 Soprano::Redland::RedlandStatementIterator::RedlandStatementIterator( const RedlandModel* model, librdf_stream *s, const Node& forceContext )
     : m_model( model ),
       m_stream( s ),
-      m_forceContext( forceContext )
+      m_forceContext( forceContext ),
+      m_initialized( false )
 {
 }
 
@@ -48,15 +49,22 @@ Soprano::Redland::RedlandStatementIterator::~RedlandStatementIterator()
 }
 
 
-bool Soprano::Redland::RedlandStatementIterator::hasNext() const
+bool Soprano::Redland::RedlandStatementIterator::next()
 {
-  return ( m_stream ? librdf_stream_end( m_stream ) == 0 : false );
+    if ( m_initialized ) {
+        // Move to the next element
+        librdf_stream_next( m_stream );
+    }
+
+    m_initialized = true;
+
+    return ( m_stream ? librdf_stream_end( m_stream ) == 0 : false );
 }
 
 
-Soprano::Statement Soprano::Redland::RedlandStatementIterator::next() const
+Soprano::Statement Soprano::Redland::RedlandStatementIterator::current() const
 {
-    if ( !hasNext() ) {
+    if ( !m_stream || librdf_stream_end( m_stream ) ) {
         return Statement();
     }
 
@@ -74,9 +82,6 @@ Soprano::Statement Soprano::Redland::RedlandStatementIterator::next() const
     else if ( m_forceContext.isValid() ) {
         copy.setContext( m_forceContext );
     }
-
-    // Move to the next element
-    librdf_stream_next( m_stream );
 
     return copy;
 }

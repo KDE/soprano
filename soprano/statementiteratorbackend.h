@@ -2,6 +2,7 @@
  * This file is part of Soprano Project.
  *
  * Copyright (C) 2006 Daniele Galdi <daniele.galdi@gmail.com>
+ * Copyright (C) 2007 Sebastian Trueg <trueg@kde.org>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -19,8 +20,39 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#include "statementiteratorprivate.h"
+#ifndef SOPRANO_STATEMENT_ITERATOR_BACKEND_H
+#define SOPRANO_STATEMENT_ITERATOR_BACKEND_H
 
-Soprano::StatementIteratorPrivate::~StatementIteratorPrivate()
-{
+#include <soprano/soprano_export.h>
+
+namespace Soprano {
+
+    class Statement;
+
+    /**
+     * The actual work in a StatementIterator instance is done by a
+     * StatementIteratorBackend.
+     */
+    class SOPRANO_EXPORT StatementIteratorBackend
+    {
+    public:
+	virtual ~StatementIteratorBackend();
+
+	/**
+	 * Advance to the next Statement in the iterator.
+	 *\return true if there is another Statement and false if the end has been reached.
+	 */
+	virtual bool next() = 0;
+
+	/**
+	 *\return the current Statement
+	 */
+	virtual Statement current() const = 0;
+
+    protected:
+	StatementIteratorBackend();
+    };
+
 }
+
+#endif

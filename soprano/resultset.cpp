@@ -77,9 +77,9 @@ Soprano::ResultSet& Soprano::ResultSet::operator=( const ResultSet& other )
 
 bool Soprano::ResultSet::next()
 {
-    // make sure the data is not detached
-    const ResultSet* that = const_cast<const ResultSet*>( this );
-    return ( that->d->queryResult ? that->d->queryResult->next() : false );
+    // some evil hacking to avoid detachment of the shared data
+    const Private* cd = d.constData();
+    return ( cd->queryResult ? cd->queryResult->next() : false );
 }
 
 
@@ -137,7 +137,9 @@ bool Soprano::ResultSet::boolValue() const
 }
 
 
-Soprano::Model *Soprano::ResultSet::model() const
+Soprano::Model *Soprano::ResultSet::model()
 {
-    return ( d->queryResult ? d->queryResult->model() : 0 );
+    // some evil hacking to avoid detachment of the shared data
+    const Private* cd = d.constData();
+    return ( cd->queryResult ? cd->queryResult->model() : 0 );
 }

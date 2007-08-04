@@ -34,8 +34,8 @@ SET(soprano_SRCS
     statement.h
     statementiterator.cpp
     statementiterator.h
-    statementiteratorprivate.cpp
-    statementiteratorprivate.h
+    statementiteratorbackend.cpp
+    statementiteratorbackend.h
     model.cpp
     model.h
     parser.cpp

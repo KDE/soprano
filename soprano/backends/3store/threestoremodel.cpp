@@ -152,8 +152,8 @@ bool Soprano::ThreeStore::Model::containsStatements( const Statement &statement 
 //        return executeQuery( Query( QString( "ask { %1 }" ).arg( statementToConstructGraphPattern( statement ) ), Query::SPARQL ) ).next();
         Statement dummy( statement.subject(), statement.predicate(), Node() );
         StatementIterator it = listStatements( dummy );
-        while ( it.hasNext() ) {
-            if ( it.next() == statement ) {
+        while ( it.next() ) {
+            if ( *it == statement ) {
                 return true;
             }
         }

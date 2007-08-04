@@ -151,17 +151,17 @@ bool Soprano::RdfSchemaWrapper::isDirectType( const Node& someClass, const Node&
 
 bool Soprano::RdfSchemaWrapper::isSubClassOf( const Node& subClass, const Node& superClass ) const
 {
-    return subClassOf( subClass, superClass ).hasNext();
+    return subClassOf( subClass, superClass ).next();
 }
 
 
 bool Soprano::RdfSchemaWrapper::isSubPropertyOf( const Node& subProperty, const Node& superProperty ) const
 {
-    return subPropertyOf( subProperty, superProperty ).hasNext();
+    return subPropertyOf( subProperty, superProperty ).next();
 }
 
 
 bool Soprano::RdfSchemaWrapper::isType( const Node& someClass, const Node& someType ) const
 {
-    return type( someClass, someType ).hasNext();
+    return type( someClass, someType ).next();
 }

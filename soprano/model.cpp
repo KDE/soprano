@@ -97,8 +97,8 @@ Soprano::ErrorCode Soprano::Model::addModel( const Model &model )
         return ERROR_UNKNOW;
     }
 
-    while ( stmi.hasNext() ) {
-        ErrorCode c = addStatement( stmi.next() );
+    while ( stmi.next() ) {
+        ErrorCode c = addStatement( *stmi );
         if ( ERROR_NONE != c ) {
             return c;
         }
@@ -107,14 +107,14 @@ Soprano::ErrorCode Soprano::Model::addModel( const Model &model )
     return ERROR_NONE;
 }
 
-Soprano::ErrorCode Soprano::Model::addStatements( const StatementIterator &iter )
+Soprano::ErrorCode Soprano::Model::addStatements( StatementIterator iter )
 {
     if ( !iter.isValid() ) {
         return ERROR_UNKNOW;
     }
 
-    while ( iter.hasNext() ) {
-        ErrorCode c = addStatement( iter.next() );
+    while ( iter.next() ) {
+        ErrorCode c = addStatement( *iter );
         if ( ERROR_NONE != c ) {
             return c;
         }
@@ -142,8 +142,8 @@ Soprano::ErrorCode Soprano::Model::addStatements( const QList<Statement> &statem
 Soprano::ErrorCode Soprano::Model::write( QTextStream &os ) const
 {
     StatementIterator it = listStatements();
-    while ( it.hasNext() ) {
-        os << it.next() << endl;
+    while ( it.next() ) {
+        os << *it << endl;
     }
 }
 

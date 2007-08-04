@@ -22,7 +22,7 @@
 #ifndef _THREESTORE_RESULT_ITERATOR_H_
 #define _THREESTORE_RESULT_ITERATOR_H_
 
-#include "statementiteratorprivate.h"
+#include "statementiteratorbackend.h"
 #include "resultset.h"
 
 namespace Soprano {
@@ -30,19 +30,18 @@ namespace Soprano {
     class Statement;
 
     namespace ThreeStore {
-	class ResultIterator : public Soprano::StatementIteratorPrivate
+	class ResultIterator : public Soprano::StatementIteratorBackend
 	{
 	public:
 	    ResultIterator( const ResultSet& );
 	    ~ResultIterator();
 
-	    bool hasNext() const;
+	    bool next();
 
-	    Soprano::Statement next() const;
+	    Soprano::Statement current() const;
 
 	private:
 	    mutable ResultSet m_result;
-	    mutable int m_hasNext;
 	};
     }
 }

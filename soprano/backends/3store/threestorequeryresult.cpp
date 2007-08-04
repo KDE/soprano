@@ -247,7 +247,7 @@ bool Soprano::ThreeStore::QueryResult::boolValue() const
 }
 
 
-Soprano::Model* Soprano::ThreeStore::QueryResult::model() const
+Soprano::Model* Soprano::ThreeStore::QueryResult::model()
 {
     // no memory models :(
     // FIXME: fix API

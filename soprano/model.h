@@ -66,7 +66,7 @@ namespace Soprano
 	/**
 	 * Convinience method which adds all statements in iter to this Model.
 	 */
-	ErrorCode addStatements( const StatementIterator &iter );
+	ErrorCode addStatements( StatementIterator iter );
 
 	/**
 	 * Convinience method which adds all %statements in statements to this Model.

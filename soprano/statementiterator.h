@@ -27,45 +27,63 @@
 
 namespace Soprano {
 
-class Statement;
-class StatementIteratorPrivate;
+    class Statement;
+    class StatementIteratorBackend;
 
-class SOPRANO_EXPORT StatementIterator
-{
-public:
-  StatementIterator();
-  StatementIterator( StatementIteratorPrivate *sti );
+    class SOPRANO_EXPORT StatementIterator
+    {
+    public:
+	StatementIterator();
 
-  StatementIterator( const StatementIterator &sti );
+	/**
+	 * Create a new StatementIterator instance that uses sti as backend.
+	 * StatementIterator will take ownership of the backend.
+	 */
+	StatementIterator( StatementIteratorBackend *sti );
 
-  virtual ~StatementIterator();
+	StatementIterator( const StatementIterator &sti );
 
-  StatementIterator& operator=( const StatementIterator& );
+	virtual ~StatementIterator();
 
-  /**
-   *\return true if there is another Statement
-   */
-  bool hasNext() const;
+	StatementIterator& operator=( const StatementIterator& );
 
-  /**
-   *\return the Next Statement
-   */
-  Statement next() const;
+	/**
+	 * Advances to the next statement in the iterator.
+	 *\return true if another Statement can be read from the iterator,
+	 * false if the end has been reached.
+	 */
+	bool next();
 
-  /**
-   *\return true if the Iterator is valid
-   */
-  bool isValid() const;
+	/**
+	 *\return the current Statement, this is not valid until after
+	 * the first call to next.
+	 */
+	Statement current() const;
 
-  /**
-   *\return true if the Iterator is empty
-   */
-  bool isEmpty() const;
+	/**
+	 * Retrieve the current Statement in the iterator.
+	 *
+	 * This is equivalent to current.
+	 *
+	 * \return The Statement the iterator currently points to or
+	 * an invlid one if next has never been called.
+	 */
+	Statement operator*() const;
 
-private:
-  QSharedDataPointer<StatementIteratorPrivate> d;
-};
+	/**
+	 *\return true if the Iterator is valid
+	 */
+	bool isValid() const;
 
+	/**
+	 *\return true if the Iterator is empty
+	 */
+	bool isEmpty() const;
+
+    private:
+	class Private;
+	QSharedDataPointer<Private> d;
+    };
 }
 
 #endif // SOPRANO_STATEMENT_ITERATOR_H

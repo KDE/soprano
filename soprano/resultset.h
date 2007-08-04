@@ -29,7 +29,6 @@
 
 #include <soprano/soprano_export.h>
 
-// FIXME: The ResultSet itself should not behave like an iterator if possible
 namespace Soprano {
 
     class Model;
@@ -37,11 +36,17 @@ namespace Soprano {
     class QueryResult;
     class Statement;
 
+    // FIXME: how about renaming it to something like ResultIterator?
     class SOPRANO_EXPORT ResultSet
     {
     public:
 	ResultSet();
 	ResultSet( const ResultSet& );
+
+	/**
+	 * Create a new ResultSet which uses qr as backend.
+	 * ResultSet will take ownership of the QueryResult.
+	 */
 	ResultSet( QueryResult *qr );
 
 	virtual ~ResultSet();
@@ -54,7 +59,6 @@ namespace Soprano {
 	 * false if no more entries are found or if the ResultSet was
 	 * already invalidated by a call to model.
 	 */
-	// FIXME: make this match the StatementIterator model or the other way around
 	bool next();
 
 	/**
@@ -90,7 +94,7 @@ namespace Soprano {
 	 * Caution: the caller has to take care of deleting the 
 	 * returned model!
 	 */
-	Model *model() const;
+	Model *model();
 
     private:
 	class Private;
