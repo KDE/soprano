@@ -12,3 +12,22 @@ set (LIB_DESTINATION "${CMAKE_INSTALL_PREFIX}/lib${LIB_SUFFIX}" CACHE STRING "Li
 
 add_subdirectory(soprano) 
 add_subdirectory(test) 
+
+# apidox
+find_package(Doxygen)
+
+if(DOXYGEN_EXECUTABLE)
+  configure_file(Doxyfile.cmake Doxyfile)
+
+  if(EXISTS ${QT_DOC_DIR}/html)
+    set(QTDOCS "${QT_DOC_DIR}/html")
+  else(EXISTS ${QT_DOC_DIR}/html)
+    set(QTDOCS "http://doc.trolltech.com/4.2/")
+  endif(EXISTS ${QT_DOC_DIR}/html)
+
+  add_custom_target(
+    apidox
+    ${DOXYGEN_EXECUTABLE} ../../Doxyfile
+    COMMAND docs/html/installdox -l qt4.tag@${QTDOCS}
+    WORKING_DIRECTORY docs/html)
+endif(DOXYGEN_EXECUTABLE)
