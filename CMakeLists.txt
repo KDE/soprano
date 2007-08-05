@@ -27,7 +27,6 @@ if(DOXYGEN_EXECUTABLE)
 
   add_custom_target(
     apidox
-    ${DOXYGEN_EXECUTABLE} ../../Doxyfile
-    COMMAND docs/html/installdox -l qt4.tag@${QTDOCS}
-    WORKING_DIRECTORY docs/html)
+    COMMAND ${DOXYGEN_EXECUTABLE} Doxyfile
+    COMMAND docs/html/installdox -l qt4.tag@${QTDOCS} docs/html/*.html)
 endif(DOXYGEN_EXECUTABLE)
