@@ -32,7 +32,7 @@ namespace Soprano
 {
     /**
      * Represents a literal value of an RDF node.
-     * LiteralValue is derived from QVariant to support
+     * LiteralValue is based on QVariant to support
      * a subset of the XML Schema types that are compatible
      * with QT types.
      *
@@ -53,7 +53,7 @@ namespace Soprano
      *
      * Literal values can be converted from strings via fromString.
      */
-    class SOPRANO_EXPORT LiteralValue : private QVariant
+    class SOPRANO_EXPORT LiteralValue
 	{
 	public:
 	    /**

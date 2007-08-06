@@ -1,0 +1,9 @@
+2.0
+	* LiteralValue is not derived from QVariant anymore but uses it internally
+	* ResultSet renamed to QueryResultIterator
+	* Fixed const'ness of many methods
+	* Changed StatementIterator layout to match QueryResultIterator's layout using next() and current() methods.
+	* Added vocabulary namespaces for usage of shared QUrl values for RDF/S and XML Schema URIs.
+	* Added FilterModel class
+	* Added RDF/S wrapper methods for easy access to RDF/S resource statements (RDFSchemaWrapper)
+	* Added "apidox" build target for building the Soprano API documentation.

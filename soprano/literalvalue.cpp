@@ -39,13 +39,20 @@ static uint qHash( const QUrl& url )
 class Soprano::LiteralValue::Private : public QSharedData
 {
 public:
+    Private() {
+    }
+
+    Private( const QVariant& v )
+        :value( v ) {
+    }
+
+    QVariant value;
     QUrl dataTypeUri;
 };
 
 
 Soprano::LiteralValue::LiteralValue()
-    : QVariant(),
-      d( new Private )
+    : d( new Private )
 {
 }
 
@@ -56,125 +63,110 @@ Soprano::LiteralValue::~LiteralValue()
 
 
 Soprano::LiteralValue::LiteralValue( const LiteralValue& other )
-    : QVariant( other )
 {
     d = other.d;
 }
 
 
 Soprano::LiteralValue::LiteralValue( const QVariant& other )
-    : QVariant(),
-      d( new Private() )
+    : d( new Private() )
 {
     QUrl type = dataTypeUriFromType( other.type() );
     if ( !type.isEmpty() ) {
-        QVariant::operator=( other );
+        d->value = other;
         d->dataTypeUri = type;
     }
 }
 
 
 Soprano::LiteralValue::LiteralValue( int i )
-    : QVariant( i ),
-      d( new Private )
+    : d( new Private( i ) )
 {
 }
 
 
 Soprano::LiteralValue::LiteralValue( qlonglong i )
-    : QVariant( i ),
-      d( new Private )
+    : d( new Private( i ) )
 {
 }
 
 
 Soprano::LiteralValue::LiteralValue( uint i )
-    : QVariant( i ),
-      d( new Private )
+    : d( new Private( i ) )
 {
 }
 
 
 Soprano::LiteralValue::LiteralValue( qulonglong i )
-    : QVariant( i ),
-      d( new Private )
+    : d( new Private( i ) )
 {
 }
 
 
 Soprano::LiteralValue::LiteralValue( bool b )
-    : QVariant( b ),
-      d( new Private )
+    : d( new Private( b ) )
 {
 }
 
 
 Soprano::LiteralValue::LiteralValue( double d )
-    : QVariant( d ),
-      d( new Private )
+    : d( new Private( d ) )
 {
 }
 
 
 Soprano::LiteralValue::LiteralValue( const char* string )
-    : QVariant( QString::fromUtf8( string ) ),
-      d( new Private )
+    : d( new Private( QString::fromUtf8( string ) ) )
 {
 }
 
 
 Soprano::LiteralValue::LiteralValue( const QLatin1String& string )
-    : QVariant( string ),
-      d( new Private )
+    : d( new Private( string ) )
 {
 }
 
 
 Soprano::LiteralValue::LiteralValue( const QString& string )
-    : QVariant( string ),
-      d( new Private )
+    : d( new Private( string ) )
 {
 }
 
 
 Soprano::LiteralValue::LiteralValue( const QDate& date )
-    : QVariant( date ),
-      d( new Private )
+    : d( new Private( date ) )
 {
 }
 
 
 Soprano::LiteralValue::LiteralValue( const QTime& time )
-    : QVariant( time ),
-      d( new Private )
+    : d( new Private( time ) )
 {
 }
 
 
 Soprano::LiteralValue::LiteralValue( const QDateTime& datetime )
-    : QVariant( datetime ),
-      d( new Private )
+    : d( new Private( datetime ) )
 {
 }
 
 
 bool Soprano::LiteralValue::isValid() const
 {
-    return QVariant::isValid();
+    return d->value.isValid();
 }
 
 
 Soprano::LiteralValue& Soprano::LiteralValue::operator=( const LiteralValue& v )
 {
     d = v.d;
-    QVariant::operator=( v );
     return *this;
 }
 
 
 Soprano::LiteralValue& Soprano::LiteralValue::operator=( int i )
 {
-    setValue( i );
+    d->value.setValue( i );
     if ( typeFromDataTypeUri( d->dataTypeUri ) != QVariant::Int ) {
         d->dataTypeUri = QUrl();
     }
@@ -185,14 +177,14 @@ Soprano::LiteralValue& Soprano::LiteralValue::operator=( int i )
 Soprano::LiteralValue& Soprano::LiteralValue::operator=( qlonglong i )
 {
     d->dataTypeUri = QUrl();
-    setValue( i );
+    d->value.setValue( i );
     return *this;
 }
 
 
 Soprano::LiteralValue& Soprano::LiteralValue::operator=( uint i )
 {
-    setValue( i );
+    d->value.setValue( i );
     if ( typeFromDataTypeUri( d->dataTypeUri ) != QVariant::UInt ) {
         d->dataTypeUri = QUrl();
     }
@@ -203,7 +195,7 @@ Soprano::LiteralValue& Soprano::LiteralValue::operator=( uint i )
 Soprano::LiteralValue& Soprano::LiteralValue::operator=( qulonglong i )
 {
     d->dataTypeUri = QUrl();
-    setValue( i );
+    d->value.setValue( i );
     return *this;
 }
 
@@ -211,7 +203,7 @@ Soprano::LiteralValue& Soprano::LiteralValue::operator=( qulonglong i )
 Soprano::LiteralValue& Soprano::LiteralValue::operator=( bool b )
 {
     d->dataTypeUri = QUrl();
-    setValue( b );
+    d->value.setValue( b );
     return *this;
 }
 
@@ -219,7 +211,7 @@ Soprano::LiteralValue& Soprano::LiteralValue::operator=( bool b )
 Soprano::LiteralValue& Soprano::LiteralValue::operator=( double v )
 {
     d->dataTypeUri = QUrl();
-    setValue( v );
+    d->value.setValue( v );
     return *this;
 }
 
@@ -227,7 +219,7 @@ Soprano::LiteralValue& Soprano::LiteralValue::operator=( double v )
 Soprano::LiteralValue& Soprano::LiteralValue::operator=( const QString& string )
 {
     d->dataTypeUri = QUrl();
-    setValue( string );
+    d->value.setValue( string );
     return *this;
 }
 
@@ -235,7 +227,7 @@ Soprano::LiteralValue& Soprano::LiteralValue::operator=( const QString& string )
 Soprano::LiteralValue& Soprano::LiteralValue::operator=( const QLatin1String& string )
 {
     d->dataTypeUri = QUrl();
-    setValue( QString::fromLatin1( string.latin1() ) );
+    d->value.setValue( QString::fromLatin1( string.latin1() ) );
     return *this;
 }
 
@@ -243,7 +235,7 @@ Soprano::LiteralValue& Soprano::LiteralValue::operator=( const QLatin1String& st
 Soprano::LiteralValue& Soprano::LiteralValue::operator=( const QDate& date )
 {
     d->dataTypeUri = QUrl();
-    setValue( date );
+    d->value.setValue( date );
     return *this;
 }
 
@@ -251,7 +243,7 @@ Soprano::LiteralValue& Soprano::LiteralValue::operator=( const QDate& date )
 Soprano::LiteralValue& Soprano::LiteralValue::operator=( const QTime& time )
 {
     d->dataTypeUri = QUrl();
-    setValue( time );
+    d->value.setValue( time );
     return *this;
 }
 
@@ -259,104 +251,104 @@ Soprano::LiteralValue& Soprano::LiteralValue::operator=( const QTime& time )
 Soprano::LiteralValue& Soprano::LiteralValue::operator=( const QDateTime& datetime )
 {
     d->dataTypeUri = QUrl();
-    setValue( datetime );
+    d->value.setValue( datetime );
     return *this;
 }
 
 
 bool Soprano::LiteralValue::isInt() const
 {
-    return( type() == QVariant::Int );
+    return( d->value.type() == QVariant::Int );
 }
 
 
 bool Soprano::LiteralValue::isInt64() const
 {
-    return( type() == QVariant::LongLong );
+    return( d->value.type() == QVariant::LongLong );
 }
 
 
 bool Soprano::LiteralValue::isUnsignedInt() const
 {
-    return( type() == QVariant::UInt );
+    return( d->value.type() == QVariant::UInt );
 }
 
 
 bool Soprano::LiteralValue::isUnsignedInt64() const
 {
-    return( type() == QVariant::ULongLong );
+    return( d->value.type() == QVariant::ULongLong );
 }
 
 
 bool Soprano::LiteralValue::isBool() const
 {
-    return( type() == QVariant::Bool );
+    return( d->value.type() == QVariant::Bool );
 }
 
 
 bool Soprano::LiteralValue::isDouble() const
 {
-    return( type() == QVariant::Double );
+    return( d->value.type() == QVariant::Double );
 }
 
 
 bool Soprano::LiteralValue::isString() const
 {
-    return( type() == QVariant::String );
+    return( d->value.type() == QVariant::String );
 }
 
 
 bool Soprano::LiteralValue::isDate() const
 {
-    return( type() == QVariant::Date );
+    return( d->value.type() == QVariant::Date );
 }
 
 
 bool Soprano::LiteralValue::isTime() const
 {
-    return( type() == QVariant::Time );
+    return( d->value.type() == QVariant::Time );
 }
 
 
 bool Soprano::LiteralValue::isDateTime() const
 {
-    return( type() == QVariant::DateTime );
+    return( d->value.type() == QVariant::DateTime );
 }
 
 
 int Soprano::LiteralValue::toInt() const
 {
-    return value<int>();
+    return d->value.value<int>();
 }
 
 
 qlonglong Soprano::LiteralValue::toInt64() const
 {
-    return value<qlonglong>();
+    return d->value.value<qlonglong>();
 }
 
 
 uint Soprano::LiteralValue::toUnsignedInt() const
 {
-    return value<uint>();
+    return d->value.value<uint>();
 }
 
 
 qulonglong Soprano::LiteralValue::toUnsignedInt64() const
 {
-    return value<qulonglong>();
+    return d->value.value<qulonglong>();
 }
 
 
 bool Soprano::LiteralValue::toBool() const
 {
-    return value<bool>();
+    return d->value.value<bool>();
 }
 
 
 double Soprano::LiteralValue::toDouble() const
 {
-    return value<double>();
+    return d->value.value<double>();
 }
 
 
@@ -384,42 +376,43 @@ QString Soprano::LiteralValue::toString() const
     else if( isDateTime() )
         return DateTime::toString( toDateTime() );
     else
-        return value<QString>();
+        return d->value.value<QString>();
 }
 
 
 QDate Soprano::LiteralValue::toDate() const
 {
-    return value<QDate>();
+    return d->value.value<QDate>();
 }
 
 
 QTime Soprano::LiteralValue::toTime() const
 {
-    return value<QTime>();
+    return d->value.value<QTime>();
 }
 
 
 QDateTime Soprano::LiteralValue::toDateTime() const
 {
-    return value<QDateTime>();
+    return d->value.value<QDateTime>();
 }
 
 
 QVariant::Type Soprano::LiteralValue::type() const
 {
-    return QVariant::type();
+    return d->value.type();
 }
 
 
 QVariant Soprano::LiteralValue::variant() const
 {
-    return *this;
+    return d->value;
 }
 
 
 QUrl Soprano::LiteralValue::dataTypeUri() const
 {
+    // FIXME: what about making it mutable?
     if ( d->dataTypeUri.isEmpty() ) {
         // EVIL! But the dataTypeUri is just a cache and thus no detach is necessary
         const_cast<Private*>( d.constData() )->dataTypeUri = LiteralValue::dataTypeUriFromType( type() );
@@ -430,13 +423,13 @@ QUrl Soprano::LiteralValue::dataTypeUri() const
 
 bool Soprano::LiteralValue::operator==( const LiteralValue& other ) const
 {
-    return QVariant::operator==( other );
+    return d->value == other.d->value;
 }
 
 
 bool Soprano::LiteralValue::operator!=( const LiteralValue& other ) const
 {
-    return QVariant::operator!=( other );
+    return d->value != other.d->value;
 }
 
 
