@@ -49,7 +49,7 @@ Soprano::FilterModel::FilterModel( Model* parent )
     : Model(),
       d( new Private() )
 {
-    setParent( parent );
+    setParentModel( parent );
 }
 
 
