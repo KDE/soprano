@@ -188,23 +188,6 @@ namespace Soprano
 	
 	};
 	
-	
-	class Numerical : public MathExpression {
-	public:
-	int intValue() const;
-	double doubleValue() const;  // ???????? maybe? yes or we must subclass
-	};
-	
-	class Double : public Numerical {
-	public:
-	double value() const;
-	};
-	
-	class Integer : public Numerical {
-	public:
-	int value() const;
-	}; // Using a QVariant should be possible? hmm, actually if the subclasses work they fit well with the rest of the highly OO design
-	
 	/**
 	 * This is probably not a Condition becasue it evaluates to a number. Same for all the others.
 	 */
@@ -358,5 +341,181 @@ namespace Soprano
             void visit(const Equal *condition) const = 0;
         }; 
 
+
+        /*
+
+         */
+
+    
+        class Numerical : public MathExpression {
+        public:
+        };
+    
+        class Double : public Numerical {
+        public:
+            double value() const;
+        };
+    
+        class Integer : public Numerical {
+        public:
+            int value() const;
+        };
+
+        ////////////////////////////////////////////////////////////////////////
+        // Unary Operators                                                    //
+        ////////////////////////////////////////////////////////////////////////
+
+        class Operator {
+        public:
+            virtual void accept( Visitor *visitor ) = 0;
+        };
+
+        ////////////////////////////////////////////////////////////////////////
+        // Unary Operators                                                    //
+        ////////////////////////////////////////////////////////////////////////
+
+        /* XQUERY Tests */
+
+        class Not: public Operator {
+        public:
+            void accept( Visitor *visitor );
+        };
+
+        class UnaryPlus: public Operator  {
+        public:
+            UnaryPlus( Numerical *num );
+
+            void accept( Visitor *visitor );
+        };
+
+        class UnaryMinus: public Operator  {
+        public:
+            UnaryMinus( Numerical *num );
+
+            void accept( Visitor *visitor );
+        };
+
+        /* 
+         * SPARQL Tests as defined in:
+         * - http://www.w3.org/TR/2005/WD-rdf-sparql-query-20051123/#func-isBound
+         */
+
+        class IsBound: public Operator {
+        public:
+            IsBound( Variable *var );
+        };
+
+
+        class IsIRI: public Operator {
+        public:
+            IsIRI( Soprano::Node *node );
+
+            void accept( Visitor *visitor );
+        };
+
+        class IsBlank: public Operator {
+        public:
+            IsBlank( Soprano::Node *node );
+
+            void accept( Visitor *visitor );
+        };
+
+        class IsLiteral: public Operator {
+        public:
+            IsLiteral( Soprano::Node *node );
+
+            void accept( Visitor *visitor );
+        };
+
+        /*
+         * SPARQL Accessors
+         */
+        
+        class StringValue: public Operator {
+        public:
+            /* Soprano::Node must be a literal */
+            StringValue( Soprano::Node *node );
+
+            void accept( Visitor *visitor );
+        };
+
+        class LangValue: public Operator {
+        public:
+            /* Soprano::Node must be a literal */
+            LangValue( Soprano::Node *node );
+
+            void accept( Visitor *visitor );
+        };
+
+        class DataTypeValue: public Operator {
+        public:
+            /* Soprano::Node must be a literal */
+            DataTypeValue( Soprano::Node *node );
+
+            void accept( Visitor *visitor );
+        }; 
+
+        ////////////////////////////////////////////////////////////////////////
+        // Binary Operators                                                   //
+        ////////////////////////////////////////////////////////////////////////
+
+        class LogicOr: public Operator {
+        public:
+            LogicOr( BooleanExpression *first, BooleanExpression *second );
+
+            void accept( Visitor *visitor );
+        };
+
+        class LogicAnd: public Operator {
+        public:
+            LogicAnd( BooleanExpression *first, BooleanExpression *second );
+            
+            void accept( Visitor *visitor );
+        };
+
+        class NumericalEqual: public Operator {
+        public:
+            NumericalEqual( Numerical *first, Numerical *second );
+
+            void accept( Visitor *visitor );
+        };
+
+        class StringEqual: public Operator {
+        public:
+            StringEqual( QString *first, QString *second );
+
+            void accept( Visitor *visitor );
+        };
+
+        class DateTimeEqual: public Operator {
+        public:
+            DateTimeEqual( DateTime *first, DateTime *second );
+
+            void accept( Visitor *visitor );
+        }; 
+
+        class NumericalNotEqual: public Operator {
+        public:
+            NumericalNotEqual( Numerical *first, Numerical *second );
+
+            void accept( Visitor *visitor );
+        };
+
+        class StringNotEqual: public Operator {
+        public:
+            StringNotEqual( QString *first, QString *second );
+
+            void accept( Visitor *visitor );
+        };
+
+        class DateTimeNotEqual: public Operator {
+        public:
+            DateTimeNotEqual( DateTime *first, DateTime *second );
+
+            void accept( Visitor *visitor );
+        };
+
+         
     };
 };
+
