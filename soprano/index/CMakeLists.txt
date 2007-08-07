@@ -1,6 +1,7 @@
 project(sopranoindex)
 
 include_directories(
+  ${soprano_core_SOURCE_DIR}
   ${QT_INCLUDES}
   ${CMAKE_SOURCE_DIR}
   ${CLUCENE_INCLUDE_DIR}

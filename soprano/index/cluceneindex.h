@@ -24,7 +24,9 @@
 
 #include <QtCore/QString>
 
-#include <soprano/statement.h>
+#include "statement.h"
+#include "soprano_export.h"
+
 
 namespace lucene {
     namespace search {
@@ -46,7 +48,7 @@ namespace Soprano {
 	 * The CLuceneIndex provides a wrapper around a CLucene index 
 	 * which stores RDF statements.
 	 */
-	class CLuceneIndex
+	class SOPRANO_EXPORT CLuceneIndex
 	{
 	public:
 	    /**

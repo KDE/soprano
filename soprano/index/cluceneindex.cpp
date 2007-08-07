@@ -297,50 +297,62 @@ int Soprano::Index::CLuceneIndex::removeStatement( const Soprano::Statement& sta
         return -1;
     }
 
+    if ( !d->indexPresent() ) {
+        return 0;
+    }
+
     QString id = d->getId( statement.subject() );
     lucene::index::Term idTerm( idFieldName().data(), WString( id ).data() );
-    lucene::document::Document* document = d->getDocument( &idTerm );
+    lucene::document::Document* document = 0;
 
-    if ( document ) {
-        // determine the values used in the index for this triple
-        QString newFieldName = statement.predicate().toString();
-        QString newText = statement.object().toString();
+    try {
+        document = d->getDocument( &idTerm );
 
-        CLuceneDocumentWrapper documentWrapper( document );
+        if ( document ) {
+            // determine the values used in the index for this triple
+            QString newFieldName = statement.predicate().toString();
+            QString newText = statement.object().toString();
 
-        // see if this triple occurs in this Document
-        if ( documentWrapper.hasProperty( newFieldName, newText ) ) {
-            // if the Document only has one predicate field, we can remove the
-            // document
-            int nrProperties = documentWrapper.numberOfPropertyFields();
-            if ( !nrProperties ) {
-                qDebug() << "(Soprano::Index::CLuceneIndex::removeStatement) no properties for id " << id;
-            }
-            else if (nrProperties == 1) {
-                d->getIndexReader()->deleteDocuments( &idTerm );
-            }
-            else {
-                // there are more triples encoded in this Document: remove the
-                // document and add a new Document without this triple
-                lucene::document::Document newDocument;
-                CLuceneDocumentWrapper newDocWrapper( &newDocument );
-                newDocWrapper.addID( id );
+            CLuceneDocumentWrapper documentWrapper( document );
 
-                // copy all fields except the one we delete
-                lucene::document::DocumentFieldEnumeration* fields = document->fields();
-                while ( fields->hasMoreElements() ) {
-                    lucene::document::Field* field = fields->nextElement();
-                    WString fieldName( field->name(), true );
-                    if ( Private::isPropertyField( fieldName ) &&
-                         !( newFieldName == fieldName && newText == WString( field->stringValue(), true ) ) ) {
-                        newDocument.add( *field );
-                    }
+            // see if this triple occurs in this Document
+            if ( documentWrapper.hasProperty( newFieldName, newText ) ) {
+                // if the Document only has one predicate field, we can remove the
+                // document
+                int nrProperties = documentWrapper.numberOfPropertyFields();
+                if ( !nrProperties ) {
+                    qDebug() << "(Soprano::Index::CLuceneIndex::removeStatement) no properties for id " << id;
                 }
+                else if (nrProperties == 1) {
+                    d->getIndexReader()->deleteDocuments( &idTerm );
+                }
+                else {
+                    // there are more triples encoded in this Document: remove the
+                    // document and add a new Document without this triple
+                    lucene::document::Document newDocument;
+                    CLuceneDocumentWrapper newDocWrapper( &newDocument );
+                    newDocWrapper.addID( id );
 
-                d->getIndexReader()->deleteDocuments( &idTerm );
-                d->getIndexWriter()->addDocument( &newDocument );
+                    // copy all fields except the one we delete
+                    lucene::document::DocumentFieldEnumeration* fields = document->fields();
+                    while ( fields->hasMoreElements() ) {
+                        lucene::document::Field* field = fields->nextElement();
+                        WString fieldName( field->name(), true );
+                        if ( Private::isPropertyField( fieldName ) &&
+                             !( newFieldName == fieldName && newText == WString( field->stringValue(), true ) ) ) {
+                            newDocument.add( *field );
+                        }
+                    }
+
+                    d->getIndexReader()->deleteDocuments( &idTerm );
+                    d->getIndexWriter()->addDocument( &newDocument );
+                }
             }
         }
+    }
+    catch( CLuceneError& err ) {
+        qDebug() << "(Soprano::Index::CLuceneIndex) Exception occured: " << err.what();
+        return -1;
     }
 
     return 0;
@@ -410,21 +422,26 @@ double Soprano::Index::CLuceneIndex::getScore( const Soprano::Node& resource, lu
 
 void Soprano::Index::CLuceneIndex::dump( QTextStream& s ) const
 {
-    lucene::index::IndexReader* reader = d->getIndexReader();
+    try  {
+        lucene::index::IndexReader* reader = d->getIndexReader();
 
-    for ( int i = 0; i < reader->numDocs(); ++i ) {
-        lucene::document::Document* doc = reader->document( i );
-        s << "Document " << i << endl
-          << "====================" << endl;
-        lucene::document::DocumentFieldEnumeration* e = doc->fields();
-        while ( e->hasMoreElements() ) {
-            lucene::document::Field* field = e->nextElement();
+        for ( int i = 0; i < reader->numDocs(); ++i ) {
+            lucene::document::Document* doc = reader->document( i );
+            s << "Document " << i << endl
+              << "====================" << endl;
+            lucene::document::DocumentFieldEnumeration* e = doc->fields();
+            while ( e->hasMoreElements() ) {
+                lucene::document::Field* field = e->nextElement();
 
-            s << WString( field->name(), true ).toQString() << ": " << WString( field->stringValue(), true ).toQString() << endl;
+                s << WString( field->name(), true ).toQString() << ": " << WString( field->stringValue(), true ).toQString() << endl;
+            }
+            s << endl;
         }
-        s << endl;
-    }
 
-    s << flush;
+        s << flush;
+    }
+    catch( CLuceneError& err ) {
+        qDebug() << "(Soprano::Index::CLuceneIndex) failed to dump index.";
+    }
 }
 

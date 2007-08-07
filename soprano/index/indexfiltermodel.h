@@ -22,7 +22,8 @@
 #ifndef _SOPRANO_INDEX_MODEL_FILTER_H_
 #define _SOPRANO_INDEX_MODEL_FILTER_H_
 
-#include <soprano/filtermodel.h>
+#include "filtermodel.h"
+#include "soprano_export.h"
 
 namespace Soprano {
 
@@ -34,7 +35,7 @@ namespace Soprano {
 	 * The IndexFilterModel provides a full text index around any Soprano Model.
 	 * All statements with a literal object will be indexed.
 	 */
-	class IndexFilterModel : public Soprano::FilterModel
+	class SOPRANO_EXPORT IndexFilterModel : public Soprano::FilterModel
 	{
 	public:
 	    /**
