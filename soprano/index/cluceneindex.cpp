@@ -195,7 +195,7 @@ bool Soprano::Index::CLuceneIndex::open( const QString& folder )
     close();
 
     try {
-        d->indexDir = lucene::store::FSDirectory::getDirectory( QFile::encodeName( folder ).data(), true );
+        d->indexDir = lucene::store::FSDirectory::getDirectory( QFile::encodeName( folder ).data(), !QFile::exists( folder ) );
     }
     catch( CLuceneError& err ) {
         qDebug() << "(Soprano::Index::CLuceneIndex) failed to open index folder " << folder << " (" << err.what() << ")";
