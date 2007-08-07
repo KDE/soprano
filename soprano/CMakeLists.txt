@@ -112,3 +112,8 @@ INSTALL(FILES
 	DESTINATION include/soprano)
 
 add_subdirectory(backends)
+
+find_package(CLucene)
+if(CLucene_FOUND)
+  add_subdirectory(index)
+endif(CLucene_FOUND)

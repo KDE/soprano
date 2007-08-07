@@ -47,7 +47,7 @@ public:
     }
 
     QVariant value;
-    QUrl dataTypeUri;
+    mutable QUrl dataTypeUri;
 };
 
 
@@ -176,8 +176,8 @@ Soprano::LiteralValue& Soprano::LiteralValue::operator=( int i )
 
 Soprano::LiteralValue& Soprano::LiteralValue::operator=( qlonglong i )
 {
-    d->dataTypeUri = QUrl();
     d->value.setValue( i );
+    d->dataTypeUri = QUrl();
     return *this;
 }
 
@@ -194,64 +194,64 @@ Soprano::LiteralValue& Soprano::LiteralValue::operator=( uint i )
 
 Soprano::LiteralValue& Soprano::LiteralValue::operator=( qulonglong i )
 {
-    d->dataTypeUri = QUrl();
     d->value.setValue( i );
+    d->dataTypeUri = QUrl();
     return *this;
 }
 
 
 Soprano::LiteralValue& Soprano::LiteralValue::operator=( bool b )
 {
-    d->dataTypeUri = QUrl();
     d->value.setValue( b );
+    d->dataTypeUri = QUrl();
     return *this;
 }
 
 
 Soprano::LiteralValue& Soprano::LiteralValue::operator=( double v )
 {
-    d->dataTypeUri = QUrl();
     d->value.setValue( v );
+    d->dataTypeUri = QUrl();
     return *this;
 }
 
 
 Soprano::LiteralValue& Soprano::LiteralValue::operator=( const QString& string )
 {
-    d->dataTypeUri = QUrl();
     d->value.setValue( string );
+    d->dataTypeUri = QUrl();
     return *this;
 }
 
 
 Soprano::LiteralValue& Soprano::LiteralValue::operator=( const QLatin1String& string )
 {
-    d->dataTypeUri = QUrl();
     d->value.setValue( QString::fromLatin1( string.latin1() ) );
+    d->dataTypeUri = QUrl();
     return *this;
 }
 
 
 Soprano::LiteralValue& Soprano::LiteralValue::operator=( const QDate& date )
 {
-    d->dataTypeUri = QUrl();
     d->value.setValue( date );
+    d->dataTypeUri = QUrl();
     return *this;
 }
 
 
 Soprano::LiteralValue& Soprano::LiteralValue::operator=( const QTime& time )
 {
-    d->dataTypeUri = QUrl();
     d->value.setValue( time );
+    d->dataTypeUri = QUrl();
     return *this;
 }
 
 
 Soprano::LiteralValue& Soprano::LiteralValue::operator=( const QDateTime& datetime )
 {
-    d->dataTypeUri = QUrl();
     d->value.setValue( datetime );
+    d->dataTypeUri = QUrl();
     return *this;
 }
 
@@ -412,10 +412,8 @@ QVariant Soprano::LiteralValue::variant() const
 
 QUrl Soprano::LiteralValue::dataTypeUri() const
 {
-    // FIXME: what about making it mutable?
     if ( d->dataTypeUri.isEmpty() ) {
-        // EVIL! But the dataTypeUri is just a cache and thus no detach is necessary
-        const_cast<Private*>( d.constData() )->dataTypeUri = LiteralValue::dataTypeUriFromType( type() );
+        d.constData()->dataTypeUri = LiteralValue::dataTypeUriFromType( type() );
     }
     return d->dataTypeUri;
 }
