@@ -68,7 +68,7 @@ public:
 
     ~Private() {
         if ( !wrap ) {
-            delete data;
+            delete [] data;
         }
     }
 

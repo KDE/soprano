@@ -13,6 +13,7 @@ set( SOPRANO_INDEX_SRCS
   cluceneutils.cpp
   indexfiltermodel.cpp
   wstring.cpp
+  fts.cpp
 )
 
 # CLucene requires exception support and has no support for visibility=hidden
@@ -53,5 +54,6 @@ install(
   FILES 
   indexfiltermodel.h
   cluceneindex.h
+  fts.h
   DESTINATION include/soprano
 )
