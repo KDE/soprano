@@ -72,3 +72,10 @@ qt4_automoc(queryresultstatementiteratortest queryresultstatementiteratortest.cp
 add_executable(queryresultstatementiteratortest queryresultstatementiteratortest.cpp)
 target_link_libraries(queryresultstatementiteratortest soprano ${QT_QTCORE_LIBRARY} ${QT_QTTEST_LIBRARY})
 add_test(queryresultstatementiteratortest ${EXECUTABLE_OUTPUT_PATH}/queryresultstatementiteratortest)
+
+# QueryAPITest
+qt4_automoc(queryapitest queryapitest.cpp)
+add_executable(queryapitest queryapitest.cpp)
+target_link_libraries(queryapitest soprano ${QT_QTCORE_LIBRARY} ${QT_QTTEST_LIBRARY})
+add_test(queryapitest ${EXECUTABLE_OUTPUT_PATH}/queryapitest)
+

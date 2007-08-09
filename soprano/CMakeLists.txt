@@ -117,3 +117,5 @@ find_package(CLucene)
 if(CLucene_FOUND)
   add_subdirectory(index)
 endif(CLucene_FOUND)
+
+#add_subdirectory(query)
