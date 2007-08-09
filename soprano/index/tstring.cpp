@@ -97,7 +97,8 @@ WString::WString( const wchar_t* s, bool wrap )
         d->data = const_cast<wchar_t*>( s );
     }
     else {
-        d->data = wcsdup( s );
+        d->data = new wchar_t[ wcslen(s) + 1];
+        wcscpy( d->data, s );
     }
 }
 
@@ -128,7 +129,8 @@ WString& WString::operator=( const WString& s )
 
 WString& WString::operator=( const wchar_t* s )
 {
-    d->data = wcsdup( s );
+    d->data = new wchar_t[ wcslen(s) + 1 ];
+    wcscpy( d->data, s );
     return *this;
 }
 

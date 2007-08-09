@@ -5,6 +5,7 @@ include_directories(
   ${QT_INCLUDES}
   ${CMAKE_SOURCE_DIR}
   ${CLUCENE_INCLUDE_DIR}
+  ${CLUCENE_LIBRARY_DIR}
 )
 
 set( SOPRANO_INDEX_SRCS
