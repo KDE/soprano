@@ -157,7 +157,7 @@ bool Soprano::Statement::operator==( const Statement& other ) const
 QDebug operator<<( QDebug s, const Soprano::Statement& sm )
 {
     s.nospace() << "[" << sm.subject() << "," << sm.predicate() << "," << sm.object() << "," << sm.context() << "]";
-    return s.space();
+    return s;
 }
 
 

@@ -7,3 +7,5 @@
 	* Added FilterModel class
 	* Added RDF/S wrapper methods for easy access to RDF/S resource statements (RDFSchemaWrapper)
 	* Added "apidox" build target for building the Soprano API documentation.
+	* Added simple inferencing model based on rule files including a rule file parser.
+	* Added an index filter model which creates a CLucene index of all literal statements.

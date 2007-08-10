@@ -229,10 +229,10 @@ QDebug operator<<( QDebug s, const Soprano::Node& n )
             s.nospace() << " (" << n.language() << ")";
         break;
     default:
-        s.nospace() << n.uri();
+        s.nospace() << n.uri().toString();
         break;
     }
-    return s.space();
+    return s;
 }
 
 

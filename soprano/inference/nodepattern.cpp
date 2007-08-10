@@ -22,6 +22,8 @@
 #include "nodepattern.h"
 #include "node.h"
 
+#include <QtCore/QDebug>
+
 
 class Soprano::Inference::NodePattern::Private : public QSharedData
 {
@@ -118,4 +120,16 @@ QString Soprano::Inference::NodePattern::createSparqlNodePattern() const
             return '<' + d->node.toString() + '>';
         }
     }
+}
+
+
+QDebug operator<<( QDebug s, const Soprano::Inference::NodePattern& pattern )
+{
+    if ( pattern.isVariable() ) {
+        s.nospace() << QString( "?%1" ).arg( pattern.variableName() );
+    }
+    else {
+        s.nospace() << pattern.resource();
+    }
+    return s;
 }

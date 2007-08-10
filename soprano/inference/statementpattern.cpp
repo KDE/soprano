@@ -23,6 +23,8 @@
 #include "nodepattern.h"
 #include "statement.h"
 
+#include <QtCore/QDebug>
+
 
 class Soprano::Inference::StatementPattern::Private : public QSharedData
 {
@@ -98,4 +100,11 @@ QString Soprano::Inference::StatementPattern::createSparqlGraphPattern() const
         .arg( d->subject.createSparqlNodePattern() )
         .arg( d->predicate.createSparqlNodePattern() )
         .arg( d->object.createSparqlNodePattern() );
+}
+
+
+QDebug operator<<( QDebug s, const Soprano::Inference::StatementPattern& pattern )
+{
+    s.nospace() << "(" << pattern.subjectPattern() << " " << pattern.predicatePattern() << " " << pattern.objectPattern() << ")";
+    return s;
 }

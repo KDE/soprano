@@ -172,8 +172,6 @@ QList<Soprano::Node> Soprano::Inference::InferenceModel::inferedGraphsForStateme
                 .arg( Vocabulary::RDF::TYPE().toString() )
                 .arg( Vocabulary::SIL::INFERENCE_GRAPH().toString() );
 
-        qDebug() << "Query 2: " << query;
-
         QueryResultIterator it2 = parentModel()->executeQuery( Query( query, Query::SPARQL ) );
         while ( it2.next() ) {
             // Step 3: remove the whole infered graph and its metadata
@@ -194,15 +192,11 @@ QList<Soprano::Node> Soprano::Inference::InferenceModel::inferedGraphsForStateme
     // now sourceStatements should contain what our nice first query above returns
     // and we use a siplyfied version of the query above to redland won't get confused :(
     Q_FOREACH( Node node, sourceStatements ) {
-        qDebug() << "found source statement " << node;
-
         // Step 2: Check for which graph it is source statement
         QString query = QString( "SELECT ?g WHERE { "
                                  "?g <%1> <%2> . }" )
                         .arg( Vocabulary::SIL::SOURCE_STATEMENT().toString() )
                         .arg( node.toString() );
-
-        qDebug() << "Query 2: " << query;
 
         QueryResultIterator it2 = parentModel()->executeQuery( Query( query, Query::SPARQL ) );
         while ( it2.next() ) {
@@ -321,7 +315,7 @@ int Soprano::Inference::InferenceModel::inferRule( const Rule& rule, bool recurs
 
             // add sourceStatements
             // FIXME: try to reuse source statements
-            QList<Statement> sourceStatements = bindPatterns( it, rule.preConditions() );
+            QList<Statement> sourceStatements = bindPatterns( it, rule.preconditions() );
             for ( QList<Statement>::const_iterator it = sourceStatements.constBegin();
                   it != sourceStatements.constEnd(); ++it ) {
                 const Statement& sourceStatement = *it;

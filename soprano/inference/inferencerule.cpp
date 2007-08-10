@@ -20,14 +20,16 @@
  */
 
 #include "inferencerule.h"
+#include "statementpattern.h"
 
 #include <QtCore/QString>
+#include <QtCore/QDebug>
 
 
 class Soprano::Inference::Rule::Private : public QSharedData
 {
 public:
-    QList<StatementPattern> preConditions;
+    QList<StatementPattern> preconditions;
     StatementPattern effect;
 };
 
@@ -56,15 +58,15 @@ Soprano::Inference::Rule& Soprano::Inference::Rule::operator=( const Rule& other
 }
 
 
-QList<Soprano::Inference::StatementPattern> Soprano::Inference::Rule::preConditions() const
+QList<Soprano::Inference::StatementPattern> Soprano::Inference::Rule::preconditions() const
 {
-    return d->preConditions;
+    return d->preconditions;
 }
 
 
 void Soprano::Inference::Rule::addPrecondition( const StatementPattern& sp )
 {
-    d->preConditions.append( sp );
+    d->preconditions.append( sp );
 }
 
 
@@ -82,8 +84,8 @@ void Soprano::Inference::Rule::setEffect( const StatementPattern& e )
 
 bool Soprano::Inference::Rule::match( const Statement& statement ) const
 {
-    for ( QList<StatementPattern>::const_iterator it = d->preConditions.constBegin();
-          it != d->preConditions.constEnd(); ++it ) {
+    for ( QList<StatementPattern>::const_iterator it = d->preconditions.constBegin();
+          it != d->preconditions.constEnd(); ++it ) {
         if ( it->match( statement ) ) {
             return true;
         }
@@ -95,11 +97,27 @@ bool Soprano::Inference::Rule::match( const Statement& statement ) const
 QString Soprano::Inference::Rule::createSparqlQuery() const
 {
     QString query = "SELECT * WHERE { ";
-    for ( QList<StatementPattern>::const_iterator it = d->preConditions.constBegin();
-          it != d->preConditions.constEnd(); ++it ) {
+    for ( QList<StatementPattern>::const_iterator it = d->preconditions.constBegin();
+          it != d->preconditions.constEnd(); ++it ) {
         query += it->createSparqlGraphPattern() + " . ";
     }
     query += "}";
 
     return query;
+}
+
+
+QDebug operator<<( QDebug s, const Soprano::Inference::Rule& rule )
+{
+    s.nospace() << "[";
+    QList<Soprano::Inference::StatementPattern> cl = rule.preconditions();
+    QList<Soprano::Inference::StatementPattern>::const_iterator it = cl.constBegin();
+    while ( it != cl.constEnd() ) {
+        s.nospace() << *it;
+        ++it;
+        if ( it != cl.constEnd() ) {
+            s.nospace() << ", ";
+        }
+    }
+    return s.nospace() << " -> " << rule.effect() << "]";
 }

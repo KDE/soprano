@@ -19,47 +19,31 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef _SOPRANO_STATEMENT_PATTERN_H_
-#define _SOPRANO_STATEMENT_PATTERN_H_
+#ifndef _INFERENCE_RULE_PARSER_H_
+#define _INFERENCE_RULE_PARSER_H_
 
-#include <QtCore/QSharedDataPointer>
-
-#include "soprano_export.h"
-
+#include <QtCore/QString>
 
 namespace Soprano {
-
-    class Statement;
-
     namespace Inference {
 
-	class NodePattern;
+	class Rule;
 
-	class SOPRANO_EXPORT StatementPattern
+	class RuleParser
 	{
 	public:
-	    StatementPattern();
-	    StatementPattern( const NodePattern&, const NodePattern&, const NodePattern& );
-	    StatementPattern( const StatementPattern& );
-	    ~StatementPattern();
+	    RuleParser();
+	    ~RuleParser();
 
-	    StatementPattern operator=( const StatementPattern& );
+	    bool parseFile( const QString& path );
 
-	    NodePattern subjectPattern() const;
-	    NodePattern predicatePattern() const;
-	    NodePattern objectPattern() const;
-
-	    bool match( const Statement& ) const;
-
-	    QString createSparqlGraphPattern() const;
+	    QList<Rule> rules() const;
 
 	private:
 	    class Private;
-	    QSharedDataPointer<Private> d;
+	    Private* d;
 	};
     }
 }
-
-SOPRANO_EXPORT QDebug operator<<( QDebug s, const Soprano::Inference::StatementPattern& );
 
 #endif

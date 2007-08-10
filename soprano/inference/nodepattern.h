@@ -83,4 +83,6 @@ namespace Soprano {
     }
 }
 
+SOPRANO_EXPORT QDebug operator<<( QDebug s, const Soprano::Inference::NodePattern& );
+
 #endif

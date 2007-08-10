@@ -46,7 +46,7 @@ namespace Soprano {
 	     * These variables are identified by their name and matched
 	     * accordingly.
 	     */
-	    QList<StatementPattern> preConditions() const;
+	    QList<StatementPattern> preconditions() const;
 
 	    void addPrecondition( const StatementPattern& );
 
@@ -71,14 +71,13 @@ namespace Soprano {
 	     */
 	    QString createSparqlQuery() const;
 
-	    // FIXME: add something like:
-	    // static QList<Rule> parseRuleFile( const QString& path );
-
 	private:
 	    class Private;
 	    QSharedDataPointer<Private> d;
 	};
     }
 }
+
+SOPRANO_EXPORT QDebug operator<<( QDebug s, const Soprano::Inference::Rule& );
 
 #endif

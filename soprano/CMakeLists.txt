@@ -69,6 +69,7 @@ SET(soprano_SRCS
     inference/sil.cpp
     inference/inferencemodel.h
     inference/inferencemodel.cpp
+    inference/inferenceruleparser.cpp
 )
 
 qt4_automoc(${soprano_SRCS})
@@ -120,6 +121,7 @@ INSTALL(FILES
 	inference/nodepattern.h
 	inference/statementpattern.h
 	inference/sil.h
+	inference/inferenceruleparser.h
 	DESTINATION include/soprano)
 
 add_subdirectory(backends)
