@@ -21,18 +21,28 @@
 
 #include "rdf.h"
 
+#define RDF_NS "http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+
 class Rdf
 {
 public:
     Rdf()
-        : rdfNamespace( "http://www.w3.org/1999/02/22-rdf-syntax-ns#" ),
-          rdfType( "http://www.w3.org/1999/02/22-rdf-syntax-ns#type" ),
-          rdfProperty( "http://www.w3.org/1999/02/22-rdf-syntax-ns#Property" ) {
+        : rdfNamespace( RDF_NS ),
+          rdfType( RDF_NS"type" ),
+          rdfProperty( RDF_NS"Property" ),
+          rdfStatement( RDF_NS"Statement" ),
+          rdfSubject( RDF_NS"subject" ),
+          rdfPredicate( RDF_NS"predicate" ),
+          rdfObject( RDF_NS"object" ) {
     }
 
     QUrl rdfNamespace;
     QUrl rdfType;
     QUrl rdfProperty;
+    QUrl rdfStatement;
+    QUrl rdfSubject;
+    QUrl rdfPredicate;
+    QUrl rdfObject;
 };
 
 Q_GLOBAL_STATIC( Rdf, rdf );
@@ -53,4 +63,28 @@ QUrl Soprano::Vocabulary::RDF::TYPE()
 QUrl Soprano::Vocabulary::RDF::PROPERTY()
 {
     return rdf()->rdfProperty;
+}
+
+
+QUrl Soprano::Vocabulary::RDF::STATEMENT()
+{
+    return rdf()->rdfStatement;
+}
+
+
+QUrl Soprano::Vocabulary::RDF::SUBJECT()
+{
+    return rdf()->rdfSubject;
+}
+
+
+QUrl Soprano::Vocabulary::RDF::PREDICATE()
+{
+    return rdf()->rdfPredicate;
+}
+
+
+QUrl Soprano::Vocabulary::RDF::OBJECT()
+{
+    return rdf()->rdfObject;
 }

@@ -40,9 +40,9 @@ namespace Soprano {
     public:
 	virtual ~FilterModel();
 
-	void setParentModel( Model* );
+	virtual void setParentModel( Model* );
 
-	Model* parentModel() const;
+	virtual Model* parentModel() const;
 
 	/**
 	 * Default implementation simple pipes the call through to the parent model.
@@ -100,6 +100,7 @@ namespace Soprano {
 
 	/**
 	 * Create a new FilterModel which works on parent.
+	 * Calls setParentModel.
 	 * \param parent The parent Model.
 	 */
 	FilterModel( Model* parent );

@@ -19,26 +19,44 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef _SOPRANO_RDF_H_
-#define _SOPRANO_RDF_H_
+#ifndef _SOPRANO_STATEMENT_PATTERN_H_
+#define _SOPRANO_STATEMENT_PATTERN_H_
 
-#include <QtCore/QUrl>
+#include <QtCore/QSharedDataPointer>
 
-// FIXME: add all the missing URIs
+#include "soprano_export.h"
+
+
 namespace Soprano {
-    namespace Vocabulary {
-	namespace RDF {
-	    /**
-	     * The RDF namespace (http://www.w3.org/1999/02/22-rdf-syntax-ns#)
-	     */
-	    QUrl NAMESPACE();
-	    QUrl TYPE();
-	    QUrl PROPERTY();
-	    QUrl STATEMENT();
-	    QUrl SUBJECT();
-	    QUrl PREDICATE();
-	    QUrl OBJECT();
-	}
+
+    class Statement;
+
+    namespace Inference {
+
+	class NodePattern;
+
+	class SOPRANO_EXPORT StatementPattern
+	{
+	public:
+	    StatementPattern();
+	    StatementPattern( const NodePattern&, const NodePattern&, const NodePattern& );
+	    StatementPattern( const StatementPattern& );
+	    ~StatementPattern();
+
+	    StatementPattern operator=( const StatementPattern& );
+
+	    NodePattern subjectPattern() const;
+	    NodePattern predicatePattern() const;
+	    NodePattern objectPattern() const;
+
+	    bool match( const Statement& ) const;
+
+	    QString createSparqlGraphPattern() const;
+
+	private:
+	    class Private;
+	    QSharedDataPointer<Private> d;
+	};
     }
 }
 

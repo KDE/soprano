@@ -100,3 +100,50 @@ bool Soprano::StatementIterator::isEmpty() const
 {
     return d->backend == 0;
 }
+
+
+QList<Soprano::Statement> Soprano::StatementIterator::allStatements()
+{
+    QList<Statement> sl;
+    while ( next() ) {
+        sl.append( current() );
+    }
+    return sl;
+}
+
+
+QList<Soprano::Node> Soprano::StatementIterator::allSubjects()
+{
+    QList<Node> nl;
+    while ( next() ) {
+        nl.append( current().subject() );
+    }
+    return nl;
+}
+
+QList<Soprano::Node> Soprano::StatementIterator::allPredicates()
+{
+    QList<Node> nl;
+    while ( next() ) {
+        nl.append( current().predicate() );
+    }
+    return nl;
+}
+
+QList<Soprano::Node> Soprano::StatementIterator::allObjects()
+{
+    QList<Node> nl;
+    while ( next() ) {
+        nl.append( current().object() );
+    }
+    return nl;
+}
+
+QList<Soprano::Node> Soprano::StatementIterator::allContexts()
+{
+    QList<Node> nl;
+    while ( next() ) {
+        nl.append( current().context() );
+    }
+    return nl;
+}

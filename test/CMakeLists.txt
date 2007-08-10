@@ -2,6 +2,7 @@ project(soprano_tests)
 
 include_directories(
   ${soprano_SOURCE_DIR}
+  ${soprano_core_SOURCE_DIR}
   ${QT_INCLUDES}
   ${CMAKE_CURRENT_BINARY_DIR}
 )
@@ -73,9 +74,14 @@ add_executable(queryresultstatementiteratortest queryresultstatementiteratortest
 target_link_libraries(queryresultstatementiteratortest soprano ${QT_QTCORE_LIBRARY} ${QT_QTTEST_LIBRARY})
 add_test(queryresultstatementiteratortest ${EXECUTABLE_OUTPUT_PATH}/queryresultstatementiteratortest)
 
+# InferenceModel
+qt4_automoc(inferencemodeltest inferencemodeltest.cpp)
+add_executable(inferencemodeltest inferencemodeltest.cpp)
+target_link_libraries(inferencemodeltest soprano ${QT_QTCORE_LIBRARY} ${QT_QTTEST_LIBRARY})
+add_test(inferencemodeltest ${EXECUTABLE_OUTPUT_PATH}/inferencemodeltest)
+
 # QueryAPITest
 qt4_automoc(queryapitest queryapitest.cpp)
 add_executable(queryapitest queryapitest.cpp)
 target_link_libraries(queryapitest soprano ${QT_QTCORE_LIBRARY} ${QT_QTTEST_LIBRARY})
 add_test(queryapitest ${EXECUTABLE_OUTPUT_PATH}/queryapitest)
-

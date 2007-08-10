@@ -63,6 +63,12 @@ SET(soprano_SRCS
     vocabulary/rdf.cpp
     vocabulary/rdfs.cpp
     vocabulary/xmls.cpp
+    inference/nodepattern.cpp
+    inference/statementpattern.cpp
+    inference/inferencerule.cpp
+    inference/sil.cpp
+    inference/inferencemodel.h
+    inference/inferencemodel.cpp
 )
 
 qt4_automoc(${soprano_SRCS})
@@ -109,6 +115,11 @@ INSTALL(FILES
 	vocabulary/rdf.h
 	vocabulary/rdfs.h
 	vocabulary/xmls.h
+	inference/inferencemodel.h
+	inference/inferencerule.h
+	inference/nodepattern.h
+	inference/statementpattern.h
+	inference/sil.h
 	DESTINATION include/soprano)
 
 add_subdirectory(backends)

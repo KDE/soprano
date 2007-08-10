@@ -41,6 +41,9 @@ namespace Soprano {
      *
      * Be aware that iterators in Soprano are shared objects which means
      * that copies of one iterator object work on the same data.
+     *
+     * Caution: backends such as redland tend to invalidate the iterators if
+     * the underlaying model is changed.
      */
     class SOPRANO_EXPORT QueryResultIterator
     {

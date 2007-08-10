@@ -19,27 +19,41 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef _SOPRANO_RDF_H_
-#define _SOPRANO_RDF_H_
+#ifndef _INFERENCE_MODEL_TEST_H_
+#define _INFERENCE_MODEL_TEST_H_
 
-#include <QtCore/QUrl>
+#include <QtCore/QObject>
 
-// FIXME: add all the missing URIs
 namespace Soprano {
-    namespace Vocabulary {
-	namespace RDF {
-	    /**
-	     * The RDF namespace (http://www.w3.org/1999/02/22-rdf-syntax-ns#)
-	     */
-	    QUrl NAMESPACE();
-	    QUrl TYPE();
-	    QUrl PROPERTY();
-	    QUrl STATEMENT();
-	    QUrl SUBJECT();
-	    QUrl PREDICATE();
-	    QUrl OBJECT();
-	}
+    class Model;
+    namespace Inference {
+	class InferenceModel;
     }
 }
+
+using namespace Soprano;
+using namespace Soprano::Inference;
+
+
+class InferenceModelTest : public QObject
+{
+    Q_OBJECT
+
+private Q_SLOTS:
+    void initTestCase();
+    void init();
+    void testAddStatementSingle();
+    void testAddStatementMulti();
+    void testRemoveStatementsSingle();
+    void testRemoveStatementsMulti();
+    void testPerformInference();
+    void testClearInference();
+    void testPerformance();
+    void cleanupTestCase();
+
+private:
+    Model* m_model;
+    InferenceModel* m_infModel;
+};
 
 #endif

@@ -23,10 +23,13 @@
 #define SOPRANO_STATEMENT_ITERATOR_H
 
 #include <QtCore/QSharedDataPointer>
+#include <QtCore/QList>
+
 #include <soprano/soprano_export.h>
 
 namespace Soprano {
 
+    class Node;
     class Statement;
     class StatementIteratorBackend;
 
@@ -35,6 +38,9 @@ namespace Soprano {
      *
      * Be aware that iterators in Soprano are shared objects which means
      * that copies of one iterator object work on the same data.
+     *
+     * Caution: backends such as redland tend to invalidate the iterators if
+     * the underlaying model is changed.
      */
     class SOPRANO_EXPORT StatementIterator
     {
@@ -92,6 +98,61 @@ namespace Soprano {
 	 *\return true if the Iterator is empty
 	 */
 	bool isEmpty() const;
+
+	/**
+	 * Convinience method which extracts all statements (this does not include the
+	 * statements that have already been read from the iterator) from the iterator
+	 * and returns them in a list.
+	 *
+	 * Be aware that after calling this method the iterator will be invalid.
+	 *
+	 * \return A list of all statements that rest in the iterator.
+	 */
+	QList<Statement> allStatements();
+
+	/**
+	 * Convinience method which extracts all subject nodes from all result statements
+	 * (this does not include the statements that have already been read from the 
+	 * iterator).
+	 *
+	 * Be aware that after calling this method the iterator will be invalid.
+	 *
+	 * \return A list of subject nodes from the statements that rest in the iterator.
+	 */
+	QList<Node> allSubjects();
+
+	/**
+	 * Convinience method which extracts all predicate nodes from all result statements
+	 * (this does not include the statements that have already been read from the 
+	 * iterator).
+	 *
+	 * Be aware that after calling this method the iterator will be invalid.
+	 *
+	 * \return A list of predicate nodes from the statements that rest in the iterator.
+	 */
+	QList<Node> allPredicates();
+
+	/**
+	 * Convinience method which extracts all object nodes from all result statements
+	 * (this does not include the statements that have already been read from the 
+	 * iterator).
+	 *
+	 * Be aware that after calling this method the iterator will be invalid.
+	 *
+	 * \return A list of object nodes from the statements that rest in the iterator.
+	 */
+	QList<Node> allObjects();
+
+	/**
+	 * Convinience method which extracts all context nodes from all result statements
+	 * (this does not include the statements that have already been read from the 
+	 * iterator).
+	 *
+	 * Be aware that after calling this method the iterator will be invalid.
+	 *
+	 * \return A list of context nodes from the statements that rest in the iterator.
+	 */
+	QList<Node> allContexts();
 
     private:
 	class Private;
