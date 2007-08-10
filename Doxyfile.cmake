@@ -85,7 +85,9 @@ WARN_LOGFILE           =
 #---------------------------------------------------------------------------
 INPUT                  = ${soprano_SOURCE_DIR}/soprano \
                          ${soprano_SOURCE_DIR}/Mainpage.dox \
-                         ${soprano_SOURCE_DIR}/soprano/vocabulary
+                         ${soprano_SOURCE_DIR}/soprano/vocabulary \
+                         ${soprano_SOURCE_DIR}/soprano/inference \
+                         ${soprano_SOURCE_DIR}/soprano/index
 INPUT_ENCODING         = UTF-8
 FILE_PATTERNS          = *.h
 RECURSIVE              = NO

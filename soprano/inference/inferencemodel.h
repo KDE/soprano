@@ -33,7 +33,28 @@ namespace Soprano {
 	class Rule;
 
 	/**
-	 * 
+	 * \brief The Soprano Inference Model provides a simple forward chaining inference engine
+	 * which uses the underlying parent model itself to store status information.
+	 *
+	 * The InferenceModel does perfect inference which means that removing of statements is supported
+	 * and results in a perfect update of the infered statements.
+	 *
+	 * This is done by storing a rather large amount of status data in a special named graph
+	 * (see Vocabulary::SIL::INFERENCE_METADATA). Thus, by using this inference model one gains
+	 * inference of excellent quality but with a big "waste" of space.
+	 *
+	 * The inference is performed based on rules which are stored in Rule instances.
+	 * Rules can be created manually or parsed using a RuleParser.
+	 *
+	 * <b>The inference engine works roughly as follows:</b>
+	 *
+	 * Whenever a new statement is added and it applies to one of the rules the following is generated:
+	 * \li named graph A is created containing the infered statements
+	 * \li the statements that triggered the rule are stored in named graph sil:InferenceMetadata as
+	 * source statements of A (sil:sourceStatement).
+	 *
+	 * Thus, when removing a statement it can easily be checked if this statement had been used to
+	 * infer another one by querying all named graphs that have this statement as a source statement.
 	 */
 	class InferenceModel : public FilterModel
 	{
