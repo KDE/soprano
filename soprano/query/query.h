@@ -42,10 +42,10 @@ namespace Soprano
         // Unary ExpressionOperators                                          //
         ////////////////////////////////////////////////////////////////////////
 
-        class ExpressionOperator {
+        /*class ExpressionOperator {
         public:
             virtual void accept( Visitor *visitor ) = 0;
-        };
+        };*/
 
         ////////////////////////////////////////////////////////////////////////
         // Unary ExpressionOperators                                          //

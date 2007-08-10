@@ -20,7 +20,7 @@ float Soprano::Query::Float::value() const
     return m_value;
 }
 
-Soprano::Query::Double::Double( int value )
+Soprano::Query::Double::Double( double value )
     :m_value(value)
 {
 }
