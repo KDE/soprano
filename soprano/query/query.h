@@ -1,24 +1,45 @@
 namespace Soprano
 {
-
     namespace Query {
 
-        class Numerical : public MathExpression {
-        public:
+        class Numerical {
         };
-    
-        class Double : public Numerical {
+   
+        class Decimal: public Numerical {
+        };
+ 
+        class Double : public Decimal {
         public:
+            Double( double value );
+
             double value() const;
+
+        private:
+            double m_value;
         };
-    
+
+        class Float: public Decimal {
+        public:
+            Float( float value );
+
+            float value() const;
+
+        private:
+            float m_value;
+        };
+
         class Integer : public Numerical {
         public:
+            Integer( int value );
+
             int value() const;
+
+        private:
+            int m_value;
         };
 
         ////////////////////////////////////////////////////////////////////////
-        // Unary ExpressionOperators                                                    //
+        // Unary ExpressionOperators                                          //
         ////////////////////////////////////////////////////////////////////////
 
         class ExpressionOperator {
@@ -27,12 +48,12 @@ namespace Soprano
         };
 
         ////////////////////////////////////////////////////////////////////////
-        // Unary ExpressionOperators                                                    //
+        // Unary ExpressionOperators                                          //
         ////////////////////////////////////////////////////////////////////////
 
         /* XQUERY Tests */
 
-        class Not: public ExpressionOperator {
+        /*class Not: public ExpressionOperator {
         public:
             void accept( Visitor *visitor );
         };
@@ -49,14 +70,14 @@ namespace Soprano
             UnaryMinus( Numerical *num );
 
             void accept( Visitor *visitor );
-        };
+        };*/
 
         /* 
          * SPARQL Tests as defined in:
          * - http://www.w3.org/TR/2005/WD-rdf-sparql-query-20051123/#func-isBound
          */
 
-        class IsBound: public ExpressionOperator {
+        /*class IsBound: public ExpressionOperator {
         public:
             IsBound( Variable *var );
 
@@ -83,15 +104,15 @@ namespace Soprano
             IsLiteral( Soprano::Node *node );
 
             void accept( Visitor *visitor );
-        };
+        };*/
 
         /*
          * SPARQL Accessors
          */
         
-        class StringValue: public ExpressionOperator {
+        /*class StringValue: public ExpressionOperator {
         public:
-            /* Soprano::Node must be a literal */
+            // Soprano::Node must be a literal
             StringValue( Soprano::Node *node );
 
             void accept( Visitor *visitor );
@@ -99,7 +120,7 @@ namespace Soprano
 
         class LangValue: public ExpressionOperator {
         public:
-            /* Soprano::Node must be a literal */
+            // Soprano::Node must be a literal
             LangValue( Soprano::Node *node );
 
             void accept( Visitor *visitor );
@@ -107,17 +128,17 @@ namespace Soprano
 
         class DataTypeValue: public ExpressionOperator {
         public:
-            /* Soprano::Node must be a literal */
+            // Soprano::Node must be a literal
             DataTypeValue( Soprano::Node *node );
 
             void accept( Visitor *visitor );
-        }; 
+        };*/
 
         ////////////////////////////////////////////////////////////////////////
-        // Binary ExpressionOperators                                                   //
+        // Binary ExpressionOperators                                         //
         ////////////////////////////////////////////////////////////////////////
 
-        class LogicOr: public ExpressionOperator {
+        /*class LogicOr: public ExpressionOperator {
         public:
             LogicOr( BooleanExpression *first, BooleanExpression *second );
 
@@ -171,7 +192,7 @@ namespace Soprano
             DateTimeNotEqual( DateTime *first, DateTime *second );
 
             void accept( Visitor *visitor );
-        };
+        };*/
 
 
         ////////////////////////////////////////////////////////////////////////
@@ -179,7 +200,7 @@ namespace Soprano
         ////////////////////////////////////////////////////////////////////////
 
         // FIXME: is this a Statement ???
-        class TiplePattern {
+        /*class TiplePattern {
         public:
             TriplePattern( Node *subject, Node *predicate, Node *object, ); 
 
@@ -238,11 +259,9 @@ namespace Soprano
             void setQueryVerb( const QString &queryVerb );
             QString queryVerb();
 
-            /**
-             * SELECT *
-             */
+            // SELECT *
             bool isWildCard();
-        };
+        };*/
 
                  
     };
