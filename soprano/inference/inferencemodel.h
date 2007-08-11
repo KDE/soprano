@@ -37,11 +37,12 @@ namespace Soprano {
 	 * which uses the underlying parent model itself to store status information.
 	 *
 	 * The InferenceModel does perfect inference which means that removing of statements is supported
-	 * and results in a perfect update of the infered statements.
-	 *
-	 * This is done by storing a rather large amount of status data in a special named graph
-	 * (see Vocabulary::SIL::INFERENCE_METADATA). Thus, by using this inference model one gains
-	 * inference of excellent quality but with a big "waste" of space.
+	 * and results in a perfect update of the infered statements. There is only one exception:
+	 * If a model contains two statements in different named graphs that both have the same subject,
+	 * predicate, and object and trigger one rule then if one of these statements is removed the
+	 * infered statements are removed, too, although the second statement would still make the infered
+	 * one valid. This situation gets resolved once the same rule is triggered again by some other
+	 * added statement or performInference gets called.
 	 *
 	 * The inference is performed based on rules which are stored in Rule instances.
 	 * Rules can be created manually or parsed using a RuleParser.
@@ -51,7 +52,8 @@ namespace Soprano {
 	 * Whenever a new statement is added and it applies to one of the rules the following is generated:
 	 * \li named graph A is created containing the infered statements
 	 * \li the statements that triggered the rule are stored in named graph sil:InferenceMetadata as
-	 * source statements of A (sil:sourceStatement).
+	 * source statements of A (sil:sourceStatement). The inference model supports two ways of storing
+	 * source statements: plain and compressed (see setCompressedSourceStatements).
 	 *
 	 * Thus, when removing a statement it can easily be checked if this statement had been used to
 	 * infer another one by querying all named graphs that have this statement as a source statement.
@@ -88,6 +90,22 @@ namespace Soprano {
 	     * is necessary call performInference() after adding the new rules.
 	     */
 	    void setRules( const QList<Rule>& rules );
+
+	    /**
+	     * If compressed statements are enabled source statements are stored compressed
+	     * in one literal value. Otherwise source statements are stored using rdf:subject,
+	     * rdf:predicate, rdf:object, and sil:context. Non-compressed statements are much
+	     * cleaner from an ontology design point of view while compressed statements take
+	     * much less space.
+	     *
+	     * By default comressed source statements are enabled.
+	     *
+	     * This metho is here mainly for historical reasons and there normally is no need
+	     * to call it. Compressed statements should work well for most users.
+	     *
+	     * \param b If true compressed source statements are enabled (the default).
+	     */
+	    void setCompressedSourceStatements( bool b );
 	    
 	public Q_SLOTS:
 	    /**
@@ -139,6 +157,12 @@ namespace Soprano {
 	     * as a source.
 	     */
 	    QList<Node> inferedGraphsForStatement( const Statement& statement ) const;
+
+	    /**
+	     * Create the statements to store an uncompressed source statement and add them to the parent model.
+	     * \return The URI of the uncompressed source statement resource.
+	     */
+	    QUrl storeUncompressedSourceStatement( const Statement& sourceStatement );
 
 	    class Private;
 	    Private* const d;

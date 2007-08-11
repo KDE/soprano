@@ -29,18 +29,44 @@
 #include "statementpattern.h"
 #include "nodepattern.h"
 #include "queryresultiterator.h"
+#include "literalvalue.h"
 
 #include <QtCore/QString>
 #include <QtCore/QUuid>
-
+#include <QtCore/QDebug>
 
 // FIXME: add error handling!
+
+
+static QString compressStatement( const Soprano::Statement& statement )
+{
+    // There should be some method Statement::toXXXString for this
+    QString s = QString( "<%1> <%2> " ).arg( statement.subject().toString() ).arg( statement.predicate().toString() );
+    if ( statement.object().isLiteral() ) {
+        s.append( QString( "\"%1\"^^<%2>" ).arg( statement.object().toString() ).arg( statement.object().dataType().toString() ) );
+    }
+    else {
+        s.append( '<' + statement.object().toString() + '>' );
+    }
+    return s;
+}
+
+
+static QUrl createRandomUri()
+{
+    // FIXME: check if the uri already exists
+    QString uid = QUuid::createUuid().toString();
+    uid = uid.mid( 1, uid.length()-2 );
+    return QUrl( "inference://localhost#" + uid );
+}
+
 
 
 class Soprano::Inference::InferenceModel::Private
 {
 public:
     QList<Rule> rules;
+    bool compressedStatements;
 };
 
 
@@ -48,12 +74,19 @@ Soprano::Inference::InferenceModel::InferenceModel( Model* parent )
     : FilterModel( parent ),
       d( new Private() )
 {
+    d->compressedStatements = true;
 }
 
 
 Soprano::Inference::InferenceModel::~InferenceModel()
 {
     delete d;
+}
+
+
+void Soprano::Inference::InferenceModel::setCompressedSourceStatements( bool b )
+{
+    d->compressedStatements = b;
 }
 
 
@@ -79,7 +112,6 @@ Soprano::ErrorCode Soprano::Inference::InferenceModel::addStatement( const State
 
 // this is stuff we only need for the temp implementation that is used due to the lack of proper SPARQL support in redland
 // -----------------------------------------------------------------------------------------------------------------------
-#include <QDebug>
 #include <QSet>
 #include "statementiterator.h"
 uint qHash( const Soprano::Node& node )
@@ -94,7 +126,6 @@ Soprano::ErrorCode Soprano::Inference::InferenceModel::removeStatements( const S
 
     // are there any rules that handle objects? Probably not.
     if ( !statement.object().isLiteral() ) {
-
         // we need to list statements first and then iterate over all that will be removed
         // since we change the model we also have to cache the statements
         QList<Statement> removedStatements = parentModel()->listStatements( statement ).allStatements();
@@ -114,98 +145,112 @@ void Soprano::Inference::InferenceModel::removeStatement( const Statement& state
     for ( QList<Node>::const_iterator it = graphs.constBegin(); it != graphs.constEnd(); ++it ) {
         Node graph = *it;
 
-        // Step 1 remove the infered metadata (and trigger recursive removal) - can be slow
-        removeContext( graph );
-
-        // Step 2: remove the source statements of the removed graph (redland probem again: iteraotors are invalidated by remove methods)
-        QList<Node> graphSources = parentModel()->listStatements( Statement( graph,
-                                                                             Vocabulary::SIL::SOURCE_STATEMENT(),
-                                                                             Node(),
-                                                                             Vocabulary::SIL::INFERENCE_METADATA() ) ).allObjects();
-        for( QList<Node>::const_iterator it = graphSources.constBegin();
-             it != graphSources.constEnd(); ++it ) {
-            parentModel()->removeStatements( Statement( *it, Node(), Node(), Vocabulary::SIL::INFERENCE_METADATA() ) );
+        // Step 1: remove the source statements of the removed graph
+        if ( !d->compressedStatements ) {
+            // (redland probem again: iteraotors are invalidated by remove methods)
+            QList<Node> graphSources = parentModel()->listStatements( Statement( graph,
+                                                                                 Vocabulary::SIL::SOURCE_STATEMENT(),
+                                                                                 Node(),
+                                                                                 Vocabulary::SIL::INFERENCE_METADATA() ) ).allObjects();
+            for( QList<Node>::const_iterator it = graphSources.constBegin();
+                 it != graphSources.constEnd(); ++it ) {
+                parentModel()->removeStatements( Statement( *it, Node(), Node(), Vocabulary::SIL::INFERENCE_METADATA() ) );
+            }
         }
 
-        // Step 3: remove the graph metadata
+
+        // Step 2: remove the graph metadata
         parentModel()->removeStatements( Statement( graph, Node(), Node(), Vocabulary::SIL::INFERENCE_METADATA() ) );
+
+        // Step 3 remove the infered metadata (and trigger recursive removal) - can be slow
+        removeContext( graph );
     }
 }
 
 
 QList<Soprano::Node> Soprano::Inference::InferenceModel::inferedGraphsForStatement( const Statement& statement ) const
 {
-    QList<Soprano::Node> graphs;
+    if ( d->compressedStatements ) {
+        // get the graphs our statement was the source for
+        StatementIterator it = parentModel()->listStatements( Statement( Node(),
+                                                                         Vocabulary::SIL::SOURCE_STATEMENT(),
+                                                                         LiteralValue( compressStatement( statement ) ),
+                                                                         Vocabulary::SIL::INFERENCE_METADATA() ) );
+        return it.allSubjects();
+    }
+    else {
+        QList<Soprano::Node> graphs;
 
-    // sadly redland does not seem to support even the most simple queries :(
+        // sadly redland does not seem to support even the most simple queries :(
 #if 0
-    // check if our statement is source statement for any infered graph
-    QString query = QString( "PREFIX rdf: <%1> "
-                             "SELECT ?s WHERE { "
-                             "?s rdf:type rdf:Statement . "
-                             "?s rdf:subject <%2> . "
-                             "?s rdf:predicate <%3> . "
-                             "?s rdf:object <%4> ." )
-                    .arg( Vocabulary::RDF::NAMESPACE().toString() )
-                    .arg( statement.subject().toString() )
-                    .arg( statement.predicate().toString() )
-                    .arg( statement.object().toString() );
+        // check if our statement is source statement for any infered graph
+        QString query = QString( "PREFIX rdf: <%1> "
+                                 "SELECT ?s WHERE { "
+                                 "?s rdf:type rdf:Statement . "
+                                 "?s rdf:subject <%2> . "
+                                 "?s rdf:predicate <%3> . "
+                                 "?s rdf:object <%4> ." )
+                        .arg( Vocabulary::RDF::NAMESPACE().toString() )
+                        .arg( statement.subject().toString() )
+                        .arg( statement.predicate().toString() )
+                        .arg( statement.object().toString() );
 
-    if ( statement.context().isValid() ) {
-        query += QString( "?s <%1> <%2> ." )
-                 .arg( Vocabulary::SIL::CONTEXT().toString() )
-                 .arg( statement.context().toString() );
-    }
-
-    query += " }";
-
-    QueryResultIterator it = parentModel()->executeQuery( Query( query, Query::SPARQL ) );
-    while ( it.next() ) {
-        // Step 2: Check for which graph it is source statement
-        query = QString( "SELECT ?g WHERE { "
-                         "GRAPH <%1> { "
-                         "?g <%2> <%3> . "
-                         "?g <%4> <%5> . } }" )
-                .arg( Vocabulary::SIL::INFERENCE_METADATA().toString() )
-                .arg( Vocabulary::SIL::SOURCE_STATEMENT().toString() )
-                .arg( it.binding( 0 ).toString() )
-                .arg( Vocabulary::RDF::TYPE().toString() )
-                .arg( Vocabulary::SIL::INFERENCE_GRAPH().toString() );
-
-        QueryResultIterator it2 = parentModel()->executeQuery( Query( query, Query::SPARQL ) );
-        while ( it2.next() ) {
-            // Step 3: remove the whole infered graph and its metadata
-            graphs += it2.binding( 0 );
+        if ( statement.context().isValid() ) {
+            query += QString( "?s <%1> <%2> ." )
+                     .arg( Vocabulary::SIL::CONTEXT().toString() )
+                     .arg( statement.context().toString() );
         }
-    }
+
+        query += " }";
+
+        QueryResultIterator it = parentModel()->executeQuery( Query( query, Query::SPARQL ) );
+        while ( it.next() ) {
+            // Step 2: Check for which graph it is source statement
+            query = QString( "SELECT ?g WHERE { "
+                             "GRAPH <%1> { "
+                             "?g <%2> <%3> . "
+                             "?g <%4> <%5> . } }" )
+                    .arg( Vocabulary::SIL::INFERENCE_METADATA().toString() )
+                    .arg( Vocabulary::SIL::SOURCE_STATEMENT().toString() )
+                    .arg( it.binding( 0 ).toString() )
+                    .arg( Vocabulary::RDF::TYPE().toString() )
+                    .arg( Vocabulary::SIL::INFERENCE_GRAPH().toString() );
+
+            QueryResultIterator it2 = parentModel()->executeQuery( Query( query, Query::SPARQL ) );
+            while ( it2.next() ) {
+                // Step 3: remove the whole infered graph and its metadata
+                graphs += it2.binding( 0 );
+            }
+        }
 #endif
 
-    // since redland cannot handle our query we have to do it the ugly way
-    QSet<Node> sourceStatements;
-    StatementIterator it = parentModel()->listStatements( Statement( Node(), Vocabulary::RDF::SUBJECT(), statement.subject() ) );
-    sourceStatements = it.allSubjects().toSet();
-    it = parentModel()->listStatements( Statement( Node(), Vocabulary::RDF::PREDICATE(), statement.predicate() ) );
-    sourceStatements &= it.allSubjects().toSet();
-    it = parentModel()->listStatements( Statement( Node(), Vocabulary::RDF::OBJECT(), statement.object() ) );
-    sourceStatements &= it.allSubjects().toSet();
+        // since redland cannot handle our query we have to do it the ugly way
+        QSet<Node> sourceStatements;
+        StatementIterator it = parentModel()->listStatements( Statement( Node(), Vocabulary::RDF::SUBJECT(), statement.subject() ) );
+        sourceStatements = it.allSubjects().toSet();
+        it = parentModel()->listStatements( Statement( Node(), Vocabulary::RDF::PREDICATE(), statement.predicate() ) );
+        sourceStatements &= it.allSubjects().toSet();
+        it = parentModel()->listStatements( Statement( Node(), Vocabulary::RDF::OBJECT(), statement.object() ) );
+        sourceStatements &= it.allSubjects().toSet();
 
-    // now sourceStatements should contain what our nice first query above returns
-    // and we use a siplyfied version of the query above to redland won't get confused :(
-    Q_FOREACH( Node node, sourceStatements ) {
-        // Step 2: Check for which graph it is source statement
-        QString query = QString( "SELECT ?g WHERE { "
-                                 "?g <%1> <%2> . }" )
-                        .arg( Vocabulary::SIL::SOURCE_STATEMENT().toString() )
-                        .arg( node.toString() );
+        // now sourceStatements should contain what our nice first query above returns
+        // and we use a siplyfied version of the query above to redland won't get confused :(
+        Q_FOREACH( Node node, sourceStatements ) {
+            // Step 2: Check for which graph it is source statement
+            QString query = QString( "SELECT ?g WHERE { "
+                                     "?g <%1> <%2> . }" )
+                            .arg( Vocabulary::SIL::SOURCE_STATEMENT().toString() )
+                            .arg( node.toString() );
 
-        QueryResultIterator it2 = parentModel()->executeQuery( Query( query, Query::SPARQL ) );
-        while ( it2.next() ) {
-            // Step 3: remove the whole infered graph and its metadata
-            graphs += it2.binding( 0 );
+            QueryResultIterator it2 = parentModel()->executeQuery( Query( query, Query::SPARQL ) );
+            while ( it2.next() ) {
+                // Step 3: remove the whole infered graph and its metadata
+                graphs += it2.binding( 0 );
+            }
         }
-    }
 
-    return graphs;
+        return graphs;
+    }
 }
 
 
@@ -278,15 +323,6 @@ int Soprano::Inference::InferenceModel::inferStatement( const Statement& stateme
 }
 
 
-static QUrl createRandomUri()
-{
-    // FIXME: check if the uri already exists
-    QString uid = QUuid::createUuid().toString();
-    uid = uid.mid( 1, uid.length()-2 );
-    return QUrl( "inference://localhost#" + uid );
-}
-
-
 int Soprano::Inference::InferenceModel::inferRule( const Rule& rule, bool recurse )
 {
     Query q( rule.createSparqlQuery(), Query::SPARQL );
@@ -314,42 +350,25 @@ int Soprano::Inference::InferenceModel::inferRule( const Rule& rule, bool recurs
                                                     Vocabulary::SIL::INFERENCE_METADATA() ) );
 
             // add sourceStatements
-            // FIXME: try to reuse source statements
             QList<Statement> sourceStatements = bindPatterns( it, rule.preconditions() );
             for ( QList<Statement>::const_iterator it = sourceStatements.constBegin();
                   it != sourceStatements.constEnd(); ++it ) {
                 const Statement& sourceStatement = *it;
 
-                QUrl sourceStatementUri = createRandomUri();
-                parentModel()->addStatement( Statement( sourceStatementUri,
-                                                        Vocabulary::RDF::TYPE(),
-                                                        Vocabulary::RDF::STATEMENT(),
-                                                        Vocabulary::SIL::INFERENCE_METADATA() ) );
-
-                parentModel()->addStatement( Statement( sourceStatementUri,
-                                                        Vocabulary::RDF::SUBJECT(),
-                                                        sourceStatement.subject(),
-                                                        Vocabulary::SIL::INFERENCE_METADATA() ) );
-                parentModel()->addStatement( Statement( sourceStatementUri,
-                                                        Vocabulary::RDF::PREDICATE(),
-                                                        sourceStatement.predicate(),
-                                                        Vocabulary::SIL::INFERENCE_METADATA() ) );
-                parentModel()->addStatement( Statement( sourceStatementUri,
-                                                        Vocabulary::RDF::OBJECT(),
-                                                        sourceStatement.object(),
-                                                        Vocabulary::SIL::INFERENCE_METADATA() ) );
-                if ( sourceStatement.context().isValid() ) {
-                    parentModel()->addStatement( Statement( sourceStatementUri,
-                                                            Vocabulary::SIL::CONTEXT(),
-                                                            sourceStatement.context(),
+                if ( d->compressedStatements ) {
+                    // remember the statement through a checksum (well, not really a checksum for now ;)
+                    parentModel()->addStatement( Statement( inferenceGraphUrl,
+                                                            Vocabulary::SIL::SOURCE_STATEMENT(),
+                                                            LiteralValue( compressStatement( sourceStatement ) ),
                                                             Vocabulary::SIL::INFERENCE_METADATA() ) );
                 }
-
-                // remember the source statement as a source for our graph
-                parentModel()->addStatement( Statement( inferenceGraphUrl,
-                                                        Vocabulary::SIL::SOURCE_STATEMENT(),
-                                                        sourceStatementUri,
-                                                        Vocabulary::SIL::INFERENCE_METADATA() ) );
+                else {
+                    // remember the source statement as a source for our graph
+                    parentModel()->addStatement( Statement( inferenceGraphUrl,
+                                                            Vocabulary::SIL::SOURCE_STATEMENT(),
+                                                            storeUncompressedSourceStatement( sourceStatement ),
+                                                            Vocabulary::SIL::INFERENCE_METADATA() ) );
+                }
             }
 
             if ( recurse ) {
@@ -359,6 +378,36 @@ int Soprano::Inference::InferenceModel::inferRule( const Rule& rule, bool recurs
     }
 
     return inferedStatementsCount;
+}
+
+
+QUrl Soprano::Inference::InferenceModel::storeUncompressedSourceStatement( const Statement& sourceStatement )
+{
+    QUrl sourceStatementUri = createRandomUri();
+    parentModel()->addStatement( Statement( sourceStatementUri,
+                                            Vocabulary::RDF::TYPE(),
+                                            Vocabulary::RDF::STATEMENT(),
+                                            Vocabulary::SIL::INFERENCE_METADATA() ) );
+
+    parentModel()->addStatement( Statement( sourceStatementUri,
+                                            Vocabulary::RDF::SUBJECT(),
+                                            sourceStatement.subject(),
+                                            Vocabulary::SIL::INFERENCE_METADATA() ) );
+    parentModel()->addStatement( Statement( sourceStatementUri,
+                                            Vocabulary::RDF::PREDICATE(),
+                                            sourceStatement.predicate(),
+                                            Vocabulary::SIL::INFERENCE_METADATA() ) );
+    parentModel()->addStatement( Statement( sourceStatementUri,
+                                            Vocabulary::RDF::OBJECT(),
+                                            sourceStatement.object(),
+                                            Vocabulary::SIL::INFERENCE_METADATA() ) );
+    if ( sourceStatement.context().isValid() ) {
+        parentModel()->addStatement( Statement( sourceStatementUri,
+                                                Vocabulary::SIL::CONTEXT(),
+                                                sourceStatement.context(),
+                                                Vocabulary::SIL::INFERENCE_METADATA() ) );
+    }
+    return sourceStatementUri;
 }
 
 #include "inferencemodel.moc"

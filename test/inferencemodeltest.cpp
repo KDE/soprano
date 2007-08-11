@@ -26,6 +26,7 @@
 #include <soprano/inference/statementpattern.h>
 #include <soprano/inference/nodepattern.h>
 #include <soprano/inference/inferencerule.h>
+#include <soprano/inference/inferenceruleparser.h>
 
 #include <QtTest/QTest>
 #include <QtCore/QDebug>
@@ -160,8 +161,12 @@ void InferenceModelTest::testRemoveStatementsMulti()
     m_infModel->addStatement( cb );
     m_infModel->addStatement( ba );
 
+//    m_infModel->print();
+
     // now let's remove one in the middle
     m_infModel->removeStatements( cb );
+
+//    m_infModel->print();
 
     // now nothing should be based on A anymore, except for B
     QVERIFY( !m_model->containsStatements( Statement( QUrl( "test#F" ), Vocabulary::RDFS::SUBCLASSOF(), QUrl( "test#A" ) ) ) );
@@ -208,7 +213,12 @@ void InferenceModelTest::testPerformance()
 
     // we just do some performance comparision
     QTime timer;
+
+    // performance with uncompressed source statements
+    // -----------------------------------------------
     timer.start();
+
+    m_infModel->setCompressedSourceStatements( false );
 
     m_infModel->addStatement( fe );
     m_infModel->addStatement( ed );
@@ -220,7 +230,35 @@ void InferenceModelTest::testPerformance()
 
     qDebug() << "Time for adding with inferencing: " << timer.elapsed();
 
+    timer.start();
+    m_infModel->removeStatements( cb );
+
+    qDebug() << "Time for removing one statement with inferencing: " << timer.elapsed();
+
     m_model->removeAllStatements();
+    // -----------------------------------------------
+
+    // performance with compressed statements
+    // -----------------------------------------------
+    timer.start();
+    m_infModel->setCompressedSourceStatements( true );
+    m_infModel->addStatement( fe );
+    m_infModel->addStatement( ed );
+    m_infModel->addStatement( dc );
+    m_infModel->addStatement( cb );
+    m_infModel->addStatement( ba );
+    m_infModel->addStatement( xa );
+    m_infModel->addStatement( xb );
+
+    qDebug() << "Time for adding with inferencing and compressed source statements: " << timer.elapsed();
+
+    timer.start();
+    m_infModel->removeStatements( cb );
+
+    qDebug() << "Time for removing one statement with inferencing and compressed source statements: " << timer.elapsed();
+
+    m_model->removeAllStatements();
+    // -----------------------------------------------
 
 
     timer.start();
@@ -233,6 +271,20 @@ void InferenceModelTest::testPerformance()
     m_model->addStatement( xb );
 
     qDebug() << "Time for adding without inferencing: " << timer.elapsed();
+}
+
+
+void InferenceModelTest::testRuleParser()
+{
+    // FIXME: somehow get the path to the rules file to test parsing it
+//     RuleParser parser;
+//     QVERIFY( parser.parseFile( "rdfs.rules" ) );
+
+//     QList<Rule> rules = parser.rules();
+
+//     Q_FOREACH( Rule rule, rules ) {
+//         qDebug() << rule;
+//     }
 }
 
 
