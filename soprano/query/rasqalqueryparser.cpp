@@ -1,4 +1,4 @@
-/* 
+/*
  * This file is part of Soprano Project.
  *
  * Copyright (C) 2007 Daniele Galdi <daniele.galdi@gmail.com>
@@ -19,24 +19,11 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#include <QtTest>
-#include <QDebug>
+#include "query.h"
 
-#include "soprano/query/query.h"
-#include "soprano/query/queryparser.h"
-#include "soprano/query/rasqalqueryparser.h"
+#include "rasqalqueryparser.h"
 
-#include "queryapitest.h"
-
-void QueryAPITest::testQuery_1()
+Soprano::Query::QueryObject *Soprano::Query::Parser::RasqalQueryParser::parseQuery( const QString &query )
 {
-    Soprano::Query::Parser::QueryParser *parser = new Soprano::Query::Parser::RasqalQueryParser();
-
-    Soprano::Query::QueryObject *obj = parser->parseQuery( "select ?a" );
-
-    qDebug() << obj->queryVerb() << endl;
+    return new QueryObject("SELECT");
 }
-
-QTEST_MAIN(QueryAPITest)
-
-#include "queryapitest.moc"

@@ -63,6 +63,8 @@ SET(soprano_SRCS
     vocabulary/rdf.cpp
     vocabulary/rdfs.cpp
     vocabulary/xmls.cpp
+    query/query.cpp
+    query/rasqalqueryparser.cpp
     inference/nodepattern.cpp
     inference/statementpattern.cpp
     inference/inferencerule.cpp
@@ -130,5 +132,3 @@ find_package(CLucene)
 if(CLucene_FOUND)
   add_subdirectory(index)
 endif(CLucene_FOUND)
-
-#add_subdirectory(query)
