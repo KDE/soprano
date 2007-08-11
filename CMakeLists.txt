@@ -11,6 +11,7 @@ set (LIB_SUFFIX "" CACHE STRING "Define suffix of directory name (32/64)" )
 set (LIB_DESTINATION "${CMAKE_INSTALL_PREFIX}/lib${LIB_SUFFIX}" CACHE STRING "Library directory name" FORCE)
 
 add_subdirectory(soprano) 
+add_subdirectory(backends)
 add_subdirectory(test) 
 add_subdirectory(rules)
 

@@ -11,6 +11,7 @@ if(TSTORE_FOUND)
     ${CMAKE_SOURCE_DIR}
     ${QT_INCLUDE_DIR}
     ${soprano_core_SOURCE_DIR}
+    ${soprano_core_BINARY_DIR}
     ${soprano_tstore_BINARY_DIR}
     ${TSTORE_INCLUDE_DIR}
     ${CMAKE_INSTALL_PREFIX}/include

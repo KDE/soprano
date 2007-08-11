@@ -126,8 +126,6 @@ INSTALL(FILES
 	inference/inferenceruleparser.h
 	DESTINATION include/soprano)
 
-add_subdirectory(backends)
-
 find_package(CLucene)
 if(CLucene_FOUND)
   add_subdirectory(index)
