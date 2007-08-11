@@ -49,8 +49,11 @@ namespace Soprano {
 	 *
 	 * <b>The inference engine works roughly as follows:</b>
 	 *
-	 * Whenever a new statement is added and it applies to one of the rules the following is generated:
-	 * \li named graph A is created containing the infered statements
+	 * Whenever a new statement is added it is compared to each rule to check if it could trigger this rule.
+	 * Then if it could trigger a rule this rule is applied to the whole model.
+	 *
+	 * If a rule produces a new infered statement the following data is created:
+	 * \li named graph A containing the infered statements
 	 * \li the statements that triggered the rule are stored in named graph sil:InferenceMetadata as
 	 * source statements of A (sil:sourceStatement). The inference model supports two ways of storing
 	 * source statements: plain and compressed (see setCompressedSourceStatements).
@@ -90,22 +93,6 @@ namespace Soprano {
 	     * is necessary call performInference() after adding the new rules.
 	     */
 	    void setRules( const QList<Rule>& rules );
-
-	    /**
-	     * If compressed statements are enabled source statements are stored compressed
-	     * in one literal value. Otherwise source statements are stored using rdf:subject,
-	     * rdf:predicate, rdf:object, and sil:context. Non-compressed statements are much
-	     * cleaner from an ontology design point of view while compressed statements take
-	     * much less space.
-	     *
-	     * By default comressed source statements are enabled.
-	     *
-	     * This metho is here mainly for historical reasons and there normally is no need
-	     * to call it. Compressed statements should work well for most users.
-	     *
-	     * \param b If true compressed source statements are enabled (the default).
-	     */
-	    void setCompressedSourceStatements( bool b );
 	    
 	public Q_SLOTS:
 	    /**
@@ -125,6 +112,36 @@ namespace Soprano {
 	     * the inference model and statements have been removed.
 	     */
 	    void clearInference();
+
+	    /**
+	     * If compressed statements are enabled source statements are stored compressed
+	     * in one literal value. Otherwise source statements are stored using rdf:subject,
+	     * rdf:predicate, rdf:object, and sil:context. Non-compressed statements are much
+	     * cleaner from an ontology design point of view while compressed statements take
+	     * much less space.
+	     *
+	     * By default comressed source statements are enabled.
+	     *
+	     * This method exists mainly for historical reasons and there normally is no need
+	     * to call it. Compressed statements should work well for most users.
+	     *
+	     * \param b If true compressed source statements are enabled (the default).
+	     */
+	    void setCompressedSourceStatements( bool b );
+
+	    /**
+	     * If the storage backend supports joined SPARQL queries via UNION
+	     * it makes sense to enable this.
+	     *
+	     * \param b If true InferenceModel will use optimized queries for
+	     * the inference during addStatement. This will speedup the 
+	     * process as matching rules are only applied to the new statement.
+	     * This flag has no influcence on performInference() though.
+	     *
+	     * The default is to disable the optimized queries since the default
+	     * soprano redland backend does not support UNION.
+	     */
+	    void setOptimizedQueriesEnabled( bool b );
 
 	private:
 	    /**

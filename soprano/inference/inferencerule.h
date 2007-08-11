@@ -26,6 +26,7 @@
 #include <QtCore/QList>
 
 #include "statementpattern.h"
+#include "statement.h"
 #include "soprano_export.h"
 
 
@@ -67,11 +68,55 @@ namespace Soprano {
 	    bool match( const Statement& statement ) const;
 
 	    /**
-	     * Create a SPARQL query that retrieves all resources matching this rule.
+	     * Bind this rule to a specific Statement.
+	     *
+	     * The purpose of this method is to allow retricting the application of
+	     * a rule to one statement, i.e. a newly added one.
+	     * 
+	     * \param statement The Statement to bind this rule to.
+	     *
+	     * \sa createSparqlQuery, bindEffect, bindPreconditions
 	     */
-	    QString createSparqlQuery() const;
+	    void bindToStatement( const Statement& statement );
+
+	    /**
+	     * Create a SPARQL query that retrieves all resources matching this rule.
+	     * \param bindVariables If true and a valid binding statement is set the query
+	     * will be bound to this statement resulting in a UNION query of all possible
+	     * bindings.
+	     *
+	     * \sa bindToStatement
+	     */
+	    QString createSparqlQuery( bool bindVariables = false ) const;
+
+	    /**
+	     * Bind the rule's effect to a set of bindings as reveived from a query.
+	     * If the bindings do not contain all variables the bound statement is used as backup.
+	     *
+	     * \param bindings The bindings to apply to this rule.
+	     *
+	     * \return The statement infered by this rule under the application of bindings.
+	     *
+	     * \sa bindToStatement, bindPreconditions
+	     */
+	    Statement bindEffect( const QMap<QString, Node>& bindings ) const;
+
+	    /**
+	     * Bind the rule's preconditions to a set of bindings as reveived from a query.
+	     * If the bindings do not contain all variables the bound statement is used as backup.
+	     *
+	     * \param bindings The bindings to apply to this rule.
+	     *
+	     * \return The statements that have to be valid in order for this rule to infer the statement
+	     * returned by bindEffect under the same bindings.
+	     *
+	     * \sa bindToStatement, bindEffect
+	     */
+	    QList<Statement> bindPreconditions( const QMap<QString, Node>& bindings ) const;
 
 	private:
+	    Statement bindStatementPattern( const StatementPattern& pattern, const QMap<QString, Node>& bindings ) const;
+
 	    class Private;
 	    QSharedDataPointer<Private> d;
 	};

@@ -100,10 +100,16 @@ bool Soprano::Inference::NodePattern::match( const Node& node ) const
 }
 
 
-QString Soprano::Inference::NodePattern::createSparqlNodePattern() const
+QString Soprano::Inference::NodePattern::createSparqlNodePattern( const QMap<QString, Node>& bindings ) const
 {
     if ( isVariable() ) {
-        return '?' + d->name;
+        QMap<QString, Node>::const_iterator it = bindings.find( d->name );
+        if ( it == bindings.constEnd() ) {
+            return '?' + d->name;
+        }
+        else {
+            return '<' + it->toString() + '>';
+        }
     }
     else {
         // FIXME: creating a SPARQL representation of a Node is something that should be available globally

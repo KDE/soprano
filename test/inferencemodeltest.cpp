@@ -109,6 +109,8 @@ void InferenceModelTest::testAddStatementMulti()
     m_infModel->addStatement( xa );
     m_infModel->addStatement( xb );
 
+    m_infModel->print();
+
     // now check that we have all the inferred statements
     QVERIFY( m_model->containsStatements( Statement( QUrl( "test#F" ), Vocabulary::RDFS::SUBCLASSOF(), QUrl( "test#A" ) ) ) );
     QVERIFY( m_model->containsStatements( Statement( QUrl( "test#F" ), Vocabulary::RDFS::SUBCLASSOF(), QUrl( "test#B" ) ) ) );
@@ -271,6 +273,12 @@ void InferenceModelTest::testPerformance()
     m_model->addStatement( xb );
 
     qDebug() << "Time for adding without inferencing: " << timer.elapsed();
+
+    timer.start();
+    m_infModel->setCompressedSourceStatements( true );
+    m_infModel->performInference();
+
+    qDebug() << "Time for performing inference after adding the statements with compressed source statements: " << timer.elapsed();
 }
 
 

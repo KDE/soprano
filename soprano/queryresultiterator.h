@@ -74,6 +74,11 @@ namespace Soprano {
 	 */
 	Statement currentStatement() const;
 
+	/**
+	 * Convinience method that puts all current bindings into one map.
+	 */
+	QMap<QString, Node> currentBindings() const;
+
 	Node binding( const QString &name ) const;
 
 	Node binding( int offset ) const;

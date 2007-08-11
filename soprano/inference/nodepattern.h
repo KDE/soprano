@@ -24,13 +24,12 @@
 
 #include <QtCore/QSharedDataPointer>
 #include <QtCore/QString>
+#include <QtCore/QMap>
 
 #include "soprano_export.h"
-
+#include "node.h"
 
 namespace Soprano {
-
-    class Node;
 
     namespace Inference {
 	/**
@@ -74,7 +73,7 @@ namespace Soprano {
 	     */
 	    bool match( const Node& node ) const;
 
-	    QString createSparqlNodePattern() const;
+	    QString createSparqlNodePattern( const QMap<QString, Node>& bindings ) const;
 
 	private:
 	    class Private;

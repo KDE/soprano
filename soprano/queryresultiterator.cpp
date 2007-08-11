@@ -88,6 +88,17 @@ Soprano::Statement Soprano::QueryResultIterator::currentStatement() const
 }
 
 
+QMap<QString, Soprano::Node> Soprano::QueryResultIterator::currentBindings() const
+{
+    QMap<QString, Node> bindings;
+    QStringList names = bindingNames();
+    for ( int i = 0; i < bindingCount(); ++i ) {
+        bindings.insert( names[i], binding( i ) );
+    }
+    return bindings;
+}
+
+
 Soprano::Node Soprano::QueryResultIterator::binding( const QString &name ) const
 {
     return ( d->queryResult ? d->queryResult->binding( name ) : Node() );

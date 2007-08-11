@@ -38,7 +38,7 @@
 // FIXME: add error handling!
 
 
-static QString compressStatement( const Soprano::Statement& statement )
+static Soprano::Node compressStatement( const Soprano::Statement& statement )
 {
     // There should be some method Statement::toXXXString for this
     QString s = QString( "<%1> <%2> " ).arg( statement.subject().toString() ).arg( statement.predicate().toString() );
@@ -48,7 +48,7 @@ static QString compressStatement( const Soprano::Statement& statement )
     else {
         s.append( '<' + statement.object().toString() + '>' );
     }
-    return s;
+    return Soprano::LiteralValue( s );
 }
 
 
@@ -61,12 +61,24 @@ static QUrl createRandomUri()
 }
 
 
+// this is stuff we only need for the temp implementation that is used due to the lack of proper SPARQL support in redland
+// -----------------------------------------------------------------------------------------------------------------------
+#include <QSet>
+#include "statementiterator.h"
+uint qHash( const Soprano::Node& node )
+{
+    return qHash( node.toString() );
+}
+// -----------------------------------------------------------------------------------------------------------------------
+
+
 
 class Soprano::Inference::InferenceModel::Private
 {
 public:
     QList<Rule> rules;
     bool compressedStatements;
+    bool optimizedQueries;
 };
 
 
@@ -75,6 +87,7 @@ Soprano::Inference::InferenceModel::InferenceModel( Model* parent )
       d( new Private() )
 {
     d->compressedStatements = true;
+    d->optimizedQueries = false;
 }
 
 
@@ -87,6 +100,12 @@ Soprano::Inference::InferenceModel::~InferenceModel()
 void Soprano::Inference::InferenceModel::setCompressedSourceStatements( bool b )
 {
     d->compressedStatements = b;
+}
+
+
+void Soprano::Inference::InferenceModel::setOptimizedQueriesEnabled( bool b )
+{
+    d->optimizedQueries = b;
 }
 
 
@@ -110,15 +129,6 @@ Soprano::ErrorCode Soprano::Inference::InferenceModel::addStatement( const State
     }
 }
 
-// this is stuff we only need for the temp implementation that is used due to the lack of proper SPARQL support in redland
-// -----------------------------------------------------------------------------------------------------------------------
-#include <QSet>
-#include "statementiterator.h"
-uint qHash( const Soprano::Node& node )
-{
-    return qHash( node.toString() );
-}
-// -----------------------------------------------------------------------------------------------------------------------
 
 Soprano::ErrorCode Soprano::Inference::InferenceModel::removeStatements( const Statement& statement )
 {
@@ -174,7 +184,7 @@ QList<Soprano::Node> Soprano::Inference::InferenceModel::inferedGraphsForStateme
         // get the graphs our statement was the source for
         StatementIterator it = parentModel()->listStatements( Statement( Node(),
                                                                          Vocabulary::SIL::SOURCE_STATEMENT(),
-                                                                         LiteralValue( compressStatement( statement ) ),
+                                                                         compressStatement( statement ),
                                                                          Vocabulary::SIL::INFERENCE_METADATA() ) );
         return it.allSubjects();
     }
@@ -256,9 +266,12 @@ QList<Soprano::Node> Soprano::Inference::InferenceModel::inferedGraphsForStateme
 
 void Soprano::Inference::InferenceModel::performInference()
 {
-    for ( QList<Rule>::const_iterator it = d->rules.constBegin();
-          it != d->rules.constEnd(); ++it ) {
-        inferRule( *it, true );
+    for ( QList<Rule>::iterator it = d->rules.begin();
+          it != d->rules.end(); ++it ) {
+        // reset the binding statement, we want to infer it all
+        Rule& rule = *it;
+        rule.bindToStatement( Statement() );
+        inferRule( rule, true );
     }
 }
 
@@ -281,42 +294,13 @@ void Soprano::Inference::InferenceModel::clearInference()
 }
 
 
-// FIXME: maybe move these methods to Rule?
-static Soprano::Node bindPattern( const Soprano::QueryResultIterator& it, const Soprano::Inference::NodePattern& pattern )
-{
-    if ( pattern.isVariable() ) {
-        return it.binding( pattern.variableName() );
-    }
-    else {
-        return pattern.resource();
-    }
-}
-
-
-static Soprano::Statement bindPattern( const Soprano::QueryResultIterator& it, const Soprano::Inference::StatementPattern& pattern )
-{
-    return Soprano::Statement( bindPattern( it, pattern.subjectPattern() ),
-                               bindPattern( it, pattern.predicatePattern() ),
-                               bindPattern( it, pattern.objectPattern() ) );
-}
-
-
-static QList<Soprano::Statement> bindPatterns( const Soprano::QueryResultIterator& it, const QList<Soprano::Inference::StatementPattern>& patterns )
-{
-    QList<Soprano::Statement> sl;
-    Q_FOREACH( Soprano::Inference::StatementPattern sp, patterns ) {
-        sl.append( bindPattern( it, sp ) );
-    }
-    return sl;
-}
-
-
 int Soprano::Inference::InferenceModel::inferStatement( const Statement& statement, bool recurse )
 {
-    for ( QList<Rule>::const_iterator it = d->rules.constBegin();
-          it != d->rules.constEnd(); ++it ) {
-        const Rule& rule = *it;
+    for ( QList<Rule>::iterator it = d->rules.begin();
+          it != d->rules.end(); ++it ) {
+        Rule& rule = *it;
         if( rule.match( statement) ) {
+            rule.bindToStatement( statement );
             inferRule( rule, recurse );
         }
     }
@@ -325,12 +309,20 @@ int Soprano::Inference::InferenceModel::inferStatement( const Statement& stateme
 
 int Soprano::Inference::InferenceModel::inferRule( const Rule& rule, bool recurse )
 {
-    Query q( rule.createSparqlQuery(), Query::SPARQL );
+    Query q( rule.createSparqlQuery( d->optimizedQueries ), Query::SPARQL );
+
+//    qDebug() << "Rule query: " << q.query();
 
     int inferedStatementsCount = 0;
     QueryResultIterator it = parentModel()->executeQuery( q );
     while ( it.next() ) {
-        Statement inferedStatement = bindPattern( it, rule.effect() );
+
+//         qDebug() << "rule bindings:";
+//         for ( int i = 0; i < it.bindingCount(); ++i ) {
+//             qDebug() << "   " << it.bindingNames()[i] << " - " << it.binding( i );
+//         }
+
+        Statement inferedStatement = rule.bindEffect( it.currentBindings() );
 
         // we only add infered statements if they are not already present (in any named graph, aka. context)
         if ( !parentModel()->containsStatements( inferedStatement ) ) {
@@ -350,7 +342,7 @@ int Soprano::Inference::InferenceModel::inferRule( const Rule& rule, bool recurs
                                                     Vocabulary::SIL::INFERENCE_METADATA() ) );
 
             // add sourceStatements
-            QList<Statement> sourceStatements = bindPatterns( it, rule.preconditions() );
+            QList<Statement> sourceStatements = rule.bindPreconditions( it.currentBindings() );
             for ( QList<Statement>::const_iterator it = sourceStatements.constBegin();
                   it != sourceStatements.constEnd(); ++it ) {
                 const Statement& sourceStatement = *it;
@@ -359,7 +351,7 @@ int Soprano::Inference::InferenceModel::inferRule( const Rule& rule, bool recurs
                     // remember the statement through a checksum (well, not really a checksum for now ;)
                     parentModel()->addStatement( Statement( inferenceGraphUrl,
                                                             Vocabulary::SIL::SOURCE_STATEMENT(),
-                                                            LiteralValue( compressStatement( sourceStatement ) ),
+                                                            compressStatement( sourceStatement ),
                                                             Vocabulary::SIL::INFERENCE_METADATA() ) );
                 }
                 else {

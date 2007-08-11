@@ -94,12 +94,12 @@ bool Soprano::Inference::StatementPattern::match( const Statement& s ) const
 }
 
 
-QString Soprano::Inference::StatementPattern::createSparqlGraphPattern() const
+QString Soprano::Inference::StatementPattern::createSparqlGraphPattern( const QMap<QString, Node>& bindings ) const
 {
     return QString( "%1 %2 %3" )
-        .arg( d->subject.createSparqlNodePattern() )
-        .arg( d->predicate.createSparqlNodePattern() )
-        .arg( d->object.createSparqlNodePattern() );
+        .arg( d->subject.createSparqlNodePattern( bindings ) )
+        .arg( d->predicate.createSparqlNodePattern( bindings ) )
+        .arg( d->object.createSparqlNodePattern( bindings ) );
 }
 
 
