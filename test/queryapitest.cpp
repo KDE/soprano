@@ -32,9 +32,9 @@ void QueryAPITest::testQuery_1()
 {
     Soprano::Query::Parser::QueryParser *parser = new Soprano::Query::Parser::RasqalQueryParser();
 
-    Soprano::Query::QueryObject *obj = parser->parseQuery( "select ?a" );
-
-    qDebug() << obj->queryVerb() << endl;
+    Soprano::Query::QueryObject *obj = parser->parseQuery(
+         "SELECT  ?a WHERE { ?a <prop> ?c }"
+    );
 }
 
 QTEST_MAIN(QueryAPITest)

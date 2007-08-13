@@ -811,4 +811,23 @@ bool Soprano::Query::QueryObject::isWildCard()
 }
 
 
+////////////////////////////////////////////////////////////////////////
+// ParsedQuery                                                        //
+////////////////////////////////////////////////////////////////////////
+
+
+Soprano::Query::Prefix::Prefix( const QString &prefix, const QUrl &uri )
+    :m_prefix(prefix), m_uri(uri)
+{
+}
+
+const QString Soprano::Query::Prefix::prefix() const
+{
+    return m_prefix;
+}
+
+const QUrl Soprano::Query::Prefix::uri() const 
+{
+    return m_uri;
+}
 

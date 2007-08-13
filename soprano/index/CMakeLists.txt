@@ -54,6 +54,5 @@ install(
   FILES 
   indexfiltermodel.h
   cluceneindex.h
-  fts.h
   DESTINATION include/soprano
 )

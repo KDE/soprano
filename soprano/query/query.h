@@ -23,6 +23,8 @@
 #ifndef SOPRANO_QUERY_API_H
 #define SOPRANO_QUERY_API_H
 
+#include <QUrl>
+#include <QList>
 #include <QString>
 
 namespace Soprano
@@ -655,19 +657,46 @@ namespace Soprano
         // ParsedQuery                                                        //
         ////////////////////////////////////////////////////////////////////////
 
-        // FIXME: is this a Statement ???
-        /*class TiplePattern {
+        class Prefix {
         public:
-            TriplePattern( Node *subject, Node *predicate, Node *object, ); 
+            Prefix( const QString &prefix, const QUrl &uri );
 
-            Node *subject();
-            Node *predicate(); 
-            Node *object(); 
+            const QString prefix() const;
+            const QUrl uri() const;
 
         private:
-            Node *m_subject;
-            Node *m_predicate;
-            Node *m_object;
+            QString m_prefix;
+            QUrl m_uri;
+        };
+
+        class QueryLiteral {
+        public:
+            QueryLiteral( Expression *expression );
+            QueryLiteral( RTerm *rtem );
+
+            bool isRTerm();
+
+            RTerm *rtem();
+
+            Expression *expression();
+
+        private:
+            Expression *m_expression;
+            RTerm *m_rterm;
+        };
+
+        class TriplePattern {
+        public:
+            TriplePattern( QueryLiteral *subject, QueryLiteral *predicate, QueryLiteral *object ); 
+
+            QueryLiteral *subject();
+            QueryLiteral *predicate(); 
+            QueryLiteral *object(); 
+
+        private:
+            QueryLiteral *m_subject;
+            QueryLiteral *m_predicate;
+            QueryLiteral *m_object;
 
             //FIXME: what does it mean?
             //Node *m_origin;
@@ -685,27 +714,31 @@ namespace Soprano
             };
 
         public:
-            // FIXME: may a Node be also a Variable?for me yes
-            GraphPattern( TriplePattern *triple, Operator op = BASIC );
+            GraphPattern( TriplePattern *triple, Operator op = BASIC, GraphPattern *parent = NULL );
 
-            void addConstraint( ExpressionOperator *expression );
+            TriplePattern *triple();
+            
+            // SPARQL FILTER
+            void setConstraint( Expression *expression );
+            Expression *constraint();
 
-            void addSubGraphPattern( GraphPattern *subgraph, ExpressionOperator *expression );
+            void addSubGraphPattern( GraphPattern *subgraph );
+            QList<GraphPattern *> childGraphs();
 
-            const Triple *triple();
-
+            GraphPattern *parentGraph();
+    
         private:
             TriplePattern *m_triple;
+            Expression *m_constraint;
 
             GraphPattern *m_parent;
-            QList<GraphPattern *> m_subgraphs;
-        };*/
+            QList<GraphPattern *> m_childs;
+        };
 
         class QueryObject {
         public:
-            QueryObject( const QString &queryVerb );
-            //void addPrefix( Prefix *prefix );
-            //QList<Prefix *> prefixes();
+            void addPrefix( Prefix *prefix );
+            QList<Prefix *> prefixes();
 
             //void addVariable( Variable *variable );
             //QList<Variable *> variables();
