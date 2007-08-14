@@ -22,6 +22,7 @@
 #include "statementpattern.h"
 #include "nodepattern.h"
 #include "statement.h"
+#include "bindingset.h"
 
 #include <QtCore/QDebug>
 
@@ -94,7 +95,7 @@ bool Soprano::Inference::StatementPattern::match( const Statement& s ) const
 }
 
 
-QString Soprano::Inference::StatementPattern::createSparqlGraphPattern( const QMap<QString, Node>& bindings ) const
+QString Soprano::Inference::StatementPattern::createSparqlGraphPattern( const BindingSet& bindings ) const
 {
     return QString( "%1 %2 %3" )
         .arg( d->subject.createSparqlNodePattern( bindings ) )

@@ -23,7 +23,6 @@
 #define _SOPRANO_STATEMENT_PATTERN_H_
 
 #include <QtCore/QSharedDataPointer>
-#include <QtCore/QMap>
 
 #include "soprano_export.h"
 #include "node.h"
@@ -32,6 +31,7 @@
 namespace Soprano {
 
     class Statement;
+    class BindingSet;
 
     namespace Inference {
 
@@ -53,7 +53,7 @@ namespace Soprano {
 
 	    bool match( const Statement& ) const;
 
-	    QString createSparqlGraphPattern( const QMap<QString, Node>& bindings ) const;
+	    QString createSparqlGraphPattern( const BindingSet& bindings ) const;
 
 	private:
 	    class Private;

@@ -66,14 +66,7 @@ Soprano::Sesame2::Iterator::Iterator( jobject o )
 
 Soprano::Sesame2::Iterator::~Iterator()
 {
-    // close the result (if this is a closable it)
-    if ( isInstanceOf( JNIWrapper::instance()->env()->FindClass( INFO_ADUNA_ITERATION_CLOSABLEITERATION ) ) ) {
-        if ( jmethodID closeID = getMethodID( "close", "()V" ) ) {
-            callVoidMethod( closeID );
-            JNIWrapper::instance()->debugException();
-        }
-    }
-
+    close();
     delete d;
 }
 
@@ -84,15 +77,35 @@ bool Soprano::Sesame2::Iterator::hasNext()
     bool b = callBooleanMethod( d->IDhasNext() );
     if ( JNIWrapper::instance()->exceptionOccured() ) {
         JNIWrapper::instance()->debugException();
-        return false;
+        b = false;
     }
-    else {
-        return b;
+
+    // there is one problem in the sesame2/soprano interface:
+    // it seems the repository is blocked until the iterator is closed.
+    // we close it here to at least catch some of the situations.
+    // The only "real" solution I see ATM is to introduce close methods
+    // in our iterators but that would be ugly.
+    if ( !b ) {
+        close();
     }
+
+    return b;
 }
 
 
 jobject Soprano::Sesame2::Iterator::next()
 {
     return callObjectMethod( d->IDnext() );
+}
+
+
+void Soprano::Sesame2::Iterator::close()
+{
+    // close the result (if this is a closable it)
+    if ( isInstanceOf( JNIWrapper::instance()->env()->FindClass( INFO_ADUNA_ITERATION_CLOSABLEITERATION ) ) ) {
+        if ( jmethodID closeID = getMethodID( "close", "()V" ) ) {
+            callVoidMethod( closeID );
+            JNIWrapper::instance()->debugException();
+        }
+    }
 }

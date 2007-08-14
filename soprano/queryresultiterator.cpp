@@ -25,6 +25,7 @@
 #include "model.h"
 #include "node.h"
 #include "statement.h"
+#include "bindingset.h"
 
 #include <QtCore/QSharedData>
 
@@ -88,14 +89,24 @@ Soprano::Statement Soprano::QueryResultIterator::currentStatement() const
 }
 
 
-QMap<QString, Soprano::Node> Soprano::QueryResultIterator::currentBindings() const
+Soprano::BindingSet Soprano::QueryResultIterator::currentBindings() const
 {
-    QMap<QString, Node> bindings;
+    BindingSet bindings;
     QStringList names = bindingNames();
     for ( int i = 0; i < bindingCount(); ++i ) {
         bindings.insert( names[i], binding( i ) );
     }
     return bindings;
+}
+
+
+QList<Soprano::BindingSet> Soprano::QueryResultIterator::allBindings()
+{
+    QList<BindingSet> bsl;
+    while ( next() ) {
+        bsl.append( currentBindings() );
+    }
+    return bsl;
 }
 
 

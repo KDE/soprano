@@ -37,6 +37,8 @@ namespace Soprano {
 
 	    jobject next();
 
+	    void close();
+
 	private:
 	    class Private;
 	    Private* const d;

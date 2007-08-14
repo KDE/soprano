@@ -35,6 +35,7 @@ namespace Soprano {
     class Node;
     class QueryResultIteratorBackend;
     class Statement;
+    class BindingSet;
 
     /**
      * An iterator for query results.
@@ -77,7 +78,7 @@ namespace Soprano {
 	/**
 	 * Convinience method that puts all current bindings into one map.
 	 */
-	QMap<QString, Node> currentBindings() const;
+	BindingSet currentBindings() const;
 
 	Node binding( const QString &name ) const;
 
@@ -104,6 +105,12 @@ namespace Soprano {
 	 *\return true if the Iterator is empty
 	 */
 	bool isEmpty() const;
+
+	/**
+	 * Convinience method that collects all binding sets that are left
+	 * in the iterator.
+	 */
+	QList<BindingSet> allBindings();
 
     private:
 	class Private;

@@ -60,6 +60,7 @@ SET(soprano_SRCS
     storagemodel.cpp
     rdfschemawrapper.cpp
     simplestatementiterator.h
+    bindingset.cpp
     vocabulary/rdf.cpp
     vocabulary/rdfs.cpp
     vocabulary/xmls.cpp
@@ -115,6 +116,7 @@ INSTALL(FILES
 	literalvalue.h
 	version.h
 	rdfschemawrapper.h
+	bindingset.h
 	vocabulary/rdf.h
 	vocabulary/rdfs.h
 	vocabulary/xmls.h

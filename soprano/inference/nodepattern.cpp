@@ -21,6 +21,7 @@
 
 #include "nodepattern.h"
 #include "node.h"
+#include "bindingset.h"
 
 #include <QtCore/QDebug>
 
@@ -100,15 +101,14 @@ bool Soprano::Inference::NodePattern::match( const Node& node ) const
 }
 
 
-QString Soprano::Inference::NodePattern::createSparqlNodePattern( const QMap<QString, Node>& bindings ) const
+QString Soprano::Inference::NodePattern::createSparqlNodePattern( const BindingSet& bindings ) const
 {
     if ( isVariable() ) {
-        QMap<QString, Node>::const_iterator it = bindings.find( d->name );
-        if ( it == bindings.constEnd() ) {
+        if ( !bindings.contains( d->name ) ) {
             return '?' + d->name;
         }
         else {
-            return '<' + it->toString() + '>';
+            return '<' + bindings[d->name].toString() + '>';
         }
     }
     else {

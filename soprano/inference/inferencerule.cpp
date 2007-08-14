@@ -22,6 +22,7 @@
 #include "inferencerule.h"
 #include "statementpattern.h"
 #include "nodepattern.h"
+#include "bindingset.h"
 
 #include <QtCore/QString>
 #include <QtCore/QStringList>
@@ -110,7 +111,7 @@ QString Soprano::Inference::Rule::createSparqlQuery( bool bindStatement ) const
     if ( !bindStatement || !d->bindingStatement.isValid() ) {
         for ( QList<StatementPattern>::const_iterator it = d->preconditions.constBegin();
               it != d->preconditions.constEnd(); ++it ) {
-            query += it->createSparqlGraphPattern( QMap<QString, Node>() ) + " . ";
+            query += it->createSparqlGraphPattern( BindingSet() ) + " . ";
         }
     }
     else {
@@ -121,7 +122,7 @@ QString Soprano::Inference::Rule::createSparqlQuery( bool bindStatement ) const
               it != d->preconditions.constEnd(); ++it ) {
             const StatementPattern& p = *it;
             if ( p.match( d->bindingStatement ) ) {
-                QMap<QString, Node> bindings;
+                BindingSet bindings;
                 if ( p.subjectPattern().isVariable() ) {
                     bindings.insert( p.subjectPattern().variableName(), d->bindingStatement.subject() );
                 }
@@ -160,71 +161,88 @@ QString Soprano::Inference::Rule::createSparqlQuery( bool bindStatement ) const
 }
 
 
-Soprano::Statement Soprano::Inference::Rule::bindStatementPattern( const StatementPattern& pattern, const QMap<QString, Node>& bindings ) const
+Soprano::Statement Soprano::Inference::Rule::bindStatementPattern( const StatementPattern& pattern, const BindingSet& bindings ) const
 {
-    // If a variable in one of the patterns cannot be bound from bindings
-    // the variable was pre-bound during the query in createSparqlGraphPattern
-    // thus, we have to match d->bindingStatement (hoping that it was not changed)
-    //
-    // Some bindings could even be invalid since our UNION queries use different vars
+    // below we make sure that all binding are available (in case of optimized queries the bindingStatement must not have changed)
 
     Statement s;
     if ( pattern.subjectPattern().isVariable() ) {
-        QMap<QString, Node>::const_iterator it = bindings.find( pattern.subjectPattern().variableName() );
-        if ( it != bindings.constEnd() && it.value().isValid() ) {
-            s.setSubject( it.value() );
-        }
-        else {
-            s.setSubject( d->bindingStatement.subject() );
-        }
+        s.setSubject( bindings[pattern.subjectPattern().variableName()] );
     }
     else {
         s.setSubject( pattern.subjectPattern().resource() );
     }
 
     if ( pattern.predicatePattern().isVariable() ) {
-        QMap<QString, Node>::const_iterator it = bindings.find( pattern.predicatePattern().variableName() );
-        if ( it != bindings.constEnd() && it.value().isValid() ) {
-            s.setPredicate( it.value() );
-        }
-        else {
-            s.setPredicate( d->bindingStatement.predicate() );
-        }
+        s.setPredicate( bindings[pattern.predicatePattern().variableName()] );
     }
     else {
         s.setPredicate( pattern.predicatePattern().resource() );
     }
 
     if ( pattern.objectPattern().isVariable() ) {
-        QMap<QString, Node>::const_iterator it = bindings.find( pattern.objectPattern().variableName() );
-        if ( it != bindings.constEnd() && it.value().isValid() ) {
-            s.setObject( it.value() );
-        }
-        else {
-            s.setObject( d->bindingStatement.object() );
-        }
+        s.setObject( bindings[pattern.objectPattern().variableName()] );
     }
     else {
         s.setObject( pattern.objectPattern().resource() );
     }
 
-
     return s;
 }
 
 
-Soprano::Statement Soprano::Inference::Rule::bindEffect( const QMap<QString, Node>& bindings ) const
+Soprano::BindingSet Soprano::Inference::Rule::mergeBindingStatement( const BindingSet& bindings ) const
 {
-    return bindStatementPattern( d->effect, bindings );
+    //
+    // Here we regenerate the information (bindings) we "removed" for optimization purposes in createSparqlGraphPattern
+    // This can simply be done by matching the bindingStatement which was used to optimize the query to the precondition
+    // that has no binding yet. Because that is the one which was removed from the optmized query
+    //
+    BindingSet bs( bindings );
+    for ( QList<StatementPattern>::const_iterator it = d->preconditions.constBegin();
+          it != d->preconditions.constEnd(); ++it ) {
+        const StatementPattern& pattern = *it;
+        if ( pattern.subjectPattern().isVariable() && bindings[pattern.subjectPattern().variableName()].isValid() ) {
+            continue;
+        }
+        if ( pattern.predicatePattern().isVariable() && bindings[pattern.predicatePattern().variableName()].isValid() ) {
+            continue;
+        }
+        if ( pattern.objectPattern().isVariable() && bindings[pattern.objectPattern().variableName()].isValid() ) {
+            continue;
+        }
+
+        // update bindings
+        if ( pattern.subjectPattern().isVariable() ) {
+            bs.insert( pattern.subjectPattern().variableName(), d->bindingStatement.subject() );
+        }
+        if ( pattern.predicatePattern().isVariable() ) {
+            bs.insert( pattern.predicatePattern().variableName(), d->bindingStatement.predicate() );
+        }
+        if ( pattern.objectPattern().isVariable() ) {
+            bs.insert( pattern.objectPattern().variableName(), d->bindingStatement.object() );
+        }
+    }
+    return bs;
 }
 
 
-QList<Soprano::Statement> Soprano::Inference::Rule::bindPreconditions( const QMap<QString, Node>& bindings ) const
+Soprano::Statement Soprano::Inference::Rule::bindEffect( const BindingSet& bindings ) const
 {
+    return bindStatementPattern( d->effect, mergeBindingStatement( bindings ) );
+}
+
+
+QList<Soprano::Statement> Soprano::Inference::Rule::bindPreconditions( const BindingSet& bindings ) const
+{
+    // 2 sweeps: 1. update bindings by matching the bindingStatement to the precondition we left out in the
+    //              optimized query creation. That gives us the rest of the bindings we need.
+    //           2. actually bind all vars
+
     QList<Statement> sl;
     for ( QList<StatementPattern>::const_iterator it = d->preconditions.constBegin();
           it != d->preconditions.constEnd(); ++it ) {
-        sl.append( bindStatementPattern( *it, bindings ) );
+        sl.append( bindStatementPattern( *it, mergeBindingStatement( bindings ) ) );
     }
 
     return sl;

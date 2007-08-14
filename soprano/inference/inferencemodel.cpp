@@ -30,6 +30,7 @@
 #include "nodepattern.h"
 #include "queryresultiterator.h"
 #include "literalvalue.h"
+#include "bindingset.h"
 
 #include <QtCore/QString>
 #include <QtCore/QUuid>
@@ -284,9 +285,9 @@ void Soprano::Inference::InferenceModel::clearInference()
                  .arg( Vocabulary::SIL::INFERENCE_GRAPH().toString() ),
                  Query::SPARQL );
 
-    QueryResultIterator it = parentModel()->executeQuery( query );
-    while ( it.next() ) {
-        parentModel()->removeContext( it.binding( 0 ) );
+    QList<BindingSet> bindings = parentModel()->executeQuery( query ).allBindings();
+    for ( QList<BindingSet>::const_iterator it = bindings.constBegin(); it != bindings.constEnd(); ++it ) {
+        parentModel()->removeContext( it->value( 0 ) );
     }
 
     // remove infered graph metadata
@@ -314,15 +315,16 @@ int Soprano::Inference::InferenceModel::inferRule( const Rule& rule, bool recurs
 //    qDebug() << "Rule query: " << q.query();
 
     int inferedStatementsCount = 0;
-    QueryResultIterator it = parentModel()->executeQuery( q );
-    while ( it.next() ) {
+    // cache the bindings since we work recursively
+    QList<BindingSet> bindings = parentModel()->executeQuery( q ).allBindings();
+    for ( QList<BindingSet>::const_iterator it = bindings.constBegin(); it != bindings.constEnd(); ++it ) {
 
 //         qDebug() << "rule bindings:";
 //         for ( int i = 0; i < it.bindingCount(); ++i ) {
 //             qDebug() << "   " << it.bindingNames()[i] << " - " << it.binding( i );
 //         }
 
-        Statement inferedStatement = rule.bindEffect( it.currentBindings() );
+        Statement inferedStatement = rule.bindEffect( *it );
 
         // we only add infered statements if they are not already present (in any named graph, aka. context)
         if ( !parentModel()->containsStatements( inferedStatement ) ) {
@@ -342,7 +344,7 @@ int Soprano::Inference::InferenceModel::inferRule( const Rule& rule, bool recurs
                                                     Vocabulary::SIL::INFERENCE_METADATA() ) );
 
             // add sourceStatements
-            QList<Statement> sourceStatements = rule.bindPreconditions( it.currentBindings() );
+            QList<Statement> sourceStatements = rule.bindPreconditions( *it );
             for ( QList<Statement>::const_iterator it = sourceStatements.constBegin();
                   it != sourceStatements.constEnd(); ++it ) {
                 const Statement& sourceStatement = *it;

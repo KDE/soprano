@@ -31,6 +31,9 @@
 
 
 namespace Soprano {
+
+    class BindingSet;
+
     namespace Inference {
 	class SOPRANO_EXPORT Rule
 	{
@@ -99,7 +102,7 @@ namespace Soprano {
 	     *
 	     * \sa bindToStatement, bindPreconditions
 	     */
-	    Statement bindEffect( const QMap<QString, Node>& bindings ) const;
+	    Statement bindEffect( const BindingSet& bindings ) const;
 
 	    /**
 	     * Bind the rule's preconditions to a set of bindings as reveived from a query.
@@ -112,10 +115,15 @@ namespace Soprano {
 	     *
 	     * \sa bindToStatement, bindEffect
 	     */
-	    QList<Statement> bindPreconditions( const QMap<QString, Node>& bindings ) const;
+	    QList<Statement> bindPreconditions( const BindingSet& bindings ) const;
 
 	private:
-	    Statement bindStatementPattern( const StatementPattern& pattern, const QMap<QString, Node>& bindings ) const;
+	    /**
+	     * Merges in binding information from the bindingStatement by matching it to the preconditions.
+	     * This is necessary for optimized queries.
+	     */
+	    BindingSet mergeBindingStatement( const BindingSet& bindings ) const;
+	    Statement bindStatementPattern( const StatementPattern& pattern, const BindingSet& bindings ) const;
 
 	    class Private;
 	    QSharedDataPointer<Private> d;
