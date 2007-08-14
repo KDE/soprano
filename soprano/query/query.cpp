@@ -24,46 +24,94 @@
 
 #include "query.h"
 
-Soprano::Query::Variable::Variable( const QString &name )
-    :m_name(name)
+//
+// Variable
+//
+
+class Soprano::Query::Variable::Private: public QSharedData {
+public:
+    Private() {}
+
+    QString name;
+};
+
+Soprano::Query::Variable::Variable()
 {
+    d = new Private;
+}
+
+Soprano::Query::Variable::Variable( const QString &name )
+{
+    d = new Private;
+    d->name = name;
+}
+
+Soprano::Query::Variable::Variable( const Variable &other )
+{
+    d = other.d;
 }
 
 const QString Soprano::Query::Variable::name() const
 {
-    return m_name;
+    return d->name;
 }
 
+//
+// RTerm
+// 
 
-Soprano::Query::RTerm::RTerm( Soprano::Node *node )
-    :m_node(node)
+class Soprano::Query::RTerm::Private {
+public:
+    Private() {};
+    
+    Soprano::Node node;
+    Variable binding;
+};
+
+Soprano::Query::RTerm::RTerm( const Soprano::Node &node )
 {
+    d = new Private;
+    d->node = node;
 }
 
-Soprano::Query::RTerm::RTerm( Variable *binding )
-    :m_binding(binding)
-{   
+Soprano::Query::RTerm::RTerm( const Variable &binding )
+{
+    d = new Private;
+    d->binding = binding;   
+}
+
+Soprano::Query::RTerm::~RTerm()
+{
+    delete d;
 }
 
 bool Soprano::Query::RTerm::isBinding() const
 {
-    return m_binding != NULL;
+    return !d->node.isValid();
 }
 
-Soprano::Node *Soprano::Query::RTerm::node() 
+const Soprano::Node Soprano::Query::RTerm::node() const
 {
-    return m_node;
+    return d->node;
 }
 
-Soprano::Query::Variable *Soprano::Query::RTerm::binding() 
+const Soprano::Query::Variable Soprano::Query::RTerm::binding() const
 {
-    return m_binding;
+    return d->binding;
 }
 
+//
+// Integer
+// 
 
 Soprano::Query::Integer::Integer( int value )
     :m_value(value)
 {
+}
+
+Soprano::Query::Integer::Integer( const Integer &other )
+{
+    m_value = other.m_value;
 }
 
 int Soprano::Query::Integer::value() const
@@ -71,10 +119,18 @@ int Soprano::Query::Integer::value() const
     return m_value;
 }
 
+//
+// Float
+//
 
 Soprano::Query::Float::Float( float value )
     :m_value(value)
 {
+}
+
+Soprano::Query::Float::Float( const Float &other )
+{
+    m_value = other.m_value;
 }
 
 float Soprano::Query::Float::value() const
@@ -82,10 +138,18 @@ float Soprano::Query::Float::value() const
     return m_value;
 }
 
+//
+// Double
+//
 
 Soprano::Query::Double::Double( double value )
     :m_value(value)
 {
+}
+
+Soprano::Query::Double::Double( const Double &other )
+{
+    m_value = other.m_value;
 }
 
 double Soprano::Query::Double::value() const
@@ -364,27 +428,27 @@ Soprano::Query::StringExpression *Soprano::Query::BinaryStringBooleanExpression:
 }
 
 
-Soprano::Query::BinaryDateTimeBooleanExpression::BinaryDateTimeBooleanExpression( DateTime *first, DateTime *second )
+Soprano::Query::BinaryDateTimeBooleanExpression::BinaryDateTimeBooleanExpression( QDateTime *first, QDateTime *second )
     :m_first(first), m_second(second)
 {
 }
 
-void Soprano::Query::BinaryDateTimeBooleanExpression::setFirst( DateTime *first )
+void Soprano::Query::BinaryDateTimeBooleanExpression::setFirst( QDateTime *first )
 {  
     m_first = first;
 }
 
-void Soprano::Query::BinaryDateTimeBooleanExpression::setSecond( DateTime *second )
+void Soprano::Query::BinaryDateTimeBooleanExpression::setSecond( QDateTime *second )
 {  
     m_second = second;
 }
 
-Soprano::Query::DateTime *Soprano::Query::BinaryDateTimeBooleanExpression::first()
+QDateTime *Soprano::Query::BinaryDateTimeBooleanExpression::first()
 {
    return m_first;
 }
 
-Soprano::Query::DateTime *Soprano::Query::BinaryDateTimeBooleanExpression::second()
+QDateTime *Soprano::Query::BinaryDateTimeBooleanExpression::second()
 {
    return m_second;
 }
@@ -508,7 +572,7 @@ void Soprano::Query::StringNotEqual::accept( ExpressionVisitor *visitor )
 }
 
 
-Soprano::Query::DateTimeEqual::DateTimeEqual( DateTime *first, DateTime *second )
+Soprano::Query::DateTimeEqual::DateTimeEqual( QDateTime *first, QDateTime *second )
     :BinaryDateTimeBooleanExpression( first, second )
 {
 }
@@ -519,7 +583,7 @@ void Soprano::Query::DateTimeEqual::accept( ExpressionVisitor *visitor )
 }
 
 
-Soprano::Query::DateTimeNotEqual::DateTimeNotEqual( DateTime *first, DateTime *second )
+Soprano::Query::DateTimeNotEqual::DateTimeNotEqual( QDateTime *first, QDateTime *second )
     :BinaryDateTimeBooleanExpression( first, second )
 {
 }
@@ -618,7 +682,7 @@ void Soprano::Query::StringGreaterThanEqual::accept( ExpressionVisitor *visitor 
 }
 
 
-Soprano::Query::DateTimeLessThan::DateTimeLessThan( DateTime *first, DateTime *second )
+Soprano::Query::DateTimeLessThan::DateTimeLessThan( QDateTime *first, QDateTime *second )
     :BinaryDateTimeBooleanExpression( first, second )
 {
 }
@@ -629,7 +693,7 @@ void Soprano::Query::DateTimeLessThan::accept( ExpressionVisitor *visitor )
 }
 
 
-Soprano::Query::DateTimeGreaterThan::DateTimeGreaterThan( DateTime *first, DateTime *second )
+Soprano::Query::DateTimeGreaterThan::DateTimeGreaterThan( QDateTime *first, QDateTime *second )
     :BinaryDateTimeBooleanExpression( first, second )
 {
 }
@@ -640,7 +704,7 @@ void Soprano::Query::DateTimeGreaterThan::accept( ExpressionVisitor *visitor )
 }
 
 
-Soprano::Query::DateTimeLessThanEqual::DateTimeLessThanEqual( DateTime *first, DateTime *second )
+Soprano::Query::DateTimeLessThanEqual::DateTimeLessThanEqual( QDateTime *first, QDateTime *second )
     :BinaryDateTimeBooleanExpression( first, second )
 {
 }
@@ -651,7 +715,7 @@ void Soprano::Query::DateTimeLessThanEqual::accept( ExpressionVisitor *visitor )
 }
 
 
-Soprano::Query::DateTimeGreaterThanEqual::DateTimeGreaterThanEqual( DateTime *first, DateTime *second )
+Soprano::Query::DateTimeGreaterThanEqual::DateTimeGreaterThanEqual( QDateTime *first, QDateTime *second )
     :BinaryDateTimeBooleanExpression( first, second )
 {
 }
@@ -784,9 +848,12 @@ void Soprano::Query::Regexp::accept( ExpressionVisitor *visitor )
     visitor->visit( this );
 }
 
+//
+// QueryObject
+// 
 
-Soprano::Query::QueryObject::QueryObject( const QString &queryVerb )
-    :m_wildCard(false), m_queryVerb(queryVerb) 
+Soprano::Query::QueryObject::QueryObject()
+    :m_wildCard(false)
 {
 }
 
@@ -812,22 +879,45 @@ bool Soprano::Query::QueryObject::isWildCard()
 
 
 ////////////////////////////////////////////////////////////////////////
-// ParsedQuery                                                        //
+// QueryObject                                                        //
 ////////////////////////////////////////////////////////////////////////
 
+//
+// Soprano::Query::Prefix
+// 
+
+class Soprano::Query::Prefix::Private: public QSharedData {
+public:
+    Private() {};
+
+    QString prefix;
+    QUrl uri;
+};
+
+Soprano::Query::Prefix::Prefix()
+{
+    d = new Private();
+}
 
 Soprano::Query::Prefix::Prefix( const QString &prefix, const QUrl &uri )
-    :m_prefix(prefix), m_uri(uri)
 {
+    d = new Private();
+    d->uri = uri;
+    d->prefix = prefix;
+}
+
+Soprano::Query::Prefix::Prefix( const Prefix &other )
+{
+    d = other.d;
 }
 
 const QString Soprano::Query::Prefix::prefix() const
 {
-    return m_prefix;
+    return d->prefix;
 }
 
-const QUrl Soprano::Query::Prefix::uri() const 
+const QUrl Soprano::Query::Prefix::uri() const
 {
-    return m_uri;
+    return d->uri;
 }
 

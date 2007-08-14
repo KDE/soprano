@@ -94,7 +94,8 @@ Soprano::Query::QueryObject *Soprano::Query::Parser::RasqalQueryParser::parseQue
 
     rasqal_finish();
 
-    QueryObject *qo = new QueryObject(queryVerb);
+    QueryObject *qo = new QueryObject();
+    qo->setQueryVerb( queryVerb );
 
     qDebug() << qo->queryVerb() << endl;
 

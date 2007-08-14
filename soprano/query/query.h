@@ -26,6 +26,8 @@
 #include <QUrl>
 #include <QList>
 #include <QString>
+#include <QDateTime>
+#include <QtCore/QSharedData>
 
 namespace Soprano
 {
@@ -33,33 +35,33 @@ namespace Soprano
 
     namespace Query {
 
-        // TODO: Implement this
-        class DateTime {
-        };
-
         class Variable {
         public:
+            Variable();
             Variable( const QString &name );
+            Variable( const Variable &other );
 
             const QString name() const;
 
         private:
-            QString m_name;
+            class Private;
+            QSharedDataPointer<Private> d;
         };
 
         class RTerm {
         public:
-            RTerm( Soprano::Node *node );
-            RTerm( Variable *binding );
+            RTerm( const Soprano::Node &node );
+            RTerm( const Variable &binding );
+            ~RTerm();
  
             bool isBinding() const;
 
-            Soprano::Node *node();
-            Variable *binding();
+            const Soprano::Node node() const;
+            const Variable binding() const;
 
         private:
-            Soprano::Node *m_node;
-            Variable *m_binding;
+            class Private;
+            Private *d;
         };
 
         class Numerical {
@@ -71,6 +73,7 @@ namespace Soprano
         class Double : public Decimal {
         public:
             Double( double value );
+            Double( const Double &other );
 
             double value() const;
 
@@ -81,7 +84,8 @@ namespace Soprano
         class Float: public Decimal {
         public:
             Float( float value );
-
+            Float( const Float &other );
+            
             float value() const;
 
         private:
@@ -91,6 +95,7 @@ namespace Soprano
         class Integer : public Numerical {
         public:
             Integer( int value );
+            Integer( const Integer &other );
 
             int value() const;
 
@@ -311,17 +316,17 @@ namespace Soprano
 
         class BinaryDateTimeBooleanExpression: public BooleanExpression {
         public:
-            BinaryDateTimeBooleanExpression( DateTime *first, DateTime *second );
+            BinaryDateTimeBooleanExpression( QDateTime *first, QDateTime *second );
 
-            void setFirst( DateTime *first );
-            void setSecond( DateTime *second );
+            void setFirst( QDateTime *first );
+            void setSecond( QDateTime *second );
 
-            DateTime *first();
-            DateTime *second();
+            QDateTime *first();
+            QDateTime *second();
   
         private:
-            DateTime *m_first;
-            DateTime *m_second;
+            QDateTime *m_first;
+            QDateTime *m_second;
         };
 
         class BinaryRTermBooleanExpression: public BooleanExpression {
@@ -398,14 +403,14 @@ namespace Soprano
 
         class DateTimeEqual: public BinaryDateTimeBooleanExpression {
         public:
-            DateTimeEqual( DateTime *first, DateTime *second );
+            DateTimeEqual( QDateTime  *first, QDateTime *second );
 
             void accept( ExpressionVisitor *visitor );
         }; 
 
         class DateTimeNotEqual: public BinaryDateTimeBooleanExpression {
         public:
-            DateTimeNotEqual( DateTime *first, DateTime *second );
+            DateTimeNotEqual( QDateTime  *first, QDateTime *second );
 
             void accept( ExpressionVisitor *visitor );
         };
@@ -468,28 +473,28 @@ namespace Soprano
 
         class DateTimeLessThan: public BinaryDateTimeBooleanExpression {
         public:
-            DateTimeLessThan( DateTime *first, DateTime *second );
+            DateTimeLessThan( QDateTime  *first, QDateTime *second );
         
             void accept( ExpressionVisitor *visitor );
         };
 
         class DateTimeGreaterThan: public BinaryDateTimeBooleanExpression {
         public:
-            DateTimeGreaterThan( DateTime *first, DateTime *second );
+            DateTimeGreaterThan( QDateTime  *first, QDateTime *second );
 
             void accept( ExpressionVisitor *visitor );
         };
 
         class DateTimeLessThanEqual: public BinaryDateTimeBooleanExpression {
         public:
-            DateTimeLessThanEqual( DateTime *first, DateTime *second );
+            DateTimeLessThanEqual( QDateTime  *first, QDateTime *second );
 
             void accept( ExpressionVisitor *visitor );
         };
 
         class DateTimeGreaterThanEqual: public BinaryDateTimeBooleanExpression {
         public:
-            DateTimeGreaterThanEqual( DateTime *first, DateTime *second );
+            DateTimeGreaterThanEqual( QDateTime  *first, QDateTime *second );
 
             void accept( ExpressionVisitor *visitor );
         };
@@ -658,17 +663,18 @@ namespace Soprano
         // ParsedQuery                                                        //
         ////////////////////////////////////////////////////////////////////////
 
-        // TODO: Implement this
         class Prefix {
         public:
+            Prefix();
             Prefix( const QString &prefix, const QUrl &uri );
+            Prefix( const Prefix &other );
 
             const QString prefix() const;
             const QUrl uri() const;
 
         private:
-            QString m_prefix;
-            QUrl m_uri;
+            class Private;
+            QSharedDataPointer<Private> d;
         };
 
         // TODO: Implement this
@@ -724,8 +730,10 @@ namespace Soprano
         // TODO: Implement this
         class QueryObject {
         public:
-            void addPrefix( Prefix *prefix );
-            QList<Prefix *> prefixes();
+            QueryObject();
+
+            void addPrefix( const Prefix &prefix );
+            QList<Prefix> prefixes();
 
             //void addVariable( Variable *variable );
             //QList<Variable *> variables();
@@ -741,6 +749,8 @@ namespace Soprano
             bool isWildCard();
 
         private:
+            QList<Prefix> m_prefixes;
+
             QList<GraphPattern *> m_graphPatterns;
             QString m_queryVerb;
             bool m_wildCard;
