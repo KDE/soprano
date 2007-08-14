@@ -33,6 +33,7 @@ namespace Soprano
 
     namespace Query {
 
+        // TODO: Implement this
         class DateTime {
         };
 
@@ -657,6 +658,7 @@ namespace Soprano
         // ParsedQuery                                                        //
         ////////////////////////////////////////////////////////////////////////
 
+        // TODO: Implement this
         class Prefix {
         public:
             Prefix( const QString &prefix, const QUrl &uri );
@@ -669,40 +671,25 @@ namespace Soprano
             QUrl m_uri;
         };
 
-        class QueryLiteral {
-        public:
-            QueryLiteral( Expression *expression );
-            QueryLiteral( RTerm *rtem );
-
-            bool isRTerm();
-
-            RTerm *rtem();
-
-            Expression *expression();
-
-        private:
-            Expression *m_expression;
-            RTerm *m_rterm;
-        };
-
+        // TODO: Implement this
         class TriplePattern {
         public:
-            TriplePattern( QueryLiteral *subject, QueryLiteral *predicate, QueryLiteral *object ); 
+            TriplePattern( RTerm *subject, RTerm *predicate, RTerm *object ); 
 
-            QueryLiteral *subject();
-            QueryLiteral *predicate(); 
-            QueryLiteral *object(); 
+            RTerm *subject();
+            RTerm *predicate(); 
+            RTerm *object(); 
 
         private:
-            QueryLiteral *m_subject;
-            QueryLiteral *m_predicate;
-            QueryLiteral *m_object;
+            RTerm *m_subject;
+            RTerm *m_predicate;
+            RTerm *m_object;
 
             //FIXME: what does it mean?
             //Node *m_origin;
         };
 
-
+        // TODO: Implement this
         class GraphPattern {
             
             enum Operator {
@@ -718,9 +705,8 @@ namespace Soprano
 
             TriplePattern *triple();
             
-            // SPARQL FILTER
-            void setConstraint( Expression *expression );
-            Expression *constraint();
+            void addConstraint( BooleanExpression *expression );
+            QList<BooleanExpression *>constraints();
 
             void addSubGraphPattern( GraphPattern *subgraph );
             QList<GraphPattern *> childGraphs();
@@ -729,12 +715,13 @@ namespace Soprano
     
         private:
             TriplePattern *m_triple;
-            Expression *m_constraint;
+            BooleanExpression *m_constraint;
 
             GraphPattern *m_parent;
             QList<GraphPattern *> m_childs;
         };
 
+        // TODO: Implement this
         class QueryObject {
         public:
             void addPrefix( Prefix *prefix );
@@ -743,8 +730,8 @@ namespace Soprano
             //void addVariable( Variable *variable );
             //QList<Variable *> variables();
 
-            //void addGraphPattern( GraphPattern *graphPattern );
-            //QList<GraphPattern *> graphPatterns();
+            void addGraphPattern( GraphPattern *graphPattern );
+            QList<GraphPattern *> graphPatterns();
 
             void setQueryVerb( const QString &queryVerb );
             QString queryVerb();
@@ -754,6 +741,7 @@ namespace Soprano
             bool isWildCard();
 
         private:
+            QList<GraphPattern *> m_graphPatterns;
             QString m_queryVerb;
             bool m_wildCard;
         };
