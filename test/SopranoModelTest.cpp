@@ -52,11 +52,11 @@ void SopranoModelTest::init()
     m_model = createModel( "testmodel" );
     QVERIFY( m_model != 0 );
 
-    Node subject1( QUrl("uri:init:test1") );
-    Node subject2( QUrl("uri:init:test2") );
+    Node subject1( QUrl("http://soprano.sf.net#init:test1") );
+    Node subject2( QUrl("http://soprano.sf.net#init:test2") );
 
-    Node predicate1( QUrl( "soprano#predicate1" ) );
-    Node predicate2( QUrl( "soprano#predicate2" ) );
+    Node predicate1( QUrl( "http://soprano.sf.net#predicate1" ) );
+    Node predicate2( QUrl( "http://soprano.sf.net#predicate2" ) );
 
     Node object1( "Literal value1" );
     Node object2( "Literal value2" );
@@ -74,11 +74,11 @@ void SopranoModelTest::init()
 
 void SopranoModelTest::testAddModel()
 {
-    Node subject1( QUrl("uri:add:model") );
+    Node subject1( QUrl("http://soprano.sf.net#add:model") );
 
-    Node predicate1( QUrl( "soprano#predicate1" ) );
-    Node predicate2( QUrl( "soprano#predicate2" ) );
-    Node predicate3( QUrl( "soprano#predicate3" ) );
+    Node predicate1( QUrl( "http://soprano.sf.net#predicate1" ) );
+    Node predicate2( QUrl( "http://soprano.sf.net#predicate2" ) );
+    Node predicate3( QUrl( "http://soprano.sf.net#predicate3" ) );
 
     Node object1( "Literal value1" );
 
@@ -102,7 +102,7 @@ void SopranoModelTest::testAddModel()
     Statement stPartial1( subject1, Node(), object1 );
     Statement stPartial2( subject1, Node(), Node() );
     Statement stPartial3;
-    Statement stPartial4( subject1, Node(), QUrl( "soprao#notInTheStore" ) );
+    Statement stPartial4( subject1, Node(), QUrl( "http://soprao.sf.net#notInTheStore" ) );
 
     QVERIFY( m_model->containsStatements( stPartial1 ) );
     QVERIFY( m_model->containsStatements( stPartial2 ) );
@@ -114,11 +114,11 @@ void SopranoModelTest::testAddModel()
 
 void SopranoModelTest::testAddListOfStatement()
 {
-    Node subject1( QUrl("uri:add:model") );
+    Node subject1( QUrl("http://soprano.sf.net#add:model") );
 
-    Node predicate1( QUrl( "soprano#predicate1" ) );
-    Node predicate2( QUrl( "soprano#predicate2" ) );
-    Node predicate3( QUrl( "soprano#predicate3" ) );
+    Node predicate1( QUrl( "http://soprano.sf.net#predicate1" ) );
+    Node predicate2( QUrl( "http://soprano.sf.net#predicate2" ) );
+    Node predicate3( QUrl( "http://soprano.sf.net#predicate3" ) );
 
     Node object1( "Literal value1" );
 
@@ -140,11 +140,11 @@ void SopranoModelTest::testAddListOfStatement()
 
 void SopranoModelTest::testAddStatementIterator()
 {
-    Node subject1( QUrl("uri:add:model") );
+    Node subject1( QUrl("http://soprano.sf.net#add:model") );
 
-    Node predicate1( QUrl( "soprano#predicate1" ) );
-    Node predicate2( QUrl( "soprano#predicate2" ) );
-    Node predicate3( QUrl( "soprano#predicate3" ) );
+    Node predicate1( QUrl( "http://soprano.sf.net#predicate1" ) );
+    Node predicate2( QUrl( "http://soprano.sf.net#predicate2" ) );
+    Node predicate3( QUrl( "http://soprano.sf.net#predicate3" ) );
 
     Node object1( "Literal value1" );
 
@@ -169,11 +169,11 @@ void SopranoModelTest::testAddStatementIterator()
 
 void SopranoModelTest::testAddStatements()
 {
-    Node subject1( QUrl("uri:soprano:test1") );
-    Node subject2( QUrl("uri:soprano:test2") );
+    Node subject1( QUrl("http://soprano.sf.net#soprano:test1") );
+    Node subject2( QUrl("http://soprano.sf.net#soprano:test2") );
 
-    Node predicate1( QUrl( "soprano#predicate1" ) );
-    Node predicate2( QUrl( "soprano#predicate2" ) );
+    Node predicate1( QUrl( "http://soprano.sf.net#predicate1" ) );
+    Node predicate2( QUrl( "http://soprano.sf.net#predicate2" ) );
 
     Node object1( "Literal value1" );
     Node object2( "Literal value2" );
@@ -192,16 +192,16 @@ void SopranoModelTest::testAddStatements()
 void SopranoModelTest::testListStatements()
 {
     QList<Statement> statements;
-    Node resource_1( QUrl("uri:list:resource1") );
-    Node resource_2( QUrl("uri:list:resource2") );
-    Node resource_3( QUrl("uri:list:resource3") );
+    Node resource_1( QUrl("http://soprano.sf.net#list:resource1") );
+    Node resource_2( QUrl("http://soprano.sf.net#list:resource2") );
+    Node resource_3( QUrl("http://soprano.sf.net#list:resource3") );
 
     for (int i=0; i<50; i++)
     {
         QString property = "predicate" + QString::number(i);
         QString literal = "Literal value" + QString::number(i);
 
-        Node predicate( QUrl( "soprano#" + property) );
+        Node predicate( QUrl( "http://soprano.sf.net#" + property) );
         Node object = LiteralValue( literal );
 
         Statement st(resource_1, predicate, object);
@@ -213,7 +213,7 @@ void SopranoModelTest::testListStatements()
         QString property = "predicate" + QString::number(i + 50);
         QString literal = "Literal value" + QString::number(i + 50);
 
-        Node predicate( QUrl( "soprano#" + property) );
+        Node predicate( QUrl( "http://soprano.sf.net#" + property) );
         Node object = LiteralValue( literal );
 
         Statement st(resource_2, predicate, object);
@@ -225,7 +225,7 @@ void SopranoModelTest::testListStatements()
         QString property = "predicate" + QString::number(i + 100);
         QString literal = "Literal value" + QString::number(i + 100);
 
-        Node predicate( QUrl( "soprano#" + property) );
+        Node predicate( QUrl( "http://soprano.sf.net#" + property) );
         Node object = LiteralValue( literal );
 
         Statement st(resource_3, predicate, object);
@@ -306,14 +306,14 @@ void SopranoModelTest::testListStatementsWithContext()
     m_model->removeAllStatements();
 
     QList<Statement> statements;
-    Node context1( QUrl("uri:list:resource1") );
-    Node context2( QUrl("uri:list:resource2") );
-    Node context3( QUrl("uri:list:resource3") );
+    Node context1( QUrl("http://soprano.sf.net#list:resource1") );
+    Node context2( QUrl("http://soprano.sf.net#list:resource2") );
+    Node context3( QUrl("http://soprano.sf.net#list:resource3") );
 
     for (int i=0; i<10; i++)
     {
-        QUrl subject = "soprano#subject" + QString::number(i);
-        QUrl predicate = "soprano#predicate" + QString::number(i);
+        QUrl subject = "http://soprano.sf.net#subject" + QString::number(i);
+        QUrl predicate = "http://soprano.sf.net#predicate" + QString::number(i);
         LiteralValue object = "Literal value" + QString::number(i);
 
         statements.append( Statement( subject, predicate, object, context1 ) );
@@ -360,9 +360,9 @@ void SopranoModelTest::testListStatementsWithContext()
 
 void SopranoModelTest::testRemoveStatement()
 {
-    Node subject( QUrl("uri:remove:3") );
-    Node predicate( QUrl( "soprano#predicate" ) );
-    Node object( QUrl("uri:soprano:2") );
+    Node subject( QUrl("http://soprano.sf.net#remove:3") );
+    Node predicate( QUrl( "http://soprano.sf.net#predicate" ) );
+    Node object( QUrl("http://soprano.sf.net#soprano:2") );
 
     Statement st(subject, predicate, object);
     m_model->addStatement( st );
@@ -464,7 +464,7 @@ void SopranoModelTest::testQuery()
 
     /* RDQL */
 
-    Query rdql("select ?b ?c where (<uri:init:test1>, ?b, ?c)", Query::RDQL);
+    Query rdql("select ?b ?c where (<http://soprano.sf.net#init:test1>, ?b, ?c)", Query::RDQL);
 
     QueryResultIterator rs2 = m_model->executeQuery( rdql );
 
@@ -483,11 +483,11 @@ void SopranoModelTest::testQuery()
 
 void SopranoModelTest::testCloseStatementIteratorOnModelDelete()
 {
-    Node subject1( QUrl("uri:add:model") );
+    Node subject1( QUrl("http://soprano.sf.net#add:model") );
 
-    Node predicate1( QUrl( "soprano#predicate1" ) );
-    Node predicate2( QUrl( "soprano#predicate2" ) );
-    Node predicate3( QUrl( "soprano#predicate3" ) );
+    Node predicate1( QUrl( "http://soprano.sf.net#predicate1" ) );
+    Node predicate2( QUrl( "http://soprano.sf.net#predicate2" ) );
+    Node predicate3( QUrl( "http://soprano.sf.net#predicate3" ) );
 
     Node object1( "Literal value1" );
 
@@ -548,21 +548,21 @@ static bool check3It( StatementIterator it, const Statement& s1, const Statement
 
 void SopranoModelTest::testContexts()
 {
-    Node subject1( QUrl( "soprano#subject1" ) );
-    Node subject2( QUrl( "soprano#subject2" ) );
-    Node subject3( QUrl( "soprano#subject3" ) );
+    Node subject1( QUrl( "http://soprano.sf.net#subject1" ) );
+    Node subject2( QUrl( "http://soprano.sf.net#subject2" ) );
+    Node subject3( QUrl( "http://soprano.sf.net#subject3" ) );
 
-    Node predicate1( QUrl( "soprano#predicate1" ) );
-    Node predicate2( QUrl( "soprano#predicate2" ) );
-    Node predicate3( QUrl( "soprano#predicate3" ) );
+    Node predicate1( QUrl( "http://soprano.sf.net#predicate1" ) );
+    Node predicate2( QUrl( "http://soprano.sf.net#predicate2" ) );
+    Node predicate3( QUrl( "http://soprano.sf.net#predicate3" ) );
 
     Node object1( "literal 1" );
     Node object2( "literal 2" );
     Node object3( "literal 3" );
 
-    Node context1( QUrl( "soprano::context1" ) );
-    Node context2( QUrl( "soprano::context2" ) );
-    Node context3( QUrl( "soprano::context3" ) );
+    Node context1( QUrl( "http://soprano.sf.net/contexts/context1" ) );
+    Node context2( QUrl( "http://soprano.sf.net/contexts/context2" ) );
+    Node context3( QUrl( "http://soprano.sf.net/contexts/context3" ) );
 
     Statement s1_c1( subject1, predicate1, object1, context1 );
     Statement s2_c1( subject1, predicate2, object1, context1 );

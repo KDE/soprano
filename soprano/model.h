@@ -51,6 +51,9 @@ namespace Soprano
     public:
 	virtual ~Model();
 
+	// FIXME: add the following method which allows us access to a model's featues through its backend
+	// Backend* backend() const;
+
 	/**
 	 * Add the Statement to the Model.
 	 *

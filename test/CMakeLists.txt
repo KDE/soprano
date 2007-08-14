@@ -81,12 +81,19 @@ target_link_libraries(inferencemodeltest soprano ${QT_QTCORE_LIBRARY} ${QT_QTTES
 add_test(inferencemodeltest ${EXECUTABLE_OUTPUT_PATH}/inferencemodeltest)
 
 # QueryAPITest
-qt4_automoc(queryapitest queryapitest.cpp)
-add_executable(queryapitest queryapitest.cpp)
-target_link_libraries(queryapitest soprano ${QT_QTCORE_LIBRARY} ${QT_QTTEST_LIBRARY})
-add_test(queryapitest ${EXECUTABLE_OUTPUT_PATH}/queryapitest)
+#qt4_automoc(queryapitest queryapitest.cpp)
+#add_executable(queryapitest queryapitest.cpp)
+#target_link_libraries(queryapitest soprano ${QT_QTCORE_LIBRARY} ${QT_QTTEST_LIBRARY})
+#add_test(queryapitest ${EXECUTABLE_OUTPUT_PATH}/queryapitest)
 
 # WString test
 qt4_automoc(wstringtest wstringtest.cpp)
 add_executable(wstringtest wstringtest.cpp ../soprano/index/wstring.cpp)
 target_link_libraries(wstringtest ${QT_QTCORE_LIBRARY} ${QT_QTTEST_LIBRARY})
+add_test(wstringtest ${EXECUTABLE_OUTPUT_PATH}/wstringtest)
+
+# Sesame2 model test
+qt4_automoc(sesame2backendtest sesame2backendtest.cpp)
+add_executable(sesame2backendtest sesame2backendtest.cpp)
+target_link_libraries(sesame2backendtest soprano sopranomodeltest ${QT_QTCORE_LIBRARY} ${QT_QTTEST_LIBRARY})
+add_test(sesame2backendtest ${EXECUTABLE_OUTPUT_PATH}/sesame2backendtest)
