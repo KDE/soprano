@@ -134,8 +134,8 @@ namespace Soprano {
 	     * it makes sense to enable this.
 	     *
 	     * \param b If true InferenceModel will use optimized queries for
-	     * the inference during addStatement. This will speedup the 
-	     * process as matching rules are only applied to the new statement.
+	     * the inference during addStatement. This will speed up the 
+	     * process quite a lot as matching rules are only applied to the new statement.
 	     * This flag has no influcence on performInference() though.
 	     *
 	     * The default is to disable the optimized queries since the default
