@@ -24,6 +24,8 @@
 
 #include "filtermodel.h"
 
+class QUrl;
+
 namespace Soprano {
 
     class Statement;

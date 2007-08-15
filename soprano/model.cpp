@@ -36,7 +36,6 @@ public:
 
 Soprano::Model::Model()
     : QObject( 0 ),
-      RdfSchemaWrapper( this ),
       d( new Private() )
 {
 }

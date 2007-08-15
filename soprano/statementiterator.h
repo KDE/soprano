@@ -66,7 +66,6 @@ namespace Soprano {
      * 
      * \author Daniele Galdi <daniele.galdi@gmail.com><br>Sebastian Trueg <trueg@kde.org>
      */
-     */
     class SOPRANO_EXPORT StatementIterator
     {
     public:

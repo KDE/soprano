@@ -35,7 +35,7 @@ namespace Soprano
    * \brief Soprano::Backend defines the interface for a Soprano backend plugin.
    *
    * To create a new backend simply create a class that implements this interface
-   * and is derived from QObject. Then use the Q_INTERFACE macro to define that it
+   * and is derived from QObject. Then use the Q_INTERFACES macro to define that it
    * is in fact a Backend plugin and export the plugin via the Q_EXPORT_PLUGIN2 macro.
    *
    * \code
