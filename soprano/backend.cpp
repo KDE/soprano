@@ -24,39 +24,32 @@
 class Soprano::Backend::Private
 {
 public:
-  QString name;
 };
 
 
 Soprano::Backend::Backend( const QString& name )
-    : d( new Private() )
+    : Plugin( name ),
+      d( new Private() )
 {
-  d->name = name;
 }
 
 
 Soprano::Backend::~Backend()
 {
-  delete d;
-}
-
-
-QString Soprano::Backend::backendName() const
-{
-  return d->name;
+    delete d;
 }
 
 
 bool Soprano::Backend::hasFeature( const QString& feature ) const
 {
-  return features().contains( feature );
+    return features().contains( feature );
 }
 
 
 bool Soprano::Backend::hasFeatures( const QStringList& featureList ) const
 {
-  for( QStringList::const_iterator it = featureList.begin(); it != featureList.end(); ++it )
-    if( !hasFeature( *it ) )
-      return false;
-  return true;
+    for( QStringList::const_iterator it = featureList.begin(); it != featureList.end(); ++it )
+        if( !hasFeature( *it ) )
+            return false;
+    return true;
 }

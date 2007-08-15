@@ -46,6 +46,7 @@ SET(soprano_SRCS
     parser.h
     pluginmanager.cpp
     pluginmanager.h
+    plugin.cpp
     backend.cpp
     backend.h
     soprano.cpp
@@ -112,6 +113,7 @@ INSTALL(FILES
 	model.h
 	filtermodel.h
 	storagemodel.h
+	plugin.h
 	pluginmanager.h
 	soprano.h
 	soprano_export.h

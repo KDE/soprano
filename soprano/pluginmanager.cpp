@@ -21,6 +21,7 @@
 
 #include "pluginmanager.h"
 #include "backend.h"
+#include "parser.h"
 #include "config.h"
 
 #include <QHash>
@@ -30,44 +31,68 @@
 
 #include <stdlib.h>
 
+
 class Soprano::PluginManager::Private
 {
 public:
-  QHash<QString, Backend*> backends;
+    QHash<QString, Backend*> backends;
+    QHash<QString, Parser*> parsers;
 };
 
 const QStringList Soprano::PluginManager::libraryPath()
 {
-  QStringList pluginPaths;
+    QStringList pluginPaths;
 
-  pluginPaths += QString(SOPRANO_DIR);
+    pluginPaths += QString(SOPRANO_DIR);
 
-  QByteArray libPath = qgetenv( "SOPRANO_LIBRARY_PATH" );
-  if( !libPath.isEmpty() ) {
-    pluginPaths += QString::fromLocal8Bit( libPath ).split(":");
-  }
+    QByteArray libPath = qgetenv( "SOPRANO_LIBRARY_PATH" );
+    if( !libPath.isEmpty() ) {
+        pluginPaths += QString::fromLocal8Bit( libPath ).split(":");
+    }
 
-  return pluginPaths;
+    return pluginPaths;
 }
 
 const Soprano::Backend* Soprano::PluginManager::discoverBackendByName( const QString& name )
 {
-  QHash<QString, Backend*>::iterator it = d->backends.find( name );
-  if( it != d->backends.end() )
-    return *it;
-  else
-    return 0;
+    QHash<QString, Backend*>::iterator it = d->backends.find( name );
+    if( it != d->backends.end() )
+        return *it;
+    else
+        return 0;
 }
 
 
 const Soprano::Backend* Soprano::PluginManager::discoverBackendByFeatures( const QStringList& features )
 {
-  for( QHash<QString, Backend*>::const_iterator it = d->backends.begin(); it != d->backends.end(); ++it ) {
-    const Backend* b = *it;
-    if( b->hasFeatures( features ) )
-      return b;
-  }
-  return 0;
+    for( QHash<QString, Backend*>::const_iterator it = d->backends.begin(); it != d->backends.end(); ++it ) {
+        const Backend* b = *it;
+        if( b->hasFeatures( features ) )
+            return b;
+    }
+    return 0;
+}
+
+
+const Soprano::Parser* Soprano::PluginManager::discoverParserByName( const QString& name )
+{
+    QHash<QString, Parser*>::iterator it = d->parsers.find( name );
+    if( it != d->parsers.end() )
+        return *it;
+    else
+        return 0;
+}
+
+
+const Soprano::Parser* Soprano::PluginManager::discoverParserForSerialization( RdfSerialization serialization )
+{
+    for( QHash<QString, Parser*>::const_iterator it = d->parsers.begin(); it != d->parsers.end(); ++it ) {
+        const Parser* p = *it;
+        if( p->supportsSerialization( serialization ) ) {
+            return p;
+        }
+    }
+    return 0;
 }
 
 
@@ -82,67 +107,84 @@ QList<const Soprano::Backend*> Soprano::PluginManager::allBackends()
 }
 
 
+QList<const Soprano::Parser*> Soprano::PluginManager::allParsers()
+{
+    QList<const Parser*> pl;
+    for ( QHash<QString, Parser*>::const_iterator it = d->parsers.constBegin();
+          it != d->parsers.constEnd(); ++it ) {
+        pl.append( it.value() );
+    }
+    return pl;
+}
+
+
 Soprano::PluginManager::PluginManager( QObject* parent )
-  : QObject( parent ),
-    d( new Private )
+    : QObject( parent ),
+      d( new Private )
 {
 }
 
 
 Soprano::PluginManager::~PluginManager()
 {
-  // delete all plugins (is this necessary?)
-  for( QHash<QString, Backend*>::const_iterator it = d->backends.begin(); it != d->backends.end(); ++it )
-    delete it.value();
-  delete d;
+    // delete all plugins (is this necessary?)
+    for( QHash<QString, Backend*>::const_iterator it = d->backends.begin(); it != d->backends.end(); ++it )
+        delete it.value();
+    // delete all plugins (is this necessary?)
+    for( QHash<QString, Parser*>::const_iterator it = d->parsers.begin(); it != d->parsers.end(); ++it )
+        delete it.value();
+    delete d;
 }
 
 
 void Soprano::PluginManager::loadAllPlugins()
 {
-  qDebug() << "(Soprano::PluginManager) loading all plugins" << endl;
+    qDebug() << "(Soprano::PluginManager) loading all plugins" << endl;
 
-  QStringList libPath = libraryPath();
-  for( QStringList::const_iterator it = libPath.begin(); it != libPath.end(); ++it ) {
-    if( QFile::exists( *it + "/soprano" ) )
-      loadPlugins( *it + "/soprano" );
-  }
+    QStringList libPath = libraryPath();
+    for( QStringList::const_iterator it = libPath.begin(); it != libPath.end(); ++it ) {
+        if( QFile::exists( *it + "/soprano" ) )
+            loadPlugins( *it + "/soprano" );
+    }
 }
 
 
 void Soprano::PluginManager::loadPlugins( const QString& path )
 {
-  qDebug() << "(Soprano::PluginManager) searching plugin dir " << path << endl;
+    qDebug() << "(Soprano::PluginManager) searching plugin dir " << path << endl;
 
-  QDir pluginsDir( path );
-  foreach( QString fileName, pluginsDir.entryList(QDir::Files) ) {
-    QPluginLoader loader(pluginsDir.absoluteFilePath(fileName));
-    QObject* plugin = loader.instance();
-    if( plugin ) {
-      Backend* backend = qobject_cast<Backend*>( plugin );
-      if( backend ) {
-	    qDebug() << "(Soprano::PluginManager) found plugin " << backend->backendName() << endl;
-	    d->backends.insert( backend->backendName(), backend );
-      }
-      else {
-	    qDebug() << "(Soprano::PluginManager) found no backend plugin at " << loader.fileName() << endl;
-	    delete plugin;
-      }
+    QDir pluginsDir( path );
+    foreach( QString fileName, pluginsDir.entryList(QDir::Files) ) {
+        QPluginLoader loader(pluginsDir.absoluteFilePath(fileName));
+        QObject* plugin = loader.instance();
+        if( plugin ) {
+            if( Backend* backend = qobject_cast<Backend*>( plugin ) ) {
+                qDebug() << "(Soprano::PluginManager) found backend plugin " << backend->pluginName() << endl;
+                d->backends.insert( backend->pluginName(), backend );
+            }
+            else if( Parser* parser = qobject_cast<Parser*>( plugin ) ) {
+                qDebug() << "(Soprano::PluginManager) found parser plugin " << parser->pluginName() << endl;
+                d->parsers.insert( parser->pluginName(), parser );
+            }
+            else {
+                qDebug() << "(Soprano::PluginManager) found no backend plugin at " << loader.fileName() << endl;
+                delete plugin;
+            }
+        }
+        else
+            qDebug() << "(Soprano::PluginManager) found no plugin at " << loader.fileName() << endl;
     }
-    else
-      qDebug() << "(Soprano::PluginManager) found no plugin at " << loader.fileName() << endl;
-  }
 }
 
 
 Soprano::PluginManager* Soprano::PluginManager::instance()
 {
-  static PluginManager* s_instance = 0;
-  if( !s_instance ) {
-    s_instance = new PluginManager();
-    s_instance->loadAllPlugins();
-  }
-  return s_instance;
+    static PluginManager* s_instance = 0;
+    if( !s_instance ) {
+        s_instance = new PluginManager();
+        s_instance->loadAllPlugins();
+    }
+    return s_instance;
 }
 
 #include "pluginmanager.moc"

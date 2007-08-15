@@ -70,13 +70,6 @@ Soprano::Model* Soprano::ThreeStore::BackendPlugin::createModel( const QString& 
 }
 
 
-Soprano::Parser* Soprano::ThreeStore::BackendPlugin::createParser( const QStringList& options ) const
-{
-    Q_UNUSED( options );
-    return 0;
-}
-
-
 QStringList Soprano::ThreeStore::BackendPlugin::features() const
 {
   return QString( "inference,contexts" ).split( ',' );

@@ -20,32 +20,42 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#include "redlandparser.h"
+#include "raptorparser.h"
+#include "../../backends/redland/redlandworld.h"
+#include "../../backends/redland/redlandstatementiterator.h"
 
-#include "redlandworld.h"
-#include "redlandmodel.h"
-#include "redlandbackend.h"
+#include <soprano/statementiterator.h>
 
 #include <redland.h>
 
 #include <QtCore/QUrl>
+#include <QtCore/QtPlugin>
 
 
-Soprano::Redland::RedlandParser::RedlandParser()
+Q_EXPORT_PLUGIN2(soprano_raptorparser, Soprano::Raptor::Parser)
+
+
+Soprano::Raptor::Parser::Parser()
+    : QObject(),
+      Soprano::Parser( "raptor" )
 {
 }
 
 
-Soprano::RdfSerializations Soprano::Redland::RedlandParser::supportedSerializations() const
+Soprano::Raptor::Parser::~Parser()
+{
+}
+
+
+Soprano::RdfSerializations Soprano::Raptor::Parser::supportedSerializations() const
 {
     return RDF_XML|N_TRIPLES|TURTLE;
 }
 
 
-Soprano::Model*
-Soprano::Redland::RedlandParser::parseFile( const QString& filename,
-                                            const QUrl& baseUri,
-                                            RdfSerialization serialization ) const
+Soprano::StatementIterator Soprano::Raptor::Parser::parseFile( const QString& filename,
+                                                               const QUrl& baseUri,
+                                                               RdfSerialization serialization ) const
 {
     QUrl uri( QUrl::fromLocalFile( filename ) );
     if ( uri.scheme().isEmpty() ) {
@@ -53,92 +63,80 @@ Soprano::Redland::RedlandParser::parseFile( const QString& filename,
         uri.setScheme("file");
     }
 
-    RedlandModel* model = World::self()->createModel();
-    if ( !model ) {
-        return 0;
-    }
-
-    librdf_uri* redlandUri = librdf_new_uri( World::self()->worldPtr(),
+    librdf_uri* redlandUri = librdf_new_uri( Redland::World::self()->worldPtr(),
                                              (unsigned char *) uri.toString().toLatin1().data() );
     if ( !redlandUri ) {
-        return 0;
+        return StatementIterator();
     }
 
-    librdf_parser *parser = librdf_new_parser( World::self()->worldPtr(),
+    librdf_parser *parser = librdf_new_parser( Redland::World::self()->worldPtr(),
                                                0, // use all factories
                                                serializationMimeType( serialization ).toLatin1().data(),
                                                0 ); // what is the URI of the syntax used for?
     if ( !parser ) {
         librdf_free_uri( redlandUri );
-        delete model;
-        return 0;
+        return StatementIterator();
     }
 
     librdf_uri* redlandBaseUri = 0;
     if ( !baseUri.toString().isEmpty() ) {
-        redlandBaseUri = librdf_new_uri( World::self()->worldPtr(),
+        redlandBaseUri = librdf_new_uri( Redland::World::self()->worldPtr(),
                                          (unsigned char *) baseUri.toString().toLatin1().data() );
     }
 
-    if ( librdf_parser_parse_into_model( parser, redlandUri, redlandBaseUri, model->redlandModel() ) ) {
-        librdf_free_uri( redlandUri );
-        librdf_free_parser( parser );
-        delete model;
-        return 0;
-    }
+    librdf_stream* stream = librdf_parser_parse_as_stream( parser, redlandUri, redlandBaseUri );
 
     librdf_free_uri( redlandUri );
     librdf_free_parser( parser );
 
-    return model;
+    if ( stream ) {
+        return StatementIterator();
+    }
+    else {
+        return new Redland::RedlandStatementIterator( 0, stream, Node() );
+    }
 }
 
 
-Soprano::Model*
-Soprano::Redland::RedlandParser::parseString( const QString& data,
-                                              const QUrl& baseUri,
-                                              RdfSerialization serialization ) const
+Soprano::StatementIterator Soprano::Raptor::Parser::parseString( const QString& data,
+                                                                 const QUrl& baseUri,
+                                                                 RdfSerialization serialization ) const
 {
-    RedlandModel* model = World::self()->createModel();
-    if ( !model ) {
-        return 0;
-    }
-
-    librdf_parser* parser = librdf_new_parser( World::self()->worldPtr(),
+    librdf_parser* parser = librdf_new_parser( Redland::World::self()->worldPtr(),
                                                0, // use all factories
                                                serializationMimeType( serialization ).toLatin1().data(),
                                                0 ); // what is the URI of the syntax used for?
     if ( !parser ) {
-        delete model;
-        return 0;
+        return StatementIterator();
     }
 
     librdf_uri* redlandBaseUri = 0;
     if ( !baseUri.toString().isEmpty() ) {
-        redlandBaseUri = librdf_new_uri( World::self()->worldPtr(),
+        redlandBaseUri = librdf_new_uri( Redland::World::self()->worldPtr(),
                                          (unsigned char *) baseUri.toString().toLatin1().data() );
     }
 
     // FIXME: do we need to convert the string data into something else than UTF8 with some serialization
-    if ( librdf_parser_parse_string_into_model( parser,
-                                                ( const unsigned char* )data.toUtf8().data(),
-                                                redlandBaseUri,
-                                                model->redlandModel() ) ) {
-        librdf_free_parser( parser );
-        delete model;
-        return 0;
-    }
-
+    librdf_stream* stream = librdf_parser_parse_string_as_stream( parser,
+                                                                  ( const unsigned char* )data.toUtf8().data(),
+                                                                  redlandBaseUri );
     librdf_free_parser( parser );
 
-    return model;
+    if ( stream ) {
+        return StatementIterator();
+    }
+    else {
+        return new Redland::RedlandStatementIterator( 0, stream, Node() );
+    }
 }
 
 
-Soprano::Model*
-Soprano::Redland::RedlandParser::parseStream( QTextStream* stream,
-                                              const QUrl& baseUri,
-                                              RdfSerialization serialization ) const
+Soprano::StatementIterator
+Soprano::Raptor::Parser::parseStream( QTextStream* stream,
+                                      const QUrl& baseUri,
+                                      RdfSerialization serialization ) const
 {
     return parseString( stream->readAll(), baseUri, serialization );
 }
+
+#include "raptorparser.moc"

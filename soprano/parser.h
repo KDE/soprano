@@ -22,16 +22,18 @@
 #ifndef SOPRANO_PARSER_H
 #define SOPRANO_PARSER_H
 
-#include <soprano/soprano_export.h>
+#include "plugin.h"
+#include "soprano_export.h"
+
+#include <QtCore/QObject>
 
 class QTextStream;
-class QString;
 class QUrl;
 
 
 namespace Soprano
 {
-    class Model;
+    class StatementIterator;
 
     /**
      * Different types of RDF serialization.
@@ -47,10 +49,10 @@ namespace Soprano
     };
     Q_DECLARE_FLAGS(RdfSerializations, RdfSerialization)
 
-    /**
-     * \return The mimetype of serialization or an empty string is serialization is UNKNOWN
-     */
-    SOPRANO_EXPORT QString serializationMimeType( RdfSerialization serialization );
+	/**
+	 * \return The mimetype of serialization or an empty string is serialization is UNKNOWN
+	 */
+	SOPRANO_EXPORT QString serializationMimeType( RdfSerialization serialization );
 
     /**
      * Parse a mimetype and match it to the RdfSerialization enum.
@@ -59,70 +61,105 @@ namespace Soprano
      */
     SOPRANO_EXPORT RdfSerialization mimeTypeToSerialization( const QString& mimetype );
 
-    class SOPRANO_EXPORT Parser
-	{
-	public:
-	    virtual ~Parser();
+    /**
+     * \brief Soprano::Parser defines the interface for a Soprano RDF parser plugin.
+     *
+     * Each parser plugin may support multiple RDF serializations (supportedSerializations()).
+     * 
+     * To create a new parser plugin simply create a class that implements this interface
+     * and is derived from QObject. Then use the Q_INTERFACES macro to define that it
+     * is in fact a Backend plugin and export the plugin via the Q_EXPORT_PLUGIN2 macro.
+     *
+     * \code
+     * class MyBackend : public QObject, public Soprano::Parser
+     * {
+     *   Q_OBJECT
+     *   Q_INTERFACES(Soprano::Parser)
+     *
+     *  public:
+     *   StatementIterator parseStream( QTextStream* stream, const QUrl& baseUri, RdfSerialization serialization = UNKNOWN ) const;
+     * };
+     * \endcode
+     *
+     * In the implementation file export the plugin so it can be picked up by the
+     * plugin loading framework:
+     *
+     * \code
+     * Q_EXPORT_PLUGIN2(soprano_mybackend, MyBackend)
+     * \endcode
+     *
+     * \author Daniele Galdi <daniele.galdi@gmail.com><br>Sebastian Trueg <trueg@kde.org>
+     */
+    class SOPRANO_EXPORT Parser : public Plugin
+    {
+    public:
+	virtual ~Parser();
 
-	    /**
-	     * The serialiazation types supported by this parser.
-	     * \return A combination of RdfSerialization types.
-	     */
-	    virtual RdfSerializations supportedSerializations() const = 0;
+	/**
+	 * The serialiazation types supported by this parser.
+	 * \return A combination of RdfSerialization types.
+	 */
+	virtual RdfSerializations supportedSerializations() const = 0;
 
-	    /**
-	     * \deprecated
-	     * Calls parseFile with RDF_XML serialization
-	     */
-	    Model* parse( const QUrl& url ) const;
+	/**
+	 * \return \p true if the parser is able to parse RDF data encoded
+	 * in serialization s, \p false otherwise.
+	 */
+	bool supportsSerialization( RdfSerializations s ) const;
 
-	    /**
-	     * Parse an RDF model which has been serialized in a file,
-	     * using the supplied baseURI to resolve any relative URI references.
-	     *
-	     * The default implementation simply calls parseStream on an opened
-	     * QFile instance.
-	     *
-	     * \param filename The name (path) of the file to parse
-	     * \param baseUri The base URI to be used for relative references.
-	     * \param serialization The serialization used in the file.
-	     * If UNKNOWN the parser is supposed to auto detect the serialization type. 
-	     * Might not be reliable.
-	     */
-	    virtual Model* parseFile( const QString& filename, const QUrl& baseUri, RdfSerialization serialization = UNKNOWN ) const;
+	/**
+	 * Parse an RDF model which has been serialized in a file,
+	 * using the supplied baseURI to resolve any relative URI references.
+	 *
+	 * The default implementation simply calls parseStream on an opened
+	 * QFile instance.
+	 *
+	 * \param filename The name (path) of the file to parse
+	 * \param baseUri The base URI to be used for relative references.
+	 * \param serialization The serialization used in the file.
+	 * If UNKNOWN the parser is supposed to auto detect the serialization type. 
+	 * Might not be reliable.
+	 */
+	virtual StatementIterator parseFile( const QString& filename, const QUrl& baseUri, RdfSerialization serialization = UNKNOWN ) const;
 
-	    /**
-	     * Parse an RDF model which has been serialized into a string,
-	     * using the supplied baseURI to resolve any relative URI references.
-	     *
-	     * The default implementation simply calls parseStream.
-	     *
-	     * \param data The serialized RDF string.
-	     * \param baseUri The base URI to be used for relative references.
-	     * \param serialization The serialization used for the string data.
-	     * If UNKNOWN the parser is supposed to auto detect the serialization type. 
-	     * Might not be reliable.
-	     */
-	    virtual Model* parseString( const QString& data, const QUrl& baseUri, RdfSerialization serialization = UNKNOWN ) const;
+	/**
+	 * Parse an RDF model which has been serialized into a string,
+	 * using the supplied baseURI to resolve any relative URI references.
+	 *
+	 * The default implementation simply calls parseStream.
+	 *
+	 * \param data The serialized RDF string.
+	 * \param baseUri The base URI to be used for relative references.
+	 * \param serialization The serialization used for the string data.
+	 * If UNKNOWN the parser is supposed to auto detect the serialization type. 
+	 * Might not be reliable.
+	 */
+	virtual StatementIterator parseString( const QString& data, const QUrl& baseUri, RdfSerialization serialization = UNKNOWN ) const;
 
-	    /**
-	     * Read a serialized RDF model from a test stream,
-	     * using the supplied baseURI to resolve any relative URI references.
-	     *
-	     * \param stream The text stream to read the serialized RDF data from.
-	     * \param baseUri The base URI to be used for relative references.
-	     * \param serialization The serialization used for the string data from the stream.
-	     * If UNKNOWN the parser is supposed to auto detect the serialization type. 
-	     * Might not be reliable.
-	     */ 
-	    virtual Model* parseStream( QTextStream* stream, const QUrl& baseUri, RdfSerialization serialization = UNKNOWN ) const = 0;
+	/**
+	 * Read a serialized RDF model from a test stream,
+	 * using the supplied baseURI to resolve any relative URI references.
+	 *
+	 * \param stream The text stream to read the serialized RDF data from.
+	 * \param baseUri The base URI to be used for relative references.
+	 * \param serialization The serialization used for the string data from the stream.
+	 * If UNKNOWN the parser is supposed to auto detect the serialization type. 
+	 * Might not be reliable.
+	 */ 
+	virtual StatementIterator parseStream( QTextStream* stream, const QUrl& baseUri, RdfSerialization serialization = UNKNOWN ) const = 0;
 
-	protected:
-	    Parser();
-	};
+    protected:
+	Parser( const QString& name );
+
+    private:
+	class Private;
+	Private* const d;
+    };
 }
 
 Q_DECLARE_OPERATORS_FOR_FLAGS(Soprano::RdfSerializations)
+
+Q_DECLARE_INTERFACE(Soprano::Parser, "org.soprano.plugins.Parser/1.0")
 
 #endif // SOPRANO_PARSER_H
 

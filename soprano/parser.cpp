@@ -1,6 +1,7 @@
 /* This file is part of Soprano
  *
  * Copyright (C) 2006 Daniele Galdi <daniele.galdi@gmail.com>
+ * Copyright (C) 2007 Sebastian Trueg <trueg@kde.org>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -19,6 +20,7 @@
  */
 
 #include "parser.h"
+#include "statementiterator.h"
 
 #include <QtCore/QTextStream>
 #include <QtCore/QFile>
@@ -26,25 +28,25 @@
 #include <QtCore/QDebug>
 
 
-using namespace Soprano;
+class Soprano::Parser::Private
+{
+};
 
-Parser::Parser()
+
+Soprano::Parser::Parser( const QString& name )
+    : Plugin( name ),
+      d( new Private() )
 {
 }
 
 
-Parser::~Parser()
+Soprano::Parser::~Parser()
 {
+    delete d;
 }
 
 
-Model* Parser::parse( const QUrl& url ) const
-{
-    return parseFile( url.toLocalFile(), url, RDF_XML );
-}
-
-
-Model* Parser::parseFile( const QString& filename, const QUrl& baseUri, RdfSerialization serialization ) const
+Soprano::StatementIterator Soprano::Parser::parseFile( const QString& filename, const QUrl& baseUri, RdfSerialization serialization ) const
 {
     QFile f( filename );
     if ( f.open( QIODevice::ReadOnly | QIODevice::Text ) ) {
@@ -58,7 +60,7 @@ Model* Parser::parseFile( const QString& filename, const QUrl& baseUri, RdfSeria
 }
 
 
-Model* Parser::parseString( const QString& data, const QUrl& baseUri, RdfSerialization serialization ) const
+Soprano::StatementIterator Soprano::Parser::parseString( const QString& data, const QUrl& baseUri, RdfSerialization serialization ) const
 {
     QString buffer( data );
     QTextStream s( &buffer, QIODevice::ReadOnly );
@@ -85,7 +87,7 @@ QString Soprano::serializationMimeType( RdfSerialization serialization )
 }
 
 
-RdfSerialization Soprano::mimeTypeToSerialization( const QString& mimetype )
+Soprano::RdfSerialization Soprano::mimeTypeToSerialization( const QString& mimetype )
 {
     if ( mimetype == "application/rdf+xml" ||
          mimetype == "text/rdf" ) {
@@ -109,4 +111,10 @@ RdfSerialization Soprano::mimeTypeToSerialization( const QString& mimetype )
         return TRIG;
     }
     return UNKNOWN;
+}
+
+
+bool Soprano::Parser::supportsSerialization( RdfSerializations s ) const
+{
+    return supportedSerializations() & s;
 }

@@ -22,10 +22,12 @@
 #ifndef _SOPRANO_PLUGIN_MANAGER_H_
 #define _SOPRANO_PLUGIN_MANAGER_H_
 
+#include "parser.h"
+#include "soprano_export.h"
+
 #include <QtCore/QObject>
 #include <QtCore/QList>
 
-#include <soprano/soprano_export.h>
 
 namespace Soprano
 {
@@ -61,7 +63,26 @@ namespace Soprano
        */
       const Backend* discoverBackendByFeatures( const QStringList& features );
 
+      /**
+       * Find a parser plugin by its name.
+       *
+       * \return the parser specified by \a name or null if could not
+       * be found.
+       */
+      const Parser* discoverParserByName( const QString& name );
+
+      /**
+       * Find a Parser instance that is able to parse RDF data serialized as
+       * serialization.
+       *
+       * \return A Parser plugin that can parse RDF data encoded in the requested 
+       * serialization or 0 if no such plugin could be found.
+       */
+      const Parser* discoverParserForSerialization( RdfSerialization serialization );
+
       QList<const Backend*> allBackends();
+
+      QList<const Parser*> allParsers();
 
       static PluginManager* instance();
 

@@ -22,7 +22,6 @@
 
 #include "redlandworld.h"
 #include "redlandmodel.h"
-#include "redlandparser.h"
 
 #include <QtCore/QObject>
 #include <QtCore/QHash>
@@ -145,11 +144,4 @@ Soprano::Redland::RedlandModel* Soprano::Redland::World::createModel( const QStr
   }
 
   return new RedlandModel( model, storage );
-}
-
-
-Soprano::Redland::RedlandParser* Soprano::Redland::World::createParser( const QStringList& options ) const
-{
-  Q_UNUSED( options );
-  return new RedlandParser();
 }

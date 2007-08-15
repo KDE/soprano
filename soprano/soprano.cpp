@@ -27,64 +27,53 @@ static const Soprano::Backend* s_defaultBackend = 0;
 
 static void initSoprano()
 {
-  if( !s_defaultBackend )
-    Soprano::setUsedBackend( Soprano::discoverBackendByName( "redland" ) );
+    if( !s_defaultBackend )
+        Soprano::setUsedBackend( Soprano::discoverBackendByName( "redland" ) );
 }
 
 
 const Soprano::Backend* Soprano::discoverBackendByName( const QString& name )
 {
-  return Soprano::PluginManager::instance()->discoverBackendByName( name );
+    return Soprano::PluginManager::instance()->discoverBackendByName( name );
 }
 
 
 const Soprano::Backend* Soprano::discoverBackendByFeatures( const QStringList& features )
 {
-  return Soprano::PluginManager::instance()->discoverBackendByFeatures( features );
+    return Soprano::PluginManager::instance()->discoverBackendByFeatures( features );
 }
 
 
 void Soprano::setUsedBackend( const Backend* b )
 {
-  s_defaultBackend = b;
+    s_defaultBackend = b;
 }
 
 
 const Soprano::Backend* Soprano::usedBackend()
 {
-  initSoprano();
-  return s_defaultBackend;
+    initSoprano();
+    return s_defaultBackend;
 }
 
 
 Soprano::Model* Soprano::createModel()
 {
-  initSoprano();
+    initSoprano();
 
-  if( s_defaultBackend )
-    return s_defaultBackend->createModel();
-  else
-    return 0;
+    if( s_defaultBackend )
+        return s_defaultBackend->createModel();
+    else
+        return 0;
 }
 
 
 Soprano::Model* Soprano::createModel( const QString& name, const QStringList& options )
 {
-  initSoprano();
+    initSoprano();
 
-  if( s_defaultBackend )
-    return s_defaultBackend->createModel( name, options );
-  else
-    return 0;
-}
-
-
-Soprano::Parser* Soprano::createParser( const QStringList& options )
-{
-  initSoprano();
-
-  if( s_defaultBackend )
-    return s_defaultBackend->createParser( options );
-  else
-    return 0;
+    if( s_defaultBackend )
+        return s_defaultBackend->createModel( name, options );
+    else
+        return 0;
 }

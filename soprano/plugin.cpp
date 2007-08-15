@@ -1,4 +1,4 @@
-/* 
+/*
  * This file is part of Soprano Project.
  *
  * Copyright (C) 2007 Sebastian Trueg <trueg@kde.org>
@@ -19,35 +19,29 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef _SESAME2_STORE_BACKEND_H_
-#define _SESAME2_STORE_BACKEND_H_
+#include "plugin.h"
 
-#include <soprano/backend.h>
-#include <soprano/soprano_export.h>
-
-#include <QObject>
-
-namespace Soprano
+class Soprano::Plugin::Private
 {
-  namespace Sesame2
-    {
-      class SOPRANO_EXPORT BackendPlugin : public QObject, public Soprano::Backend
-	{
-	  Q_OBJECT
-	  Q_INTERFACES(Soprano::Backend)
+public:
+    QString name;
+};
 
-	public:
-	  BackendPlugin();
 
-	  Model* createModel() const;
-	  Model* createModel( const QString& name, const QStringList& options = QStringList() ) const;
-
-	  QStringList features() const;
-
-	private:
-	  
-	};
-    }
+Soprano::Plugin::Plugin( const QString& name )
+    : d( new Private() )
+{
+    d->name = name;
 }
 
-#endif
+
+Soprano::Plugin::~Plugin()
+{
+    delete d;
+}
+
+
+QString Soprano::Plugin::pluginName() const
+{
+    return d->name;
+}

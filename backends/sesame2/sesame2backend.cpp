@@ -88,13 +88,6 @@ Soprano::Model* Soprano::Sesame2::BackendPlugin::createModel( const QString& nam
 }
 
 
-Soprano::Parser* Soprano::Sesame2::BackendPlugin::createParser( const QStringList& options ) const
-{
-    Q_UNUSED( options );
-    return 0;
-}
-
-
 QStringList Soprano::Sesame2::BackendPlugin::features() const
 {
     return QString( "inference,contexts,memory" ).split( ',' );

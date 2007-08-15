@@ -28,7 +28,6 @@
 
 #include "redlandworld.h"
 #include "redlandmodel.h"
-#include "redlandparser.h"
 
 #include <QtCore/QtPlugin>
 #include <QtCore/QDebug>
@@ -56,15 +55,9 @@ Soprano::Model* Soprano::Redland::BackendPlugin::createModel( const QString& nam
 }
 
 
-Soprano::Parser* Soprano::Redland::BackendPlugin::createParser( const QStringList& options ) const
-{
-    return World::self()->createParser( options );
-}
-
-
 QStringList Soprano::Redland::BackendPlugin::features() const
 {
-  return QString( "memory,contexts,parser" ).split( ',' );
+    return QString( "memory,contexts" ).split( ',' );
 }
 
 #include "redlandbackend.moc"

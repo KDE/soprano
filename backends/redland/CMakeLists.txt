@@ -15,7 +15,7 @@ include_directories(
   ${CMAKE_INSTALL_PREFIX}/include
 )
 
-set(redland_backend_SRC
+set(redland_core_SRC
   redlandutil.cpp
   redlandutil.h
   redlandworld.cpp
@@ -26,18 +26,23 @@ set(redland_backend_SRC
   redlandqueryresult.h
   redlandmodel.cpp
   redlandmodel.h
-  redlandparser.cpp
-  redlandparser.h
+  redlandnodeiteratorbackend.cpp
+)
+
+set(redland_backend_SRC
   redlandbackend.cpp
   redlandbackend.h
-  redlandnodeiteratorbackend.cpp
 )
 
 qt4_automoc(${redland_backend_SRC})
 
+add_library(soprano_redlandcore STATIC ${redland_core_SRC})
+
 add_library(soprano_redlandbackend SHARED ${redland_backend_SRC})
 
-TARGET_LINK_LIBRARIES(soprano_redlandbackend soprano ${REDLAND_LIBRARIES})
+TARGET_LINK_LIBRARIES(soprano_redlandcore soprano ${REDLAND_LIBRARIES})
+
+TARGET_LINK_LIBRARIES(soprano_redlandbackend soprano_redlandcore)
 
 ADD_DEFINITIONS(${REDLAND_CFLAGS})
 

@@ -22,104 +22,93 @@
 #ifndef _SOPRANO_BACKEND_H_
 #define _SOPRANO_BACKEND_H_
 
-#include <soprano/soprano_export.h>
+#include "plugin.h"
+#include "soprano_export.h"
 
 #include <QtCore/QStringList>
 
 namespace Soprano
 {
-  class Model;
-  class Parser;
+    class Model;
 
-  /**
-   * \brief Soprano::Backend defines the interface for a Soprano backend plugin.
-   *
-   * To create a new backend simply create a class that implements this interface
-   * and is derived from QObject. Then use the Q_INTERFACES macro to define that it
-   * is in fact a Backend plugin and export the plugin via the Q_EXPORT_PLUGIN2 macro.
-   *
-   * \code
-   * class MyBackend : public QObject, public Soprano::Backend
-   * {
-   *   Q_OBJECT
-   *   Q_INTERFACES(Soprano::Backend)
-   *
-   *  public:
-   *   Model* createModel() const;
-   *   Model* createModel( const QString& name, const QStringList& options = QStringList() ) const;
-   * };
-   * \endcode
-   *
-   * In the implementation file export the plugin so it can be picked up by the
-   * plugin loading framework:
-   *
-   * \code
-   * Q_EXPORT_PLUGIN2(soprano_mybackend, MyBackend)
-   * \endcode
-   *
-   * \author Sebastian Trueg <trueg@kde.org>
-   */
-  class SOPRANO_EXPORT Backend
+    /**
+     * \brief Soprano::Backend defines the interface for a Soprano backend plugin.
+     *
+     * To create a new backend simply create a class that implements this interface
+     * and is derived from QObject. Then use the Q_INTERFACES macro to define that it
+     * is in fact a Backend plugin and export the plugin via the Q_EXPORT_PLUGIN2 macro.
+     *
+     * \code
+     * class MyBackend : public QObject, public Soprano::Backend
+     * {
+     *   Q_OBJECT
+     *   Q_INTERFACES(Soprano::Backend)
+     *
+     *  public:
+     *   Model* createModel() const;
+     *   Model* createModel( const QString& name, const QStringList& options = QStringList() ) const;
+     * };
+     * \endcode
+     *
+     * In the implementation file export the plugin so it can be picked up by the
+     * plugin loading framework:
+     *
+     * \code
+     * Q_EXPORT_PLUGIN2(soprano_mybackend, MyBackend)
+     * \endcode
+     *
+     * \author Sebastian Trueg <trueg@kde.org>
+     */
+    class SOPRANO_EXPORT Backend : public Plugin
     {
     public:
-      Backend( const QString& name );
-      virtual ~Backend();
+	Backend( const QString& name );
+	virtual ~Backend();
 
-      QString backendName() const;
+	/**
+	 * Creates a simple memory model
+	 * The caller takes ownership and has to care about deletion.
+	 *
+	 * \return A new memory model or 0 if the backend does not support memory models.
+	 */
+	virtual Model* createModel() const = 0;
 
-      /**
-       * Creates a simple memory model
-       * The caller takes ownership and has to care about deletion.
-       *
-       * \return A new memory model or 0 if the backend does not support memory models.
-       */
-      virtual Model* createModel() const = 0;
+	/**
+	 * Creates a new RDF model with options.
+	 * The caller takes ownership and has to care about deletion.
+	 *
+	 * \param name the name of the model, can be used for storage.
+	 *
+	 * \param options Specify optional options for the created model. Options are key/value
+	 *        pairs in the form of "key=value".
+	 *        Possible options may include (options always depend on the implementation)
+	 *        \li storagePath Where to store the data on the local harddrive (Redland)
+	 *        \li storageType The database backend used, i.e. berkdb or sqlite or memory (Redland)
+	 *        \li host The host to connect to (3Store)
+	 *        \li user The username to use with the database (3Store)
+	 *        \li password The password to use with the database user (3Store)
+	 *
+	 * In case of the 3Store backend if no options are given it tries to connect to a local mysql service 
+	 * as the current user.
+	 */
+	virtual Model* createModel( const QString& name, const QStringList& options = QStringList() ) const = 0;
 
-      /**
-       * Creates a new RDF model with options.
-       * The caller takes ownership and has to care about deletion.
-       *
-       * \param name the name of the model, can be used for storage.
-       *
-       * \param options Specify optional options for the created model. Options are key/value
-       *        pairs in the form of "key=value".
-       *        Possible options may include (options always depend on the implementation)
-       *        \li storagePath Where to store the data on the local harddrive (Redland)
-       *        \li storageType The database backend used, i.e. berkdb or sqlite or memory (Redland)
-       *        \li host The host to connect to (3Store)
-       *        \li user The username to use with the database (3Store)
-       *        \li password The password to use with the database user (3Store)
-       *
-       * In case of the 3Store backend if no options are given it tries to connect to a local mysql service 
-       * as the current user.
-       */
-      virtual Model* createModel( const QString& name, const QStringList& options = QStringList() ) const = 0;
+	/**
+	 * Features include:
+	 * \li memory The backend supports a memory storage.
+	 * \li contexts The backend supports RDF contexts.
+	 *
+	 * \return the list of supported features.
+	 */
+	virtual QStringList features() const = 0;
 
-      /**
-       * Create a new RDF parser.
-       * The caller takes ownership and has to care about deletion.
-       *
-       * \param options optional options. Unused for now.
-       */
-      virtual Parser* createParser( const QStringList& options = QStringList() ) const = 0;
-
-      /**
-       * Features include:
-       * \li memory The backend supports a memory storage.
-       * \li contexts The backend supports RDF contexts.
-       * \li parser The backend supports Parser creation.
-       *
-       * \return the list of supported features.
-       */
-      virtual QStringList features() const = 0;
-
-      // FIXME: make the features an enumeration
-      bool hasFeature( const QString& feature ) const;
-      bool hasFeatures( const QStringList& feature ) const;
+	// FIXME: make the features an enumeration
+	bool hasFeature( const QString& feature ) const;
+	bool hasFeatures( const QStringList& feature ) const;
 
     private:
-      class Private;
-      Private* const d;
+	class Private;
+	Private* const d;
     };
 }
 

@@ -2,7 +2,6 @@ Soprano 2 TODO List
 
 Add here what you want to add in Soprano
 
-trueg: I think we should remove Backend::createParser and create an extra plugin system for parsers.
 trueg: Is "Repository" better suited as a name for "Model"? After all model seems to be used quite often
        (in other APIs) for an object representing one named graph instead of the whole dataset.
 trueg: Model::backend() could make sense.

@@ -20,34 +20,39 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef SOPRANO_BACKEND_REDLAND_PARSER_H
-#define SOPRANO_BACKEND_REDLAND_PARSER_H
+#ifndef _SOPRANO_RAPTOR_PARSER_H_
+#define _SOPRANO_RAPTOR_PARSER_H_
 
 #include <QtCore/QUrl>
+#include <QtCore/QObject>
 
-#include "parser.h"
+#include <soprano/parser.h>
+#include <soprano/soprano_export.h>
 
 namespace Soprano {
-    namespace Redland {
-	class RedlandParser: public Soprano::Parser
-	    {
-	    public:
-		RedlandParser();
+    namespace Raptor {
+	class SOPRANO_EXPORT Parser : public QObject, public Soprano::Parser
+	{
+	    Q_OBJECT
+	    Q_INTERFACES(Soprano::Parser)
 
-		RdfSerializations supportedSerializations() const;
+	public:
+	    Parser();
+	    ~Parser();
 
-		Model* parseFile( const QString& filename, 
-				  const QUrl& baseUri, 
-				  RdfSerialization serialization = UNKNOWN ) const;
-		Model* parseString( const QString& data, 
-				    const QUrl& baseUri, 
-				    RdfSerialization serialization = UNKNOWN ) const;
-		Model* parseStream( QTextStream*, 
-				    const QUrl& baseUri, 
-				    RdfSerialization serialization = UNKNOWN ) const;
-	    };
+	    RdfSerializations supportedSerializations() const;
+
+	    StatementIterator parseFile( const QString& filename, 
+					 const QUrl& baseUri, 
+					 RdfSerialization serialization = UNKNOWN ) const;
+	    StatementIterator parseString( const QString& data, 
+					   const QUrl& baseUri, 
+					   RdfSerialization serialization = UNKNOWN ) const;
+	    StatementIterator parseStream( QTextStream*, 
+					   const QUrl& baseUri, 
+					   RdfSerialization serialization = UNKNOWN ) const;
+	};
     }
 }
 
-#endif // SOPRANO_BACKEND_REDLAND_PARSER_H
-
+#endif

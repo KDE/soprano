@@ -41,7 +41,6 @@ namespace Soprano
 
 	  Model* createModel() const;
 	  Model* createModel( const QString& name, const QStringList& options = QStringList() ) const;
-	  Parser* createParser( const QStringList& options = QStringList() ) const;
 
 	  QStringList features() const;
 	};
