@@ -51,19 +51,19 @@ Soprano::Query::Variable::Variable( const Variable &other )
     d = other.d;
 }
 
-const QString Soprano::Query::Variable::name() const
+QString Soprano::Query::Variable::name() const
 {
     return d->name;
 }
 
 //
 // RTerm
-// 
+//
 
 class Soprano::Query::RTerm::Private {
 public:
     Private() {};
-    
+
     Soprano::Node node;
     Variable binding;
 };
@@ -77,7 +77,7 @@ Soprano::Query::RTerm::RTerm( const Soprano::Node &node )
 Soprano::Query::RTerm::RTerm( const Variable &binding )
 {
     d = new Private;
-    d->binding = binding;   
+    d->binding = binding;
 }
 
 Soprano::Query::RTerm::~RTerm()
@@ -90,19 +90,19 @@ bool Soprano::Query::RTerm::isBinding() const
     return !d->node.isValid();
 }
 
-const Soprano::Node Soprano::Query::RTerm::node() const
+Soprano::Node Soprano::Query::RTerm::node() const
 {
     return d->node;
 }
 
-const Soprano::Query::Variable Soprano::Query::RTerm::binding() const
+Soprano::Query::Variable Soprano::Query::RTerm::binding() const
 {
     return d->binding;
 }
 
 //
 // Integer
-// 
+//
 
 Soprano::Query::Integer::Integer( int value )
     :m_value(value)
@@ -171,7 +171,7 @@ void Soprano::Query::UnaryBooleanExpression::setExpression( BooleanExpression *e
     m_expression = expression;
 }
 
-Soprano::Query::BooleanExpression *Soprano::Query::UnaryBooleanExpression::expression() 
+Soprano::Query::BooleanExpression *Soprano::Query::UnaryBooleanExpression::expression()
 {
     return m_expression;
 }
@@ -196,7 +196,7 @@ Soprano::Query::RTerm *Soprano::Query::UnaryRTermBooleanExpression::rterm()
 Soprano::Query::UnaryRTermStringExpression::UnaryRTermStringExpression( RTerm *rterm )
     :m_rterm(rterm)
 {
-}   
+}
 
 void Soprano::Query::UnaryRTermStringExpression::setRTerm( RTerm *rterm )
 {
@@ -219,10 +219,10 @@ void Soprano::Query::UnaryNumericalExpression::setExpression( NumericalExpressio
     m_expression = expression;
 }
 
-Soprano::Query::NumericalExpression *Soprano::Query::UnaryNumericalExpression::expression() 
-{ 
+Soprano::Query::NumericalExpression *Soprano::Query::UnaryNumericalExpression::expression()
+{
     return m_expression;
-}  
+}
 
 
 Soprano::Query::Not::Not( BooleanExpression *expression )
@@ -434,12 +434,12 @@ Soprano::Query::BinaryDateTimeBooleanExpression::BinaryDateTimeBooleanExpression
 }
 
 void Soprano::Query::BinaryDateTimeBooleanExpression::setFirst( QDateTime *first )
-{  
+{
     m_first = first;
 }
 
 void Soprano::Query::BinaryDateTimeBooleanExpression::setSecond( QDateTime *second )
-{  
+{
     m_second = second;
 }
 
@@ -460,12 +460,12 @@ Soprano::Query::BinaryRTermBooleanExpression::BinaryRTermBooleanExpression( RTer
 }
 
 void Soprano::Query::BinaryRTermBooleanExpression::setFirst( RTerm *first )
-{ 
+{
     m_first = first;
 }
 
 void Soprano::Query::BinaryRTermBooleanExpression::setSecond( RTerm *second )
-{ 
+{
     m_second = second;
 }
 
@@ -818,7 +818,7 @@ void Soprano::Query::Regexp::setExpression( StringExpression *expression )
     m_expression = expression;
 }
 
-Soprano::Query::StringExpression *Soprano::Query::Regexp::expression() 
+Soprano::Query::StringExpression *Soprano::Query::Regexp::expression()
 {
     return m_expression;
 }
@@ -838,7 +838,7 @@ void Soprano::Query::Regexp::setFlags( const QString &flags )
     m_flags = flags;
 }
 
-QString Soprano::Query::Regexp::flags() 
+QString Soprano::Query::Regexp::flags()
 {
     return m_flags;
 }
@@ -850,7 +850,7 @@ void Soprano::Query::Regexp::accept( ExpressionVisitor *visitor )
 
 //
 // QueryObject
-// 
+//
 
 Soprano::Query::QueryObject::QueryObject()
     :m_wildCard(false)
@@ -874,7 +874,7 @@ void Soprano::Query::QueryObject::setWildCard( bool wildCard )
 
 bool Soprano::Query::QueryObject::isWildCard()
 {
-    return m_wildCard; 
+    return m_wildCard;
 }
 
 
@@ -884,7 +884,7 @@ bool Soprano::Query::QueryObject::isWildCard()
 
 //
 // Soprano::Query::Prefix
-// 
+//
 
 class Soprano::Query::Prefix::Private: public QSharedData {
 public:
