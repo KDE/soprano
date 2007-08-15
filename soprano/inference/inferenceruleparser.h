@@ -29,6 +29,11 @@ namespace Soprano {
 
 	class Rule;
 
+	/**
+	 * \brief The RuleParser can be used to parse %Soprano rule files.
+	 *
+	 * \author Sebastian Trueg <trueg@kde.org>
+	 */
 	class RuleParser
 	{
 	public:

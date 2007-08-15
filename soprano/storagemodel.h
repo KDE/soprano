@@ -27,9 +27,12 @@
 
 namespace Soprano {
     /**
-     * Base class for all Models that store data (as compared to FilterModels).
-     * The StorageModel simply implements some of the methods from Model which
+     * \brief Base class for all Model implementations that store data (as compared to FilterModel).
+     *
+     * The StorageModel implements some of the methods from Model which
      * may be equal for different backends.
+     *
+     * \author Sebastian Trueg <trueg@kde.org>
      */
     class SOPRANO_EXPORT StorageModel : public Model
     {

@@ -32,6 +32,11 @@
 
 namespace Soprano
 {
+    /**
+     * \brief A Node represents one RDF resource.
+     *
+     * \author Daniele Galdi <daniele.galdi@gmail.com><br>Sebastian Trueg <trueg@kde.org>
+     */
     class SOPRANO_EXPORT Node
 	{
 	public:

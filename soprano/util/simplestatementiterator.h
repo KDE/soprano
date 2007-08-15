@@ -30,12 +30,13 @@
 namespace Soprano {
 
     /**
-     * The most simple version of a StatementIterator simply iterates over
+     * \brief The most simple version of a StatementIterator simply iterates over
      * a list of Statements.
      *
      * The SimpleStatementIterator has been designed as a trivial extension
      * to StatementIterator and can be used as a drop-in-replacement as shown
      * below:
+     *
      * \code
      * QList<Statement> list;
      * SimpleStatementIterator it( list );
@@ -43,6 +44,8 @@ namespace Soprano {
      * // it and it2 iterate over the exact same data
      * StatementIterator it2 = it;
      * \endcode
+     *
+     * \author Sebastian Trueg <trueg@kde.org>
      */
     class SOPRANO_EXPORT SimpleStatementIterator : public StatementIterator
     {

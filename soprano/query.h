@@ -27,9 +27,13 @@
 
 class QString;
 
-// FIXME: Is the Query class really useful? Is it really used?
 namespace Soprano
 {
+    /**
+     * \brief Deprecated query class.
+     *
+     * \deprecated Will be replaced by a real query API soon.
+     */
     class SOPRANO_EXPORT Query
     {
     public:

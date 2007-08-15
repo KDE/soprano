@@ -23,6 +23,7 @@
 #define _SOPRANO_PLUGIN_MANAGER_H_
 
 #include <QtCore/QObject>
+#include <QtCore/QList>
 
 #include <soprano/soprano_export.h>
 
@@ -30,6 +31,14 @@ namespace Soprano
 {
   class Backend;
 
+  /**
+   * \brief The PluginManager loads and maintains all %Soprano plugins.
+   *
+   * Normally there is no need to use this class as all important methods have
+   * global counterparts in the Soprano namespace.
+   *
+   * \author Sebastian Trueg <trueg@kde.org>
+   */
   class SOPRANO_EXPORT PluginManager : public QObject
     {
       Q_OBJECT
@@ -51,6 +60,8 @@ namespace Soprano
        * \return a backend that supports the features defined in \a features.
        */
       const Backend* discoverBackendByFeatures( const QStringList& features );
+
+      QList<const Backend*> allBackends();
 
       static PluginManager* instance();
 

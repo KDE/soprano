@@ -30,8 +30,12 @@ namespace Soprano {
     class Statement;
 
     /**
-     * The actual work in a StatementIterator instance is done by a
+     * \brief The actual work in a StatementIterator instance is done by a
      * StatementIteratorBackend.
+     *
+     * Each Backend implementation has to have its own version of StatementIteratorBackend.
+     *
+     * \author Daniele Galdi <daniele.galdi@gmail.com><br>Sebastian Trueg <trueg@kde.org>
      */
     class SOPRANO_EXPORT StatementIteratorBackend
     {

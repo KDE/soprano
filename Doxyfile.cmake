@@ -87,7 +87,8 @@ INPUT                  = ${soprano_SOURCE_DIR}/soprano \
                          ${soprano_SOURCE_DIR}/Mainpage.dox \
                          ${soprano_SOURCE_DIR}/soprano/vocabulary \
                          ${soprano_SOURCE_DIR}/soprano/inference \
-                         ${soprano_SOURCE_DIR}/soprano/index
+                         ${soprano_SOURCE_DIR}/soprano/index/indexfiltermodel.h \
+                         ${soprano_SOURCE_DIR}/soprano/index/cluceneindex.h
 INPUT_ENCODING         = UTF-8
 FILE_PATTERNS          = *.h
 RECURSIVE              = NO

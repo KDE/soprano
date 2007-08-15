@@ -32,7 +32,14 @@ namespace Soprano {
     class Model;
     class Node;
     class Statement;
-
+    
+    /**
+     * \brief QueryResultIteratorBackend is the actual working horse behind QueryResultIterator.
+     *
+     * Each Backend implementation has to have its own version of QueryResultIteratorBackend.
+     *
+     * \author Daniele Galdi <daniele.galdi@gmail.com><br>Sebastian Trueg <trueg@kde.org>
+     */
     class SOPRANO_EXPORT QueryResultIteratorBackend
 	{
 	public:

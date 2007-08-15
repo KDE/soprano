@@ -32,9 +32,14 @@ namespace Soprano {
     class Node;
 
     /**
-     * Represents one set of bindings in the result of a select query.
-     * This class is mostly a convinience class for caching of query
+     * \brief Represents one set of bindings in the result of a select query.
+     *
+     * BindingSet is mostly a convinience class for caching of query
      * results.
+     *
+     * \sa QueryResultIterator
+     *
+     * \author Sebastian Trueg <trueg@kde.org>
      */
     class SOPRANO_EXPORT BindingSet
     {

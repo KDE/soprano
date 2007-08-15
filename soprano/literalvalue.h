@@ -31,7 +31,8 @@
 namespace Soprano
 {
     /**
-     * Represents a literal value of an RDF node.
+     * \brief Represents a literal value of an RDF node.
+     *
      * LiteralValue is based on QVariant to support
      * a subset of the XML Schema types that are compatible
      * with QT types.
@@ -52,6 +53,8 @@ namespace Soprano
      * \li QDateTime
      *
      * Literal values can be converted from strings via fromString.
+     *
+     * \author Sebastian Trueg <trueg@kde.org>
      */
     class SOPRANO_EXPORT LiteralValue
 	{

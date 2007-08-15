@@ -37,6 +37,16 @@ namespace Soprano {
 
 	class NodePattern;
 
+	/**
+	 * \brief Building block of an inference Rule.
+	 *
+	 * A StatementPattern consists of three NodePattern that can either
+	 * be variables or already bound ndoes.
+	 *
+	 * StatementPattern is used to define preconditions and effects in Rule.
+	 *
+	 * \author Sebastian Trueg <trueg@kde.org>
+	 */
 	class SOPRANO_EXPORT StatementPattern
 	{
 	public:

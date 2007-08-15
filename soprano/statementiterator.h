@@ -2,6 +2,7 @@
  * This file is part of Soprano Project.
  *
  * Copyright (C) 2006 Daniele Galdi <daniele.galdi@gmail.com>
+ * Copyright (C) 2007 Sebastian Trueg <trueg@kde.org>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -34,13 +35,37 @@ namespace Soprano {
     class StatementIteratorBackend;
 
     /**
-     * An iterator that provides a stream of Statements.
+     * \brief An iterator that provides a stream of Statements.
      *
-     * Be aware that iterators in Soprano are shared objects which means
+     * Iteartors in %Soprano are very easy to use through two methods
+     * next() and current(). Instead of the latter operator*() can also be used.
+     * Both can be called subsequetially to retrieve the current Statement
+     * until next() has been called again.
+     *
+     * \code
+     * while( it.next() ) {
+     *    doSomething( *it );
+     *    doSomethingElse( it.current() );
+     * }
+     * \endcode
+     *
+     * Backends such as redland tend to invalidate the iterators if
+     * the underlaying model is changed. Thus, it is always a good idea to cache
+     * the results if they are to be used to modify the model:
+     *
+     * \code
+     * StatementIterator it = model->listStatements();
+     * QList<Statement> allStatements = it.allStatements();
+     * Q_FOREACH( Statement s, allStatements ) {
+     *    modifyTheModel( model, s );
+     * }
+     * \endcode
+     *
+     * \warning Be aware that iterators in Soprano are shared objects which means
      * that copies of one iterator object work on the same data.
-     *
-     * Caution: backends such as redland tend to invalidate the iterators if
-     * the underlaying model is changed.
+     * 
+     * \author Daniele Galdi <daniele.galdi@gmail.com><br>Sebastian Trueg <trueg@kde.org>
+     */
      */
     class SOPRANO_EXPORT StatementIterator
     {
@@ -82,10 +107,10 @@ namespace Soprano {
 	/**
 	 * Retrieve the current Statement in the iterator.
 	 *
-	 * This is equivalent to current.
+	 * This is equivalent to current().
 	 *
 	 * \return The Statement the iterator currently points to or
-	 * an invlid one if next has never been called.
+	 * an invalid one if next has never been called.
 	 */
 	Statement operator*() const;
 

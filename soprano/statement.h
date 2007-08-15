@@ -1,6 +1,7 @@
 /* This file is part of Soprano Project.
  *
  * Copyright (C) 2006 Daniele Galdi <daniele.galdi@gmail.com>
+ * Copyright (C) 2007 Sebastian Trueg <trueg@kde.org>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -26,13 +27,24 @@
 
 namespace Soprano
 {
-
+    /**
+     * \brief A Statement instance represents one RDF quadruple.
+     *
+     * In %Soprano statements are quadruples, i.e. in addition to the subject, predicate, and
+     * object nodes, they have a fourth node, the context. The context represents the named graph
+     * in which the statement is stored. If the context is an empty node the statement is stored in
+     * the default graph.
+     *
+     * A Statement is valid if subject, predicate, and object are valid. Invalid statements can, however,
+     * be used in many methods such as Model::listStatements as wildwards.
+     *
+     * \author Daniele Galdi <daniele.galdi@gmail.com><br>Sebastian Trueg <trueg@kde.org>
+     */
     class SOPRANO_EXPORT Statement
 	{
 	public:
-
 	    /**
-	     * Default Constructor, build an Empty(not valid) Statement.
+	     * Default Constructor, build an empty (invalid) Statement.
 	     */
 	    Statement();
 
@@ -63,7 +75,7 @@ namespace Soprano
 	     * to operator== is that empty nodes are matched as wildcards,
 	     * i.e. they match any other node.
 	     *
-	     * \return true if this statement matches other, false if not.
+	     * \return \p true if this statement matches other, \p false if not.
 	     */
 	    bool matches( const Statement& other ) const;
 

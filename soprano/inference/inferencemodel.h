@@ -60,6 +60,8 @@ namespace Soprano {
 	 *
 	 * Thus, when removing a statement it can easily be checked if this statement had been used to
 	 * infer another one by querying all named graphs that have this statement as a source statement.
+	 *
+	 * \author Sebastian Trueg <trueg@kde.org>
 	 */
 	class InferenceModel : public FilterModel
 	{

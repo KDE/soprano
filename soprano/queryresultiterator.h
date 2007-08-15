@@ -38,13 +38,45 @@ namespace Soprano {
     class BindingSet;
 
     /**
-     * An iterator for query results.
+     * \brief An iterator for query results.
      *
-     * Be aware that iterators in Soprano are shared objects which means
-     * that copies of one iterator object work on the same data.
+     * %Query results in %Soprano are wrapped in a QueryResultIterator.
      *
-     * Caution: backends such as redland tend to invalidate the iterators if
+     * Iteartors in %Soprano are very easy to use through the method
+     * next() and a set of retrieval methods such as currentStatement() or currentBindings().
+     * The retrieval methods can be called subsequetially to retrieve the current bindings or 
+     * statement until next() has been called again.
+     *
+     * \code
+     * QueryResultIterator it = model->query( someGraphQuery );
+     * while( it.next() ) {
+     *    doSomething( it.currentStatement() );
+     * }
+     *
+     * QueryResultIterator it2 = model->query( someTupleQuery );
+     * while( it.next() ) {
+     *    doSomethingElse( it.currentBindings() );
+     *    doSomethingCompletelyDifferent( it.binding( "x" ) );
+     *    doSomethingEntirelyDifferent( it.binding( 0 ) );
+     * }
+     * \endcode
+     *
+     * Backends such as redland tend to invalidate the iterators if
+     * the underlaying model is changed. Thus, it is always a good idea to cache
+     * the results if they are to be used to modify the model:
+     *
+     * \code
+     * QueryResultIterator it = model->query( someTupleQuery );
+     * QList<BindingSet> allBindings = it.allBindings();
+     * Q_FOREACH( BindingSet s, allBindings ) {
+     *    modifyTheModel( model, s );
+     * }
+     * \endcode
+     *
+     * \warning Backends such as redland tend to invalidate the iterators if
      * the underlaying model is changed.
+     *
+     * \author Daniele Galdi <daniele.galdi@gmail.com><br>Sebastian Trueg <trueg@kde.org>
      */
     class SOPRANO_EXPORT QueryResultIterator
     {

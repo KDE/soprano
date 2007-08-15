@@ -35,6 +35,12 @@ namespace Soprano {
     class BindingSet;
 
     namespace Inference {
+
+        /**
+	 * \brief A rule used by the InferenceModel to generate inferenced statements.
+	 *
+	 * \author Sebastian Trueg <trueg@kde.org>
+	 */
 	class SOPRANO_EXPORT Rule
 	{
 	public:

@@ -30,18 +30,20 @@ namespace Soprano {
     class Statement;
 
     /**
-     * A simple wrapper iterator that iterates over the results of a 
+     * \brief A simple wrapper around QueryResultIterator that iterates over the results of a 
      * SPARQL describe or construct query.
      *
      * The QueryResultStatementIterator has been designed as a trivial extension
      * to StatementIterator and can be used as a drop-in-replacement as shown
      * below:
      * \code
-     * QueryResultStatementIterator it( result );
+     * QueryResultStatementIterator it( model->query( someGraphQuery ) );
      *
      * // it and it2 iterate over the exact same data
      * StatementIterator it2 = it;
      * \endcode
+     *
+     * \author Sebastian Trueg <trueg@kde.org>
      */
     class QueryResultStatementIterator : public Soprano::StatementIterator
     {

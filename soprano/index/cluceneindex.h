@@ -45,8 +45,14 @@ namespace Soprano {
     namespace Index {
 
 	/**
-	 * The CLuceneIndex provides a wrapper around a CLucene index 
+	 * \brief The CLuceneIndex provides a wrapper around a CLucene index 
 	 * which stores RDF statements.
+	 *
+	 * It is used by the IndexFilterModel to actually handle the index. It has been
+	 * made visible in the public API to provide the possibility for advanced queries
+	 * and data modifications.
+	 *
+	 * \author Sebastian Trueg <trueg@kde.org>
 	 */
 	class SOPRANO_EXPORT CLuceneIndex
 	{

@@ -32,7 +32,7 @@ namespace Soprano
   class Parser;
 
   /**
-   * Soprano::Backend defines the interface for a Soprano backend plugin.
+   * \brief Soprano::Backend defines the interface for a Soprano backend plugin.
    *
    * To create a new backend simply create a class that implements this interface
    * and is derived from QObject. Then use the Q_INTERFACE macro to define that it
@@ -45,8 +45,8 @@ namespace Soprano
    *   Q_INTERFACES(Soprano::Backend)
    *
    *  public:
-   *   Storage* createStorage( const QString& name, const QStringList& options = QStringList() ) const;
-   *   Parser* createParser( const QStringList& options = QStringList() ) const;
+   *   Model* createModel() const;
+   *   Model* createModel( const QString& name, const QStringList& options = QStringList() ) const;
    * };
    * \endcode
    *
@@ -56,6 +56,8 @@ namespace Soprano
    * \code
    * Q_EXPORT_PLUGIN2(soprano_mybackend, MyBackend)
    * \endcode
+   *
+   * \author Sebastian Trueg <trueg@kde.org>
    */
   class SOPRANO_EXPORT Backend
     {

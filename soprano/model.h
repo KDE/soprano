@@ -28,7 +28,7 @@
 
 #include "soprano_export.h"
 #include "error.h"
-#include "rdfschemawrapper.h"
+
 
 class QTextStream;
 
@@ -41,10 +41,27 @@ namespace Soprano
     class StatementIterator;
 
     /**
-     * A Model is the central RDF storage class in Soprano. It is a queryable
-     * collection of statements.
+     * \brief A Model is the central class in %Soprano. It is a queryable
+     * collection of RDF quadruples, i.e statements.
+     *
+     * Model itself is just an interface for numerous implementations. There are basically
+     * two types of Models in %Soprano:
+     *
+     * \li StorageModel is the base class for Model implementations that actually store RDF quadruples.
+     *     StorageModels are created transparently by %Soprano backend plugins: Backend::createModel()
+     * \li FilterModel is the base class for all filter models. FilterModels can be stacked on top of
+     *     a StorageModel to perform arbitrary tasks like inference or actual content filtering. An
+     *     important FilterModel is Inference::InferenceModel.
+     *
+     * The simplest way to create a memory Model is to use the default Backend:
+     *
+     * \code
+     * Model* memModel = Soprano::createModel();
+     * \endcode
+     *
+     * \author Daniele Galdi <daniele.galdi@gmail.com><br>Sebastian Trueg <trueg@kde.org>
      */
-    class SOPRANO_EXPORT Model : public QObject, public RdfSchemaWrapper
+    class SOPRANO_EXPORT Model : public QObject
     {
 	Q_OBJECT
 
@@ -52,7 +69,7 @@ namespace Soprano
 	virtual ~Model();
 
 	// FIXME: add the following method which allows us access to a model's featues through its backend
-	// Backend* backend() const;
+	// const Backend* backend() const;
 
 	/**
 	 * Add the Statement to the Model.

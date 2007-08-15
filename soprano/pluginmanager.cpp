@@ -36,7 +36,7 @@ public:
   QHash<QString, Backend*> backends;
 };
 
-const QStringList Soprano::PluginManager::libraryPath() 
+const QStringList Soprano::PluginManager::libraryPath()
 {
   QStringList pluginPaths;
 
@@ -46,8 +46,8 @@ const QStringList Soprano::PluginManager::libraryPath()
   if( !libPath.isEmpty() ) {
     pluginPaths += QString::fromLocal8Bit( libPath ).split(":");
   }
-  
-  return pluginPaths;  
+
+  return pluginPaths;
 }
 
 const Soprano::Backend* Soprano::PluginManager::discoverBackendByName( const QString& name )
@@ -68,6 +68,17 @@ const Soprano::Backend* Soprano::PluginManager::discoverBackendByFeatures( const
       return b;
   }
   return 0;
+}
+
+
+QList<const Soprano::Backend*> Soprano::PluginManager::allBackends()
+{
+    QList<const Backend*> bl;
+    for ( QHash<QString, Backend*>::const_iterator it = d->backends.constBegin();
+          it != d->backends.constEnd(); ++it ) {
+        bl.append( it.value() );
+    }
+    return bl;
 }
 
 

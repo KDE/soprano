@@ -28,10 +28,14 @@
 
 namespace Soprano {
     /**
+     * \brief A FilterModel is a virtual model that wraps another Model.
+     * 
      * FilterModels can be stacked to provide filtering on each of
      * the Model's methods. A FilterModel has a parent model which
      * is the data base for this filter. The parent can be an actual
-     * Model or another FilterModel.
+     * StorageModel or another FilterModel.
+     *
+     * \author Sebastian Trueg <trueg@kde.org>
      */
     class SOPRANO_EXPORT FilterModel : public Model
     {

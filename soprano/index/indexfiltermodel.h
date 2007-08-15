@@ -32,8 +32,11 @@ namespace Soprano {
 	class CLuceneIndex;
 
 	/**
-	 * The IndexFilterModel provides a full text index around any Soprano Model.
+	 * \brief The IndexFilterModel provides a full text index around any Soprano Model.
+	 *
 	 * All statements with a literal object will be indexed.
+	 *
+	 * \author Sebastian Trueg <trueg@kde.org>
 	 */
 	class SOPRANO_EXPORT IndexFilterModel : public Soprano::FilterModel
 	{

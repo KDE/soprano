@@ -34,11 +34,15 @@ namespace Soprano {
 
     namespace Inference {
 	/**
+	 * \brief Smallest building block of an inference Rule.
+	 *
 	 * There are two types of NodePattern:
 	 * \li Simple nodes that wrap around an instance or Node
 	 *     and only match against that particular node.
 	 * \li Variable nodes that match against every Node and
 	 *     have a name.
+	 *
+	 * \author Sebastian Trueg <trueg@kde.org>
 	 */
 	class SOPRANO_EXPORT NodePattern
 	{
