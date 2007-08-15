@@ -35,15 +35,17 @@
 
 void InferenceModelTest::initTestCase()
 {
+//    Soprano::setUsedBackend( Soprano::discoverBackendByName( "sesame2" ) );
     m_model = Soprano::createModel();
     QVERIFY( m_model );
     m_infModel = new InferenceModel( m_model );
+    m_infModel->setOptimizedQueriesEnabled( false );
 
     // create a simple rule
     Rule rule;
-    rule.addPrecondition( StatementPattern( NodePattern( "x" ), NodePattern( Vocabulary::RDFS::SUBCLASSOF() ), NodePattern( "y" ) ) );
-    rule.addPrecondition( StatementPattern( NodePattern( "y" ), NodePattern( Vocabulary::RDFS::SUBCLASSOF() ), NodePattern( "z" ) ) );
-    rule.setEffect( StatementPattern( NodePattern( "x" ), NodePattern( Vocabulary::RDFS::SUBCLASSOF() ), NodePattern( "z" ) ) );
+    rule.addPrecondition( StatementPattern( NodePattern( "a" ), NodePattern( Vocabulary::RDFS::SUBCLASSOF() ), NodePattern( "b" ) ) );
+    rule.addPrecondition( StatementPattern( NodePattern( "b" ), NodePattern( Vocabulary::RDFS::SUBCLASSOF() ), NodePattern( "c" ) ) );
+    rule.setEffect( StatementPattern( NodePattern( "a" ), NodePattern( Vocabulary::RDFS::SUBCLASSOF() ), NodePattern( "c" ) ) );
 
     m_infModel->addRule( rule );
 }
@@ -64,18 +66,16 @@ void InferenceModelTest::init()
 
 void InferenceModelTest::testAddStatementSingle()
 {
-    Statement s1( QUrl( "test#A" ), Vocabulary::RDFS::SUBCLASSOF(), QUrl( "test#B" ) );
-    Statement s2( QUrl( "test#B" ), Vocabulary::RDFS::SUBCLASSOF(), QUrl( "test#C" ) );
+    Statement s1( QUrl( "http://soprano.sf.net/test#A" ), Vocabulary::RDFS::SUBCLASSOF(), QUrl( "http://soprano.sf.net/test#B" ) );
+    Statement s2( QUrl( "http://soprano.sf.net/test#B" ), Vocabulary::RDFS::SUBCLASSOF(), QUrl( "http://soprano.sf.net/test#C" ) );
 
-    Statement s3( QUrl( "test#A" ), Vocabulary::RDFS::SUBCLASSOF(), QUrl( "test#C" ) );
+    Statement s3( QUrl( "http://soprano.sf.net/test#A" ), Vocabulary::RDFS::SUBCLASSOF(), QUrl( "http://soprano.sf.net/test#C" ) );
 
     m_infModel->addStatement( s1 );
 
     // at this point nothing should be infered
-    StatementIterator it = m_model->listStatements();
-    QVERIFY( it.next() );
-    QCOMPARE( s1, *it );
-    QVERIFY( !it.next() );
+    QCOMPARE( 1, m_model->statementCount() );
+    QVERIFY( m_model->containsStatements( s1 ) );
 
     m_infModel->addStatement( s2 );
 
@@ -89,16 +89,16 @@ void InferenceModelTest::testAddStatementSingle()
 void InferenceModelTest::testAddStatementMulti()
 {
     // F -> E -> D -> C -> B -> A
-    Statement fe( QUrl( "test#F" ), Vocabulary::RDFS::SUBCLASSOF(), QUrl( "test#E" ) );
-    Statement ed( QUrl( "test#E" ), Vocabulary::RDFS::SUBCLASSOF(), QUrl( "test#D" ) );
-    Statement dc( QUrl( "test#D" ), Vocabulary::RDFS::SUBCLASSOF(), QUrl( "test#C" ) );
-    Statement cb( QUrl( "test#C" ), Vocabulary::RDFS::SUBCLASSOF(), QUrl( "test#B" ) );
-    Statement ba( QUrl( "test#B" ), Vocabulary::RDFS::SUBCLASSOF(), QUrl( "test#A" ) );
+    Statement fe( QUrl( "http://soprano.sf.net/test#F" ), Vocabulary::RDFS::SUBCLASSOF(), QUrl( "http://soprano.sf.net/test#E" ) );
+    Statement ed( QUrl( "http://soprano.sf.net/test#E" ), Vocabulary::RDFS::SUBCLASSOF(), QUrl( "http://soprano.sf.net/test#D" ) );
+    Statement dc( QUrl( "http://soprano.sf.net/test#D" ), Vocabulary::RDFS::SUBCLASSOF(), QUrl( "http://soprano.sf.net/test#C" ) );
+    Statement cb( QUrl( "http://soprano.sf.net/test#C" ), Vocabulary::RDFS::SUBCLASSOF(), QUrl( "http://soprano.sf.net/test#B" ) );
+    Statement ba( QUrl( "http://soprano.sf.net/test#B" ), Vocabulary::RDFS::SUBCLASSOF(), QUrl( "http://soprano.sf.net/test#A" ) );
 
     // X -> B
     // X -> A
-    Statement xb( QUrl( "test#X" ), Vocabulary::RDFS::SUBCLASSOF(), QUrl( "test#C" ) );
-    Statement xa( QUrl( "test#X" ), Vocabulary::RDFS::SUBCLASSOF(), QUrl( "test#A" ) );
+    Statement xb( QUrl( "http://soprano.sf.net/test#X" ), Vocabulary::RDFS::SUBCLASSOF(), QUrl( "http://soprano.sf.net/test#C" ) );
+    Statement xa( QUrl( "http://soprano.sf.net/test#X" ), Vocabulary::RDFS::SUBCLASSOF(), QUrl( "http://soprano.sf.net/test#A" ) );
 
     // we throw them all in adn check the inference afterwards
     m_infModel->addStatement( fe );
@@ -109,33 +109,35 @@ void InferenceModelTest::testAddStatementMulti()
     m_infModel->addStatement( xa );
     m_infModel->addStatement( xb );
 
-    m_infModel->print();
+//    m_infModel->print();
 
     // now check that we have all the inferred statements
-    QVERIFY( m_model->containsStatements( Statement( QUrl( "test#F" ), Vocabulary::RDFS::SUBCLASSOF(), QUrl( "test#A" ) ) ) );
-    QVERIFY( m_model->containsStatements( Statement( QUrl( "test#F" ), Vocabulary::RDFS::SUBCLASSOF(), QUrl( "test#B" ) ) ) );
-    QVERIFY( m_model->containsStatements( Statement( QUrl( "test#F" ), Vocabulary::RDFS::SUBCLASSOF(), QUrl( "test#C" ) ) ) );
-    QVERIFY( m_model->containsStatements( Statement( QUrl( "test#F" ), Vocabulary::RDFS::SUBCLASSOF(), QUrl( "test#D" ) ) ) );
+    QVERIFY( m_model->containsStatements( Statement( QUrl( "http://soprano.sf.net/test#F" ), Vocabulary::RDFS::SUBCLASSOF(), QUrl( "http://soprano.sf.net/test#A" ) ) ) );
+    QVERIFY( m_model->containsStatements( Statement( QUrl( "http://soprano.sf.net/test#F" ), Vocabulary::RDFS::SUBCLASSOF(), QUrl( "http://soprano.sf.net/test#B" ) ) ) );
+    QVERIFY( m_model->containsStatements( Statement( QUrl( "http://soprano.sf.net/test#F" ), Vocabulary::RDFS::SUBCLASSOF(), QUrl( "http://soprano.sf.net/test#C" ) ) ) );
+    QVERIFY( m_model->containsStatements( Statement( QUrl( "http://soprano.sf.net/test#F" ), Vocabulary::RDFS::SUBCLASSOF(), QUrl( "http://soprano.sf.net/test#D" ) ) ) );
 
-    QVERIFY( m_model->containsStatements( Statement( QUrl( "test#E" ), Vocabulary::RDFS::SUBCLASSOF(), QUrl( "test#A" ) ) ) );
-    QVERIFY( m_model->containsStatements( Statement( QUrl( "test#E" ), Vocabulary::RDFS::SUBCLASSOF(), QUrl( "test#B" ) ) ) );
-    QVERIFY( m_model->containsStatements( Statement( QUrl( "test#E" ), Vocabulary::RDFS::SUBCLASSOF(), QUrl( "test#C" ) ) ) );
+    QVERIFY( m_model->containsStatements( Statement( QUrl( "http://soprano.sf.net/test#E" ), Vocabulary::RDFS::SUBCLASSOF(), QUrl( "http://soprano.sf.net/test#A" ) ) ) );
+    QVERIFY( m_model->containsStatements( Statement( QUrl( "http://soprano.sf.net/test#E" ), Vocabulary::RDFS::SUBCLASSOF(), QUrl( "http://soprano.sf.net/test#B" ) ) ) );
+    QVERIFY( m_model->containsStatements( Statement( QUrl( "http://soprano.sf.net/test#E" ), Vocabulary::RDFS::SUBCLASSOF(), QUrl( "http://soprano.sf.net/test#C" ) ) ) );
 
-    QVERIFY( m_model->containsStatements( Statement( QUrl( "test#D" ), Vocabulary::RDFS::SUBCLASSOF(), QUrl( "test#A" ) ) ) );
-    QVERIFY( m_model->containsStatements( Statement( QUrl( "test#D" ), Vocabulary::RDFS::SUBCLASSOF(), QUrl( "test#B" ) ) ) );
+    QVERIFY( m_model->containsStatements( Statement( QUrl( "http://soprano.sf.net/test#D" ), Vocabulary::RDFS::SUBCLASSOF(), QUrl( "http://soprano.sf.net/test#A" ) ) ) );
+    QVERIFY( m_model->containsStatements( Statement( QUrl( "http://soprano.sf.net/test#D" ), Vocabulary::RDFS::SUBCLASSOF(), QUrl( "http://soprano.sf.net/test#B" ) ) ) );
 
-    QVERIFY( m_model->containsStatements( Statement( QUrl( "test#C" ), Vocabulary::RDFS::SUBCLASSOF(), QUrl( "test#A" ) ) ) );
+    QVERIFY( m_model->containsStatements( Statement( QUrl( "http://soprano.sf.net/test#C" ), Vocabulary::RDFS::SUBCLASSOF(), QUrl( "http://soprano.sf.net/test#A" ) ) ) );
 
-    QVERIFY( m_model->containsStatements( Statement( QUrl( "test#X" ), Vocabulary::RDFS::SUBCLASSOF(), QUrl( "test#B" ) ) ) );
+    QVERIFY( m_model->containsStatements( Statement( QUrl( "http://soprano.sf.net/test#X" ), Vocabulary::RDFS::SUBCLASSOF(), QUrl( "http://soprano.sf.net/test#B" ) ) ) );
 }
 
 
 void InferenceModelTest::testRemoveStatementsSingle()
 {
-    Statement s1( QUrl( "test#A" ), Vocabulary::RDFS::SUBCLASSOF(), QUrl( "test#B" ) );
-    Statement s2( QUrl( "test#B" ), Vocabulary::RDFS::SUBCLASSOF(), QUrl( "test#C" ) );
+    Statement s1( QUrl( "http://soprano.sf.net/test#A" ), Vocabulary::RDFS::SUBCLASSOF(), QUrl( "http://soprano.sf.net/test#B" ) );
+    Statement s2( QUrl( "http://soprano.sf.net/test#B" ), Vocabulary::RDFS::SUBCLASSOF(), QUrl( "http://soprano.sf.net/test#C" ) );
     m_infModel->addStatement( s1 );
     m_infModel->addStatement( s2 );
+
+    m_model->print();
 
     m_infModel->removeStatements( s1 );
 
@@ -150,11 +152,11 @@ void InferenceModelTest::testRemoveStatementsSingle()
 void InferenceModelTest::testRemoveStatementsMulti()
 {
     // F -> E -> D -> C -> B -> A
-    Statement fe( QUrl( "test#F" ), Vocabulary::RDFS::SUBCLASSOF(), QUrl( "test#E" ) );
-    Statement ed( QUrl( "test#E" ), Vocabulary::RDFS::SUBCLASSOF(), QUrl( "test#D" ) );
-    Statement dc( QUrl( "test#D" ), Vocabulary::RDFS::SUBCLASSOF(), QUrl( "test#C" ) );
-    Statement cb( QUrl( "test#C" ), Vocabulary::RDFS::SUBCLASSOF(), QUrl( "test#B" ) );
-    Statement ba( QUrl( "test#B" ), Vocabulary::RDFS::SUBCLASSOF(), QUrl( "test#A" ) );
+    Statement fe( QUrl( "http://soprano.sf.net/test#F" ), Vocabulary::RDFS::SUBCLASSOF(), QUrl( "http://soprano.sf.net/test#E" ) );
+    Statement ed( QUrl( "http://soprano.sf.net/test#E" ), Vocabulary::RDFS::SUBCLASSOF(), QUrl( "http://soprano.sf.net/test#D" ) );
+    Statement dc( QUrl( "http://soprano.sf.net/test#D" ), Vocabulary::RDFS::SUBCLASSOF(), QUrl( "http://soprano.sf.net/test#C" ) );
+    Statement cb( QUrl( "http://soprano.sf.net/test#C" ), Vocabulary::RDFS::SUBCLASSOF(), QUrl( "http://soprano.sf.net/test#B" ) );
+    Statement ba( QUrl( "http://soprano.sf.net/test#B" ), Vocabulary::RDFS::SUBCLASSOF(), QUrl( "http://soprano.sf.net/test#A" ) );
 
     // we throw them all in adn check the inference afterwards
     m_infModel->addStatement( fe );
@@ -171,30 +173,30 @@ void InferenceModelTest::testRemoveStatementsMulti()
 //    m_infModel->print();
 
     // now nothing should be based on A anymore, except for B
-    QVERIFY( !m_model->containsStatements( Statement( QUrl( "test#F" ), Vocabulary::RDFS::SUBCLASSOF(), QUrl( "test#A" ) ) ) );
-    QVERIFY( !m_model->containsStatements( Statement( QUrl( "test#F" ), Vocabulary::RDFS::SUBCLASSOF(), QUrl( "test#B" ) ) ) );
-    QVERIFY( m_model->containsStatements( Statement( QUrl( "test#F" ), Vocabulary::RDFS::SUBCLASSOF(), QUrl( "test#C" ) ) ) );
-    QVERIFY( m_model->containsStatements( Statement( QUrl( "test#F" ), Vocabulary::RDFS::SUBCLASSOF(), QUrl( "test#D" ) ) ) );
+    QVERIFY( !m_model->containsStatements( Statement( QUrl( "http://soprano.sf.net/test#F" ), Vocabulary::RDFS::SUBCLASSOF(), QUrl( "http://soprano.sf.net/test#A" ) ) ) );
+    QVERIFY( !m_model->containsStatements( Statement( QUrl( "http://soprano.sf.net/test#F" ), Vocabulary::RDFS::SUBCLASSOF(), QUrl( "http://soprano.sf.net/test#B" ) ) ) );
+    QVERIFY( m_model->containsStatements( Statement( QUrl( "http://soprano.sf.net/test#F" ), Vocabulary::RDFS::SUBCLASSOF(), QUrl( "http://soprano.sf.net/test#C" ) ) ) );
+    QVERIFY( m_model->containsStatements( Statement( QUrl( "http://soprano.sf.net/test#F" ), Vocabulary::RDFS::SUBCLASSOF(), QUrl( "http://soprano.sf.net/test#D" ) ) ) );
 
-    QVERIFY( !m_model->containsStatements( Statement( QUrl( "test#E" ), Vocabulary::RDFS::SUBCLASSOF(), QUrl( "test#A" ) ) ) );
-    QVERIFY( !m_model->containsStatements( Statement( QUrl( "test#E" ), Vocabulary::RDFS::SUBCLASSOF(), QUrl( "test#B" ) ) ) );
-    QVERIFY( m_model->containsStatements( Statement( QUrl( "test#E" ), Vocabulary::RDFS::SUBCLASSOF(), QUrl( "test#C" ) ) ) );
+    QVERIFY( !m_model->containsStatements( Statement( QUrl( "http://soprano.sf.net/test#E" ), Vocabulary::RDFS::SUBCLASSOF(), QUrl( "http://soprano.sf.net/test#A" ) ) ) );
+    QVERIFY( !m_model->containsStatements( Statement( QUrl( "http://soprano.sf.net/test#E" ), Vocabulary::RDFS::SUBCLASSOF(), QUrl( "http://soprano.sf.net/test#B" ) ) ) );
+    QVERIFY( m_model->containsStatements( Statement( QUrl( "http://soprano.sf.net/test#E" ), Vocabulary::RDFS::SUBCLASSOF(), QUrl( "http://soprano.sf.net/test#C" ) ) ) );
 
-    QVERIFY( !m_model->containsStatements( Statement( QUrl( "test#D" ), Vocabulary::RDFS::SUBCLASSOF(), QUrl( "test#A" ) ) ) );
-    QVERIFY( !m_model->containsStatements( Statement( QUrl( "test#D" ), Vocabulary::RDFS::SUBCLASSOF(), QUrl( "test#B" ) ) ) );
+    QVERIFY( !m_model->containsStatements( Statement( QUrl( "http://soprano.sf.net/test#D" ), Vocabulary::RDFS::SUBCLASSOF(), QUrl( "http://soprano.sf.net/test#A" ) ) ) );
+    QVERIFY( !m_model->containsStatements( Statement( QUrl( "http://soprano.sf.net/test#D" ), Vocabulary::RDFS::SUBCLASSOF(), QUrl( "http://soprano.sf.net/test#B" ) ) ) );
 }
 
 
 void InferenceModelTest::testPerformInference()
 {
-    Statement s1( QUrl( "test#A" ), Vocabulary::RDFS::SUBCLASSOF(), QUrl( "test#B" ) );
-    Statement s2( QUrl( "test#B" ), Vocabulary::RDFS::SUBCLASSOF(), QUrl( "test#C" ) );
+    Statement s1( QUrl( "http://soprano.sf.net/test#A" ), Vocabulary::RDFS::SUBCLASSOF(), QUrl( "http://soprano.sf.net/test#B" ) );
+    Statement s2( QUrl( "http://soprano.sf.net/test#B" ), Vocabulary::RDFS::SUBCLASSOF(), QUrl( "http://soprano.sf.net/test#C" ) );
     m_model->addStatement( s1 );
     m_model->addStatement( s2 );
 
     m_infModel->performInference();
 
-    Statement s3( QUrl( "test#A" ), Vocabulary::RDFS::SUBCLASSOF(), QUrl( "test#C" ) );
+    Statement s3( QUrl( "http://soprano.sf.net/test#A" ), Vocabulary::RDFS::SUBCLASSOF(), QUrl( "http://soprano.sf.net/test#C" ) );
     QVERIFY( m_model->containsStatements( s3 ) );
 }
 
@@ -202,16 +204,16 @@ void InferenceModelTest::testPerformInference()
 void InferenceModelTest::testPerformance()
 {
     // F -> E -> D -> C -> B -> A
-    Statement fe( QUrl( "test#F" ), Vocabulary::RDFS::SUBCLASSOF(), QUrl( "test#E" ) );
-    Statement ed( QUrl( "test#E" ), Vocabulary::RDFS::SUBCLASSOF(), QUrl( "test#D" ) );
-    Statement dc( QUrl( "test#D" ), Vocabulary::RDFS::SUBCLASSOF(), QUrl( "test#C" ) );
-    Statement cb( QUrl( "test#C" ), Vocabulary::RDFS::SUBCLASSOF(), QUrl( "test#B" ) );
-    Statement ba( QUrl( "test#B" ), Vocabulary::RDFS::SUBCLASSOF(), QUrl( "test#A" ) );
+    Statement fe( QUrl( "http://soprano.sf.net/test#F" ), Vocabulary::RDFS::SUBCLASSOF(), QUrl( "http://soprano.sf.net/test#E" ) );
+    Statement ed( QUrl( "http://soprano.sf.net/test#E" ), Vocabulary::RDFS::SUBCLASSOF(), QUrl( "http://soprano.sf.net/test#D" ) );
+    Statement dc( QUrl( "http://soprano.sf.net/test#D" ), Vocabulary::RDFS::SUBCLASSOF(), QUrl( "http://soprano.sf.net/test#C" ) );
+    Statement cb( QUrl( "http://soprano.sf.net/test#C" ), Vocabulary::RDFS::SUBCLASSOF(), QUrl( "http://soprano.sf.net/test#B" ) );
+    Statement ba( QUrl( "http://soprano.sf.net/test#B" ), Vocabulary::RDFS::SUBCLASSOF(), QUrl( "http://soprano.sf.net/test#A" ) );
 
     // X -> B
     // X -> A
-    Statement xb( QUrl( "test#X" ), Vocabulary::RDFS::SUBCLASSOF(), QUrl( "test#C" ) );
-    Statement xa( QUrl( "test#X" ), Vocabulary::RDFS::SUBCLASSOF(), QUrl( "test#A" ) );
+    Statement xb( QUrl( "http://soprano.sf.net/test#X" ), Vocabulary::RDFS::SUBCLASSOF(), QUrl( "http://soprano.sf.net/test#C" ) );
+    Statement xa( QUrl( "http://soprano.sf.net/test#X" ), Vocabulary::RDFS::SUBCLASSOF(), QUrl( "http://soprano.sf.net/test#A" ) );
 
     // we just do some performance comparision
     QTime timer;
@@ -298,8 +300,8 @@ void InferenceModelTest::testRuleParser()
 
 void InferenceModelTest::testClearInference()
 {
-    Statement s1( QUrl( "test#A" ), Vocabulary::RDFS::SUBCLASSOF(), QUrl( "test#B" ) );
-    Statement s2( QUrl( "test#B" ), Vocabulary::RDFS::SUBCLASSOF(), QUrl( "test#C" ) );
+    Statement s1( QUrl( "http://soprano.sf.net/test#A" ), Vocabulary::RDFS::SUBCLASSOF(), QUrl( "http://soprano.sf.net/test#B" ) );
+    Statement s2( QUrl( "http://soprano.sf.net/test#B" ), Vocabulary::RDFS::SUBCLASSOF(), QUrl( "http://soprano.sf.net/test#C" ) );
     m_infModel->addStatement( s1 );
     m_infModel->addStatement( s2 );
 

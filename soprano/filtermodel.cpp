@@ -23,6 +23,7 @@
 #include "statement.h"
 #include "queryresultiterator.h"
 #include "statementiterator.h"
+#include "nodeiterator.h"
 
 #include <QtCore/QList>
 
@@ -94,7 +95,7 @@ bool Soprano::FilterModel::isEmpty() const
 }
 
 
-QList<Soprano::Node> Soprano::FilterModel::listContexts() const
+Soprano::NodeIterator Soprano::FilterModel::listContexts() const
 {
     Q_ASSERT( d->parent );
     return d->parent->listContexts();

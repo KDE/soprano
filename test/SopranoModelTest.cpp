@@ -684,4 +684,37 @@ void SopranoModelTest::testContexts()
     QVERIFY( !m_model->containsStatements( s1_c3 ) );
 }
 
+
+void SopranoModelTest::testListContexts()
+{
+    // add some statements with contexts
+
+    QList<Statement> statements;
+    Node context1( QUrl("http://soprano.sf.net#list:resource1") );
+    Node context2( QUrl("http://soprano.sf.net#list:resource2") );
+    Node context3( QUrl("http://soprano.sf.net#list:resource3") );
+
+    for (int i=0; i<10; i++)
+    {
+        QUrl subject = "http://soprano.sf.net#subject" + QString::number(i);
+        QUrl predicate = "http://soprano.sf.net#predicate" + QString::number(i);
+        LiteralValue object = "Literal value" + QString::number(i);
+
+        statements.append( Statement( subject, predicate, object, context1 ) );
+        statements.append( Statement( subject, predicate, object, context2 ) );
+        statements.append( Statement( subject, predicate, object, context3 ) );
+    }
+
+    QVERIFY( m_model->addStatements( statements ) == ERROR_NONE );
+
+    NodeIterator it = m_model->listContexts();
+
+    QList<Node> allContexts = it.allNodes();
+    QCOMPARE( 3, allContexts.count() );
+
+    QVERIFY( allContexts.contains( context1 ) );
+    QVERIFY( allContexts.contains( context2 ) );
+    QVERIFY( allContexts.contains( context3 ) );
+}
+
 #include "SopranoModelTest.moc"

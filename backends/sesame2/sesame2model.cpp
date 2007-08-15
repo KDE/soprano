@@ -27,6 +27,7 @@
 #include "sesame2valuefactory.h"
 #include "sesame2iterator.h"
 #include "sesame2statementiteratorbackend.h"
+#include "sesame2nodeiteratorbackend.h"
 #include "sesame2queryresultiteratorbackend.h"
 #include "jniwrapper.h"
 
@@ -34,6 +35,7 @@
 #include <soprano/queryresultiterator.h>
 #include <soprano/statement.h>
 #include <soprano/query.h>
+#include <soprano/nodeiterator.h>
 
 #include <QtCore/QDebug>
 
@@ -70,24 +72,20 @@ Soprano::ErrorCode Soprano::Sesame2::Model::addStatement( const Statement &state
 }
 
 
-QList<Soprano::Node> Soprano::Sesame2::Model::listContexts() const
+Soprano::NodeIterator Soprano::Sesame2::Model::listContexts() const
 {
     QList<Soprano::Node> contexts;
 
     jobject ids = m_repository->repositoryConnection()->getContextIDs();
-    if ( ids ) {
-        Iterator it( ids );
-        while ( it.hasNext() ) {
-            jobject x = it.next();
-            Q_ASSERT( x );
-            contexts.append( convertNode( x ) );
-        }
+
+    if ( JNIWrapper::instance()->exceptionOccured() ) {
+        qDebug() << "(Soprano::Sesame2::Model::listContexts) failed.";
+        JNIWrapper::instance()->debugException();
+        return NodeIterator();
     }
     else {
-        JNIWrapper::instance()->debugException();
+        return new NodeIteratorBackend( ids );
     }
-
-    return contexts;
 }
 
 

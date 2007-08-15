@@ -38,7 +38,7 @@ namespace Soprano {
 	    ~Model();
 
 	    ErrorCode addStatement( const Statement &statement );
-	    QList<Node> listContexts() const;
+	    NodeIterator listContexts() const;
 	    QueryResultIterator executeQuery( const Query &query ) const;
 	    StatementIterator listStatements( const Statement &partial ) const;
 	    ErrorCode removeStatements( const Statement &statement );

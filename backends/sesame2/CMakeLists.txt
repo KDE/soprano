@@ -30,6 +30,7 @@ if(JAVA_INCLUDE_PATH)
     sesame2model.cpp
     sesame2utils.cpp
     sesame2statementiteratorbackend.cpp
+    sesame2nodeiteratorbackend.cpp
     sesame2queryresultiteratorbackend.cpp
     sesame2bindingset.cpp
     )

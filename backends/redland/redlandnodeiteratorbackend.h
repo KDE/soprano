@@ -1,4 +1,4 @@
-/*
+/* 
  * This file is part of Soprano Project.
  *
  * Copyright (C) 2007 Sebastian Trueg <trueg@kde.org>
@@ -19,46 +19,43 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef _SOPRANO_THREE_STORE_MODEL_H_
-#define _SOPRANO_THREE_STORE_MODEL_H_
+#ifndef SOPRANO_BACKEND_REDLAND_NODE_ITERATOR_H
+#define SOPRANO_BACKEND_REDLAND_NODE_ITERATOR_H
 
-#include "storagemodel.h"
-#include "node.h"
-#include "statement.h"
+#include "nodeiteratorbackend.h"
 
-extern "C" {
-#include <3store3/tstore.h>
-}
+#include <redland.h>
 
+#include <QtCore/QSharedDataPointer>
 
-namespace Soprano {
-    namespace ThreeStore {
+namespace Soprano 
+{
+    class Node;
 
-	class Model : public Soprano::StorageModel
+    namespace Redland {
+
+	class RedlandModel;
+
+	class NodeIteratorBackend: public Soprano::NodeIteratorBackend
 	{
 	public:
-	    Model( ts_connection* conn );
-	    ~Model();
+	    explicit NodeIteratorBackend( const RedlandModel* model, librdf_iterator *it );
 
-	    ErrorCode addStatement( const Statement &statement );
+	    ~NodeIteratorBackend();
 
-	    NodeIterator listContexts() const;
+	    bool next();
 
-	    bool containsStatements( const Statement &statement ) const;
+	    Soprano::Node current() const;
 
-	    Soprano::QueryResultIterator executeQuery( const Query &query ) const;
-
-	    Soprano::StatementIterator listStatements( const Statement &partial ) const;
-
-	    ErrorCode removeStatements( const Statement &statement );
-
-	    int statementCount() const;
+	    void close() const;
 
 	private:
-	    class Private;
-	    Private *d;
+	    mutable const RedlandModel* m_model;
+	    mutable librdf_iterator* m_iterator;
+	    bool m_initialized;
 	};
     }
 }
 
-#endif
+#endif // SOPRANO_BACKEND_REDLAND_NODE_ITERATOR_H
+

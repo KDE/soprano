@@ -64,7 +64,7 @@ namespace Soprano {
 	 * Default implementation simple pipes the call through to the parent model.
 	 * \sa Model::listContexts()
 	 */
-	virtual QList<Node> listContexts() const;
+	virtual NodeIterator listContexts() const;
 
 	/**
 	 * Default implementation simple pipes the call through to the parent model.

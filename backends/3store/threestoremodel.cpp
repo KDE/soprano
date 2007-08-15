@@ -22,10 +22,11 @@
 #include "threestoremodel.h"
 #include "threestorequeryresult.h"
 
-#include "queryresultiterator.h"
-#include "statementiterator.h"
-#include "query.h"
-#include "queryresultstatementiterator.h"
+#include <soprano/queryresultiterator.h>
+#include <soprano/statementiterator.h>
+#include <soprano/query.h>
+#include <soprano/queryresultstatementiterator.h>
+#include <soprano/nodeiterator.h>
 
 #include <QtCore/QDebug>
 
@@ -132,15 +133,15 @@ Soprano::ErrorCode Soprano::ThreeStore::Model::addStatement( const Statement &st
 }
 
 
-QList<Soprano::Node> Soprano::ThreeStore::Model::listContexts() const
+Soprano::NodeIterator Soprano::ThreeStore::Model::listContexts() const
 {
     // FIXME: maybe use ts_mysql_query for this or use "select ?g where { graph ?g }" (although I dont think the latter is supported by rasqal)
-    QueryResultIterator r = executeQuery( Query( "select ?g where { graph ?g }", Query::SPARQL ) );
-    QList<Soprano::Node> ng;
-    while ( r.next() ) {
-        ng.append( r.binding( 0 ) );
-    }
-    return ng;
+//     QueryResultIterator r = executeQuery( Query( "select ?g where { graph ?g }", Query::SPARQL ) );
+//     QList<Soprano::Node> ng;
+//     while ( r.next() ) {
+//         ng.append( r.binding( 0 ) );
+//     }
+//     return ng;
 }
 
 

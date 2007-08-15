@@ -44,6 +44,7 @@ namespace Soprano
 
 	class RedlandStatementIterator;
 	class RedlandQueryResult;
+	class NodeIteratorBackend;
 
 	class RedlandModel: public Soprano::StorageModel
 	    {
@@ -58,7 +59,7 @@ namespace Soprano
 
 		ErrorCode addStatement( const Statement &statement );
 
-		virtual QList<Node> listContexts() const;
+		virtual NodeIterator listContexts() const;
 
 		bool containsStatements( const Statement &statement ) const;
 
@@ -79,12 +80,14 @@ namespace Soprano
 		Private *d;
 
 		void removeIterator( RedlandStatementIterator* it ) const;
+		void removeIterator( NodeIteratorBackend* it ) const;
 		void removeQueryResult( RedlandQueryResult* r ) const;
 
 		ErrorCode removeStatement( const Statement& );
 
 		friend class RedlandStatementIterator;
 		friend class RedlandQueryResult;
+		friend class NodeIteratorBackend;
 	    }; 
 
     }

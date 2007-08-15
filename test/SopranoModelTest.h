@@ -57,6 +57,8 @@ private Q_SLOTS:
   void testBooleanQuery();
   void testQuery();
 
+  void testListContexts();
+
   void testCloseStatementIteratorOnModelDelete();
 
   void testContexts();

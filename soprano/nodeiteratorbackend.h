@@ -1,4 +1,4 @@
-/*
+/* 
  * This file is part of Soprano Project.
  *
  * Copyright (C) 2007 Sebastian Trueg <trueg@kde.org>
@@ -19,46 +19,43 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef _SOPRANO_THREE_STORE_MODEL_H_
-#define _SOPRANO_THREE_STORE_MODEL_H_
+#ifndef SOPRANO_NODE_ITERATOR_BACKEND_H
+#define SOPRANO_NODE_ITERATOR_BACKEND_H
 
-#include "storagemodel.h"
-#include "node.h"
-#include "statement.h"
-
-extern "C" {
-#include <3store3/tstore.h>
-}
-
+#include <soprano/soprano_export.h>
 
 namespace Soprano {
-    namespace ThreeStore {
 
-	class Model : public Soprano::StorageModel
-	{
-	public:
-	    Model( ts_connection* conn );
-	    ~Model();
+    class Node;
 
-	    ErrorCode addStatement( const Statement &statement );
+    /**
+     * \brief The actual work in a NodeIterator instance is done by a
+     * NodeIteratorBackend.
+     *
+     * Each Backend implementation has to have its own version of NodeIteratorBackend.
+     *
+     * \author Sebastian Trueg <trueg@kde.org>
+     */
+    class SOPRANO_EXPORT NodeIteratorBackend
+    {
+    public:
+	virtual ~NodeIteratorBackend();
 
-	    NodeIterator listContexts() const;
+	/**
+	 * Advance to the next Node in the iterator.
+	 *\return true if there is another Node and false if the end has been reached.
+	 */
+	virtual bool next() = 0;
 
-	    bool containsStatements( const Statement &statement ) const;
+	/**
+	 *\return the current Node
+	 */
+	virtual Node current() const = 0;
 
-	    Soprano::QueryResultIterator executeQuery( const Query &query ) const;
+    protected:
+	NodeIteratorBackend();
+    };
 
-	    Soprano::StatementIterator listStatements( const Statement &partial ) const;
-
-	    ErrorCode removeStatements( const Statement &statement );
-
-	    int statementCount() const;
-
-	private:
-	    class Private;
-	    Private *d;
-	};
-    }
 }
 
 #endif

@@ -19,46 +19,13 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef _SOPRANO_THREE_STORE_MODEL_H_
-#define _SOPRANO_THREE_STORE_MODEL_H_
+#include "nodeiteratorbackend.h"
 
-#include "storagemodel.h"
-#include "node.h"
-#include "statement.h"
-
-extern "C" {
-#include <3store3/tstore.h>
+Soprano::NodeIteratorBackend::NodeIteratorBackend()
+{
 }
 
 
-namespace Soprano {
-    namespace ThreeStore {
-
-	class Model : public Soprano::StorageModel
-	{
-	public:
-	    Model( ts_connection* conn );
-	    ~Model();
-
-	    ErrorCode addStatement( const Statement &statement );
-
-	    NodeIterator listContexts() const;
-
-	    bool containsStatements( const Statement &statement ) const;
-
-	    Soprano::QueryResultIterator executeQuery( const Query &query ) const;
-
-	    Soprano::StatementIterator listStatements( const Statement &partial ) const;
-
-	    ErrorCode removeStatements( const Statement &statement );
-
-	    int statementCount() const;
-
-	private:
-	    class Private;
-	    Private *d;
-	};
-    }
+Soprano::NodeIteratorBackend::~NodeIteratorBackend()
+{
 }
-
-#endif

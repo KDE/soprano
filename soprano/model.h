@@ -39,6 +39,7 @@ namespace Soprano
     class QueryResultIterator;
     class Statement;
     class StatementIterator;
+    class NodeIterator;
 
     /**
      * \brief A Model is the central class in %Soprano. It is a queryable
@@ -101,7 +102,7 @@ namespace Soprano
 	/**
 	 * \return A List of Context Nodes.
 	 */
-	virtual QList<Node> listContexts() const = 0;
+	virtual NodeIterator listContexts() const = 0;
 
 	/**
 	 * The default implementation is simply based on listStatements( const Statement& ).

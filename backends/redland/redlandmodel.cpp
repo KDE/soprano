@@ -22,13 +22,16 @@
 
 #include "redlandmodel.h"
 
-#include "query.h"
-#include "queryresultiterator.h"
-#include "statementiterator.h"
+#include <soprano/query.h>
+#include <soprano/queryresultiterator.h>
+#include <soprano/statementiterator.h>
+#include <soprano/nodeiterator.h>
+
 #include "redlandworld.h"
 #include "redlandutil.h"
 #include "redlandqueryresult.h"
 #include "redlandstatementiterator.h"
+#include "redlandnodeiteratorbackend.h"
 
 #include <QtCore/QReadWriteLock>
 #include <QtCore/QReadLocker>
@@ -60,6 +63,7 @@ public:
     QReadWriteLock readWriteLock;
 
     QList<RedlandStatementIterator*> iterators;
+    QList<Redland::NodeIteratorBackend*> nodeIterators;
     QList<RedlandQueryResult*> results;
 };
 
@@ -79,6 +83,10 @@ Soprano::Redland::RedlandModel::~RedlandModel()
 {
     for ( QList<RedlandStatementIterator*>::iterator it = d->iterators.begin();
           it != d->iterators.end(); ++it ) {
+        ( *it )->close();
+    }
+    for ( QList<Redland::NodeIteratorBackend*>::iterator it = d->nodeIterators.begin();
+          it != d->nodeIterators.end(); ++it ) {
         ( *it )->close();
     }
     for ( QList<RedlandQueryResult*>::iterator it = d->results.begin();
@@ -137,26 +145,20 @@ Soprano::ErrorCode Soprano::Redland::RedlandModel::addStatement( const Statement
 }
 
 
-QList<Soprano::Node> Soprano::Redland::RedlandModel::listContexts() const
+Soprano::NodeIterator Soprano::Redland::RedlandModel::listContexts() const
 {
-    QList<Node> contexts;
-
     QReadLocker lock( &d->readWriteLock );
 
     librdf_iterator *iter = librdf_model_get_contexts( d->model );
-    if (!iter)
-    {
-        return contexts;
+    if (!iter) {
+        return 0;
     }
 
-    while ( librdf_iterator_end( iter ) == 0 )
-    {
-        librdf_node *ctx = (librdf_node *)librdf_iterator_get_context( iter );
-        contexts.append( Util::createNode( ctx ) );
-        librdf_iterator_next( iter );
-    }
+    NodeIteratorBackend* it = new NodeIteratorBackend( this, iter );
 
-    return contexts;
+    d->nodeIterators.append( it );
+
+    return it;
 }
 
 bool Soprano::Redland::RedlandModel::containsStatements( const Statement &statement ) const
@@ -378,6 +380,12 @@ Soprano::ErrorCode Soprano::Redland::RedlandModel::print() const
 void Soprano::Redland::RedlandModel::removeIterator( RedlandStatementIterator* it ) const
 {
     d->iterators.removeAll( it );
+}
+
+
+void Soprano::Redland::RedlandModel::removeIterator( Redland::NodeIteratorBackend* it ) const
+{
+    d->nodeIterators.removeAll( it );
 }
 
 

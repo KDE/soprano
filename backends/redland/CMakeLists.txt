@@ -30,6 +30,7 @@ set(redland_backend_SRC
   redlandparser.h
   redlandbackend.cpp
   redlandbackend.h
+  redlandnodeiteratorbackend.cpp
 )
 
 qt4_automoc(${redland_backend_SRC})
