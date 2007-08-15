@@ -3,13 +3,31 @@
  *
  * Soprano is a QT-based pluggable framework for RDF storage and parsing.
  *
- * The central class in Soprano is Soprano::Model which represents an RDF graph.
- * Soprano::Model instances are created by implementations of the Soprano::Backend
- * interface.
+ * The central class in Soprano is Soprano::Model which represents an RDF repository.
+ * Model provides methods to add, remove, and list statements and to query the repository.
  *
- * The easiest way to use Soprano is through the functions Soprano::createModel and
- * Soprano::createParser.
+ * The actual work is done by storage plugins (Soprano::Backend).
  *
+ * Model instances are mostly created by the plugin implementations through the
+ * Soprano::Backend::createModel() methods. In the most simple case one does not need to bother
+ * with Soprano::Backend though as the basic methods are duplicated in the Soprano
+ * namespace. Thus, to create a simple memory model using the default %Soprano backend:
+ *
+ * \code
+ * Soprano::Model m = Soprano::createModel();
+ * \endcode
+ *
+ * Finer grained control can be achieved by using the Backend directly:
+ *
+ * \code
+ * Soprano::Backend* backend = Soprano::discoverBackendByName( "redland" );
+ * Soprano::Model* model = backend->createModel();
+ * \endcode
+ *
+ * %Soprano makes use of contexts, i.e. named graphs. Thus, statements as represented by
+ * Soprano::Statement are actually RDF quadruples.
+ *
+ * For further details on Soprano::Model usage see the class and method documentation.
  */
 
 // DOXYGEN_VERSION=4.0
