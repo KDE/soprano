@@ -41,13 +41,14 @@ namespace Soprano
             Variable( const QString &name );
             Variable( const Variable &other );
 
-            const QString name() const;
+            QString name() const;
 
         private:
             class Private;
             QSharedDataPointer<Private> d;
         };
 
+	// why not inherit Varianble from RTerm?
         class RTerm {
         public:
             RTerm( const Soprano::Node &node );
@@ -56,8 +57,8 @@ namespace Soprano
  
             bool isBinding() const;
 
-            const Soprano::Node node() const;
-            const Variable binding() const;
+            Soprano::Node node() const;
+            Variable binding() const;
 
         private:
             class Private;
@@ -116,6 +117,8 @@ namespace Soprano
 
         // An expression that return a xsd:boolean
         class BooleanExpression: public Expression {
+	    // how about:
+	    // bool evaluate() const;
         };
 
         // An expression that return a xsd:integer, xsd:decimal, xsd:float, and xsd:double
@@ -163,6 +166,9 @@ namespace Soprano
             RTerm *m_rterm;
         };
 
+	// why does a this expression which is derived from NumericalExpression have another
+        // NumericalExpression as parameter? Shouldn't the Numerical classes also be expressions
+	// of some kind so they can be nested here?
         class UnaryNumericalExpression: public NumericalExpression {
         public:
             UnaryNumericalExpression( NumericalExpression *expression );
@@ -183,6 +189,7 @@ namespace Soprano
             void accept( ExpressionVisitor *visitor );
         };
 
+	// what does unary "+" do?
         class UnaryPlus: public UnaryNumericalExpression {
         public:
             UnaryPlus( NumericalExpression *expression );
@@ -697,7 +704,8 @@ namespace Soprano
 
         // TODO: Implement this
         class GraphPattern {
-            
+
+	    // why not implement this as expressions?
             enum Operator {
                 BASIC = 0, 
                 OPTIONAL,
