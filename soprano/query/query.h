@@ -762,6 +762,7 @@ namespace Soprano
         public:
             // Query types
             enum QueryType {
+		INVALID_QUERY,
                 GRAPH_QUERY,
                 SELECT_QUERY,
                 BOOLEAN_QUERY
@@ -776,6 +777,8 @@ namespace Soprano
             ~Query();
         
             Query& operator=( const Query& );
+
+	    bool isValid() const;
         
             void addPrefix( const Prefix &prefix );
             QList<Prefix> prefixes();
@@ -793,8 +796,18 @@ namespace Soprano
             class Private;
             QSharedDataPointer<Private> d;
         };
-        
+
+	enum QueryLanguage {
+	    QUERY_LANGUAGE_NONE = 0x0,
+	    QUERY_LANGUAGE_SPARQL = 0x1,
+	    QUERY_LANGUAGE_RDQL = 0x2,
+	    QUERY_LANGUAGE_SERQL = 0x4,
+	    QUERY_LANGUAGE_USER = 0x8  //<!-- The user type can be used to introduce unknown query lanaguages by name
+	};
+	Q_DECLARE_FLAGS( QueryLanguages, QueryLanguage )
     };
 };
+
+Q_DECLARE_OPERATORS_FOR_FLAGS(Soprano::Query::QueryLanguages)
 
 #endif // SOPRANO_QUERY_API_H

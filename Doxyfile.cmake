@@ -86,6 +86,7 @@ WARN_LOGFILE           =
 INPUT                  = ${soprano_SOURCE_DIR}/soprano \
                          ${soprano_SOURCE_DIR}/Mainpage.dox \
                          ${soprano_SOURCE_DIR}/soprano/vocabulary \
+                         ${soprano_SOURCE_DIR}/soprano/query \
                          ${soprano_SOURCE_DIR}/soprano/inference \
                          ${soprano_SOURCE_DIR}/soprano/index/indexfiltermodel.h \
                          ${soprano_SOURCE_DIR}/soprano/index/cluceneindex.h

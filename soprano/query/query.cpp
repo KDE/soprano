@@ -177,7 +177,7 @@ int Soprano::Query::Numerical::integerValue()
 class Soprano::Query::Node::Private : public QSharedData {
 public:
     Private() {}
-    
+
     Soprano::Node node;
 };
 
@@ -223,27 +223,27 @@ Soprano::Query::Expression::~Expression()
 }
 
 Soprano::Query::BooleanExpression::BooleanExpression()
-{       
-}       
-            
+{
+}
+
 Soprano::Query::BooleanExpression::~BooleanExpression()
-{       
+{
 }
 
 Soprano::Query::NumericalExpression::NumericalExpression()
-{       
-}       
-            
+{
+}
+
 Soprano::Query::NumericalExpression::~NumericalExpression()
-{       
+{
 }
 
 Soprano::Query::StringExpression::StringExpression()
-{       
-}       
-            
+{
+}
+
 Soprano::Query::StringExpression::~StringExpression()
-{       
+{
 }
 
 ////////////////////////////////////////////////////////////////////////
@@ -993,22 +993,22 @@ const QUrl Soprano::Query::Prefix::uri() const
 class Soprano::Query::GraphPattern::Private: public QSharedData
 {
 public:
-    Private() 
+    Private()
       : subject( 0 ),
         predicate( 0 ),
         object( 0 ),
         context( 0 ),
         optional( false )
     {};
-        
-    ~Private() 
+
+    ~Private()
     {
         delete subject;
         delete predicate;
         delete object;
         delete context;
     }
-    
+
     RTerm *subject;
     RTerm *predicate;
     RTerm *object;
@@ -1083,7 +1083,7 @@ const Soprano::Query::RTerm *Soprano::Query::GraphPattern::object() const
 {
    return d->object;
 }
-            
+
 void Soprano::Query::GraphPattern::setContext( RTerm *context )
 {
     delete d->context;
@@ -1106,9 +1106,9 @@ public:
     ~Private() {
         delete condition;
     }
-    
+
     BooleanExpression *condition;
-    
+
     QList<Prefix> prefixes;
     QueryTerms queryTerms;
     QueryType type;
@@ -1176,6 +1176,12 @@ Soprano::Query::QueryTerms Soprano::Query::Query::terms() const
     d->queryTerms;
 }
 
+bool Soprano::Query::Query::isValid() const
+{
+    return type() == INVALID_QUERY;
+}
+
+
 //
 // Soprano::Query::QueryTerms
 //
@@ -1184,14 +1190,14 @@ class Soprano::Query::QueryTerms::Private : public QSharedData
 {
 public:
     Private() {}
-    
+
     ~Private() {
        Q_FOREACH( RTerm* r, rterms ) {
           delete r;
        }
     }
-    
-    QList<RTerm *> rterms; 
+
+    QList<RTerm *> rterms;
 };
 
 Soprano::Query::QueryTerms::QueryTerms()
@@ -1203,16 +1209,16 @@ Soprano::Query::QueryTerms::QueryTerms( const QueryTerms& other )
 {
     d = other.d;
 }
-        
+
 Soprano::Query::QueryTerms::~QueryTerms()
 {
 }
-            
+
 void Soprano::Query::QueryTerms::addQueryTerm( RTerm *rterm )
 {
    d->rterms.append( rterm );
 }
-        
+
 QList<const Soprano::Query::RTerm*> Soprano::Query::QueryTerms::terms() const
 {
     QList<const RTerm*> l;
