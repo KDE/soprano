@@ -56,8 +56,8 @@ namespace Soprano
     SOPRANO_EXPORT QString serializationMimeType( RdfSerialization serialization );
 
     /**
-     * Parse a mimetype and match it to the RdfSerialization enum.
-     * \return the RdfSerialization type that matches mimetype or SERIALIZATION_UNKNOWN if the mimetype 
+     * Parse a mimetype and match it to the Soprano::RdfSerialization enum.
+     * \return the Soprano::RdfSerialization type that matches mimetype or SERIALIZATION_UNKNOWN if the mimetype 
      * could not be parsed.
      */
     SOPRANO_EXPORT RdfSerialization mimeTypeToSerialization( const QString& mimetype );
@@ -98,16 +98,16 @@ namespace Soprano
 
 	/**
 	 * The serialiazation types supported by this parser.
-	 * \return A combination of RdfSerialization types. If
-	 * the list contains SERIALIZATION_USER the parser 
+	 * \return A combination of Soprano::RdfSerialization types. If
+	 * the list contains Soprano::SERIALIZATION_USER the parser 
 	 * supports additional RDF serialiazations not
 	 * officially supported by %Soprano.
 	 */
 	virtual RdfSerializations supportedSerializations() const = 0;
 
 	/**
-	 * A parser can support additional RDF serializations that are not defined in RdfSerialization.
-	 * In that case supportedSerializations() has to include SERIALIZATION_USER.
+	 * A parser can support additional RDF serializations that are not defined in Soprano::RdfSerialization.
+	 * In that case supportedSerializations() has to include Soprano::SERIALIZATION_USER.
 	 *
 	 * The default implementation returns an empty list.
 	 *
@@ -116,10 +116,17 @@ namespace Soprano
 	virtual QStringList supportedUserSerializations() const;
 
 	/**
+	 * Check if a plugin supports a specific serialization.
+	 *
+	 * \param s The requested serialization.
+	 * \param userSerialization If serialization is set to Soprano::SERIALIZATION_USER this parameter specifies the
+	 *       requested serialization. It allows the extension of the %Soprano Parser interface with new
+	 *       RDF serializations that are not officially supported by %Soprano.
+	 *
 	 * \return \p true if the parser is able to parse RDF data encoded
 	 * in serialization s, \p false otherwise.
 	 */
-	bool supportsSerialization( RdfSerialization s ) const;
+	bool supportsSerialization( RdfSerialization s, const QString& userSerialization = QString() ) const;
 
 	/**
 	 * Parse an RDF model which has been serialized in a file,
@@ -131,7 +138,7 @@ namespace Soprano
 	 * \param filename The name (path) of the file to parse
 	 * \param baseUri The base URI to be used for relative references.
 	 * \param serialization The serialization used in the file.
-	 * \param userSerialization If serialization is set to SERIALIZATION_USER this parameter specifies the
+	 * \param userSerialization If serialization is set to Soprano::SERIALIZATION_USER this parameter specifies the
 	 *       serialization to use. It allows the extension of the %Soprano Parser interface with new
 	 *       RDF serializations that are not officially supported by %Soprano.
 	 *
@@ -148,7 +155,7 @@ namespace Soprano
 	 * \param data The serialized RDF string.
 	 * \param baseUri The base URI to be used for relative references.
 	 * \param serialization The serialization used for the string data.
-	 * \param userSerialization If serialization is set to SERIALIZATION_USER this parameter specifies the
+	 * \param userSerialization If serialization is set to Soprano::SERIALIZATION_USER this parameter specifies the
 	 *       serialization to use. It allows the extension of the %Soprano Parser interface with new
 	 *       RDF serializations that are not officially supported by %Soprano.
 	 *
@@ -163,7 +170,7 @@ namespace Soprano
 	 * \param stream The text stream to read the serialized RDF data from.
 	 * \param baseUri The base URI to be used for relative references.
 	 * \param serialization The serialization used for the string data from the stream.
-	 * \param userSerialization If serialization is set to SERIALIZATION_USER this parameter specifies the
+	 * \param userSerialization If serialization is set to Soprano::SERIALIZATION_USER this parameter specifies the
 	 *       serialization to use. It allows the extension of the %Soprano Parser interface with new
 	 *       RDF serializations that are not officially supported by %Soprano.
 	 *
@@ -177,7 +184,7 @@ namespace Soprano
 	 * \param it An iterator containing the statements to be serialized.
 	 * \param stream The stream the serialized data should be written to.
 	 * \param serialization The encoding to be used.
-	 * \param userSerialization If serialization is set to SERIALIZATION_USER this parameter specifies the
+	 * \param userSerialization If serialization is set to Soprano::SERIALIZATION_USER this parameter specifies the
 	 *       serialization to use. It allows the extension of the %Soprano Parser interface with new
 	 *       RDF serializations that are not officially supported by %Soprano.
 	 *

@@ -150,7 +150,7 @@ bool Soprano::ThreeStore::Model::containsStatements( const Statement &statement 
     // our listStatements does not support fully defined statements
     if ( statement.isValid() ) {
         // FIXME: I am not sure if this actually works. In redland it does not. But then again the redland ask query is completely buggy
-//        return executeQuery( Query( QString( "ask { %1 }" ).arg( statementToConstructGraphPattern( statement ) ), Query::SPARQL ) ).next();
+//        return executeQuery( QueryLegacy( QString( "ask { %1 }" ).arg( statementToConstructGraphPattern( statement ) ), QueryLegacy::SPARQL ) ).next();
         Statement dummy( statement.subject(), statement.predicate(), Node() );
         StatementIterator it = listStatements( dummy );
         while ( it.next() ) {
@@ -166,13 +166,13 @@ bool Soprano::ThreeStore::Model::containsStatements( const Statement &statement 
 }
 
 
-Soprano::QueryResultIterator Soprano::ThreeStore::Model::executeQuery( const Query &query ) const
+Soprano::QueryResultIterator Soprano::ThreeStore::Model::executeQuery( const QueryLegacy &query ) const
 {
     qDebug() << "(Soprano::ThreeStore::Model) executing query: " << query.query();
 
     // FIXME: should we use another base URI?
     ts_query* q = ts_query_prepare( d->connection,
-                                    Query::queryTypeToString( query.type() ).toUtf8().data(),
+                                    QueryLegacy::queryTypeToString( query.type() ).toUtf8().data(),
                                     query.query().toUtf8().data(),
                                     "3store:default#");
 
@@ -196,7 +196,7 @@ Soprano::StatementIterator Soprano::ThreeStore::Model::listStatements( const Sta
         query += QString( "%2 . }" ).arg( statementToConstructGraphPattern( partial ) );
     }
 
-    QueryResultIterator r = executeQuery( Query( query, Query::SPARQL ) );
+    QueryResultIterator r = executeQuery( QueryLegacy( query, QueryLegacy::SPARQL ) );
 
     return Soprano::QueryResultStatementIterator( r );
 }

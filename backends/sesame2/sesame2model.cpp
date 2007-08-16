@@ -89,9 +89,9 @@ Soprano::NodeIterator Soprano::Sesame2::Model::listContexts() const
 }
 
 
-Soprano::QueryResultIterator Soprano::Sesame2::Model::executeQuery( const Query &query ) const
+Soprano::QueryResultIterator Soprano::Sesame2::Model::executeQuery( const QueryLegacy &query ) const
 {
-    if ( query.type() != Soprano::Query::SPARQL ) {
+    if ( query.type() != Soprano::QueryLegacy::SPARQL ) {
         return QueryResultIterator();
     }
 

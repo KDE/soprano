@@ -39,7 +39,7 @@ namespace Soprano {
 
 	    ErrorCode addStatement( const Statement &statement );
 	    NodeIterator listContexts() const;
-	    QueryResultIterator executeQuery( const Query &query ) const;
+	    QueryResultIterator executeQuery( const QueryLegacy &query ) const;
 	    StatementIterator listStatements( const Statement &partial ) const;
 	    ErrorCode removeStatements( const Statement &statement );
 	    int statementCount() const;

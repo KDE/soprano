@@ -92,13 +92,13 @@ Soprano::Statement Soprano::Redland::Util::createStatement( librdf_statement *st
   return Soprano::Statement( createNode( subject), createNode( predicate), createNode( object ) );
 }
 
-const char *Soprano::Redland::Util::queryType( const Query &query )
+const char *Soprano::Redland::Util::queryType( const QueryLegacy &query )
 {
-  if ( query.type() == Query::RDQL )
+  if ( query.type() == QueryLegacy::RDQL )
   {
     return "rdql";
   }
-  else if (query.type() == Query::SPARQL )
+  else if (query.type() == QueryLegacy::SPARQL )
   {
     return "sparql";
   }

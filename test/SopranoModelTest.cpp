@@ -400,7 +400,7 @@ void SopranoModelTest::testRemoveAllStatement()
 
 void SopranoModelTest::testGraphQuery()
 {
-    Query query("CONSTRUCT { ?s ?p ?o } WHERE { ?s ?p ?o . }", Query::SPARQL);
+    QueryLegacy query("CONSTRUCT { ?s ?p ?o } WHERE { ?s ?p ?o . }", QueryLegacy::SPARQL);
 
     QueryResultIterator rs = m_model->executeQuery( query );
     QVERIFY( rs.isGraph() );
@@ -417,7 +417,7 @@ void SopranoModelTest::testGraphQuery()
 
 void SopranoModelTest::testBooleanQuery()
 {
-    Query query("ASK where {?a ?b ?c}", Query::SPARQL);
+    QueryLegacy query("ASK where {?a ?b ?c}", QueryLegacy::SPARQL);
 
     QueryResultIterator res = m_model->executeQuery( query );
     QVERIFY( !res.next() );
@@ -434,7 +434,7 @@ void SopranoModelTest::testBooleanQuery()
 void SopranoModelTest::testQuery()
 {
     /* SPARQL */
-    Query sparql("select ?b ?c where {?a ?b ?c .}", Query::SPARQL);
+    QueryLegacy sparql("select ?b ?c where {?a ?b ?c .}", QueryLegacy::SPARQL);
 
     QueryResultIterator rs1 = m_model->executeQuery( sparql );
 
@@ -464,7 +464,7 @@ void SopranoModelTest::testQuery()
 
     /* RDQL */
 
-    Query rdql("select ?b ?c where (<http://soprano.sf.net#init:test1>, ?b, ?c)", Query::RDQL);
+    QueryLegacy rdql("select ?b ?c where (<http://soprano.sf.net#init:test1>, ?b, ?c)", QueryLegacy::RDQL);
 
     QueryResultIterator rs2 = m_model->executeQuery( rdql );
 

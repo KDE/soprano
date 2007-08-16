@@ -183,7 +183,7 @@ bool Soprano::Redland::RedlandModel::containsStatements( const Statement &statem
 }
 
 
-Soprano::QueryResultIterator Soprano::Redland::RedlandModel::executeQuery( const Query &query ) const
+Soprano::QueryResultIterator Soprano::Redland::RedlandModel::executeQuery( const QueryLegacy &query ) const
 {
     QReadLocker lock( &d->readWriteLock );
 

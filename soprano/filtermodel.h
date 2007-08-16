@@ -76,7 +76,7 @@ namespace Soprano {
 	 * Default implementation simple pipes the call through to the parent model.
 	 * \sa Model::executeQuery
 	 */
-	virtual QueryResultIterator executeQuery( const Query &query ) const;
+	virtual QueryResultIterator executeQuery( const QueryLegacy &query ) const;
 
 	/**
 	 * Default implementation simple pipes the call through to the parent model.

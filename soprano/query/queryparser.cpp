@@ -43,9 +43,14 @@ Soprano::Query::Parser::~Parser()
 }
 
 
-bool Soprano::Query::Parser::supportsQueryLanguage( QueryLanguage lang ) const
+bool Soprano::Query::Parser::supportsQueryLanguage( QueryLanguage lang, const QString& userQueryLanguage ) const
 {
-    return supportedQueryLanguages() & lang;
+    if ( lang == QUERY_LANGUAGE_USER ) {
+        return supportedUserQueryLanguages().contains( userQueryLanguage );
+    }
+    else {
+        return supportedQueryLanguages() & lang;
+    }
 }
 
 

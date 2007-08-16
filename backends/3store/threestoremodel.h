@@ -46,7 +46,7 @@ namespace Soprano {
 
 	    bool containsStatements( const Statement &statement ) const;
 
-	    Soprano::QueryResultIterator executeQuery( const Query &query ) const;
+	    Soprano::QueryResultIterator executeQuery( const QueryLegacy &query ) const;
 
 	    Soprano::StatementIterator listStatements( const Statement &partial ) const;
 

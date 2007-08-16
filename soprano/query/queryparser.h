@@ -110,10 +110,15 @@ namespace Soprano {
 
 	    /**
 	     * Check if the parser supports a specific query language.
+	     *
 	     * \param lang The query language to support.
+	     * \param userQueryLanguage If lang is set to Query::QUERY_LANGUAGE_USER this parameter specifies the
+	     *       requested query language. It allows the extension of the %Soprano Query interface with new
+	     *       query languages that are not officially supported by %Soprano.
+	     *
 	     * \return \p true if the parser support query lanaguge lang.
 	     */
-	    bool supportsQueryLanguage( QueryLanguage lang ) const;
+	    bool supportsQueryLanguage( QueryLanguage lang, const QString& userQueryLanguage = QString() ) const;
 	    
 	    /**
 	     * A query parser can support additional query languages that are not defined in Query::QueryLanguage.

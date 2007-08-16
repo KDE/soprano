@@ -35,7 +35,7 @@ class QTextStream;
 namespace Soprano
 {
     class Node;
-    class Query;
+    class QueryLegacy;
     class QueryResultIterator;
     class Statement;
     class StatementIterator;
@@ -121,7 +121,7 @@ namespace Soprano
 	 *
 	 * \return All the Statements that match the query.
 	 */
-	virtual QueryResultIterator executeQuery( const Query &query ) const = 0;
+	virtual QueryResultIterator executeQuery( const QueryLegacy &query ) const = 0;
 
 	/**
 	 * Return an iterator over Model Statements that "partial"

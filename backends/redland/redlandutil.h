@@ -29,7 +29,7 @@ namespace Soprano
 {
 
   class Node;
-  class Query;
+  class QueryLegacy;
   class Statement;
 
   namespace Redland
@@ -45,7 +45,7 @@ namespace Soprano
   
 	  librdf_statement *createStatement( const Statement &statement );
 
-	  const char *queryType( const Query &query );
+	  const char *queryType( const QueryLegacy &query );
 
 	  /**
 	   * Calls librdf_free_node if \a node is not null.

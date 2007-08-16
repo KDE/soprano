@@ -24,7 +24,7 @@
 #include <QtCore/QString>
 
 
-class Soprano::Query::Private
+class Soprano::QueryLegacy::Private
 {
 public:
   Private() : limit(-1), offset(-1)
@@ -35,14 +35,14 @@ public:
   QueryType type;
 };
 
-Soprano::Query::Query( const QString &query, QueryType type )
+Soprano::QueryLegacy::QueryLegacy( const QString &query, QueryType type )
     : d( new Private() )
 {
   d->query = query;
   d->type = type;
 }
 
-Soprano::Query::Query( const QString &query, QueryType type, int limit, int offset )
+Soprano::QueryLegacy::QueryLegacy( const QString &query, QueryType type, int limit, int offset )
     : d( new Private() )
 {
   d->query = query;
@@ -51,7 +51,7 @@ Soprano::Query::Query( const QString &query, QueryType type, int limit, int offs
   d->offset = offset;
 }
 
-Soprano::Query::Query( const Query &other )
+Soprano::QueryLegacy::QueryLegacy( const QueryLegacy &other )
     : d( new Private() )
 {
   d->query = other.query();
@@ -60,43 +60,43 @@ Soprano::Query::Query( const Query &other )
   d->offset = other.offset();
 }
 
-Soprano::Query::~Query()
+Soprano::QueryLegacy::~QueryLegacy()
 {
   delete d;
 }
 
-Soprano::Query::QueryType Soprano::Query::type() const
+Soprano::QueryLegacy::QueryType Soprano::QueryLegacy::type() const
 {
   return d->type;
 }
 
-QString Soprano::Query::query() const
+QString Soprano::QueryLegacy::query() const
 {
   return d->query;
 }
 
-int Soprano::Query::limit() const
+int Soprano::QueryLegacy::limit() const
 {
   return d->limit;
 }
 
-void Soprano::Query::setLimit(int limit)
+void Soprano::QueryLegacy::setLimit(int limit)
 {
   d->limit = limit;
 }
 
-int Soprano::Query::offset() const
+int Soprano::QueryLegacy::offset() const
 {
   return d->offset;
 }
 
-void Soprano::Query::setOffset(int offset)
+void Soprano::QueryLegacy::setOffset(int offset)
 {
   d->offset = offset;
 }
 
 
-QString Soprano::Query::queryTypeToString( QueryType queryType )
+QString Soprano::QueryLegacy::queryTypeToString( QueryType queryType )
 {
     switch( queryType ) {
     case SPARQL:
@@ -107,7 +107,7 @@ QString Soprano::Query::queryTypeToString( QueryType queryType )
 }
 
 
-int Soprano::Query::queryTypeFromString( const QString& s )
+int Soprano::QueryLegacy::queryTypeFromString( const QString& s )
 {
     QString sn( s.toLower() );
     if ( sn == "sparql" ) {

@@ -115,9 +115,14 @@ Soprano::RdfSerialization Soprano::mimeTypeToSerialization( const QString& mimet
 }
 
 
-bool Soprano::Parser::supportsSerialization( RdfSerialization s ) const
+bool Soprano::Parser::supportsSerialization( RdfSerialization s, const QString& userSerialization ) const
 {
-    return supportedSerializations() & s;
+    if ( s == SERIALIZATION_USER ) {
+        return supportedUserSerializations().contains( userSerialization );
+    }
+    else {
+        return supportedSerializations() & s;
+    }
 }
 
 

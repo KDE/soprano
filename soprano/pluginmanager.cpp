@@ -86,11 +86,33 @@ const Soprano::Parser* Soprano::PluginManager::discoverParserByName( const QStri
 }
 
 
-const Soprano::Parser* Soprano::PluginManager::discoverParserForSerialization( RdfSerialization serialization )
+const Soprano::Parser* Soprano::PluginManager::discoverParserForSerialization( RdfSerialization serialization, const QString& userSerialization )
 {
     for( QHash<QString, Parser*>::const_iterator it = d->parsers.begin(); it != d->parsers.end(); ++it ) {
         const Parser* p = *it;
-        if( p->supportsSerialization( serialization ) ) {
+        if( p->supportsSerialization( serialization, userSerialization ) ) {
+            return p;
+        }
+    }
+    return 0;
+}
+
+
+const Soprano::Query::Parser* Soprano::PluginManager::discoverQueryParserByName( const QString& name )
+{
+    QHash<QString, Query::Parser*>::iterator it = d->queryParsers.find( name );
+    if( it != d->queryParsers.end() )
+        return *it;
+    else
+        return 0;
+}
+
+
+const Soprano::Query::Parser* Soprano::PluginManager::discoverQueryParserForQueryLanguage( Query::QueryLanguage lang, const QString& userQueryLanguage )
+{
+    for( QHash<QString, Query::Parser*>::const_iterator it = d->queryParsers.begin(); it != d->queryParsers.end(); ++it ) {
+        const Query::Parser* p = *it;
+        if( p->supportsQueryLanguage( lang, userQueryLanguage ) ) {
             return p;
         }
     }
@@ -114,6 +136,17 @@ QList<const Soprano::Parser*> Soprano::PluginManager::allParsers()
     QList<const Parser*> pl;
     for ( QHash<QString, Parser*>::const_iterator it = d->parsers.constBegin();
           it != d->parsers.constEnd(); ++it ) {
+        pl.append( it.value() );
+    }
+    return pl;
+}
+
+
+QList<const Soprano::Query::Parser*> Soprano::PluginManager::allQueryParsers()
+{
+    QList<const Query::Parser*> pl;
+    for ( QHash<QString, Query::Parser*>::const_iterator it = d->queryParsers.constBegin();
+          it != d->queryParsers.constEnd(); ++it ) {
         pl.append( it.value() );
     }
     return pl;
@@ -184,6 +217,7 @@ void Soprano::PluginManager::loadPlugins( const QString& path )
 }
 
 
+// FIXME: port to Q_GLOBAL_STATIC
 Soprano::PluginManager* Soprano::PluginManager::instance()
 {
     static PluginManager* s_instance = 0;

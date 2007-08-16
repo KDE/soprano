@@ -23,6 +23,7 @@
 #define _SOPRANO_PLUGIN_MANAGER_H_
 
 #include "parser.h"
+#include "query/query.h"
 #include "soprano_export.h"
 
 #include <QtCore/QObject>
@@ -32,6 +33,10 @@
 namespace Soprano
 {
   class Backend;
+
+  namespace Query {
+      class Parser;
+  }
 
   /**
    * \brief The PluginManager loads and maintains all %Soprano plugins.
@@ -75,14 +80,41 @@ namespace Soprano
        * Find a Parser instance that is able to parse RDF data serialized as
        * serialization.
        *
+       * \param serialization The requested serialization.
+       * \param userSerialization If serialization is set to Soprano::SERIALIZATION_USER this parameter specifies the
+       *       serialization to use. It allows the extension of the %Soprano Parser interface with new
+       *       RDF serializations that are not officially supported by %Soprano.
+       *
        * \return A Parser plugin that can parse RDF data encoded in the requested 
        * serialization or 0 if no such plugin could be found.
        */
-      const Parser* discoverParserForSerialization( RdfSerialization serialization );
+      const Parser* discoverParserForSerialization( RdfSerialization serialization, const QString& userSerialization = QString() );
+
+      /**
+       * Find a query parser plugin by its name.
+       *
+       * \return the query parser specified by \a name or null if could not
+       * be found.
+       */
+      const Query::Parser* discoverQueryParserByName( const QString& name );
+
+      /**
+       * Find a Query::Parser instance that is able to parse the specified query language.
+       *
+       * \param lang The language the plugin is supposed to support.
+       * \param userQueryLanguage If lang is set to Query::QUERY_LANGUAGE_USER this parameter specifies the
+       *       query language to use. It allows the extension of the %Soprano Query interface with new
+       *       query languages that are not officially supported by %Soprano.
+       *
+       * \return A Query::Parser plugin that can parse query language lang or 0 if no such plugin could be found.
+       */
+      const Query::Parser* discoverQueryParserForQueryLanguage( Query::QueryLanguage lang, const QString& userQueryLanguage = QString() );
 
       QList<const Backend*> allBackends();
 
       QList<const Parser*> allParsers();
+
+      QList<const Query::Parser*> allQueryParsers();
 
       static PluginManager* instance();
 

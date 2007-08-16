@@ -109,7 +109,7 @@ bool Soprano::FilterModel::containsStatements( const Statement &statement ) cons
 }
 
 
-Soprano::QueryResultIterator Soprano::FilterModel::executeQuery( const Query &query ) const
+Soprano::QueryResultIterator Soprano::FilterModel::executeQuery( const QueryLegacy &query ) const
 {
     Q_ASSERT( d->parent );
     return d->parent->executeQuery( query );

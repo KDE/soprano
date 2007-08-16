@@ -34,7 +34,7 @@ namespace Soprano
      *
      * \deprecated Will be replaced by a real query API soon.
      */
-    class SOPRANO_EXPORT Query
+    class SOPRANO_EXPORT QueryLegacy
     {
     public:
 	enum QueryType {
@@ -42,13 +42,13 @@ namespace Soprano
 	    RDQL
 	};
 
-	Query( const QString &query, QueryType type);
+	QueryLegacy( const QString &query, QueryType type);
 
-	Query( const QString &query, QueryType type, int limit, int offset );
+	QueryLegacy( const QString &query, QueryType type, int limit, int offset );
 
-	Query( const Query &other );
+	QueryLegacy( const QueryLegacy &other );
 
-	~Query();
+	~QueryLegacy();
 
 	QueryType type() const;
 
