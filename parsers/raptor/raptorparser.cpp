@@ -23,17 +23,31 @@
 #include "raptorparser.h"
 #include "../../backends/redland/redlandworld.h"
 #include "../../backends/redland/redlandstatementiterator.h"
+#include "../../backends/redland/redlandutil.h"
 
 #include <soprano/statementiterator.h>
+#include <soprano/statement.h>
 
 #include <redland.h>
 
 #include <QtCore/QUrl>
 #include <QtCore/QtPlugin>
+#include <QtCore/QTextStream>
 #include <QtCore/QDebug>
 
 
 Q_EXPORT_PLUGIN2(soprano_raptorparser, Soprano::Raptor::Parser)
+
+// for some strange reason librdf can only handle application/turtle when parsing and application/x-turtle when serializing, but not the other way around
+static QString mimeTypeString( Soprano::RdfSerialization s )
+{
+    if ( s == Soprano::SERIALIZATION_TURTLE ) {
+        return "application/turtle"; // x-turtle does not work....
+    }
+    else {
+        return serializationMimeType( s );
+    }
+}
 
 
 Soprano::Raptor::Parser::Parser()
@@ -50,13 +64,16 @@ Soprano::Raptor::Parser::~Parser()
 
 Soprano::RdfSerializations Soprano::Raptor::Parser::supportedSerializations() const
 {
-    return RDF_XML|N_TRIPLES|TURTLE;
+    // FIXME: test for XML/RDF fails
+//    return SERIALIZATION_RDF_XML|SERIALIZATION_N_TRIPLES|
+    return SERIALIZATION_TURTLE;
 }
 
 
 Soprano::StatementIterator Soprano::Raptor::Parser::parseFile( const QString& filename,
                                                                const QUrl& baseUri,
-                                                               RdfSerialization serialization ) const
+                                                               RdfSerialization serialization,
+                                                               const QString& userSerialization ) const
 {
     QUrl uri( QUrl::fromLocalFile( filename ) );
     if ( uri.scheme().isEmpty() ) {
@@ -70,14 +87,9 @@ Soprano::StatementIterator Soprano::Raptor::Parser::parseFile( const QString& fi
         return StatementIterator();
     }
 
-    QString mimeType = serializationMimeType( serialization );
-    if ( serialization == TURTLE ) {
-        mimeType = "application/turtle"; // x-turtle does not work....
-    }
-
     librdf_parser *parser = librdf_new_parser( Redland::World::self()->worldPtr(),
                                                0, // use all factories
-                                               mimeType.toLatin1().data(),
+                                               mimeTypeString( serialization ).toLatin1().data(),
                                                0 ); // what is the URI of the syntax used for?
     if ( !parser ) {
         qDebug() << "(Soprano::Raptor::Parser) no parser for serialization " << serializationMimeType( serialization );
@@ -107,11 +119,12 @@ Soprano::StatementIterator Soprano::Raptor::Parser::parseFile( const QString& fi
 
 Soprano::StatementIterator Soprano::Raptor::Parser::parseString( const QString& data,
                                                                  const QUrl& baseUri,
-                                                                 RdfSerialization serialization ) const
+                                                                 RdfSerialization serialization,
+                                                                 const QString& userSerialization ) const
 {
     librdf_parser* parser = librdf_new_parser( Redland::World::self()->worldPtr(),
                                                0, // use all factories
-                                               serializationMimeType( serialization ).toLatin1().data(),
+                                               mimeTypeString( serialization ).toLatin1().data(),
                                                0 ); // what is the URI of the syntax used for?
     if ( !parser ) {
         return StatementIterator();
@@ -141,9 +154,151 @@ Soprano::StatementIterator Soprano::Raptor::Parser::parseString( const QString& 
 Soprano::StatementIterator
 Soprano::Raptor::Parser::parseStream( QTextStream* stream,
                                       const QUrl& baseUri,
-                                      RdfSerialization serialization ) const
+                                      RdfSerialization serialization,
+                                      const QString& userSerialization ) const
 {
     return parseString( stream->readAll(), baseUri, serialization );
+}
+
+
+int raptorIOStreamWriteByte( void* data, const int byte )
+{
+    QTextStream* s = reinterpret_cast<QTextStream*>( data );
+    // an int is not a byte. Strange raptor API!
+    ( *s ) << ( char )byte;
+    return 0;
+}
+
+
+int raptorIOStreamWriteBytes( void* data, const void* ptr, size_t size, size_t nmemb )
+{
+    // the raptor API is very weird. But it seems that ATM raptor only uses size == 1
+    QTextStream* s = reinterpret_cast<QTextStream*>( data );
+    switch( size ) {
+    case 1: {
+        const char* p = reinterpret_cast<const char*>( ptr );
+        for ( int i = 0; i < nmemb; ++i ) {
+            ( *s ) << p[i];
+        }
+        break;
+    }
+    default:
+        qDebug() << "Unsupported data size: " << size;
+        return -1;
+    }
+    return 0;
+}
+
+
+class StreamData {
+public:
+    Soprano::StatementIterator it;
+    bool initialized;
+    bool atEnd;
+};
+
+// the raptor API is aweful: it seems that first atEnd is called, then get, and then next until next returns false.
+// So we have to call it.next() manually if we don't want to get the first statement twice
+int streamIsEnd( void* data )
+{
+    StreamData* it = reinterpret_cast<StreamData*>( data );
+    if ( !it->initialized ) {
+        it->initialized = true;
+        it->atEnd = !it->it.next();
+    }
+    return it->atEnd;
+}
+
+
+int streamNext( void* data )
+{
+    StreamData* it = reinterpret_cast<StreamData*>( data );
+    it->atEnd = !it->it.next();
+    return it->atEnd;
+}
+
+
+void* streamGet( void* data, int what )
+{
+    StreamData* it = reinterpret_cast<StreamData*>( data );
+
+    if ( what == 0 ) {
+        // statement (stupid librdf does not export it)
+        return Soprano::Redland::Util::createStatement( it->it.current() );
+    }
+    else {
+        // context
+        return Soprano::Redland::Util::createNode( it->it.current().context() );
+    }
+}
+
+
+void streamFinished( void* )
+{}
+
+
+bool Soprano::Raptor::Parser::serialize( StatementIterator it,
+                                         QTextStream* stream,
+                                         RdfSerialization serialization,
+                                         const QString& userSerialization ) const
+{
+    librdf_serializer* serializer = librdf_new_serializer( Redland::World::self()->worldPtr(),
+                                                           0, // all factories
+                                                           serializationMimeType( serialization ).toLatin1().data(),
+                                                           0 );
+    if ( !serializer ) {
+        qDebug() << "(Soprano::Raptor::Parser) no serializer for mimetype " << mimeTypeString( serialization );
+        return false;
+    }
+
+    bool success = true;
+
+    raptor_iostream_handler raptorStreamHandler = {
+        0,
+        0,
+        raptorIOStreamWriteByte,
+        raptorIOStreamWriteBytes,
+        0
+    };
+    raptor_iostream* raptorStream = raptor_new_iostream_from_handler( stream,
+                                                                      &raptorStreamHandler );
+
+    if ( !raptorStream ) {
+        qDebug() << "(Soprano::Raptor::Parser) failed to create Raptor stream.";
+        librdf_free_serializer( serializer );
+        return false;
+    }
+
+    StreamData streamData;
+    streamData.it = it;
+    streamData.atEnd = false;
+    streamData.initialized = false;
+    librdf_stream* rdfStream = librdf_new_stream( Redland::World::self()->worldPtr(),
+                                                  &streamData,
+                                                  streamIsEnd,
+                                                  streamNext,
+                                                  streamGet,
+                                                  streamFinished );
+
+    if ( !rdfStream ) {
+        qDebug() << "(Soprano::Raptor::Parser) failed to create librdf stream.";
+        raptor_free_iostream( raptorStream );
+        return false;
+    }
+
+    if ( librdf_serializer_serialize_stream_to_iostream( serializer,
+                                                         0,
+                                                         rdfStream,
+                                                         raptorStream ) ) {
+        qDebug() << "(Soprano::Raptor::Parser) serialization failed.";
+        success = false;
+    }
+
+//     librdf_free_stream( rdfStream );
+//     raptor_free_iostream( raptorStream );
+    librdf_free_serializer( serializer );
+
+    return success;
 }
 
 #include "raptorparser.moc"

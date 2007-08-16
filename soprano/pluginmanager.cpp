@@ -22,6 +22,7 @@
 #include "pluginmanager.h"
 #include "backend.h"
 #include "parser.h"
+#include "query/queryparser.h"
 #include "config.h"
 
 #include <QHash>
@@ -37,6 +38,7 @@ class Soprano::PluginManager::Private
 public:
     QHash<QString, Backend*> backends;
     QHash<QString, Parser*> parsers;
+    QHash<QString, Query::Parser*> queryParsers;
 };
 
 const QStringList Soprano::PluginManager::libraryPath()
@@ -130,8 +132,9 @@ Soprano::PluginManager::~PluginManager()
     // delete all plugins (is this necessary?)
     for( QHash<QString, Backend*>::const_iterator it = d->backends.begin(); it != d->backends.end(); ++it )
         delete it.value();
-    // delete all plugins (is this necessary?)
     for( QHash<QString, Parser*>::const_iterator it = d->parsers.begin(); it != d->parsers.end(); ++it )
+        delete it.value();
+    for( QHash<QString, Query::Parser*>::const_iterator it = d->queryParsers.begin(); it != d->queryParsers.end(); ++it )
         delete it.value();
     delete d;
 }
@@ -165,6 +168,10 @@ void Soprano::PluginManager::loadPlugins( const QString& path )
             else if( Parser* parser = qobject_cast<Parser*>( plugin ) ) {
                 qDebug() << "(Soprano::PluginManager) found parser plugin " << parser->pluginName() << endl;
                 d->parsers.insert( parser->pluginName(), parser );
+            }
+            else if( Query::Parser* parser = qobject_cast<Query::Parser*>( plugin ) ) {
+                qDebug() << "(Soprano::PluginManager) found query parser plugin " << parser->pluginName() << endl;
+                d->queryParsers.insert( parser->pluginName(), parser );
             }
             else {
                 qDebug() << "(Soprano::PluginManager) found no backend plugin at " << loader.fileName() << endl;

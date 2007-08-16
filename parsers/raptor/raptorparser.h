@@ -44,13 +44,20 @@ namespace Soprano {
 
 	    StatementIterator parseFile( const QString& filename, 
 					 const QUrl& baseUri, 
-					 RdfSerialization serialization = UNKNOWN ) const;
+					 RdfSerialization serialization,
+					 const QString& userSerialization = QString() ) const;
 	    StatementIterator parseString( const QString& data, 
 					   const QUrl& baseUri, 
-					   RdfSerialization serialization = UNKNOWN ) const;
+					   RdfSerialization serialization,
+					   const QString& userSerialization = QString() ) const;
 	    StatementIterator parseStream( QTextStream*, 
 					   const QUrl& baseUri, 
-					   RdfSerialization serialization = UNKNOWN ) const;
+					   RdfSerialization serialization,
+					   const QString& userSerialization = QString() ) const;
+	    bool serialize( StatementIterator it, 
+			    QTextStream* stream, 
+			    RdfSerialization serialization,
+			    const QString& userSerialization = QString() ) const;
 	};
     }
 }

@@ -18,9 +18,11 @@
 #include <soprano/parser.h>
 #include <soprano/pluginmanager.h>
 #include <soprano/statementiterator.h>
+#include <soprano/simplestatementiterator.h>
 #include <soprano/statement.h>
 
 #include <QtTest/QTest>
+#include <QtCore/QFile>
 #include <QtCore/QDebug>
 
 
@@ -39,8 +41,8 @@ void ParserTest::testParser_data()
     QTest::addColumn<Soprano::RdfSerialization>( "serialization" );
     QTest::addColumn<QString>( "filename" );
 
-    QTest::newRow("rdf_xml") << RDF_XML << SOPRANO_TEST_DATA_DIR"/rdf_xml-testdata.rdf";
-    QTest::newRow("turtle") << TURTLE << SOPRANO_TEST_DATA_DIR"/turtle-testdata.ttl";
+    QTest::newRow("rdf_xml") << SERIALIZATION_RDF_XML << SOPRANO_TEST_DATA_DIR"/rdf_xml-testdata.rdf";
+    QTest::newRow("turtle") << SERIALIZATION_TURTLE << SOPRANO_TEST_DATA_DIR"/turtle-testdata.ttl";
 }
 
 
@@ -58,8 +60,24 @@ void ParserTest::testParser()
 
     Q_FOREACH( const Parser* parser, parsers ) {
         if ( parser->supportsSerialization( serialization ) ) {
+            // test parsing
             StatementIterator it = parser->parseFile( filename, QUrl("http://soprano.sf.net/testdata/"), serialization );
             QList<Statement> all = it.allStatements();
+
+            QCOMPARE( testStatements.count(), all.count() );
+
+            Q_FOREACH( Statement s, testStatements ) {
+                QVERIFY( all.contains( s ) );
+            }
+
+            // test serialization
+            it = SimpleStatementIterator( testStatements );
+            QString serializedData;
+            QTextStream s( &serializedData );
+            QVERIFY( parser->serialize( it, &s, serialization ) );
+
+            // the only way to check the result I can think of is to parse again
+            all = parser->parseString( serializedData, QUrl("http://soprano.sf.net/testdata/"), serialization ).allStatements();
 
             QCOMPARE( testStatements.count(), all.count() );
 

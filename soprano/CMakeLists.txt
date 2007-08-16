@@ -67,8 +67,8 @@ SET(soprano_SRCS
     vocabulary/rdf.cpp
     vocabulary/rdfs.cpp
     vocabulary/xmls.cpp
-#    query/query.cpp
-#    query/rasqalqueryparser.cpp
+    query/query.cpp
+    query/queryparser.cpp
     inference/nodepattern.cpp
     inference/statementpattern.cpp
     inference/inferencerule.cpp
