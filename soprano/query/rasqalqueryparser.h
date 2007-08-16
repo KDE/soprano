@@ -32,7 +32,7 @@ namespace Soprano {
 
             class RasqalQueryParser: public QueryParser {
             public:
-                QueryObject *parseQuery( const QString &query );
+                Query *parseQuery( const QString &query );
 
             };
         

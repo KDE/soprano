@@ -32,7 +32,7 @@ namespace Soprano {
                 /**
                  * Translate the given query into a proper Soprano query-object or NULL on Error.
                  */
-                virtual QueryObject *parseQuery( const QString &query ) = 0;
+                virtual Query *parseQuery( const QString &query ) = 0;
 
             //public signal:
                 //void syntaxErrorFounded(  );

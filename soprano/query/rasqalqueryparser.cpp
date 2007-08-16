@@ -27,7 +27,7 @@
 #include "query.h"
 #include "rasqalqueryparser.h"
 
-Soprano::Query::QueryObject *Soprano::Query::Parser::RasqalQueryParser::parseQuery( const QString &query )
+Soprano::Query::Query *Soprano::Query::Parser::RasqalQueryParser::parseQuery( const QString &query )
 {
     qDebug() << query << endl;
 
@@ -94,10 +94,10 @@ Soprano::Query::QueryObject *Soprano::Query::Parser::RasqalQueryParser::parseQue
 
     rasqal_finish();
 
-    QueryObject *qo = new QueryObject();
-    qo->setQueryVerb( queryVerb );
+    Query *qo = new Query();
+    //qo->set( queryVerb );
 
-    qDebug() << qo->queryVerb() << endl;
+    //qDebug() << qo->queryVerb() << endl;
 
     return qo;
 }

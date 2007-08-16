@@ -34,12 +34,27 @@ namespace Soprano
     class Node;
 
     namespace Query {
+    
+        class RTerm {
+        public:
+            virtual ~RTerm();
+            virtual bool isVariable() const;
+            virtual bool isNode() const;
 
-        class Variable {
+        protected:
+            RTerm();
+        };
+
+
+        class Variable : public RTerm {
         public:
             Variable();
             Variable( const QString &name );
             Variable( const Variable &other );
+
+            Variable& operator=( const Variable& );
+
+            bool isVariable() const { return true; }
 
             QString name() const;
 
@@ -48,62 +63,52 @@ namespace Soprano
             QSharedDataPointer<Private> d;
         };
 
-	// why not inherit Varianble from RTerm?
-        class RTerm {
+
+        class Node : public RTerm {
         public:
-            RTerm( const Soprano::Node &node );
-            RTerm( const Variable &binding );
-            ~RTerm();
- 
-            bool isBinding() const;
+            Node();
+            Node( const Soprano::Node &node );
+            Node( const Node &other );
+     
+            Node& operator=( const Node& );
+     
+            bool isNode() const { return true; }
 
             Soprano::Node node() const;
-            Variable binding() const;
-
+        
         private:
             class Private;
-            Private *d;
+            QSharedDataPointer<Private> d;
         };
-
+        
+    
         class Numerical {
+        public:
+            Numerical();
+            Numerical( int    value );
+            Numerical( double value );
+            Numerical( float  value );
+            Numerical( const Numerical &other );
+            ~Numerical();
+        
+            //Numerical& operator=( const Numerical& );
+        
+            bool isDecimal();
+
+            bool isDouble();
+            double doubleValue();
+
+            bool isFloat();
+            float floatValue();
+            
+            bool isInteger();
+            int integerValue();
+            
+        private:
+            class Private;
+            QSharedDataPointer<Private> d;
         };
    
-        class Decimal: public Numerical {
-        };
- 
-        class Double : public Decimal {
-        public:
-            Double( double value );
-            Double( const Double &other );
-
-            double value() const;
-
-        private:
-            double m_value;
-        };
-
-        class Float: public Decimal {
-        public:
-            Float( float value );
-            Float( const Float &other );
-            
-            float value() const;
-
-        private:
-            float m_value;
-        };
-
-        class Integer : public Numerical {
-        public:
-            Integer( int value );
-            Integer( const Integer &other );
-
-            int value() const;
-
-        private:
-            int m_value;
-        };
-
         ////////////////////////////////////////////////////////////////////////
         // Expressions                                                        //
         ////////////////////////////////////////////////////////////////////////
@@ -112,21 +117,39 @@ namespace Soprano
 
         class Expression {
         public:
+            virtual ~Expression();
+        
             virtual void accept( ExpressionVisitor *visitor ) = 0;
+            
+        protected:
+            Expression();
         };
 
         // An expression that return a xsd:boolean
         class BooleanExpression: public Expression {
-	    // how about:
-	    // bool evaluate() const;
+        public:
+            virtual ~BooleanExpression();
+
+        protected:
+            BooleanExpression();
         };
 
         // An expression that return a xsd:integer, xsd:decimal, xsd:float, and xsd:double
         class NumericalExpression: public Expression {
+	public:
+            virtual ~NumericalExpression();
+
+        protected:
+            NumericalExpression();
         };
 
         // An expression that return a xsd:string or rdfs:Datatype
         class StringExpression: public Expression {
+	public:
+            virtual ~StringExpression();
+
+        protected:
+            StringExpression();
         };
 
         ////////////////////////////////////////////////////////////////////////
@@ -166,9 +189,6 @@ namespace Soprano
             RTerm *m_rterm;
         };
 
-	// why does a this expression which is derived from NumericalExpression have another
-        // NumericalExpression as parameter? Shouldn't the Numerical classes also be expressions
-	// of some kind so they can be nested here?
         class UnaryNumericalExpression: public NumericalExpression {
         public:
             UnaryNumericalExpression( NumericalExpression *expression );
@@ -189,7 +209,6 @@ namespace Soprano
             void accept( ExpressionVisitor *visitor );
         };
 
-	// what does unary "+" do?
         class UnaryPlus: public UnaryNumericalExpression {
         public:
             UnaryPlus( NumericalExpression *expression );
@@ -676,6 +695,8 @@ namespace Soprano
             Prefix( const QString &prefix, const QUrl &uri );
             Prefix( const Prefix &other );
 
+            Prefix& operator=( const Prefix& );
+        
             const QString prefix() const;
             const QUrl uri() const;
 
@@ -684,85 +705,95 @@ namespace Soprano
             QSharedDataPointer<Private> d;
         };
 
-        // TODO: Implement this
-        class TriplePattern {
+        class GraphPattern : public BooleanExpression {
         public:
-            TriplePattern( RTerm *subject, RTerm *predicate, RTerm *object ); 
+            GraphPattern();
 
-            RTerm *subject();
-            RTerm *predicate(); 
-            RTerm *object(); 
-
-        private:
-            RTerm *m_subject;
-            RTerm *m_predicate;
-            RTerm *m_object;
-
-            //FIXME: what does it mean?
-            //Node *m_origin;
-        };
-
-        // TODO: Implement this
-        class GraphPattern {
-
-	    // why not implement this as expressions?
-            enum Operator {
-                BASIC = 0, 
-                OPTIONAL,
-                UNION,
-                GROUP,
-                GRAPH
-            };
-
-        public:
-            GraphPattern( TriplePattern *triple, Operator op = BASIC, GraphPattern *parent = NULL );
-
-            TriplePattern *triple();
+            /**
+             * GraphPattern takes ownership of the RTerm instances.
+             */
+            GraphPattern( RTerm *subject, RTerm *predicate, RTerm *object, RTerm *context = 0, bool optional = false );
+            ~GraphPattern();
+        
+            GraphPattern& operator=( const GraphPattern& );
+        
+            void setOptional(bool optional);
+            bool optional() const;
+        
+            void setSubject( RTerm *subject );
+            const RTerm *subject() const;
             
-            void addConstraint( BooleanExpression *expression );
-            QList<BooleanExpression *>constraints();
-
-            void addSubGraphPattern( GraphPattern *subgraph );
-            QList<GraphPattern *> childGraphs();
-
-            GraphPattern *parentGraph();
-    
+            void setPredicate( RTerm *predicate );
+            const RTerm *predicate() const; 
+                              
+            void setObject( RTerm *object );
+            const RTerm *object() const; 
+            
+            void setContext( RTerm *context );
+            const RTerm *context() const;
+                
         private:
-            TriplePattern *m_triple;
-            BooleanExpression *m_constraint;
-
-            GraphPattern *m_parent;
-            QList<GraphPattern *> m_childs;
+            class Private;
+            QSharedDataPointer<Private> d;
         };
-
-        // TODO: Implement this
-        class QueryObject {
+        
+        class QueryTerms {
         public:
-            QueryObject();
-
+            QueryTerms();
+            QueryTerms( const QueryTerms& other );
+            ~QueryTerms();
+            
+            //QueryTerms& operator=( const QueryTerms& );
+            /**
+             * QueryTerms takes ownership of the RTerm instances.
+             */
+            void addQueryTerm( RTerm *rterm );
+        
+            QList<const RTerm*> terms() const;
+            
+            bool selectAll() const;
+            
+        private:
+            class Private;
+            QSharedDataPointer<Private> d;
+        };
+        
+        class Query {
+        public:
+            // Query types
+            enum QueryType {
+                GRAPH_QUERY,
+                SELECT_QUERY,
+                BOOLEAN_QUERY
+          
+                // TODO: Implement Insert and Delete query
+                // INSERT_QUERY = 0x8,
+                // DELETE_QUERY = 0x10
+            };
+        
+            Query();
+            Query( QueryType type );
+            ~Query();
+        
+            Query& operator=( const Query& );
+        
             void addPrefix( const Prefix &prefix );
             QList<Prefix> prefixes();
 
-            //void addVariable( Variable *variable );
-            //QList<Variable *> variables();
+            void setCondition( BooleanExpression* condition );
+            const BooleanExpression *condition() const;
+        
+            void setQueryType( QueryType type );
+            QueryType type() const;
 
-            void addGraphPattern( GraphPattern *graphPattern );
-            QList<GraphPattern *> graphPatterns();
-
-            void setQueryVerb( const QString &queryVerb );
-            QString queryVerb();
-
-            // SELECT *
-            void setWildCard( bool wildCard );
-            bool isWildCard();
-
+            void setQueryTerms( const QueryTerms &queryTerms );
+            QueryTerms terms() const;
+        
         private:
-            QList<Prefix> m_prefixes;
-
-            QList<GraphPattern *> m_graphPatterns;
-            QString m_queryVerb;
-            bool m_wildCard;
+            class Private;
+            QSharedDataPointer<Private> d;
         };
+        
     };
 };
 

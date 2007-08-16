@@ -24,6 +24,31 @@
 
 #include "query.h"
 
+#include <QtCore/QVariant>
+#include <QtCore/QList>
+
+//
+// RTerm
+//
+
+Soprano::Query::RTerm::RTerm()
+{
+}
+
+Soprano::Query::RTerm::~RTerm()
+{
+}
+
+bool Soprano::Query::RTerm::isVariable() const
+{
+   return false;
+}
+
+bool Soprano::Query::RTerm::isNode() const
+{
+   return false;
+}
+
 //
 // Variable
 //
@@ -51,110 +76,174 @@ Soprano::Query::Variable::Variable( const Variable &other )
     d = other.d;
 }
 
+Soprano::Query::Variable& Soprano::Query::Variable::operator=( const Variable& other )
+{
+    d = other.d;
+    return *this;
+}
+
 QString Soprano::Query::Variable::name() const
 {
     return d->name;
 }
 
+
 //
-// RTerm
+// Numerical
 //
 
-class Soprano::Query::RTerm::Private {
+// FIXME: not sure if this works with built-in types
+Q_DECLARE_METATYPE(float)
+
+class Soprano::Query::Numerical::Private : public QSharedData
+{
 public:
-    Private() {};
-
-    Soprano::Node node;
-    Variable binding;
+   Private( const QVariant& v = QVariant() )
+     : value( v ) {
+   }
+   QVariant value;
 };
 
-Soprano::Query::RTerm::RTerm( const Soprano::Node &node )
+Soprano::Query::Numerical::Numerical()
 {
     d = new Private;
+}
+
+Soprano::Query::Numerical::Numerical( int value )
+{
+    d = new Private( value );
+}
+
+Soprano::Query::Numerical::Numerical( double value )
+{
+    d = new Private( value );
+}
+
+Soprano::Query::Numerical::Numerical( float value )
+{
+    d = new Private;
+    d->value.setValue( value );
+}
+
+Soprano::Query::Numerical::Numerical( const Numerical &other )
+{
+    d = other.d;
+}
+
+Soprano::Query::Numerical::~Numerical()
+{
+}
+
+bool Soprano::Query::Numerical::isDecimal()
+{
+    return isDouble() || isFloat();
+}
+
+bool Soprano::Query::Numerical::isDouble()
+{
+   return d->value.type() == QVariant::Double;
+}
+
+double Soprano::Query::Numerical::doubleValue()
+{
+   return d->value.toDouble();
+}
+
+bool Soprano::Query::Numerical::isFloat()
+{
+   return d->value.userType() == qMetaTypeId<float>();
+}
+
+float Soprano::Query::Numerical::floatValue()
+{
+   return d->value.value<float>();
+}
+
+bool Soprano::Query::Numerical::isInteger()
+{
+   return d->value.type() == QVariant::Int;
+}
+
+int Soprano::Query::Numerical::integerValue()
+{
+   return d->value.toInt();
+}
+
+
+//
+// Node
+//
+
+class Soprano::Query::Node::Private : public QSharedData {
+public:
+    Private() {}
+    
+    Soprano::Node node;
+};
+
+Soprano::Query::Node::Node()
+{
+    d = new Private();
+}
+
+Soprano::Query::Node::Node( const Soprano::Node &node )
+{
+    d = new Private();
     d->node = node;
 }
 
-Soprano::Query::RTerm::RTerm( const Variable &binding )
+Soprano::Query::Node::Node( const Node &other )
 {
-    d = new Private;
-    d->binding = binding;
+    d = other.d;
 }
 
-Soprano::Query::RTerm::~RTerm()
+
+Soprano::Query::Node& Soprano::Query::Node::operator=( const Node& other )
 {
-    delete d;
+    d = other.d;
+    return *this;
 }
 
-bool Soprano::Query::RTerm::isBinding() const
-{
-    return !d->node.isValid();
-}
-
-Soprano::Node Soprano::Query::RTerm::node() const
+Soprano::Node Soprano::Query::Node::node() const
 {
     return d->node;
 }
 
-Soprano::Query::Variable Soprano::Query::RTerm::binding() const
-{
-    return d->binding;
-}
 
-//
-// Integer
-//
+////////////////////////////////////////////////////////////////////////
+// Expressions                                                        //
+////////////////////////////////////////////////////////////////////////
 
-Soprano::Query::Integer::Integer( int value )
-    :m_value(value)
+Soprano::Query::Expression::Expression()
 {
 }
 
-Soprano::Query::Integer::Integer( const Integer &other )
-{
-    m_value = other.m_value;
-}
-
-int Soprano::Query::Integer::value() const
-{
-    return m_value;
-}
-
-//
-// Float
-//
-
-Soprano::Query::Float::Float( float value )
-    :m_value(value)
+Soprano::Query::Expression::~Expression()
 {
 }
 
-Soprano::Query::Float::Float( const Float &other )
-{
-    m_value = other.m_value;
+Soprano::Query::BooleanExpression::BooleanExpression()
+{       
+}       
+            
+Soprano::Query::BooleanExpression::~BooleanExpression()
+{       
 }
 
-float Soprano::Query::Float::value() const
-{
-    return m_value;
+Soprano::Query::NumericalExpression::NumericalExpression()
+{       
+}       
+            
+Soprano::Query::NumericalExpression::~NumericalExpression()
+{       
 }
 
-//
-// Double
-//
-
-Soprano::Query::Double::Double( double value )
-    :m_value(value)
-{
-}
-
-Soprano::Query::Double::Double( const Double &other )
-{
-    m_value = other.m_value;
-}
-
-double Soprano::Query::Double::value() const
-{
-    return m_value;
+Soprano::Query::StringExpression::StringExpression()
+{       
+}       
+            
+Soprano::Query::StringExpression::~StringExpression()
+{       
 }
 
 ////////////////////////////////////////////////////////////////////////
@@ -848,38 +937,8 @@ void Soprano::Query::Regexp::accept( ExpressionVisitor *visitor )
     visitor->visit( this );
 }
 
-//
-// QueryObject
-//
-
-Soprano::Query::QueryObject::QueryObject()
-    :m_wildCard(false)
-{
-}
-
-void Soprano::Query::QueryObject::setQueryVerb( const QString &queryVerb )
-{
-    m_queryVerb = queryVerb;
-}
-
-QString Soprano::Query::QueryObject::queryVerb()
-{
-    return m_queryVerb;
-}
-
-void Soprano::Query::QueryObject::setWildCard( bool wildCard )
-{
-    m_wildCard = wildCard;
-}
-
-bool Soprano::Query::QueryObject::isWildCard()
-{
-    return m_wildCard;
-}
-
-
 ////////////////////////////////////////////////////////////////////////
-// QueryObject                                                        //
+// Query                                                              //
 ////////////////////////////////////////////////////////////////////////
 
 //
@@ -911,6 +970,12 @@ Soprano::Query::Prefix::Prefix( const Prefix &other )
     d = other.d;
 }
 
+Soprano::Query::Prefix& Soprano::Query::Prefix::operator=( const Prefix& other )
+{
+    d = other.d;
+    return *this;
+}
+
 const QString Soprano::Query::Prefix::prefix() const
 {
     return d->prefix;
@@ -921,3 +986,243 @@ const QUrl Soprano::Query::Prefix::uri() const
     return d->uri;
 }
 
+//
+// Soprano::Query::GraphPattern
+//
+
+class Soprano::Query::GraphPattern::Private: public QSharedData
+{
+public:
+    Private() 
+      : subject( 0 ),
+        predicate( 0 ),
+        object( 0 ),
+        context( 0 ),
+        optional( false )
+    {};
+        
+    ~Private() 
+    {
+        delete subject;
+        delete predicate;
+        delete object;
+        delete context;
+    }
+    
+    RTerm *subject;
+    RTerm *predicate;
+    RTerm *object;
+    RTerm *context;
+    bool optional;
+};
+
+Soprano::Query::GraphPattern::GraphPattern()
+{
+   d = new Private;
+}
+
+Soprano::Query::GraphPattern::GraphPattern( RTerm *subject, RTerm *predicate, RTerm *object, RTerm *context, bool optional )
+{
+    d = new Private;
+    d->subject = subject;
+    d->predicate = predicate;
+    d->object = object;
+    d->context = context;
+    d->optional = optional;
+}
+
+Soprano::Query::GraphPattern::~GraphPattern()
+{
+}
+
+Soprano::Query::GraphPattern& Soprano::Query::GraphPattern::operator=( const GraphPattern& other )
+{
+    d = other.d;
+    return *this;
+}
+
+void Soprano::Query::GraphPattern::setOptional(bool optional)
+{
+    d->optional = optional;
+}
+
+bool Soprano::Query::GraphPattern::optional() const
+{
+    return d->optional;
+}
+
+void Soprano::Query::GraphPattern::setSubject( RTerm *subject )
+{
+    delete d->subject;
+    d->subject = subject;
+}
+
+const Soprano::Query::RTerm *Soprano::Query::GraphPattern::subject() const
+{
+    return d->subject;
+}
+
+void Soprano::Query::GraphPattern::setPredicate( RTerm *predicate )
+{
+    delete d->predicate;
+    d->predicate = predicate;
+}
+
+const Soprano::Query::RTerm *Soprano::Query::GraphPattern::predicate() const
+{
+   return d->predicate;
+}
+
+void Soprano::Query::GraphPattern::setObject( RTerm *object )
+{
+   delete d->object;
+   d->object = object;
+}
+
+const Soprano::Query::RTerm *Soprano::Query::GraphPattern::object() const
+{
+   return d->object;
+}
+            
+void Soprano::Query::GraphPattern::setContext( RTerm *context )
+{
+    delete d->context;
+    d->context = context;
+}
+
+const Soprano::Query::RTerm *Soprano::Query::GraphPattern::context() const
+{
+    return d->context;
+}
+
+//
+// Soprano::Query::Query
+//
+
+class Soprano::Query::Query::Private : public QSharedData {
+public:
+    Private(): condition(0) {};
+
+    ~Private() {
+        delete condition;
+    }
+    
+    BooleanExpression *condition;
+    
+    QList<Prefix> prefixes;
+    QueryTerms queryTerms;
+    QueryType type;
+};
+
+Soprano::Query::Query::Query()
+{
+   d = new Private;
+}
+
+Soprano::Query::Query::Query( QueryType type )
+{
+   d = new Private;
+   d->type = type;
+}
+
+Soprano::Query::Query::~Query()
+{
+}
+
+Soprano::Query::Query& Soprano::Query::Query::operator=( const Query& other )
+{
+    d = other.d;
+    return *this;
+}
+
+void Soprano::Query::Query::addPrefix( const Prefix &prefix )
+{
+    d->prefixes.append( prefix );
+}
+
+QList<Soprano::Query::Prefix> Soprano::Query::Query::prefixes()
+{
+    return d->prefixes;
+}
+
+void Soprano::Query::Query::setCondition( BooleanExpression* condition )
+{
+    delete d->condition;
+    d->condition = condition;
+}
+
+const Soprano::Query::BooleanExpression *Soprano::Query::Query::condition() const
+{
+    return d->condition;
+}
+
+void Soprano::Query::Query::setQueryType( QueryType type )
+{
+    d->type = type;
+}
+
+Soprano::Query::Query::QueryType Soprano::Query::Query::type() const
+{
+    return d->type;
+}
+
+void Soprano::Query::Query::setQueryTerms( const QueryTerms &queryTerms )
+{
+    d->queryTerms = queryTerms;
+}
+
+Soprano::Query::QueryTerms Soprano::Query::Query::terms() const
+{
+    d->queryTerms;
+}
+
+//
+// Soprano::Query::QueryTerms
+//
+
+class Soprano::Query::QueryTerms::Private : public QSharedData
+{
+public:
+    Private() {}
+    
+    ~Private() {
+       Q_FOREACH( RTerm* r, rterms ) {
+          delete r;
+       }
+    }
+    
+    QList<RTerm *> rterms; 
+};
+
+Soprano::Query::QueryTerms::QueryTerms()
+{
+    d = new Private();
+}
+
+Soprano::Query::QueryTerms::QueryTerms( const QueryTerms& other )
+{
+    d = other.d;
+}
+        
+Soprano::Query::QueryTerms::~QueryTerms()
+{
+}
+            
+void Soprano::Query::QueryTerms::addQueryTerm( RTerm *rterm )
+{
+   d->rterms.append( rterm );
+}
+        
+QList<const Soprano::Query::RTerm*> Soprano::Query::QueryTerms::terms() const
+{
+    QList<const RTerm*> l;
+    Q_FOREACH( RTerm* r, d->rterms ) {
+        l.append( r );
+    }
+    return l;
+}
+
+bool Soprano::Query::QueryTerms::selectAll() const
+{
+    return d->rterms.isEmpty();
+}
