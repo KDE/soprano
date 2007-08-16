@@ -798,11 +798,11 @@ namespace Soprano
         };
 
 	enum QueryLanguage {
-	    QUERY_LANGUAGE_NONE = 0x0,
-	    QUERY_LANGUAGE_SPARQL = 0x1,
-	    QUERY_LANGUAGE_RDQL = 0x2,
-	    QUERY_LANGUAGE_SERQL = 0x4,
-	    QUERY_LANGUAGE_USER = 0x8  //<!-- The user type can be used to introduce unknown query lanaguages by name
+	    QUERY_LANGUAGE_NONE = 0x0,   /**< No query language */
+	    QUERY_LANGUAGE_SPARQL = 0x1, /**< The SPARQL query language: http://www.w3.org/TR/rdf-sparql-query/ */
+	    QUERY_LANGUAGE_RDQL = 0x2,   /**< The RDQL RDF query language: http://www.w3.org/Submission/2004/SUBM-RDQL-20040109/ */
+	    QUERY_LANGUAGE_SERQL = 0x4,  /**< Sesame RDF %Query Language: http://openrdf.org/doc/sesame2/users/ch05.html */
+	    QUERY_LANGUAGE_USER = 0x8    /**< The user type can be used to introduce unknown query lanaguages by name */
 	};
 	Q_DECLARE_FLAGS( QueryLanguages, QueryLanguage )
     };

@@ -69,7 +69,7 @@ namespace Soprano {
 	     *
 	     * \param query The %query string to parse.
 	     * \param lang The language the %query is written in.
-	     * \param userQueryLanguage If lang is set to QUERY_LANGUAGE_USER this parameter specifies the
+	     * \param userQueryLanguage If lang is set to Query::QUERY_LANGUAGE_USER this parameter specifies the
 	     *       query language to use. It allows the extension of the %Soprano Query interface with new
 	     *       query languages that are not officially supported by %Soprano.
 	     *
@@ -83,7 +83,7 @@ namespace Soprano {
 	     *
 	     * \param query The Query instance to serialize.
 	     * \param lang The encoding that should be used to serialize the %query.
-	     * \param userQueryLanguage If lang is set to QUERY_LANGUAGE_USER this parameter specifies the
+	     * \param userQueryLanguage If lang is set to Query::QUERY_LANGUAGE_USER this parameter specifies the
 	     *       query language to use. It allows the extension of the %Soprano Query interface with new
 	     *       query languages that are not officially supported by %Soprano.
 	     *
@@ -94,8 +94,8 @@ namespace Soprano {
 	    /**
 	     * A query parser can support different query languages.
 	     *
-	     * \return A combination of QueryLanguage values representing the supported query languages. If
-	     * the list contains QUERY_LANGUAGE_USER the query parser supports additional query languages not
+	     * \return A combination of Query::QueryLanguage values representing the supported query languages. If
+	     * the list contains Query::QUERY_LANGUAGE_USER the query parser supports additional query languages not
 	     * officially supported by %Soprano.
 	     *
 	     * \sa supportedUserQueryLanguages()
@@ -103,8 +103,8 @@ namespace Soprano {
 	    virtual QueryLanguages supportedQueryLanguages() const = 0;
 
 	    /**
-	     * A query parser can support additional query languages that are not defined in QueryLanguages.
-	     * In that case supportedQueryLanguages() has to include QUERY_LANGUAGE_USER.
+	     * A query parser can support additional query languages that are not defined in Query::QueryLanguage.
+	     * In that case supportedQueryLanguages() has to include Query::QUERY_LANGUAGE_USER.
 	     *
 	     * \return A list of supported query languages.
 	     */
