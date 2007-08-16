@@ -2,10 +2,13 @@ project(soprano_tests)
 
 include_directories(
   ${soprano_SOURCE_DIR}
+  ${soprano_SOURCE_DIR}/data
   ${soprano_core_SOURCE_DIR}
   ${QT_INCLUDES}
   ${CMAKE_CURRENT_BINARY_DIR}
 )
+
+configure_file(config-testdata.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/config-testdata.h)
 
 # Node
 qt4_automoc(nodetest NodeTest.cpp)
@@ -97,3 +100,9 @@ qt4_automoc(sesame2backendtest sesame2backendtest.cpp)
 add_executable(sesame2backendtest sesame2backendtest.cpp)
 target_link_libraries(sesame2backendtest soprano sopranomodeltest ${QT_QTCORE_LIBRARY} ${QT_QTTEST_LIBRARY})
 add_test(sesame2backendtest ${EXECUTABLE_OUTPUT_PATH}/sesame2backendtest)
+
+# parser test
+qt4_automoc(parsertest parsertest.cpp)
+add_executable(parsertest parsertest.cpp)
+target_link_libraries(parsertest soprano ${QT_QTCORE_LIBRARY} ${QT_QTTEST_LIBRARY})
+add_test(parsertest ${EXECUTABLE_OUTPUT_PATH}/parsertest)

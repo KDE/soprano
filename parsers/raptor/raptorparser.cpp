@@ -30,6 +30,7 @@
 
 #include <QtCore/QUrl>
 #include <QtCore/QtPlugin>
+#include <QtCore/QDebug>
 
 
 Q_EXPORT_PLUGIN2(soprano_raptorparser, Soprano::Raptor::Parser)
@@ -89,7 +90,7 @@ Soprano::StatementIterator Soprano::Raptor::Parser::parseFile( const QString& fi
     librdf_free_uri( redlandUri );
     librdf_free_parser( parser );
 
-    if ( stream ) {
+    if ( !stream ) {
         return StatementIterator();
     }
     else {
@@ -122,7 +123,7 @@ Soprano::StatementIterator Soprano::Raptor::Parser::parseString( const QString& 
                                                                   redlandBaseUri );
     librdf_free_parser( parser );
 
-    if ( stream ) {
+    if ( !stream ) {
         return StatementIterator();
     }
     else {
