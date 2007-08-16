@@ -70,11 +70,17 @@ Soprano::StatementIterator Soprano::Raptor::Parser::parseFile( const QString& fi
         return StatementIterator();
     }
 
+    QString mimeType = serializationMimeType( serialization );
+    if ( serialization == TURTLE ) {
+        mimeType = "application/turtle"; // x-turtle does not work....
+    }
+
     librdf_parser *parser = librdf_new_parser( Redland::World::self()->worldPtr(),
                                                0, // use all factories
-                                               serializationMimeType( serialization ).toLatin1().data(),
+                                               mimeType.toLatin1().data(),
                                                0 ); // what is the URI of the syntax used for?
     if ( !parser ) {
+        qDebug() << "(Soprano::Raptor::Parser) no parser for serialization " << serializationMimeType( serialization );
         librdf_free_uri( redlandUri );
         return StatementIterator();
     }

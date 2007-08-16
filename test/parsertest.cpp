@@ -36,30 +36,36 @@ void ParserTest::init()
 
 void ParserTest::testParser_data()
 {
-    QTest::addColumn<QString>( "parserName" );
+    QTest::addColumn<Soprano::RdfSerialization>( "serialization" );
+    QTest::addColumn<QString>( "filename" );
 
-    QList<const Parser*> pl = PluginManager::instance()->allParsers();
-    Q_FOREACH( const Parser* p, pl ) {
-        QTest::newRow( p->pluginName().toLatin1().data() ) << p->pluginName();
-    }
+    QTest::newRow("rdf_xml") << RDF_XML << SOPRANO_TEST_DATA_DIR"/rdf_xml-testdata.rdf";
+    QTest::newRow("turtle") << TURTLE << SOPRANO_TEST_DATA_DIR"/turtle-testdata.ttl";
 }
 
 
+Q_DECLARE_METATYPE( Soprano::RdfSerialization )
+
 void ParserTest::testParser()
 {
-    QFETCH( QString, parserName );
-    const Parser* parser = PluginManager::instance()->discoverParserByName( parserName );
+    QFETCH( RdfSerialization, serialization );
+    QFETCH( QString, filename );
+
+
+    QList<const Parser*> parsers = PluginManager::instance()->allParsers();
 
     QList<Statement> testStatements = testData();
 
-    if ( parser->supportsSerialization( RDF_XML ) ) {
-        StatementIterator it = parser->parseFile( SOPRANO_TEST_DATA_DIR"/rdf_xml-testdata.rdf", QUrl("http://soprano.sf.net/testdata/"), RDF_XML );
-        QList<Statement> all = it.allStatements();
+    Q_FOREACH( const Parser* parser, parsers ) {
+        if ( parser->supportsSerialization( serialization ) ) {
+            StatementIterator it = parser->parseFile( filename, QUrl("http://soprano.sf.net/testdata/"), serialization );
+            QList<Statement> all = it.allStatements();
 
-        QCOMPARE( testStatements.count(), all.count() );
+            QCOMPARE( testStatements.count(), all.count() );
 
-        Q_FOREACH( Statement s, testStatements ) {
-            QVERIFY( all.contains( s ) );
+            Q_FOREACH( Statement s, testStatements ) {
+                QVERIFY( all.contains( s ) );
+            }
         }
     }
 }
