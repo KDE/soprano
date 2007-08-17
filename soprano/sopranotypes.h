@@ -58,6 +58,8 @@ namespace Soprano
     /**
      * There are two types of backend settings: boolean flags and key/value pairs.
      * The boolean flags are identified by BackendFlag.
+     *
+     * \sa BackendSetting, Backend::createModel()
      */
     enum BackendOption {
 	BACKEND_OPTION_NONE = 0x0,
@@ -68,6 +70,14 @@ namespace Soprano
     };
     Q_DECLARE_FLAGS( BackendOptions, BackendOption )
 
+    /**
+     * Each Backend plugin can support different features. %Soprano defines a list of well-known features
+     * that each backend implementation should try to realize. In addition user features can be defined.
+     * For this BACKEND_FEATURE_USER has to be included in the supported features. Then additional features
+     * may be reported through Backend::supportedUserFeatures().
+     *
+     * \sa Backend::supportedFeatures(), Backend::supportedUserFeatures()
+     */
     enum BackendFeature {
 	BACKEND_FEATURE_NONE = 0x0,
 	BACKEND_FEATURE_ADD_STATEMENT = 0x1,       /**< The backend supports the adding of statements (Model::addStatement()). */
@@ -82,6 +92,13 @@ namespace Soprano
     };
     Q_DECLARE_FLAGS( BackendFeatures, BackendFeature )
 
+
+    /**
+     * %Soprano defines a set of well-known query languages that can be used to serialize queries.
+     * Additional languages may be supported using QUERY_LANGUAGE_USER.
+     *
+     * \sa Query::QueryParser, Query::QuerySerializer
+     */
     namespace Query {
 	enum QueryLanguage {
 	    QUERY_LANGUAGE_NONE = 0x0,   /**< No query language */

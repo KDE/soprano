@@ -109,7 +109,7 @@ namespace Soprano
 	 * If the features include Soprano::BACKEND_FEATURE_USER additional user features not defined in 
 	 * Backend::BackendFeature can be supported via supportedUserFeatures().
 	 *
-	 * \return A combination of BackendFeature values.
+	 * \return A combination of Soprano::BackendFeature values.
 	 */
 	virtual BackendFeatures supportedFeatures() const = 0;
 

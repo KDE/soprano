@@ -203,7 +203,7 @@ INCLUDE_FILE_PATTERNS  =
 PREDEFINED             = 
 EXPAND_AS_DEFINED      = EIGEN_MAKE_DYNAMICSIZE_TYPEDEFS \
                          EIGEN_MAKE_FIXEDSIZE_TYPEDEFS
-SKIP_FUNCTION_MACROS   = NO
+SKIP_FUNCTION_MACROS   = YES
 #---------------------------------------------------------------------------
 # Configuration::additions related to external references   
 #---------------------------------------------------------------------------
