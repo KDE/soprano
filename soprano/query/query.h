@@ -91,7 +91,7 @@ namespace Soprano
             Numerical( const Numerical &other );
             ~Numerical();
         
-            //Numerical& operator=( const Numerical& );
+            Numerical& operator=( const Numerical& );
         
             bool isDecimal();
 
@@ -743,7 +743,8 @@ namespace Soprano
             QueryTerms( const QueryTerms& other );
             ~QueryTerms();
             
-            //QueryTerms& operator=( const QueryTerms& );
+            QueryTerms& operator=( const QueryTerms& );
+	
             /**
              * QueryTerms takes ownership of the RTerm instances.
              */

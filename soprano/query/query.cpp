@@ -28,7 +28,7 @@
 #include <QtCore/QList>
 
 //
-// RTerm
+// Soprano::Query::RTerm
 //
 
 Soprano::Query::RTerm::RTerm()
@@ -50,7 +50,7 @@ bool Soprano::Query::RTerm::isNode() const
 }
 
 //
-// Variable
+// Soprano::Query::Variable
 //
 
 class Soprano::Query::Variable::Private: public QSharedData {
@@ -87,9 +87,8 @@ QString Soprano::Query::Variable::name() const
     return d->name;
 }
 
-
 //
-// Numerical
+// Soprano::Query::Numerical
 //
 
 // FIXME: not sure if this works with built-in types
@@ -134,6 +133,12 @@ Soprano::Query::Numerical::~Numerical()
 {
 }
 
+Soprano::Query::Numerical& Soprano::Query::Numerical::operator=( const Numerical& other )
+{
+    d = other.d;
+    return *this;
+}
+
 bool Soprano::Query::Numerical::isDecimal()
 {
     return isDouble() || isFloat();
@@ -169,9 +174,8 @@ int Soprano::Query::Numerical::integerValue()
    return d->value.toInt();
 }
 
-
 //
-// Node
+// Soprano::Query::Node
 //
 
 class Soprano::Query::Node::Private : public QSharedData {
@@ -209,10 +213,9 @@ Soprano::Node Soprano::Query::Node::node() const
     return d->node;
 }
 
-
-////////////////////////////////////////////////////////////////////////
-// Expressions                                                        //
-////////////////////////////////////////////////////////////////////////
+//
+// Soprano::Query::Expression     
+//
 
 Soprano::Query::Expression::Expression()
 {
@@ -222,6 +225,10 @@ Soprano::Query::Expression::~Expression()
 {
 }
 
+//
+// Soprano::Query::BooleanExpression
+//
+
 Soprano::Query::BooleanExpression::BooleanExpression()
 {
 }
@@ -229,6 +236,10 @@ Soprano::Query::BooleanExpression::BooleanExpression()
 Soprano::Query::BooleanExpression::~BooleanExpression()
 {
 }
+
+//
+// Soprano::Query::NumericalExpression
+//
 
 Soprano::Query::NumericalExpression::NumericalExpression()
 {
@@ -238,6 +249,10 @@ Soprano::Query::NumericalExpression::~NumericalExpression()
 {
 }
 
+//
+// Soprano::Query::StringExpression
+//
+
 Soprano::Query::StringExpression::StringExpression()
 {
 }
@@ -246,9 +261,9 @@ Soprano::Query::StringExpression::~StringExpression()
 {
 }
 
-////////////////////////////////////////////////////////////////////////
-// Unary Expressions                                                  //
-////////////////////////////////////////////////////////////////////////
+//
+// Soprano::Query::UnaryBooleanExpression
+//
 
 Soprano::Query::UnaryBooleanExpression::UnaryBooleanExpression( BooleanExpression *expression )
     :m_expression( expression )
@@ -265,6 +280,9 @@ Soprano::Query::BooleanExpression *Soprano::Query::UnaryBooleanExpression::expre
     return m_expression;
 }
 
+//
+// Soprano::Query::UnaryRTermBooleanExpression
+//
 
 Soprano::Query::UnaryRTermBooleanExpression::UnaryRTermBooleanExpression( RTerm *rterm )
     :m_rterm(rterm)
@@ -281,6 +299,9 @@ Soprano::Query::RTerm *Soprano::Query::UnaryRTermBooleanExpression::rterm()
     return m_rterm;
 }
 
+//
+// Soprano::Query::UnaryRTermStringExpression
+//
 
 Soprano::Query::UnaryRTermStringExpression::UnaryRTermStringExpression( RTerm *rterm )
     :m_rterm(rterm)
@@ -297,6 +318,9 @@ Soprano::Query::RTerm *Soprano::Query::UnaryRTermStringExpression::rterm()
     return m_rterm;
 }
 
+//
+// Soprano::Query::UnaryNumericalExpression
+//
 
 Soprano::Query::UnaryNumericalExpression::UnaryNumericalExpression( NumericalExpression *expression )
     :m_expression( expression )
@@ -313,6 +337,9 @@ Soprano::Query::NumericalExpression *Soprano::Query::UnaryNumericalExpression::e
     return m_expression;
 }
 
+//
+// Soprano::Query::Not
+//
 
 Soprano::Query::Not::Not( BooleanExpression *expression )
     :UnaryBooleanExpression( expression )
@@ -324,6 +351,9 @@ void Soprano::Query::Not::accept( ExpressionVisitor *visitor )
     visitor->visit( this );
 }
 
+//
+// Soprano::Query::UnaryPlus
+//
 
 Soprano::Query::UnaryPlus::UnaryPlus( NumericalExpression *expression )
     :UnaryNumericalExpression( expression )
@@ -335,6 +365,9 @@ void Soprano::Query::UnaryPlus::accept( ExpressionVisitor *visitor )
     visitor->visit( this );
 }
 
+//
+// Soprano::Query::UnaryMinus
+//
 
 Soprano::Query::UnaryMinus::UnaryMinus( NumericalExpression *expression )
     :UnaryNumericalExpression( expression )
@@ -346,6 +379,9 @@ void Soprano::Query::UnaryMinus::accept( ExpressionVisitor *visitor )
     visitor->visit( this );
 }
 
+//
+// Soprano::Query::IsBound
+//
 
 Soprano::Query::IsBound::IsBound( Variable *variable )
     :m_variable( variable )
@@ -367,6 +403,9 @@ void Soprano::Query::IsBound::accept( ExpressionVisitor *visitor )
     visitor->visit( this );
 }
 
+//
+// Soprano::Query::IsIRI
+//
 
 Soprano::Query::IsIRI::IsIRI( RTerm *rterm )
     :UnaryRTermBooleanExpression( rterm )
@@ -378,6 +417,9 @@ void Soprano::Query::IsIRI::accept( ExpressionVisitor *visitor )
     visitor->visit( this );
 }
 
+//
+// Soprano::Query::IsBlank
+//
 
 Soprano::Query::IsBlank::IsBlank( RTerm *rterm )
     :UnaryRTermBooleanExpression( rterm )
@@ -389,6 +431,9 @@ void Soprano::Query::IsBlank::accept( ExpressionVisitor *visitor )
     visitor->visit( this );
 }
 
+//
+// Soprano::Query::IsLiteral
+//
 
 Soprano::Query::IsLiteral::IsLiteral( RTerm *rterm )
     :UnaryRTermBooleanExpression( rterm )
@@ -400,6 +445,9 @@ void Soprano::Query::IsLiteral::accept( ExpressionVisitor *visitor )
     visitor->visit( this );
 }
 
+//
+// Soprano::Query::StringValue
+//
 
 Soprano::Query::StringValue::StringValue( RTerm *rterm )
     :UnaryRTermStringExpression( rterm )
@@ -411,6 +459,9 @@ void Soprano::Query::StringValue::accept( ExpressionVisitor *visitor )
     visitor->visit( this );
 }
 
+//
+// Soprano::Query::LangValue
+//
 
 Soprano::Query::LangValue::LangValue( RTerm *rterm )
     :UnaryRTermStringExpression( rterm )
@@ -422,6 +473,9 @@ void Soprano::Query::LangValue::accept( ExpressionVisitor *visitor )
     visitor->visit( this );
 }
 
+//
+// Soprano::Query::DataTypeValue
+//
 
 Soprano::Query::DataTypeValue::DataTypeValue( RTerm *rterm )
     :UnaryRTermStringExpression( rterm )
@@ -433,11 +487,9 @@ void Soprano::Query::DataTypeValue::accept( ExpressionVisitor *visitor )
     visitor->visit( this );
 }
 
-
-////////////////////////////////////////////////////////////////////////
-// Binary Expression                                                  //
-////////////////////////////////////////////////////////////////////////
-
+//
+// Soprano::Query::BinaryBooleanExpression
+//
 
 Soprano::Query::BinaryBooleanExpression::BinaryBooleanExpression( BooleanExpression *first, BooleanExpression *second )
     :m_first(first), m_second(second)
@@ -464,6 +516,9 @@ Soprano::Query::BooleanExpression *Soprano::Query::BinaryBooleanExpression::seco
    return m_second;
 }
 
+//
+// Soprano::Query::BinaryNumericalBooleanExpression
+//
 
 Soprano::Query::BinaryNumericalBooleanExpression::BinaryNumericalBooleanExpression( NumericalExpression *first, NumericalExpression *second )
     :m_first(first), m_second(second)
@@ -490,6 +545,9 @@ Soprano::Query::NumericalExpression *Soprano::Query::BinaryNumericalBooleanExpre
    return m_second;
 }
 
+//
+// Soprano::Query::BinaryStringBooleanExpression
+//
 
 Soprano::Query::BinaryStringBooleanExpression::BinaryStringBooleanExpression( StringExpression *first, StringExpression *second )
     :m_first(first), m_second(second)
@@ -516,6 +574,9 @@ Soprano::Query::StringExpression *Soprano::Query::BinaryStringBooleanExpression:
    return m_second;
 }
 
+//
+// Soprano::Query::BinaryDateTimeBooleanExpression
+//
 
 Soprano::Query::BinaryDateTimeBooleanExpression::BinaryDateTimeBooleanExpression( QDateTime *first, QDateTime *second )
     :m_first(first), m_second(second)
@@ -542,6 +603,9 @@ QDateTime *Soprano::Query::BinaryDateTimeBooleanExpression::second()
    return m_second;
 }
 
+//
+// Soprano::Query::BinaryRTermBooleanExpression
+//
 
 Soprano::Query::BinaryRTermBooleanExpression::BinaryRTermBooleanExpression( RTerm *first, RTerm *second )
     :m_first(first), m_second(second)
@@ -568,6 +632,9 @@ Soprano::Query::RTerm *Soprano::Query::BinaryRTermBooleanExpression::second()
    return m_second;
 }
 
+//
+// Soprano::Query::BinaryNumericalExpression
+//
 
 Soprano::Query::BinaryNumericalExpression::BinaryNumericalExpression( NumericalExpression *first, NumericalExpression *second )
     :m_first(first), m_second(second)
@@ -605,6 +672,9 @@ void Soprano::Query::LogicOr::accept( ExpressionVisitor *visitor )
     visitor->visit( this );
 }
 
+//
+// Soprano::Query::LogicAnd
+//
 
 Soprano::Query::LogicAnd::LogicAnd( BooleanExpression *first, BooleanExpression *second )
     :BinaryBooleanExpression( first, second )
@@ -616,6 +686,9 @@ void Soprano::Query::LogicAnd::accept( ExpressionVisitor *visitor )
     visitor->visit( this );
 }
 
+//
+// Soprano::Query::NumericalEqual
+//
 
 Soprano::Query::NumericalEqual::NumericalEqual( NumericalExpression *first, NumericalExpression *second )
     :BinaryNumericalBooleanExpression( first, second )
@@ -627,6 +700,9 @@ void Soprano::Query::NumericalEqual::accept( ExpressionVisitor *visitor )
     visitor->visit( this );
 }
 
+//
+// Soprano::Query::NumericalNotEqual
+//
 
 Soprano::Query::NumericalNotEqual::NumericalNotEqual( NumericalExpression *first, NumericalExpression *second )
     :BinaryNumericalBooleanExpression( first, second )
@@ -638,6 +714,9 @@ void Soprano::Query::NumericalNotEqual::accept( ExpressionVisitor *visitor )
     visitor->visit( this );
 }
 
+//
+// Soprano::Query::StringEqual
+//
 
 Soprano::Query::StringEqual::StringEqual( StringExpression *first, StringExpression *second )
     :BinaryStringBooleanExpression( first, second )
@@ -649,6 +728,9 @@ void Soprano::Query::StringEqual::accept( ExpressionVisitor *visitor )
     visitor->visit( this );
 }
 
+//
+// Soprano::Query::StringNotEqual
+//
 
 Soprano::Query::StringNotEqual::StringNotEqual( StringExpression *first, StringExpression *second )
     :BinaryStringBooleanExpression( first, second )
@@ -660,6 +742,9 @@ void Soprano::Query::StringNotEqual::accept( ExpressionVisitor *visitor )
     visitor->visit( this );
 }
 
+//
+// Soprano::Query::DateTimeEqual
+//
 
 Soprano::Query::DateTimeEqual::DateTimeEqual( QDateTime *first, QDateTime *second )
     :BinaryDateTimeBooleanExpression( first, second )
@@ -671,6 +756,9 @@ void Soprano::Query::DateTimeEqual::accept( ExpressionVisitor *visitor )
     visitor->visit( this );
 }
 
+//
+// Soprano::Query::DateTimeNotEqual
+//
 
 Soprano::Query::DateTimeNotEqual::DateTimeNotEqual( QDateTime *first, QDateTime *second )
     :BinaryDateTimeBooleanExpression( first, second )
@@ -682,6 +770,9 @@ void Soprano::Query::DateTimeNotEqual::accept( ExpressionVisitor *visitor )
     visitor->visit( this );
 }
 
+//
+// Soprano::Query::NumericalLessThan
+//
 
 Soprano::Query::NumericalLessThan::NumericalLessThan( NumericalExpression *first, NumericalExpression *second )
     :BinaryNumericalBooleanExpression( first, second )
@@ -693,6 +784,9 @@ void Soprano::Query::NumericalLessThan::accept( ExpressionVisitor *visitor )
     visitor->visit( this );
 }
 
+//
+// Soprano::Query::NumericalGreaterThan
+//
 
 Soprano::Query::NumericalGreaterThan::NumericalGreaterThan( NumericalExpression *first, NumericalExpression *second )
     :BinaryNumericalBooleanExpression( first, second )
@@ -704,6 +798,9 @@ void Soprano::Query::NumericalGreaterThan::accept( ExpressionVisitor *visitor )
     visitor->visit( this );
 }
 
+//
+// Soprano::Query::NumericalLessThan
+//
 
 Soprano::Query::NumericalLessThanEqual::NumericalLessThanEqual( NumericalExpression *first, NumericalExpression *second )
     :BinaryNumericalBooleanExpression( first, second )
@@ -715,6 +812,9 @@ void Soprano::Query::NumericalLessThanEqual::accept( ExpressionVisitor *visitor 
     visitor->visit( this );
 }
 
+//
+// Soprano::Query::NumericalGreaterThanEqual
+//
 
 Soprano::Query::NumericalGreaterThanEqual::NumericalGreaterThanEqual( NumericalExpression *first, NumericalExpression *second )
     :BinaryNumericalBooleanExpression( first, second )
@@ -726,6 +826,9 @@ void Soprano::Query::NumericalGreaterThanEqual::accept( ExpressionVisitor *visit
     visitor->visit( this );
 }
 
+//
+// Soprano::Query::StringLessThan
+//
 
 Soprano::Query::StringLessThan::StringLessThan( StringExpression *first, StringExpression *second )
     :BinaryStringBooleanExpression( first, second )
@@ -737,6 +840,9 @@ void Soprano::Query::StringLessThan::accept( ExpressionVisitor *visitor )
     visitor->visit( this );
 }
 
+//
+// Soprano::Query::StringGreaterThan
+//
 
 Soprano::Query::StringGreaterThan::StringGreaterThan( StringExpression *first, StringExpression *second )
     :BinaryStringBooleanExpression( first, second )
@@ -748,6 +854,9 @@ void Soprano::Query::StringGreaterThan::accept( ExpressionVisitor *visitor )
     visitor->visit( this );
 }
 
+//
+// Soprano::Query::StringLessThanEqual
+//
 
 Soprano::Query::StringLessThanEqual::StringLessThanEqual( StringExpression *first, StringExpression *second )
     :BinaryStringBooleanExpression( first, second )
@@ -759,6 +868,9 @@ void Soprano::Query::StringLessThanEqual::accept( ExpressionVisitor *visitor )
     visitor->visit( this );
 }
 
+//
+// Soprano::Query::StringGreaterThanEqual
+//
 
 Soprano::Query::StringGreaterThanEqual::StringGreaterThanEqual( StringExpression *first, StringExpression *second )
     :BinaryStringBooleanExpression( first, second )
@@ -770,6 +882,9 @@ void Soprano::Query::StringGreaterThanEqual::accept( ExpressionVisitor *visitor 
     visitor->visit( this );
 }
 
+//
+// Soprano::Query::DateTimeLessThan
+//
 
 Soprano::Query::DateTimeLessThan::DateTimeLessThan( QDateTime *first, QDateTime *second )
     :BinaryDateTimeBooleanExpression( first, second )
@@ -781,6 +896,9 @@ void Soprano::Query::DateTimeLessThan::accept( ExpressionVisitor *visitor )
     visitor->visit( this );
 }
 
+//
+// Soprano::Query::DateTimeGreaterThan
+//
 
 Soprano::Query::DateTimeGreaterThan::DateTimeGreaterThan( QDateTime *first, QDateTime *second )
     :BinaryDateTimeBooleanExpression( first, second )
@@ -792,6 +910,9 @@ void Soprano::Query::DateTimeGreaterThan::accept( ExpressionVisitor *visitor )
     visitor->visit( this );
 }
 
+//
+// Soprano::Query::DateTimeLessThanEqual
+//
 
 Soprano::Query::DateTimeLessThanEqual::DateTimeLessThanEqual( QDateTime *first, QDateTime *second )
     :BinaryDateTimeBooleanExpression( first, second )
@@ -803,6 +924,9 @@ void Soprano::Query::DateTimeLessThanEqual::accept( ExpressionVisitor *visitor )
     visitor->visit( this );
 }
 
+//
+// Soprano::Query::DateTimeGreaterThanEqual
+//
 
 Soprano::Query::DateTimeGreaterThanEqual::DateTimeGreaterThanEqual( QDateTime *first, QDateTime *second )
     :BinaryDateTimeBooleanExpression( first, second )
@@ -814,6 +938,9 @@ void Soprano::Query::DateTimeGreaterThanEqual::accept( ExpressionVisitor *visito
     visitor->visit( this );
 }
 
+//
+// Soprano::Query::NumericalMultiply
+//
 
 Soprano::Query::NumericalMultiply::NumericalMultiply( NumericalExpression *first, NumericalExpression *second )
     :BinaryNumericalExpression( first, second )
@@ -825,6 +952,9 @@ void Soprano::Query::NumericalMultiply::accept( ExpressionVisitor *visitor )
     visitor->visit( this );
 }
 
+//
+// Soprano::Query::NumericalDivide
+//
 
 Soprano::Query::NumericalDivide::NumericalDivide( NumericalExpression *first, NumericalExpression *second )
     :BinaryNumericalExpression( first, second )
@@ -836,6 +966,9 @@ void Soprano::Query::NumericalDivide::accept( ExpressionVisitor *visitor )
     visitor->visit( this );
 }
 
+//
+// Soprano::Query::NumericalAdd
+//
 
 Soprano::Query::NumericalAdd::NumericalAdd( NumericalExpression *first, NumericalExpression *second )
     :BinaryNumericalExpression( first, second )
@@ -847,6 +980,9 @@ void Soprano::Query::NumericalAdd::accept( ExpressionVisitor *visitor )
     visitor->visit( this );
 }
 
+//
+// Soprano::Query::NumericalSubtract
+//
 
 Soprano::Query::NumericalSubtract::NumericalSubtract( NumericalExpression *first, NumericalExpression *second )
     :BinaryNumericalExpression( first, second )
@@ -858,6 +994,9 @@ void Soprano::Query::NumericalSubtract::accept( ExpressionVisitor *visitor )
     visitor->visit( this );
 }
 
+//
+// Soprano::Query::RTermEqual
+//
 
 Soprano::Query::RTermEqual::RTermEqual( RTerm *first, RTerm *second )
     :BinaryRTermBooleanExpression( first, second )
@@ -869,6 +1008,9 @@ void Soprano::Query::RTermEqual::accept( ExpressionVisitor *visitor )
     visitor->visit( this );
 }
 
+//
+// Soprano::Query::RTermNotEqual
+//
 
 Soprano::Query::RTermNotEqual::RTermNotEqual( RTerm *first, RTerm *second )
     :BinaryRTermBooleanExpression( first, second )
@@ -880,6 +1022,9 @@ void Soprano::Query::RTermNotEqual::accept( ExpressionVisitor *visitor )
     visitor->visit( this );
 }
 
+//
+// Soprano::Query::LangMatches
+//
 
 Soprano::Query::LangMatches::LangMatches( StringExpression *first, StringExpression *second )
     :BinaryStringBooleanExpression( first, second )
@@ -891,6 +1036,9 @@ void Soprano::Query::LangMatches::accept( ExpressionVisitor *visitor )
     visitor->visit( this );
 }
 
+//
+// Soprano::Query::Regexp
+//
 
 Soprano::Query::Regexp::Regexp( StringExpression *expression, const QString &pattern )
     :m_expression(expression), m_pattern(pattern)
@@ -936,10 +1084,6 @@ void Soprano::Query::Regexp::accept( ExpressionVisitor *visitor )
 {
     visitor->visit( this );
 }
-
-////////////////////////////////////////////////////////////////////////
-// Query                                                              //
-////////////////////////////////////////////////////////////////////////
 
 //
 // Soprano::Query::Prefix
@@ -1213,6 +1357,13 @@ Soprano::Query::QueryTerms::QueryTerms( const QueryTerms& other )
 Soprano::Query::QueryTerms::~QueryTerms()
 {
 }
+
+Soprano::Query::QueryTerms& Soprano::Query::QueryTerms::operator=( const QueryTerms& other )
+{
+    d = other.d;
+    return *this;
+}
+
 
 void Soprano::Query::QueryTerms::addQueryTerm( RTerm *rterm )
 {
