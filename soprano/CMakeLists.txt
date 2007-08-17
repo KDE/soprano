@@ -72,6 +72,7 @@ SET(soprano_SRCS
     vocabulary/xmls.cpp
     query/query.cpp
     query/queryparser.cpp
+    query/queryserializer.cpp
     inference/nodepattern.cpp
     inference/statementpattern.cpp
     inference/inferencerule.cpp
@@ -137,6 +138,9 @@ INSTALL(FILES
 	inference/statementpattern.h
 	inference/sil.h
 	inference/inferenceruleparser.h
+	query/query.h
+	query/queryparser.h
+	query/queryserializer.h
 	DESTINATION include/soprano)
 
 find_package(CLucene)

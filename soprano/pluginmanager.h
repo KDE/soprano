@@ -37,6 +37,7 @@ namespace Soprano
 
   namespace Query {
       class Parser;
+      class Serializer;
   }
 
   /**
@@ -137,6 +138,26 @@ namespace Soprano
        */
       const Query::Parser* discoverQueryParserForQueryLanguage( Query::QueryLanguage lang, const QString& userQueryLanguage = QString() );
 
+      /**
+       * Find a query serializer plugin by its name.
+       *
+       * \return the query serializer specified by \a name or null if could not
+       * be found.
+       */
+      const Query::Serializer* discoverQuerySerializerByName( const QString& name );
+
+      /**
+       * Find a Query::Serializer instance that is able to serialize the specified query language.
+       *
+       * \param lang The language the plugin is supposed to support.
+       * \param userQueryLanguage If lang is set to Query::QUERY_LANGUAGE_USER this parameter specifies the
+       *       query language to use. It allows the extension of the %Soprano Query interface with new
+       *       query languages that are not officially supported by %Soprano.
+       *
+       * \return A Query::Serializer plugin that can parse query language lang or 0 if no such plugin could be found.
+       */
+      const Query::Serializer* discoverQuerySerializerForQueryLanguage( Query::QueryLanguage lang, const QString& userQueryLanguage = QString() );
+
       QList<const Backend*> allBackends();
 
       QList<const Parser*> allParsers();
@@ -144,6 +165,8 @@ namespace Soprano
       QList<const Serializer*> allSerializers();
 
       QList<const Query::Parser*> allQueryParsers();
+
+      QList<const Query::Serializer*> allQuerySerializers();
 
       static PluginManager* instance();
 

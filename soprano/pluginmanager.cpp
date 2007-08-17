@@ -24,6 +24,7 @@
 #include "parser.h"
 #include "serializer.h"
 #include "query/queryparser.h"
+#include "query/queryserializer.h"
 #include "config.h"
 
 #include <QHash>
@@ -41,6 +42,7 @@ public:
     QHash<QString, Parser*> parsers;
     QHash<QString, Serializer*> serializers;
     QHash<QString, Query::Parser*> queryParsers;
+    QHash<QString, Query::Serializer*> querySerializers;
 };
 
 
@@ -145,6 +147,28 @@ const Soprano::Query::Parser* Soprano::PluginManager::discoverQueryParserForQuer
 }
 
 
+const Soprano::Query::Serializer* Soprano::PluginManager::discoverQuerySerializerByName( const QString& name )
+{
+    QHash<QString, Query::Serializer*>::iterator it = d->querySerializers.find( name );
+    if( it != d->querySerializers.end() )
+        return *it;
+    else
+        return 0;
+}
+
+
+const Soprano::Query::Serializer* Soprano::PluginManager::discoverQuerySerializerForQueryLanguage( Query::QueryLanguage lang, const QString& userQueryLanguage )
+{
+    for( QHash<QString, Query::Serializer*>::const_iterator it = d->querySerializers.begin(); it != d->querySerializers.end(); ++it ) {
+        const Query::Serializer* p = *it;
+        if( p->supportsQueryLanguage( lang, userQueryLanguage ) ) {
+            return p;
+        }
+    }
+    return 0;
+}
+
+
 QList<const Soprano::Backend*> Soprano::PluginManager::allBackends()
 {
     QList<const Backend*> bl;
@@ -183,6 +207,17 @@ QList<const Soprano::Query::Parser*> Soprano::PluginManager::allQueryParsers()
     QList<const Query::Parser*> pl;
     for ( QHash<QString, Query::Parser*>::const_iterator it = d->queryParsers.constBegin();
           it != d->queryParsers.constEnd(); ++it ) {
+        pl.append( it.value() );
+    }
+    return pl;
+}
+
+
+QList<const Soprano::Query::Serializer*> Soprano::PluginManager::allQuerySerializers()
+{
+    QList<const Query::Serializer*> pl;
+    for ( QHash<QString, Query::Serializer*>::const_iterator it = d->querySerializers.constBegin();
+          it != d->querySerializers.constEnd(); ++it ) {
         pl.append( it.value() );
     }
     return pl;
@@ -245,6 +280,10 @@ void Soprano::PluginManager::loadPlugins( const QString& path )
             else if( Query::Parser* parser = qobject_cast<Query::Parser*>( plugin ) ) {
                 qDebug() << "(Soprano::PluginManager) found query parser plugin " << parser->pluginName() << endl;
                 d->queryParsers.insert( parser->pluginName(), parser );
+            }
+            else if( Query::Serializer* serializer = qobject_cast<Query::Serializer*>( plugin ) ) {
+                qDebug() << "(Soprano::PluginManager) found query serializer plugin " << serializer->pluginName() << endl;
+                d->querySerializers.insert( serializer->pluginName(), serializer );
             }
             else {
                 qDebug() << "(Soprano::PluginManager) found no backend plugin at " << loader.fileName() << endl;
