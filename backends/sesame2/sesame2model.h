@@ -34,7 +34,7 @@ namespace Soprano {
 	class Model : public StorageModel
 	{
 	public:
-	    Model( RepositoryWrapper* sesame2Repository );
+	    Model( const Backend* backend, RepositoryWrapper* sesame2Repository );
 	    ~Model();
 
 	    ErrorCode addStatement( const Statement &statement );

@@ -104,8 +104,8 @@ public:
 };
 
 
-Soprano::ThreeStore::Model::Model( ts_connection* conn )
-    : Soprano::StorageModel(),
+Soprano::ThreeStore::Model::Model( const Backend* b, ts_connection* conn )
+    : Soprano::StorageModel( b ),
       d( new Private() )
 {
     d->connection = conn;

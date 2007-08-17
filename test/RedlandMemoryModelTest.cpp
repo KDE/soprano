@@ -26,11 +26,15 @@
 using namespace Soprano;
 
 
-Soprano::Model* RedlandMemoryModelTest::createModel( const QString& name )
+Soprano::Model* RedlandMemoryModelTest::createModel()
 {
-    Soprano::setUsedBackend( Soprano::discoverBackendByName( "redland" ) );
-    Q_UNUSED( name );
-    return Soprano::createModel();
+    const Backend* b = Soprano::discoverBackendByName( "redland" );
+    if ( !b ) {
+        return 0;
+    }
+
+    // redland default is to create a mem model
+    return b->createModel();
 }
 
 QTEST_MAIN(RedlandMemoryModelTest)

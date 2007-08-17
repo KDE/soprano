@@ -24,12 +24,41 @@
 
 #include "plugin.h"
 #include "soprano_export.h"
+#include "sopranotypes.h"
 
 #include <QtCore/QStringList>
 
 namespace Soprano
 {
     class Model;
+
+    /**
+     * Wraps one setting for Model creation.
+     *
+     * \sa Backend::createModel()
+     */
+    class BackendSetting
+    {
+    public:
+	/**
+	 * Create an empty setting.
+	 */
+	BackendSetting();
+
+	/**
+	 * Create a standard setting with option \p s and value \p value_.
+	 */
+	BackendSetting( BackendOption s, const QString& value_ );
+
+	/**
+	 * Create a user setting with user option name \p userOption and value \p value_.
+	 */
+	BackendSetting( const QString& userOption, const QString& value_ );
+
+	BackendOption option;    /**< The option that this setting sets. If Soprano::BACKEND_OPTION_USER the option is identified by userSettingName. */
+	QString userOptionName;  /**< The name of the user setting if setting is set to Soprano::BACKEND_OPTION_USER */
+	QString value;           /**< The value of the setting. For boolean options such as BACKEND_OPTION_ENABLE_INFERENCE the value can be ignored. */
+    };
 
     /**
      * \brief Soprano::Backend defines the interface for a Soprano backend plugin.
@@ -66,45 +95,42 @@ namespace Soprano
 	virtual ~Backend();
 
 	/**
-	 * Creates a simple memory model
-	 * The caller takes ownership and has to care about deletion.
-	 *
-	 * \return A new memory model or 0 if the backend does not support memory models.
-	 */
-	virtual Model* createModel() const = 0;
-
-	/**
 	 * Creates a new RDF model with options.
 	 * The caller takes ownership and has to care about deletion.
 	 *
-	 * \param name the name of the model, can be used for storage.
-	 *
-	 * \param options Specify optional options for the created model. Options are key/value
-	 *        pairs in the form of "key=value".
-	 *        Possible options may include (options always depend on the implementation)
-	 *        \li storagePath Where to store the data on the local harddrive (Redland)
-	 *        \li storageType The database backend used, i.e. berkdb or sqlite or memory (Redland)
-	 *        \li host The host to connect to (3Store)
-	 *        \li user The username to use with the database (3Store)
-	 *        \li password The password to use with the database user (3Store)
-	 *
-	 * In case of the 3Store backend if no options are given it tries to connect to a local mysql service 
-	 * as the current user.
+	 * \param settings The settings that should be used to create the Model. Backend implementations
+	 *  should never ignore settings but rather return 0 if an option is not supported. Backends can,
+	 * however, define their own default settings.
 	 */
-	virtual Model* createModel( const QString& name, const QStringList& options = QStringList() ) const = 0;
+	virtual Model* createModel( const QList<BackendSetting>& settings = QList<BackendSetting>() ) const = 0;
 
 	/**
-	 * Features include:
-	 * \li memory The backend supports a memory storage.
-	 * \li contexts The backend supports RDF contexts.
+	 * Each backend can support a set of features. Backends without any features do not make much sense.
+	 * If the features include Soprano::BACKEND_FEATURE_USER additional user features not defined in 
+	 * Backend::BackendFeature can be supported via supportedUserFeatures().
 	 *
-	 * \return the list of supported features.
+	 * \return A combination of BackendFeature values.
 	 */
-	virtual QStringList features() const = 0;
+	virtual BackendFeatures supportedFeatures() const = 0;
 
-	// FIXME: make the features an enumeration
-	bool hasFeature( const QString& feature ) const;
-	bool hasFeatures( const QStringList& feature ) const;
+	/**
+	 * A Backend can support additional features that are not defined in Backend::BackendFeature.
+	 * These user defined features have string identifiers. If a backend supports additional features
+	 * it has to include Soprano::BACKEND_FEATURE_USER in supportedFeatures().
+	 *
+	 * The default implementation returns an empty list.
+	 *
+	 * \return the list of supported user features.
+	 */
+	virtual QStringList supportedUserFeatures() const;
+
+	/**
+	 * Check if a backend supports certain features. If feature includes Soprano::BACKEND_FEATURE_USER
+	 * the list if userFeatures is also compared.
+	 *
+	 * \return \p true if the backend does support the requested features, \p false otherwise.
+	 */
+	bool supportsFeatures( BackendFeatures feature, const QStringList& userFeatures = QStringList() ) const;
 
     private:
 	class Private;

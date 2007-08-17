@@ -26,11 +26,18 @@
 using namespace Soprano;
 
 
-Soprano::Model* RedlandPersistentModelTest::createModel( const QString& name )
+Soprano::Model* RedlandPersistentModelTest::createModel()
 {
-    Soprano::setUsedBackend( Soprano::discoverBackendByName( "redland" ) );
-    Soprano::Model* m = Soprano::createModel( name );
-    m->removeAllStatements();
+    const Backend* b = Soprano::discoverBackendByName( "redland" );
+    if ( !b ) {
+        return 0;
+    }
+
+    QList<BackendSetting> settings;
+    settings.append( BackendSetting( "hash-type", "bdb" ) );
+    Model* m = b->createModel( settings );
+    if ( m )
+        m->removeAllStatements();
     return m;
 }
 

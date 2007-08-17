@@ -25,6 +25,7 @@
 
 #include "plugin.h"
 #include "query.h"
+#include "sopranotypes.h"
 #include "soprano_export.h"
 
 #include <QtCore/QObject>

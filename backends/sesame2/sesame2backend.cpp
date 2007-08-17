@@ -37,47 +37,47 @@ Soprano::Sesame2::BackendPlugin::BackendPlugin()
 }
 
 
-Soprano::Model* Soprano::Sesame2::BackendPlugin::createModel() const
-{
-    RepositoryWrapper* repo = RepositoryWrapper::create();
-    if ( repo ) {
-        if ( repo->initialize() ) {
-            return new Model( repo );
-        }
-        else {
-            delete repo;
-        }
-    }
-
-    return 0;
-}
-
-
-Soprano::Model* Soprano::Sesame2::BackendPlugin::createModel( const QString& name, const QStringList& options ) const
+Soprano::Model* Soprano::Sesame2::BackendPlugin::createModel( const QList<BackendSetting>& settings ) const
 {
     QString path;
-    Q_FOREACH( QString option, options ) {
-        QStringList tokens = option.split( '=' );
-        if ( tokens.count() == 2 ) {
-            QString key = tokens[0];
-            QString value = tokens[1];
+    bool memory = false;
 
-            if( key == "storagePath" ) {
-                path = value;
-            }
+    // FIXME: support inferecen option
+
+    Q_FOREACH( BackendSetting s, settings ) {
+        if ( s.option == BACKEND_OPTION_USER ) {
+            // no user options ATM
+            qDebug() << "(Soprano::Sesame2::BackendPlugin) no user options supported.";
+            return 0;
+        }
+        else if ( s.option == BACKEND_OPTION_STORAGE_MEMORY ) {
+            memory = true;
+        }
+        else if ( s.option == BACKEND_OPTION_STORAGE_DIR ) {
+            path = s.value;
+        }
+        else {
+            qDebug() << "(Soprano::Sesame2::BackendPlugin) unsupported option: " << s.option;
+            return 0;
         }
     }
 
-    if ( path.isEmpty() ) {
-        qDebug() << "(Soprano::Sesame2::BackendPlugin) No path specified. Creating memory model.";
-        return createModel();
+    if ( !path.isEmpty() && memory ) {
+        qDebug() << "(Soprano::Sesame2::BackendPlugin) Path specified for memory model. Settings mismatch.";
+        return 0;
     }
 
-    RepositoryWrapper* repo = RepositoryWrapper::create( path );
+    RepositoryWrapper* repo = 0;
+    if ( memory || path.isEmpty() ) {
+        repo = RepositoryWrapper::create();
+    }
+    else {
+        repo = RepositoryWrapper::create( path );
+    }
 
     if ( repo ) {
         if ( repo->initialize() ) {
-            return new Model( repo );
+            return new Model( this, repo );
         }
         else {
             delete repo;
@@ -88,9 +88,14 @@ Soprano::Model* Soprano::Sesame2::BackendPlugin::createModel( const QString& nam
 }
 
 
-QStringList Soprano::Sesame2::BackendPlugin::features() const
+Soprano::BackendFeatures Soprano::Sesame2::BackendPlugin::supportedFeatures() const
 {
-    return QString( "inference,contexts,memory" ).split( ',' );
+    return(  BACKEND_FEATURE_MEMORY_STORAGE|
+             BACKEND_FEATURE_ADD_STATEMENT|
+             BACKEND_FEATURE_REMOVE_STATEMENTS|
+             BACKEND_FEATURE_LIST_STATEMENTS|
+             BACKEND_FEATURE_QUERY|
+             BACKEND_FEATURE_CONTEXTS );
 }
 
 #include "sesame2backend.moc"

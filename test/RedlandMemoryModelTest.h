@@ -36,7 +36,7 @@ class RedlandMemoryModelTest: public SopranoModelTest
 Q_OBJECT
 
 protected:
-  virtual Soprano::Model* createModel( const QString& name );
+  virtual Soprano::Model* createModel();
 };
 
 #endif // REDLAND_MEMORY_MODEL_TEST_H

@@ -31,9 +31,20 @@
 
 #include <QtCore/QtPlugin>
 #include <QtCore/QDebug>
+#include <QtCore/QHash>
 
 
 Q_EXPORT_PLUGIN2(soprano_redlandbackend, Soprano::Redland::BackendPlugin)
+
+
+static QString createRedlandOptionString( const QHash<QString, QString>& options )
+{
+  QStringList os;
+  for( QHash<QString, QString>::const_iterator it = options.begin(); it != options.end(); it++ )
+    os += QString("%1='%2'").arg( it.key() ).arg( it.value() );
+  return os.join(",");
+}
+
 
 
 Soprano::Redland::BackendPlugin::BackendPlugin()
@@ -43,21 +54,66 @@ Soprano::Redland::BackendPlugin::BackendPlugin()
 }
 
 
-Soprano::Model* Soprano::Redland::BackendPlugin::createModel() const
+Soprano::Model* Soprano::Redland::BackendPlugin::createModel( const QList<BackendSetting>& settings ) const
 {
-    return World::self()->createModel();
+    // check all settings.
+    // we pass all user settings on to librdf
+    QHash<QString, QString> redlandOptions;
+
+    // set some defaults
+    redlandOptions["contexts"] = "yes";
+    redlandOptions["storageType"] = "hashes";
+    redlandOptions["hash-type"] = "memory";
+
+    Q_FOREACH( BackendSetting s, settings ) {
+        if ( s.option == BACKEND_OPTION_USER ) {
+            redlandOptions[s.userOptionName] = s.value;
+        }
+        else if ( s.option == BACKEND_OPTION_STORAGE_MEMORY ) {
+            redlandOptions["hash-type"] = "memory";
+        }
+        else if ( s.option == BACKEND_OPTION_STORAGE_DIR ) {
+            redlandOptions["dir"] = s.value;
+        }
+    }
+
+    // remove unused options from the option hash
+    QString storageType = redlandOptions["storageType"];
+    redlandOptions.remove( "storageType" );
+
+    QString os = createRedlandOptionString( redlandOptions );
+
+    // FIXME: does this always work without a name
+    qDebug() << "(Soprano::Redland::BackendPlugin) creating model of type " << storageType << " with options " << os << endl;
+
+    // create a new storage
+    librdf_storage* storage = librdf_new_storage( World::self()->worldPtr(),
+                                                  storageType.toLatin1().data(),
+                                                  0,
+                                                  os.toLatin1().data() );
+    if( !storage ) {
+        qDebug() << "(Soprano::Redland) storage creation failed!" << endl;
+        return 0;
+    }
+
+    librdf_model *model = librdf_new_model( World::self()->worldPtr(), storage, 0 );
+    if ( !model ) {
+        librdf_free_storage( storage );
+        return 0;
+    }
+
+    return new RedlandModel( this, model, storage );
 }
 
 
-Soprano::Model* Soprano::Redland::BackendPlugin::createModel( const QString& name, const QStringList& options ) const
+Soprano::BackendFeatures Soprano::Redland::BackendPlugin::supportedFeatures() const
 {
-    return World::self()->createModel( name, options );
-}
-
-
-QStringList Soprano::Redland::BackendPlugin::features() const
-{
-    return QString( "memory,contexts" ).split( ',' );
+    return(  BACKEND_FEATURE_MEMORY_STORAGE|
+             BACKEND_FEATURE_ADD_STATEMENT|
+             BACKEND_FEATURE_REMOVE_STATEMENTS|
+             BACKEND_FEATURE_LIST_STATEMENTS|
+             BACKEND_FEATURE_QUERY|
+             BACKEND_FEATURE_CONTEXTS );
 }
 
 #include "redlandbackend.moc"

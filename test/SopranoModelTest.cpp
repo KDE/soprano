@@ -49,7 +49,7 @@ void SopranoModelTest::cleanup()
 
 void SopranoModelTest::init()
 {
-    m_model = createModel( "testmodel" );
+    m_model = createModel();
     QVERIFY( m_model != 0 );
 
     Node subject1( QUrl("http://soprano.sf.net#init:test1") );
@@ -86,7 +86,7 @@ void SopranoModelTest::testAddModel()
     Statement st2(subject1, predicate2, object1);
     Statement st3(subject1, predicate3, object1);
 
-    Model *memory = createModel( "memory" );
+    Model *memory = createModel();
     QVERIFY( memory );
 
     memory->addStatement( st1 );
@@ -152,7 +152,7 @@ void SopranoModelTest::testAddStatementIterator()
     Statement st2(subject1, predicate2, object1);
     Statement st3(subject1, predicate3, object1);
 
-    Model *memory = createModel( "memory" );
+    Model *memory = createModel();
     QVERIFY( memory );
 
     memory->addStatement( st1 );
@@ -495,7 +495,7 @@ void SopranoModelTest::testCloseStatementIteratorOnModelDelete()
     Statement st2(subject1, predicate2, object1);
     Statement st3(subject1, predicate3, object1);
 
-    Model *model = Soprano::createModel();
+    Model *model = createModel();
     QVERIFY( model );
 
     model->addStatement( st1 );

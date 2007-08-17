@@ -44,6 +44,8 @@ SET(soprano_SRCS
     model.h
     parser.cpp
     parser.h
+    serializer.cpp
+    serializer.h
     pluginmanager.cpp
     pluginmanager.h
     plugin.cpp
@@ -64,6 +66,7 @@ SET(soprano_SRCS
     rdfschemawrapper.cpp
     simplestatementiterator.h
     bindingset.cpp
+    sopranotypes.cpp
     vocabulary/rdf.cpp
     vocabulary/rdfs.cpp
     vocabulary/xmls.cpp
@@ -123,6 +126,8 @@ INSTALL(FILES
 	version.h
 	rdfschemawrapper.h
 	bindingset.h
+	serializer.h
+	sopranotypes.h
 	vocabulary/rdf.h
 	vocabulary/rdfs.h
 	vocabulary/xmls.h

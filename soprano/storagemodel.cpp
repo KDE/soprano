@@ -30,16 +30,23 @@
 class Soprano::StorageModel::Private
 {
 public:
+    const Backend* backend;
 };
 
-Soprano::StorageModel::StorageModel()
+Soprano::StorageModel::StorageModel( const Backend* backend )
     : d( new Private() )
 {
+    d->backend = backend;
 }
 
 Soprano::StorageModel::~StorageModel()
 {
     delete d;
+}
+
+const Soprano::Backend* Soprano::StorageModel::backend() const
+{
+    return d->backend;
 }
 
 bool Soprano::StorageModel::isEmpty() const

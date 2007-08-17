@@ -1,6 +1,7 @@
-/*
- * This file is part of Soprano Project.
+/* 
+ * This file is part of Soprano Project
  *
+ * Copyright (C) 2006 Duncan Mac-Vicar <duncan@kde.org>
  * Copyright (C) 2007 Sebastian Trueg <trueg@kde.org>
  *
  * This library is free software; you can redistribute it and/or
@@ -19,21 +20,34 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef _SESAME2_BACKEND_TEST_H_
-#define _SESAME2_BACKEND_TEST_H_
+#ifndef _SOPRANO_RAPTOR_SERIALIZER_H_
+#define _SOPRANO_RAPTOR_SERIALIZER_H_
 
-#include "SopranoModelTest.h"
+#include <QtCore/QUrl>
+#include <QtCore/QObject>
+
+#include <soprano/serializer.h>
+#include <soprano/soprano_export.h>
 
 namespace Soprano {
-    class Model;
+    namespace Raptor {
+	class SOPRANO_EXPORT Serializer : public QObject, public Soprano::Serializer
+	{
+	    Q_OBJECT
+	    Q_INTERFACES(Soprano::Serializer)
+
+	public:
+	    Serializer();
+	    ~Serializer();
+
+	    RdfSerializations supportedSerializations() const;
+
+	    bool serialize( StatementIterator it, 
+			    QTextStream* stream, 
+			    RdfSerialization serialization,
+			    const QString& userSerialization = QString() ) const;
+	};
+    }
 }
-
-class Sesame2BackendTest : public SopranoModelTest
-{
-    Q_OBJECT
-
-protected:
-    virtual Soprano::Model* createModel();
-};
 
 #endif

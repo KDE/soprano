@@ -67,8 +67,8 @@ public:
     QList<RedlandQueryResult*> results;
 };
 
-Soprano::Redland::RedlandModel::RedlandModel( librdf_model *model, librdf_storage *storage )
-    : StorageModel()
+Soprano::Redland::RedlandModel::RedlandModel( const Backend* b, librdf_model *model, librdf_storage *storage )
+    : StorageModel( b )
 {
     d = new Private;
     d->world = World::self()->worldPtr();

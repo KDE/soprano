@@ -186,7 +186,7 @@ namespace Soprano
 	 * Default implementation is based on Model::write
 	 */
 	virtual ErrorCode print() const;
-
+	
     signals:
 	/**
 	 * Emitted when new statements have been added to the model.

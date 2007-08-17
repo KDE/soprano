@@ -22,17 +22,18 @@
 #ifndef _SOPRANO_PLUGIN_MANAGER_H_
 #define _SOPRANO_PLUGIN_MANAGER_H_
 
-#include "parser.h"
-#include "query/query.h"
+#include "sopranotypes.h"
 #include "soprano_export.h"
 
 #include <QtCore/QObject>
-#include <QtCore/QList>
+#include <QtCore/QStringList>
 
 
 namespace Soprano
 {
   class Backend;
+  class Parser;
+  class Serializer;
 
   namespace Query {
       class Parser;
@@ -64,9 +65,12 @@ namespace Soprano
       /**
        * Find a backend plugin by its features.
        *
+       * \param features The features that are requested.
+       * \param userFeatures If features contain Backend::BACKEND_FEATURE_USER this paramter states the additionally requested user features.
+       *
        * \return a backend that supports the features defined in \a features.
        */
-      const Backend* discoverBackendByFeatures( const QStringList& features );
+      const Backend* discoverBackendByFeatures( BackendFeatures features, const QStringList& userFeatures = QStringList() );
 
       /**
        * Find a parser plugin by its name.
@@ -89,6 +93,29 @@ namespace Soprano
        * serialization or 0 if no such plugin could be found.
        */
       const Parser* discoverParserForSerialization( RdfSerialization serialization, const QString& userSerialization = QString() );
+
+
+      /**
+       * Find a serializer plugin by its name.
+       *
+       * \return the serializer specified by \a name or null if could not
+       * be found.
+       */
+      const Serializer* discoverSerializerByName( const QString& name );
+
+      /**
+       * Find a Serializer instance that is able to encode RDF data using
+       * serialization.
+       *
+       * \param serialization The requested serialization.
+       * \param userSerialization If serialization is set to Soprano::SERIALIZATION_USER this parameter specifies the
+       *       serialization to use. It allows the extension of the %Soprano Serializer interface with new
+       *       RDF serializations that are not officially supported by %Soprano.
+       *
+       * \return A Serializer plugin that can serialize RDF data encoded in the requested 
+       * serialization or 0 if no such plugin could be found.
+       */
+      const Serializer* discoverSerializerForSerialization( RdfSerialization serialization, const QString& userSerialization = QString() );
 
       /**
        * Find a query parser plugin by its name.
@@ -113,6 +140,8 @@ namespace Soprano
       QList<const Backend*> allBackends();
 
       QList<const Parser*> allParsers();
+
+      QList<const Serializer*> allSerializers();
 
       QList<const Query::Parser*> allQueryParsers();
 

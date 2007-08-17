@@ -1,5 +1,4 @@
-/*
- * This file is part of Soprano Project.
+/* This file is part of Soprano
  *
  * Copyright (C) 2007 Sebastian Trueg <trueg@kde.org>
  *
@@ -19,21 +18,44 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef _SESAME2_BACKEND_TEST_H_
-#define _SESAME2_BACKEND_TEST_H_
+#include "serializer.h"
+#include "statementiterator.h"
 
-#include "SopranoModelTest.h"
+#include <QtCore/QTextStream>
+#include <QtCore/QStringList>
+#include <QtCore/QDebug>
 
-namespace Soprano {
-    class Model;
-}
 
-class Sesame2BackendTest : public SopranoModelTest
+class Soprano::Serializer::Private
 {
-    Q_OBJECT
-
-protected:
-    virtual Soprano::Model* createModel();
 };
 
-#endif
+
+Soprano::Serializer::Serializer( const QString& name )
+    : Plugin( name ),
+      d( new Private() )
+{
+}
+
+
+Soprano::Serializer::~Serializer()
+{
+    delete d;
+}
+
+
+bool Soprano::Serializer::supportsSerialization( RdfSerialization s, const QString& userSerialization ) const
+{
+    if ( s == SERIALIZATION_USER ) {
+        return supportedUserSerializations().contains( userSerialization );
+    }
+    else {
+        return supportedSerializations() & s;
+    }
+}
+
+
+QStringList Soprano::Serializer::supportedUserSerializations() const
+{
+    return QStringList();
+}

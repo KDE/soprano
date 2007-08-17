@@ -24,6 +24,7 @@
 
 #include "plugin.h"
 #include "soprano_export.h"
+#include "sopranotypes.h"
 
 #include <QtCore/QObject>
 
@@ -34,33 +35,6 @@ class QUrl;
 namespace Soprano
 {
     class StatementIterator;
-
-    /**
-     * Different types of RDF serialization.
-     */
-    // FIXME: what about the used charsets? Should we and if so, how should we include them?
-    enum RdfSerialization {
-	SERIALIZATION_UNKNOWN = 0x0,   /**< The serialization is unknown. */
-	SERIALIZATION_RDF_XML = 0x1,   /**< Standard RDF/XML serialization */
-	SERIALIZATION_N3 = 0x2,        /**< Notation 3: http://www.w3.org/DesignIssues/Notation3 */
-	SERIALIZATION_N_TRIPLES = 0x4, /**< N-Triples as defined by W3: http://www.w3.org/TR/rdf-testcases/#ntriples */
-	SERIALIZATION_TURTLE = 0x8,    /**< Turtle - Terse RDF Triple Language: http://www.dajobe.org/2004/01/turtle/ */
-	SERIALIZATION_TRIG = 0x10,     /**< TriG - Turtle + Named Graphs: http://sites.wiwiss.fu-berlin.de/suhl/bizer/TriG/ */
-	SERIALIZATION_USER = 0x20      /**< The user type can be used to introduce unknown RDF serializations by name */
-    };
-    Q_DECLARE_FLAGS(RdfSerializations, RdfSerialization)
-
-    /**
-     * \return The mimetype of serialization or an empty string is serialization is SERIALIZATION_UNKNOWN
-     */
-    SOPRANO_EXPORT QString serializationMimeType( RdfSerialization serialization );
-
-    /**
-     * Parse a mimetype and match it to the Soprano::RdfSerialization enum.
-     * \return the Soprano::RdfSerialization type that matches mimetype or SERIALIZATION_UNKNOWN if the mimetype 
-     * could not be parsed.
-     */
-    SOPRANO_EXPORT RdfSerialization mimeTypeToSerialization( const QString& mimetype );
 
     /**
      * \brief Soprano::Parser defines the interface for a Soprano RDF parser plugin.
@@ -178,20 +152,6 @@ namespace Soprano
 	 */ 
 	virtual StatementIterator parseStream( QTextStream* stream, const QUrl& baseUri, RdfSerialization serialization, const QString& userSerialization = QString() ) const = 0;
 
-	/**
-	 * Serialize a list of statements.
-	 *
-	 * \param it An iterator containing the statements to be serialized.
-	 * \param stream The stream the serialized data should be written to.
-	 * \param serialization The encoding to be used.
-	 * \param userSerialization If serialization is set to Soprano::SERIALIZATION_USER this parameter specifies the
-	 *       serialization to use. It allows the extension of the %Soprano Parser interface with new
-	 *       RDF serializations that are not officially supported by %Soprano.
-	 *
-	 * \return \p true if the %serialization was successful,  false otherwise.
-	 */
-	virtual bool serialize( StatementIterator it, QTextStream* stream, RdfSerialization serialization, const QString& userSerialization = QString() ) const = 0;
-
     protected:
 	Parser( const QString& name );
 
@@ -200,8 +160,6 @@ namespace Soprano
 	Private* const d;
     };
 }
-
-Q_DECLARE_OPERATORS_FOR_FLAGS(Soprano::RdfSerializations)
 
 Q_DECLARE_INTERFACE(Soprano::Parser, "org.soprano.plugins.Parser/1.0")
 

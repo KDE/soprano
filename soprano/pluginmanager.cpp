@@ -22,6 +22,7 @@
 #include "pluginmanager.h"
 #include "backend.h"
 #include "parser.h"
+#include "serializer.h"
 #include "query/queryparser.h"
 #include "config.h"
 
@@ -38,8 +39,10 @@ class Soprano::PluginManager::Private
 public:
     QHash<QString, Backend*> backends;
     QHash<QString, Parser*> parsers;
+    QHash<QString, Serializer*> serializers;
     QHash<QString, Query::Parser*> queryParsers;
 };
+
 
 const QStringList Soprano::PluginManager::libraryPath()
 {
@@ -65,11 +68,11 @@ const Soprano::Backend* Soprano::PluginManager::discoverBackendByName( const QSt
 }
 
 
-const Soprano::Backend* Soprano::PluginManager::discoverBackendByFeatures( const QStringList& features )
+const Soprano::Backend* Soprano::PluginManager::discoverBackendByFeatures( BackendFeatures features, const QStringList& userFeatures )
 {
     for( QHash<QString, Backend*>::const_iterator it = d->backends.begin(); it != d->backends.end(); ++it ) {
         const Backend* b = *it;
-        if( b->hasFeatures( features ) )
+        if( b->supportsFeatures( features, userFeatures ) )
             return b;
     }
     return 0;
@@ -90,6 +93,28 @@ const Soprano::Parser* Soprano::PluginManager::discoverParserForSerialization( R
 {
     for( QHash<QString, Parser*>::const_iterator it = d->parsers.begin(); it != d->parsers.end(); ++it ) {
         const Parser* p = *it;
+        if( p->supportsSerialization( serialization, userSerialization ) ) {
+            return p;
+        }
+    }
+    return 0;
+}
+
+
+const Soprano::Serializer* Soprano::PluginManager::discoverSerializerByName( const QString& name )
+{
+    QHash<QString, Serializer*>::iterator it = d->serializers.find( name );
+    if( it != d->serializers.end() )
+        return *it;
+    else
+        return 0;
+}
+
+
+const Soprano::Serializer* Soprano::PluginManager::discoverSerializerForSerialization( RdfSerialization serialization, const QString& userSerialization )
+{
+    for( QHash<QString, Serializer*>::const_iterator it = d->serializers.begin(); it != d->serializers.end(); ++it ) {
+        const Serializer* p = *it;
         if( p->supportsSerialization( serialization, userSerialization ) ) {
             return p;
         }
@@ -136,6 +161,17 @@ QList<const Soprano::Parser*> Soprano::PluginManager::allParsers()
     QList<const Parser*> pl;
     for ( QHash<QString, Parser*>::const_iterator it = d->parsers.constBegin();
           it != d->parsers.constEnd(); ++it ) {
+        pl.append( it.value() );
+    }
+    return pl;
+}
+
+
+QList<const Soprano::Serializer*> Soprano::PluginManager::allSerializers()
+{
+    QList<const Serializer*> pl;
+    for ( QHash<QString, Serializer*>::const_iterator it = d->serializers.constBegin();
+          it != d->serializers.constEnd(); ++it ) {
         pl.append( it.value() );
     }
     return pl;
@@ -201,6 +237,10 @@ void Soprano::PluginManager::loadPlugins( const QString& path )
             else if( Parser* parser = qobject_cast<Parser*>( plugin ) ) {
                 qDebug() << "(Soprano::PluginManager) found parser plugin " << parser->pluginName() << endl;
                 d->parsers.insert( parser->pluginName(), parser );
+            }
+            else if( Serializer* serializer = qobject_cast<Serializer*>( plugin ) ) {
+                qDebug() << "(Soprano::PluginManager) found serializer plugin " << serializer->pluginName() << endl;
+                d->serializers.insert( serializer->pluginName(), serializer );
             }
             else if( Query::Parser* parser = qobject_cast<Query::Parser*>( plugin ) ) {
                 qDebug() << "(Soprano::PluginManager) found query parser plugin " << parser->pluginName() << endl;

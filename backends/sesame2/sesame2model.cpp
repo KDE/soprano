@@ -40,8 +40,8 @@
 #include <QtCore/QDebug>
 
 
-Soprano::Sesame2::Model::Model( RepositoryWrapper* repo )
-    : Soprano::StorageModel(),
+Soprano::Sesame2::Model::Model( const Backend* backend, RepositoryWrapper* repo )
+    : Soprano::StorageModel( backend ),
       m_repository( repo )
 {
 }

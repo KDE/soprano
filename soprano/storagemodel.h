@@ -26,6 +26,9 @@
 #include "soprano_export.h"
 
 namespace Soprano {
+
+    class Backend;
+
     /**
      * \brief Base class for all Model implementations that store data (as compared to FilterModel).
      *
@@ -51,8 +54,16 @@ namespace Soprano {
 	 */
 	virtual bool containsStatements( const Statement &statement ) const;
 
+	/**
+	 * \return The backend that was used to create this model.
+	 */
+	const Backend* backend() const;
+
     protected:
-	StorageModel();
+	/**
+	 * \param backend The Backend that created this model.
+	 */
+	StorageModel( const Backend* backend );
 
     private:
 	class Private;

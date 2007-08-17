@@ -49,9 +49,7 @@ namespace Soprano
 	class RedlandModel: public Soprano::StorageModel
 	    {
 	    public:
-		RedlandModel();
-
-		RedlandModel( librdf_model *model, librdf_storage *storage );
+		RedlandModel( const Backend*, librdf_model *model, librdf_storage *storage );
 
 		~RedlandModel();
 

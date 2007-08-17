@@ -26,6 +26,9 @@
 
 
 namespace Soprano {
+
+    class Backend;
+
     namespace ThreeStore {
 
 	class Model;
@@ -38,7 +41,8 @@ namespace Soprano {
 
 	    static Core* instance();
 
-	    Model* createModel( const QString& host,
+	    Model* createModel( const Backend* b,
+				const QString& host,
 				const QString& db,
 				const QString& user,
 				const QString& passwd );

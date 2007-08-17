@@ -36,9 +36,15 @@ using namespace Soprano;
 
 void StorageScalingTest::initTestCase()
 {
+    QList<BackendSetting> settings;
+    settings.append( BackendSetting( BACKEND_OPTION_STORAGE_DIR, "/tmp/scalingtest" ) );
+
     QDir( "/tmp" ).mkdir( "scalingtest" );
-    m_model = Soprano::createModel( "scalingtest", QString( "storagePath=/tmp/scalingtest" ).split( "," ) );
+
+    m_model = Soprano::createModel( settings );
+
     QVERIFY( m_model );
+
     m_counter = 0;
 }
 

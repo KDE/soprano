@@ -44,9 +44,6 @@ namespace Soprano
 
 		    librdf_world* worldPtr() const;
 
-		    RedlandModel* createModel() const;
-		    RedlandModel* createModel( const QString& name, const QStringList& options = QStringList() ) const;
-
 		private:
 		    librdf_world * m_world;
 		};

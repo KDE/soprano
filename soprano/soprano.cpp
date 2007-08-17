@@ -38,9 +38,9 @@ const Soprano::Backend* Soprano::discoverBackendByName( const QString& name )
 }
 
 
-const Soprano::Backend* Soprano::discoverBackendByFeatures( const QStringList& features )
+const Soprano::Backend* Soprano::discoverBackendByFeatures( BackendFeatures features, const QStringList& userFeatures )
 {
-    return Soprano::PluginManager::instance()->discoverBackendByFeatures( features );
+    return Soprano::PluginManager::instance()->discoverBackendByFeatures( features, userFeatures );
 }
 
 
@@ -57,23 +57,12 @@ const Soprano::Backend* Soprano::usedBackend()
 }
 
 
-Soprano::Model* Soprano::createModel()
+Soprano::Model* Soprano::createModel( const QList<BackendSetting>& settings )
 {
     initSoprano();
 
     if( s_defaultBackend )
-        return s_defaultBackend->createModel();
-    else
-        return 0;
-}
-
-
-Soprano::Model* Soprano::createModel( const QString& name, const QStringList& options )
-{
-    initSoprano();
-
-    if( s_defaultBackend )
-        return s_defaultBackend->createModel( name, options );
+        return s_defaultBackend->createModel( settings );
     else
         return 0;
 }

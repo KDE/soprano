@@ -21,6 +21,7 @@
 
 #include "threestorecore.h"
 #include "threestoremodel.h"
+#include "threestorebackend.h"
 
 extern "C" {
 #include <3store3/tstore.h>
@@ -58,7 +59,8 @@ Soprano::ThreeStore::Core* Soprano::ThreeStore::Core::instance()
 }
 
 
-Soprano::ThreeStore::Model* Soprano::ThreeStore::Core::createModel( const QString& host,
+Soprano::ThreeStore::Model* Soprano::ThreeStore::Core::createModel( const Backend* backend,
+                                                                    const QString& host,
                                                                     const QString& db,
                                                                     const QString& user,
                                                                     const QString& passwd )
@@ -72,7 +74,7 @@ Soprano::ThreeStore::Model* Soprano::ThreeStore::Core::createModel( const QStrin
                                       passwd.toUtf8().data() );
 
     if ( conn ) {
-        return new ThreeStore::Model( conn );
+        return new ThreeStore::Model( backend, conn );
     }
     else {
         return 0;

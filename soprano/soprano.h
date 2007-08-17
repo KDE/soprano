@@ -52,9 +52,14 @@ namespace Soprano {
     /**
      * Find a backend plugin by its features.
      *
+     * \param features The features that are requested.
+     * \param userFeatures If features contain Soprano::BACKEND_FEATURE_USER this paramter states the additionally requested user features.
+     *
      * \return a backend that supports the features defined in \a features.
+     *
+     * \sa PluginManager::discoverBackendByFeatures()
      */
-    SOPRANO_EXPORT const Backend* discoverBackendByFeatures( const QStringList& features );
+    SOPRANO_EXPORT const Backend* discoverBackendByFeatures( BackendFeatures features, const QStringList& userFeatures = QStringList() );
 
     /**
      * By default and if available backend "redland" is used.
@@ -64,27 +69,16 @@ namespace Soprano {
     SOPRANO_EXPORT const Backend* usedBackend();
 
     /**
-     * Creates a simple memory model
-     * The caller takes ownership and has to care about deletion.
-     */
-    // FIXME: Isn't the notion of a "memory model" already way to implementation-specific?
-    SOPRANO_EXPORT Model* createModel();
-
-    /**
      * Creates a new RDF storage using the backend set via setUsedBackend.
      * The caller takes ownership and has to care about deletion.
      *
-     * \param name The name of the storage
-     *
-     * \param options Specify optional options for the created model. Options are key/value
-     *        pairs in the form of "key=value".
-     *        Possible options may include (options always depend on the implementation)
-     *        \li storagePath Where to store the data on the local harddrive
-     *        \li storageType The database backend used, i.e. berkdb or sqlite or memory
+     * \param settings The settings that should be used to create the Model. Backend implementations
+     *  should never ignore settings but rather return 0 if an option is not supported. Backends can,
+     * however, define their own default settings.
      *
      * \sa Model, Backend::createModel
      */
-    SOPRANO_EXPORT Model* createModel( const QString& name, const QStringList& options = QStringList() );
+    SOPRANO_EXPORT Model* createModel( const QList<BackendSetting>& settings = QList<BackendSetting>() );
 }
 
 #endif // SOPRANO_H

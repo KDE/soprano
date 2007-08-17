@@ -25,9 +25,8 @@
 
 #include <QtTest>
 
-Soprano::Model* Sesame2BackendTest::createModel( const QString& name )
+Soprano::Model* Sesame2BackendTest::createModel()
 {
-    Q_UNUSED( name );
     const Soprano::Backend* b = Soprano::discoverBackendByName( "sesame2" );
     if ( b ) {
         return b->createModel();

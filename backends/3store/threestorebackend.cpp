@@ -36,43 +36,50 @@ Soprano::ThreeStore::BackendPlugin::BackendPlugin()
 }
 
 
-Soprano::Model* Soprano::ThreeStore::BackendPlugin::createModel() const
-{
-    // no memory model support. Hmm... kind of ugly, maybe the APi should be changes?
-    return 0;
-}
-
-
-Soprano::Model* Soprano::ThreeStore::BackendPlugin::createModel( const QString& name, const QStringList& options ) const
+Soprano::Model* Soprano::ThreeStore::BackendPlugin::createModel( const QList<BackendSetting>& settings ) const
 {
     // we use the name as 3Store/SQL database name and parse the options for mysql connection data
-    QString host,  user,  passwd;
-    Q_FOREACH( QString option, options ) {
-        QStringList tokens = option.split( '=' );
-        if ( tokens.count() == 2 ) {
-            if ( tokens[0] == "host" ) {
-                host = tokens[1];
-            }
-            else if ( tokens[0] == "user" ) {
-                user = tokens[1];
-            }
-            else if ( tokens[0] == "password" ) {
-                passwd = tokens[1];
+    QString db, host,  user,  passwd;
+    Q_FOREACH( BackendSetting s, settings ) {
+        if ( s.option == BACKEND_OPTION_USER ) {
+            if ( s.userOptionName == "db" )
+                db = s.value;
+            else if ( s.userOptionName == "host" )
+                host = s.value;
+            else if ( s.userOptionName == "user" )
+                user = s.value;
+            else if ( s.userOptionName == "passwd" )
+                passwd = s.value;
+            else {
+                qDebug() << "(Soprano::ThreeStore::BackendPlugin) unsupported option: " << s.userOptionName;
+                return 0;
             }
         }
+        else {
+            qDebug() << "(Soprano::ThreeStore::BackendPlugin) unsupported option: " << s.option;
+            return 0;
+        }
+    }
+
+    if ( db.isEmpty() ) {
+        qDebug() << "(Soprano::ThreeStore::BackendPlugin) no MySQL database set.";
+        return 0;
     }
 
     if ( host.isEmpty() ) {
         host = "localhost";
     }
 
-    return ThreeStore::Core::instance()->createModel( host, name, user, passwd );
+    return ThreeStore::Core::instance()->createModel( this, host, db, user, passwd );
 }
 
 
-QStringList Soprano::ThreeStore::BackendPlugin::features() const
+Soprano::BackendFeatures Soprano::ThreeStore::BackendPlugin::supportedFeatures() const
 {
-  return QString( "inference,contexts" ).split( ',' );
+    return(  BACKEND_FEATURE_ADD_STATEMENT|
+             BACKEND_FEATURE_LIST_STATEMENTS|
+             BACKEND_FEATURE_QUERY|
+             BACKEND_FEATURE_CONTEXTS );
 }
 
 #include "threestorebackend.moc"

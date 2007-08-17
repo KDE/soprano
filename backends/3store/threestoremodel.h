@@ -37,7 +37,7 @@ namespace Soprano {
 	class Model : public Soprano::StorageModel
 	{
 	public:
-	    Model( ts_connection* conn );
+	    Model( const Backend*, ts_connection* conn );
 	    ~Model();
 
 	    ErrorCode addStatement( const Statement &statement );

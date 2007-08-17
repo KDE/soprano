@@ -35,7 +35,7 @@ class TStoreModelTest: public SopranoModelTest
     Q_OBJECT
 
 protected:
-  virtual Soprano::Model* createModel( const QString& name );
+  virtual Soprano::Model* createModel();
 };
 
 #endif

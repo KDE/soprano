@@ -21,6 +21,28 @@
 
 #include "backend.h"
 
+
+Soprano::BackendSetting::BackendSetting()
+    : option( BACKEND_OPTION_NONE )
+{
+}
+
+
+Soprano::BackendSetting::BackendSetting( BackendOption s, const QString& value_ )
+    : option( s ),
+      value( value_ )
+{
+}
+
+
+Soprano::BackendSetting::BackendSetting( const QString& userOption, const QString& value_ )
+    : option( BACKEND_OPTION_USER ),
+      userOptionName( userOption ),
+      value( value_ )
+{
+}
+
+
 class Soprano::Backend::Private
 {
 public:
@@ -40,16 +62,25 @@ Soprano::Backend::~Backend()
 }
 
 
-bool Soprano::Backend::hasFeature( const QString& feature ) const
+QStringList Soprano::Backend::supportedUserFeatures() const
 {
-    return features().contains( feature );
+    return QStringList();
 }
 
 
-bool Soprano::Backend::hasFeatures( const QStringList& featureList ) const
+bool Soprano::Backend::supportsFeatures( BackendFeatures features, const QStringList& userFeatureList ) const
 {
-    for( QStringList::const_iterator it = featureList.begin(); it != featureList.end(); ++it )
-        if( !hasFeature( *it ) )
-            return false;
+    if ( !( supportedFeatures() & features ) ) {
+        return false;
+    }
+
+    if ( features & BACKEND_FEATURE_USER ) {
+        for( QStringList::const_iterator it = userFeatureList.begin(); it != userFeatureList.end(); ++it ) {
+            if( !supportedUserFeatures().contains( *it ) ) {
+                return false;
+            }
+        }
+    }
+
     return true;
 }
