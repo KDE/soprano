@@ -13,7 +13,7 @@ set (LIB_DESTINATION "${CMAKE_INSTALL_PREFIX}/lib${LIB_SUFFIX}" CACHE STRING "Li
 add_subdirectory(soprano) 
 add_subdirectory(backends)
 add_subdirectory(parsers)
-add_subdirectory(serializer)
+add_subdirectory(serializers)
 add_subdirectory(test) 
 add_subdirectory(rules)
 
