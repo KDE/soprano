@@ -100,7 +100,9 @@ namespace Soprano
 	virtual bool isEmpty() const = 0;
 
 	/**
-	 * \return A List of Context Nodes.
+	 * List all contexts in the model, i.e. all named graphs.
+	 *
+	 * \return An iterator over context Nodes.
 	 */
 	virtual NodeIterator listContexts() const = 0;
 

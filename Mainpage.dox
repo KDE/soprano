@@ -3,6 +3,8 @@
  *
  * Soprano is a QT-based pluggable framework for RDF storage and parsing.
  *
+ * \section storage RDF Storage
+ *
  * The central class in Soprano is Soprano::Model which represents an RDF repository.
  * Model provides methods to add, remove, and list statements and to query the repository.
  *
@@ -28,6 +30,12 @@
  * Soprano::Statement are actually RDF quadruples.
  *
  * For further details on Soprano::Model usage see the class and method documentation.
+ *
+ *
+ * \section misc RDF Parsing and Serialization
+ *
+ * Apart from RDF storage %Soprano also supports parsing and serialization of RDF data. Both
+ * tasks are handled through plugins which are based on Soprano::Parser and Soprano::Serializer.
  */
 
 // DOXYGEN_VERSION=4.0

@@ -40,7 +40,28 @@ namespace Soprano
      * \brief Soprano::Parser defines the interface for a Soprano RDF parser plugin.
      *
      * Each parser plugin may support multiple RDF serializations (supportedSerializations()).
-     * 
+     *
+     *
+     * \section Usage
+     *
+     * Using a Parser is straightforward. Once starts by getting a plugin that supports the requested
+     * RDF data serilization:
+     *
+     * \code
+     * Parser* p = PluginManager::instance()->discoverParserForSerialization( SERIALIZATION_RDF_XML );
+     * \endcode
+     *
+     * Then parsing RDF data is done in a single method call resulting in a StatementIterator over
+     * the resulting graph (since parsers may support multiple serializations one always needs to
+     * provide the serialization type unless a parser plugin support autodetection).
+     *
+     * \code
+     * StatementIterator it = p->parseFile( "myrdffile.rdf", SERIALIZATION_RDF_XML );
+     * \endcode
+     *
+     *  
+     * \section pluginwriting Creating a new Parser plugin
+     *
      * To create a new parser plugin simply create a class that implements this interface
      * and is derived from QObject. Then use the Q_INTERFACES macro to define that it
      * is in fact a Backend plugin and export the plugin via the Q_EXPORT_PLUGIN2 macro.
