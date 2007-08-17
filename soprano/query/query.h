@@ -38,6 +38,9 @@ namespace Soprano
         class RTerm {
         public:
             virtual ~RTerm();
+
+            virtual RTerm* clone() const = 0;
+
             virtual bool isVariable() const;
             virtual bool isNode() const;
 
@@ -54,6 +57,8 @@ namespace Soprano
 
             Variable& operator=( const Variable& );
 
+	    Variable* clone() const;
+
             bool isVariable() const { return true; }
 
             QString name() const;
@@ -69,6 +74,8 @@ namespace Soprano
             Node();
             Node( const Soprano::Node &node );
             Node( const Node &other );
+
+	    Node* clone() const;
      
             Node& operator=( const Node& );
      
@@ -120,6 +127,8 @@ namespace Soprano
             virtual ~Expression();
         
             virtual void accept( ExpressionVisitor *visitor ) = 0;
+
+            virtual Expression* clone() const = 0;
             
         protected:
             Expression();
@@ -130,14 +139,18 @@ namespace Soprano
         public:
             virtual ~BooleanExpression();
 
+            virtual BooleanExpression* clone() const = 0;
+
         protected:
             BooleanExpression();
         };
 
         // An expression that return a xsd:integer, xsd:decimal, xsd:float, and xsd:double
         class NumericalExpression: public Expression {
-	public:
+        public:
             virtual ~NumericalExpression();
+
+	    NumericalExpression* clone() const = 0;
 
         protected:
             NumericalExpression();
@@ -145,8 +158,10 @@ namespace Soprano
 
         // An expression that return a xsd:string or rdfs:Datatype
         class StringExpression: public Expression {
-	public:
+        public:
             virtual ~StringExpression();
+
+	    StringExpression* clone() const = 0;
 
         protected:
             StringExpression();
@@ -159,67 +174,86 @@ namespace Soprano
         class UnaryBooleanExpression: public BooleanExpression {
         public:
             UnaryBooleanExpression( BooleanExpression *expression );
+//            virtual ~UnaryBooleanExpression();
 
             void setExpression( BooleanExpression *expression );
-            BooleanExpression *expression();
+            const BooleanExpression *expression() const;
 
         private:
-            BooleanExpression *m_expression;
+            class Private;
+            QSharedDataPointer<Private> d;
         };
 
         class UnaryRTermBooleanExpression: public BooleanExpression {
         public:
+//            UnaryRTermBooleanExpression();
             UnaryRTermBooleanExpression( RTerm *rterm );
+//            UnaryRTermBooleanExpression( const UnaryRTermBooleanExpression& );
+//            virtual ~UnaryRTermBooleanExpression();
 
+//            UnaryRTermBooleanExpression& operator=( const UnaryRTermBooleanExpression& );
+	    
             void setRTerm( RTerm *expression );
-            RTerm *rterm();
+            const RTerm *rterm() const;
 
         private:
-            RTerm *m_rterm;
+            class Private;
+            QSharedDataPointer<Private> d;
         };
 
-        class UnaryRTermStringExpression: public StringExpression {
+	class UnaryRTermStringExpression: public StringExpression {
         public:
+//            UnaryRTermStringExpression();
             UnaryRTermStringExpression( RTerm *rterm );
+/*             UnaryRTermStringExpression( const UnaryRTermStringExpression& ); */
+/*             virtual ~UnaryRTermStringExpression(); */
 
+/* 	        UnaryRTermStringExpression& operator=( const UnaryRTermStringExpression& ); */
+	    
             void setRTerm( RTerm *expression );
-            RTerm *rterm();
+            const RTerm *rterm() const;
 
         private:
-            RTerm *m_rterm;
+            class Private;
+            QSharedDataPointer<Private> d;
         };
 
         class UnaryNumericalExpression: public NumericalExpression {
         public:
+//            UnaryNumericalExpression();
             UnaryNumericalExpression( NumericalExpression *expression );
+/*             UnaryNumericalExpression( const UnaryNumericalExpression &other ); */
+/*             virtual ~UnaryNumericalExpression(); */
 
             void setExpression( NumericalExpression *expression );
-            NumericalExpression *expression();
+            const NumericalExpression *expression() const;
 
         private:
-            NumericalExpression *m_expression;
+            class Private;
+            QSharedDataPointer<Private> d;
         };
 
         /* XQUERY Tests */
 
         class Not: public UnaryBooleanExpression {
         public:
+            Not();
             Not( BooleanExpression *expression );
-
+            ~Not();
+	    
+	    Not* clone() const;
+	    
             void accept( ExpressionVisitor *visitor );
         };
 
-        class UnaryPlus: public UnaryNumericalExpression {
+        class Negate: public UnaryNumericalExpression  {
         public:
-            UnaryPlus( NumericalExpression *expression );
+            Negate();
+            Negate( NumericalExpression *expression );
+            ~Negate();
 
-            void accept( ExpressionVisitor *visitor );
-        };
-
-        class UnaryMinus: public UnaryNumericalExpression  {
-        public:
-            UnaryMinus( NumericalExpression *expression );
-
+	    Negate* clone() const;
+	    
             void accept( ExpressionVisitor *visitor );
         };
 
@@ -230,21 +264,31 @@ namespace Soprano
 
         class IsBound: public BooleanExpression {
         public:
+            IsBound();
             IsBound( Variable *variable );
+            IsBound( const IsBound &other );
+            virtual ~IsBound();
+            
+            IsBound operator=( const IsBound &other );
 
             void setVariable( Variable *variable );
-            Variable *variable();
+            const Variable *variable() const;
 
+            IsBound* clone() const;
+            
             void accept( ExpressionVisitor *visitor );
-
+            
         private:
-            Variable *m_variable;
+            class Private;
+            QSharedDataPointer<Private> d;
         };
-
 
         class IsIRI: public UnaryRTermBooleanExpression {
         public:
             IsIRI( RTerm *rterm );
+	    ~IsIRI();
+
+	    IsIRI* clone() const;
 
             void accept( ExpressionVisitor *visitor );
         };
@@ -252,6 +296,9 @@ namespace Soprano
         class IsBlank: public UnaryRTermBooleanExpression {
         public:
             IsBlank( RTerm *rterm );
+            ~IsBlank();
+
+	    IsBlank* clone() const;
 
             void accept( ExpressionVisitor *visitor );
         };
@@ -259,6 +306,9 @@ namespace Soprano
         class IsLiteral: public UnaryRTermBooleanExpression {
         public:
             IsLiteral( RTerm *rterm );
+	    ~IsLiteral();
+
+	    IsLiteral* clone() const;
 
             void accept( ExpressionVisitor *visitor );
         };
@@ -269,8 +319,9 @@ namespace Soprano
         
         class StringValue: public UnaryRTermStringExpression {
         public:
-            // RTerm must be a literal or resource
             StringValue( RTerm *rterm );
+
+            StringValue *clone() const;
 
             void accept( ExpressionVisitor *visitor );
         };
@@ -280,6 +331,8 @@ namespace Soprano
             // RTerm must be a literal
             LangValue( RTerm *rterm );
 
+	    LangValue* clone() const;
+
             void accept( ExpressionVisitor *visitor );
         };
 
@@ -287,6 +340,8 @@ namespace Soprano
         public:
             // RTerm must be a literal
             DataTypeValue( RTerm *rterm );
+
+	    DataTypeValue* clone() const;
 
             void accept( ExpressionVisitor *visitor );
         };
@@ -302,12 +357,12 @@ namespace Soprano
             void setFirst( BooleanExpression *first );
             void setSecond( BooleanExpression *second );    
 
-            BooleanExpression *first();
-            BooleanExpression *second();
+            const BooleanExpression *first() const;
+            const BooleanExpression *second() const;
     
         private:
-            BooleanExpression *m_first;
-            BooleanExpression *m_second;
+            class Private;
+            QSharedDataPointer<Private> d;
         };
 
         class BinaryNumericalBooleanExpression: public BooleanExpression {
@@ -317,12 +372,12 @@ namespace Soprano
             void setFirst( NumericalExpression *first );
             void setSecond( NumericalExpression *second );
 
-            NumericalExpression *first();
-            NumericalExpression *second();
+            const NumericalExpression *first() const;
+            const NumericalExpression *second() const;
    
         private:
-            NumericalExpression *m_first;
-            NumericalExpression *m_second;
+            class Private;
+            QSharedDataPointer<Private> d;
         };
 
         class BinaryStringBooleanExpression: public BooleanExpression {
@@ -332,27 +387,27 @@ namespace Soprano
             void setFirst( StringExpression *first );
             void setSecond( StringExpression *second );
 
-            StringExpression *first();
-            StringExpression *second();
+            const StringExpression *first() const;
+            const StringExpression *second() const;
   
         private:
-            StringExpression *m_first;
-            StringExpression *m_second;
+            class Private;
+            QSharedDataPointer<Private> d;
         };
 
         class BinaryDateTimeBooleanExpression: public BooleanExpression {
         public:
-            BinaryDateTimeBooleanExpression( QDateTime *first, QDateTime *second );
+            BinaryDateTimeBooleanExpression( const QDateTime& first, const QDateTime& second );
 
-            void setFirst( QDateTime *first );
-            void setSecond( QDateTime *second );
+            void setFirst( const QDateTime& first );
+            void setSecond( const QDateTime& second );
 
-            QDateTime *first();
-            QDateTime *second();
+            QDateTime first() const;
+            QDateTime second() const;
   
         private:
-            QDateTime *m_first;
-            QDateTime *m_second;
+            class Private;
+            QSharedDataPointer<Private> d;
         };
 
         class BinaryRTermBooleanExpression: public BooleanExpression {
@@ -362,12 +417,12 @@ namespace Soprano
             void setFirst( RTerm *first );
             void setSecond( RTerm *second );
 
-            RTerm *first();
-            RTerm *second();
+            const RTerm *first() const;
+            const RTerm *second() const;
 
         private:
-            RTerm *m_first;
-            RTerm *m_second;
+            class Private;
+            QSharedDataPointer<Private> d;
         };
 
         class BinaryNumericalExpression: public NumericalExpression {
@@ -377,18 +432,20 @@ namespace Soprano
             void setFirst( NumericalExpression *first );
             void setSecond( NumericalExpression *second );
 
-            NumericalExpression *first();
-            NumericalExpression *second();
+            const NumericalExpression *first() const;
+            const NumericalExpression *second() const;
     
         private:
-            NumericalExpression *m_first;
-            NumericalExpression *m_second;
+            class Private;
+            QSharedDataPointer<Private> d;
         };
 
         class LogicOr: public BinaryBooleanExpression {
         public:
             LogicOr( BooleanExpression *first, BooleanExpression *second );
 
+	    LogicOr* clone() const;
+	    
             void accept( ExpressionVisitor *visitor );
         };
 
@@ -396,6 +453,8 @@ namespace Soprano
         public:
             LogicAnd( BooleanExpression *first, BooleanExpression *second );
             
+	    LogicAnd* clone() const;
+
             void accept( ExpressionVisitor *visitor );
         };
 
@@ -403,12 +462,17 @@ namespace Soprano
         public:
             NumericalEqual( NumericalExpression *first, NumericalExpression *second );
 
+	    NumericalEqual* clone() const;
+
             void accept( ExpressionVisitor *visitor );
         };
 
+        // trueg: I think the NotEqual expressions are superfluous since they can be done via Not(Equal(expr, expr))
         class NumericalNotEqual: public BinaryNumericalBooleanExpression {
         public:
             NumericalNotEqual( NumericalExpression *first, NumericalExpression *second );
+
+	    NumericalNotEqual* clone() const;
 
             void accept( ExpressionVisitor *visitor );
         };
@@ -417,6 +481,8 @@ namespace Soprano
         public:
             StringEqual( StringExpression *first, StringExpression *second );
 
+	    StringEqual* clone() const;
+
             void accept( ExpressionVisitor *visitor );
         };
 
@@ -424,19 +490,25 @@ namespace Soprano
         public:
             StringNotEqual( StringExpression *first, StringExpression *second );
 
+	    StringNotEqual* clone() const;
+
             void accept( ExpressionVisitor *visitor );
         };
 
         class DateTimeEqual: public BinaryDateTimeBooleanExpression {
         public:
-            DateTimeEqual( QDateTime  *first, QDateTime *second );
+            DateTimeEqual( const QDateTime& first, const QDateTime& second );
+
+	    DateTimeEqual* clone() const;
 
             void accept( ExpressionVisitor *visitor );
         }; 
 
         class DateTimeNotEqual: public BinaryDateTimeBooleanExpression {
         public:
-            DateTimeNotEqual( QDateTime  *first, QDateTime *second );
+            DateTimeNotEqual( const QDateTime& first, const QDateTime& second );
+
+	    DateTimeNotEqual* clone() const;
 
             void accept( ExpressionVisitor *visitor );
         };
@@ -445,12 +517,16 @@ namespace Soprano
         public:
             NumericalLessThan( NumericalExpression *first, NumericalExpression *second );
 
+	    NumericalLessThan* clone() const;
+
             void accept( ExpressionVisitor *visitor );
         };
 
         class NumericalGreaterThan: public BinaryNumericalBooleanExpression {
         public:
             NumericalGreaterThan( NumericalExpression *first, NumericalExpression *second );
+
+	    NumericalGreaterThan* clone() const;
 
             void accept( ExpressionVisitor *visitor );
         };
@@ -459,12 +535,16 @@ namespace Soprano
         public:
             NumericalLessThanEqual( NumericalExpression *first, NumericalExpression *second );
 
+	    NumericalLessThanEqual* clone() const;
+
             void accept( ExpressionVisitor *visitor );
         };
 
         class NumericalGreaterThanEqual: public BinaryNumericalBooleanExpression {
         public:
             NumericalGreaterThanEqual( NumericalExpression *first, NumericalExpression *second );
+
+	    NumericalGreaterThanEqual* clone() const;
         
             void accept( ExpressionVisitor *visitor );
         };
@@ -473,12 +553,16 @@ namespace Soprano
         public:
             StringLessThan( StringExpression *first, StringExpression *second );
 
+	    StringLessThan* clone() const;
+
             void accept( ExpressionVisitor *visitor );
         };
 
         class StringGreaterThan: public BinaryStringBooleanExpression {
         public:
             StringGreaterThan( StringExpression *first, StringExpression *second );
+
+	    StringGreaterThan* clone() const;
         
             void accept( ExpressionVisitor *visitor );
         };
@@ -487,6 +571,8 @@ namespace Soprano
         public:
             StringLessThanEqual( StringExpression *first, StringExpression *second );
 
+	    StringLessThanEqual* clone() const;
+
             void accept( ExpressionVisitor *visitor );
         };
 
@@ -494,33 +580,43 @@ namespace Soprano
         public:
             StringGreaterThanEqual( StringExpression *first, StringExpression *second );
 
+	    StringGreaterThanEqual* clone() const;
+
             void accept( ExpressionVisitor *visitor );
         };
 
         class DateTimeLessThan: public BinaryDateTimeBooleanExpression {
         public:
-            DateTimeLessThan( QDateTime  *first, QDateTime *second );
+            DateTimeLessThan( const QDateTime& first, const QDateTime& second );
+
+	    DateTimeLessThan* clone() const;
         
             void accept( ExpressionVisitor *visitor );
         };
 
         class DateTimeGreaterThan: public BinaryDateTimeBooleanExpression {
         public:
-            DateTimeGreaterThan( QDateTime  *first, QDateTime *second );
+            DateTimeGreaterThan( const QDateTime& first, const QDateTime& second );
+
+	    DateTimeGreaterThan* clone() const;
 
             void accept( ExpressionVisitor *visitor );
         };
 
         class DateTimeLessThanEqual: public BinaryDateTimeBooleanExpression {
         public:
-            DateTimeLessThanEqual( QDateTime  *first, QDateTime *second );
+            DateTimeLessThanEqual( const QDateTime& first, const QDateTime& second );
+
+	    DateTimeLessThanEqual* clone() const;
 
             void accept( ExpressionVisitor *visitor );
         };
 
         class DateTimeGreaterThanEqual: public BinaryDateTimeBooleanExpression {
         public:
-            DateTimeGreaterThanEqual( QDateTime  *first, QDateTime *second );
+            DateTimeGreaterThanEqual( const QDateTime& first, const QDateTime& second );
+
+	    DateTimeGreaterThanEqual* clone() const;
 
             void accept( ExpressionVisitor *visitor );
         };
@@ -529,12 +625,16 @@ namespace Soprano
         public:
             NumericalMultiply( NumericalExpression *first, NumericalExpression *second );
 
+	    NumericalMultiply* clone() const;
+
             void accept( ExpressionVisitor *visitor ); 
         };
 
         class NumericalDivide: public BinaryNumericalExpression {
         public:
             NumericalDivide( NumericalExpression *first, NumericalExpression *second );
+
+	    NumericalDivide* clone() const;
 
             void accept( ExpressionVisitor *visitor );
         };
@@ -543,12 +643,16 @@ namespace Soprano
         public:
             NumericalAdd( NumericalExpression *first, NumericalExpression *second );
 
+	    NumericalAdd* clone() const;
+
             void accept( ExpressionVisitor *visitor );
         };
 
         class NumericalSubtract: public BinaryNumericalExpression {
         public:
             NumericalSubtract( NumericalExpression *first, NumericalExpression *second );
+
+	    NumericalSubtract* clone() const;
 
             void accept( ExpressionVisitor *visitor );
         };
@@ -562,6 +666,8 @@ namespace Soprano
         public:
             RTermEqual( RTerm *first, RTerm *second );
 
+	    RTermEqual* clone() const;
+
             void accept( ExpressionVisitor *expression );
         };
 
@@ -569,12 +675,16 @@ namespace Soprano
         public:
             RTermNotEqual( RTerm *first, RTerm *second );
 
+	    RTermNotEqual* clone() const;
+
             void accept( ExpressionVisitor *expression );
         };
 
         class LangMatches: public BinaryStringBooleanExpression {
         public:
             LangMatches( StringExpression *first, StringExpression *second );
+
+	    LangMatches* clone() const;
 
             void accept( ExpressionVisitor *expression );
         }; 
@@ -584,8 +694,10 @@ namespace Soprano
             Regexp( StringExpression *expression, const QString &pattern);
             Regexp( StringExpression *expression, const QString &pattern, const QString &flags );
 
+	    Regexp* clone() const;
+
             void setExpression( StringExpression *expression );
-            StringExpression *expression();
+            const StringExpression *expression() const;
 
             void setPattern( const QString &pattern );
             QString pattern();
@@ -596,9 +708,8 @@ namespace Soprano
             void accept( ExpressionVisitor *expression );
 
         private:
-            StringExpression *m_expression;
-            QString m_pattern;  
-            QString m_flags;
+	    class Private;
+	    QSharedDataPointer<Private> d;
         }; 
 
         ////////////////////////////////////////////////////////////////////////
@@ -609,9 +720,7 @@ namespace Soprano
         public:
             virtual void visit( Not *expression ) = 0;
 
-            virtual void visit( UnaryPlus *expression ) = 0;
-
-            virtual void visit( UnaryMinus *expression ) = 0;
+            virtual void visit( Negate *expression ) = 0;
             
             virtual void visit( IsBound *expression ) = 0;
             

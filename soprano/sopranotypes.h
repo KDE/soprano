@@ -83,7 +83,7 @@ namespace Soprano
 	BACKEND_FEATURE_ADD_STATEMENT = 0x1,       /**< The backend supports the adding of statements (Model::addStatement()). */
 	BACKEND_FEATURE_REMOVE_STATEMENTS = 0x2,   /**< The backend supports the removal of statements (Model::removeStatement()). */
 	BACKEND_FEATURE_LIST_STATEMENTS = 0x4,     /**< The backend supports the listing of statements (Model::listStatements(), Model::containsStatements()) */
-	BACKEND_FEATURE_QUERY = 0x8,               /**< The backend supports RDF queries (Model::query()) */
+	BACKEND_FEATURE_QUERY = 0x8,               /**< The backend supports RDF queries (Model::executeQuery()) */
 	BACKEND_FEATURE_INFERENCE = 0x10,          /**< The backend provides includes inference engine. */
 	BACKEND_FEATURE_INFERENCE_OPTIONAL = 0x20, /**< The backend's inference engine is optional, i.e. it can be disabled. */
 	BACKEND_FEATURE_CONTEXTS = 0x40,           /**< The backend supports contexts, i.e. named graphs. If this feature is not present Statement::context() will always return an empty node. */
@@ -93,13 +93,14 @@ namespace Soprano
     Q_DECLARE_FLAGS( BackendFeatures, BackendFeature )
 
 
-    /**
-     * %Soprano defines a set of well-known query languages that can be used to serialize queries.
-     * Additional languages may be supported using QUERY_LANGUAGE_USER.
-     *
-     * \sa Query::QueryParser, Query::QuerySerializer
-     */
     namespace Query {
+	/**
+	 * %Soprano defines a set of well-known query languages that can be used to serialize queries.
+	 * Additional languages may be supported using Query::QUERY_LANGUAGE_USER in combination with
+	 * string codes in Parser::supportedUserQueryLanguages() and Serializer::supportedUserQueryLanguages().
+	 *
+	 * \sa Query::Parser, Query::Serializer
+	 */
 	enum QueryLanguage {
 	    QUERY_LANGUAGE_NONE = 0x0,   /**< No query language */
 	    QUERY_LANGUAGE_SPARQL = 0x1, /**< The SPARQL query language: http://www.w3.org/TR/rdf-sparql-query/ */

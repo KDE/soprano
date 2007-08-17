@@ -82,6 +82,11 @@ Soprano::Query::Variable& Soprano::Query::Variable::operator=( const Variable& o
     return *this;
 }
 
+Soprano::Query::Variable* Soprano::Query::Variable::clone() const
+{
+    return new Variable( *this );
+}
+
 QString Soprano::Query::Variable::name() const
 {
     return d->name;
@@ -201,6 +206,10 @@ Soprano::Query::Node::Node( const Node &other )
     d = other.d;
 }
 
+Soprano::Query::Node* Soprano::Query::Node::clone() const
+{
+    return new Node( *this );
+}
 
 Soprano::Query::Node& Soprano::Query::Node::operator=( const Node& other )
 {
@@ -214,7 +223,7 @@ Soprano::Node Soprano::Query::Node::node() const
 }
 
 //
-// Soprano::Query::Expression     
+// Soprano::Query::Expression
 //
 
 Soprano::Query::Expression::Expression()
@@ -265,76 +274,152 @@ Soprano::Query::StringExpression::~StringExpression()
 // Soprano::Query::UnaryBooleanExpression
 //
 
+class Soprano::Query::UnaryBooleanExpression::Private : public QSharedData
+{
+public:
+    Private( BooleanExpression* e = 0 )
+        : expression( e ) {
+    }
+    Private( const Private& other )
+        : expression( 0 ) {
+        if ( other.expression ) {
+            expression = other.expression->clone();
+        }
+    }
+    ~Private() {
+        delete expression;
+    }
+
+    BooleanExpression* expression;
+};
+
 Soprano::Query::UnaryBooleanExpression::UnaryBooleanExpression( BooleanExpression *expression )
-    :m_expression( expression )
+    : d( new Private( expression ) )
 {
 }
 
 void Soprano::Query::UnaryBooleanExpression::setExpression( BooleanExpression *expression )
 {
-    m_expression = expression;
+    d->expression = expression;
 }
 
-Soprano::Query::BooleanExpression *Soprano::Query::UnaryBooleanExpression::expression()
+const Soprano::Query::BooleanExpression *Soprano::Query::UnaryBooleanExpression::expression() const
 {
-    return m_expression;
+    return d->expression;
 }
 
 //
 // Soprano::Query::UnaryRTermBooleanExpression
 //
 
+class Soprano::Query::UnaryRTermBooleanExpression::Private : public QSharedData
+{
+public:
+    Private( RTerm* e = 0 )
+        : term( e ) {
+    }
+    Private( const Private& other )
+        : term( 0 ) {
+        if ( other.term ) {
+            term = other.term->clone();
+        }
+    }
+    ~Private() {
+        delete term;
+    }
+
+    RTerm* term;
+};
+
 Soprano::Query::UnaryRTermBooleanExpression::UnaryRTermBooleanExpression( RTerm *rterm )
-    :m_rterm(rterm)
+    : d ( new Private( rterm ) )
 {
 }
 
 void Soprano::Query::UnaryRTermBooleanExpression::setRTerm( RTerm *rterm )
 {
-    m_rterm = rterm;
+    d->term = rterm;
 }
 
-Soprano::Query::RTerm *Soprano::Query::UnaryRTermBooleanExpression::rterm()
+const Soprano::Query::RTerm *Soprano::Query::UnaryRTermBooleanExpression::rterm() const
 {
-    return m_rterm;
+    return d->term;
 }
 
 //
 // Soprano::Query::UnaryRTermStringExpression
 //
 
+class Soprano::Query::UnaryRTermStringExpression::Private : public QSharedData
+{
+public:
+    Private( RTerm* e = 0 )
+        : term( e ) {
+    }
+    Private( const Private& other )
+        : term( 0 ) {
+        if ( other.term ) {
+            term = other.term->clone();
+        }
+    }
+    ~Private() {
+        delete term;
+    }
+
+    RTerm* term;
+};
+
 Soprano::Query::UnaryRTermStringExpression::UnaryRTermStringExpression( RTerm *rterm )
-    :m_rterm(rterm)
+    : d ( new Private( rterm ) )
 {
 }
 
 void Soprano::Query::UnaryRTermStringExpression::setRTerm( RTerm *rterm )
 {
-    m_rterm = rterm;
+    d->term = rterm;
 }
 
-Soprano::Query::RTerm *Soprano::Query::UnaryRTermStringExpression::rterm()
+const Soprano::Query::RTerm *Soprano::Query::UnaryRTermStringExpression::rterm() const
 {
-    return m_rterm;
+    return d->term;
 }
 
 //
 // Soprano::Query::UnaryNumericalExpression
 //
 
+class Soprano::Query::UnaryNumericalExpression::Private : public QSharedData
+{
+public:
+    Private( NumericalExpression* e = 0 )
+        : expression( e ) {
+    }
+    Private( const Private& other )
+        : expression( 0 ) {
+        if ( other.expression ) {
+            expression = other.expression->clone();
+        }
+    }
+    ~Private() {
+        delete expression;
+    }
+
+    NumericalExpression* expression;
+};
+
 Soprano::Query::UnaryNumericalExpression::UnaryNumericalExpression( NumericalExpression *expression )
-    :m_expression( expression )
+    : d( new Private(  expression ) )
 {
 }
 
 void Soprano::Query::UnaryNumericalExpression::setExpression( NumericalExpression *expression )
 {
-    m_expression = expression;
+    d->expression = expression;
 }
 
-Soprano::Query::NumericalExpression *Soprano::Query::UnaryNumericalExpression::expression()
+const Soprano::Query::NumericalExpression *Soprano::Query::UnaryNumericalExpression::expression() const
 {
-    return m_expression;
+    return d->expression;
 }
 
 //
@@ -346,62 +431,112 @@ Soprano::Query::Not::Not( BooleanExpression *expression )
 {
 }
 
+Soprano::Query::Not::~Not()
+{
+}
+
 void Soprano::Query::Not::accept( ExpressionVisitor *visitor )
 {
     visitor->visit( this );
 }
 
+Soprano::Query::Not* Soprano::Query::Not::clone() const
+{
+    return new Not( *this );
+}
+
 //
-// Soprano::Query::UnaryPlus
+// Soprano::Query::Negate
 //
 
-Soprano::Query::UnaryPlus::UnaryPlus( NumericalExpression *expression )
+Soprano::Query::Negate::Negate( NumericalExpression *expression )
     :UnaryNumericalExpression( expression )
 {
 }
 
-void Soprano::Query::UnaryPlus::accept( ExpressionVisitor *visitor )
+Soprano::Query::Negate::~Negate()
+{
+}
+
+void Soprano::Query::Negate::accept( ExpressionVisitor *visitor )
 {
     visitor->visit( this );
 }
 
-//
-// Soprano::Query::UnaryMinus
-//
-
-Soprano::Query::UnaryMinus::UnaryMinus( NumericalExpression *expression )
-    :UnaryNumericalExpression( expression )
+Soprano::Query::Negate* Soprano::Query::Negate::clone() const
 {
-}
-
-void Soprano::Query::UnaryMinus::accept( ExpressionVisitor *visitor )
-{
-    visitor->visit( this );
+    return new Negate( *this );
 }
 
 //
 // Soprano::Query::IsBound
 //
 
-Soprano::Query::IsBound::IsBound( Variable *variable )
-    :m_variable( variable )
+class Soprano::Query::IsBound::Private : public QSharedData
 {
+public:
+    Private( Variable* v = 0 )
+        : variable( v ) {
+    }
+    Private( const Private& other )
+        : variable( 0 ) {
+        if ( other.variable ) {
+            variable = variable->clone();
+        }
+    }
+    ~Private() {
+        delete variable;
+    }
+
+    Variable* variable;
+};
+
+Soprano::Query::IsBound::IsBound()
+    : d( new Private() )
+{
+}
+
+
+Soprano::Query::IsBound::IsBound( Variable *variable )
+    : d( new Private( variable ) )
+{
+}
+
+Soprano::Query::IsBound::IsBound( const IsBound &other )
+{
+    d = other.d;
+}
+
+Soprano::Query::IsBound::~IsBound()
+{
+}
+
+Soprano::Query::IsBound Soprano::Query::IsBound::operator=( const IsBound &other )
+{
+    d = other.d;
+    return *this;
 }
 
 void Soprano::Query::IsBound::setVariable( Variable *variable )
 {
-    m_variable = variable;
+    d->variable = variable;
 }
 
-Soprano::Query::Variable *Soprano::Query::IsBound::variable()
+const Soprano::Query::Variable *Soprano::Query::IsBound::variable() const
 {
-    return m_variable;
+    return d->variable;
 }
 
 void Soprano::Query::IsBound::accept( ExpressionVisitor *visitor )
 {
     visitor->visit( this );
 }
+
+Soprano::Query::IsBound* Soprano::Query::IsBound::clone() const
+{
+    return new IsBound( *this );
+}
+
 
 //
 // Soprano::Query::IsIRI
@@ -412,9 +547,18 @@ Soprano::Query::IsIRI::IsIRI( RTerm *rterm )
 {
 }
 
+Soprano::Query::IsIRI::~IsIRI()
+{
+}
+
 void Soprano::Query::IsIRI::accept( ExpressionVisitor *visitor )
 {
     visitor->visit( this );
+}
+
+Soprano::Query::IsIRI* Soprano::Query::IsIRI::clone() const
+{
+    return new IsIRI( *this );
 }
 
 //
@@ -426,9 +570,18 @@ Soprano::Query::IsBlank::IsBlank( RTerm *rterm )
 {
 }
 
+Soprano::Query::IsBlank::~IsBlank()
+{
+}
+
 void Soprano::Query::IsBlank::accept( ExpressionVisitor *visitor )
 {
     visitor->visit( this );
+}
+
+Soprano::Query::IsBlank* Soprano::Query::IsBlank::clone() const
+{
+    return new IsBlank( *this );
 }
 
 //
@@ -440,9 +593,18 @@ Soprano::Query::IsLiteral::IsLiteral( RTerm *rterm )
 {
 }
 
+Soprano::Query::IsLiteral::~IsLiteral()
+{
+}
+
 void Soprano::Query::IsLiteral::accept( ExpressionVisitor *visitor )
 {
     visitor->visit( this );
+}
+
+Soprano::Query::IsLiteral* Soprano::Query::IsLiteral::clone() const
+{
+    return new IsLiteral( *this );
 }
 
 //
@@ -459,6 +621,12 @@ void Soprano::Query::StringValue::accept( ExpressionVisitor *visitor )
     visitor->visit( this );
 }
 
+Soprano::Query::StringValue* Soprano::Query::StringValue::clone() const
+{
+    return new StringValue( *this );
+}
+
+
 //
 // Soprano::Query::LangValue
 //
@@ -471,6 +639,11 @@ Soprano::Query::LangValue::LangValue( RTerm *rterm )
 void Soprano::Query::LangValue::accept( ExpressionVisitor *visitor )
 {
     visitor->visit( this );
+}
+
+Soprano::Query::LangValue* Soprano::Query::LangValue::clone() const
+{
+    return new LangValue( *this );
 }
 
 //
@@ -487,180 +660,330 @@ void Soprano::Query::DataTypeValue::accept( ExpressionVisitor *visitor )
     visitor->visit( this );
 }
 
+Soprano::Query::DataTypeValue* Soprano::Query::DataTypeValue::clone() const
+{
+    return new DataTypeValue( *this );
+}
+
 //
 // Soprano::Query::BinaryBooleanExpression
 //
 
+class Soprano::Query::BinaryBooleanExpression::Private : public QSharedData
+{
+public:
+    Private( BooleanExpression *first_ = 0, BooleanExpression *second_ = 0 )
+        : first( first_ ),
+          second( second_ ) {
+    }
+    Private( const Private& other )
+        : first( 0 ),
+          second( 0 ) {
+        if ( other.first ) {
+            first = other.first->clone();
+        }
+        if ( other.second ) {
+            second = other.second->clone();
+        }
+    }
+    ~Private() {
+        delete first;
+        delete second;
+    }
+
+    BooleanExpression* first;
+    BooleanExpression* second;
+};
+
 Soprano::Query::BinaryBooleanExpression::BinaryBooleanExpression( BooleanExpression *first, BooleanExpression *second )
-    :m_first(first), m_second(second)
+    : d( new Private( first, second ) )
 {
 }
 
 void Soprano::Query::BinaryBooleanExpression::setFirst( BooleanExpression *first )
 {
-    m_first = first;
+    d->first = first;
 }
 
 void Soprano::Query::BinaryBooleanExpression::setSecond( BooleanExpression *second )
 {
-    m_second = second;
+    d->second = second;
 }
 
-Soprano::Query::BooleanExpression *Soprano::Query::BinaryBooleanExpression::first()
+const Soprano::Query::BooleanExpression *Soprano::Query::BinaryBooleanExpression::first() const
 {
-   return m_first;
+   return d->first;
 }
 
-Soprano::Query::BooleanExpression *Soprano::Query::BinaryBooleanExpression::second()
+const Soprano::Query::BooleanExpression *Soprano::Query::BinaryBooleanExpression::second() const
 {
-   return m_second;
+   return d->second;
 }
 
 //
 // Soprano::Query::BinaryNumericalBooleanExpression
 //
 
+class Soprano::Query::BinaryNumericalBooleanExpression::Private : public QSharedData
+{
+public:
+    Private( NumericalExpression *first_ = 0, NumericalExpression *second_ = 0 )
+        : first( first_ ),
+          second( second_ ) {
+    }
+    Private( const Private& other )
+        : first( 0 ),
+          second( 0 ) {
+        if ( other.first ) {
+            first = other.first->clone();
+        }
+        if ( other.second ) {
+            second = other.second->clone();
+        }
+    }
+    ~Private() {
+        delete first;
+        delete second;
+    }
+
+    NumericalExpression* first;
+    NumericalExpression* second;
+};
+
 Soprano::Query::BinaryNumericalBooleanExpression::BinaryNumericalBooleanExpression( NumericalExpression *first, NumericalExpression *second )
-    :m_first(first), m_second(second)
+    : d( new Private( first, second ) )
 {
 }
 
 void Soprano::Query::BinaryNumericalBooleanExpression::setFirst( NumericalExpression *first )
 {
-    m_first = first;
+    d->first = first;
 }
 
 void Soprano::Query::BinaryNumericalBooleanExpression::setSecond( NumericalExpression *second )
 {
-    m_second = second;
+    d->second = second;
 }
 
-Soprano::Query::NumericalExpression *Soprano::Query::BinaryNumericalBooleanExpression::first()
+const Soprano::Query::NumericalExpression *Soprano::Query::BinaryNumericalBooleanExpression::first() const
 {
-   return m_first;
+   return d->first;
 }
 
-Soprano::Query::NumericalExpression *Soprano::Query::BinaryNumericalBooleanExpression::second()
+const Soprano::Query::NumericalExpression *Soprano::Query::BinaryNumericalBooleanExpression::second() const
 {
-   return m_second;
+   return d->second;
 }
 
 //
 // Soprano::Query::BinaryStringBooleanExpression
 //
 
+class Soprano::Query::BinaryStringBooleanExpression::Private : public QSharedData
+{
+public:
+    Private( StringExpression *first_ = 0, StringExpression *second_ = 0 )
+        : first( first_ ),
+          second( second_ ) {
+    }
+    Private( const Private& other )
+        : first( 0 ),
+          second( 0 ) {
+        if ( other.first ) {
+            first = other.first->clone();
+        }
+        if ( other.second ) {
+            second = other.second->clone();
+        }
+    }
+    ~Private() {
+        delete first;
+        delete second;
+    }
+
+    StringExpression* first;
+    StringExpression* second;
+};
+
 Soprano::Query::BinaryStringBooleanExpression::BinaryStringBooleanExpression( StringExpression *first, StringExpression *second )
-    :m_first(first), m_second(second)
+    : d( new Private( first, second ) )
 {
 }
 
 void Soprano::Query::BinaryStringBooleanExpression::setFirst( StringExpression *first )
 {
-    m_first = first;
+    d->first = first;
 }
 
 void Soprano::Query::BinaryStringBooleanExpression::setSecond( StringExpression *second )
 {
-    m_second = second;
+    d->second = second;
 }
 
-Soprano::Query::StringExpression *Soprano::Query::BinaryStringBooleanExpression::first()
+const Soprano::Query::StringExpression *Soprano::Query::BinaryStringBooleanExpression::first() const
 {
-   return m_first;
+   return d->first;
 }
 
-Soprano::Query::StringExpression *Soprano::Query::BinaryStringBooleanExpression::second()
+const Soprano::Query::StringExpression *Soprano::Query::BinaryStringBooleanExpression::second() const
 {
-   return m_second;
+   return d->second;
 }
 
 //
 // Soprano::Query::BinaryDateTimeBooleanExpression
 //
 
-Soprano::Query::BinaryDateTimeBooleanExpression::BinaryDateTimeBooleanExpression( QDateTime *first, QDateTime *second )
-    :m_first(first), m_second(second)
+class Soprano::Query::BinaryDateTimeBooleanExpression::Private : public QSharedData
+{
+public:
+    Private( const QDateTime first_ = QDateTime(), const QDateTime& second_ = QDateTime() )
+        : first( first_ ),
+          second( second_ ) {
+    }
+
+    QDateTime first;
+    QDateTime second;
+};
+
+Soprano::Query::BinaryDateTimeBooleanExpression::BinaryDateTimeBooleanExpression( const QDateTime &first, const QDateTime &second )
+    : d( new Private( first, second ) )
 {
 }
 
-void Soprano::Query::BinaryDateTimeBooleanExpression::setFirst( QDateTime *first )
+void Soprano::Query::BinaryDateTimeBooleanExpression::setFirst( const QDateTime &first )
 {
-    m_first = first;
+    d->first = first;
 }
 
-void Soprano::Query::BinaryDateTimeBooleanExpression::setSecond( QDateTime *second )
+void Soprano::Query::BinaryDateTimeBooleanExpression::setSecond( const QDateTime &second )
 {
-    m_second = second;
+    d->second = second;
 }
 
-QDateTime *Soprano::Query::BinaryDateTimeBooleanExpression::first()
+QDateTime Soprano::Query::BinaryDateTimeBooleanExpression::first() const
 {
-   return m_first;
+   return d->first;
 }
 
-QDateTime *Soprano::Query::BinaryDateTimeBooleanExpression::second()
+QDateTime Soprano::Query::BinaryDateTimeBooleanExpression::second() const
 {
-   return m_second;
+   return d->second;
 }
 
 //
 // Soprano::Query::BinaryRTermBooleanExpression
 //
 
+class Soprano::Query::BinaryRTermBooleanExpression::Private : public QSharedData
+{
+public:
+    Private( RTerm *first_ = 0, RTerm *second_ = 0 )
+        : first( first_ ),
+          second( second_ ) {
+    }
+    Private( const Private& other )
+        : first( 0 ),
+          second( 0 ) {
+        if ( other.first ) {
+            first = other.first->clone();
+        }
+        if ( other.second ) {
+            second = other.second->clone();
+        }
+    }
+    ~Private() {
+        delete first;
+        delete second;
+    }
+
+    RTerm* first;
+    RTerm* second;
+};
+
 Soprano::Query::BinaryRTermBooleanExpression::BinaryRTermBooleanExpression( RTerm *first, RTerm *second )
-    :m_first(first), m_second(second)
+    : d( new Private( first, second ) )
 {
 }
 
 void Soprano::Query::BinaryRTermBooleanExpression::setFirst( RTerm *first )
 {
-    m_first = first;
+    d->first = first;
 }
 
 void Soprano::Query::BinaryRTermBooleanExpression::setSecond( RTerm *second )
 {
-    m_second = second;
+    d->second = second;
 }
 
-Soprano::Query::RTerm *Soprano::Query::BinaryRTermBooleanExpression::first()
+const Soprano::Query::RTerm *Soprano::Query::BinaryRTermBooleanExpression::first() const
 {
-   return m_first;
+   return d->first;
 }
 
-Soprano::Query::RTerm *Soprano::Query::BinaryRTermBooleanExpression::second()
+const Soprano::Query::RTerm *Soprano::Query::BinaryRTermBooleanExpression::second() const
 {
-   return m_second;
+   return d->second;
 }
 
 //
 // Soprano::Query::BinaryNumericalExpression
 //
 
+class Soprano::Query::BinaryNumericalExpression::Private : public QSharedData
+{
+public:
+    Private( NumericalExpression *first_ = 0, NumericalExpression *second_ = 0 )
+        : first( first_ ),
+          second( second_ ) {
+    }
+    Private( const Private& other )
+        : first( 0 ),
+          second( 0 ) {
+        if ( other.first ) {
+            first = other.first->clone();
+        }
+        if ( other.second ) {
+            second = other.second->clone();
+        }
+    }
+    ~Private() {
+        delete first;
+        delete second;
+    }
+
+    NumericalExpression* first;
+    NumericalExpression* second;
+};
+
 Soprano::Query::BinaryNumericalExpression::BinaryNumericalExpression( NumericalExpression *first, NumericalExpression *second )
-    :m_first(first), m_second(second)
+    : d( new Private( first, second ) )
 {
 }
 
 void Soprano::Query::BinaryNumericalExpression::setFirst( NumericalExpression *first )
 {
-    m_first = first;
+    d->first = first;
 }
 
 void Soprano::Query::BinaryNumericalExpression::setSecond( NumericalExpression *second )
 {
-    m_second = second;
+    d->second = second;
 }
 
-Soprano::Query::NumericalExpression *Soprano::Query::BinaryNumericalExpression::first()
+const Soprano::Query::NumericalExpression *Soprano::Query::BinaryNumericalExpression::first() const
 {
-   return m_first;
+   return d->first;
 }
 
-Soprano::Query::NumericalExpression *Soprano::Query::BinaryNumericalExpression::second()
+const Soprano::Query::NumericalExpression *Soprano::Query::BinaryNumericalExpression::second() const
 {
-   return m_second;
+   return d->second;
 }
 
+//
+// Soprano::Query::LogicOr
+//
 
 Soprano::Query::LogicOr::LogicOr( BooleanExpression *first, BooleanExpression *second )
     :BinaryBooleanExpression( first, second )
@@ -670,6 +993,11 @@ Soprano::Query::LogicOr::LogicOr( BooleanExpression *first, BooleanExpression *s
 void Soprano::Query::LogicOr::accept( ExpressionVisitor *visitor )
 {
     visitor->visit( this );
+}
+
+Soprano::Query::LogicOr* Soprano::Query::LogicOr::clone() const
+{
+    return new LogicOr( *this );
 }
 
 //
@@ -686,6 +1014,11 @@ void Soprano::Query::LogicAnd::accept( ExpressionVisitor *visitor )
     visitor->visit( this );
 }
 
+Soprano::Query::LogicAnd* Soprano::Query::LogicAnd::clone() const
+{
+    return new LogicAnd( *this );
+}
+
 //
 // Soprano::Query::NumericalEqual
 //
@@ -698,6 +1031,11 @@ Soprano::Query::NumericalEqual::NumericalEqual( NumericalExpression *first, Nume
 void Soprano::Query::NumericalEqual::accept( ExpressionVisitor *visitor )
 {
     visitor->visit( this );
+}
+
+Soprano::Query::NumericalEqual* Soprano::Query::NumericalEqual::clone() const
+{
+    return new NumericalEqual( *this );
 }
 
 //
@@ -714,6 +1052,11 @@ void Soprano::Query::NumericalNotEqual::accept( ExpressionVisitor *visitor )
     visitor->visit( this );
 }
 
+Soprano::Query::NumericalNotEqual* Soprano::Query::NumericalNotEqual::clone() const
+{
+    return new NumericalNotEqual( *this );
+}
+
 //
 // Soprano::Query::StringEqual
 //
@@ -727,6 +1070,12 @@ void Soprano::Query::StringEqual::accept( ExpressionVisitor *visitor )
 {
     visitor->visit( this );
 }
+
+Soprano::Query::StringEqual* Soprano::Query::StringEqual::clone() const
+{
+    return new StringEqual( *this );
+}
+
 
 //
 // Soprano::Query::StringNotEqual
@@ -742,12 +1091,18 @@ void Soprano::Query::StringNotEqual::accept( ExpressionVisitor *visitor )
     visitor->visit( this );
 }
 
+Soprano::Query::StringNotEqual* Soprano::Query::StringNotEqual::clone() const
+{
+    return new StringNotEqual( *this );
+}
+
+
 //
 // Soprano::Query::DateTimeEqual
 //
 
-Soprano::Query::DateTimeEqual::DateTimeEqual( QDateTime *first, QDateTime *second )
-    :BinaryDateTimeBooleanExpression( first, second )
+Soprano::Query::DateTimeEqual::DateTimeEqual( const QDateTime& first, const QDateTime& second )
+    : BinaryDateTimeBooleanExpression( first, second )
 {
 }
 
@@ -756,11 +1111,17 @@ void Soprano::Query::DateTimeEqual::accept( ExpressionVisitor *visitor )
     visitor->visit( this );
 }
 
+Soprano::Query::DateTimeEqual* Soprano::Query::DateTimeEqual::clone() const
+{
+    return new DateTimeEqual( *this );
+}
+
+
 //
 // Soprano::Query::DateTimeNotEqual
 //
 
-Soprano::Query::DateTimeNotEqual::DateTimeNotEqual( QDateTime *first, QDateTime *second )
+Soprano::Query::DateTimeNotEqual::DateTimeNotEqual( const QDateTime& first, const QDateTime& second )
     :BinaryDateTimeBooleanExpression( first, second )
 {
 }
@@ -769,6 +1130,12 @@ void Soprano::Query::DateTimeNotEqual::accept( ExpressionVisitor *visitor )
 {
     visitor->visit( this );
 }
+
+Soprano::Query::DateTimeNotEqual* Soprano::Query::DateTimeNotEqual::clone() const
+{
+    return new DateTimeNotEqual( *this );
+}
+
 
 //
 // Soprano::Query::NumericalLessThan
@@ -784,6 +1151,12 @@ void Soprano::Query::NumericalLessThan::accept( ExpressionVisitor *visitor )
     visitor->visit( this );
 }
 
+Soprano::Query::NumericalLessThan* Soprano::Query::NumericalLessThan::clone() const
+{
+    return new NumericalLessThan( *this );
+}
+
+
 //
 // Soprano::Query::NumericalGreaterThan
 //
@@ -797,6 +1170,12 @@ void Soprano::Query::NumericalGreaterThan::accept( ExpressionVisitor *visitor )
 {
     visitor->visit( this );
 }
+
+Soprano::Query::NumericalGreaterThan* Soprano::Query::NumericalGreaterThan::clone() const
+{
+    return new NumericalGreaterThan( *this );
+}
+
 
 //
 // Soprano::Query::NumericalLessThan
@@ -812,6 +1191,12 @@ void Soprano::Query::NumericalLessThanEqual::accept( ExpressionVisitor *visitor 
     visitor->visit( this );
 }
 
+Soprano::Query::NumericalLessThanEqual* Soprano::Query::NumericalLessThanEqual::clone() const
+{
+    return new NumericalLessThanEqual( *this );
+}
+
+
 //
 // Soprano::Query::NumericalGreaterThanEqual
 //
@@ -825,6 +1210,12 @@ void Soprano::Query::NumericalGreaterThanEqual::accept( ExpressionVisitor *visit
 {
     visitor->visit( this );
 }
+
+Soprano::Query::NumericalGreaterThanEqual* Soprano::Query::NumericalGreaterThanEqual::clone() const
+{
+    return new NumericalGreaterThanEqual( *this );
+}
+
 
 //
 // Soprano::Query::StringLessThan
@@ -840,6 +1231,12 @@ void Soprano::Query::StringLessThan::accept( ExpressionVisitor *visitor )
     visitor->visit( this );
 }
 
+Soprano::Query::StringLessThan* Soprano::Query::StringLessThan::clone() const
+{
+    return new StringLessThan( *this );
+}
+
+
 //
 // Soprano::Query::StringGreaterThan
 //
@@ -852,6 +1249,12 @@ Soprano::Query::StringGreaterThan::StringGreaterThan( StringExpression *first, S
 void Soprano::Query::StringGreaterThan::accept( ExpressionVisitor *visitor )
 {
     visitor->visit( this );
+}
+
+
+Soprano::Query::StringGreaterThan* Soprano::Query::StringGreaterThan::clone() const
+{
+    return new StringGreaterThan( *this );
 }
 
 //
@@ -868,6 +1271,11 @@ void Soprano::Query::StringLessThanEqual::accept( ExpressionVisitor *visitor )
     visitor->visit( this );
 }
 
+Soprano::Query::StringLessThanEqual* Soprano::Query::StringLessThanEqual::clone() const
+{
+    return new StringLessThanEqual( *this );
+}
+
 //
 // Soprano::Query::StringGreaterThanEqual
 //
@@ -882,11 +1290,16 @@ void Soprano::Query::StringGreaterThanEqual::accept( ExpressionVisitor *visitor 
     visitor->visit( this );
 }
 
+Soprano::Query::StringGreaterThanEqual* Soprano::Query::StringGreaterThanEqual::clone() const
+{
+    return new StringGreaterThanEqual( *this );
+}
+
 //
 // Soprano::Query::DateTimeLessThan
 //
 
-Soprano::Query::DateTimeLessThan::DateTimeLessThan( QDateTime *first, QDateTime *second )
+Soprano::Query::DateTimeLessThan::DateTimeLessThan( const QDateTime& first, const QDateTime& second )
     :BinaryDateTimeBooleanExpression( first, second )
 {
 }
@@ -896,11 +1309,16 @@ void Soprano::Query::DateTimeLessThan::accept( ExpressionVisitor *visitor )
     visitor->visit( this );
 }
 
+Soprano::Query::DateTimeLessThan* Soprano::Query::DateTimeLessThan::clone() const
+{
+    return new DateTimeLessThan( *this );
+}
+
 //
 // Soprano::Query::DateTimeGreaterThan
 //
 
-Soprano::Query::DateTimeGreaterThan::DateTimeGreaterThan( QDateTime *first, QDateTime *second )
+Soprano::Query::DateTimeGreaterThan::DateTimeGreaterThan( const QDateTime& first, const QDateTime& second )
     :BinaryDateTimeBooleanExpression( first, second )
 {
 }
@@ -910,11 +1328,16 @@ void Soprano::Query::DateTimeGreaterThan::accept( ExpressionVisitor *visitor )
     visitor->visit( this );
 }
 
+Soprano::Query::DateTimeGreaterThan* Soprano::Query::DateTimeGreaterThan::clone() const
+{
+    return new DateTimeGreaterThan( *this );
+}
+
 //
 // Soprano::Query::DateTimeLessThanEqual
 //
 
-Soprano::Query::DateTimeLessThanEqual::DateTimeLessThanEqual( QDateTime *first, QDateTime *second )
+Soprano::Query::DateTimeLessThanEqual::DateTimeLessThanEqual( const QDateTime& first, const QDateTime& second )
     :BinaryDateTimeBooleanExpression( first, second )
 {
 }
@@ -924,11 +1347,16 @@ void Soprano::Query::DateTimeLessThanEqual::accept( ExpressionVisitor *visitor )
     visitor->visit( this );
 }
 
+Soprano::Query::DateTimeLessThanEqual* Soprano::Query::DateTimeLessThanEqual::clone() const
+{
+    return new DateTimeLessThanEqual( *this );
+}
+
 //
 // Soprano::Query::DateTimeGreaterThanEqual
 //
 
-Soprano::Query::DateTimeGreaterThanEqual::DateTimeGreaterThanEqual( QDateTime *first, QDateTime *second )
+Soprano::Query::DateTimeGreaterThanEqual::DateTimeGreaterThanEqual( const QDateTime& first, const QDateTime& second )
     :BinaryDateTimeBooleanExpression( first, second )
 {
 }
@@ -936,6 +1364,11 @@ Soprano::Query::DateTimeGreaterThanEqual::DateTimeGreaterThanEqual( QDateTime *f
 void Soprano::Query::DateTimeGreaterThanEqual::accept( ExpressionVisitor *visitor )
 {
     visitor->visit( this );
+}
+
+Soprano::Query::DateTimeGreaterThanEqual* Soprano::Query::DateTimeGreaterThanEqual::clone() const
+{
+    return new DateTimeGreaterThanEqual( *this );
 }
 
 //
@@ -952,6 +1385,11 @@ void Soprano::Query::NumericalMultiply::accept( ExpressionVisitor *visitor )
     visitor->visit( this );
 }
 
+Soprano::Query::NumericalMultiply* Soprano::Query::NumericalMultiply::clone() const
+{
+    return new NumericalMultiply( *this );
+}
+
 //
 // Soprano::Query::NumericalDivide
 //
@@ -964,6 +1402,11 @@ Soprano::Query::NumericalDivide::NumericalDivide( NumericalExpression *first, Nu
 void Soprano::Query::NumericalDivide::accept( ExpressionVisitor *visitor )
 {
     visitor->visit( this );
+}
+
+Soprano::Query::NumericalDivide* Soprano::Query::NumericalDivide::clone() const
+{
+    return new NumericalDivide( *this );
 }
 
 //
@@ -980,6 +1423,11 @@ void Soprano::Query::NumericalAdd::accept( ExpressionVisitor *visitor )
     visitor->visit( this );
 }
 
+Soprano::Query::NumericalAdd* Soprano::Query::NumericalAdd::clone() const
+{
+    return new NumericalAdd( *this );
+}
+
 //
 // Soprano::Query::NumericalSubtract
 //
@@ -992,6 +1440,11 @@ Soprano::Query::NumericalSubtract::NumericalSubtract( NumericalExpression *first
 void Soprano::Query::NumericalSubtract::accept( ExpressionVisitor *visitor )
 {
     visitor->visit( this );
+}
+
+Soprano::Query::NumericalSubtract* Soprano::Query::NumericalSubtract::clone() const
+{
+    return new NumericalSubtract( *this );
 }
 
 //
@@ -1008,6 +1461,11 @@ void Soprano::Query::RTermEqual::accept( ExpressionVisitor *visitor )
     visitor->visit( this );
 }
 
+Soprano::Query::RTermEqual* Soprano::Query::RTermEqual::clone() const
+{
+    return new RTermEqual( *this );
+}
+
 //
 // Soprano::Query::RTermNotEqual
 //
@@ -1020,6 +1478,11 @@ Soprano::Query::RTermNotEqual::RTermNotEqual( RTerm *first, RTerm *second )
 void Soprano::Query::RTermNotEqual::accept( ExpressionVisitor *visitor )
 {
     visitor->visit( this );
+}
+
+Soprano::Query::RTermNotEqual* Soprano::Query::RTermNotEqual::clone() const
+{
+    return new RTermNotEqual( *this );
 }
 
 //
@@ -1036,48 +1499,82 @@ void Soprano::Query::LangMatches::accept( ExpressionVisitor *visitor )
     visitor->visit( this );
 }
 
+Soprano::Query::LangMatches* Soprano::Query::LangMatches::clone() const
+{
+    return new LangMatches( *this );
+}
+
 //
 // Soprano::Query::Regexp
 //
 
+class Soprano::Query::Regexp::Private : public QSharedData
+{
+public:
+    Private( StringExpression *ex, const QString &p, const QString& f = QString() )
+        : expression( ex ),
+          pattern( p ),
+          flags( f ) {
+    }
+    Private( const Private& other)
+        : expression( 0 ),
+          pattern( other.pattern ),
+          flags( other.flags ) {
+        if ( other.expression ) {
+            expression = other.expression->clone();                         }
+    }
+    ~Private() {
+        delete expression;
+    }
+
+    StringExpression *expression;
+            QString pattern;
+            QString flags;
+};
+
 Soprano::Query::Regexp::Regexp( StringExpression *expression, const QString &pattern )
-    :m_expression(expression), m_pattern(pattern)
+    : d( new Private( expression, pattern ) )
 {
 }
 
 Soprano::Query::Regexp::Regexp( StringExpression *expression, const QString &pattern, const QString &flags )
-    :m_expression(expression), m_pattern(pattern), m_flags(flags)
+    : d( new Private( expression, pattern, flags ) )
 {
+}
+
+Soprano::Query::Regexp* Soprano::Query::Regexp::clone() const
+{
+    return new Regexp( *this );
 }
 
 void Soprano::Query::Regexp::setExpression( StringExpression *expression )
 {
-    m_expression = expression;
+    d->expression = expression;
 }
 
-Soprano::Query::StringExpression *Soprano::Query::Regexp::expression()
+const Soprano::Query::StringExpression *Soprano::Query::Regexp::expression() const
 {
-    return m_expression;
+    return d->expression;
 }
 
 void Soprano::Query::Regexp::setPattern( const QString &pattern )
 {
-    m_pattern = pattern;
+    d->pattern = pattern;
 }
 
 QString Soprano::Query::Regexp::pattern()
 {
-    return m_pattern;
+    return d->pattern;
 }
 
 void Soprano::Query::Regexp::setFlags( const QString &flags )
 {
-    m_flags = flags;
+    d->flags = flags;
 }
 
 QString Soprano::Query::Regexp::flags()
 {
-    return m_flags;
+    return d->flags;
 }
 
 void Soprano::Query::Regexp::accept( ExpressionVisitor *visitor )
@@ -1144,6 +1641,26 @@ public:
         context( 0 ),
         optional( false )
     {};
+
+    Private( const Private& other )
+      : subject( 0 ),
+        predicate( 0 ),
+        object( 0 ),
+        context( 0 ),
+        optional( other.optional ) {
+        if ( other.subject ) {
+            subject = other.subject->clone();
+        }
+        if ( other.predicate ) {
+            predicate = other.predicate->clone();
+        }
+        if ( other.object ) {
+            object = other.object->clone();
+        }
+        if ( other.context ) {
+            context = other.context->clone();
+        }
+    }
 
     ~Private()
     {
@@ -1245,8 +1762,18 @@ const Soprano::Query::RTerm *Soprano::Query::GraphPattern::context() const
 
 class Soprano::Query::Query::Private : public QSharedData {
 public:
-    Private(): condition(0) {};
-
+    Private()
+        : condition(0) {
+    }
+    Private( const Private& other )
+        : condition(0),
+          prefixes( other.prefixes ),
+          queryTerms( other.queryTerms ),
+          type( other.type ) {
+        if ( other.condition ) {
+            condition = other.condition->clone();
+        }
+    }
     ~Private() {
         delete condition;
     }
@@ -1335,6 +1862,11 @@ class Soprano::Query::QueryTerms::Private : public QSharedData
 public:
     Private() {}
 
+    Private( const Private& other) {
+       Q_FOREACH( RTerm* r, other.rterms ) {
+          rterms.append( r->clone() );
+       }
+    }
     ~Private() {
        Q_FOREACH( RTerm* r, rterms ) {
           delete r;
