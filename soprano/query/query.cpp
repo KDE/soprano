@@ -138,10 +138,20 @@ Soprano::Query::Numerical::~Numerical()
 {
 }
 
+Soprano::Query::Numerical* Soprano::Query::Numerical::clone() const
+{
+    return new Numerical( *this );
+}
+
 Soprano::Query::Numerical& Soprano::Query::Numerical::operator=( const Numerical& other )
 {
     d = other.d;
     return *this;
+}
+
+void Soprano::Query::Numerical::accept( ExpressionVisitor *visitor )
+{
+    visitor->visit( this );
 }
 
 bool Soprano::Query::Numerical::isDecimal()
@@ -269,6 +279,56 @@ Soprano::Query::StringExpression::StringExpression()
 Soprano::Query::StringExpression::~StringExpression()
 {
 }
+
+//
+// Soprano::Query::String
+//
+
+class Soprano::Query::String::Private : public QSharedData
+{
+public:
+    Private( const QString& s = QString() )
+        : value( s ) {
+    }
+
+    QString value;
+};
+
+Soprano::Query::String::String()
+    : d( new Private() )
+{
+}
+
+Soprano::Query::String::String( const QString& s )
+    : d( new Private( s ) )
+{
+}
+
+Soprano::Query::String::String( const String& other )
+{
+    d = other.d;
+}
+
+Soprano::Query::String* Soprano::Query::String::clone() const
+{
+    return new String( *this );
+}
+
+QString Soprano::Query::String::value() const
+{
+    return d->value;
+}
+
+void Soprano::Query::String::setValue( const QString& s )
+{
+    d->value = s;
+}
+
+void Soprano::Query::String::accept( ExpressionVisitor* visitor )
+{
+    visitor->visit( this );
+}
+
 
 //
 // Soprano::Query::UnaryBooleanExpression

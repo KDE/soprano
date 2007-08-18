@@ -34,6 +34,20 @@ namespace Soprano
     class Node;
 
     namespace Query {
+
+        class ExpressionVisitor;
+
+        class Expression {
+        public:
+            virtual ~Expression();
+        
+            virtual void accept( ExpressionVisitor *visitor ) = 0;
+
+            virtual Expression* clone() const = 0;
+            
+        protected:
+            Expression();
+        };
     
         class RTerm {
         public:
@@ -89,50 +103,10 @@ namespace Soprano
         };
         
     
-        class Numerical {
-        public:
-            Numerical();
-            Numerical( int    value );
-            Numerical( double value );
-            Numerical( float  value );
-            Numerical( const Numerical &other );
-            ~Numerical();
-        
-            Numerical& operator=( const Numerical& );
-        
-            bool isDecimal();
-
-            bool isDouble();
-            double doubleValue();
-
-            bool isFloat();
-            float floatValue();
-            
-            bool isInteger();
-            int integerValue();
-            
-        private:
-            class Private;
-            QSharedDataPointer<Private> d;
-        };
-   
         ////////////////////////////////////////////////////////////////////////
         // Expressions                                                        //
         ////////////////////////////////////////////////////////////////////////
 
-        class ExpressionVisitor;
-
-        class Expression {
-        public:
-            virtual ~Expression();
-        
-            virtual void accept( ExpressionVisitor *visitor ) = 0;
-
-            virtual Expression* clone() const = 0;
-            
-        protected:
-            Expression();
-        };
 
         // An expression that return a xsd:boolean
         class BooleanExpression: public Expression {
@@ -156,6 +130,40 @@ namespace Soprano
             NumericalExpression();
         };
 
+	/**
+	 * A numerical constant.
+	 */
+        class Numerical : public NumericalExpression {
+        public:
+            Numerical();
+            Numerical( int    value );
+            Numerical( double value );
+            Numerical( float  value );
+            Numerical( const Numerical &other );
+            ~Numerical();
+        
+            Numerical& operator=( const Numerical& );
+
+	    Numerical* clone() const;
+
+            void accept( ExpressionVisitor *visitor );
+        
+            bool isDecimal();
+
+            bool isDouble();
+            double doubleValue();
+
+            bool isFloat();
+            float floatValue();
+            
+            bool isInteger();
+            int integerValue();
+            
+        private:
+            class Private;
+            QSharedDataPointer<Private> d;
+        };
+   
         // An expression that return a xsd:string or rdfs:Datatype
         class StringExpression: public Expression {
         public:
@@ -166,6 +174,27 @@ namespace Soprano
         protected:
             StringExpression();
         };
+
+	/**
+	 * A string constant
+	 */
+	class String : public StringExpression {
+	public:
+	    String();
+	    String( const QString& );
+	    String( const String& other );
+
+	    String* clone() const;
+
+	    QString value() const;
+	    void setValue( const QString& );
+
+	    void accept( ExpressionVisitor* );
+
+	private:
+	    class Private;
+	    QSharedDataPointer<Private> d;
+	};
 
         ////////////////////////////////////////////////////////////////////////
         // Unary Expressions                                                  //
@@ -752,6 +781,8 @@ namespace Soprano
             
             virtual void visit( DateTimeNotEqual *expression ) = 0;
 
+            virtual void visit( Numerical *expression ) = 0;
+
             virtual void visit( NumericalLessThan *expression ) = 0;
 
             virtual void visit( NumericalGreaterThan *expression ) = 0;
@@ -759,6 +790,8 @@ namespace Soprano
             virtual void visit( NumericalLessThanEqual *expression ) = 0;
 
             virtual void visit( NumericalGreaterThanEqual *expression ) = 0;
+
+            virtual void visit( String *expression ) = 0;
 
             virtual void visit( StringLessThan *expression ) = 0;
         
