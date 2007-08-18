@@ -29,6 +29,13 @@
 #include <QDateTime>
 #include <QtCore/QSharedData>
 
+// FIXME: - set operations such as intersect
+//        - I think it would be sufficient to have equal on expressions rather
+//          then one for strings and one or numericals and so on
+//        - String operations such as concat
+//        - We have no way of representing OFFSET or LIMIT yet
+
+
 namespace Soprano
 {
     class Node;
@@ -203,7 +210,6 @@ namespace Soprano
         class UnaryBooleanExpression: public BooleanExpression {
         public:
             UnaryBooleanExpression( BooleanExpression *expression );
-//            virtual ~UnaryBooleanExpression();
 
             void setExpression( BooleanExpression *expression );
             const BooleanExpression *expression() const;
@@ -215,12 +221,7 @@ namespace Soprano
 
         class UnaryRTermBooleanExpression: public BooleanExpression {
         public:
-//            UnaryRTermBooleanExpression();
             UnaryRTermBooleanExpression( RTerm *rterm );
-//            UnaryRTermBooleanExpression( const UnaryRTermBooleanExpression& );
-//            virtual ~UnaryRTermBooleanExpression();
-
-//            UnaryRTermBooleanExpression& operator=( const UnaryRTermBooleanExpression& );
 	    
             void setRTerm( RTerm *expression );
             const RTerm *rterm() const;
@@ -232,12 +233,7 @@ namespace Soprano
 
 	class UnaryRTermStringExpression: public StringExpression {
         public:
-//            UnaryRTermStringExpression();
             UnaryRTermStringExpression( RTerm *rterm );
-/*             UnaryRTermStringExpression( const UnaryRTermStringExpression& ); */
-/*             virtual ~UnaryRTermStringExpression(); */
-
-/* 	        UnaryRTermStringExpression& operator=( const UnaryRTermStringExpression& ); */
 	    
             void setRTerm( RTerm *expression );
             const RTerm *rterm() const;
@@ -249,10 +245,7 @@ namespace Soprano
 
         class UnaryNumericalExpression: public NumericalExpression {
         public:
-//            UnaryNumericalExpression();
             UnaryNumericalExpression( NumericalExpression *expression );
-/*             UnaryNumericalExpression( const UnaryNumericalExpression &other ); */
-/*             virtual ~UnaryNumericalExpression(); */
 
             void setExpression( NumericalExpression *expression );
             const NumericalExpression *expression() const;
