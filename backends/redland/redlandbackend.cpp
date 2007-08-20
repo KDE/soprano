@@ -54,7 +54,7 @@ Soprano::Redland::BackendPlugin::BackendPlugin()
 }
 
 
-Soprano::Model* Soprano::Redland::BackendPlugin::createModel( const QList<BackendSetting>& settings ) const
+Soprano::StorageModel* Soprano::Redland::BackendPlugin::createModel( const QList<BackendSetting>& settings ) const
 {
     // check all settings.
     // we pass all user settings on to librdf

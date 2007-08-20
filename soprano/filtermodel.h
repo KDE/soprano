@@ -42,57 +42,60 @@ namespace Soprano {
 	Q_OBJECT
 
     public:
+	/**
+	 * Destructor
+	 */
 	virtual ~FilterModel();
 
-	virtual void setParentModel( Model* );
+	/**
+	 * Set the parent Model.
+	 * \param model The Model that this filter will forward any commands to.
+	 */
+	virtual void setParentModel( Model* model );
 
+	/**
+	 * Get the parent model.
+	 * \return The parent Model or 0 if none has been set.
+	 */
 	virtual Model* parentModel() const;
 
 	/**
 	 * Default implementation simple pipes the call through to the parent model.
-	 * \sa Model::add( const Statement &statement )
 	 */
 	virtual ErrorCode addStatement( const Statement &statement );
 
 	/**
 	 * Default implementation simple pipes the call through to the parent model.
-	 * \sa Model::isEmpty()
 	 */
 	virtual bool isEmpty() const;
 
 	/**
 	 * Default implementation simple pipes the call through to the parent model.
-	 * \sa Model::listContexts()
 	 */
 	virtual NodeIterator listContexts() const;
 
 	/**
 	 * Default implementation simple pipes the call through to the parent model.
-	 * \sa Model::containsStatements( const Statement &statement )
 	 */
 	virtual bool containsStatements( const Statement &statement ) const;
 
 	/**
 	 * Default implementation simple pipes the call through to the parent model.
-	 * \sa Model::executeQuery
 	 */
 	virtual QueryResultIterator executeQuery( const QueryLegacy &query ) const;
 
 	/**
 	 * Default implementation simple pipes the call through to the parent model.
-	 * \sa Model::listStatements( const Statement &partial )
 	 */
 	virtual StatementIterator listStatements( const Statement &partial ) const;
 
 	/**
 	 * Default implementation simple pipes the call through to the parent model.
-	 * \sa Model::removeStatements( const Statement &statement )
 	 */
 	virtual ErrorCode removeStatements( const Statement &statement );
 
 	/**
 	 * Default implementation simple pipes the call through to the parent model.
-	 * \sa Model::statementCount()
 	 */
 	virtual int statementCount() const;
 

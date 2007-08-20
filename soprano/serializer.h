@@ -50,7 +50,7 @@ namespace Soprano
      *   Q_INTERFACES(Soprano::Serializer)
      *
      *  public:
-     *   bool serialize( StatementIterator it, QTextStream* stream, RdfSerialization serialization, const QString& userSerialization = QString() ) const = 0;
+     *   bool serialize( StatementIterator it, QTextStream& stream, RdfSerialization serialization, const QString& userSerialization = QString() ) const = 0;
      * };
      * \endcode
      *
@@ -112,7 +112,7 @@ namespace Soprano
 	 *
 	 * \return \p true if the %serialization was successful,  false otherwise.
 	 */
-	virtual bool serialize( StatementIterator it, QTextStream* stream, RdfSerialization serialization, const QString& userSerialization = QString() ) const = 0;
+	virtual bool serialize( StatementIterator it, QTextStream& stream, RdfSerialization serialization, const QString& userSerialization = QString() ) const = 0;
 
     protected:
 	Serializer( const QString& name );

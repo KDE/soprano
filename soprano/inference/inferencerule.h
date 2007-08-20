@@ -39,6 +39,9 @@ namespace Soprano {
         /**
 	 * \brief A rule used by the InferenceModel to generate inferenced statements.
 	 *
+	 * Rules can be created manually by adding preconditions and the effect via addPrecondition() and
+	 * setEffect() or from a rules file through the RuleParser.
+	 *
 	 * \author Sebastian Trueg <trueg@kde.org>
 	 */
 	class SOPRANO_EXPORT Rule

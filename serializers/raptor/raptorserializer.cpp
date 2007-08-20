@@ -147,7 +147,7 @@ void streamFinished( void* )
 
 
 bool Soprano::Raptor::Serializer::serialize( StatementIterator it,
-                                             QTextStream* stream,
+                                             QTextStream& stream,
                                              RdfSerialization serialization,
                                              const QString& userSerialization ) const
 {
@@ -169,7 +169,7 @@ bool Soprano::Raptor::Serializer::serialize( StatementIterator it,
         raptorIOStreamWriteBytes,
         0
     };
-    raptor_iostream* raptorStream = raptor_new_iostream_from_handler( stream,
+    raptor_iostream* raptorStream = raptor_new_iostream_from_handler( &stream,
                                                                       &raptorStreamHandler );
 
     if ( !raptorStream ) {

@@ -39,7 +39,7 @@ namespace Soprano
 	public:
 	  BackendPlugin();
 
-	  Model* createModel( const QList<BackendSetting>& settings = QList<BackendSetting>() ) const;
+	  StorageModel* createModel( const QList<BackendSetting>& settings = QList<BackendSetting>() ) const;
 
 	  BackendFeatures supportedFeatures() const;
 	};

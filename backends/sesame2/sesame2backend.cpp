@@ -37,7 +37,7 @@ Soprano::Sesame2::BackendPlugin::BackendPlugin()
 }
 
 
-Soprano::Model* Soprano::Sesame2::BackendPlugin::createModel( const QList<BackendSetting>& settings ) const
+Soprano::StorageModel* Soprano::Sesame2::BackendPlugin::createModel( const QList<BackendSetting>& settings ) const
 {
     QString path;
     bool memory = false;

@@ -43,7 +43,7 @@ namespace Soprano {
 	    RdfSerializations supportedSerializations() const;
 
 	    bool serialize( StatementIterator it, 
-			    QTextStream* stream, 
+			    QTextStream& stream, 
 			    RdfSerialization serialization,
 			    const QString& userSerialization = QString() ) const;
 	};

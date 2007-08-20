@@ -81,13 +81,13 @@ namespace Soprano
     enum BackendFeature {
 	BACKEND_FEATURE_NONE = 0x0,
 	BACKEND_FEATURE_ADD_STATEMENT = 0x1,       /**< The backend supports the adding of statements (Model::addStatement()). */
-	BACKEND_FEATURE_REMOVE_STATEMENTS = 0x2,   /**< The backend supports the removal of statements (Model::removeStatement()). */
+	BACKEND_FEATURE_REMOVE_STATEMENTS = 0x2,   /**< The backend supports the removal of statements (Model::removeStatements()). */
 	BACKEND_FEATURE_LIST_STATEMENTS = 0x4,     /**< The backend supports the listing of statements (Model::listStatements(), Model::containsStatements()) */
 	BACKEND_FEATURE_QUERY = 0x8,               /**< The backend supports RDF queries (Model::executeQuery()) */
 	BACKEND_FEATURE_INFERENCE = 0x10,          /**< The backend provides includes inference engine. */
 	BACKEND_FEATURE_INFERENCE_OPTIONAL = 0x20, /**< The backend's inference engine is optional, i.e. it can be disabled. */
 	BACKEND_FEATURE_CONTEXTS = 0x40,           /**< The backend supports contexts, i.e. named graphs. If this feature is not present Statement::context() will always return an empty node. */
-	BACKEND_FEATURE_MEMORY_STORAGE = 0x80,     /**< The backend supports pure memory Models. (Backend::createMemoryModel() returns valid Model instances) */
+	BACKEND_FEATURE_MEMORY_STORAGE = 0x80,     /**< The backend supports pure memory Models. (Soprano::BACKEND_OPTION_STORAGE_MEMORY) */
 	BACKEND_FEATURE_USER = 0x1000              /**< Backends may support additional features that are not officially supported by %Soprano. */
     };
     Q_DECLARE_FLAGS( BackendFeatures, BackendFeature )

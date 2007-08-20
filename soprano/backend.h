@@ -30,7 +30,7 @@
 
 namespace Soprano
 {
-    class Model;
+    class StorageModel;
 
     /**
      * Wraps one setting for Model creation.
@@ -74,8 +74,8 @@ namespace Soprano
      *   Q_INTERFACES(Soprano::Backend)
      *
      *  public:
-     *   Model* createModel() const;
-     *   Model* createModel( const QString& name, const QStringList& options = QStringList() ) const;
+     *   StorageModel* createModel() const;
+     *   StorageModel* createModel( const QString& name, const QStringList& options = QStringList() ) const;
      * };
      * \endcode
      *
@@ -102,7 +102,7 @@ namespace Soprano
 	 *  should never ignore settings but rather return 0 if an option is not supported. Backends can,
 	 * however, define their own default settings.
 	 */
-	virtual Model* createModel( const QList<BackendSetting>& settings = QList<BackendSetting>() ) const = 0;
+	virtual StorageModel* createModel( const QList<BackendSetting>& settings = QList<BackendSetting>() ) const = 0;
 
 	/**
 	 * Each backend can support a set of features. Backends without any features do not make much sense.

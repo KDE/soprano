@@ -29,6 +29,8 @@
 
 #include <QtCore/QObject>
 
+class QTextStream;
+
 namespace Soprano {
     namespace Query {
 
@@ -74,14 +76,15 @@ namespace Soprano {
 	     * visualize a %query to the user.
 	     *
 	     * \param query The Query instance to serialize.
+	     * \param stream The stream the serialized query is supposed to be written to.
 	     * \param lang The encoding that should be used to serialize the %query.
 	     * \param userQueryLanguage If lang is set to Query::QUERY_LANGUAGE_USER this parameter specifies the
 	     *       query language to use. It allows the extension of the %Soprano Query interface with new
 	     *       query languages that are not officially supported by %Soprano.
 	     *
-	     * \return A string representation of query or an empty string on error.
+	     * \return \p true if the %serialization was successful,  false otherwise.
 	     */
-	    virtual QString serializeQuery( const Query& query, QueryLanguage lang, const QString& userQueryLanguage = QString() ) = 0;
+	    virtual bool serializeQuery( const Query& query, QTextStream& stream, QueryLanguage lang, const QString& userQueryLanguage = QString() ) = 0;
 
 	    /**
 	     * A query serializer can support different query languages.

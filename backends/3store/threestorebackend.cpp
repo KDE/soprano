@@ -36,7 +36,7 @@ Soprano::ThreeStore::BackendPlugin::BackendPlugin()
 }
 
 
-Soprano::Model* Soprano::ThreeStore::BackendPlugin::createModel( const QList<BackendSetting>& settings ) const
+Soprano::StorageModel* Soprano::ThreeStore::BackendPlugin::createModel( const QList<BackendSetting>& settings ) const
 {
     // we use the name as 3Store/SQL database name and parse the options for mysql connection data
     QString db, host,  user,  passwd;
