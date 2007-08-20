@@ -4,8 +4,6 @@ Add here what you want to add in Soprano
 
 trueg: Is "Repository" better suited as a name for "Model"? After all model seems to be used quite often
        (in other APIs) for an object representing one named graph instead of the whole dataset.
-trueg: Model::backend() could make sense.
-       ATM we have no way of detecting which query langs are supported by a model.
 
 * Proper error handling everywhere. Example: methods like Model::listStatements can only return an empty iterator.
   The caller has no way of knowing if this is the proper result or if an error occured. 
