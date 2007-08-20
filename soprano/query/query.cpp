@@ -1588,8 +1588,8 @@ public:
     }
 
     StringExpression *expression;
-            QString pattern;
-            QString flags;
+    QString pattern;
+    QString flags;
 };
 
 Soprano::Query::Regexp::Regexp( StringExpression *expression, const QString &pattern )

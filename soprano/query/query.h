@@ -78,7 +78,7 @@ namespace Soprano
 
             Variable& operator=( const Variable& );
 
-	    Variable* clone() const;
+            Variable* clone() const;
 
             bool isVariable() const { return true; }
 
@@ -96,7 +96,7 @@ namespace Soprano
             Node( const Soprano::Node &node );
             Node( const Node &other );
 
-	    Node* clone() const;
+            Node* clone() const;
      
             Node& operator=( const Node& );
      
@@ -131,15 +131,15 @@ namespace Soprano
         public:
             virtual ~NumericalExpression();
 
-	    NumericalExpression* clone() const = 0;
+            NumericalExpression* clone() const = 0;
 
         protected:
             NumericalExpression();
         };
 
-	/**
-	 * A numerical constant.
-	 */
+        /**
+         * A numerical constant.
+        */
         class Numerical : public NumericalExpression {
         public:
             Numerical();
@@ -151,7 +151,7 @@ namespace Soprano
         
             Numerical& operator=( const Numerical& );
 
-	    Numerical* clone() const;
+            Numerical* clone() const;
 
             void accept( ExpressionVisitor *visitor );
         
@@ -176,32 +176,32 @@ namespace Soprano
         public:
             virtual ~StringExpression();
 
-	    StringExpression* clone() const = 0;
+            StringExpression* clone() const = 0;
 
         protected:
             StringExpression();
         };
 
-	/**
-	 * A string constant
-	 */
-	class String : public StringExpression {
-	public:
-	    String();
-	    String( const QString& );
-	    String( const String& other );
+        /**
+        * A string constant
+        */
+        class String : public StringExpression {
+        public:
+            String();
+            String( const QString& );
+            String( const String& other );
 
-	    String* clone() const;
+            String* clone() const;
 
-	    QString value() const;
-	    void setValue( const QString& );
+            QString value() const;
+            void setValue( const QString& );
+    
+            void accept( ExpressionVisitor* );
 
-	    void accept( ExpressionVisitor* );
-
-	private:
-	    class Private;
-	    QSharedDataPointer<Private> d;
-	};
+        private:
+            class Private;
+            QSharedDataPointer<Private> d;
+        };
 
         ////////////////////////////////////////////////////////////////////////
         // Unary Expressions                                                  //
@@ -222,7 +222,7 @@ namespace Soprano
         class UnaryRTermBooleanExpression: public BooleanExpression {
         public:
             UnaryRTermBooleanExpression( RTerm *rterm );
-	    
+        
             void setRTerm( RTerm *expression );
             const RTerm *rterm() const;
 
@@ -231,10 +231,10 @@ namespace Soprano
             QSharedDataPointer<Private> d;
         };
 
-	class UnaryRTermStringExpression: public StringExpression {
+        class UnaryRTermStringExpression: public StringExpression {
         public:
             UnaryRTermStringExpression( RTerm *rterm );
-	    
+        
             void setRTerm( RTerm *expression );
             const RTerm *rterm() const;
 
@@ -262,9 +262,9 @@ namespace Soprano
             Not();
             Not( BooleanExpression *expression );
             ~Not();
-	    
-	    Not* clone() const;
-	    
+        
+            Not* clone() const;
+        
             void accept( ExpressionVisitor *visitor );
         };
 
@@ -274,8 +274,8 @@ namespace Soprano
             Negate( NumericalExpression *expression );
             ~Negate();
 
-	    Negate* clone() const;
-	    
+            Negate* clone() const;
+        
             void accept( ExpressionVisitor *visitor );
         };
 
@@ -308,9 +308,9 @@ namespace Soprano
         class IsIRI: public UnaryRTermBooleanExpression {
         public:
             IsIRI( RTerm *rterm );
-	    ~IsIRI();
+            ~IsIRI();
 
-	    IsIRI* clone() const;
+            IsIRI* clone() const;
 
             void accept( ExpressionVisitor *visitor );
         };
@@ -320,7 +320,7 @@ namespace Soprano
             IsBlank( RTerm *rterm );
             ~IsBlank();
 
-	    IsBlank* clone() const;
+            IsBlank* clone() const;
 
             void accept( ExpressionVisitor *visitor );
         };
@@ -328,9 +328,9 @@ namespace Soprano
         class IsLiteral: public UnaryRTermBooleanExpression {
         public:
             IsLiteral( RTerm *rterm );
-	    ~IsLiteral();
+            ~IsLiteral();
 
-	    IsLiteral* clone() const;
+            IsLiteral* clone() const;
 
             void accept( ExpressionVisitor *visitor );
         };
@@ -353,7 +353,7 @@ namespace Soprano
             // RTerm must be a literal
             LangValue( RTerm *rterm );
 
-	    LangValue* clone() const;
+            LangValue* clone() const;
 
             void accept( ExpressionVisitor *visitor );
         };
@@ -363,7 +363,7 @@ namespace Soprano
             // RTerm must be a literal
             DataTypeValue( RTerm *rterm );
 
-	    DataTypeValue* clone() const;
+            DataTypeValue* clone() const;
 
             void accept( ExpressionVisitor *visitor );
         };
@@ -466,8 +466,8 @@ namespace Soprano
         public:
             LogicOr( BooleanExpression *first, BooleanExpression *second );
 
-	    LogicOr* clone() const;
-	    
+            LogicOr* clone() const;
+        
             void accept( ExpressionVisitor *visitor );
         };
 
@@ -475,7 +475,7 @@ namespace Soprano
         public:
             LogicAnd( BooleanExpression *first, BooleanExpression *second );
             
-	    LogicAnd* clone() const;
+            LogicAnd* clone() const;
 
             void accept( ExpressionVisitor *visitor );
         };
@@ -484,7 +484,7 @@ namespace Soprano
         public:
             NumericalEqual( NumericalExpression *first, NumericalExpression *second );
 
-	    NumericalEqual* clone() const;
+            NumericalEqual* clone() const;
 
             void accept( ExpressionVisitor *visitor );
         };
@@ -494,7 +494,7 @@ namespace Soprano
         public:
             NumericalNotEqual( NumericalExpression *first, NumericalExpression *second );
 
-	    NumericalNotEqual* clone() const;
+            NumericalNotEqual* clone() const;
 
             void accept( ExpressionVisitor *visitor );
         };
@@ -503,7 +503,7 @@ namespace Soprano
         public:
             StringEqual( StringExpression *first, StringExpression *second );
 
-	    StringEqual* clone() const;
+            StringEqual* clone() const;
 
             void accept( ExpressionVisitor *visitor );
         };
@@ -512,7 +512,7 @@ namespace Soprano
         public:
             StringNotEqual( StringExpression *first, StringExpression *second );
 
-	    StringNotEqual* clone() const;
+            StringNotEqual* clone() const;
 
             void accept( ExpressionVisitor *visitor );
         };
@@ -521,7 +521,7 @@ namespace Soprano
         public:
             DateTimeEqual( const QDateTime& first, const QDateTime& second );
 
-	    DateTimeEqual* clone() const;
+            DateTimeEqual* clone() const;
 
             void accept( ExpressionVisitor *visitor );
         }; 
@@ -530,7 +530,7 @@ namespace Soprano
         public:
             DateTimeNotEqual( const QDateTime& first, const QDateTime& second );
 
-	    DateTimeNotEqual* clone() const;
+            DateTimeNotEqual* clone() const;
 
             void accept( ExpressionVisitor *visitor );
         };
@@ -539,7 +539,7 @@ namespace Soprano
         public:
             NumericalLessThan( NumericalExpression *first, NumericalExpression *second );
 
-	    NumericalLessThan* clone() const;
+            NumericalLessThan* clone() const;
 
             void accept( ExpressionVisitor *visitor );
         };
@@ -548,7 +548,7 @@ namespace Soprano
         public:
             NumericalGreaterThan( NumericalExpression *first, NumericalExpression *second );
 
-	    NumericalGreaterThan* clone() const;
+            NumericalGreaterThan* clone() const;
 
             void accept( ExpressionVisitor *visitor );
         };
@@ -557,7 +557,7 @@ namespace Soprano
         public:
             NumericalLessThanEqual( NumericalExpression *first, NumericalExpression *second );
 
-	    NumericalLessThanEqual* clone() const;
+            NumericalLessThanEqual* clone() const;
 
             void accept( ExpressionVisitor *visitor );
         };
@@ -566,7 +566,7 @@ namespace Soprano
         public:
             NumericalGreaterThanEqual( NumericalExpression *first, NumericalExpression *second );
 
-	    NumericalGreaterThanEqual* clone() const;
+            NumericalGreaterThanEqual* clone() const;
         
             void accept( ExpressionVisitor *visitor );
         };
@@ -575,7 +575,7 @@ namespace Soprano
         public:
             StringLessThan( StringExpression *first, StringExpression *second );
 
-	    StringLessThan* clone() const;
+            StringLessThan* clone() const;
 
             void accept( ExpressionVisitor *visitor );
         };
@@ -584,7 +584,7 @@ namespace Soprano
         public:
             StringGreaterThan( StringExpression *first, StringExpression *second );
 
-	    StringGreaterThan* clone() const;
+            StringGreaterThan* clone() const;
         
             void accept( ExpressionVisitor *visitor );
         };
@@ -593,7 +593,7 @@ namespace Soprano
         public:
             StringLessThanEqual( StringExpression *first, StringExpression *second );
 
-	    StringLessThanEqual* clone() const;
+            StringLessThanEqual* clone() const;
 
             void accept( ExpressionVisitor *visitor );
         };
@@ -602,7 +602,7 @@ namespace Soprano
         public:
             StringGreaterThanEqual( StringExpression *first, StringExpression *second );
 
-	    StringGreaterThanEqual* clone() const;
+            StringGreaterThanEqual* clone() const;
 
             void accept( ExpressionVisitor *visitor );
         };
@@ -611,7 +611,7 @@ namespace Soprano
         public:
             DateTimeLessThan( const QDateTime& first, const QDateTime& second );
 
-	    DateTimeLessThan* clone() const;
+            DateTimeLessThan* clone() const;
         
             void accept( ExpressionVisitor *visitor );
         };
@@ -620,7 +620,7 @@ namespace Soprano
         public:
             DateTimeGreaterThan( const QDateTime& first, const QDateTime& second );
 
-	    DateTimeGreaterThan* clone() const;
+            DateTimeGreaterThan* clone() const;
 
             void accept( ExpressionVisitor *visitor );
         };
@@ -629,7 +629,7 @@ namespace Soprano
         public:
             DateTimeLessThanEqual( const QDateTime& first, const QDateTime& second );
 
-	    DateTimeLessThanEqual* clone() const;
+            DateTimeLessThanEqual* clone() const;
 
             void accept( ExpressionVisitor *visitor );
         };
@@ -638,7 +638,7 @@ namespace Soprano
         public:
             DateTimeGreaterThanEqual( const QDateTime& first, const QDateTime& second );
 
-	    DateTimeGreaterThanEqual* clone() const;
+            DateTimeGreaterThanEqual* clone() const;
 
             void accept( ExpressionVisitor *visitor );
         };
@@ -647,7 +647,7 @@ namespace Soprano
         public:
             NumericalMultiply( NumericalExpression *first, NumericalExpression *second );
 
-	    NumericalMultiply* clone() const;
+            NumericalMultiply* clone() const;
 
             void accept( ExpressionVisitor *visitor ); 
         };
@@ -656,7 +656,7 @@ namespace Soprano
         public:
             NumericalDivide( NumericalExpression *first, NumericalExpression *second );
 
-	    NumericalDivide* clone() const;
+            NumericalDivide* clone() const;
 
             void accept( ExpressionVisitor *visitor );
         };
@@ -665,7 +665,7 @@ namespace Soprano
         public:
             NumericalAdd( NumericalExpression *first, NumericalExpression *second );
 
-	    NumericalAdd* clone() const;
+            NumericalAdd* clone() const;
 
             void accept( ExpressionVisitor *visitor );
         };
@@ -674,7 +674,7 @@ namespace Soprano
         public:
             NumericalSubtract( NumericalExpression *first, NumericalExpression *second );
 
-	    NumericalSubtract* clone() const;
+            NumericalSubtract* clone() const;
 
             void accept( ExpressionVisitor *visitor );
         };
@@ -688,7 +688,7 @@ namespace Soprano
         public:
             RTermEqual( RTerm *first, RTerm *second );
 
-	    RTermEqual* clone() const;
+            RTermEqual* clone() const;
 
             void accept( ExpressionVisitor *expression );
         };
@@ -697,7 +697,7 @@ namespace Soprano
         public:
             RTermNotEqual( RTerm *first, RTerm *second );
 
-	    RTermNotEqual* clone() const;
+            RTermNotEqual* clone() const;
 
             void accept( ExpressionVisitor *expression );
         };
@@ -706,7 +706,7 @@ namespace Soprano
         public:
             LangMatches( StringExpression *first, StringExpression *second );
 
-	    LangMatches* clone() const;
+            LangMatches* clone() const;
 
             void accept( ExpressionVisitor *expression );
         }; 
@@ -716,7 +716,7 @@ namespace Soprano
             Regexp( StringExpression *expression, const QString &pattern);
             Regexp( StringExpression *expression, const QString &pattern, const QString &flags );
 
-	    Regexp* clone() const;
+            Regexp* clone() const;
 
             void setExpression( StringExpression *expression );
             const StringExpression *expression() const;
@@ -730,8 +730,8 @@ namespace Soprano
             void accept( ExpressionVisitor *expression );
 
         private:
-	    class Private;
-	    QSharedDataPointer<Private> d;
+            class Private;
+            QSharedDataPointer<Private> d;
         }; 
 
         ////////////////////////////////////////////////////////////////////////
@@ -879,7 +879,7 @@ namespace Soprano
             ~QueryTerms();
             
             QueryTerms& operator=( const QueryTerms& );
-	
+    
             /**
              * QueryTerms takes ownership of the RTerm instances.
              */
@@ -898,7 +898,7 @@ namespace Soprano
         public:
             // Query types
             enum QueryType {
-		INVALID_QUERY,
+                INVALID_QUERY,
                 GRAPH_QUERY,
                 SELECT_QUERY,
                 BOOLEAN_QUERY
@@ -914,7 +914,7 @@ namespace Soprano
         
             Query& operator=( const Query& );
 
-	    bool isValid() const;
+            bool isValid() const;
         
             void addPrefix( const Prefix &prefix );
             QList<Prefix> prefixes();
