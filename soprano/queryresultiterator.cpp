@@ -160,10 +160,5 @@ bool Soprano::QueryResultIterator::boolValue() const
 
 bool Soprano::QueryResultIterator::isValid() const
 {
-    return !isEmpty();
-}
-
-bool Soprano::QueryResultIterator::isEmpty() const
-{
-    return d->queryResult == 0;
+    return d->queryResult != 0;
 }

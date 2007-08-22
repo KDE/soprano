@@ -56,7 +56,7 @@ bool Soprano::StorageModel::isEmpty() const
 
 bool Soprano::StorageModel::containsStatements( const Statement &statement ) const
 {
-    return !listStatements( statement ).isEmpty();
+    return listStatements( statement ).next();
 }
 
 #include "storagemodel.moc"

@@ -52,6 +52,8 @@ namespace Soprano {
 	 * made visible in the public API to provide the possibility for advanced queries
 	 * and data modifications.
 	 *
+	 * \warning <b>The API is subject to change. Most likely CLucene classes will be wrapped and hidden from the public API.</b>
+	 *
 	 * \author Sebastian Trueg <trueg@kde.org>
 	 */
 	class SOPRANO_EXPORT CLuceneIndex

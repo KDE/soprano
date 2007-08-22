@@ -48,7 +48,7 @@ Soprano::Model::~Model()
 
 bool Soprano::Model::containsContext( const Node &context ) const
 {
-    return !listStatementsInContext( context ).isEmpty();
+    return listStatementsInContext( context ).next();
 }
 
 Soprano::StatementIterator Soprano::Model::listStatements() const

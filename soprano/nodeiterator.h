@@ -68,6 +68,9 @@ namespace Soprano {
     class SOPRANO_EXPORT NodeIterator
     {
     public:
+	/**
+	 * Creates and empty, invlid iterator.
+	 */
 	NodeIterator();
 
 	/**
@@ -113,14 +116,10 @@ namespace Soprano {
 	Node operator*() const;
 
 	/**
-	 *\return true if the Iterator is valid
+	 * \return \p true if the Iterator is valid, \p false otherwise, i.e.
+	 * it has no backend .
 	 */
 	bool isValid() const;
-
-	/**
-	 *\return true if the Iterator is empty
-	 */
-	bool isEmpty() const;
 
 	/**
 	 * Convinience method which extracts all nodes (this does not include the

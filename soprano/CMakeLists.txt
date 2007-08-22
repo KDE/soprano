@@ -13,6 +13,7 @@ include_directories(
   ${QT_QTCORE_INCLUDE_DIR}
   ${CMAKE_SOURCE_DIR}
   ${soprano_core_BINARY_DIR}
+  ${soprano_core_SOURCE_DIR}/query
   ${soprano_core_SOURCE_DIR}/vocabulary
   ${CMAKE_SOURCE_DIR}/soprano
   ${QT_INCLUDE_DIR}
@@ -22,8 +23,8 @@ include_directories(
 configure_file(config.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/config.h)
 
 SET(soprano_SRCS
-    query.cpp
-    query.h
+    querylegacy.cpp
+    querylegacy.h
     queryresultiterator.cpp
     queryresultiterator.h
     queryresultiteratorbackend.cpp
@@ -103,7 +104,7 @@ INSTALL(TARGETS soprano
 
 INSTALL(FILES 
 	parser.h
-	query.h
+	querylegacy.h
 	queryresultiterator.h
 	queryresultiteratorbackend.h
 	node.h

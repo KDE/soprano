@@ -740,6 +740,8 @@ namespace Soprano
 
         class ExpressionVisitor {
         public:
+	    virtual ~ExpressionVisitor() {}
+
             virtual void visit( Not *expression ) = 0;
 
             virtual void visit( Negate *expression ) = 0;

@@ -19,7 +19,7 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#include "query.h"
+#include "querylegacy.h"
 
 #include <QtCore/QString>
 

@@ -21,8 +21,11 @@
 
 #include "indexfiltermodel.h"
 #include "cluceneindex.h"
+#include "indexqueryresult.h"
 
 #include <soprano/statementiterator.h>
+
+#include <CLucene.h>
 
 
 class Soprano::Index::IndexFilterModel::Private
@@ -86,3 +89,23 @@ Soprano::ErrorCode Soprano::Index::IndexFilterModel::removeStatements( const Sop
 
     return FilterModel::removeStatements( statement );
 }
+
+
+QList<Soprano::Index::QueryResult> Soprano::Index::IndexFilterModel::query( const QString& cluceneQuery ) const
+{
+    lucene::search::Hits* hits = index()->search( cluceneQuery );
+    QList<QueryResult> results;
+    if ( hits ) {
+        for ( int i = 0; i < hits->length(); ++i ) {
+            results.append( QueryResult( index()->getResource( &hits->doc( i ) ), hits->score( i ) ) );
+        }
+        _CLDELETE( hits );
+    }
+    return results;
+}
+
+
+// Soprano::Query::Query Soprano::Index::IndexFilterModel::evaluateAndRewriteQuery( const Soprano::Query::Query& query ) const
+// {
+
+// }

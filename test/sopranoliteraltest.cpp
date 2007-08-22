@@ -84,7 +84,6 @@ void SopranoLiteralTest::testDataTypes()
   // and retrieve it
   StatementIterator it = m_model->listStatements( Statement( subject, predicate, Node() ) );
   QVERIFY( it.isValid() );
-  QVERIFY( !it.isEmpty() );
   QVERIFY( it.next() );
   Statement s2 = *it;
   QCOMPARE( s2.object().literal().toString(), value.toString() );

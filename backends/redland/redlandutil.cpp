@@ -23,7 +23,7 @@
 #include "redlandutil.h"
 
 #include "node.h"
-#include "query.h"
+#include "querylegacy.h"
 #include "statement.h"
 #include "redlandworld.h"
 

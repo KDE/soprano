@@ -93,12 +93,7 @@ Soprano::Statement Soprano::StatementIterator::operator*() const
 
 bool Soprano::StatementIterator::isValid() const
 {
-    return !isEmpty();
-}
-
-bool Soprano::StatementIterator::isEmpty() const
-{
-    return d->backend == 0;
+    return d->backend != 0;
 }
 
 

@@ -92,14 +92,8 @@ Soprano::Node Soprano::NodeIterator::operator*() const
 
 bool Soprano::NodeIterator::isValid() const
 {
-    return !isEmpty();
+    return d->backend != 0;
 }
-
-bool Soprano::NodeIterator::isEmpty() const
-{
-    return d->backend == 0;
-}
-
 
 QList<Soprano::Node> Soprano::NodeIterator::allNodes()
 {

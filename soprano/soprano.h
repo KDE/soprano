@@ -23,22 +23,23 @@
 #ifndef SOPRANO_H
 #define SOPRANO_H
 
-#include <soprano/query.h>
-#include <soprano/queryresultiterator.h>
-#include <soprano/node.h>
-#include <soprano/nodeiterator.h>
-#include <soprano/literalvalue.h>
-#include <soprano/statement.h>
-#include <soprano/statementiterator.h>
-#include <soprano/simplestatementiterator.h>
-#include <soprano/queryresultstatementiterator.h>
-#include <soprano/model.h>
-#include <soprano/storagemodel.h>
-#include <soprano/filtermodel.h>
-#include <soprano/parser.h>
-#include <soprano/backend.h>
-#include <soprano/pluginmanager.h>
-#include <soprano/error.h>
+#include "querylegacy.h"
+#include "query.h"
+#include "queryresultiterator.h"
+#include "node.h"
+#include "nodeiterator.h"
+#include "literalvalue.h"
+#include "statement.h"
+#include "statementiterator.h"
+#include "simplestatementiterator.h"
+#include "queryresultstatementiterator.h"
+#include "model.h"
+#include "storagemodel.h"
+#include "filtermodel.h"
+#include "parser.h"
+#include "backend.h"
+#include "pluginmanager.h"
+#include "error.h"
 
 namespace Soprano {
     /**

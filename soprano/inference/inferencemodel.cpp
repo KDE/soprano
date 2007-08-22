@@ -24,7 +24,7 @@
 #include "sil.h"
 #include "statement.h"
 #include "inferencerule.h"
-#include "query.h"
+#include "querylegacy.h"
 #include "statementpattern.h"
 #include "nodepattern.h"
 #include "queryresultiterator.h"

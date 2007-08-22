@@ -69,6 +69,9 @@ namespace Soprano {
     class SOPRANO_EXPORT StatementIterator
     {
     public:
+	/**
+	 * Creates and empty, invlid iterator.
+	 */
 	StatementIterator();
 
 	/**
@@ -114,14 +117,10 @@ namespace Soprano {
 	Statement operator*() const;
 
 	/**
-	 *\return true if the Iterator is valid
+	 * \return \p true if the Iterator is valid, \p false otherwise, i.e.
+	 * it has no backend .
 	 */
 	bool isValid() const;
-
-	/**
-	 *\return true if the Iterator is empty
-	 */
-	bool isEmpty() const;
 
 	/**
 	 * Convinience method which extracts all statements (this does not include the

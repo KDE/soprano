@@ -81,7 +81,11 @@ namespace Soprano {
     class SOPRANO_EXPORT QueryResultIterator
     {
     public:
+	/**
+	 * Creates and empty, invlid iterator.
+	 */
 	QueryResultIterator();
+
 	QueryResultIterator( const QueryResultIterator& );
 
 	/**
@@ -129,14 +133,10 @@ namespace Soprano {
 	bool boolValue() const;
 
 	/**
-	 *\return true if the Iterator is valid
+	 * \return \p true if the Iterator is valid, \p false otherwise, i.e.
+	 * it has no backend .
 	 */
 	bool isValid() const;
-
-	/**
-	 *\return true if the Iterator is empty
-	 */
-	bool isEmpty() const;
 
 	/**
 	 * Convinience method that collects all binding sets that are left

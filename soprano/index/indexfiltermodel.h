@@ -27,9 +27,14 @@
 
 namespace Soprano {
 
+    namespace Query {
+	class Query;
+    }
+
     namespace Index {
 
 	class CLuceneIndex;
+	class QueryResult;
 
 	/**
 	 * \brief The IndexFilterModel provides a full text index around any Soprano Model.
@@ -85,6 +90,26 @@ namespace Soprano {
 	     * This will remove the statement from the index and then forward the call to the parent model.
 	     */
 	    Soprano::ErrorCode removeStatements( const Soprano::Statement &statement );
+
+	    /**
+	     * Query the literal index.
+	     *
+	     * \param cluceneQuery The query to use.
+	     *
+	     * \return A list of query results.
+	     */
+	    QList<QueryResult> query( const QString& cluceneQuery ) const;
+
+	    /**
+	     * Extract full text matching parts of a %query and replace them with
+	     * results from an index %query.
+	     *
+	     * \param query The query to rewrite.
+	     *
+	     * \return A rewritten query stripped of all full test and regexp matching parts
+	     * and replaced by results from an index query.
+	     */
+//	    Query::Query evaluateAndRewriteQuery( const Query::Query& query ) const;
 
 	private:
 	    class Private;

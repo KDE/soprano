@@ -69,9 +69,6 @@ namespace Soprano
     public:
 	virtual ~Model();
 
-	// FIXME: add the following method which allows us access to a model's featues through its backend
-	// const Backend* backend() const;
-
 	/**
 	 * Add the Statement to the Model.
 	 *
@@ -102,7 +99,7 @@ namespace Soprano
 	/**
 	 * List all contexts in the model, i.e. all named graphs.
 	 *
-	 * \return An iterator over context Nodes.
+	 * \return An iterator over context Nodes, on error an invalid iterator is returned.
 	 */
 	virtual NodeIterator listContexts() const = 0;
 
@@ -121,7 +118,7 @@ namespace Soprano
 	/**
 	 * Execute the given query over the Model.
 	 *
-	 * \return All the Statements that match the query.
+	 * \return All the Statements that match the query, on error an invalid iterator is returned.
 	 */
 	virtual QueryResultIterator executeQuery( const QueryLegacy &query ) const = 0;
 
@@ -131,17 +128,21 @@ namespace Soprano
 	 *
 	 * \param partial The partial Statement to match.
 	 *
-	 * \return An iterator for all the matched Statements.
+	 * \return An iterator for all the matched Statements, on error an invalid iterator is returned.
 	 */
 	virtual StatementIterator listStatements( const Statement &partial ) const = 0;
 
 	/**
 	 * Convinience method which lists all statements in this Model.
+	 *
+	 * \return An iterator for all the matched Statements, on error an invalid iterator is returned.
 	 */
 	StatementIterator listStatements() const;
 
 	/**
 	 * Convinience method which lists all statements in context.
+	 *
+	 * \return An iterator for all the matched Statements, on error an invalid iterator is returned.
 	 */
 	StatementIterator listStatementsInContext( const Node &context ) const;
 
