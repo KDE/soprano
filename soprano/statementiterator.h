@@ -88,13 +88,6 @@ namespace Soprano {
 	StatementIterator& operator=( const StatementIterator& );
 
 	/**
-	 * Set the backend to read the actual data from.
-	 * A previous backend will be deleted if there are no other StatementIterator
-	 * instances using it.
-	 */
-	void setBackend( StatementIteratorBackend* b );
-
-	/**
 	 * Advances to the next statement in the iterator.
 	 *\return true if another Statement can be read from the iterator,
 	 * false if the end has been reached.
@@ -177,6 +170,14 @@ namespace Soprano {
 	 * \return A wrapper iterator over the context nodes.
 	 */
 	NodeIterator iterateContexts();
+
+    protected:
+	/**
+	 * Set the backend to read the actual data from.
+	 * A previous backend will be deleted if there are no other StatementIterator
+	 * instances using it.
+	 */
+	void setBackend( StatementIteratorBackend* b );
 
     private:
 	class Private;

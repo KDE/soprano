@@ -86,13 +86,6 @@ namespace Soprano {
 	NodeIterator& operator=( const NodeIterator& );
 
 	/**
-	 * Set the backend to read the actual data from.
-	 * A previous backend will be deleted if there are no other NodeIterator
-	 * instances using it.
-	 */
-	void setBackend( NodeIteratorBackend* b );
-
-	/**
 	 * Advances to the next node in the iterator.
 	 *\return true if another Node can be read from the iterator,
 	 * false if the end has been reached.
@@ -131,6 +124,14 @@ namespace Soprano {
 	 * \return A list of all nodes that rest in the iterator.
 	 */
 	QList<Node> allNodes();
+
+    protected:
+	/**
+	 * Set the backend to read the actual data from.
+	 * A previous backend will be deleted if there are no other NodeIterator
+	 * instances using it.
+	 */
+	void setBackend( NodeIteratorBackend* b );
 
     private:
 	class Private;
