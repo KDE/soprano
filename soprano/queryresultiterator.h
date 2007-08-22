@@ -83,7 +83,7 @@ namespace Soprano {
     {
     public:
 	/**
-	 * Creates and empty, invlid iterator.
+	 * Creates and empty, invalid iterator.
 	 */
 	QueryResultIterator();
 
