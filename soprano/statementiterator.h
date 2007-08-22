@@ -136,7 +136,7 @@ namespace Soprano {
 	 * 
 	 * \return A wrapper iterator over the subject nodes.
 	 */
-	NodeIterator iterateSubjects();
+	NodeIterator iterateSubjects() const;
 
 	/**
 	 * Conviniece method that creates an iterator over the predicate nodes of the statements
@@ -147,7 +147,7 @@ namespace Soprano {
 	 * 
 	 * \return A wrapper iterator over the predicate nodes.
 	 */
-	NodeIterator iteratePredicates();
+	NodeIterator iteratePredicates() const;
 
 	/**
 	 * Conviniece method that creates an iterator over the object nodes of the statements
@@ -158,7 +158,7 @@ namespace Soprano {
 	 * 
 	 * \return A wrapper iterator over the object nodes.
 	 */
-	NodeIterator iterateObjects();
+	NodeIterator iterateObjects() const;
 
 	/**
 	 * Conviniece method that creates an iterator over the context nodes of the statements
@@ -169,7 +169,7 @@ namespace Soprano {
 	 * 
 	 * \return A wrapper iterator over the context nodes.
 	 */
-	NodeIterator iterateContexts();
+	NodeIterator iterateContexts() const;
 
     protected:
 	/**

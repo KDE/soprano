@@ -52,7 +52,9 @@ namespace Soprano
      * \li QTime
      * \li QDateTime
      *
-     * Literal values can be converted from strings via fromString.
+     * Literal values can be converted from strings via fromString().
+     *
+     * \sa Vocabulary::XMLSchema
      *
      * \author Sebastian Trueg <trueg@kde.org>
      */

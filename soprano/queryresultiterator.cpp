@@ -189,7 +189,7 @@ private:
     Soprano::QueryResultIterator m_result;
 };
 
-Soprano::StatementIterator Soprano::QueryResultIterator::iterateStatements()
+Soprano::StatementIterator Soprano::QueryResultIterator::iterateStatements() const
 {
     return new QueryResultStatementIteratorBackend( *this );
 }

@@ -147,22 +147,22 @@ private:
 };
 
 
-Soprano::NodeIterator Soprano::StatementIterator::iterateSubjects()
+Soprano::NodeIterator Soprano::StatementIterator::iterateSubjects() const
 {
     return new StatementNodeIteratorBackend( *this, StatementNodeIteratorBackend::SUBJECT );
 }
 
-Soprano::NodeIterator Soprano::StatementIterator::iteratePredicates()
+Soprano::NodeIterator Soprano::StatementIterator::iteratePredicates() const
 {
     return new StatementNodeIteratorBackend( *this, StatementNodeIteratorBackend::PREDICATE );
 }
 
-Soprano::NodeIterator Soprano::StatementIterator::iterateObjects()
+Soprano::NodeIterator Soprano::StatementIterator::iterateObjects() const
 {
     return new StatementNodeIteratorBackend( *this, StatementNodeIteratorBackend::OBJECT );
 }
 
-Soprano::NodeIterator Soprano::StatementIterator::iterateContexts()
+Soprano::NodeIterator Soprano::StatementIterator::iterateContexts() const
 {
     return new StatementNodeIteratorBackend( *this, StatementNodeIteratorBackend::CONTEXT );
 }

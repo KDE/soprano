@@ -222,7 +222,7 @@ namespace Soprano {
 	 * 
 	 * \return A wrapper iterator over the statements in a graph query.
 	 */
-	StatementIterator iterateStatements();
+	StatementIterator iterateStatements() const;
 
     private:
 	class Private;
