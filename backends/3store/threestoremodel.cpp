@@ -25,7 +25,6 @@
 #include <soprano/queryresultiterator.h>
 #include <soprano/statementiterator.h>
 #include <soprano/querylegacy.h>
-#include <soprano/queryresultstatementiterator.h>
 #include <soprano/nodeiterator.h>
 
 #include <QtCore/QDebug>
@@ -198,7 +197,7 @@ Soprano::StatementIterator Soprano::ThreeStore::Model::listStatements( const Sta
 
     QueryResultIterator r = executeQuery( QueryLegacy( query, QueryLegacy::SPARQL ) );
 
-    return Soprano::QueryResultStatementIterator( r );
+    return r.iterateStatements();
 }
 
 

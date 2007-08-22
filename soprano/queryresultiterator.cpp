@@ -25,6 +25,8 @@
 #include "model.h"
 #include "node.h"
 #include "statement.h"
+#include "statementiterator.h"
+#include "statementiteratorbackend.h"
 #include "bindingset.h"
 
 #include <QtCore/QSharedData>
@@ -161,4 +163,33 @@ bool Soprano::QueryResultIterator::boolValue() const
 bool Soprano::QueryResultIterator::isValid() const
 {
     return d->queryResult != 0;
+}
+
+
+class QueryResultStatementIteratorBackend : public Soprano::StatementIteratorBackend
+{
+public:
+    QueryResultStatementIteratorBackend( const Soprano::QueryResultIterator& r )
+        : Soprano::StatementIteratorBackend(),
+          m_result( r ) {
+    }
+
+    ~QueryResultStatementIteratorBackend() {
+    }
+
+    bool next() {
+        return m_result.next();
+    }
+
+    Soprano::Statement current() const {
+        return m_result.currentStatement();
+    }
+
+private:
+    Soprano::QueryResultIterator m_result;
+};
+
+Soprano::StatementIterator Soprano::QueryResultIterator::iterateStatements()
+{
+    return new QueryResultStatementIteratorBackend( *this );
 }

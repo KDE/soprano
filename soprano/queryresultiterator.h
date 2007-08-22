@@ -35,6 +35,7 @@ namespace Soprano {
     class Node;
     class QueryResultIteratorBackend;
     class Statement;
+    class StatementIterator;
     class BindingSet;
 
     /**
@@ -143,6 +144,17 @@ namespace Soprano {
 	 * in the iterator.
 	 */
 	QList<BindingSet> allBindings();
+
+	/**
+	 * Conviniece method that creates an iterator over the statements in this query result.
+	 * This method does only make sense for graph queries.
+	 *
+	 * \warning The new iterator is just a wrapper around this one. Thus, changing it will also
+	 * change this one.
+	 * 
+	 * \return A wrapper iterator over the statements in a graph query.
+	 */
+	StatementIterator iterateStatements();
 
     private:
 	class Private;

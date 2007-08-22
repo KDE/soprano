@@ -32,7 +32,6 @@
 #include "statement.h"
 #include "statementiterator.h"
 #include "simplestatementiterator.h"
-#include "queryresultstatementiterator.h"
 #include "model.h"
 #include "storagemodel.h"
 #include "filtermodel.h"

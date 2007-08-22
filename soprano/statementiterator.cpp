@@ -119,7 +119,7 @@ public:
         CONTEXT
     };
 
-    StatementNodeIteratorBackend( Soprano::StatementIterator it, Which w )
+    StatementNodeIteratorBackend( const Soprano::StatementIterator& it, Which w )
         : m_it( it ),
           m_which( w ) {
     }

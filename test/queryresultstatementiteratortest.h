@@ -32,7 +32,6 @@ class QueryResultStatementIteratorTest : public QObject
  private Q_SLOTS:
   void testEmptyIterator();
   void testIteration();
-  void testAssignment();
 };
 
 #endif

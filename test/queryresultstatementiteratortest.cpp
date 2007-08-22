@@ -21,10 +21,10 @@
 
 #include "queryresultstatementiteratortest.h"
 
-#include "soprano/queryresultstatementiterator.h"
 #include "soprano/queryresultiterator.h"
 #include "soprano/queryresultiteratorbackend.h"
 #include "soprano/statement.h"
+#include "soprano/statementiterator.h"
 
 #include <QtCore/QList>
 #include <QtCore/QUrl>
@@ -118,9 +118,10 @@ static QList<Statement> createStatements( int cnt )
 
 void QueryResultStatementIteratorTest::testEmptyIterator()
 {
-    QueryResultStatementIterator it;
-    QVERIFY( !it.next() );
-    QVERIFY( !it.current().isValid() );
+    QueryResultIterator it;
+    StatementIterator it2 = it.iterateStatements();
+    QVERIFY( !it2.next() );
+    QVERIFY( !it2.current().isValid() );
 }
 
 
@@ -128,43 +129,11 @@ void QueryResultStatementIteratorTest::testIteration()
 {
     QList<Statement> sl = createStatements( 5 );
     QueryResultIterator resultIt( new DummyQueryResult( sl ) );
-    QueryResultStatementIterator it( resultIt );
+    StatementIterator it = resultIt.iterateStatements();
     while ( it.next() ) {
         sl.removeAll( *it );
     }
     QCOMPARE( 0, sl.count() );
-}
-
-
-void QueryResultStatementIteratorTest::testAssignment()
-{
-    QList<Statement> sl = createStatements( 5 );
-    QueryResultIterator resultIt( new DummyQueryResult( sl ) );
-    QueryResultStatementIterator it1( resultIt );
-    for ( int i = 0; i < 2; ++i ) {
-        QVERIFY( it1.next() );
-    }
-
-    QueryResultStatementIterator it2 = it1;
-    for ( int i = 0; i < 2; ++i ) {
-        QVERIFY( it2.next() );
-    }
-
-    // there should be one left in the it
-    QVERIFY( it1.next() );
-    QVERIFY( !it1.next() );
-    QVERIFY( !it2.next() );
-
-    // now test the same with a simple StatementIterator
-    StatementIterator it3 = it1;
-    QVERIFY( !it3.next() );
-
-    QueryResultIterator resultIt2( new DummyQueryResult( sl ) );
-    it3 = QueryResultStatementIterator( resultIt2 );
-    for ( uint i = 0; i < sl.count(); ++i ) {
-        QVERIFY( it3.next() );
-    }
-    QVERIFY( !it3.next() );
 }
 
 QTEST_MAIN(QueryResultStatementIteratorTest)

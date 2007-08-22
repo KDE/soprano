@@ -115,6 +115,34 @@ namespace Soprano
 	 */
 	bool containsContext( const Node &context ) const;
 
+	// possible interfaces for queries:
+	// 1. the most simple one: a string query. let the backend do the parsing, make our Query stuff optional
+	//
+	// Advantages:
+	//  * Simple, no change in backends necessary
+	//
+	// Disadvantages:
+	//  * Our Query API is only optional and using it means a lot of converting
+	//  * No possibility of reporting syntax errors.
+	//
+	//QueryResultIterator query( const QString& query, QueryLanguage language, const QString& userQueryLanguage = QString() ) const;
+
+	// 2. Use our query stuff
+	// 2.1 only Query, no string representation without serializer
+	// 2.2 Query does contain the original string it was parsed from (seems not very clean API-wise)
+	//
+	// Advantages:
+	//  * Cleaner Model API
+	//  * Possibility of query optimization and modification by FilterModels
+	//
+	// Disadvantages:
+	//  * More complicated for Model users: query objects have to be created, in many cases using a QueryParser?
+	//  * The backend needs to support the Query API or use a serializer to convert the query back to string form
+	//
+	//QueryResultIterator query( const Query::Query& query ) const;
+
+	// 3. Support both, provide default implementation of the first one in StorageModel by using QueryParsers
+
 	/**
 	 * Execute the given query over the Model.
 	 *
