@@ -23,10 +23,10 @@
 #ifndef SOPRANO_QUERY_QUERYPARSER_H
 #define SOPRANO_QUERY_QUERYPARSER_H
 
-#include "plugin.h"
-#include "query.h"
-#include "sopranotypes.h"
-#include "soprano_export.h"
+#include "soprano/plugin.h"
+#include "soprano/query/query.h"
+#include "soprano/sopranotypes.h"
+#include "soprano/soprano_export.h"
 
 #include <QtCore/QObject>
 
@@ -52,7 +52,6 @@ namespace Soprano {
 	 *
 	 *  public:
 	 *   Query parseQuery( const QString &query, QueryLanguage lang, const QString& userQueryLanguage = QString() );
-	 *   QString serializeQuery( const Query& query, QueryLanguage lang, const QString& userQueryLanguage = QString() );
 	 *   QueryLanguages supportedQueryLanguages() const;
 	 * };
 	 * \endcode
@@ -83,20 +82,6 @@ namespace Soprano {
 	     * \return A Query object representing the parsed %query or an empty invalid Query object.
 	     */
 	    virtual Query parseQuery( const QString &query, QueryLanguage lang, const QString& userQueryLanguage = QString() ) = 0;
-
-	    /**
-	     * Serialize a Query object to a string. This method can be user to convert between different %query languages or to 
-	     * visualize a %query to the user.
-	     *
-	     * \param query The Query instance to serialize.
-	     * \param lang The encoding that should be used to serialize the %query.
-	     * \param userQueryLanguage If lang is set to Query::QUERY_LANGUAGE_USER this parameter specifies the
-	     *       query language to use. It allows the extension of the %Soprano Query interface with new
-	     *       query languages that are not officially supported by %Soprano.
-	     *
-	     * \return A string representation of query or an empty string on error.
-	     */
-	    virtual QString serializeQuery( const Query& query, QueryLanguage lang, const QString& userQueryLanguage = QString() ) = 0;
 
 	    /**
 	     * A query parser can support different query languages.

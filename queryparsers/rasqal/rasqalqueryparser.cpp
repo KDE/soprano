@@ -19,15 +19,41 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#include <QDebug>
+#include <QtCore/QtPlugin>
+#include <QtCore/QTextStream>
 
 #include <rasqal.h>
 #include <raptor.h>
 
-#include "query.h"
+#include "soprano/query/query.h"
 #include "rasqalqueryparser.h"
 
-Soprano::Query::Query *Soprano::Query::Parser::RasqalQueryParser::parseQuery( const QString &query )
+Q_EXPORT_PLUGIN2(soprano_rasqalqueryparser, Soprano::Rasqal::QueryParser)
+
+Soprano::Rasqal::QueryParser::QueryParser()
+    : QObject(),
+      Soprano::Query::Parser( "rasqal" )
+{
+}
+
+Soprano::Rasqal::QueryParser::~QueryParser()
+{
+}
+
+Soprano::Query::Query Soprano::Rasqal::QueryParser::parseQuery( const QString &query, Soprano::Query::QueryLanguage lang, const QString& userQueryLanguage )
+{
+    return Soprano::Query::Query();
+}
+
+Soprano::Query::QueryLanguages Soprano::Rasqal::QueryParser::supportedQueryLanguages() const
+{
+    return Soprano::Query::QUERY_LANGUAGE_SPARQL;
+}
+
+#include "rasqalqueryparser.moc"
+
+
+/*Soprano::Query::Query *Soprano::Query::Parser::RasqalQueryParser::parseQuery( const QString &query )
 {
     qDebug() << query << endl;
 
@@ -100,4 +126,4 @@ Soprano::Query::Query *Soprano::Query::Parser::RasqalQueryParser::parseQuery( co
     //qDebug() << qo->queryVerb() << endl;
 
     return qo;
-}
+}*/

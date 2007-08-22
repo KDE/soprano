@@ -33,8 +33,58 @@ void QueryAPITest::testQuery_1()
     Soprano::Query::Parser::QueryParser *parser = new Soprano::Query::Parser::RasqalQueryParser();
 
     Soprano::Query::QueryObject *obj = parser->parseQuery(
-         "SELECT  ?a WHERE { ?a <prop> ?c }"
+         "SELECT ?title WHERE\
+         {\
+            ?title .\
+         }"
     );
+
+    delete parser;
+    delete obj;
+}
+
+void QueryAPITest::testQuery_2()
+{
+    Soprano::Query::Parser::QueryParser *parser = new Soprano::Query::Parser::RasqalQueryParser();
+
+    Soprano::Query::QueryObject *obj = parser->parseQuery(
+        "PREFIX  dc:\ 
+        SELECT  ?title\
+        WHERE   {  dc:title ?title }"
+    );
+    
+    delete parser;
+    delete obj;
+}
+
+void QueryAPITest::testQuery_3()
+{
+    Soprano::Query::Parser::QueryParser *parser = new Soprano::Query::Parser::RasqalQueryParser();
+
+    Soprano::Query::QueryObject *obj = parser->parseQuery(
+        "PREFIX  dc:\
+         PREFIX  :\
+         SELECT  $title\
+         WHERE   { :book1  dc:title  $title }"
+    );
+    
+    delete parser;
+    delete obj;
+}
+
+void QueryAPITest::testQuery_4()
+{
+    Soprano::Query::Parser::QueryParser *parser = new Soprano::Query::Parser::RasqalQueryParser();
+
+    Soprano::Query::QueryObject *obj = parser->parseQuery(
+        "BASE\    
+        PREFIX  dcore:\  
+        SELECT  ?title\
+        WHERE   {  dcore:title ?title }"
+    );
+
+    delete parser;
+    delete obj;
 }
 
 QTEST_MAIN(QueryAPITest)

@@ -21,22 +21,29 @@
 
 #include <QString>
 
-#include "queryparser.h"
+#include "soprano/soprano_export.h"
+#include "soprano/query/queryparser.h"
 
 #ifndef SOPRANO_QUERY_PARSER_RASQALQUERYPARSER_H
 #define SOPRANO_QUERY_PARSER_RASQALQUERYPARSER_H
 
 namespace Soprano {
-    namespace Query {
-        namespace Parser {
 
-            class RasqalQueryParser: public QueryParser {
+    namespace Rasqal {
+
+            class SOPRANO_EXPORT QueryParser:  public QObject, public Soprano::Query::Parser {
+                Q_OBJECT                                                                                                                           
+                Q_INTERFACES(Soprano::Query::Parser)
+
             public:
-                Query *parseQuery( const QString &query );
+                QueryParser();
+                ~QueryParser();
 
+                virtual Soprano::Query::Query parseQuery( const QString &query, Soprano::Query::QueryLanguage lang, const QString& userQueryLanguage = QString() );
+
+                virtual Soprano::Query::QueryLanguages supportedQueryLanguages() const;
             };
         
-        };
     };
 };
 

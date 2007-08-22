@@ -1752,6 +1752,11 @@ Soprano::Query::GraphPattern::GraphPattern( RTerm *subject, RTerm *predicate, RT
     d->optional = optional;
 }
 
+Soprano::Query::GraphPattern::GraphPattern( const GraphPattern &other )
+{
+    d = other.d;
+}
+
 Soprano::Query::GraphPattern::~GraphPattern()
 {
 }
@@ -1854,6 +1859,11 @@ Soprano::Query::Query::Query( QueryType type )
 {
    d = new Private;
    d->type = type;
+}
+
+Soprano::Query::Query::Query( const Query &other )
+{
+    d = other.d;
 }
 
 Soprano::Query::Query::~Query()

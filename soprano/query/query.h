@@ -188,15 +188,15 @@ namespace Soprano
         class String : public StringExpression {
         public:
             String();
-            String( const QString& );
-            String( const String& other );
+            String( const QString &value );
+            String( const String &other );
 
             String* clone() const;
 
             QString value() const;
-            void setValue( const QString& );
+            void setValue( const QString &value );
     
-            void accept( ExpressionVisitor* );
+            void accept( ExpressionVisitor *visitor );
 
         private:
             class Private;
@@ -832,7 +832,7 @@ namespace Soprano
             Prefix( const QString &prefix, const QUrl &uri );
             Prefix( const Prefix &other );
 
-            Prefix& operator=( const Prefix& );
+            Prefix& operator=( const Prefix& other );
         
             const QString prefix() const;
             const QUrl uri() const;
@@ -846,13 +846,14 @@ namespace Soprano
         public:
             GraphPattern();
 
-            /**
+            /*
              * GraphPattern takes ownership of the RTerm instances.
              */
             GraphPattern( RTerm *subject, RTerm *predicate, RTerm *object, RTerm *context = 0, bool optional = false );
+            GraphPattern( const GraphPattern &other );
             ~GraphPattern();
         
-            GraphPattern& operator=( const GraphPattern& );
+            GraphPattern& operator=( const GraphPattern &other );
         
             void setOptional(bool optional);
             bool optional() const;
@@ -880,9 +881,9 @@ namespace Soprano
             QueryTerms( const QueryTerms& other );
             ~QueryTerms();
             
-            QueryTerms& operator=( const QueryTerms& );
+            QueryTerms& operator=( const QueryTerms& other);
     
-            /**
+            /*
              * QueryTerms takes ownership of the RTerm instances.
              */
             void addQueryTerm( RTerm *rterm );
@@ -912,9 +913,10 @@ namespace Soprano
         
             Query();
             Query( QueryType type );
+            Query( const Query &other );
             ~Query();
         
-            Query& operator=( const Query& );
+            Query& operator=( const Query& other );
 
             bool isValid() const;
         

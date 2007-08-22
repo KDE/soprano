@@ -29,6 +29,9 @@ class QueryAPITest: public QObject
     Q_OBJECT
     private slots:
     void testQuery_1();    
+    void testQuery_2();    
+    void testQuery_3();    
+    void testQuery_4();    
 };
 
 #endif // QUERY_API_TEST_H
