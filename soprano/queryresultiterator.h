@@ -87,6 +87,9 @@ namespace Soprano {
 	 */
 	QueryResultIterator();
 
+	/**
+	 * Copy constructor. Copies of iterators share their data.
+	 */
 	QueryResultIterator( const QueryResultIterator& );
 
 	/**
@@ -95,8 +98,14 @@ namespace Soprano {
 	 */
 	QueryResultIterator( QueryResultIteratorBackend *qr );
 
+	/**
+	 * Destructor.
+	 */
 	virtual ~QueryResultIterator();
 
+	/**
+	 * Copies of iterators share their data.
+	 */
 	QueryResultIterator& operator=( const QueryResultIterator& );
 
 	/**
@@ -109,28 +118,87 @@ namespace Soprano {
 
 	/**
 	 * Retrieve the current Statement after a call to next.
+	 * This method does only make sense for graph queries.
 	 */
 	Statement currentStatement() const;
 
 	/**
 	 * Convinience method that puts all current bindings into one map.
+	 * This method does only make sense for tuple queries.
 	 */
 	BindingSet currentBindings() const;
 
+	/**
+	 * Get the current binding for a variable.
+	 *
+	 * \param name The name of the requested variable.
+	 *
+	 * This method does only make sense for tuple queries.
+	 *
+	 * \return The binding for the requested variable or and invalid
+	 * node if the bindings do not contain the variable.
+	 */
 	Node binding( const QString &name ) const;
 
+	/**
+	 * Get the current binding for a variable by index.
+	 *
+	 * \param offset The index of the requested variable.
+	 *
+	 * This method does only make sense for tuple queries.
+	 *
+	 * \return The binding for the requested variable or and invalid
+	 * node if offset is out of bounds, i.e. bigger or equal to bindingCount().
+	 */	
 	Node binding( int offset ) const;
 
+	/**
+	 * The number of bindings in this query result.
+	 *
+	 * This method does only make sense for tuple queries.
+	 *
+	 * \return The number of bindings.
+	 */
 	int bindingCount() const;
 
+	/**
+	 * This method does only make sense for tuple queries.
+	 *
+	 * \return The names of the bound variables in this query result.
+	 */
 	QStringList bindingNames() const;
 
+	/**
+	 * Check if this is a graph result.
+	 *
+	 * \return \p true if this result refers to a graph query, i.e. currentStatement()
+	 * and iterateStatements() return valid values.
+	 */
 	bool isGraph() const;
 
+	/**
+	 * Check if this is a tuple result.
+	 *
+	 * \return \true if this result refers to a tuple query, i.e. currentBindings(),
+	 * binding(), bindingCount(), bindingNames(), and allBindings() return valid values.
+	 */
 	bool isBinding() const;
 
+	/**
+	 * Check if this is a boolean result.
+	 *
+	 * \return \true if this result refers to a boolean query (SPARQL ASK), i.e.
+	 * boolValue() returns a valid value.
+	 */
 	bool isBool() const;
 
+	/**
+	 * This method does only make sense for boolean queries.
+	 *
+	 * \return The result of a boolean query (SPARQL ASK).
+	 *
+	 * \sa isBool()
+	 */
 	bool boolValue() const;
 
 	/**
