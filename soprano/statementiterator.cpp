@@ -23,6 +23,8 @@
 #include "statementiterator.h"
 #include "statementiteratorbackend.h"
 #include "statement.h"
+#include "nodeiteratorbackend.h"
+#include "nodeiterator.h"
 
 
 class Soprano::StatementIterator::Private : public QSharedData
@@ -107,38 +109,60 @@ QList<Soprano::Statement> Soprano::StatementIterator::allStatements()
 }
 
 
-QList<Soprano::Node> Soprano::StatementIterator::allSubjects()
+class StatementNodeIteratorBackend : public Soprano::NodeIteratorBackend
 {
-    QList<Node> nl;
-    while ( next() ) {
-        nl.append( current().subject() );
+public:
+    enum Which {
+        SUBJECT,
+        PREDICATE,
+        OBJECT,
+        CONTEXT
+    };
+
+    StatementNodeIteratorBackend( Soprano::StatementIterator it, Which w )
+        : m_it( it ),
+          m_which( w ) {
     }
-    return nl;
+
+    bool next() {
+        return m_it.next();
+    }
+
+    Soprano::Node current() const {
+        switch( m_which ) {
+        case SUBJECT:
+            return m_it.current().subject();
+        case PREDICATE:
+            return m_it.current().predicate();
+        case OBJECT:
+            return m_it.current().object();
+        case CONTEXT:
+            return m_it.current().context();
+        }
+    }
+
+private:
+    Soprano::StatementIterator m_it;
+    Which m_which;
+};
+
+
+Soprano::NodeIterator Soprano::StatementIterator::iterateSubjects()
+{
+    return new StatementNodeIteratorBackend( *this, StatementNodeIteratorBackend::SUBJECT );
 }
 
-QList<Soprano::Node> Soprano::StatementIterator::allPredicates()
+Soprano::NodeIterator Soprano::StatementIterator::iteratePredicates()
 {
-    QList<Node> nl;
-    while ( next() ) {
-        nl.append( current().predicate() );
-    }
-    return nl;
+    return new StatementNodeIteratorBackend( *this, StatementNodeIteratorBackend::PREDICATE );
 }
 
-QList<Soprano::Node> Soprano::StatementIterator::allObjects()
+Soprano::NodeIterator Soprano::StatementIterator::iterateObjects()
 {
-    QList<Node> nl;
-    while ( next() ) {
-        nl.append( current().object() );
-    }
-    return nl;
+    return new StatementNodeIteratorBackend( *this, StatementNodeIteratorBackend::OBJECT );
 }
 
-QList<Soprano::Node> Soprano::StatementIterator::allContexts()
+Soprano::NodeIterator Soprano::StatementIterator::iterateContexts()
 {
-    QList<Node> nl;
-    while ( next() ) {
-        nl.append( current().context() );
-    }
-    return nl;
+    return new StatementNodeIteratorBackend( *this, StatementNodeIteratorBackend::CONTEXT );
 }

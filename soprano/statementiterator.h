@@ -31,6 +31,7 @@
 namespace Soprano {
 
     class Node;
+    class NodeIterator;
     class Statement;
     class StatementIteratorBackend;
 
@@ -134,48 +135,48 @@ namespace Soprano {
 	QList<Statement> allStatements();
 
 	/**
-	 * Convinience method which extracts all subject nodes from all result statements
-	 * (this does not include the statements that have already been read from the 
-	 * iterator).
+	 * Conviniece method that creates an iterator over the subject nodes of the statements
+	 * in this iterator.
 	 *
-	 * Be aware that after calling this method the iterator will be invalid.
-	 *
-	 * \return A list of subject nodes from the statements that rest in the iterator.
+	 * \warning The new iterator is just a wrapper around this one. Thus, changing it will also
+	 * change this one.
+	 * 
+	 * \return A wrapper iterator over the subject nodes.
 	 */
-	QList<Node> allSubjects();
+	NodeIterator iterateSubjects();
 
 	/**
-	 * Convinience method which extracts all predicate nodes from all result statements
-	 * (this does not include the statements that have already been read from the 
-	 * iterator).
+	 * Conviniece method that creates an iterator over the predicate nodes of the statements
+	 * in this iterator.
 	 *
-	 * Be aware that after calling this method the iterator will be invalid.
-	 *
-	 * \return A list of predicate nodes from the statements that rest in the iterator.
+	 * \warning The new iterator is just a wrapper around this one. Thus, changing it will also
+	 * change this one.
+	 * 
+	 * \return A wrapper iterator over the predicate nodes.
 	 */
-	QList<Node> allPredicates();
+	NodeIterator iteratePredicates();
 
 	/**
-	 * Convinience method which extracts all object nodes from all result statements
-	 * (this does not include the statements that have already been read from the 
-	 * iterator).
+	 * Conviniece method that creates an iterator over the object nodes of the statements
+	 * in this iterator.
 	 *
-	 * Be aware that after calling this method the iterator will be invalid.
-	 *
-	 * \return A list of object nodes from the statements that rest in the iterator.
+	 * \warning The new iterator is just a wrapper around this one. Thus, changing it will also
+	 * change this one.
+	 * 
+	 * \return A wrapper iterator over the object nodes.
 	 */
-	QList<Node> allObjects();
+	NodeIterator iterateObjects();
 
 	/**
-	 * Convinience method which extracts all context nodes from all result statements
-	 * (this does not include the statements that have already been read from the 
-	 * iterator).
+	 * Conviniece method that creates an iterator over the context nodes of the statements
+	 * in this iterator.
 	 *
-	 * Be aware that after calling this method the iterator will be invalid.
-	 *
-	 * \return A list of context nodes from the statements that rest in the iterator.
+	 * \warning The new iterator is just a wrapper around this one. Thus, changing it will also
+	 * change this one.
+	 * 
+	 * \return A wrapper iterator over the context nodes.
 	 */
-	QList<Node> allContexts();
+	NodeIterator iterateContexts();
 
     private:
 	class Private;

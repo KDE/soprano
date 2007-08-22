@@ -30,6 +30,7 @@
 #include "queryresultiterator.h"
 #include "literalvalue.h"
 #include "bindingset.h"
+#include "nodeiterator.h"
 
 #include <QtCore/QString>
 #include <QtCore/QUuid>
@@ -123,10 +124,14 @@ void Soprano::Inference::InferenceModel::setRules( const QList<Rule>& rules )
 
 Soprano::ErrorCode Soprano::Inference::InferenceModel::addStatement( const Statement& statement )
 {
-    parentModel()->addStatement( statement );
-    if( inferStatement( statement, true ) ) {
-        emit statementsAdded();
+    ErrorCode error = parentModel()->addStatement( statement );
+    if ( error == ERROR_NONE ) {
+        // FIXME: error handling for the inference itself
+        if( inferStatement( statement, true ) ) {
+            emit statementsAdded();
+        }
     }
+    return error;
 }
 
 
@@ -161,7 +166,7 @@ void Soprano::Inference::InferenceModel::removeStatement( const Statement& state
             QList<Node> graphSources = parentModel()->listStatements( Statement( graph,
                                                                                  Vocabulary::SIL::SOURCE_STATEMENT(),
                                                                                  Node(),
-                                                                                 Vocabulary::SIL::INFERENCE_METADATA() ) ).allObjects();
+                                                                                 Vocabulary::SIL::INFERENCE_METADATA() ) ).iterateObjects().allNodes();
             for( QList<Node>::const_iterator it = graphSources.constBegin();
                  it != graphSources.constEnd(); ++it ) {
                 parentModel()->removeStatements( Statement( *it, Node(), Node(), Vocabulary::SIL::INFERENCE_METADATA() ) );
@@ -186,7 +191,7 @@ QList<Soprano::Node> Soprano::Inference::InferenceModel::inferedGraphsForStateme
                                                                          Vocabulary::SIL::SOURCE_STATEMENT(),
                                                                          compressStatement( statement ),
                                                                          Vocabulary::SIL::INFERENCE_METADATA() ) );
-        return it.allSubjects();
+        return it.iterateSubjects().allNodes();
     }
     else {
         QList<Soprano::Node> graphs;
@@ -237,11 +242,11 @@ QList<Soprano::Node> Soprano::Inference::InferenceModel::inferedGraphsForStateme
         // since redland cannot handle our query we have to do it the ugly way
         QSet<Node> sourceStatements;
         StatementIterator it = parentModel()->listStatements( Statement( Node(), Vocabulary::RDF::SUBJECT(), statement.subject() ) );
-        sourceStatements = it.allSubjects().toSet();
+        sourceStatements = it.iterateSubjects().allNodes().toSet();
         it = parentModel()->listStatements( Statement( Node(), Vocabulary::RDF::PREDICATE(), statement.predicate() ) );
-        sourceStatements &= it.allSubjects().toSet();
+        sourceStatements &= it.iterateSubjects().allNodes().toSet();
         it = parentModel()->listStatements( Statement( Node(), Vocabulary::RDF::OBJECT(), statement.object() ) );
-        sourceStatements &= it.allSubjects().toSet();
+        sourceStatements &= it.iterateSubjects().allNodes().toSet();
 
         // now sourceStatements should contain what our nice first query above returns
         // and we use a siplyfied version of the query above to redland won't get confused :(
