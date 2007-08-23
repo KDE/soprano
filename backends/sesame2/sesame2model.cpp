@@ -56,8 +56,6 @@ Soprano::Sesame2::Model::~Model()
 
 Soprano::ErrorCode Soprano::Sesame2::Model::addStatement( const Statement &statement )
 {
-    closeIterators();
-
     if ( jobject sesameStatement = m_repository->valueFactory()->convertStatement( statement ) ) {
         m_repository->repositoryConnection()->addStatement( sesameStatement );
         if ( JNIWrapper::instance()->exceptionOccured() ) {
@@ -77,8 +75,6 @@ Soprano::ErrorCode Soprano::Sesame2::Model::addStatement( const Statement &state
 
 Soprano::NodeIterator Soprano::Sesame2::Model::listContexts() const
 {
-    closeIterators();
-
     QList<Soprano::Node> contexts;
 
     jobject ids = m_repository->repositoryConnection()->getContextIDs();
@@ -97,8 +93,6 @@ Soprano::NodeIterator Soprano::Sesame2::Model::listContexts() const
 
 Soprano::QueryResultIterator Soprano::Sesame2::Model::executeQuery( const QueryLegacy &query ) const
 {
-    closeIterators();
-
     if ( query.type() != Soprano::QueryLegacy::SPARQL ) {
         return QueryResultIterator();
     }
@@ -125,8 +119,6 @@ Soprano::QueryResultIterator Soprano::Sesame2::Model::executeQuery( const QueryL
 
 Soprano::StatementIterator Soprano::Sesame2::Model::listStatements( const Statement& statement ) const
 {
-    closeIterators();
-
     jobject results = m_repository->repositoryConnection()->getStatements( m_repository->valueFactory()->convertNode( statement.subject() ),
                                                                            m_repository->valueFactory()->convertNode( statement.predicate() ),
                                                                            m_repository->valueFactory()->convertNode( statement.object() ),
@@ -146,8 +138,6 @@ Soprano::StatementIterator Soprano::Sesame2::Model::listStatements( const Statem
 
 Soprano::ErrorCode Soprano::Sesame2::Model::removeStatements( const Statement &statement )
 {
-    closeIterators();
-
     // we are not using convertStatement here since we support wildcards
     m_repository->repositoryConnection()->remove( m_repository->valueFactory()->convertNode( statement.subject() ),
                                                   m_repository->valueFactory()->convertNode( statement.predicate() ),
@@ -165,16 +155,12 @@ Soprano::ErrorCode Soprano::Sesame2::Model::removeStatements( const Statement &s
 
 int Soprano::Sesame2::Model::statementCount() const
 {
-    closeIterators();
-
     return m_repository->repositoryConnection()->size();
 }
 
 
 bool Soprano::Sesame2::Model::containsStatements( const Statement &statement ) const
 {
-    closeIterators();
-
     // we are not using convertStatement here since we support wildcards
     bool r = m_repository->repositoryConnection()->hasStatement( m_repository->valueFactory()->convertNode( statement.subject() ),
                                                                  m_repository->valueFactory()->convertNode( statement.predicate() ),
@@ -189,7 +175,7 @@ bool Soprano::Sesame2::Model::containsStatements( const Statement &statement ) c
 }
 
 
-void Soprano::Sesame2::Model::closeIterators() const
+void Soprano::Sesame2::Model::closeIterators()
 {
     Q_FOREACH( jobject it, m_openIterators ) {
         Iterator( it ).close();

@@ -20,13 +20,13 @@
  */
 
 #include "simplestatementiterator.h"
-#include "statementiteratorbackend.h"
+#include "iteratorbackend.h"
 
 #include "statement.h"
 
 
 namespace Soprano {
-    class SimpleStatementIteratorBackend : public StatementIteratorBackend
+    class SimpleStatementIteratorBackend : public IteratorBackend<Statement>
     {
     public:
         SimpleStatementIteratorBackend();
@@ -38,6 +38,8 @@ namespace Soprano {
         bool next();
 
         Statement current() const;
+
+        void close() {}
 
     private:
         QList<Statement> m_statements;

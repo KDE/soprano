@@ -45,6 +45,9 @@ void Sesame2BackendTest::testIteratorClose()
 
     // now the iterator is open
 
+    // close it
+    it.close();
+
     // try read-only stuff
     QVERIFY( m_model->listStatements( *m_st2 ).next() );
 

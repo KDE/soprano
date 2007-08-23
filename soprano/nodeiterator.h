@@ -23,10 +23,11 @@
 #ifndef SOPRANO_NODE_ITERATOR_H
 #define SOPRANO_NODE_ITERATOR_H
 
-#include <QtCore/QSharedDataPointer>
+#include "iterator.h"
+#include "soprano_export.h"
+
 #include <QtCore/QList>
 
-#include <soprano/soprano_export.h>
 
 namespace Soprano {
 
@@ -60,12 +61,16 @@ namespace Soprano {
      * }
      * \endcode
      *
+     * Iterators in %Soprano may lock the underlying Model. Thus, they have to be closed.
+     * This can either be achieved by deleting the iterator, finishing it (next() does return \p false),
+     * or calling close(). Before that other operations on the Model may block.
+     *
      * \warning Be aware that iterators in Soprano are shared objects which means
      * that copies of one iterator object work on the same data.
      * 
      * \author Sebastian Trueg <trueg@kde.org>
      */
-    class SOPRANO_EXPORT NodeIterator
+    class SOPRANO_EXPORT NodeIterator : public Iterator<Node>
     {
     public:
 	/**
@@ -77,42 +82,13 @@ namespace Soprano {
 	 * Create a new NodeIterator instance that uses sti as backend.
 	 * NodeIterator will take ownership of the backend.
 	 */
-	NodeIterator( NodeIteratorBackend *sti );
+	NodeIterator( IteratorBackend<Node> *sti );
 
 	NodeIterator( const NodeIterator &sti );
 
 	virtual ~NodeIterator();
 
 	NodeIterator& operator=( const NodeIterator& );
-
-	/**
-	 * Advances to the next node in the iterator.
-	 *\return true if another Node can be read from the iterator,
-	 * false if the end has been reached.
-	 */
-	bool next();
-
-	/**
-	 *\return the current Node, this is not valid until after
-	 * the first call to next.
-	 */
-	Node current() const;
-
-	/**
-	 * Retrieve the current Node in the iterator.
-	 *
-	 * This is equivalent to current().
-	 *
-	 * \return The Node the iterator currently points to or
-	 * an invalid one if next has never been called.
-	 */
-	Node operator*() const;
-
-	/**
-	 * \return \p true if the Iterator is valid, \p false otherwise, i.e.
-	 * it has no backend .
-	 */
-	bool isValid() const;
 
 	/**
 	 * Convinience method which extracts all nodes (this does not include the
@@ -123,19 +99,7 @@ namespace Soprano {
 	 *
 	 * \return A list of all nodes that rest in the iterator.
 	 */
-	QList<Node> allNodes();
-
-    protected:
-	/**
-	 * Set the backend to read the actual data from.
-	 * A previous backend will be deleted if there are no other NodeIterator
-	 * instances using it.
-	 */
-	void setBackend( NodeIteratorBackend* b );
-
-    private:
-	class Private;
-	QSharedDataPointer<Private> d;
+	QList<Node> allNodes() { return allElements(); }
     };
 }
 

@@ -35,10 +35,7 @@ SET(soprano_SRCS
     statement.h
     statementiterator.cpp
     statementiterator.h
-    statementiteratorbackend.cpp
-    statementiteratorbackend.h
     nodeiterator.cpp
-    nodeiteratorbackend.cpp
     simplestatementiterator.cpp
     model.cpp
     model.h
@@ -111,10 +108,8 @@ INSTALL(FILES
 	node.h
 	statement.h
 	statementiterator.h
-	statementiteratorbackend.h
 	simplestatementiterator.h
 	nodeiterator.h
-	nodeiteratorbackend.h
 	model.h
 	filtermodel.h
 	storagemodel.h
@@ -130,6 +125,8 @@ INSTALL(FILES
 	bindingset.h
 	serializer.h
 	sopranotypes.h
+	iterator.h
+	iteratorbackend.h
 	vocabulary/rdf.h
 	vocabulary/rdfs.h
 	vocabulary/xmls.h

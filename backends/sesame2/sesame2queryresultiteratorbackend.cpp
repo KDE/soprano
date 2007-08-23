@@ -153,3 +153,9 @@ bool Soprano::Sesame2::QueryResultIteratorBackend::boolValue() const
 {
     return false;
 }
+
+
+void Soprano::Sesame2::QueryResultIteratorBackend::close()
+{
+    d->result.close();
+}

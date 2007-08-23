@@ -23,10 +23,12 @@
 #ifndef SOPRANO_STATEMENT_ITERATOR_H
 #define SOPRANO_STATEMENT_ITERATOR_H
 
-#include <QtCore/QSharedDataPointer>
+#include "iterator.h"
+#include "statement.h"
+#include "soprano_export.h"
+
 #include <QtCore/QList>
 
-#include <soprano/soprano_export.h>
 
 namespace Soprano {
 
@@ -62,12 +64,16 @@ namespace Soprano {
      * }
      * \endcode
      *
+     * Iterators in %Soprano may lock the underlying Model. Thus, they have to be closed.
+     * This can either be achieved by deleting the iterator, finishing it (next() does return \p false),
+     * or calling close(). Before that other operations on the Model may block.
+     *
      * \warning Be aware that iterators in Soprano are shared objects which means
      * that copies of one iterator object work on the same data.
      * 
      * \author Daniele Galdi <daniele.galdi@gmail.com><br>Sebastian Trueg <trueg@kde.org>
      */
-    class SOPRANO_EXPORT StatementIterator
+    class SOPRANO_EXPORT StatementIterator : public Iterator<Statement>
     {
     public:
 	/**
@@ -79,42 +85,13 @@ namespace Soprano {
 	 * Create a new StatementIterator instance that uses sti as backend.
 	 * StatementIterator will take ownership of the backend.
 	 */
-	StatementIterator( StatementIteratorBackend *sti );
+	StatementIterator( IteratorBackend<Statement> *sti );
 
 	StatementIterator( const StatementIterator &sti );
 
 	virtual ~StatementIterator();
 
 	StatementIterator& operator=( const StatementIterator& );
-
-	/**
-	 * Advances to the next statement in the iterator.
-	 *\return true if another Statement can be read from the iterator,
-	 * false if the end has been reached.
-	 */
-	bool next();
-
-	/**
-	 *\return the current Statement, this is not valid until after
-	 * the first call to next.
-	 */
-	Statement current() const;
-
-	/**
-	 * Retrieve the current Statement in the iterator.
-	 *
-	 * This is equivalent to current().
-	 *
-	 * \return The Statement the iterator currently points to or
-	 * an invalid one if next has never been called.
-	 */
-	Statement operator*() const;
-
-	/**
-	 * \return \p true if the Iterator is valid, \p false otherwise, i.e.
-	 * it has no backend .
-	 */
-	bool isValid() const;
 
 	/**
 	 * Convinience method which extracts all statements (this does not include the
@@ -125,7 +102,7 @@ namespace Soprano {
 	 *
 	 * \return A list of all statements that rest in the iterator.
 	 */
-	QList<Statement> allStatements();
+	QList<Statement> allStatements() { return allElements(); }
 
 	/**
 	 * Conviniece method that creates an iterator over the subject nodes of the statements
@@ -170,18 +147,6 @@ namespace Soprano {
 	 * \return A wrapper iterator over the context nodes.
 	 */
 	NodeIterator iterateContexts() const;
-
-    protected:
-	/**
-	 * Set the backend to read the actual data from.
-	 * A previous backend will be deleted if there are no other StatementIterator
-	 * instances using it.
-	 */
-	void setBackend( StatementIteratorBackend* b );
-
-    private:
-	class Private;
-	QSharedDataPointer<Private> d;
     };
 }
 

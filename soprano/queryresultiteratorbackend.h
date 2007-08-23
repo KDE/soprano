@@ -23,13 +23,15 @@
 #ifndef SOPRANO_QUERY_RESULT_H
 #define SOPRANO_QUERY_RESULT_H
 
+#include "iteratorbackend.h"
+#include "bindingset.h"
+
 #include <QString>
 #include <QStringList>
-#include <soprano/soprano_export.h>
+
 
 namespace Soprano {
 
-    class Model;
     class Node;
     class Statement;
     
@@ -40,34 +42,39 @@ namespace Soprano {
      *
      * \author Daniele Galdi <daniele.galdi@gmail.com><br>Sebastian Trueg <trueg@kde.org>
      */
-    class SOPRANO_EXPORT QueryResultIteratorBackend
-	{
-	public:
-	    virtual ~QueryResultIteratorBackend();
+    class SOPRANO_EXPORT QueryResultIteratorBackend : public IteratorBackend<BindingSet>
+    {
+    public:
+	virtual ~QueryResultIteratorBackend();
 
-	    virtual bool next() = 0;
+	virtual bool next() = 0;
 
-	    virtual Statement currentStatement() const = 0;
+	/**
+	 * Constructs the BindingSet using binding() and bindingNames()
+	 */
+	virtual BindingSet current() const;
 
-	    virtual Node binding( const QString &name ) const = 0;
+	virtual Statement currentStatement() const = 0;
 
-	    virtual Node binding( int offset ) const = 0;
+	virtual Node binding( const QString &name ) const = 0;
 
-	    virtual int bindingCount() const = 0;
+	virtual Node binding( int offset ) const = 0;
 
-	    virtual QStringList bindingNames() const = 0;
+	virtual int bindingCount() const = 0;
 
-	    virtual bool isGraph() const = 0;
+	virtual QStringList bindingNames() const = 0;
 
-	    virtual bool isBinding() const = 0;
+	virtual bool isGraph() const = 0;
 
-	    virtual bool isBool() const = 0;
+	virtual bool isBinding() const = 0;
 
-	    virtual bool boolValue() const = 0;
+	virtual bool isBool() const = 0;
 
-	protected:
-	    QueryResultIteratorBackend();
-	};
+	virtual bool boolValue() const = 0;
+
+    protected:
+	QueryResultIteratorBackend();
+    };
 
 }
 

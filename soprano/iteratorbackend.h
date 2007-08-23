@@ -20,43 +20,46 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef SOPRANO_STATEMENT_ITERATOR_BACKEND_H
-#define SOPRANO_STATEMENT_ITERATOR_BACKEND_H
+#ifndef SOPRANO_ITERATOR_BACKEND_H
+#define SOPRANO_ITERATOR_BACKEND_H
 
 #include <soprano/soprano_export.h>
 
 namespace Soprano {
 
-    class Statement;
-
     /**
-     * \brief The actual work in a StatementIterator instance is done by a
-     * StatementIteratorBackend.
+     * \brief The actual work in a Iterator instance is done by an
+     * IteratorBackend.
      *
-     * Each Backend implementation has to have its own version of StatementIteratorBackend.
+     * Implementations of IteratorBackend should close itself when the end is reached or
+     * on destruction.
      *
      * \author Daniele Galdi <daniele.galdi@gmail.com><br>Sebastian Trueg <trueg@kde.org>
      */
-    class SOPRANO_EXPORT StatementIteratorBackend
+    template<class T> class SOPRANO_EXPORT IteratorBackend
     {
     public:
-	virtual ~StatementIteratorBackend();
+	virtual ~IteratorBackend() {}
 
 	/**
-	 * Advance to the next Statement in the iterator.
-	 *\return true if there is another Statement and false if the end has been reached.
+	 * Advance to the next element in the iterator.
+	 *\return true if there is another  and false if the end has been reached.
 	 */
 	virtual bool next() = 0;
 
 	/**
-	 *\return the current Statement
+	 *\return the current element.
 	 */
-	virtual Statement current() const = 0;
+	virtual T current() const = 0;
+
+	/**
+	 * Close the iterator and release any locks on the underlying Model.
+	 */
+	virtual void close() = 0;
 
     protected:
-	StatementIteratorBackend();
+	IteratorBackend() {}
     };
-
 }
 
 #endif

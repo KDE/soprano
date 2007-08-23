@@ -75,3 +75,9 @@ Soprano::Statement Soprano::Sesame2::StatementIteratorBackend::current() const
 {
     return d->current;
 }
+
+
+void Soprano::Sesame2::StatementIteratorBackend::close()
+{
+    d->result.close();
+}

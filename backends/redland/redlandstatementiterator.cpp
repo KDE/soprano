@@ -87,7 +87,7 @@ Soprano::Statement Soprano::Redland::RedlandStatementIterator::current() const
 }
 
 
-void Soprano::Redland::RedlandStatementIterator::close() const
+void Soprano::Redland::RedlandStatementIterator::close()
 {
     if( m_stream ) {
         librdf_free_stream( m_stream );

@@ -96,6 +96,9 @@ public:
         return false;
     }
 
+    void close() {
+    }
+
 private:
     bool m_first;
     QList<Statement> m_statements;
@@ -108,9 +111,9 @@ static QList<Statement> createStatements( int cnt )
     QList<Statement> sl;
     for ( int i = 0; i < cnt; ++i ) {
         sl.append( Statement( QUrl( QString( "test://subject%1" ).arg( i ) ),
-                                       QUrl( QString( "test://predicate%1" ).arg( i ) ),
-                                       QUrl( QString( "test://object%1" ).arg( i ) ),
-                                       QUrl( QString( "test://context%1" ).arg( i ) ) ) );
+                              QUrl( QString( "test://predicate%1" ).arg( i ) ),
+                              QUrl( QString( "test://object%1" ).arg( i ) ),
+                              QUrl( QString( "test://context%1" ).arg( i ) ) ) );
     }
     return sl;
 }

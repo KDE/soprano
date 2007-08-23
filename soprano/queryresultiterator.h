@@ -23,15 +23,15 @@
 #ifndef SOPRANO_RESULT_SET_H
 #define SOPRANO_RESULT_SET_H
 
+#include "iterator.h"
+#include "soprano_export.h"
+
 #include <QtCore/QString>
 #include <QtCore/QStringList>
-#include <QtCore/QSharedDataPointer>
 
-#include <soprano/soprano_export.h>
 
 namespace Soprano {
 
-    class Model;
     class Node;
     class QueryResultIteratorBackend;
     class Statement;
@@ -74,12 +74,16 @@ namespace Soprano {
      * }
      * \endcode
      *
+     * Iterators in %Soprano may lock the underlying Model. Thus, they have to be closed.
+     * This can either be achieved by deleting the iterator, finishing it (next() does return \p false),
+     * or calling close(). Before that other operations on the Model may block.
+     *
      * \warning Backends such as redland tend to invalidate the iterators if
      * the underlaying model is changed.
      *
      * \author Daniele Galdi <daniele.galdi@gmail.com><br>Sebastian Trueg <trueg@kde.org>
      */
-    class SOPRANO_EXPORT QueryResultIterator
+    class SOPRANO_EXPORT QueryResultIterator : public Iterator<BindingSet>
     {
     public:
 	/**
@@ -107,14 +111,6 @@ namespace Soprano {
 	 * Copies of iterators share their data.
 	 */
 	QueryResultIterator& operator=( const QueryResultIterator& );
-
-	/**
-	 * Advance to the next entry (statement or bindingset)
-	 * \return true if the end of the QueryResultIterator was not reached yet.
-	 * false if no more entries are found or if the QueryResultIterator was
-	 * already invalidated by a call to model.
-	 */
-	bool next();
 
 	/**
 	 * Retrieve the current Statement after a call to next.
@@ -223,10 +219,6 @@ namespace Soprano {
 	 * \return A wrapper iterator over the statements in a graph query.
 	 */
 	StatementIterator iterateStatements() const;
-
-    private:
-	class Private;
-	QSharedDataPointer<Private> d;
     };
 
 }

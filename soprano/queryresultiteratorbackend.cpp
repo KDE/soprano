@@ -20,6 +20,10 @@
  */
 
 #include "queryresultiteratorbackend.h"
+#include "bindingset.h"
+#include "node.h"
+
+#include <QStringList>
 
 Soprano::QueryResultIteratorBackend::QueryResultIteratorBackend()
 {
@@ -27,4 +31,14 @@ Soprano::QueryResultIteratorBackend::QueryResultIteratorBackend()
 
 Soprano::QueryResultIteratorBackend::~QueryResultIteratorBackend()
 {
+}
+
+Soprano::BindingSet Soprano::QueryResultIteratorBackend::current() const
+{
+    BindingSet bindings;
+    QStringList names = bindingNames();
+    for ( int i = 0; i < bindingCount(); ++i ) {
+        bindings.insert( names[i], binding( i ) );
+    }
+    return bindings;
 }

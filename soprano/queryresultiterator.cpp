@@ -22,46 +22,28 @@
 
 #include "queryresultiterator.h"
 #include "queryresultiteratorbackend.h"
-#include "model.h"
 #include "node.h"
 #include "statement.h"
 #include "statementiterator.h"
-#include "statementiteratorbackend.h"
+#include "iteratorbackend.h"
 #include "bindingset.h"
-
-#include <QtCore/QSharedData>
-
-
-class Soprano::QueryResultIterator::Private : public QSharedData
-{
-public:
-    Private( QueryResultIteratorBackend* qr = 0 )
-        : queryResult( qr ) {
-    }
-
-    ~Private() {
-        delete queryResult;
-    }
-
-    QueryResultIteratorBackend* queryResult;
-};
 
 
 Soprano::QueryResultIterator::QueryResultIterator()
+    : Iterator<BindingSet>()
 {
-    d = new Private;
 }
 
 
 Soprano::QueryResultIterator::QueryResultIterator( QueryResultIteratorBackend *qr )
+    : Iterator<BindingSet>( qr )
 {
-    d = new Private( qr );
 }
 
 
 Soprano::QueryResultIterator::QueryResultIterator( const QueryResultIterator& other )
+    : Iterator<BindingSet>( other )
 {
-    d = other.d;
 }
 
 
@@ -72,106 +54,82 @@ Soprano::QueryResultIterator::~QueryResultIterator()
 
 Soprano::QueryResultIterator& Soprano::QueryResultIterator::operator=( const QueryResultIterator& other )
 {
-    d = other.d;
+    Iterator<BindingSet>::operator=( other );
     return *this;
-}
-
-
-bool Soprano::QueryResultIterator::next()
-{
-    // some evil hacking to avoid detachment of the shared data
-    const Private* cd = d.constData();
-    return ( cd->queryResult ? cd->queryResult->next() : false );
 }
 
 
 Soprano::Statement Soprano::QueryResultIterator::currentStatement() const
 {
-    return ( d->queryResult ? d->queryResult->currentStatement() : Statement() );
+    return ( backend() ? dynamic_cast<QueryResultIteratorBackend*>( backend() )->currentStatement() : Statement() );
 }
 
 
 Soprano::BindingSet Soprano::QueryResultIterator::currentBindings() const
 {
-    BindingSet bindings;
-    QStringList names = bindingNames();
-    for ( int i = 0; i < bindingCount(); ++i ) {
-        bindings.insert( names[i], binding( i ) );
-    }
-    return bindings;
+    return current();
 }
 
 
 QList<Soprano::BindingSet> Soprano::QueryResultIterator::allBindings()
 {
-    QList<BindingSet> bsl;
-    while ( next() ) {
-        bsl.append( currentBindings() );
-    }
-    return bsl;
+    return allElements();
 }
 
 
 Soprano::Node Soprano::QueryResultIterator::binding( const QString &name ) const
 {
-    return ( d->queryResult ? d->queryResult->binding( name ) : Node() );
+    return ( backend() ? dynamic_cast<QueryResultIteratorBackend*>( backend() )->binding( name ) : Node() );
 }
 
 
 Soprano::Node Soprano::QueryResultIterator::binding( int offset ) const
 {
-    return ( d->queryResult ? d->queryResult->binding( offset ) : Node() );
+    return ( backend() ? dynamic_cast<QueryResultIteratorBackend*>( backend() )->binding( offset ) : Node() );
 }
 
 
 int Soprano::QueryResultIterator::bindingCount() const
 {
-    return ( d->queryResult ? d->queryResult->bindingCount() : 0 );
+    return ( backend() ? dynamic_cast<QueryResultIteratorBackend*>( backend() )->bindingCount() : 0 );
 }
 
 
 QStringList Soprano::QueryResultIterator::bindingNames() const
 {
-    return ( d->queryResult ? d->queryResult->bindingNames() : QStringList() );
+    return ( backend() ? dynamic_cast<QueryResultIteratorBackend*>( backend() )->bindingNames() : QStringList() );
 }
 
 
 bool Soprano::QueryResultIterator::isGraph() const
 {
-    return ( d->queryResult ? d->queryResult->isGraph() : false );
+    return ( backend() ? dynamic_cast<QueryResultIteratorBackend*>( backend() )->isGraph() : false );
 }
 
 
 bool Soprano::QueryResultIterator::isBinding() const
 {
-    return ( d->queryResult ? d->queryResult->isBinding() : false );
+    return ( backend() ? dynamic_cast<QueryResultIteratorBackend*>( backend() )->isBinding() : false );
 }
 
 
 bool Soprano::QueryResultIterator::isBool() const
 {
-    return ( d->queryResult ? d->queryResult->isBool() : false );
+    return ( backend() ? dynamic_cast<QueryResultIteratorBackend*>( backend() )->isBool() : false );
 }
 
 
 bool Soprano::QueryResultIterator::boolValue() const
 {
-    return ( d->queryResult ? d->queryResult->boolValue() : false );
+    return ( backend() ? dynamic_cast<QueryResultIteratorBackend*>( backend() )->boolValue() : false );
 }
 
 
-bool Soprano::QueryResultIterator::isValid() const
-{
-    return d->queryResult != 0;
-}
-
-
-class QueryResultStatementIteratorBackend : public Soprano::StatementIteratorBackend
+class QueryResultStatementIteratorBackend : public Soprano::IteratorBackend<Soprano::Statement>
 {
 public:
     QueryResultStatementIteratorBackend( const Soprano::QueryResultIterator& r )
-        : Soprano::StatementIteratorBackend(),
-          m_result( r ) {
+        : m_result( r ) {
     }
 
     ~QueryResultStatementIteratorBackend() {
@@ -183,6 +141,10 @@ public:
 
     Soprano::Statement current() const {
         return m_result.currentStatement();
+    }
+
+    void close() {
+        m_result.close();
     }
 
 private:

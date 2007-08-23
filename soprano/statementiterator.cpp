@@ -21,40 +21,24 @@
  */
 
 #include "statementiterator.h"
-#include "statementiteratorbackend.h"
 #include "statement.h"
-#include "nodeiteratorbackend.h"
+#include "node.h"
+#include "iteratorbackend.h"
 #include "nodeiterator.h"
 
 
-class Soprano::StatementIterator::Private : public QSharedData
-{
-public:
-    Private()
-        : backend( 0 ) {
-    }
-
-    ~Private() {
-        delete backend;
-    }
-
-    StatementIteratorBackend* backend;
-};
-
-
 Soprano::StatementIterator::StatementIterator()
-    : d( new Private() )
+    : Iterator<Statement>()
 {
 }
 
-Soprano::StatementIterator::StatementIterator( StatementIteratorBackend *sti )
-    : d( new Private() )
+Soprano::StatementIterator::StatementIterator( IteratorBackend<Statement> *sti )
+    : Iterator<Statement>( sti )
 {
-    d->backend = sti;
 }
 
 Soprano::StatementIterator::StatementIterator( const StatementIterator &other )
-    : d( other.d )
+    : Iterator<Statement>( other )
 {
 }
 
@@ -64,52 +48,11 @@ Soprano::StatementIterator::~StatementIterator()
 
 Soprano::StatementIterator& Soprano::StatementIterator::operator=( const StatementIterator& other )
 {
-    d = other.d;
+    Iterator<Statement>::operator=( other );
     return *this;
 }
 
-void Soprano::StatementIterator::setBackend( StatementIteratorBackend* b )
-{
-    if ( d->backend != b ) {
-        // now we want it to detach
-        d->backend = b;
-    }
-}
-
-bool Soprano::StatementIterator::next()
-{
-    // some evil hacking to avoid detachment of the shared data
-    const Private* cd = d.constData();
-    return isValid() ? cd->backend->next() : false;
-}
-
-Soprano::Statement Soprano::StatementIterator::current() const
-{
-    return isValid() ? d->backend->current() : Statement();
-}
-
-Soprano::Statement Soprano::StatementIterator::operator*() const
-{
-    return current();
-}
-
-bool Soprano::StatementIterator::isValid() const
-{
-    return d->backend != 0;
-}
-
-
-QList<Soprano::Statement> Soprano::StatementIterator::allStatements()
-{
-    QList<Statement> sl;
-    while ( next() ) {
-        sl.append( current() );
-    }
-    return sl;
-}
-
-
-class StatementNodeIteratorBackend : public Soprano::NodeIteratorBackend
+class StatementNodeIteratorBackend : public Soprano::IteratorBackend<Soprano::Node>
 {
 public:
     enum Which {
@@ -139,6 +82,10 @@ public:
         case CONTEXT:
             return m_it.current().context();
         }
+    }
+
+    void close() {
+        m_it.close();
     }
 
 private:

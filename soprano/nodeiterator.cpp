@@ -20,38 +20,21 @@
  */
 
 #include "nodeiterator.h"
-#include "nodeiteratorbackend.h"
 #include "node.h"
 
 
-class Soprano::NodeIterator::Private : public QSharedData
-{
-public:
-    Private()
-        : backend( 0 ) {
-    }
-
-    ~Private() {
-        delete backend;
-    }
-
-    NodeIteratorBackend* backend;
-};
-
-
 Soprano::NodeIterator::NodeIterator()
-    : d( new Private() )
+    : Iterator<Node>()
 {
 }
 
-Soprano::NodeIterator::NodeIterator( NodeIteratorBackend *sti )
-    : d( new Private() )
+Soprano::NodeIterator::NodeIterator( IteratorBackend<Node> *sti )
+    : Iterator<Node>( sti )
 {
-    d->backend = sti;
 }
 
 Soprano::NodeIterator::NodeIterator( const NodeIterator &other )
-    : d( other.d )
+    : Iterator<Node>( other )
 {
 }
 
@@ -61,45 +44,6 @@ Soprano::NodeIterator::~NodeIterator()
 
 Soprano::NodeIterator& Soprano::NodeIterator::operator=( const NodeIterator& other )
 {
-    d = other.d;
+    Iterator<Node>::operator=( other );
     return *this;
-}
-
-void Soprano::NodeIterator::setBackend( NodeIteratorBackend* b )
-{
-    if ( d->backend != b ) {
-        // now we want it to detach
-        d->backend = b;
-    }
-}
-
-bool Soprano::NodeIterator::next()
-{
-    // some evil hacking to avoid detachment of the shared data
-    const Private* cd = d.constData();
-    return isValid() ? cd->backend->next() : false;
-}
-
-Soprano::Node Soprano::NodeIterator::current() const
-{
-    return isValid() ? d->backend->current() : Node();
-}
-
-Soprano::Node Soprano::NodeIterator::operator*() const
-{
-    return current();
-}
-
-bool Soprano::NodeIterator::isValid() const
-{
-    return d->backend != 0;
-}
-
-QList<Soprano::Node> Soprano::NodeIterator::allNodes()
-{
-    QList<Node> sl;
-    while ( next() ) {
-        sl.append( current() );
-    }
-    return sl;
 }

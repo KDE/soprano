@@ -75,3 +75,9 @@ Soprano::Node Soprano::Sesame2::NodeIteratorBackend::current() const
 {
     return d->current;
 }
+
+
+void Soprano::Sesame2::NodeIteratorBackend::close()
+{
+    d->result.close();
+}

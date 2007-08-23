@@ -76,7 +76,7 @@ Soprano::Redland::RedlandQueryResult::~RedlandQueryResult()
 }
 
 
-void Soprano::Redland::RedlandQueryResult::close() const
+void Soprano::Redland::RedlandQueryResult::close()
 {
     if ( d->result ) {
         librdf_free_query_results( d->result );

@@ -22,7 +22,7 @@
 #ifndef SOPRANO_BACKEND_REDLAND_NODE_ITERATOR_H
 #define SOPRANO_BACKEND_REDLAND_NODE_ITERATOR_H
 
-#include "nodeiteratorbackend.h"
+#include "iteratorbackend.h"
 
 #include <redland.h>
 
@@ -36,7 +36,7 @@ namespace Soprano
 
 	class RedlandModel;
 
-	class NodeIteratorBackend: public Soprano::NodeIteratorBackend
+	class NodeIteratorBackend: public Soprano::IteratorBackend<Node>
 	{
 	public:
 	    explicit NodeIteratorBackend( const RedlandModel* model, librdf_iterator *it );
@@ -47,11 +47,11 @@ namespace Soprano
 
 	    Soprano::Node current() const;
 
-	    void close() const;
+	    void close();
 
 	private:
-	    mutable const RedlandModel* m_model;
-	    mutable librdf_iterator* m_iterator;
+	    const RedlandModel* m_model;
+	    librdf_iterator* m_iterator;
 	    bool m_initialized;
 	};
     }

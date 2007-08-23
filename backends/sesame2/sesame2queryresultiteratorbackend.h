@@ -61,6 +61,8 @@ namespace Soprano {
 
 	    bool boolValue() const;
 
+	    void close();
+
 	private:
 	    class Private;
 	    Private* const d;

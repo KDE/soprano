@@ -152,7 +152,7 @@ Soprano::ThreeStore::QueryResult::QueryResult( ts_result* r )
 
 Soprano::ThreeStore::QueryResult::~QueryResult()
 {
-    ts_query_free( d->result->query );
+    close();
     delete d;
 }
 
@@ -244,4 +244,10 @@ bool Soprano::ThreeStore::QueryResult::boolValue() const
 {
     // FIXME: do we need to cache this value or is it returned multiple times?
     return ts_result_fetch_row( d->result );
+}
+
+
+void Soprano::ThreeStore::QueryResult::close()
+{
+    ts_query_free( d->result->query );
 }

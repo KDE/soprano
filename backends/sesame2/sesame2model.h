@@ -48,7 +48,7 @@ namespace Soprano {
 	    bool containsStatements( const Statement &statement ) const;
 
 	private:
-	    void closeIterators() const;
+	    void closeIterators();
 
 	    RepositoryWrapper* m_repository;
 	    mutable QList<jobject> m_openIterators;

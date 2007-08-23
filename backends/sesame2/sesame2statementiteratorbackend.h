@@ -22,7 +22,7 @@
 #ifndef _SOPRANO_SESAME2_STATEMENT_ITERATOR_BACKEND_H_
 #define _SOPRANO_SESAME2_STATEMENT_ITERATOR_BACKEND_H_
 
-#include <soprano/statementiteratorbackend.h>
+#include <soprano/iteratorbackend.h>
 
 #include <jni.h>
 
@@ -31,7 +31,7 @@ namespace Soprano {
     class Statement;
 
     namespace Sesame2 {
-	class StatementIteratorBackend : public Soprano::StatementIteratorBackend
+	class StatementIteratorBackend : public Soprano::IteratorBackend<Statement>
 	{
 	public:
 	    StatementIteratorBackend( jobject result );
@@ -39,6 +39,7 @@ namespace Soprano {
 
 	    bool next();
 	    Statement current() const;
+	    void close();
 
 	private:
 	    class Private;

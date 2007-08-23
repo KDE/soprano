@@ -22,7 +22,7 @@
 #ifndef _SOPRANO_SESAME2_NODE_ITERATOR_BACKEND_H_
 #define _SOPRANO_SESAME2_NODE_ITERATOR_BACKEND_H_
 
-#include <soprano/nodeiteratorbackend.h>
+#include <soprano/iteratorbackend.h>
 
 #include <jni.h>
 
@@ -31,7 +31,7 @@ namespace Soprano {
     class Node;
 
     namespace Sesame2 {
-	class NodeIteratorBackend : public Soprano::NodeIteratorBackend
+	class NodeIteratorBackend : public Soprano::IteratorBackend<Node>
 	{
 	public:
 	    NodeIteratorBackend( jobject result );
@@ -39,6 +39,7 @@ namespace Soprano {
 
 	    bool next();
 	    Node current() const;
+	    void close();
 
 	private:
 	    class Private;

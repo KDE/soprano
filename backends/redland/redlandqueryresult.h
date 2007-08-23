@@ -62,7 +62,7 @@ namespace Soprano {
 
 		bool boolValue() const;
 
-		void close() const;
+		void close();
 
 	    private:
 		class Private;

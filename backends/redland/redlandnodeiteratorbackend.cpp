@@ -77,7 +77,7 @@ Soprano::Node Soprano::Redland::NodeIteratorBackend::current() const
 }
 
 
-void Soprano::Redland::NodeIteratorBackend::close() const
+void Soprano::Redland::NodeIteratorBackend::close()
 {
     if( m_iterator ) {
         librdf_free_iterator( m_iterator );
