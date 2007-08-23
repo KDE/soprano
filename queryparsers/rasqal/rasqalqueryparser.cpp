@@ -47,14 +47,14 @@ Soprano::Query::Query Soprano::Rasqal::QueryParser::parseQuery( const QString &q
 {
     // FIXME: Use the parameters
     rasqal_query *rq = rasqal_new_query( "sparql", (const unsigned char*)"http://www.w3.org/TR/rdf-sparql-query/" );
-    if ( !rq ) 
+    if ( !rq )
     {
         qDebug() << "ERROR!" << rq << endl;
         // TODO: error during query creation
         return Soprano::Query::Query();
     }
 
-    rasqal_query_set_fatal_error_handler( rq, this, raptor_message_handler );
+    rasqal_query_set_fatal_error_handler( rq, const_cast<QueryParser*>( this ), raptor_message_handler );
 
     /*if ( rasqal_query_prepare( rq, (unsigned char *)query.toLatin1().data(), NULL ) )
     {
@@ -82,17 +82,17 @@ Soprano::Query::QueryLanguages Soprano::Rasqal::QueryParser::supportedQueryLangu
 void Soprano::Rasqal::QueryParser::raptor_message_handler( void *query_parser, raptor_locator *rl, const char *msg )
 {
     QueryParser* parser = static_cast<QueryParser *>(query_parser);
-    
+
     Soprano::Locator locator;
-    locator.setLine( raptor_locator_line(rl) );    
-    locator.setColumn( raptor_locator_column(rl) );    
+    locator.setLine( raptor_locator_line(rl) );
+    locator.setColumn( raptor_locator_column(rl) );
 
     parser->emitSyntaxError( locator , msg );
 }
 
 void Soprano::Rasqal::QueryParser::emitSyntaxError( const Locator& locator, const QString& message )
 {
-    qDebug() << message;    
+    qDebug() << message;
 }
 
 #include "rasqalqueryparser.moc"
@@ -108,7 +108,7 @@ void Soprano::Rasqal::QueryParser::emitSyntaxError( const Locator& locator, cons
 
     // FIXME: set the right QueryObjects' PREFIX
     //raptor_sequence* prefixes = rasqal_query_get_prefix_sequence( rq );
-       
+
     // FIXME: set the QueryObject's query verb
     rasqal_query_verb query_verb = rasqal_query_get_verb( rq );
 
@@ -139,7 +139,7 @@ void Soprano::Rasqal::QueryParser::emitSyntaxError( const Locator& locator, cons
 
     // The top query graph pattern
     rasqal_graph_pattern* graph_pattern = rasqal_query_get_query_graph_pattern( rq );
-    
+
     rasqal_triple *triple = rasqal_graph_pattern_get_triple( graph_pattern, 0 );
 
     qDebug() << triple->subject->type << endl;
@@ -147,7 +147,7 @@ void Soprano::Rasqal::QueryParser::emitSyntaxError( const Locator& locator, cons
     qDebug() << triple->object->type << RASQAL_LITERAL_VARIABLE << endl;
 
     rasqal_graph_pattern_operator op = rasqal_graph_pattern_get_operator( graph_pattern );
-    qDebug() << op << endl; 
+    qDebug() << op << endl;
 
     rasqal_finish();
 

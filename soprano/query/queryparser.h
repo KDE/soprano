@@ -118,13 +118,13 @@ namespace Soprano {
 	     */
 	    virtual QStringList supportedUserQueryLanguages() const;
 
-    signals:
-        void syntaxError( Locator &locator, QString& message );
+	Q_SIGNALS:
+	    void syntaxError( Soprano::Locator &locator, QString& message );
 
 	protected:
 	    Parser( const QString& name );
 
-        void emitSyntaxError( Locator& locator, QString& message );
+	    void emitSyntaxError( Soprano::Locator& locator, QString& message );
 
 	private:
 	    class Private;
