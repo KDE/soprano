@@ -22,15 +22,22 @@
 #include <QtTest>
 #include <QDebug>
 
+#include "soprano/locator.h"
+#include "soprano/pluginmanager.h"
 #include "soprano/query/query.h"
 #include "soprano/query/queryparser.h"
-#include "soprano/query/rasqalqueryparser.h"
 
 #include "queryapitest.h"
 
+void QueryAPITest::syntaxErrorFounded( Soprano::Locator &locator, QString& message )
+{
+    qDebug() << message << locator.line() << locator.column() << endl;
+}
+
+
 void QueryAPITest::testQuery_1()
 {
-    Soprano::Query::Parser::QueryParser *parser = new Soprano::Query::Parser::RasqalQueryParser();
+    /*Soprano::Query::Parser::QueryParser *parser = new Soprano::Query::Parser::RasqalQueryParser();
 
     Soprano::Query::QueryObject *obj = parser->parseQuery(
          "SELECT ?title WHERE\
@@ -40,12 +47,12 @@ void QueryAPITest::testQuery_1()
     );
 
     delete parser;
-    delete obj;
+    delete obj;*/
 }
 
 void QueryAPITest::testQuery_2()
 {
-    Soprano::Query::Parser::QueryParser *parser = new Soprano::Query::Parser::RasqalQueryParser();
+    /*Soprano::Query::Parser::QueryParser *parser = new Soprano::Query::Parser::RasqalQueryParser();
 
     Soprano::Query::QueryObject *obj = parser->parseQuery(
         "PREFIX  dc:\ 
@@ -54,12 +61,12 @@ void QueryAPITest::testQuery_2()
     );
     
     delete parser;
-    delete obj;
+    delete obj;*/
 }
 
 void QueryAPITest::testQuery_3()
 {
-    Soprano::Query::Parser::QueryParser *parser = new Soprano::Query::Parser::RasqalQueryParser();
+    /*Soprano::Query::Parser::QueryParser *parser = new Soprano::Query::Parser::RasqalQueryParser();
 
     Soprano::Query::QueryObject *obj = parser->parseQuery(
         "PREFIX  dc:\
@@ -69,12 +76,12 @@ void QueryAPITest::testQuery_3()
     );
     
     delete parser;
-    delete obj;
+    delete obj;*/
 }
 
 void QueryAPITest::testQuery_4()
 {
-    Soprano::Query::Parser::QueryParser *parser = new Soprano::Query::Parser::RasqalQueryParser();
+    /*Soprano::Query::Parser::QueryParser *parser = new Soprano::Query::Parser::RasqalQueryParser();
 
     Soprano::Query::QueryObject *obj = parser->parseQuery(
         "BASE\    
@@ -84,7 +91,20 @@ void QueryAPITest::testQuery_4()
     );
 
     delete parser;
-    delete obj;
+    delete obj;*/
+}
+
+void QueryAPITest::testSyntaxError()
+{
+    Soprano::PluginManager *manager = Soprano::PluginManager::instance();
+
+    const Soprano::Query::Parser *parser = manager->discoverQueryParserByName( "rasqal" );
+    connect( parser, SIGNAL( syntaxError(Soprano::Locator &, QString&) ), 
+             this, SLOT( syntaxErrorFounded(Soprano::Locator &, QString& )));
+
+    parser->parseQuery( " select ?a where ; broken query ", Soprano::Query::QUERY_LANGUAGE_SPARQL );
+
+    delete manager;    
 }
 
 QTEST_MAIN(QueryAPITest)

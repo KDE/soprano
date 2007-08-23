@@ -286,7 +286,7 @@ void Soprano::PluginManager::loadPlugins( const QString& path )
                 d->querySerializers.insert( serializer->pluginName(), serializer );
             }
             else {
-                qDebug() << "(Soprano::PluginManager) found no backend plugin at " << loader.fileName() << endl;
+                qDebug() << "(Soprano::PluginManager) found no soprano plugin at " << loader.fileName() << plugin << endl;
                 delete plugin;
             }
         }

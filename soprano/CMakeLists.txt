@@ -57,6 +57,8 @@ SET(soprano_SRCS
     error.h
     literalvalue.cpp
     literalvalue.h
+    locator.cpp
+    locator.h
     datetime.cpp
     version.cpp
     filtermodel.h

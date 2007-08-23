@@ -24,16 +24,18 @@
 #define SOPRANO_QUERY_QUERYPARSER_H
 
 #include "soprano/plugin.h"
-#include "soprano/query/query.h"
 #include "soprano/sopranotypes.h"
 #include "soprano/soprano_export.h"
 
 #include <QtCore/QObject>
 
 namespace Soprano {
+
+    class Locator;
+
     namespace Query {
 
-	class Query;
+    class Query;
 
 	/**
 	 * \brief Soprano::Query::Parser defines the interface for a Soprano query parser plugin.
@@ -45,9 +47,8 @@ namespace Soprano {
 	 * is in fact a Backend plugin and export the plugin via the Q_EXPORT_PLUGIN2 macro.
 	 *
 	 * \code
-	 * class MyQueryParser : public QObject, public Soprano::Query::Parser
+	 * class MyQueryParser : public Soprano::Query::Parser
 	 * {
-	 *   Q_OBJECT
 	 *   Q_INTERFACES(Soprano::Query::Parser)
 	 *
 	 *  public:
@@ -65,8 +66,9 @@ namespace Soprano {
 	 *
 	 * \author Daniele Galdi <daniele.galdi@gmail.com><br>Sebastian Trueg <trueg@kde.org>
 	 */
-	class SOPRANO_EXPORT Parser : public Plugin
+	class SOPRANO_EXPORT Parser : public QObject, public Plugin
 	{
+    Q_OBJECT
 	public:
 	    virtual ~Parser();
 
@@ -81,7 +83,7 @@ namespace Soprano {
 	     *
 	     * \return A Query object representing the parsed %query or an empty invalid Query object.
 	     */
-	    virtual Query parseQuery( const QString &query, QueryLanguage lang, const QString& userQueryLanguage = QString() ) = 0;
+	    virtual Query parseQuery( const QString &query, QueryLanguage lang, const QString& userQueryLanguage = QString() ) const = 0;
 
 	    /**
 	     * A query parser can support different query languages.
@@ -116,8 +118,13 @@ namespace Soprano {
 	     */
 	    virtual QStringList supportedUserQueryLanguages() const;
 
+    signals:
+        void syntaxError( Locator &locator, QString& message );
+
 	protected:
 	    Parser( const QString& name );
+
+        void emitSyntaxError( Locator& locator, QString& message );
 
 	private:
 	    class Private;

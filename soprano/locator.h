@@ -1,4 +1,4 @@
-/* 
+/*
  * This file is part of Soprano Project.
  *
  * Copyright (C) 2007 Daniele Galdi <daniele.galdi@gmail.com>
@@ -19,27 +19,42 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef QUERY_API_TEST_H
-#define QUERY_API_TEST_H
+#ifndef SOPRANO_LOCATOR_H
+#define SOPRANO_LOCATOR_H
 
-#include <QObject>
 #include <QString>
+#include <QtCore/QSharedData>
 
-class Soprano::Locator;
-
-class QueryAPITest: public QObject
+namespace Soprano 
 {
-Q_OBJECT
-private slots:
-    void testQuery_1();    
-    void testQuery_2();    
-    void testQuery_3();    
-    void testQuery_4();
 
-    void testSyntaxError();
+    class Locator {
+    public:
+        Locator();
+        Locator( const Locator &other );
+        ~Locator();
 
-    void syntaxErrorFounded( Soprano::Locator &locator, QString& message );
+        Locator operator=( const Locator &other );
+
+        int line() const;
+        void setLine( int line );
+
+        int column() const;
+        void setColumn( int column );
+
+        int byte() const;
+        void setByte( int byte );
+
+        const QString fileName() const;
+        void setFileName( const QString& fileName );
+
+    private:
+        class Private;
+        QSharedDataPointer<Private> d;     
+    };
+
 };
 
-#endif // QUERY_API_TEST_H
+
+#endif // SOPRANO_LOCATOR_H
 

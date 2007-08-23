@@ -31,18 +31,24 @@ namespace Soprano {
 
     namespace Rasqal {
 
-            class SOPRANO_EXPORT QueryParser:  public QObject, public Soprano::Query::Parser {
-                Q_OBJECT                                                                                                                           
-                Q_INTERFACES(Soprano::Query::Parser)
+        class SOPRANO_EXPORT QueryParser : public Soprano::Query::Parser {
+        Q_OBJECT
+        Q_INTERFACES(Soprano::Query::Parser)
 
-            public:
-                QueryParser();
-                ~QueryParser();
+        public:
+            QueryParser();
+            ~QueryParser();
 
-                virtual Soprano::Query::Query parseQuery( const QString &query, Soprano::Query::QueryLanguage lang, const QString& userQueryLanguage = QString() );
+            virtual Soprano::Query::Query parseQuery( const QString &query, Soprano::Query::QueryLanguage lang, const QString& userQueryLanguage = QString() ) const;
 
-                virtual Soprano::Query::QueryLanguages supportedQueryLanguages() const;
-            };
+            virtual Soprano::Query::QueryLanguages supportedQueryLanguages() const;
+
+        protected:
+            virtual void emitSyntaxError( const Locator& locator, const QString& message );
+
+        private:
+            static void raptor_message_handler( void *query_parser, raptor_locator *rl, const char *msg );
+        };
         
     };
 };

@@ -19,11 +19,12 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#include "queryparser.h"
-#include "query.h"
-
 #include <QtCore/QStringList>
 
+#include "query.h"
+#include "../locator.h"
+
+#include "queryparser.h"
 
 class Soprano::Query::Parser::Private
 {
@@ -58,3 +59,10 @@ QStringList Soprano::Query::Parser::supportedUserQueryLanguages() const
 {
     return QStringList();
 }
+
+void Soprano::Query::Parser::emitSyntaxError( Locator& locator, QString& message )
+{
+    emit syntaxError( locator, message );
+}
+
+#include "queryparser.moc"
