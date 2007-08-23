@@ -66,7 +66,6 @@ private Q_SLOTS:
 protected:
   virtual Soprano::Model* createModel() = 0;
 
-private:
    Soprano::Statement* m_st1;
    Soprano::Statement* m_st2;
    Soprano::Statement* m_st3;

@@ -506,7 +506,6 @@ void SopranoModelTest::testCloseStatementIteratorOnModelDelete()
 
     delete model;
 
-    QVERIFY( !it.current().isValid() );
     QVERIFY( !it.next() );
 }
 

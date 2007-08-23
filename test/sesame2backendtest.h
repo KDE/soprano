@@ -32,6 +32,14 @@ class Sesame2BackendTest : public SopranoModelTest
 {
     Q_OBJECT
 
+private Q_SLOTS:
+    /**
+     * Sesame2's iterators have a close() method. The question is:
+     * do they any harm if they are not closed before other operations
+     * are done?
+     */
+    void testIteratorClose();
+
 protected:
     virtual Soprano::Model* createModel();
 };

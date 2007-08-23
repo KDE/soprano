@@ -52,7 +52,6 @@ public:
         }
     }
 
-    // only used for graph queries
     Iterator result;
 
     bool tupleResult;

@@ -24,6 +24,8 @@
 
 #include <soprano/storagemodel.h>
 
+#include <QtCore/QList>
+
 #include <jni.h>
 
 namespace Soprano {
@@ -46,7 +48,10 @@ namespace Soprano {
 	    bool containsStatements( const Statement &statement ) const;
 
 	private:
+	    void closeIterators() const;
+
 	    RepositoryWrapper* m_repository;
+	    mutable QList<jobject> m_openIterators;
 	};
     }
 }
