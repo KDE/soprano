@@ -38,7 +38,7 @@ private slots:
 
     void testSyntaxError();
 
-    void syntaxErrorFounded( Soprano::Locator &locator, QString& message );
+    void syntaxErrorFounded( const Soprano::Locator &locator, const QString& message );
 };
 
 #endif // QUERY_API_TEST_H

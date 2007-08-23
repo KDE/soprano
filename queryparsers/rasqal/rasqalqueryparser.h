@@ -43,11 +43,10 @@ namespace Soprano {
 
             virtual Soprano::Query::QueryLanguages supportedQueryLanguages() const;
 
-        protected:
-            virtual void emitSyntaxError( const Locator& locator, const QString& message );
-
         private:
             static void raptor_message_handler( void *query_parser, raptor_locator *rl, const char *msg );
+            
+            void emitSyntaxError( const Soprano::Locator& locator, const QString& message );
         };
         
     };

@@ -29,9 +29,9 @@
 
 #include "queryapitest.h"
 
-void QueryAPITest::syntaxErrorFounded( Soprano::Locator &locator, QString& message )
+void QueryAPITest::syntaxErrorFounded( const Soprano::Locator &locator, const QString& message )
 {
-    qDebug() << message << locator.line() << locator.column() << endl;
+    qDebug() << "(Soprano::Query::Parser)" << message << locator.line() << locator.column() << endl;
 }
 
 
@@ -99,8 +99,8 @@ void QueryAPITest::testSyntaxError()
     Soprano::PluginManager *manager = Soprano::PluginManager::instance();
 
     const Soprano::Query::Parser *parser = manager->discoverQueryParserByName( "rasqal" );
-    connect( parser, SIGNAL( syntaxError(Soprano::Locator &, QString&) ), 
-             this, SLOT( syntaxErrorFounded(Soprano::Locator &, QString& )));
+    connect( parser, SIGNAL( syntaxError(const Soprano::Locator &, const QString&) ), 
+             this, SLOT( syntaxErrorFounded(const Soprano::Locator &, const QString& )));
 
     parser->parseQuery( " select ?a where ; broken query ", Soprano::Query::QUERY_LANGUAGE_SPARQL );
 

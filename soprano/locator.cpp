@@ -23,7 +23,11 @@
 
 class Soprano::Locator::Private: public QSharedData {
 public:
-    Private() {};
+    Private()
+        : line(-1), 
+          column(-1), 
+          byte(-1) 
+    {};
 
     int line;
     int column;

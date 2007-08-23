@@ -119,12 +119,10 @@ namespace Soprano {
 	    virtual QStringList supportedUserQueryLanguages() const;
 
 	Q_SIGNALS:
-	    void syntaxError( Soprano::Locator &locator, QString& message );
+	    void syntaxError( const Soprano::Locator &locator, const QString& message );
 
 	protected:
 	    Parser( const QString& name );
-
-	    void emitSyntaxError( Soprano::Locator& locator, QString& message );
 
 	private:
 	    class Private;

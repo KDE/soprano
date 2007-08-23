@@ -45,31 +45,19 @@ Soprano::Rasqal::QueryParser::~QueryParser()
 
 Soprano::Query::Query Soprano::Rasqal::QueryParser::parseQuery( const QString &query, Soprano::Query::QueryLanguage lang, const QString& userQueryLanguage ) const
 {
-    // FIXME: Use the parameters
     rasqal_query *rq = rasqal_new_query( "sparql", (const unsigned char*)"http://www.w3.org/TR/rdf-sparql-query/" );
     if ( !rq )
     {
-        qDebug() << "ERROR!" << rq << endl;
-        // TODO: error during query creation
         return Soprano::Query::Query();
     }
 
     rasqal_query_set_fatal_error_handler( rq, const_cast<QueryParser*>( this ), raptor_message_handler );
-
-    /*if ( rasqal_query_prepare( rq, (unsigned char *)query.toLatin1().data(), NULL ) )
-    {
-        qDebug() << "SYNTAX ERROR!" << endl;
-        // TODO: error during query creation
-        return NULL;
-    }
-
-    // FIXME: Error handling
+    rasqal_query_set_error_handler( rq, const_cast<QueryParser*>( this ), raptor_message_handler );
+    
     if ( rasqal_query_prepare( rq, (unsigned char *)query.toLatin1().data(), NULL ) )
     {
-        qDebug() << "SYNTAX ERROR!" << endl;
-        // TODO: error during query creation
-        return NULL;
-    }*/
+        return Soprano::Query::Query();
+    }
 
     return Soprano::Query::Query();
 }
@@ -92,7 +80,7 @@ void Soprano::Rasqal::QueryParser::raptor_message_handler( void *query_parser, r
 
 void Soprano::Rasqal::QueryParser::emitSyntaxError( const Locator& locator, const QString& message )
 {
-    qDebug() << message;
+    emit syntaxError( locator, message );
 }
 
 #include "rasqalqueryparser.moc"

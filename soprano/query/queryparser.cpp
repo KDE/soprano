@@ -60,9 +60,4 @@ QStringList Soprano::Query::Parser::supportedUserQueryLanguages() const
     return QStringList();
 }
 
-void Soprano::Query::Parser::emitSyntaxError( Locator& locator, QString& message )
-{
-    emit syntaxError( locator, message );
-}
-
 #include "queryparser.moc"
