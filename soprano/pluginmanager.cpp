@@ -296,15 +296,25 @@ void Soprano::PluginManager::loadPlugins( const QString& path )
 }
 
 
-// FIXME: port to Q_GLOBAL_STATIC
+// dummy class for singleton creation
+class PluginManagerSingleton : public Soprano::PluginManager
+{
+public:
+    PluginManagerSingleton()
+        : Soprano::PluginManager( 0 ) {
+    }
+};
+
+Q_GLOBAL_STATIC( PluginManagerSingleton, pluginManagerInstance );
+
 Soprano::PluginManager* Soprano::PluginManager::instance()
 {
-    static PluginManager* s_instance = 0;
-    if( !s_instance ) {
-        s_instance = new PluginManager();
-        s_instance->loadAllPlugins();
+    static bool initialized = false;
+    if( !initialized ) {
+        initialized = true;
+        pluginManagerInstance()->loadAllPlugins();
     }
-    return s_instance;
+    return pluginManagerInstance();
 }
 
 #include "pluginmanager.moc"

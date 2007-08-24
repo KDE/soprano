@@ -34,6 +34,9 @@ namespace Soprano {
      *
      * Interface based on Sesame's RdfSchemaSource. ( Copyright © 2002-2006 Aduna BV, GNU LGPL License applies. )
      *
+     * \warning Backward inferencing has not been implemented yet. Thus, methods like subClassOf() return the same
+     * as directSubClassOf().
+     *
      * \author Sebastian Trueg <trueg@kde.org>
      */
     class RdfSchemaWrapper

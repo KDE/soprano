@@ -95,7 +95,6 @@ namespace Soprano
        */
       const Parser* discoverParserForSerialization( RdfSerialization serialization, const QString& userSerialization = QString() );
 
-
       /**
        * Find a serializer plugin by its name.
        *
@@ -170,9 +169,10 @@ namespace Soprano
 
       static PluginManager* instance();
 
-    private:
+    protected:
       PluginManager( QObject* parent = 0 );
 
+    private:
       void loadAllPlugins();
       void loadPlugins( const QString& path );
 

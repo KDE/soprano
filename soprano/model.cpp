@@ -123,8 +123,6 @@ Soprano::ErrorCode Soprano::Model::addStatements( StatementIterator iter )
 
 Soprano::ErrorCode Soprano::Model::addStatements( const QList<Statement> &statements )
 {
-    // FIXME: why not call add with an empty context here?
-
     QListIterator<Statement> iter(statements);
     while ( iter.hasNext() ) {
         ErrorCode c = addStatement( iter.next() );
