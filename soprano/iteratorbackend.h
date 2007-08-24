@@ -31,8 +31,7 @@ namespace Soprano {
      * \brief The actual work in a Iterator instance is done by an
      * IteratorBackend.
      *
-     * Implementations of IteratorBackend should close itself when the end is reached or
-     * on destruction.
+     * Implementations of IteratorBackend should close itself on destruction and when the end is reached.
      *
      * \author Daniele Galdi <daniele.galdi@gmail.com><br>Sebastian Trueg <trueg@kde.org>
      */

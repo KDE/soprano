@@ -34,31 +34,32 @@ namespace Soprano {
     /**
      * \brief The basic %Soprano iterator class.
      *
-     * Iteartors in %Soprano are very easy to use through two methods
+     * Iterators in %Soprano are very easy to use through two methods
      * next() and current(). Instead of the latter operator*() can also be used.
      * Both can be called subsequetially to retrieve the current element
      * until next() has been called again.
      *
      * \code
+     * Soprano::Iterator<X> it;
      * while( it.next() ) {
      *    doSomething( *it );
      *    doSomethingElse( it.current() );
      * }
      * \endcode
      *
-     * Backends such as redland tend to invalidate the iterators if
-     * the underlaying model is changed. Thus, it is always a good idea to cache
-     * the results if they are to be used to modify the model:
+     * Many backends do lock the underlying Model during iteration. Thus, 
+     * it is always a good idea to cache the results if they are to be used
+     * to modify the model:
      *
      * \code
-     * StatementIterator it = model->listStatements();
-     * QList<Statement> allStatements = it.allStatements();
-     * Q_FOREACH( Statement s, allStatements ) {
+     * Soprano::StatementIterator it = model->listStatements();
+     * QList<Statement> allStatements = it.allElements();
+     * Q_FOREACH( Soprano::Statement s, allStatements ) {
      *    modifyTheModel( model, s );
      * }
      * \endcode
      *
-     * Iterators in %Soprano may lock the underlying Model. Thus, they have to be closed.
+     * Also, Iterators have to be closed.
      * This can either be achieved by deleting the iterator, finishing it (next() does return \p false),
      * or calling close(). Before that other operations on the Model may block.
      *
@@ -93,15 +94,17 @@ namespace Soprano {
 	void close();
 
 	/**
-	 * Advances to the next statement in the iterator.
-	 *\return true if another Statement can be read from the iterator,
+	 * Advances to the next element in the iterator.
+	 *\return true if another element can be read from the iterator,
 	 * false if the end has been reached.
 	 */
 	bool next();
 
 	/**
-	 *\return the current element, this is not valid until after
-	 * the first call to next.
+	 * Get the element the iterator currently points to. Be aware that
+	 * a valid current element is only available if next() returned \p true.
+	 *
+	 *\return the current element.
 	 */
 	T current() const;
 
@@ -116,8 +119,8 @@ namespace Soprano {
 	T operator*() const;
 
 	/**
-	 * \return \p true if the Iterator is valid, \p false otherwise, i.e.
-	 * it has no backend .
+	 * \return \p true if the Iterator is valid, \p false otherwise. (An invalid iterator
+	 * has no backend.)
 	 */
 	bool isValid() const;
 
@@ -135,7 +138,7 @@ namespace Soprano {
     protected:
 	/**
 	 * Set the backend to read the actual data from.
-	 * A previous backend will be deleted if there are no other StatementIterator
+	 * A previous backend will be deleted if there are no other Iterator
 	 * instances using it.
 	 */
 	void setBackend( IteratorBackend<T>* b );

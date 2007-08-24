@@ -43,10 +43,21 @@ namespace Soprano {
      *
      * %Query results in %Soprano are wrapped in a QueryResultIterator.
      *
-     * Iteartors in %Soprano are very easy to use through the method
-     * next() and a set of retrieval methods such as currentStatement() or currentBindings().
-     * The retrieval methods can be called subsequetially to retrieve the current bindings or 
-     * statement until next() has been called again.
+     * %Query iterators are returned by Model::executeQuery(). In contrast to
+     * NodeIterator or StatementIterator %QueryResultIterator has a set of different
+     * access methods for the current dataset which can be one of three things:
+     *
+     * \li A Statement: Graph query results are represented as a stream of statements.
+     *     See also currentStatement() and iterateStatements().
+     * \li A BindingSet: Tuple query results are represented by a set of variable bindings
+     *     according to the variables used in the query. The bindings can be accessed as a set
+     *     through the normal Iterator method current() or separately through #binding(int) const or
+     *     #binding(const QString&) const.
+     * \li A boolean value: This is a special case in which the query was a boolean query
+     *     (a SPARQL ASK query). In this case there is nothing to iterate but only a single
+     *     boolean value which can be accessed through boolValue().
+     *
+     * <b>Example:</b>
      *
      * \code
      * QueryResultIterator it = model->query( someGraphQuery );
@@ -62,24 +73,10 @@ namespace Soprano {
      * }
      * \endcode
      *
-     * Backends such as redland tend to invalidate the iterators if
-     * the underlaying model is changed. Thus, it is always a good idea to cache
-     * the results if they are to be used to modify the model:
+     * For further details on %Soprano iterators see Iterator.
      *
-     * \code
-     * QueryResultIterator it = model->query( someTupleQuery );
-     * QList<BindingSet> allBindings = it.allBindings();
-     * Q_FOREACH( BindingSet s, allBindings ) {
-     *    modifyTheModel( model, s );
-     * }
-     * \endcode
-     *
-     * Iterators in %Soprano may lock the underlying Model. Thus, they have to be closed.
-     * This can either be achieved by deleting the iterator, finishing it (next() does return \p false),
-     * or calling close(). Before that other operations on the Model may block.
-     *
-     * \warning Backends such as redland tend to invalidate the iterators if
-     * the underlaying model is changed.
+     * \warning Be aware that iterators in Soprano are shared objects which means
+     * that copies of one iterator object work on the same data.
      *
      * \author Daniele Galdi <daniele.galdi@gmail.com><br>Sebastian Trueg <trueg@kde.org>
      */
@@ -175,7 +172,7 @@ namespace Soprano {
 	/**
 	 * Check if this is a tuple result.
 	 *
-	 * \return \true if this result refers to a tuple query, i.e. currentBindings(),
+	 * \return \p true if this result refers to a tuple query, i.e. currentBindings(),
 	 * binding(), bindingCount(), bindingNames(), and allBindings() return valid values.
 	 */
 	bool isBinding() const;
@@ -183,7 +180,7 @@ namespace Soprano {
 	/**
 	 * Check if this is a boolean result.
 	 *
-	 * \return \true if this result refers to a boolean query (SPARQL ASK), i.e.
+	 * \return \p true if this result refers to a boolean query (SPARQL ASK), i.e.
 	 * boolValue() returns a valid value.
 	 */
 	bool isBool() const;

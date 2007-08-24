@@ -37,33 +37,9 @@ namespace Soprano {
     /**
      * \brief An iterator that provides a stream of Nodes.
      *
-     * Iteartors in %Soprano are very easy to use through two methods
-     * next() and current(). Instead of the latter operator*() can also be used.
-     * Both can be called subsequetially to retrieve the current Node
-     * until next() has been called again.
+     * The most common use of StatementIterator is through Model::listContexts().
      *
-     * \code
-     * while( it.next() ) {
-     *    doSomething( *it );
-     *    doSomethingElse( it.current() );
-     * }
-     * \endcode
-     *
-     * Backends such as redland tend to invalidate the iterators if
-     * the underlaying model is changed. Thus, it is always a good idea to cache
-     * the results if they are to be used to modify the model:
-     *
-     * \code
-     * NodeIterator it = model->listContexts();
-     * QList<Node> allNodes = it.allNodes();
-     * Q_FOREACH( Node s, allNodes ) {
-     *    modifyTheModel( model, s );
-     * }
-     * \endcode
-     *
-     * Iterators in %Soprano may lock the underlying Model. Thus, they have to be closed.
-     * This can either be achieved by deleting the iterator, finishing it (next() does return \p false),
-     * or calling close(). Before that other operations on the Model may block.
+     * For further details on %Soprano iterators see Iterator.
      *
      * \warning Be aware that iterators in Soprano are shared objects which means
      * that copies of one iterator object work on the same data.
