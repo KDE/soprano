@@ -55,10 +55,15 @@ static QList<Statement> createTestData( const Statement& s, int num )
 class TestingThread : public QThread
 {
 public:
-    TestingThread( Model* m, const QString& name )
-        : m_model( m ),
+    TestingThread( const QString& name )
+        : m_model( 0 ),
           m_name( name ),
           m_success( true ) {
+    }
+
+    void start( Model* m ) {
+        m_model = m;
+        QThread::start();
     }
 
     bool verifyResult() {
@@ -93,8 +98,8 @@ private:
 class AddStatementTest : public TestingThread
 {
 public:
-    AddStatementTest( Model* m )
-        : TestingThread( m, "addStatement" ) {
+    AddStatementTest()
+        : TestingThread( "addStatement" ) {
     }
 
     bool performTest() {
@@ -113,6 +118,55 @@ public:
 };
 
 
+class RemoveStatementTest : public TestingThread
+{
+public:
+    RemoveStatementTest()
+        : TestingThread( "removeStatement" ) {
+    }
+
+    bool performTest() {
+        if ( model()->removeAllStatements() != ERROR_NONE )
+            return false;
+
+        return !model()->listStatements().next();
+    }
+};
+
+
+
+
+void MultiThreadingTest::startAllTests( Model* m )
+{
+    Q_FOREACH( QThread* t, m_testThreads ) {
+        dynamic_cast<TestingThread*>( t )->start( m );
+    }
+}
+
+
+void MultiThreadingTest::verifyAllTests()
+{
+    Q_FOREACH( QThread* t, m_testThreads ) {
+        QVERIFY( dynamic_cast<TestingThread*>( t )->verifyResult() );
+    }
+}
+
+
+void MultiThreadingTest::initTestCase()
+{
+    m_testThreads.append( new AddStatementTest() );
+    m_testThreads.append( new RemoveStatementTest() );
+}
+
+
+void MultiThreadingTest::cleanupTestCase()
+{
+    Q_FOREACH( QThread* t, m_testThreads ) {
+        delete t;
+    }
+}
+
+
 void MultiThreadingTest::testNodeIterator()
 {
     Model* model = createModel();
@@ -126,8 +180,7 @@ void MultiThreadingTest::testNodeIterator()
     NodeIterator it = model->listContexts();
 
     // we start the thread with an open iterator
-    AddStatementTest t1( model );
-    t1.start();
+    startAllTests( model );
 
     // now check the iterator, it should contain exactly those contexts that were in the
     // model when we called listContexts
@@ -135,7 +188,7 @@ void MultiThreadingTest::testNodeIterator()
     QCOMPARE( 1, allContexts.count() );
     QVERIFY( allContexts[0] == context );
 
-    QVERIFY( t1.verifyResult() );
+    verifyAllTests();
 
     delete model;
 }

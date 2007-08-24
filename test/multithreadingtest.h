@@ -33,10 +33,18 @@ class MultiThreadingTest : public QObject
 Q_OBJECT
 
 private Q_SLOTS:
+    void initTestCase();
     void testNodeIterator();
+    void cleanupTestCase();
 
 protected:
     virtual Soprano::Model* createModel() = 0;
+
+private:
+    void startAllTests( Soprano::Model* );
+    void verifyAllTests();
+
+    QList<QThread*> m_testThreads;
 };
 
 #endif
