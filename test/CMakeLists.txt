@@ -38,10 +38,14 @@ add_executable(redlandstitest StatementIteratorTest.cpp RedlandStatementIterator
 target_link_libraries(redlandstitest soprano ${QT_QTCORE_LIBRARY} ${QT_QTTEST_LIBRARY})
 add_test(redlandstitest ${EXECUTABLE_OUTPUT_PATH}/redlandstitest)
 
-# general model test
+# general model tests
 qt4_automoc(sopranotest SopranoModelTest.cpp)
 add_library(sopranomodeltest STATIC SopranoModelTest.cpp)
 target_link_libraries(sopranomodeltest soprano ${QT_QTCORE_LIBRARY} ${QT_QTTEST_LIBRARY})
+
+qt4_automoc(multithreadingtest multithreadingtest.cpp)
+add_library(multithreadingtest STATIC multithreadingtest.cpp)
+target_link_libraries(multithreadingtest soprano ${QT_QTCORE_LIBRARY} ${QT_QTTEST_LIBRARY})
 
 # redland model tests
 qt4_automoc(sopranommtest RedlandMemoryModelTest.cpp)
@@ -53,6 +57,11 @@ qt4_automoc(sopranopmtest RedlandPersistentModelTest.cpp)
 add_executable(sopranopmtest RedlandPersistentModelTest.cpp)
 target_link_libraries(sopranopmtest sopranomodeltest)
 add_test(sopranopmtest ${EXECUTABLE_OUTPUT_PATH}/sopranopmtest)
+
+qt4_automoc(redlandmultithreadtest redlandmultithreadtest.cpp)
+add_executable(redlandmultithreadtest redlandmultithreadtest.cpp)
+target_link_libraries(redlandmultithreadtest soprano multithreadingtest ${QT_QTCORE_LIBRARY} ${QT_QTTEST_LIBRARY})
+add_test(redlandmultithreadtest ${EXECUTABLE_OUTPUT_PATH}/redlandmultithreadtest)
 
 # 3Store model test
 qt4_automoc(tstoremodeltest 3storemodeltest.cpp)
@@ -96,11 +105,16 @@ add_executable(wstringtest wstringtest.cpp ../soprano/index/wstring.cpp)
 target_link_libraries(wstringtest ${QT_QTCORE_LIBRARY} ${QT_QTTEST_LIBRARY})
 add_test(wstringtest ${EXECUTABLE_OUTPUT_PATH}/wstringtest)
 
-# Sesame2 model test
+# Sesame2 model tests
 qt4_automoc(sesame2backendtest sesame2backendtest.cpp)
 add_executable(sesame2backendtest sesame2backendtest.cpp)
 target_link_libraries(sesame2backendtest soprano sopranomodeltest ${QT_QTCORE_LIBRARY} ${QT_QTTEST_LIBRARY})
 add_test(sesame2backendtest ${EXECUTABLE_OUTPUT_PATH}/sesame2backendtest)
+
+qt4_automoc(sesame2multithreadtest sesame2multithreadtest.cpp)
+add_executable(sesame2multithreadtest sesame2multithreadtest.cpp)
+target_link_libraries(sesame2multithreadtest soprano multithreadingtest ${QT_QTCORE_LIBRARY} ${QT_QTTEST_LIBRARY})
+add_test(sesame2multithreadtest ${EXECUTABLE_OUTPUT_PATH}/sesame2multithreadtest)
 
 # parser test
 qt4_automoc(parsertest parsertest.cpp)

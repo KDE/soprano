@@ -35,6 +35,8 @@ namespace Soprano {
      * The StorageModel implements some of the methods from Model which
      * may be equal for different backends.
      *
+     * \sa Backend::createModel()
+     *
      * \author Sebastian Trueg <trueg@kde.org>
      */
     class SOPRANO_EXPORT StorageModel : public Model

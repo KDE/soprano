@@ -138,6 +138,6 @@ namespace Soprano
     };
 }
 
-Q_DECLARE_INTERFACE(Soprano::Backend, "org.soprano.plugins.Backend/1.0")
+Q_DECLARE_INTERFACE(Soprano::Backend, "org.soprano.plugins.Backend/2.0")
 
 #endif

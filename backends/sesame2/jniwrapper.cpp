@@ -29,6 +29,7 @@
 #include <QtCore/QAtomic>
 #include <QtCore/QGlobalStatic>
 #include <QtCore/QDebug>
+#include <QtCore/QThread>
 
 
 class JNIWrapperFactory
@@ -46,6 +47,8 @@ class JNIWrapper::Private
 public:
     JavaVM* jvm;
     JNIEnv* jniEnv;
+
+    QHash<Qt::HANDLE, JNIEnv*> jniEnvMap;
 };
 
 
@@ -55,8 +58,8 @@ JNIWrapper::JNIWrapper()
     // prepare the VM options
     JavaVMInitArgs vmArgs;
     JavaVMOption vmOptions[2];
-    vmOptions[0].optionString = "-Djava.class.path="SESAME2_CLASSPATH;
-    vmOptions[1].optionString = "-verbose:jni,gc,class";
+    vmOptions[0].optionString = ( char* )"-Djava.class.path="SESAME2_CLASSPATH;
+    vmOptions[1].optionString = ( char* )"-verbose:jni,gc,class";
     vmArgs.version = JNI_VERSION_1_6;
     vmArgs.options = vmOptions;
     vmArgs.nOptions = 2;
@@ -66,6 +69,8 @@ JNIWrapper::JNIWrapper()
 
     Q_ASSERT( d->jvm );
     Q_ASSERT( d->jniEnv );
+
+    d->jniEnvMap[QThread::currentThreadId()] = d->jniEnv;
 }
 
 
@@ -84,7 +89,16 @@ JNIWrapper* JNIWrapper::instance()
 
 JNIEnv* JNIWrapper::env() const
 {
-    return d->jniEnv;
+    QHash<Qt::HANDLE, JNIEnv*>::const_iterator it = d->jniEnvMap.find( QThread::currentThreadId() );
+    if ( it == d->jniEnvMap.constEnd() ) {
+        JNIEnv* env = 0;
+        Q_ASSERT( d->jvm->AttachCurrentThreadAsDaemon( ( void** )&env, 0 ) == 0 );
+        d->jniEnvMap[QThread::currentThreadId()] = env;
+        return env;
+    }
+    else {
+        return *it;
+    }
 }
 
 
