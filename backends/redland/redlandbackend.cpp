@@ -85,7 +85,6 @@ Soprano::StorageModel* Soprano::Redland::BackendPlugin::createModel( const QList
 
     QString os = createRedlandOptionString( redlandOptions );
 
-    // FIXME: does this always work without a name
     qDebug() << "(Soprano::Redland::BackendPlugin) creating model of type " << storageType << " with options " << os << endl;
 
     // create a new storage

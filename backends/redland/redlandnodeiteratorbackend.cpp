@@ -40,9 +40,6 @@ Soprano::Redland::NodeIteratorBackend::NodeIteratorBackend( const RedlandModel* 
 
 Soprano::Redland::NodeIteratorBackend::~NodeIteratorBackend()
 {
-    if ( m_model ) {
-        m_model->removeIterator( this );
-    }
     close();
 }
 
@@ -56,7 +53,18 @@ bool Soprano::Redland::NodeIteratorBackend::next()
 
     m_initialized = true;
 
-    return ( m_iterator ? librdf_iterator_end( m_iterator ) == 0 : false );
+    if ( m_iterator ) {
+        if ( librdf_iterator_end( m_iterator ) ) {
+            close();
+            return false;
+        }
+        else {
+            return true;
+        }
+    }
+    else {
+        return false;
+    }
 }
 
 
@@ -82,6 +90,9 @@ void Soprano::Redland::NodeIteratorBackend::close()
     if( m_iterator ) {
         librdf_free_iterator( m_iterator );
         m_iterator = 0;
+    }
+    if ( m_model ) {
+        m_model->removeIterator( this );
     }
     m_model = 0;
 }

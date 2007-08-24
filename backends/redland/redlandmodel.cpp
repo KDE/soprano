@@ -154,7 +154,9 @@ Soprano::NodeIterator Soprano::Redland::RedlandModel::listContexts() const
         return 0;
     }
 
+    // second lock for the iterator itself
     NodeIteratorBackend* it = new NodeIteratorBackend( this, iter );
+    d->readWriteLock.lockForRead();
 
     d->nodeIterators.append( it );
 
@@ -204,7 +206,10 @@ Soprano::QueryResultIterator Soprano::Redland::RedlandModel::executeQuery( const
 
     librdf_free_query( q );
 
+    // second lock for the iterator itself
     RedlandQueryResult* result = new RedlandQueryResult( this, res );
+    d->readWriteLock.lockForRead();
+
     d->results.append( result );
 
     return QueryResultIterator( result );
@@ -226,7 +231,10 @@ Soprano::StatementIterator Soprano::Redland::RedlandModel::listStatements( const
         Util::freeNode( ctx );
 
         // see listStatements( Statement ) for details on the context hack
+        // second lock for the iterator itself
+        d->readWriteLock.lockForRead();
         RedlandStatementIterator* it = new RedlandStatementIterator( this, stream, partial.context() );
+
         d->iterators.append( it );
 
         return StatementIterator( it );
@@ -258,7 +266,10 @@ Soprano::StatementIterator Soprano::Redland::RedlandModel::listStatements( const
         Util::freeNode( ctx );
         Util::freeStatement( st );
 
+        // second lock for the iterator itself
+        d->readWriteLock.lockForRead();
         RedlandStatementIterator* it = new RedlandStatementIterator( this, stream, partial.context() );
+
         d->iterators.append( it );
 
         return StatementIterator( it );
@@ -317,12 +328,14 @@ Soprano::ErrorCode Soprano::Redland::RedlandModel::removeStatements( const State
 
     else if ( !statement.isValid() ||
               !statement.context().isValid() ) {
-        StatementIterator it  = listStatements( statement );
+        // FIXME: use redland streams for this
+        QList<Statement> statementsToRemove = listStatements( statement ).allStatements();
 
         QWriteLocker lock( &d->readWriteLock );
 
         int cnt = 0;
-        while ( it.next() ) {
+        for ( QList<Statement>::const_iterator it = statementsToRemove.constBegin();
+              it != statementsToRemove.constEnd(); ++it ) {
             ++cnt;
             ErrorCode error = removeStatement( *it );
             if ( error != ERROR_NONE ) {
@@ -380,16 +393,19 @@ Soprano::ErrorCode Soprano::Redland::RedlandModel::print() const
 void Soprano::Redland::RedlandModel::removeIterator( RedlandStatementIterator* it ) const
 {
     d->iterators.removeAll( it );
+    d->readWriteLock.unlock();
 }
 
 
 void Soprano::Redland::RedlandModel::removeIterator( Redland::NodeIteratorBackend* it ) const
 {
     d->nodeIterators.removeAll( it );
+    d->readWriteLock.unlock();
 }
 
 
 void Soprano::Redland::RedlandModel::removeQueryResult( RedlandQueryResult* r ) const
 {
     d->results.removeAll( r );
+    d->readWriteLock.unlock();
 }

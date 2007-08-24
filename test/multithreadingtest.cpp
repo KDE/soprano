@@ -173,25 +173,34 @@ void MultiThreadingTest::testNodeIterator()
     QVERIFY( model != 0 );
 
     // add some testdata with the same context
-    QUrl context = createRandomUri();
-    QList<Statement> data = createTestData( Statement( Node(), Node(), Node(), context ), 5 );
-    model->addStatements( data );
+    QUrl context1 = createRandomUri();
+    QUrl context2 = createRandomUri();
+    model->addStatements( createTestData( Statement( Node(), Node(), Node(), context1 ), 5 ) );
+    model->addStatements( createTestData( Statement( Node(), Node(), Node(), context2 ), 5 ) );
 
     NodeIterator it = model->listContexts();
 
     // we start the thread with an open iterator
     startAllTests( model );
 
+    // now wait little to give the threads some time to mess things up (in case we have a bug)
+    QTime t;
+    t.start();
+    while ( t.elapsed() < 200 );
+
     // now check the iterator, it should contain exactly those contexts that were in the
     // model when we called listContexts
     QList<Node> allContexts = it.allNodes();
-    QCOMPARE( 1, allContexts.count() );
-    QVERIFY( allContexts[0] == context );
+    it.close();
+    StatementIterator it2 = model->listStatements();
+    it2.close();
+    QCOMPARE( allContexts.count(), 2 );
+    QVERIFY( allContexts.contains( context1 ) );
+    QVERIFY( allContexts.contains( context2 ) );
 
     verifyAllTests();
 
     delete model;
 }
-
 
 #include "multithreadingtest.moc"

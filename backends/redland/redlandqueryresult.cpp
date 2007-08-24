@@ -71,7 +71,6 @@ Soprano::Redland::RedlandQueryResult::RedlandQueryResult( const RedlandModel* mo
 
 Soprano::Redland::RedlandQueryResult::~RedlandQueryResult()
 {
-    d->model->removeQueryResult( this );
     delete d;
 }
 
@@ -85,6 +84,9 @@ void Soprano::Redland::RedlandQueryResult::close()
             d->stream = 0;
         }
         d->result = 0;
+    }
+    if ( d->model ) {
+        d->model->removeQueryResult( this );
     }
     d->model = 0;
 }
@@ -108,6 +110,10 @@ bool Soprano::Redland::RedlandQueryResult::next()
             d->first = false;
         }
 
+        if ( !hasNext ) {
+            close();
+        }
+
         return hasNext;
     }
     else if ( isGraph() ) {
@@ -117,7 +123,13 @@ bool Soprano::Redland::RedlandQueryResult::next()
         }
 
         if ( d->stream ) {
-            return librdf_stream_end( d->stream ) == 0;
+            if ( librdf_stream_end( d->stream ) ) {
+                close();
+                return false;
+            }
+            else {
+                return true;
+            }
         }
         else {
             // we cannot reuse a result and it has already been used in model()

@@ -42,9 +42,6 @@ Soprano::Redland::RedlandStatementIterator::RedlandStatementIterator( const Redl
 
 Soprano::Redland::RedlandStatementIterator::~RedlandStatementIterator()
 {
-    if ( m_model ) {
-        m_model->removeIterator( this );
-    }
     close();
 }
 
@@ -58,7 +55,18 @@ bool Soprano::Redland::RedlandStatementIterator::next()
 
     m_initialized = true;
 
-    return ( m_stream ? librdf_stream_end( m_stream ) == 0 : false );
+    if ( m_stream ) {
+        if ( librdf_stream_end( m_stream ) ) {
+            close();
+            return false;
+        }
+        else {
+            return true;
+        }
+    }
+    else {
+        return false;
+    }
 }
 
 
@@ -92,6 +100,9 @@ void Soprano::Redland::RedlandStatementIterator::close()
     if( m_stream ) {
         librdf_free_stream( m_stream );
         m_stream = 0;
+    }
+    if ( m_model ) {
+        m_model->removeIterator( this );
     }
     m_model = 0;
 }

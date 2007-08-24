@@ -242,6 +242,7 @@ template<typename T> QList<T> Soprano::Iterator<T>::allElements()
     while ( next() ) {
         sl.append( current() );
     }
+    close();
     return sl;
 }
 

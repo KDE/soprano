@@ -30,8 +30,7 @@ Soprano::Model* TStoreModelTest::createModel()
 {
     const Soprano::Backend* b = Soprano::discoverBackendByName( "3store" );
     Q_ASSERT( b != 0 );
-    Soprano::setUsedBackend( b );
-    return Soprano::createModel();
+    return b->createModel();
 }
 
 QTEST_MAIN(TStoreModelTest)
