@@ -195,12 +195,6 @@ namespace Soprano {
 	bool boolValue() const;
 
 	/**
-	 * \return \p true if the Iterator is valid, \p false otherwise, i.e.
-	 * it has no backend .
-	 */
-	bool isValid() const;
-
-	/**
 	 * Convinience method that collects all binding sets that are left
 	 * in the iterator.
 	 */
