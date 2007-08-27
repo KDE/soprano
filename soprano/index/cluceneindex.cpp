@@ -437,23 +437,8 @@ Soprano::Error::ErrorCode Soprano::Index::CLuceneIndex::removeStatement( const S
     lucene::document::Document* document = documentForResource( statement.subject() );
     if ( document ) {
         try {
-            // copy the whole document except for the field to remove (FIXME: move this to the model and use the RDF store to get the stored values)
-            lucene::document::Document* newDoc = _CLNEW lucene::document::Document;
-            CLuceneDocumentWrapper docWrapper( newDoc );
-            WString fieldName = statement.predicate().toString();
-            WString fieldValue = statement.object().toString();
-            lucene::document::DocumentFieldEnumeration* fields = document->fields();
-            while ( fields->hasMoreElements() ) {
-                lucene::document::Field* field = fields->nextElement();
-                if ( WString( field->name(), true ) != fieldName && WString( field->stringValue(), true ) != fieldValue ) {
-                    docWrapper.addProperty( field->name(), field->stringValue() );
-                }
-            }
-
-            // now remove the old doc
-            _CLDELETE( document );
-            d->documentCache[statement.subject()] = newDoc;
-
+            CLuceneDocumentWrapper docWrapper( document );
+            docWrapper.removeProperty( statement.predicate().toString(), statement.object().toString() );
             success = true;
         }
         catch( CLuceneError& err ) {

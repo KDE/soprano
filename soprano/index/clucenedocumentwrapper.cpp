@@ -88,7 +88,7 @@ void Soprano::Index::CLuceneDocumentWrapper::removeProperty( const WString& fiel
     }
 
     // step 2: remove the field from the text index
-    d->document->removeField( textFieldName().data() );
+    d->document->removeFields( textFieldName().data() );
 
     lucene::document::DocumentFieldEnumeration* e = d->document->fields();
     while ( e->hasMoreElements() ) {
