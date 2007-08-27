@@ -36,9 +36,10 @@ class IndexTest: public QObject
   Q_OBJECT
 
 private Q_SLOTS:
-    void initTestCase();
+    void init();
     void testAddStatement();
-    void cleanupTestCase();
+    void testRemoveStatement();
+    void cleanup();
 
 private:
     Soprano::Model* m_model;

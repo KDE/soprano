@@ -37,7 +37,7 @@ using namespace Soprano;
 using namespace Soprano::Index;
 
 
-void IndexTest::initTestCase()
+void IndexTest::init()
 {
     // create any memory model
     QList<BackendSetting> settings;
@@ -54,7 +54,7 @@ void IndexTest::initTestCase()
 }
 
 
-void IndexTest::cleanupTestCase()
+void IndexTest::cleanup()
 {
     delete m_indexModel;
     delete m_model;
@@ -83,9 +83,6 @@ void IndexTest::testAddStatement()
     QVERIFY( m_indexModel->addStatement( s2 ) == Error::ERROR_NONE );
     QVERIFY( m_indexModel->containsStatements( s2 ) );
 
-    QTextStream s( stderr );
-    m_indexModel->index()->dump( s );
-
     // check the previous one again to make sure the index is not borked
     hits = m_indexModel->index()->search( "Hello World" );
     QVERIFY( hits != 0 );
@@ -100,6 +97,39 @@ void IndexTest::testAddStatement()
     QCOMPARE( WString( hits->doc( 0 ).get( L"id" ) ), WString( s2.subject().toString() ) );
     _CLDELETE( hits );
 }
+
+
+void IndexTest::testRemoveStatement()
+{
+    QTextStream s( stderr );
+
+    // first add something
+    Statement s1( QUrl( "http://soprano.sf.net/test#A" ),
+                  QUrl( "http://soprano.sf.net/test#valueX" ),
+                  LiteralValue( "Hello World" ) );
+    Statement s2( QUrl( "http://soprano.sf.net/test#A" ),
+                  QUrl( "http://soprano.sf.net/test#valueY" ),
+                  LiteralValue( "Wurst" ) );
+
+    QVERIFY( m_indexModel->addStatement( s1 ) == Error::ERROR_NONE );
+    QVERIFY( m_indexModel->containsStatements( s1 ) );
+    m_indexModel->index()->dump( s );
+    QVERIFY( m_indexModel->addStatement( s2 ) == Error::ERROR_NONE );
+    QVERIFY( m_indexModel->containsStatements( s2 ) );
+
+    m_indexModel->index()->dump( s );
+
+    // now remove one of them
+    QVERIFY( m_indexModel->removeStatements( s1 ) == Error::ERROR_NONE );
+
+    m_indexModel->index()->dump( s );
+
+    // now make sure that the index does not contain it anymore
+    lucene::search::Hits* hits = m_indexModel->index()->search( "Hello World" );
+    QVERIFY( hits != 0 );
+    QCOMPARE( hits->length(), 0 );
+}
+
 
 QTEST_MAIN( IndexTest );
 

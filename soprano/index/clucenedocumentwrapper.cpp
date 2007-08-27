@@ -68,6 +68,36 @@ void Soprano::Index::CLuceneDocumentWrapper::addProperty( const WString& field, 
 }
 
 
+void Soprano::Index::CLuceneDocumentWrapper::removeProperty( const WString& field, const WString& text )
+{
+    // clucene does not allow to remove a specific field/value combination. Thus,
+    // we have to do a little hackling and re-add everything except our property (could we maybe just get these from the RDF model?)
+
+    // step 1: remove the field itself
+    TCHAR** values = d->document->getValues( field.data() );
+    if ( values ) {
+        d->document->removeFields( field.data() );
+
+        // now copy the ones that we want to preserve back
+        for ( int i = 0; values[i]; ++i ) {
+            WString value( values[i], true );
+            if ( value != text ) {
+                addProperty( field, values[i] );
+            }
+        }
+    }
+
+    // step 2: remove the field from the text index
+    d->document->removeField( textFieldName().data() );
+
+    lucene::document::DocumentFieldEnumeration* e = d->document->fields();
+    while ( e->hasMoreElements() ) {
+        lucene::document::Field* field = e->nextElement();
+        d->document->add( *new Field( textFieldName().data(), field->stringValue(), /*false, true, true*/ Field::STORE_NO|Field::INDEX_TOKENIZED|Field::TERMVECTOR_YES ) );
+    }
+}
+
+
 bool Soprano::Index::CLuceneDocumentWrapper::hasProperty( const QString& field, const QString& text ) const
 {
     WString wText( text );

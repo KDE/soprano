@@ -37,7 +37,7 @@ namespace Soprano {
     /**
      * \brief An iterator that provides a stream of Nodes.
      *
-     * The most common use of StatementIterator is through Model::listContexts().
+     * The most common use of %NodeIterator is through Model::listContexts().
      *
      * For further details on %Soprano iterators see Iterator.
      *

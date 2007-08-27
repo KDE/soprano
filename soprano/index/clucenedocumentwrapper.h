@@ -49,6 +49,7 @@ namespace Soprano {
 	    ~CLuceneDocumentWrapper();
 
 	    void addProperty( const WString& field, const WString& text );
+	    void removeProperty( const WString& field, const WString& text );
 	
 	    /**
 	     * Checks whether a field occurs with a specified value in a Document.

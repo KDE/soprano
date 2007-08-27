@@ -87,7 +87,7 @@ public:
         if ( !indexWriter ) {
             try {
                 closeReader();
-                indexWriter = new lucene::index::IndexWriter( indexDir, analyzer, !indexPresent() );
+                indexWriter = _CLNEW lucene::index::IndexWriter( indexDir, analyzer, !indexPresent() );
             }
             catch( CLuceneError& err ) {
                 qDebug() << "(Soprano::Index::CLuceneIndex) could not create index writer " << err.what();
@@ -100,7 +100,7 @@ public:
     lucene::search::Searcher* getIndexSearcher() {
         if ( !searcher ) {
             closeWriter();
-            searcher = new lucene::search::IndexSearcher( indexDir );
+            searcher = _CLNEW lucene::search::IndexSearcher( indexDir );
         }
         return searcher;
     }
@@ -114,7 +114,7 @@ public:
             catch ( CLuceneError& err ) {
                 qDebug() << "(Soprano::Index::CLuceneIndex) could not close index seacher " << err.what();
             }
-            delete searcher;
+            _CLDELETE( searcher );
             searcher = 0;
         }
         if ( indexReader ) {
@@ -124,7 +124,7 @@ public:
             catch ( CLuceneError& err ) {
                 qDebug() << "(Soprano::Index::CLuceneIndex) could not close index reader " << err.what();
             }
-            delete indexReader;
+            _CLDELETE( indexReader );
             indexReader = 0;
         }
     }
@@ -137,7 +137,7 @@ public:
             catch( CLuceneError& err ) {
                 qDebug() << "(Soprano::Index::CLuceneError) unable to close IndexWriter: " << err.what();
             }
-            delete indexWriter;
+            _CLDELETE( indexWriter );
             indexWriter = 0;
         }
     }
@@ -180,7 +180,7 @@ Soprano::Index::CLuceneIndex::CLuceneIndex( lucene::analysis::Analyzer* analyzer
 {
     d->analyzer = analyzer;
     if ( !d->analyzer ) {
-        d->analyzer = new lucene::analysis::SimpleAnalyzer();
+        d->analyzer = _CLNEW lucene::analysis::SimpleAnalyzer();
         d->deleteAnalyzer = true;
     }
 }
@@ -191,7 +191,7 @@ Soprano::Index::CLuceneIndex::~CLuceneIndex()
     close();
 
     if ( d->deleteAnalyzer ) {
-        delete d->analyzer;
+        _CLDELETE( d->analyzer );
     }
     delete d;
 }
@@ -231,8 +231,6 @@ void Soprano::Index::CLuceneIndex::close()
 {
     d->closeReader();
     d->closeWriter();
-
-    _CLDELETE( d->indexDir );
 }
 
 
@@ -261,7 +259,7 @@ lucene::document::Document* Soprano::Index::CLuceneIndex::documentForResource( c
         lucene::document::Document* document = 0;
         try {
             // step 1: create a new document
-            document = new lucene::document::Document;
+            document = _CLNEW lucene::document::Document;
             CLuceneDocumentWrapper docWrapper( document );
             docWrapper.addID( id );
 
@@ -439,25 +437,23 @@ Soprano::Error::ErrorCode Soprano::Index::CLuceneIndex::removeStatement( const S
     lucene::document::Document* document = documentForResource( statement.subject() );
     if ( document ) {
         try {
-            // determine the values used in the index for this triple
+            // copy the whole document except for the field to remove (FIXME: move this to the model and use the RDF store to get the stored values)
+            lucene::document::Document* newDoc = _CLNEW lucene::document::Document;
+            CLuceneDocumentWrapper docWrapper( newDoc );
             WString fieldName = statement.predicate().toString();
-            WString text = statement.object().toString();
-
-            // clucene does not allow to remove a specific field/value combination. Thus,
-            // we have to do a little hackling
-            TCHAR** values = document->getValues( fieldName.data() );
-            if ( values ) {
-                document->removeFields( fieldName.data() );
-
-                // now copy the ones that we want to preserve back
-                CLuceneDocumentWrapper docWrapper( document );
-                for ( int i = 0; values[i]; ++i ) {
-                    WString value( values[i], true );
-                    if ( value != text ) {
-                        docWrapper.addProperty( fieldName, values[i] );
-                    }
+            WString fieldValue = statement.object().toString();
+            lucene::document::DocumentFieldEnumeration* fields = document->fields();
+            while ( fields->hasMoreElements() ) {
+                lucene::document::Field* field = fields->nextElement();
+                if ( WString( field->name(), true ) != fieldName && WString( field->stringValue(), true ) != fieldValue ) {
+                    docWrapper.addProperty( field->name(), field->stringValue() );
                 }
             }
+
+            // now remove the old doc
+            _CLDELETE( document );
+            d->documentCache[statement.subject()] = newDoc;
+
             success = true;
         }
         catch( CLuceneError& err ) {
