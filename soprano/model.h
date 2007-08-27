@@ -60,9 +60,28 @@ namespace Soprano
      * Model* memModel = Soprano::createModel();
      * \endcode
      *
+     * <b>%Error handling:</b>
+     *
+     * Model is based on %Soprano's own error handling system which tries to emulate exceptions to a certain extend.
+     * Most methods in Model have a means of reporting if an operation was successful or not. For additional error
+     * information Model inherits ErrorCache which provides the method lastError().
+     *
+     * Thus, advanced error handling would look as follows:
+     *
+     * \code
+     * Soprano::Model* model = Soprano::createModel();
+     * Soprano::Statement invalidStatement;
+     * if( model->addStatement( invalidStatement ) != Error::ERROR_NONE ) {
+     *    showErrorMessage( model->lastError().message() );
+     * }
+     * \endcode
+     *
+     * Model is thread-safe when used with a thread-safe backend (all "official" %Soprano backends are thread-safe).
+     * However, it is recommended to create Model instances in the main thread.
+     *
      * \author Daniele Galdi <daniele.galdi@gmail.com><br>Sebastian Trueg <trueg@kde.org>
      */
-    class SOPRANO_EXPORT Model : public QObject
+    class SOPRANO_EXPORT Model : public QObject, public Error::ErrorCache
     {
 	Q_OBJECT
 
@@ -74,22 +93,22 @@ namespace Soprano
 	 *
 	 * \param statement The Statement to add.
 	 */
-	virtual ErrorCode addStatement( const Statement &statement ) = 0;
+	virtual Error::ErrorCode addStatement( const Statement &statement ) = 0;
 
 	/**
 	 * Convinience method which adds all statements in model to this Model.
 	 */
-	ErrorCode addModel( const Model &model );
+	Error::ErrorCode addModel( const Model &model );
 
 	/**
 	 * Convinience method which adds all statements in iter to this Model.
 	 */
-	ErrorCode addStatements( StatementIterator iter );
+	Error::ErrorCode addStatements( StatementIterator iter );
 
 	/**
 	 * Convinience method which adds all %statements in statements to this Model.
 	 */
-	ErrorCode addStatements( const QList<Statement> &statements );
+	Error::ErrorCode addStatements( const QList<Statement> &statements );
 
 	/**
 	 * \return true if the Model doesn't contains any Statement.
@@ -180,27 +199,26 @@ namespace Soprano
 	 * \param statement A possible partially defined statement that serves as
 	 * a filter for all statements that should be removed.
 	 */
-	virtual ErrorCode removeStatements( const Statement &statement ) = 0;
+	virtual Error::ErrorCode removeStatements( const Statement &statement ) = 0;
 
 	/**
 	 * Convinience method which removes all %statements in statements.
 	 */
-	ErrorCode removeStatements( const QList<Statement> &statements );
+	Error::ErrorCode removeStatements( const QList<Statement> &statements );
 
         /**
 	 * Convinience method that removes all statements in the context.
 	 */
-	ErrorCode removeContext( const Node& );
+	Error::ErrorCode removeContext( const Node& );
 
 	/**
 	 * Convinience method that clear the Model of all statements
 	 */
-	ErrorCode removeAllStatements();
+	Error::ErrorCode removeAllStatements();
 
 	/**
 	 * The number of statements stored in this Model.
-	 * \return The size of the Model. 
-	 *         -1 if not supported.
+	 * \return The size of the Model, or -1 on error.
 	 */
 	virtual int statementCount() const = 0;
 
@@ -209,14 +227,14 @@ namespace Soprano
 	 *
 	 * Default implementation is based on Model::listStatements
 	 */
-	virtual ErrorCode write( QTextStream &os ) const;
+	virtual Error::ErrorCode write( QTextStream &os ) const;
 
 	/**
 	 * Print all statements in this Model to stdout.
 	 *
 	 * Default implementation is based on Model::write
 	 */
-	virtual ErrorCode print() const;
+	virtual Error::ErrorCode print() const;
 	
     signals:
 	/**

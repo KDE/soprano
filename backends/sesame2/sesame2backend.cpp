@@ -39,6 +39,8 @@ Soprano::Sesame2::BackendPlugin::BackendPlugin()
 
 Soprano::StorageModel* Soprano::Sesame2::BackendPlugin::createModel( const QList<BackendSetting>& settings ) const
 {
+    clearError();
+
     QString path;
     bool memory = false;
 
@@ -80,8 +82,12 @@ Soprano::StorageModel* Soprano::Sesame2::BackendPlugin::createModel( const QList
             return new Model( this, repo );
         }
         else {
+            setError( JNIWrapper::instance()->convertAndClearException() );
             delete repo;
         }
+    }
+    else {
+        setError( JNIWrapper::instance()->convertAndClearException() );
     }
 
     return 0;

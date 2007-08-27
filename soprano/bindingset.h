@@ -107,7 +107,7 @@ namespace Soprano {
 	/**
 	 * Check if a certain variable has a binding in this set.
 	 *
-	 * \param The variable name.
+	 * \param name The variable name.
 	 *
 	 * \return \p true if this set contains a binding for the 
 	 * variable name, \p false otherwise.

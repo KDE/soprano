@@ -40,6 +40,7 @@
 #include <QtCore/QDebug>
 
 
+
 Soprano::Sesame2::Model::Model( const Backend* backend, RepositoryWrapper* repo )
     : Soprano::StorageModel( backend ),
       m_repository( repo )
@@ -54,34 +55,37 @@ Soprano::Sesame2::Model::~Model()
 }
 
 
-Soprano::ErrorCode Soprano::Sesame2::Model::addStatement( const Statement &statement )
+Soprano::Error::ErrorCode Soprano::Sesame2::Model::addStatement( const Statement &statement )
 {
+    clearError();
     if ( jobject sesameStatement = m_repository->valueFactory()->convertStatement( statement ) ) {
         m_repository->repositoryConnection()->addStatement( sesameStatement );
         if ( JNIWrapper::instance()->exceptionOccured() ) {
             qDebug() << "(Soprano::Sesame2::Model::addStatements) failed.";
-            JNIWrapper::instance()->debugException();
-            return ERROR_UNKNOW;
+            setError( JNIWrapper::instance()->convertAndClearException() );
+            return Error::ERROR_UNKNOWN;
         }
         else {
-            return ERROR_NONE;
+            return Error::ERROR_NONE;
         }
     }
     else {
-        return ERROR_UNKNOW;
+        return Error::ERROR_UNKNOWN;
     }
 }
 
 
 Soprano::NodeIterator Soprano::Sesame2::Model::listContexts() const
 {
+    clearError();
+
     QList<Soprano::Node> contexts;
 
     jobject ids = m_repository->repositoryConnection()->getContextIDs();
 
     if ( JNIWrapper::instance()->exceptionOccured() ) {
         qDebug() << "(Soprano::Sesame2::Model::listContexts) failed.";
-        JNIWrapper::instance()->debugException();
+        setError( JNIWrapper::instance()->convertAndClearException() );
         return NodeIterator();
     }
     else {
@@ -93,7 +97,10 @@ Soprano::NodeIterator Soprano::Sesame2::Model::listContexts() const
 
 Soprano::QueryResultIterator Soprano::Sesame2::Model::executeQuery( const QueryLegacy &query ) const
 {
+    clearError();
+
     if ( query.type() != Soprano::QueryLegacy::SPARQL ) {
+        setError( Error::Error( "Unsupported query language." ) );
         return QueryResultIterator();
     }
 
@@ -111,7 +118,7 @@ Soprano::QueryResultIterator Soprano::Sesame2::Model::executeQuery( const QueryL
         return new QueryResultIteratorBackend( queryResult );
     }
     else {
-        JNIWrapper::instance()->debugException();
+        setError( JNIWrapper::instance()->convertAndClearException() );
         return QueryResultIterator();
     }
 }
@@ -119,6 +126,8 @@ Soprano::QueryResultIterator Soprano::Sesame2::Model::executeQuery( const QueryL
 
 Soprano::StatementIterator Soprano::Sesame2::Model::listStatements( const Statement& statement ) const
 {
+    clearError();
+
     jobject results = m_repository->repositoryConnection()->getStatements( m_repository->valueFactory()->convertNode( statement.subject() ),
                                                                            m_repository->valueFactory()->convertNode( statement.predicate() ),
                                                                            m_repository->valueFactory()->convertNode( statement.object() ),
@@ -126,7 +135,7 @@ Soprano::StatementIterator Soprano::Sesame2::Model::listStatements( const Statem
 
     if ( JNIWrapper::instance()->exceptionOccured() ) {
         qDebug() << "(Soprano::Sesame2::Model::listStatements) failed.";
-        JNIWrapper::instance()->debugException();
+        setError( JNIWrapper::instance()->convertAndClearException() );
         return StatementIterator();
     }
     else {
@@ -136,8 +145,10 @@ Soprano::StatementIterator Soprano::Sesame2::Model::listStatements( const Statem
 }
 
 
-Soprano::ErrorCode Soprano::Sesame2::Model::removeStatements( const Statement &statement )
+Soprano::Error::ErrorCode Soprano::Sesame2::Model::removeStatements( const Statement &statement )
 {
+    clearError();
+
     // we are not using convertStatement here since we support wildcards
     m_repository->repositoryConnection()->remove( m_repository->valueFactory()->convertNode( statement.subject() ),
                                                   m_repository->valueFactory()->convertNode( statement.predicate() ),
@@ -145,22 +156,32 @@ Soprano::ErrorCode Soprano::Sesame2::Model::removeStatements( const Statement &s
                                                   m_repository->valueFactory()->convertNode( statement.context() ) );
     if ( JNIWrapper::instance()->exceptionOccured() ) {
         qDebug() << "(Soprano::Sesame2::Model::removeStatements) failed.";
-        JNIWrapper::instance()->debugException();
-        return ERROR_UNKNOW;
+        setError( JNIWrapper::instance()->convertAndClearException() );
+        return Error::ERROR_UNKNOWN;
     }
 
-    return ERROR_NONE;
+    return Error::ERROR_NONE;
 }
 
 
 int Soprano::Sesame2::Model::statementCount() const
 {
-    return m_repository->repositoryConnection()->size();
+    clearError();
+    int size = m_repository->repositoryConnection()->size();
+    if ( JNIWrapper::instance()->exceptionOccured() ) {
+        setError( JNIWrapper::instance()->convertAndClearException() );
+        return -1;
+    }
+    else {
+        return size;
+    }
 }
 
 
 bool Soprano::Sesame2::Model::containsStatements( const Statement &statement ) const
 {
+    clearError();
+
     // we are not using convertStatement here since we support wildcards
     bool r = m_repository->repositoryConnection()->hasStatement( m_repository->valueFactory()->convertNode( statement.subject() ),
                                                                  m_repository->valueFactory()->convertNode( statement.predicate() ),
@@ -168,7 +189,7 @@ bool Soprano::Sesame2::Model::containsStatements( const Statement &statement ) c
                                                                  m_repository->valueFactory()->convertNode( statement.context() ) );
     if ( JNIWrapper::instance()->exceptionOccured() ) {
         qDebug() << "(Soprano::Sesame2::Model::containsStatements) failed.";
-        JNIWrapper::instance()->debugException();
+        setError( JNIWrapper::instance()->convertAndClearException() );
         return false;
     }
     return r;

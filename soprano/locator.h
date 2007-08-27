@@ -27,34 +27,38 @@
 
 namespace Soprano 
 {
+    namespace Error {
+	/**
+	 * A Locator object provides additional information about
+	 * parsing errors.
+	 */
+	class Locator {
+	public:
+	    Locator();
+	    Locator( int line, int column, int byte = -1, const QString& filename = QString() );
+	    Locator( const Locator &other );
+	    ~Locator();
 
-    class Locator {
-    public:
-        Locator();
-        Locator( const Locator &other );
-        ~Locator();
+	    Locator& operator=( const Locator &other );
 
-        Locator operator=( const Locator &other );
+	    int line() const;
+	    void setLine( int line );
 
-        int line() const;
-        void setLine( int line );
+	    int column() const;
+	    void setColumn( int column );
 
-        int column() const;
-        void setColumn( int column );
+	    int byte() const;
+	    void setByte( int byte );
 
-        int byte() const;
-        void setByte( int byte );
+	    QString fileName() const;
+	    void setFileName( const QString& fileName );
 
-        const QString fileName() const;
-        void setFileName( const QString& fileName );
-
-    private:
-        class Private;
-        QSharedDataPointer<Private> d;     
-    };
-
-};
-
+	private:
+	    class Private;
+	    QSharedDataPointer<Private> d;     
+	};
+    }
+}
 
 #endif // SOPRANO_LOCATOR_H
 

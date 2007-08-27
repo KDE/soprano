@@ -39,31 +39,31 @@
 namespace Soprano {
     /**
      * @brief Returns the major number of Soprano's version, e.g.
-     * 1 for Soprano 1.0.2. 
+     * 1 for %Soprano 1.0.2. 
      * @return the major version number at runtime.
      */
     SOPRANO_EXPORT unsigned int versionMajor();
 
     /**
      * @brief Returns the minor number of Soprano's version, e.g.
-     * 0 for KDE 1.0.2. 
+     * 0 for %Soprano 1.0.2. 
      * @return the minor version number at runtime.
      */
     SOPRANO_EXPORT unsigned int versionMinor();
 
     /**
      * @brief Returns the release of Soprano's version, e.g.
-     * 2 for Soprano 1.0.2. 
+     * 2 for %Soprano 1.0.2. 
      * @return the release number at runtime.
      */
     SOPRANO_EXPORT unsigned int versionRelease();
 
     /**
-     * @brief Returns the Soprano version as string, e.g. "1.0.2".
+     * @brief Returns the %Soprano version as string, e.g. "1.0.2".
      *
      * On contrary to the macro SOPRANO_VERSION_STRING this function returns
      * the version number of Soprano at runtime.
-     * @return the Soprano version. You can keep the string forever
+     * @return the %Soprano version. You can keep the string forever
      */
     SOPRANO_EXPORT const char* versionString();
 }

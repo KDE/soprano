@@ -25,7 +25,10 @@
 
 #include <redland.h>
 
+#include <soprano/error.h>
+
 #include <QtCore/QStringList>
+
 
 
 namespace Soprano
@@ -34,7 +37,7 @@ namespace Soprano
 	{
 	    class RedlandModel;
 
-	    class World
+	    class World : public Soprano::Error::ErrorCache
 		{
 		public:
 		    World();
@@ -43,6 +46,10 @@ namespace Soprano
 		    static World *self();
 
 		    librdf_world* worldPtr() const;
+
+		    // make error methods public
+		    void setError( const Error::Error& e ) const { ErrorCache::setError( e ); }
+		    void clearError() const { ErrorCache::clearError(); }
 
 		private:
 		    librdf_world * m_world;

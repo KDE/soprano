@@ -40,7 +40,7 @@ namespace Soprano {
 	    Model( const Backend*, ts_connection* conn );
 	    ~Model();
 
-	    ErrorCode addStatement( const Statement &statement );
+	    Error::ErrorCode addStatement( const Statement &statement );
 
 	    NodeIterator listContexts() const;
 
@@ -50,7 +50,7 @@ namespace Soprano {
 
 	    Soprano::StatementIterator listStatements( const Statement &partial ) const;
 
-	    ErrorCode removeStatements( const Statement &statement );
+	    Error::ErrorCode removeStatements( const Statement &statement );
 
 	    int statementCount() const;
 

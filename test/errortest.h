@@ -1,7 +1,7 @@
 /* 
  * This file is part of Soprano Project.
  *
- * Copyright (C) 2007 Daniele Galdi <daniele.galdi@gmail.com>
+ * Copyright (C) 2007 Sebastian Trueg <trueg@kde.org>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -19,27 +19,21 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef QUERY_API_TEST_H
-#define QUERY_API_TEST_H
-
 #include <QObject>
-#include <QString>
 
-class Soprano::Error::Locator;
+#ifndef ERROR_TEST_H
+#define ERROR_TEST_H
 
-class QueryAPITest: public QObject
+class ErrorTest: public QObject
 {
-Q_OBJECT
-private slots:
-    void testQuery_1();    
-    void testQuery_2();    
-    void testQuery_3();    
-    void testQuery_4();
+  Q_OBJECT
 
-    void testSyntaxError();
-
-    void syntaxErrorFounded( const Soprano::Error::Locator &locator, const QString& message );
+private Q_SLOTS:
+    void testErrorCopy();
+    void testOperator();
+    void testParserErrorCopy();
+    void testParserErrorOperator();
+    void testParserErrorConversion();
 };
 
-#endif // QUERY_API_TEST_H
-
+#endif

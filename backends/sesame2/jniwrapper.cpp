@@ -20,7 +20,9 @@
  */
 
 #include "jniwrapper.h"
+#include "jniobjectwrapper.h"
 #include "sesame2-config.h"
+#include "sesame2types.h"
 
 #include <jni.h>
 
@@ -169,4 +171,20 @@ void JNIWrapper::debugException()
 bool JNIWrapper::exceptionOccured()
 {
     return env()->ExceptionCheck() == JNI_TRUE;
+}
+
+
+Soprano::Error::Error JNIWrapper::convertAndClearException()
+{
+    jthrowable exception = env()->ExceptionOccurred();
+    if ( exception ) {
+        JNIObjectWrapper exWr( exception );
+        jmethodID id = exWr.getMethodID( "getMessage", "()L"JAVA_LANG_STRING";" );
+        QString message = JNIWrapper::instance()->convertString( reinterpret_cast<jstring>( exWr.callObjectMethod( id ) ) );
+        env()->ExceptionClear();
+        return Soprano::Error::Error( message, Soprano::Error::ERROR_UNKNOWN );
+    }
+    else {
+        return Soprano::Error::Error();
+    }
 }

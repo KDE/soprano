@@ -39,11 +39,11 @@ namespace Soprano {
 	    Model( const Backend* backend, RepositoryWrapper* sesame2Repository );
 	    ~Model();
 
-	    ErrorCode addStatement( const Statement &statement );
+	    Error::ErrorCode addStatement( const Statement &statement );
 	    NodeIterator listContexts() const;
 	    QueryResultIterator executeQuery( const QueryLegacy &query ) const;
 	    StatementIterator listStatements( const Statement &partial ) const;
-	    ErrorCode removeStatements( const Statement &statement );
+	    Error::ErrorCode removeStatements( const Statement &statement );
 	    int statementCount() const;
 	    bool containsStatements( const Statement &statement ) const;
 

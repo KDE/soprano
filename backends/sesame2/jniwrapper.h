@@ -26,6 +26,7 @@
 
 #include <jni.h>
 
+#include <soprano/error.h>
 
 /**
  * The JNI wrapper takes care of creating, initializing, and deleting the Java VM.
@@ -43,6 +44,11 @@ public:
     jobject constructObject( const char* className, const char* constructorSignature = 0, ... );
 
     bool exceptionOccured();
+
+    /**
+     * If an exception occured, converts it to a Soprano::Error instance.
+     */
+    Soprano::Error::Error convertAndClearException();
 
     /**
      * If an exception occured, prints and then clears it

@@ -46,7 +46,7 @@ namespace Soprano {
         private:
             static void raptor_message_handler( void *query_parser, raptor_locator *rl, const char *msg );
             
-            void emitSyntaxError( const Soprano::Locator& locator, const QString& message );
+            void emitSyntaxError( const Soprano::Error::Locator& locator, const QString& message );
         };
         
     };

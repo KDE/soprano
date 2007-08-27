@@ -20,14 +20,211 @@
  */
 
 #include "error.h"
+#include "locator.h"
 
-static char* s_errorMessages[] = {
+#include <QtCore/QHash>
+#include <QtCore/QThread>
+#include <QtCore/QDebug>
+
+
+namespace Soprano {
+    namespace Error {
+        class ErrorData : public QSharedData
+        {
+        public:
+            ErrorData( const QString& m = QString(), int c = ERROR_NONE )
+                : message( m ),
+                  code( c ) {
+            }
+
+            virtual ~ErrorData() {
+            }
+
+            QString message;
+            int code;
+        };
+    }
+}
+
+
+Soprano::Error::Error::Error()
+    : d( new ErrorData() )
+{
+}
+
+
+Soprano::Error::Error::Error( ErrorData* data )
+    : d( data )
+{
+}
+
+
+Soprano::Error::Error::Error( const QString& message, int code )
+    : d( new ErrorData( message,  code ) )
+{
+    if ( d->message.isEmpty() && code < ERROR_UNKNOWN ) {
+        d->message = errorMessage( ( ErrorCode )code );
+    }
+}
+
+
+Soprano::Error::Error::Error( const Error& other )
+{
+    d = other.d;
+}
+
+
+Soprano::Error::Error::~Error()
+{
+}
+
+
+Soprano::Error::Error& Soprano::Error::Error::operator=( const Error& other )
+{
+    d = other.d;
+    return *this;
+}
+
+
+QString Soprano::Error::Error::message() const
+{
+    return d->message;
+}
+
+
+int Soprano::Error::Error::code() const
+{
+    return d->code;
+}
+
+
+namespace Soprano {
+    namespace Error {
+        class ParserErrorData : public Soprano::Error::ErrorData
+        {
+        public:
+            ParserErrorData( const Locator& loc = Locator(), const QString& message = QString(), int code = ERROR_NONE )
+                : ErrorData( message, code ),
+                  locator( loc ) {
+            }
+
+            Locator locator;
+        };
+    }
+}
+
+bool Soprano::Error::Error::isParserError() const
+{
+    return dynamic_cast<const ParserErrorData*>( d.constData() ) != 0;
+}
+
+
+Soprano::Error::ParserError::ParserError()
+    : Error( new ParserErrorData() )
+{
+}
+
+
+Soprano::Error::ParserError::ParserError( const Locator& loc, const QString& message, int code )
+    : Error( new ParserErrorData( loc, message, code ) )
+{
+}
+
+
+Soprano::Error::ParserError::ParserError( const Error& other )
+    : Error( other )
+{
+}
+
+
+Soprano::Error::ParserError::~ParserError()
+{
+}
+
+
+Soprano::Error::ParserError& Soprano::Error::ParserError::operator=( const Error& other )
+{
+    Error::operator=( other );
+    return *this;
+}
+
+
+Soprano::Error::Locator Soprano::Error::ParserError::locator() const
+{
+    const ParserErrorData* data = dynamic_cast<const ParserErrorData*>( d.constData() );
+    if ( data ) {
+        return data->locator;
+    }
+    else {
+        return Locator();
+    }
+}
+
+
+
+// /////////////////////////////////////
+// ERROR CACHE
+// /////////////////////////////////////
+
+
+class Soprano::Error::ErrorCache::Private
+{
+public:
+    QHash<Qt::HANDLE, Error> errorMap;
+};
+
+
+Soprano::Error::ErrorCache::ErrorCache()
+    : d( new Private() )
+{
+}
+
+
+Soprano::Error::ErrorCache::~ErrorCache()
+{
+    delete d;
+}
+
+
+Soprano::Error::Error Soprano::Error::ErrorCache::lastError() const
+{
+    return d->errorMap[QThread::currentThreadId()];
+}
+
+
+void Soprano::Error::ErrorCache::setError( const Error& error ) const
+{
+    if ( error.code() ) {
+        if ( error.isParserError() ) {
+            ParserError pe( error );
+            // FIXME: create QDebug operator for Locator and also Error
+            qDebug() << "(Soprano) Parser error occured at " << pe.locator().line() << ", " << pe.locator().column() << ":" << error.message();
+        }
+        else {
+            qDebug() << "(Soprano) Error occured:" << error.message();
+        }
+    }
+
+    d->errorMap[QThread::currentThreadId()] = error;
+}
+
+
+void Soprano::Error::ErrorCache::clearError() const
+{
+    d->errorMap[QThread::currentThreadId()] = Error();
+}
+
+
+static const char* s_errorMessages[] = {
   "Success",
   "Invalid statement",
+  "Unsupported operation",
+  "Parsing failed",
   "Unknown error"
 };
 
-QString Soprano::errorMessage( ErrorCode code )
+
+QString Soprano::Error::errorMessage( ErrorCode code )
 {
   // FIXME: translate the strings.
   return s_errorMessages[(int)code];

@@ -121,3 +121,17 @@ qt4_automoc(parsertest parsertest.cpp)
 add_executable(parsertest parsertest.cpp)
 target_link_libraries(parsertest soprano ${QT_QTCORE_LIBRARY} ${QT_QTTEST_LIBRARY})
 add_test(parsertest ${EXECUTABLE_OUTPUT_PATH}/parsertest)
+
+# Error test
+qt4_automoc(errortest errortest.cpp)
+add_executable(errortest errortest.cpp)
+target_link_libraries(errortest soprano ${QT_QTCORE_LIBRARY} ${QT_QTTEST_LIBRARY})
+add_test(errortest ${EXECUTABLE_OUTPUT_PATH}/errortest)
+
+find_package(CLucene)
+if(CLucene_FOUND)
+  qt4_automoc(cluceneindextest cluceneindextest.cpp)
+  add_executable(cluceneindextest cluceneindextest.cpp)
+  target_link_libraries(cluceneindextest soprano sopranoindex ${QT_QTCORE_LIBRARY} ${QT_QTTEST_LIBRARY} ${CLUCENE_LIBRARY})
+  add_test(cluceneindextest ${EXECUTABLE_OUTPUT_PATH}/cluceneindextest)
+endif(CLucene_FOUND)

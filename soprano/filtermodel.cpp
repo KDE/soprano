@@ -81,7 +81,7 @@ void Soprano::FilterModel::setParentModel( Model* model )
 }
 
 
-Soprano::ErrorCode Soprano::FilterModel::addStatement( const Statement &statement )
+Soprano::Error::ErrorCode Soprano::FilterModel::addStatement( const Statement &statement )
 {
     Q_ASSERT( d->parent );
     return d->parent->addStatement( statement );
@@ -123,7 +123,7 @@ Soprano::StatementIterator Soprano::FilterModel::listStatements( const Statement
 }
 
 
-Soprano::ErrorCode Soprano::FilterModel::removeStatements( const Statement &statement )
+Soprano::Error::ErrorCode Soprano::FilterModel::removeStatements( const Statement &statement )
 {
     Q_ASSERT( d->parent );
     return d->parent->removeStatements( statement );

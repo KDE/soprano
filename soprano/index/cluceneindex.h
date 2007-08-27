@@ -26,6 +26,7 @@
 
 #include "statement.h"
 #include "soprano_export.h"
+#include "error.h"
 
 
 namespace lucene {
@@ -38,6 +39,7 @@ namespace lucene {
     }
     namespace document {
 	class Document;
+	class Field;
     }
 }
 
@@ -51,6 +53,13 @@ namespace Soprano {
 	 * It is used by the IndexFilterModel to actually handle the index. It has been
 	 * made visible in the public API to provide the possibility for advanced queries
 	 * and data modifications.
+	 *
+	 * <b>Data organization</b>
+	 *
+	 * In the %Soprano index each resouce gets its own clucene document. Only statements with literal
+	 * objects are indexed. The clucene is identified through the statements' subject and then a new
+	 * field is created that uses the statement's predicate as field name and the statement's object
+	 * as value. The index ignores all context information.
 	 *
 	 * \warning <b>The API is subject to change. Most likely CLucene classes will be wrapped and hidden from the public API.</b>
 	 *
@@ -76,16 +85,59 @@ namespace Soprano {
 	    bool isOpen() const;
 
 	    /**
+	     * Start a new transaction. After calling this method multiple fields and statements may be added to the
+	     * index and nothing is written back to disk. A transaction has to be closed. Otherwise the data will not be written to the index.
+	     * (All transactions are closed on deletion.)
+	     *
+	     * Methods such as addStatement will start and close a transaction internally if none has been started
+	     * before.
+	     *
+	     * \return A transaction id that has to be used to close the transaction. This is a safety mechanism to ensure
+	     * that no other user closes one's transaction. If another transaction has already been started 0 is returned.
+	     */
+	    int startTransaction();
+
+	    /**
+	     * Close a transaction and write the changes back to the index.
+	     *
+	     * \param id The transaction ID as returned by startTransaction()
+	     *
+	     * \return \p true if the transaction was closed,  false if no transaction was started,
+	     * a wrong transaction id has been supplied, or a clucene error occured.
+	     */
+	    bool closeTransaction( int id );
+
+	    /**
 	     * Indexes a statement.
 	     * \return An error code or 0 on success
 	     */
-	    int addStatement( const Soprano::Statement& );
+	    Error::ErrorCode addStatement( const Soprano::Statement& );
 
 	    /**
 	     * Removes a statement from the index.
 	     * \return An error code or 0 on success
 	     */
-	    int removeStatement( const Soprano::Statement& );
+	    Error::ErrorCode removeStatement( const Soprano::Statement& );
+
+	    /**
+	     * Get a document for a specific resource. This is only possible after starting a transaction.
+	     *
+	     * \param resource The resource for which a document is requested.
+	     *
+	     * \return The document representing the resource or 0 if no transaction has been started or
+	     * a clucene error occured.
+	     */
+	    lucene::document::Document* documentForResource( const Node& resource );
+	    
+	    /**
+	     * Add a field to a document.
+	     *
+	     * \param resource The resource to identify the document.
+	     * \param field The clucene field to add. The index will take ownership of field.
+	     *
+	     * \return An error code or 0 on success
+	     */
+	    Error::ErrorCode addFieldToResourceDocument( const Node& resource, lucene::document::Field* field );
 
 	    /**
 	     * Evaluates the given query and returns the results as a Hits instance.
@@ -131,5 +183,7 @@ namespace Soprano {
 	};
     }
 }
+
+uint qHash( const Soprano::Node& node );
 
 #endif

@@ -63,79 +63,79 @@ Soprano::StatementIterator Soprano::Model::listStatementsInContext( const Node &
 }
 
 
-Soprano::ErrorCode Soprano::Model::removeStatements( const QList<Statement> &statements )
+Soprano::Error::ErrorCode Soprano::Model::removeStatements( const QList<Statement> &statements )
 {
     for ( QList<Statement>::const_iterator it = statements.constBegin();
           it != statements.constEnd(); ++it ) {
-        ErrorCode c = removeStatements( *it );
-        if ( c != ERROR_NONE ) {
+        Error::ErrorCode c = removeStatements( *it );
+        if ( c != Error::ERROR_NONE ) {
             return c;
         }
     }
-    return ERROR_NONE;
+    return Error::ERROR_NONE;
 }
 
 
-Soprano::ErrorCode Soprano::Model::removeContext( const Node& context )
+Soprano::Error::ErrorCode Soprano::Model::removeContext( const Node& context )
 {
     return removeStatements( Statement( Node(), Node(), Node(), context ) );
 }
 
 
-Soprano::ErrorCode Soprano::Model::removeAllStatements()
+Soprano::Error::ErrorCode Soprano::Model::removeAllStatements()
 {
     return removeStatements( Statement() );
 }
 
 
-Soprano::ErrorCode Soprano::Model::addModel( const Model &model )
+Soprano::Error::ErrorCode Soprano::Model::addModel( const Model &model )
 {
     StatementIterator stmi = model.listStatements( Statement() );
     if ( !stmi.isValid() ) {
-        return ERROR_UNKNOW;
+        return Error::ERROR_UNKNOWN;
     }
 
     while ( stmi.next() ) {
-        ErrorCode c = addStatement( *stmi );
-        if ( ERROR_NONE != c ) {
+        Error::ErrorCode c = addStatement( *stmi );
+        if ( Error::ERROR_NONE != c ) {
             return c;
         }
     }
 
-    return ERROR_NONE;
+    return Error::ERROR_NONE;
 }
 
-Soprano::ErrorCode Soprano::Model::addStatements( StatementIterator iter )
+Soprano::Error::ErrorCode Soprano::Model::addStatements( StatementIterator iter )
 {
     if ( !iter.isValid() ) {
-        return ERROR_UNKNOW;
+        return Error::ERROR_UNKNOWN;
     }
 
     while ( iter.next() ) {
-        ErrorCode c = addStatement( *iter );
-        if ( ERROR_NONE != c ) {
+        Error::ErrorCode c = addStatement( *iter );
+        if ( Error::ERROR_NONE != c ) {
             return c;
         }
     }
 
-    return ERROR_NONE;
+    return Error::ERROR_NONE;
 }
 
-Soprano::ErrorCode Soprano::Model::addStatements( const QList<Statement> &statements )
+Soprano::Error::ErrorCode Soprano::Model::addStatements( const QList<Statement> &statements )
 {
     QListIterator<Statement> iter(statements);
     while ( iter.hasNext() ) {
-        ErrorCode c = addStatement( iter.next() );
-        if ( ERROR_NONE != c ) {
+        Error::ErrorCode c = addStatement( iter.next() );
+        if ( Error::ERROR_NONE != c ) {
             return c;
         }
     }
 
-    return ERROR_NONE;
+    return Error::ERROR_NONE;
 }
 
 
-Soprano::ErrorCode Soprano::Model::write( QTextStream &os ) const
+Soprano::Error::ErrorCode Soprano::Model::write( QTextStream &os ) const
 {
     StatementIterator it = listStatements();
     while ( it.next() ) {
@@ -144,7 +144,7 @@ Soprano::ErrorCode Soprano::Model::write( QTextStream &os ) const
 }
 
 
-Soprano::ErrorCode Soprano::Model::print() const
+Soprano::Error::ErrorCode Soprano::Model::print() const
 {
     QTextStream os( stdout );
     write( os );

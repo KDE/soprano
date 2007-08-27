@@ -1,4 +1,4 @@
-/* 
+/*
  * This file is part of Soprano Project.
  *
  * Copyright (C) 2007 Daniele Galdi <daniele.galdi@gmail.com>
@@ -29,7 +29,7 @@
 
 #include "queryapitest.h"
 
-void QueryAPITest::syntaxErrorFounded( const Soprano::Locator &locator, const QString& message )
+void QueryAPITest::syntaxErrorFounded( const Soprano::Error::Locator &locator, const QString& message )
 {
     qDebug() << "(Soprano::Query::Parser)" << message << locator.line() << locator.column() << endl;
 }
@@ -55,11 +55,11 @@ void QueryAPITest::testQuery_2()
     /*Soprano::Query::Parser::QueryParser *parser = new Soprano::Query::Parser::RasqalQueryParser();
 
     Soprano::Query::QueryObject *obj = parser->parseQuery(
-        "PREFIX  dc:\ 
+        "PREFIX  dc:\
         SELECT  ?title\
         WHERE   {  dc:title ?title }"
     );
-    
+
     delete parser;
     delete obj;*/
 }
@@ -74,7 +74,7 @@ void QueryAPITest::testQuery_3()
          SELECT  $title\
          WHERE   { :book1  dc:title  $title }"
     );
-    
+
     delete parser;
     delete obj;*/
 }
@@ -84,8 +84,8 @@ void QueryAPITest::testQuery_4()
     /*Soprano::Query::Parser::QueryParser *parser = new Soprano::Query::Parser::RasqalQueryParser();
 
     Soprano::Query::QueryObject *obj = parser->parseQuery(
-        "BASE\    
-        PREFIX  dcore:\  
+        "BASE\
+        PREFIX  dcore:\
         SELECT  ?title\
         WHERE   {  dcore:title ?title }"
     );
@@ -99,12 +99,12 @@ void QueryAPITest::testSyntaxError()
     Soprano::PluginManager *manager = Soprano::PluginManager::instance();
 
     const Soprano::Query::Parser *parser = manager->discoverQueryParserByName( "rasqal" );
-    connect( parser, SIGNAL( syntaxError(const Soprano::Locator &, const QString&) ), 
-             this, SLOT( syntaxErrorFounded(const Soprano::Locator &, const QString& )));
+    connect( parser, SIGNAL( syntaxError(const Soprano::Error::Locator &, const QString&) ),
+             this, SLOT( syntaxErrorFounded(const Soprano::Error::Locator &, const QString& )));
 
     parser->parseQuery( " select ?a where ; broken query ", Soprano::Query::QUERY_LANGUAGE_SPARQL );
 
-    delete manager;    
+    delete manager;
 }
 
 QTEST_MAIN(QueryAPITest)

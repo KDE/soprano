@@ -183,10 +183,12 @@ void SopranoModelTest::testAddStatements()
     Statement st3(subject1, predicate2, object2);
     Statement st4(subject2, predicate2, object2);
 
-    QVERIFY( m_model->addStatement( st1 ) == Soprano::ERROR_NONE );
-    QVERIFY( m_model->addStatement( st2 ) == Soprano::ERROR_NONE );
-    QVERIFY( m_model->addStatement( st3 ) == Soprano::ERROR_NONE );
-    QVERIFY( m_model->addStatement( st4 ) == Soprano::ERROR_NONE );
+    QVERIFY( m_model->addStatement( st1 ) == Soprano::Error::ERROR_NONE );
+    QVERIFY( m_model->addStatement( st2 ) == Soprano::Error::ERROR_NONE );
+    QVERIFY( m_model->addStatement( st3 ) == Soprano::Error::ERROR_NONE );
+    QVERIFY( m_model->addStatement( st4 ) == Soprano::Error::ERROR_NONE );
+
+    QVERIFY( m_model->addStatement( Statement() ) != Soprano::Error::ERROR_NONE );
 }
 
 void SopranoModelTest::testListStatements()
@@ -321,7 +323,7 @@ void SopranoModelTest::testListStatementsWithContext()
         statements.append( Statement( subject, predicate, object, context3 ) );
     }
 
-    QVERIFY( m_model->addStatements( statements ) == ERROR_NONE );
+    QVERIFY( m_model->addStatements( statements ) == Error::ERROR_NONE );
 
     // list all of them
     StatementIterator it = m_model->listStatements( Statement() );
@@ -429,6 +431,15 @@ void SopranoModelTest::testBooleanQuery()
     QVERIFY( res.boolValue() );
 
     QVERIFY( !res.next() );
+}
+
+
+void SopranoModelTest::testInvalidQuery()
+{
+    QueryLegacy query( "INVALID query", QueryLegacy::SPARQL );
+
+    QueryResultIterator res = m_model->executeQuery( query );
+    QVERIFY( !res.isValid() );
 }
 
 void SopranoModelTest::testQuery()
@@ -580,17 +591,17 @@ void SopranoModelTest::testContexts()
     Statement s3_c0( subject1, predicate3, object3 );
 
     // add all the statements (do not add context3 yet, it is used below)
-    QVERIFY( m_model->addStatement( s1_c1 ) == ERROR_NONE );
-    QVERIFY( m_model->addStatement( s2_c1 ) == ERROR_NONE );
-    QVERIFY( m_model->addStatement( s3_c1 ) == ERROR_NONE );
+    QVERIFY( m_model->addStatement( s1_c1 ) == Error::ERROR_NONE );
+    QVERIFY( m_model->addStatement( s2_c1 ) == Error::ERROR_NONE );
+    QVERIFY( m_model->addStatement( s3_c1 ) == Error::ERROR_NONE );
 
-    QVERIFY( m_model->addStatement( s1_c2 ) == ERROR_NONE );
-    QVERIFY( m_model->addStatement( s2_c2 ) == ERROR_NONE );
-    QVERIFY( m_model->addStatement( s3_c2 ) == ERROR_NONE );
+    QVERIFY( m_model->addStatement( s1_c2 ) == Error::ERROR_NONE );
+    QVERIFY( m_model->addStatement( s2_c2 ) == Error::ERROR_NONE );
+    QVERIFY( m_model->addStatement( s3_c2 ) == Error::ERROR_NONE );
 
-    QVERIFY( m_model->addStatement( s1_c0 ) == ERROR_NONE );
-    QVERIFY( m_model->addStatement( s2_c0 ) == ERROR_NONE );
-    QVERIFY( m_model->addStatement( s3_c0 ) == ERROR_NONE );
+    QVERIFY( m_model->addStatement( s1_c0 ) == Error::ERROR_NONE );
+    QVERIFY( m_model->addStatement( s2_c0 ) == Error::ERROR_NONE );
+    QVERIFY( m_model->addStatement( s3_c0 ) == Error::ERROR_NONE );
 
     // check containsStatements plain
     QVERIFY( m_model->containsStatements( s1_c1 ) );
@@ -645,7 +656,7 @@ void SopranoModelTest::testContexts()
               s1_c0, s3_c2, s3_c0 );
 
     // check remove context
-    QVERIFY( m_model->removeContext( context1 ) == ERROR_NONE );
+    QVERIFY( m_model->removeContext( context1 ) == Error::ERROR_NONE );
     QVERIFY( !m_model->containsStatements( s1_c1 ) );
     QVERIFY( !m_model->containsStatements( s2_c1 ) );
     QVERIFY( !m_model->containsStatements( s3_c1 ) );
@@ -659,7 +670,7 @@ void SopranoModelTest::testContexts()
     QVERIFY( m_model->containsStatements( s3_c0 ) );
 
     // check remove with context
-    QVERIFY( m_model->removeStatements( s1_c2 ) == ERROR_NONE );
+    QVERIFY( m_model->removeStatements( s1_c2 ) == Error::ERROR_NONE );
     QVERIFY( !m_model->containsStatements( s1_c2 ) );
     QVERIFY( m_model->containsStatements( s2_c2 ) );
     QVERIFY( m_model->containsStatements( s3_c2 ) );
@@ -669,15 +680,15 @@ void SopranoModelTest::testContexts()
     QVERIFY( m_model->containsStatements( s3_c0 ) );
 
     // check remove without context
-    QVERIFY( m_model->addStatement( s1_c3 ) == ERROR_NONE );
-    QVERIFY( m_model->addStatement( s2_c3 ) == ERROR_NONE );
-    QVERIFY( m_model->addStatement( s3_c3 ) == ERROR_NONE );
+    QVERIFY( m_model->addStatement( s1_c3 ) == Error::ERROR_NONE );
+    QVERIFY( m_model->addStatement( s2_c3 ) == Error::ERROR_NONE );
+    QVERIFY( m_model->addStatement( s3_c3 ) == Error::ERROR_NONE );
 
     QVERIFY( m_model->containsStatements( s1_c3 ) );
     QVERIFY( m_model->containsStatements( s2_c3 ) );
     QVERIFY( m_model->containsStatements( s3_c3 ) );
 
-    QVERIFY( m_model->removeStatements( s1_c0 ) == ERROR_NONE );
+    QVERIFY( m_model->removeStatements( s1_c0 ) == Error::ERROR_NONE );
 
     QVERIFY( !m_model->containsStatements( s1_c0 ) );
     QVERIFY( !m_model->containsStatements( s1_c3 ) );
@@ -704,7 +715,7 @@ void SopranoModelTest::testListContexts()
         statements.append( Statement( subject, predicate, object, context3 ) );
     }
 
-    QVERIFY( m_model->addStatements( statements ) == ERROR_NONE );
+    QVERIFY( m_model->addStatements( statements ) == Error::ERROR_NONE );
 
     NodeIterator it = m_model->listContexts();
 

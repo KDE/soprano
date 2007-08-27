@@ -56,6 +56,7 @@ private Q_SLOTS:
   void testGraphQuery();
   void testBooleanQuery();
   void testQuery();
+  void testInvalidQuery();
 
   void testListContexts();
 

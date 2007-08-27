@@ -66,5 +66,5 @@ Soprano::RdfSerialization Soprano::mimeTypeToSerialization( const QString& mimet
               mimetype == "application/trig") {
         return SERIALIZATION_TRIG;
     }
-    return SERIALIZATION_UNKNOWN;
+    return SERIALIZATION_UNKNOWNN;
 }

@@ -62,7 +62,7 @@ namespace Soprano {
 	/**
 	 * Default implementation simple pipes the call through to the parent model.
 	 */
-	virtual ErrorCode addStatement( const Statement &statement );
+	virtual Error::ErrorCode addStatement( const Statement &statement );
 
 	/**
 	 * Default implementation simple pipes the call through to the parent model.
@@ -92,7 +92,7 @@ namespace Soprano {
 	/**
 	 * Default implementation simple pipes the call through to the parent model.
 	 */
-	virtual ErrorCode removeStatements( const Statement &statement );
+	virtual Error::ErrorCode removeStatements( const Statement &statement );
 
 	/**
 	 * Default implementation simple pipes the call through to the parent model.

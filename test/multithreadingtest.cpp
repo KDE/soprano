@@ -104,7 +104,7 @@ public:
 
     bool performTest() {
         QList<Statement> data = createTestData( Statement(), 5 );
-        if ( model()->addStatements( data ) != ERROR_NONE )
+        if ( model()->addStatements( data ) != Error::ERROR_NONE )
             return false;
 
         // check if the statements have really been added
@@ -126,7 +126,7 @@ public:
     }
 
     bool performTest() {
-        if ( model()->removeAllStatements() != ERROR_NONE )
+        if ( model()->removeAllStatements() != Error::ERROR_NONE )
             return false;
 
         return !model()->listStatements().next();

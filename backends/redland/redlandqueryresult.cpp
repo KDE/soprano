@@ -71,6 +71,7 @@ Soprano::Redland::RedlandQueryResult::RedlandQueryResult( const RedlandModel* mo
 
 Soprano::Redland::RedlandQueryResult::~RedlandQueryResult()
 {
+    close();
     delete d;
 }
 

@@ -169,10 +169,8 @@ namespace Soprano
 
       static PluginManager* instance();
 
-    protected:
-      PluginManager( QObject* parent = 0 );
-
     private:
+      PluginManager( QObject* parent = 0 );
       void loadAllPlugins();
       void loadPlugins( const QString& path );
 

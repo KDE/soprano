@@ -209,7 +209,6 @@ jobject Soprano::Sesame2::RepositoryConnection::query( jobject queryLang, jstrin
     jobject query = callObjectMethod( d->IDprepareQuery(), queryLang, queryString );
     if ( !query ) {
         qDebug() << "Failed to prepare query.";
-        JNIWrapper::instance()->debugException();
         return 0;
     }
 

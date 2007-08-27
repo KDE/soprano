@@ -35,6 +35,12 @@
 // indexwriter needs to be closed for deletion
 // indexreader needs to be closed after usage of writer
 
+uint qHash( const Soprano::Node& node )
+{
+    return qHash( node.toString() );
+}
+
+
 class Soprano::Index::CLuceneIndex::Private
 {
 public:
@@ -45,7 +51,8 @@ public:
           analyzer( 0 ),
           queryParser( 0 ),
           searcher( 0 ),
-          deleteAnalyzer( false ) {
+          deleteAnalyzer( false ),
+          transactionID( 0 ) {
     }
 
     lucene::store::Directory* indexDir;
@@ -56,6 +63,10 @@ public:
     lucene::search::IndexSearcher* searcher;
 
     bool deleteAnalyzer;
+
+    // if > 0 a transaction is running
+    int transactionID;
+    QHash<Node, lucene::document::Document*> documentCache;
 
     bool indexPresent() const {
         return lucene::index::IndexReader::indexExists( indexDir );
@@ -232,130 +243,214 @@ bool Soprano::Index::CLuceneIndex::isOpen() const
 }
 
 
-int Soprano::Index::CLuceneIndex::addStatement( const Soprano::Statement& statement )
+lucene::document::Document* Soprano::Index::CLuceneIndex::documentForResource( const Node& resource )
+{
+    if ( d->transactionID == 0 ) {
+        return 0;
+    }
+
+    // check if the resource is already cached
+    QHash<Node, lucene::document::Document*>::const_iterator it = d->documentCache.find( resource );
+    if ( it != d->documentCache.constEnd() ) {
+        return *it;
+    }
+    else {
+        QString id = d->getId( resource );
+        lucene::document::Document* document = 0;
+        try {
+            // step 1: create a new document
+            document = new lucene::document::Document;
+            CLuceneDocumentWrapper docWrapper( document );
+            docWrapper.addID( id );
+
+            // step 2: check if the resource already exists
+            lucene::index::Term idTerm( idFieldName().data(), WString( id ).data() );
+            lucene::document::Document* oldDoc = 0;
+            if ( d->indexPresent() ) {
+                oldDoc = d->getDocument( &idTerm );
+            }
+
+            // step 3: copy the existing fields from the document into our cache
+            if ( oldDoc ) {
+                CLuceneDocumentWrapper oldDocWrapper( oldDoc );
+                lucene::document::DocumentFieldEnumeration* fields = oldDoc->fields();
+                while ( fields->hasMoreElements() ) {
+                    lucene::document::Field* field = fields->nextElement();
+                    if ( Private::isPropertyField( WString( field->name(), true ) ) ) {
+                        document->add( *field );
+                    }
+                }
+            }
+
+            // step 4: add it to our cache
+            d->documentCache[resource] = document;
+
+            return document;
+        }
+        catch( CLuceneError& err ) {
+            qDebug() << "(Soprano::Index::CLuceneIndex) Exception occured: " << err.what();
+            return 0;
+        }
+    }
+}
+
+int Soprano::Index::CLuceneIndex::startTransaction()
+{
+    if ( d->transactionID == 0 ) {
+        // FIXME: use a random number
+        d->transactionID = 1;
+        return d->transactionID;
+    }
+    else {
+        return 0;
+    }
+}
+
+
+bool Soprano::Index::CLuceneIndex::closeTransaction( int id )
+{
+    if ( id == d->transactionID && id > 0 ) {
+        // update all documents
+        for ( QHash<Node, lucene::document::Document*>::iterator it = d->documentCache.begin();
+              it != d->documentCache.end(); ++it ) {
+            lucene::document::Document* doc = it.value();
+
+            try  {
+                // remove previous instances
+                if ( d->indexPresent() ) {
+                    lucene::index::Term idTerm( idFieldName().data(), doc->get( idFieldName().data() ) );
+                    d->getIndexReader()->deleteDocuments( &idTerm );
+                }
+
+                // add the updated one
+                d->getIndexWriter()->addDocument( doc );
+            }
+            catch( CLuceneError& err ) {
+                qDebug() << "Failed to store document: " << err.what();
+                return false;
+            }
+        }
+
+        // clear the document cache, strangely we cannot delete the documents, that makes clucene crash!
+        d->documentCache.clear();
+    }
+    else {
+        return false;
+    }
+}
+
+
+Soprano::Error::ErrorCode Soprano::Index::CLuceneIndex::addFieldToResourceDocument( const Node& resource, lucene::document::Field* field )
+{
+    bool localTransaction = false;
+    if ( d->transactionID == 0 ) {
+        startTransaction();
+        localTransaction = true;
+    }
+
+    bool success = true;
+    if ( lucene::document::Document* doc = documentForResource( resource ) ) {
+        doc->add( *field );
+    }
+
+    if ( localTransaction ) {
+        closeTransaction( d->transactionID );
+    }
+
+    return success ? Error::ERROR_NONE : Error::ERROR_UNKNOWN;
+}
+
+
+Soprano::Error::ErrorCode Soprano::Index::CLuceneIndex::addStatement( const Soprano::Statement& statement )
 {
     if ( !statement.object().isLiteral() ) {
         qDebug() << "(Soprano::Index::CLuceneIndex::addStatement) only adding statements with literal object type.";
-        return -1;
+        return Error::ERROR_UNKNOWN;
+    }
+
+    bool localTransaction = false;
+    if ( d->transactionID == 0 ) {
+        startTransaction();
+        localTransaction = true;
     }
 
     QString field = statement.predicate().toString();
     QString text = statement.object().toString();
 
-    QString id = d->getId( statement.subject() );
-    lucene::document::Document* document = 0;
-    try {
-        lucene::index::Term idTerm( idFieldName().data(), WString( id ).data() );
-        if ( d->indexPresent() ) {
-            document = d->getDocument( &idTerm );
-        }
+    bool success = true;
 
-        if ( !document ) {
-            // create a new document
-            lucene::document::Document newDoc;
-            CLuceneDocumentWrapper docWrapper( &newDoc );
-            docWrapper.addID( id );
-            docWrapper.addProperty( field, text );
-            d->getIndexWriter()->addDocument( &newDoc );
-        }
-        else {
-            // update the document if the predicate does not exist already
-            CLuceneDocumentWrapper docWrapper( document );
-            if ( !docWrapper.hasProperty( field, text ) ) {
-                lucene::document::Document newDoc;
-                CLuceneDocumentWrapper newDocWrapper( &newDoc );
-                newDocWrapper.addID( id );
-
-                // copy all fields
-                lucene::document::DocumentFieldEnumeration* fields = document->fields();
-                while ( fields->hasMoreElements() ) {
-                    lucene::document::Field* field = fields->nextElement();
-                    if ( Private::isPropertyField( WString( field->name(), true ) ) ) {
-                        newDoc.add( *field );
-                    }
-                }
-
-                newDocWrapper.addProperty( field, text );
-                d->getIndexReader()->deleteDocuments( &idTerm );
-                d->getIndexWriter()->addDocument( &newDoc );
-            }
-        }
+    lucene::document::Document* document = documentForResource( statement.subject() );
+    if ( document ) {
+        CLuceneDocumentWrapper docWrapper( document );
+        docWrapper.addProperty( field, text );
+        success = true;
     }
-    catch( CLuceneError& err ) {
-        qDebug() << "(Soprano::Index::CLuceneIndex) Exception occured: " << err.what();
-        return -1;
+    else {
+        success = false;
     }
 
-    return 0;
+    if ( localTransaction ) {
+        closeTransaction( d->transactionID );
+    }
+
+    return success ? Error::ERROR_NONE : Error::ERROR_UNKNOWN;
 }
 
 
-int Soprano::Index::CLuceneIndex::removeStatement( const Soprano::Statement& statement )
+Soprano::Error::ErrorCode Soprano::Index::CLuceneIndex::removeStatement( const Soprano::Statement& statement )
 {
     if ( !statement.object().isLiteral() ) {
         qDebug() << "(Soprano::Index::CLuceneIndex::removeStatement) only adding statements with literal object type.";
-        return -1;
+        return Error::ERROR_UNKNOWN;
     }
 
+    // just for speed
     if ( !d->indexPresent() ) {
-        return 0;
+        return Error::ERROR_NONE;
     }
 
-    QString id = d->getId( statement.subject() );
-    lucene::index::Term idTerm( idFieldName().data(), WString( id ).data() );
-    lucene::document::Document* document = 0;
+    bool localTransaction = false;
+    if ( d->transactionID == 0 ) {
+        startTransaction();
+        localTransaction = true;
+    }
 
-    try {
-        document = d->getDocument( &idTerm );
+    bool success = false;
 
-        if ( document ) {
+    lucene::document::Document* document = documentForResource( statement.subject() );
+    if ( document ) {
+        try {
             // determine the values used in the index for this triple
-            QString newFieldName = statement.predicate().toString();
-            QString newText = statement.object().toString();
+            WString fieldName = statement.predicate().toString();
+            WString text = statement.object().toString();
 
-            CLuceneDocumentWrapper documentWrapper( document );
+            // clucene does not allow to remove a specific field/value combination. Thus,
+            // we have to do a little hackling
+            TCHAR** values = document->getValues( fieldName.data() );
+            if ( values ) {
+                document->removeFields( fieldName.data() );
 
-            // see if this triple occurs in this Document
-            if ( documentWrapper.hasProperty( newFieldName, newText ) ) {
-                // if the Document only has one predicate field, we can remove the
-                // document
-                int nrProperties = documentWrapper.numberOfPropertyFields();
-                if ( !nrProperties ) {
-                    qDebug() << "(Soprano::Index::CLuceneIndex::removeStatement) no properties for id " << id;
-                }
-                else if (nrProperties == 1) {
-                    d->getIndexReader()->deleteDocuments( &idTerm );
-                }
-                else {
-                    // there are more triples encoded in this Document: remove the
-                    // document and add a new Document without this triple
-                    lucene::document::Document newDocument;
-                    CLuceneDocumentWrapper newDocWrapper( &newDocument );
-                    newDocWrapper.addID( id );
-
-                    // copy all fields except the one we delete
-                    lucene::document::DocumentFieldEnumeration* fields = document->fields();
-                    while ( fields->hasMoreElements() ) {
-                        lucene::document::Field* field = fields->nextElement();
-                        WString fieldName( field->name(), true );
-                        if ( Private::isPropertyField( fieldName ) &&
-                             !( newFieldName == fieldName && newText == WString( field->stringValue(), true ) ) ) {
-                            newDocument.add( *field );
-                        }
+                // now copy the ones that we want to preserve back
+                for ( int i = 0; values[i]; ++i ) {
+                    WString value( values[i], true );
+                    if ( value != text ) {
+                        document->add( *new lucene::document::Field( fieldName.data(), text.data(), true, false, false ) );
                     }
-
-                    d->getIndexReader()->deleteDocuments( &idTerm );
-                    d->getIndexWriter()->addDocument( &newDocument );
                 }
             }
+            success = true;
+        }
+        catch( CLuceneError& err ) {
+            qDebug() << "(Soprano::Index::CLuceneIndex) Exception occured: " << err.what();
+            success = false;
         }
     }
-    catch( CLuceneError& err ) {
-        qDebug() << "(Soprano::Index::CLuceneIndex) Exception occured: " << err.what();
-        return -1;
+
+    if ( localTransaction ) {
+        closeTransaction( d->transactionID );
     }
 
-    return 0;
+    return success ? Error::ERROR_NONE : Error::ERROR_UNKNOWN;
 }
 
 
@@ -384,13 +479,25 @@ Soprano::Node Soprano::Index::CLuceneIndex::getResource( lucene::document::Docum
 
 lucene::search::Hits* Soprano::Index::CLuceneIndex::search( const QString& query )
 {
-    return search( d->queryParser->parse( WString( query ).data() ) );
+    try {
+        return search( d->queryParser->parse( WString( query ).data() ) );
+    }
+    catch( CLuceneError& err ) {
+        qDebug() << "search failed: " << err.what();
+        return 0;
+    }
 }
 
 
 lucene::search::Hits* Soprano::Index::CLuceneIndex::search( lucene::search::Query* query )
 {
-    return d->getIndexSearcher()->search( query );
+    try {
+        return d->getIndexSearcher()->search( query );
+    }
+    catch( CLuceneError& err ) {
+        qDebug() << "search failed: " << err.what();
+        return 0;
+    }
 }
 
 

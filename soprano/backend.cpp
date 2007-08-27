@@ -28,6 +28,12 @@ Soprano::BackendSetting::BackendSetting()
 }
 
 
+Soprano::BackendSetting::BackendSetting( BackendOption s )
+    : option( s )
+{
+}
+
+
 Soprano::BackendSetting::BackendSetting( BackendOption s, const QString& value_ )
     : option( s ),
       value( value_ )

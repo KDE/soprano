@@ -69,14 +69,14 @@ Soprano::Index::CLuceneIndex* Soprano::Index::IndexFilterModel::index() const
     return d->index;
 }
 
-Soprano::ErrorCode Soprano::Index::IndexFilterModel::addStatement( const Soprano::Statement &statement )
+Soprano::Error::ErrorCode Soprano::Index::IndexFilterModel::addStatement( const Soprano::Statement &statement )
 {
     d->index->addStatement( statement );
     return FilterModel::addStatement( statement );
 }
 
 
-Soprano::ErrorCode Soprano::Index::IndexFilterModel::removeStatements( const Soprano::Statement &statement )
+Soprano::Error::ErrorCode Soprano::Index::IndexFilterModel::removeStatements( const Soprano::Statement &statement )
 {
     // since we use backends that directly implement this method we don't know which
     // statements are actually removed (there is no signal for that)

@@ -23,6 +23,7 @@
 #define _SOPRANO_BACKEND_H_
 
 #include "plugin.h"
+#include "error.h"
 #include "soprano_export.h"
 #include "sopranotypes.h"
 
@@ -44,6 +45,11 @@ namespace Soprano
 	 * Create an empty setting.
 	 */
 	BackendSetting();
+
+	/**
+	 * Create a boolean setting.
+	 */
+	BackendSetting( BackendOption option );
 
 	/**
 	 * Create a standard setting with option \p s and value \p value_.
@@ -88,7 +94,7 @@ namespace Soprano
      *
      * \author Sebastian Trueg <trueg@kde.org>
      */
-    class SOPRANO_EXPORT Backend : public Plugin
+    class SOPRANO_EXPORT Backend : public Plugin, public Error::ErrorCache
     {
     public:
 	Backend( const QString& name );

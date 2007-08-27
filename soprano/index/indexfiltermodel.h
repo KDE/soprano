@@ -82,14 +82,14 @@ namespace Soprano {
 	     *
 	     * This will index the statement and then forward the call to the parent model.
 	     */
-	    Soprano::ErrorCode addStatement( const Soprano::Statement &statement );
+	    Soprano::Error::ErrorCode addStatement( const Soprano::Statement &statement );
 
 	    /**
 	     * Removes a statement.
 	     *
 	     * This will remove the statement from the index and then forward the call to the parent model.
 	     */
-	    Soprano::ErrorCode removeStatements( const Soprano::Statement &statement );
+	    Soprano::Error::ErrorCode removeStatements( const Soprano::Statement &statement );
 
 	    /**
 	     * Query the literal index.

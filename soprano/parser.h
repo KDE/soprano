@@ -73,7 +73,7 @@ namespace Soprano
      *   Q_INTERFACES(Soprano::Parser)
      *
      *  public:
-     *   StatementIterator parseStream( QTextStream* stream, const QUrl& baseUri, RdfSerialization serialization = SERIALIZATION_UNKNOWN, const QString& userSerialization = QString() ) const;
+     *   StatementIterator parseStream( QTextStream* stream, const QUrl& baseUri, RdfSerialization serialization = SERIALIZATION_UNKNOWNN, const QString& userSerialization = QString() ) const;
      * };
      * \endcode
      *

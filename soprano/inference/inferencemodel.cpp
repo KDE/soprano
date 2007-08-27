@@ -122,10 +122,10 @@ void Soprano::Inference::InferenceModel::setRules( const QList<Rule>& rules )
 }
 
 
-Soprano::ErrorCode Soprano::Inference::InferenceModel::addStatement( const Statement& statement )
+Soprano::Error::ErrorCode Soprano::Inference::InferenceModel::addStatement( const Statement& statement )
 {
-    ErrorCode error = parentModel()->addStatement( statement );
-    if ( error == ERROR_NONE ) {
+    Error::ErrorCode error = parentModel()->addStatement( statement );
+    if ( error == Error::ERROR_NONE ) {
         // FIXME: error handling for the inference itself
         if( inferStatement( statement, true ) ) {
             emit statementsAdded();
@@ -135,7 +135,7 @@ Soprano::ErrorCode Soprano::Inference::InferenceModel::addStatement( const State
 }
 
 
-Soprano::ErrorCode Soprano::Inference::InferenceModel::removeStatements( const Statement& statement )
+Soprano::Error::ErrorCode Soprano::Inference::InferenceModel::removeStatements( const Statement& statement )
 {
     // FIXME: should we check if the statement could match some rule at all and if not do nothing?
 

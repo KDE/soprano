@@ -53,7 +53,7 @@ Soprano::Query::Query Soprano::Rasqal::QueryParser::parseQuery( const QString &q
 
     rasqal_query_set_fatal_error_handler( rq, const_cast<QueryParser*>( this ), raptor_message_handler );
     rasqal_query_set_error_handler( rq, const_cast<QueryParser*>( this ), raptor_message_handler );
-    
+
     if ( rasqal_query_prepare( rq, (unsigned char *)query.toLatin1().data(), NULL ) )
     {
         return Soprano::Query::Query();
@@ -71,14 +71,14 @@ void Soprano::Rasqal::QueryParser::raptor_message_handler( void *query_parser, r
 {
     QueryParser* parser = static_cast<QueryParser *>(query_parser);
 
-    Soprano::Locator locator;
+    Soprano::Error::Locator locator;
     locator.setLine( raptor_locator_line(rl) );
     locator.setColumn( raptor_locator_column(rl) );
 
     parser->emitSyntaxError( locator , msg );
 }
 
-void Soprano::Rasqal::QueryParser::emitSyntaxError( const Locator& locator, const QString& message )
+void Soprano::Rasqal::QueryParser::emitSyntaxError( const Error::Locator& locator, const QString& message )
 {
     emit syntaxError( locator, message );
 }
@@ -122,7 +122,7 @@ void Soprano::Rasqal::QueryParser::emitSyntaxError( const Locator& locator, cons
             queryVerb = "INSERT";
             break;
         default:
-            queryVerb = "UNKNOWN";
+            queryVerb = "UNKNOWNN";
     };
 
     // The top query graph pattern

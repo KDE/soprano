@@ -77,12 +77,12 @@ namespace Soprano {
 	     * Add a new statement to the model. Inferencing will be done directly.
 	     * Inferenced statements are stored in additional named graphs.
 	     */
-	    ErrorCode addStatement( const Statement& );
+	    Error::ErrorCode addStatement( const Statement& );
 
 	    /**
 	     * Remove a statement from the model.
 	     */
-	    ErrorCode removeStatements( const Statement& );
+	    Error::ErrorCode removeStatements( const Statement& );
 
 	    /**
 	     * Add an inference rule to the set of rules.

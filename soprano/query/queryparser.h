@@ -30,8 +30,9 @@
 #include <QtCore/QObject>
 
 namespace Soprano {
-
-    class Locator;
+    namespace Error {
+	class Locator;
+    }
 
     namespace Query {
 
@@ -119,7 +120,7 @@ namespace Soprano {
 	    virtual QStringList supportedUserQueryLanguages() const;
 
 	Q_SIGNALS:
-	    void syntaxError( const Soprano::Locator &locator, const QString& message );
+	    void syntaxError( const Soprano::Error::Locator &locator, const QString& message );
 
 	protected:
 	    Parser( const QString& name );

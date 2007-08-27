@@ -31,6 +31,7 @@
 #include <QDir>
 #include <QPluginLoader>
 #include <QDebug>
+#include <QtCore/QMutex>
 
 #include <stdlib.h>
 
@@ -296,25 +297,17 @@ void Soprano::PluginManager::loadPlugins( const QString& path )
 }
 
 
-// dummy class for singleton creation
-class PluginManagerSingleton : public Soprano::PluginManager
-{
-public:
-    PluginManagerSingleton()
-        : Soprano::PluginManager( 0 ) {
-    }
-};
-
-Q_GLOBAL_STATIC( PluginManagerSingleton, pluginManagerInstance );
-
 Soprano::PluginManager* Soprano::PluginManager::instance()
 {
-    static bool initialized = false;
-    if( !initialized ) {
-        initialized = true;
-        pluginManagerInstance()->loadAllPlugins();
+    static PluginManager* s_instance = 0;
+    static QMutex s_mutex;
+    s_mutex.lock();
+    if( !s_instance ) {
+        s_instance = new PluginManager();
+        s_instance->loadAllPlugins();
     }
-    return pluginManagerInstance();
+    s_mutex.unlock();
+    return s_instance;
 }
 
 #include "pluginmanager.moc"

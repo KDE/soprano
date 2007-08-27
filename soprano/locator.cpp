@@ -21,12 +21,12 @@
 
 #include "locator.h"
 
-class Soprano::Locator::Private: public QSharedData {
+class Soprano::Error::Locator::Private: public QSharedData {
 public:
     Private()
-        : line(-1), 
-          column(-1), 
-          byte(-1) 
+        : line(-1),
+          column(-1),
+          byte(-1)
     {};
 
     int line;
@@ -35,62 +35,71 @@ public:
     QString fileName;
 };
 
-Soprano::Locator::Locator()
+Soprano::Error::Locator::Locator()
 {
     d = new Private();
 }
 
-Soprano::Locator::Locator( const Locator &other )
+Soprano::Error::Locator::Locator( const Locator &other )
 {
     d = other.d;
 }
 
-Soprano::Locator::~Locator()
-{       
+Soprano::Error::Locator::Locator( int line, int column, int byte, const QString& filename )
+    : d( new Private() )
+{
+    d->line = line;
+    d->column = column;
+    d->byte = byte;
+    d->fileName = filename;
 }
 
-Soprano::Locator Soprano::Locator::operator=( const Locator &other )
+Soprano::Error::Locator::~Locator()
+{
+}
+
+Soprano::Error::Locator& Soprano::Error::Locator::operator=( const Locator &other )
 {
     d = other.d;
     return *this;
 }
 
-int Soprano::Locator::line() const
+int Soprano::Error::Locator::line() const
 {
     return d->line;
 }
 
-void Soprano::Locator::setLine( int line )
+void Soprano::Error::Locator::setLine( int line )
 {
     d->line = line;
 }
 
-int Soprano::Locator::column() const
+int Soprano::Error::Locator::column() const
 {
     return d->column;
 }
-    
-void Soprano::Locator::setColumn( int column )
+
+void Soprano::Error::Locator::setColumn( int column )
 {
     d->column = column;
 }
 
-int Soprano::Locator::byte() const
+int Soprano::Error::Locator::byte() const
 {
     return d->byte;
 }
-    
-void Soprano::Locator::setByte( int byte )
+
+void Soprano::Error::Locator::setByte( int byte )
 {
    d->byte = byte;
 }
 
-const QString Soprano::Locator::fileName() const
+QString Soprano::Error::Locator::fileName() const
 {
     return d->fileName;
 }
-    
-void Soprano::Locator::setFileName( const QString& fileName )
+
+void Soprano::Error::Locator::setFileName( const QString& fileName )
 {
     d->fileName = fileName;
 }

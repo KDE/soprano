@@ -67,7 +67,7 @@ void JNIObjectWrapper::callVoidMethod( jmethodID methodId, ... )
                                                     methodId,
                                                     args );
     va_end( args );
-    JNIWrapper::instance()->debugException();
+//    JNIWrapper::instance()->debugException();
 }
 
 
@@ -80,7 +80,7 @@ bool JNIObjectWrapper::callBooleanMethod( jmethodID methodId, ... )
                                                                    methodId,
                                                                    args );
     va_end( args );
-    JNIWrapper::instance()->debugException();
+//    JNIWrapper::instance()->debugException();
     return returnVal;
 }
 
@@ -94,7 +94,7 @@ long JNIObjectWrapper::callLongMethod( jmethodID methodId, ... )
                                                                 methodId,
                                                                 args );
     va_end( args );
-    JNIWrapper::instance()->debugException();
+//    JNIWrapper::instance()->debugException();
     return returnVal;
 }
 
@@ -108,7 +108,7 @@ jobject JNIObjectWrapper::callObjectMethod( jmethodID methodId, ... )
                                                                   methodId,
                                                                   args );
     va_end( args );
-    JNIWrapper::instance()->debugException();
+//    JNIWrapper::instance()->debugException();
     return returnVal;
 }
 

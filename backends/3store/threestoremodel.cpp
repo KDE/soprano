@@ -118,7 +118,7 @@ Soprano::ThreeStore::Model::~Model()
 }
 
 
-Soprano::ErrorCode Soprano::ThreeStore::Model::addStatement( const Statement &statement )
+Soprano::Error::ErrorCode Soprano::ThreeStore::Model::addStatement( const Statement &statement )
 {
     return ( ts_assert_triple( d->connection,
                                d->ensureNode( statement.context() ),
@@ -128,7 +128,7 @@ Soprano::ErrorCode Soprano::ThreeStore::Model::addStatement( const Statement &st
                                ( statement.object().isLiteral() ? ObjLiteral : ObjURI ),
                                ( statement.object().isLiteral() ? ts_ensure_datatype( d->connection, statement.object().literal().dataTypeUri().toString().toUtf8().data() ) : 0 ),
                                ( statement.object().isLiteral() ? ts_ensure_language( d->connection, statement.object().language().toUtf8().data() ) : 0 ) ) == 0
-             ? ERROR_NONE : ERROR_UNKNOW );
+             ? Error::ERROR_NONE : Error::ERROR_UNKNOWN );
 }
 
 
@@ -201,10 +201,10 @@ Soprano::StatementIterator Soprano::ThreeStore::Model::listStatements( const Sta
 }
 
 
-Soprano::ErrorCode Soprano::ThreeStore::Model::removeStatements( const Statement &statement )
+Soprano::Error::ErrorCode Soprano::ThreeStore::Model::removeStatements( const Statement &statement )
 {
     // FIXME
-    return ERROR_UNKNOW;
+    return Error::ERROR_UNKNOWN;
 }
 
 
