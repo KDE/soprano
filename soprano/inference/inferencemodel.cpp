@@ -124,7 +124,7 @@ void Soprano::Inference::InferenceModel::setRules( const QList<Rule>& rules )
 
 Soprano::Error::ErrorCode Soprano::Inference::InferenceModel::addStatement( const Statement& statement )
 {
-    Error::ErrorCode error = parentModel()->addStatement( statement );
+    Error::ErrorCode error = FilterModel::addStatement( statement );
     if ( error == Error::ERROR_NONE ) {
         // FIXME: error handling for the inference itself
         if( inferStatement( statement, true ) ) {

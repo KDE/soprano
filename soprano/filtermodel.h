@@ -35,6 +35,12 @@ namespace Soprano {
      * is the data base for this filter. The parent can be an actual
      * StorageModel or another FilterModel.
      *
+     * <b>Error handling:</b>
+     *
+     * The FilterModel "inherits" its parent Model's errors, i.e. FilterModel::lastError()
+     * always equals FilterModel::parent()->lastError() (If the FilterModel implementations
+     * are called in subclasses).
+     *
      * \author Sebastian Trueg <trueg@kde.org>
      */
     class SOPRANO_EXPORT FilterModel : public Model

@@ -149,6 +149,12 @@ namespace Soprano {
 	     */
 	    void setError( const Error& ) const;
 
+	    /**
+	     * Convinience method to set simple string error messages with a default
+	     * error code ERROR_UNKNOWN.
+	     */
+	    void setError( const QString& errorMessage ) const;
+
 	private:
 	    class Private;
 	    Private* const d;

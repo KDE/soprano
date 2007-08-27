@@ -21,6 +21,7 @@
 
 #include "cluceneutils.h"
 #include "wstring.h"
+#include "../error.h"
 
 namespace Soprano {
     namespace Index {
@@ -58,4 +59,10 @@ WString Soprano::Index::textFieldName()
 QString Soprano::Index::bnodeIdPrefix()
 {
     return cluceneIndexStatics()->bnodeIdPrefix;
+}
+
+
+Soprano::Error::Error Soprano::Index::exceptionToError( CLuceneError& err )
+{
+    return Error::Error( err.what(), Error::ERROR_UNKNOWN + err.number() );
 }

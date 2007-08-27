@@ -71,8 +71,14 @@ Soprano::Index::CLuceneIndex* Soprano::Index::IndexFilterModel::index() const
 
 Soprano::Error::ErrorCode Soprano::Index::IndexFilterModel::addStatement( const Soprano::Statement &statement )
 {
-    d->index->addStatement( statement );
-    return FilterModel::addStatement( statement );
+    Error::ErrorCode c = FilterModel::addStatement( statement );
+    if ( c == Error::ERROR_NONE ) {
+        c = d->index->addStatement( statement );
+        if ( c != Error::ERROR_NONE ) {
+            setError( d->index->lastError() );
+        }
+    }
+    return c;
 }
 
 
@@ -84,7 +90,11 @@ Soprano::Error::ErrorCode Soprano::Index::IndexFilterModel::removeStatements( co
     // FIXME: can we handle this is the CLuceneIndex?
     Soprano::StatementIterator it = parentModel()->listStatements( statement );
     while ( it.next() ) {
-        d->index->removeStatement( *it );
+        Error::ErrorCode c = d->index->removeStatement( *it );
+        if ( c != Error::ERROR_NONE ) {
+            setError( d->index->lastError() );
+            return c;
+        }
     }
 
     return FilterModel::removeStatements( statement );

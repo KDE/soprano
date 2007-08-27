@@ -209,6 +209,12 @@ void Soprano::Error::ErrorCache::setError( const Error& error ) const
 }
 
 
+void Soprano::Error::ErrorCache::setError( const QString& errorMessage ) const
+{
+    setError( Error( errorMessage, ERROR_UNKNOWN ) );
+}
+
+
 void Soprano::Error::ErrorCache::clearError() const
 {
     d->errorMap[QThread::currentThreadId()] = Error();

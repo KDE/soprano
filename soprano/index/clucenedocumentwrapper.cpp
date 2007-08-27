@@ -26,6 +26,8 @@
 #include <CLucene/document/Document.h>
 #include <CLucene/document/Field.h>
 
+#include <QtCore/QDebug>
+
 
 class Soprano::Index::CLuceneDocumentWrapper::Private
 {
@@ -47,12 +49,13 @@ Soprano::Index::CLuceneDocumentWrapper::~CLuceneDocumentWrapper()
 }
 
 
-void Soprano::Index::CLuceneDocumentWrapper::addProperty( const QString& field, const QString& text )
-{
-    WString wText( text );
+using lucene::document::Field;
 
+void Soprano::Index::CLuceneDocumentWrapper::addProperty( const WString& field, const WString& text )
+{
+    // FIXME: Do we really need to store the values? after all we have them in the RDF store anyway!
     // store this predicate (YES, the CLucene API is that bad. We actually put in Fields allocated on the heap here!)
-    d->document->add( *new lucene::document::Field( WString( field ).data(), wText.data(), true, false, false ) );
+    d->document->add( *new Field( field.data(), text.data(), /*true, false, false*/ Field::STORE_YES|Field::INDEX_NO|Field::TERMVECTOR_NO ) );
 
     // We don't have to recalculate the concatenated text: just add another
     // TEXT field and Lucene will take care of this. Additional advantage:
@@ -61,7 +64,7 @@ void Soprano::Index::CLuceneDocumentWrapper::addProperty( const QString& field, 
     // means loss of information).
     //
     // (YES, the CLucene API is that bad. We actually put in Fields allocated on the heap here!)
-    d->document->add( *new lucene::document::Field( textFieldName().data(), wText.data(), false, true, true ) );
+    d->document->add( *new Field( textFieldName().data(), text.data(), /*false, true, true*/ Field::STORE_NO|Field::INDEX_TOKENIZED|Field::TERMVECTOR_YES ) );
 }
 
 
@@ -99,7 +102,7 @@ int Soprano::Index::CLuceneDocumentWrapper::numberOfPropertyFields() const
 void Soprano::Index::CLuceneDocumentWrapper::addID( const QString& id )
 {
     // (YES, the CLucene API is that bad. We actually put in Fields allocated on the heap here!)
-    d->document->add( *new lucene::document::Field( idFieldName().data(), WString( id ).data(), true, true, false ) );
+    d->document->add( *new lucene::document::Field( idFieldName().data(), WString( id ).data(), /*true, true, false*/ Field::STORE_YES|Field::INDEX_UNTOKENIZED|Field::TERMVECTOR_NO ) );
 }
 
 

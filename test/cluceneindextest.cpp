@@ -66,31 +66,39 @@ void IndexTest::testAddStatement()
     Statement s1( QUrl( "http://soprano.sf.net/test#A" ),
                   QUrl( "http://soprano.sf.net/test#valueX" ),
                   LiteralValue( "Hello World" ) );
+    Statement s2( QUrl( "http://soprano.sf.net/test#A" ),
+                  QUrl( "http://soprano.sf.net/test#valueY" ),
+                  LiteralValue( "Wurst" ) );
 
     QVERIFY( m_indexModel->addStatement( s1 ) == Error::ERROR_NONE );
-
     QVERIFY( m_indexModel->containsStatements( s1 ) );
+
+    // now check if the statement was properly indexed
+    lucene::search::Hits* hits = m_indexModel->index()->search( "Hello World" );
+    QVERIFY( hits != 0 );
+    QCOMPARE( hits->length(), 1 );
+    QCOMPARE( WString( hits->doc( 0 ).get( L"id" ) ), WString( s1.subject().toString() ) );
+    _CLDELETE( hits );
+
+    QVERIFY( m_indexModel->addStatement( s2 ) == Error::ERROR_NONE );
+    QVERIFY( m_indexModel->containsStatements( s2 ) );
 
     QTextStream s( stderr );
     m_indexModel->index()->dump( s );
 
-    // now check if the statement was properly indexed
-    WString field( s1.predicate().toString() );
-    WString value( s1.object().literal().toString() );
-    lucene::index::Term* term = new lucene::index::Term( field.data(), value.data() );
-    lucene::search::Query* query = new lucene::search::TermQuery( term );
-    lucene::search::Hits* hits = m_indexModel->index()->search( query );
-
+    // check the previous one again to make sure the index is not borked
+    hits = m_indexModel->index()->search( "Hello World" );
     QVERIFY( hits != 0 );
-
     QCOMPARE( hits->length(), 1 );
+    QCOMPARE( WString( hits->doc( 0 ).get( L"id" ) ), WString( s1.subject().toString() ) );
+    _CLDELETE( hits );
 
-    lucene::document::Document& doc = hits->doc( 0 );
-
-    QCOMPARE( doc.get( L"id" ), WString( s1.subject().toString() ).data() );
-
-    _CLDELETE( term );
-    _CLDELETE( query );
+    // and check for the second statement
+    hits = m_indexModel->index()->search( "Wurst" );
+    QVERIFY( hits != 0 );
+    QCOMPARE( hits->length(), 1 );
+    QCOMPARE( WString( hits->doc( 0 ).get( L"id" ) ), WString( s2.subject().toString() ) );
+    _CLDELETE( hits );
 }
 
 QTEST_MAIN( IndexTest );

@@ -49,7 +49,6 @@ public:
           indexReader( 0 ),
           indexWriter( 0 ),
           analyzer( 0 ),
-          queryParser( 0 ),
           searcher( 0 ),
           deleteAnalyzer( false ),
           transactionID( 0 ) {
@@ -59,7 +58,6 @@ public:
     lucene::index::IndexReader* indexReader;
     lucene::index::IndexWriter* indexWriter;
     lucene::analysis::Analyzer* analyzer;
-    lucene::queryParser::QueryParser* queryParser;
     lucene::search::IndexSearcher* searcher;
 
     bool deleteAnalyzer;
@@ -185,7 +183,6 @@ Soprano::Index::CLuceneIndex::CLuceneIndex( lucene::analysis::Analyzer* analyzer
         d->analyzer = new lucene::analysis::SimpleAnalyzer();
         d->deleteAnalyzer = true;
     }
-    d->queryParser = new lucene::queryParser::QueryParser( textFieldName().data(), analyzer );
 }
 
 
@@ -193,7 +190,6 @@ Soprano::Index::CLuceneIndex::~CLuceneIndex()
 {
     close();
 
-    _CLDELETE( d->queryParser );
     if ( d->deleteAnalyzer ) {
         delete d->analyzer;
     }
@@ -205,11 +201,14 @@ bool Soprano::Index::CLuceneIndex::open( const QString& folder )
 {
     close();
 
+    clearError();
+
     try {
         d->indexDir = lucene::store::FSDirectory::getDirectory( QFile::encodeName( folder ).data(), !QFile::exists( folder ) );
     }
     catch( CLuceneError& err ) {
         qDebug() << "(Soprano::Index::CLuceneIndex) failed to open index folder " << folder << " (" << err.what() << ")";
+        setError( exceptionToError( err ) );
         return false;
     }
 
@@ -245,7 +244,10 @@ bool Soprano::Index::CLuceneIndex::isOpen() const
 
 lucene::document::Document* Soprano::Index::CLuceneIndex::documentForResource( const Node& resource )
 {
+    clearError();
+
     if ( d->transactionID == 0 ) {
+        setError( "No transaction started." );
         return 0;
     }
 
@@ -277,18 +279,19 @@ lucene::document::Document* Soprano::Index::CLuceneIndex::documentForResource( c
                 while ( fields->hasMoreElements() ) {
                     lucene::document::Field* field = fields->nextElement();
                     if ( Private::isPropertyField( WString( field->name(), true ) ) ) {
-                        document->add( *field );
+                        docWrapper.addProperty( field->name(), field->stringValue() );
                     }
                 }
             }
 
-            // step 4: add it to our cache
+            // step 4: add the new doc to our cache
             d->documentCache[resource] = document;
 
             return document;
         }
         catch( CLuceneError& err ) {
             qDebug() << "(Soprano::Index::CLuceneIndex) Exception occured: " << err.what();
+            setError( exceptionToError( err ) );
             return 0;
         }
     }
@@ -296,12 +299,15 @@ lucene::document::Document* Soprano::Index::CLuceneIndex::documentForResource( c
 
 int Soprano::Index::CLuceneIndex::startTransaction()
 {
+    clearError();
+
     if ( d->transactionID == 0 ) {
         // FIXME: use a random number
         d->transactionID = 1;
         return d->transactionID;
     }
     else {
+        setError( "Previous transaction still open." );
         return 0;
     }
 }
@@ -327,14 +333,20 @@ bool Soprano::Index::CLuceneIndex::closeTransaction( int id )
             }
             catch( CLuceneError& err ) {
                 qDebug() << "Failed to store document: " << err.what();
+                setError( exceptionToError( err ) );
                 return false;
             }
+
+            _CLDELETE( doc );
         }
 
-        // clear the document cache, strangely we cannot delete the documents, that makes clucene crash!
+        clearError();
         d->documentCache.clear();
+        d->transactionID = 0;
+        return true;
     }
     else {
+        setError( QString( "Invalid transaction ID: %1" ).arg( id ) );
         return false;
     }
 }
@@ -365,8 +377,11 @@ Soprano::Error::ErrorCode Soprano::Index::CLuceneIndex::addStatement( const Sopr
 {
     if ( !statement.object().isLiteral() ) {
         qDebug() << "(Soprano::Index::CLuceneIndex::addStatement) only adding statements with literal object type.";
+        setError( Error::Error( "Only indexing of literal objects supported." ) );
         return Error::ERROR_UNKNOWN;
     }
+
+    clearError();
 
     bool localTransaction = false;
     if ( d->transactionID == 0 ) {
@@ -386,6 +401,7 @@ Soprano::Error::ErrorCode Soprano::Index::CLuceneIndex::addStatement( const Sopr
         success = true;
     }
     else {
+        // error already set in documentForResource
         success = false;
     }
 
@@ -401,8 +417,11 @@ Soprano::Error::ErrorCode Soprano::Index::CLuceneIndex::removeStatement( const S
 {
     if ( !statement.object().isLiteral() ) {
         qDebug() << "(Soprano::Index::CLuceneIndex::removeStatement) only adding statements with literal object type.";
+        setError( Error::Error( "Only indexing of literal objects supported." ) );
         return Error::ERROR_UNKNOWN;
     }
+
+    clearError();
 
     // just for speed
     if ( !d->indexPresent() ) {
@@ -431,10 +450,11 @@ Soprano::Error::ErrorCode Soprano::Index::CLuceneIndex::removeStatement( const S
                 document->removeFields( fieldName.data() );
 
                 // now copy the ones that we want to preserve back
+                CLuceneDocumentWrapper docWrapper( document );
                 for ( int i = 0; values[i]; ++i ) {
                     WString value( values[i], true );
                     if ( value != text ) {
-                        document->add( *new lucene::document::Field( fieldName.data(), text.data(), true, false, false ) );
+                        docWrapper.addProperty( fieldName, values[i] );
                     }
                 }
             }
@@ -442,6 +462,7 @@ Soprano::Error::ErrorCode Soprano::Index::CLuceneIndex::removeStatement( const S
         }
         catch( CLuceneError& err ) {
             qDebug() << "(Soprano::Index::CLuceneIndex) Exception occured: " << err.what();
+            setError( exceptionToError( err ) );
             success = false;
         }
     }
@@ -479,11 +500,16 @@ Soprano::Node Soprano::Index::CLuceneIndex::getResource( lucene::document::Docum
 
 lucene::search::Hits* Soprano::Index::CLuceneIndex::search( const QString& query )
 {
+    clearError();
     try {
-        return search( d->queryParser->parse( WString( query ).data() ) );
+        lucene::search::Query* q = lucene::queryParser::QueryParser::parse( WString( query ).data(), textFieldName().data(), d->analyzer );
+        lucene::search::Hits* hits = search( q );
+        _CLDELETE( q );
+        return hits;
     }
     catch( CLuceneError& err ) {
         qDebug() << "search failed: " << err.what();
+        setError( exceptionToError( err ) );
         return 0;
     }
 }
@@ -491,11 +517,13 @@ lucene::search::Hits* Soprano::Index::CLuceneIndex::search( const QString& query
 
 lucene::search::Hits* Soprano::Index::CLuceneIndex::search( lucene::search::Query* query )
 {
+    clearError();
     try {
         return d->getIndexSearcher()->search( query );
     }
     catch( CLuceneError& err ) {
         qDebug() << "search failed: " << err.what();
+        setError( exceptionToError( err ) );
         return 0;
     }
 }
@@ -503,32 +531,52 @@ lucene::search::Hits* Soprano::Index::CLuceneIndex::search( lucene::search::Quer
 
 double Soprano::Index::CLuceneIndex::getScore( const Soprano::Node& resource, const QString& query )
 {
-    return getScore( resource, d->queryParser->parse( WString( query ).data() ) );
+    clearError();
+    try {
+        lucene::search::Query* q = lucene::queryParser::QueryParser::parse( WString( query ).data(), textFieldName().data(), d->analyzer );
+        double score = getScore( resource, q );
+        _CLDELETE( q );
+        return score;
+    }
+    catch( CLuceneError& err ) {
+        qDebug() << "search failed: " << err.what();
+        setError( exceptionToError( err ) );
+        return 0.0;
+    }
 }
 
 
 double Soprano::Index::CLuceneIndex::getScore( const Soprano::Node& resource, lucene::search::Query* query )
 {
-    // rewrite the query
-    lucene::index::Term queryTerm( idFieldName().data(), WString( d->getId( resource ) ).data() );
-    lucene::search::TermQuery idQuery( &queryTerm );
-    lucene::search::BooleanQuery combinedQuery;
-    combinedQuery.add( &idQuery, true, false );
-    combinedQuery.add( query, true, false );
+    clearError();
+    try {
+        // rewrite the query
+        lucene::index::Term queryTerm( idFieldName().data(), WString( d->getId( resource ) ).data() );
+        lucene::search::TermQuery idQuery( &queryTerm );
+        lucene::search::BooleanQuery combinedQuery;
+        combinedQuery.add( &idQuery, true, false );
+        combinedQuery.add( query, true, false );
 
-    // fetch the score when the URI matches the original query
-    lucene::search::TopDocs* docs = static_cast<lucene::search::Searchable*>( d->getIndexSearcher() )->_search( &combinedQuery, 0, 1 );
-    double r = -1.0;
-    if ( docs->totalHits > 0 ) {
-        r = docs->scoreDocs[0]->score;
+        // fetch the score when the URI matches the original query
+        lucene::search::TopDocs* docs = static_cast<lucene::search::Searchable*>( d->getIndexSearcher() )->_search( &combinedQuery, 0, 1 );
+        double r = -1.0;
+        if ( docs->totalHits > 0 ) {
+            r = docs->scoreDocs[0].score;
+        }
+        _CLDELETE( docs );
+        return r;
     }
-    _CLDELETE( docs );
-    return r;
+    catch( CLuceneError& err ) {
+        qDebug() << "search failed: " << err.what();
+        setError( exceptionToError( err ) );
+        return 0.0;
+    }
 }
 
 
 void Soprano::Index::CLuceneIndex::dump( QTextStream& s ) const
 {
+    clearError();
     try  {
         lucene::index::IndexReader* reader = d->getIndexReader();
 
@@ -549,6 +597,7 @@ void Soprano::Index::CLuceneIndex::dump( QTextStream& s ) const
     }
     catch( CLuceneError& err ) {
         qDebug() << "(Soprano::Index::CLuceneIndex) failed to dump index.";
+        setError( exceptionToError( err ) );
     }
 }
 

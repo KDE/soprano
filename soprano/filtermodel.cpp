@@ -84,56 +84,72 @@ void Soprano::FilterModel::setParentModel( Model* model )
 Soprano::Error::ErrorCode Soprano::FilterModel::addStatement( const Statement &statement )
 {
     Q_ASSERT( d->parent );
-    return d->parent->addStatement( statement );
+    Error::ErrorCode c = d->parent->addStatement( statement );
+    setError( d->parent->lastError() );
+    return c;
 }
 
 
 bool Soprano::FilterModel::isEmpty() const
 {
     Q_ASSERT( d->parent );
-    return d->parent->isEmpty();
+    bool b = d->parent->isEmpty();
+    setError( d->parent->lastError() );
+    return b;
 }
 
 
 Soprano::NodeIterator Soprano::FilterModel::listContexts() const
 {
     Q_ASSERT( d->parent );
-    return d->parent->listContexts();
+    NodeIterator it = d->parent->listContexts();
+    setError( d->parent->lastError() );
+    return it;
 }
 
 
 bool Soprano::FilterModel::containsStatements( const Statement &statement ) const
 {
     Q_ASSERT( d->parent );
-    return d->parent->containsStatements( statement );
+    bool b = d->parent->containsStatements( statement );
+    setError( d->parent->lastError() );
+    return b;
 }
 
 
 Soprano::QueryResultIterator Soprano::FilterModel::executeQuery( const QueryLegacy &query ) const
 {
     Q_ASSERT( d->parent );
-    return d->parent->executeQuery( query );
+    QueryResultIterator it = d->parent->executeQuery( query );
+    setError( d->parent->lastError() );
+    return it;
 }
 
 
 Soprano::StatementIterator Soprano::FilterModel::listStatements( const Statement &partial ) const
 {
     Q_ASSERT( d->parent );
-    return d->parent->listStatements( partial );
+    StatementIterator it = d->parent->listStatements( partial );
+    setError( d->parent->lastError() );
+    return it;
 }
 
 
 Soprano::Error::ErrorCode Soprano::FilterModel::removeStatements( const Statement &statement )
 {
     Q_ASSERT( d->parent );
-    return d->parent->removeStatements( statement );
+    Error::ErrorCode c = d->parent->removeStatements( statement );
+    setError( d->parent->lastError() );
+    return c;
 }
 
 
 int Soprano::FilterModel::statementCount() const
 {
     Q_ASSERT( d->parent );
-    return d->parent->statementCount();
+    int cnt = d->parent->statementCount();
+    setError( d->parent->lastError() );
+    return cnt;
 }
 
 

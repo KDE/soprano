@@ -28,6 +28,10 @@
 #include "wstring.h"
 
 namespace Soprano {
+    namespace Error {
+	class Error;
+    }
+
     namespace Index {
         /**
 	 * The name of the Document field holding the Resource identifier. The value
@@ -47,6 +51,8 @@ namespace Soprano {
          * invalid as a (part of a) URI scheme.
          */
         QString bnodeIdPrefix();
+
+	Error::Error exceptionToError( CLuceneError& );
     }
 }
 
