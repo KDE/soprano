@@ -73,6 +73,8 @@ Soprano::StatementIterator Soprano::Raptor::Parser::parseFile( const QString& fi
                                                                RdfSerialization serialization,
                                                                const QString& userSerialization ) const
 {
+    clearError();
+
     QUrl uri( QUrl::fromLocalFile( filename ) );
     if ( uri.scheme().isEmpty() ) {
         // we need to help the stupid librdf file url handling
@@ -92,6 +94,7 @@ Soprano::StatementIterator Soprano::Raptor::Parser::parseFile( const QString& fi
     if ( !parser ) {
         qDebug() << "(Soprano::Raptor::Parser) no parser for serialization " << serializationMimeType( serialization );
         librdf_free_uri( redlandUri );
+        setError( Redland::World::self()->lastError() );
         return StatementIterator();
     }
 
@@ -107,6 +110,7 @@ Soprano::StatementIterator Soprano::Raptor::Parser::parseFile( const QString& fi
     librdf_free_parser( parser );
 
     if ( !stream ) {
+        setError( Redland::World::self()->lastError() );
         return StatementIterator();
     }
     else {
@@ -120,6 +124,8 @@ Soprano::StatementIterator Soprano::Raptor::Parser::parseString( const QString& 
                                                                  RdfSerialization serialization,
                                                                  const QString& userSerialization ) const
 {
+    clearError();
+
     librdf_parser* parser = librdf_new_parser( Redland::World::self()->worldPtr(),
                                                0, // use all factories
                                                mimeTypeString( serialization ).toLatin1().data(),
@@ -141,6 +147,7 @@ Soprano::StatementIterator Soprano::Raptor::Parser::parseString( const QString& 
     librdf_free_parser( parser );
 
     if ( !stream ) {
+        setError( Redland::World::self()->lastError() );
         return StatementIterator();
     }
     else {

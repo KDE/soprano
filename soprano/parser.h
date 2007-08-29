@@ -25,6 +25,7 @@
 #include "plugin.h"
 #include "soprano_export.h"
 #include "sopranotypes.h"
+#include "error.h"
 
 #include <QtCore/QObject>
 
@@ -86,7 +87,7 @@ namespace Soprano
      *
      * \author Daniele Galdi <daniele.galdi@gmail.com><br>Sebastian Trueg <trueg@kde.org>
      */
-    class SOPRANO_EXPORT Parser : public Plugin
+    class SOPRANO_EXPORT Parser : public Plugin, public Error::ErrorCache
     {
     public:
 	virtual ~Parser();

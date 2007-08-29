@@ -56,6 +56,8 @@ Soprano::Redland::BackendPlugin::BackendPlugin()
 
 Soprano::StorageModel* Soprano::Redland::BackendPlugin::createModel( const QList<BackendSetting>& settings ) const
 {
+    clearError();
+
     // check all settings.
     // we pass all user settings on to librdf
     QHash<QString, QString> redlandOptions;
@@ -94,12 +96,14 @@ Soprano::StorageModel* Soprano::Redland::BackendPlugin::createModel( const QList
                                                   os.toLatin1().data() );
     if( !storage ) {
         qDebug() << "(Soprano::Redland) storage creation failed!" << endl;
+        setError( Redland::World::self()->lastError() );
         return 0;
     }
 
     librdf_model *model = librdf_new_model( World::self()->worldPtr(), storage, 0 );
     if ( !model ) {
         librdf_free_storage( storage );
+        setError( Redland::World::self()->lastError() );
         return 0;
     }
 
