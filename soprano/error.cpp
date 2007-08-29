@@ -209,9 +209,9 @@ void Soprano::Error::ErrorCache::setError( const Error& error ) const
 }
 
 
-void Soprano::Error::ErrorCache::setError( const QString& errorMessage ) const
+void Soprano::Error::ErrorCache::setError( const QString& errorMessage, int code ) const
 {
-    setError( Error( errorMessage, ERROR_UNKNOWN ) );
+    setError( Error( errorMessage, code ) );
 }
 
 

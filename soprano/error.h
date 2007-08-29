@@ -32,7 +32,8 @@ namespace Soprano {
     namespace Error {
 	enum ErrorCode {
 	    ERROR_NONE = 0,          /**< No error occured, i.e. success. */
-	    ERROR_INVALID_STATEMENT, /**< Error indicating that a Statement was invalid where this is not supoprted. For example in Model::addStatement(). */
+	    ERROR_INVALID_ARGUMENT,  /**< Error indicating that a method argument was invalid. For example an invalid Statement in Model::addStatement(). */
+	    ERROR_INVALID_STATEMENT = ERROR_INVALID_ARGUMENT, /**< \deprecated: use ERROR_INVALID_ARGUMENT */
 	    ERROR_NOT_SUPPORTED,     /**< Error indicating that a certain functionality is not supported. */
 	    ERROR_PARSING_FAILED,    /**< Parsing a query or an RDF serialization failed. */
 	    ERROR_UNKNOWN            /**< An unknown error occured. */
@@ -71,6 +72,22 @@ namespace Soprano {
 	    virtual ~Error();
 
 	    Error& operator=( const Error& );
+
+	    /**
+	     * An %Error evalutes to a boolean, indicating if an %Error is "set".
+	     *
+	     * \return \p false if code() == ERROR_NONE, \p true otherwise.
+	     *
+	     * Thus, an Error object can easily be checked as follows:
+	     *
+	     * \code
+	     * model.addStatement( s );
+	     * if( model.lastError() ) {
+	     *    displayError( model.lastError() );
+	     * }
+	     * \endcode
+	     */
+	    operator bool() const { return code() != ERROR_NONE; }
 
 	    QString message() const;
 	    int code() const;
@@ -153,7 +170,7 @@ namespace Soprano {
 	     * Convinience method to set simple string error messages with a default
 	     * error code ERROR_UNKNOWN.
 	     */
-	    void setError( const QString& errorMessage ) const;
+	    void setError( const QString& errorMessage, int code = ERROR_UNKNOWN ) const;
 
 	private:
 	    class Private;
