@@ -41,22 +41,22 @@ Soprano::StorageModel* Soprano::ThreeStore::BackendPlugin::createModel( const QL
     // we use the name as 3Store/SQL database name and parse the options for mysql connection data
     QString db, host,  user,  passwd;
     Q_FOREACH( BackendSetting s, settings ) {
-        if ( s.option == BACKEND_OPTION_USER ) {
-            if ( s.userOptionName == "db" )
-                db = s.value.toString();
-            else if ( s.userOptionName == "host" )
-                host = s.value.toString();
-            else if ( s.userOptionName == "user" )
-                user = s.value.toString();
-            else if ( s.userOptionName == "passwd" )
-                passwd = s.value.toString();
+        if ( s.option() == BACKEND_OPTION_USER ) {
+            if ( s.userOptionName() == "db" )
+                db = s.value().toString();
+            else if ( s.userOptionName() == "host" )
+                host = s.value().toString();
+            else if ( s.userOptionName() == "user" )
+                user = s.value().toString();
+            else if ( s.userOptionName() == "passwd" )
+                passwd = s.value().toString();
             else {
-                setError( QString( "Unsupported option: %1" ).arg( s.userOptionName ), Error::ERROR_INVALID_ARGUMENT );
+                setError( QString( "Unsupported option: %1" ).arg( s.userOptionName() ), Error::ERROR_INVALID_ARGUMENT );
                 return 0;
             }
         }
         else {
-            setError( QString( "Unsupported option: %1" ).arg( s.option ), Error::ERROR_INVALID_ARGUMENT );
+            setError( QString( "Unsupported option: %1" ).arg( s.option() ), Error::ERROR_INVALID_ARGUMENT );
             return 0;
         }
     }

@@ -47,21 +47,21 @@ Soprano::StorageModel* Soprano::Sesame2::BackendPlugin::createModel( const QList
     // FIXME: support inferecen option
 
     Q_FOREACH( BackendSetting s, settings ) {
-        if ( s.option == BACKEND_OPTION_USER ) {
+        if ( s.option() == BACKEND_OPTION_USER ) {
             // no user options ATM
             qDebug() << "(Soprano::Sesame2::BackendPlugin) no user options supported.";
             setError( "No user options supported.", Error::ERROR_INVALID_ARGUMENT );
             return 0;
         }
-        else if ( s.option == BACKEND_OPTION_STORAGE_MEMORY ) {
-            memory = s.value.toBool();
+        else if ( s.option() == BACKEND_OPTION_STORAGE_MEMORY ) {
+            memory = s.value().toBool();
         }
-        else if ( s.option == BACKEND_OPTION_STORAGE_DIR ) {
-            path = s.value.toString();
+        else if ( s.option() == BACKEND_OPTION_STORAGE_DIR ) {
+            path = s.value().toString();
         }
         else {
-            qDebug() << "(Soprano::Sesame2::BackendPlugin) unsupported option: " << s.option;
-            setError( QString( "Unsupported option: %1" ).arg( s.option ), Error::ERROR_INVALID_ARGUMENT );
+            qDebug() << "(Soprano::Sesame2::BackendPlugin) unsupported option: " << s.option();
+            setError( QString( "Unsupported option: %1" ).arg( s.option() ), Error::ERROR_INVALID_ARGUMENT );
             return 0;
         }
     }

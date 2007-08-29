@@ -69,19 +69,19 @@ Soprano::StorageModel* Soprano::Redland::BackendPlugin::createModel( const QList
     redlandOptions["new"] = "no";
 
     Q_FOREACH( BackendSetting s, settings ) {
-        if ( s.option == BACKEND_OPTION_USER ) {
-            redlandOptions[s.userOptionName] = s.value.toString();
+        if ( s.option() == BACKEND_OPTION_USER ) {
+            redlandOptions[s.userOptionName()] = s.value().toString();
         }
-        else if ( s.option == BACKEND_OPTION_STORAGE_MEMORY ) {
-            if ( s.value.toBool() ) {
+        else if ( s.option() == BACKEND_OPTION_STORAGE_MEMORY ) {
+            if ( s.value().toBool() ) {
                 redlandOptions["hash-type"] = "memory";
             }
             else {
                 redlandOptions["hash-type"] = "bdb";
             }
         }
-        else if ( s.option == BACKEND_OPTION_STORAGE_DIR ) {
-            redlandOptions["dir"] = s.value.toString();
+        else if ( s.option() == BACKEND_OPTION_STORAGE_DIR ) {
+            redlandOptions["dir"] = s.value().toString();
             redlandOptions["hash-type"] = "bdb";
         }
     }

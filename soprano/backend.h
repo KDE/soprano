@@ -29,6 +29,8 @@
 
 #include <QtCore/QStringList>
 #include <QtCore/QVariant>
+#include <QtCore/QSharedDataPointer>
+
 
 namespace Soprano
 {
@@ -66,9 +68,40 @@ namespace Soprano
 	 */
 	BackendSetting( const QString& userOption, const QVariant& value_ );
 
-	BackendOption option;    /**< The option that this setting sets. If Soprano::BACKEND_OPTION_USER the option is identified by userSettingName. */
-	QString userOptionName;  /**< The name of the user setting if setting is set to Soprano::BACKEND_OPTION_USER */
-	QVariant value;          /**< The value of the setting. */
+	/**
+	 * Copy constructor.
+	 */
+	BackendSetting( const BackendSetting& other );
+
+	/**
+	 * Destructor.
+	 */
+	~BackendSetting();
+
+	/**
+	 * Copy operator.
+	 */
+	BackendSetting& operator=( const BackendSetting& other );
+
+	/**
+	 * The option that this setting sets. If Soprano::BACKEND_OPTION_USER 
+	 * the option is identified by userOptionName().
+	 */
+	BackendOption option() const;
+
+	/**
+	 * The name of the user option if option() is Soprano::BACKEND_OPTION_USER.
+	 */
+	QString userOptionName() const;
+
+	/**
+	 * The value of the setting.
+	 */
+	QVariant value() const;
+
+    private:
+	class Private;
+	QSharedDataPointer<Private> d;
     };
 
     /**

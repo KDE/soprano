@@ -21,33 +21,67 @@
 
 #include "backend.h"
 
+#include <QtCore/QSharedData>
+
+
+class Soprano::BackendSetting::Private : public QSharedData
+{
+public:
+    Private( BackendOption option_ = BACKEND_OPTION_NONE,
+             const QString& userOptionName_ = QString(),
+             const QVariant& value_ = QVariant() )
+        : option( option_ ),
+          userOptionName( userOptionName_ ),
+          value( value_ ) {
+    }
+
+    BackendOption option;
+    QString userOptionName;
+    QVariant value;
+};
+
 
 Soprano::BackendSetting::BackendSetting()
-    : option( BACKEND_OPTION_NONE )
+    : d( new Private() )
 {
 }
 
 
 Soprano::BackendSetting::BackendSetting( BackendOption s )
-    : option( s ),
-      value( true )
+    : d( new Private( s, QString(), true ) )
 {
 }
 
 
-Soprano::BackendSetting::BackendSetting( BackendOption s, const QVariant& value_ )
-    : option( s ),
-      value( value_ )
+Soprano::BackendSetting::BackendSetting( BackendOption s, const QVariant& value )
+    : d( new Private( s, QString(), value ) )
 {
 }
 
 
-Soprano::BackendSetting::BackendSetting( const QString& userOption, const QVariant& value_ )
-    : option( BACKEND_OPTION_USER ),
-      userOptionName( userOption ),
-      value( value_ )
+Soprano::BackendSetting::BackendSetting( const QString& userOption, const QVariant& value )
+    : d( new Private( BACKEND_OPTION_USER, userOption, value ) )
 {
 }
+
+
+Soprano::BackendSetting::BackendSetting( const BackendSetting& other )
+{
+    d = other.d;
+}
+
+
+Soprano::BackendSetting::~BackendSetting()
+{
+}
+
+
+Soprano::BackendSetting& Soprano::BackendSetting::operator=( const BackendSetting& other )
+{
+    d = other.d;
+    return *this;
+}
+
 
 
 class Soprano::Backend::Private
