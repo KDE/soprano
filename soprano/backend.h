@@ -35,7 +35,11 @@ namespace Soprano
     class StorageModel;
 
     /**
-     * Wraps one setting for Model creation.
+     * \brief Wraps one setting for Model creation.
+     *
+     * A BackendSetting consists of an option type and an option value. The option type can either be a predefined
+     * value from Soprano::BackendOption or a user defined string value that depends on the Backend implementation. In the 
+     * latter case option has to be set to Soprano::BACKEND_OPTION_USER.
      *
      * \sa Backend::createModel()
      */
