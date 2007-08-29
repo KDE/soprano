@@ -165,3 +165,9 @@ bool Soprano::RdfSchemaWrapper::isType( const Node& someClass, const Node& someT
 {
     return type( someClass, someType ).next();
 }
+
+
+Soprano::Error::Error Soprano::RdfSchemaWrapper::lastError() const
+{
+    return d->model->lastError();
+}

@@ -149,7 +149,7 @@ namespace Soprano {
 	    /**
 	     * Get the last error that occured in the current thread.
 	     */
-	    Error lastError() const;
+	    virtual Error lastError() const;
 
 	protected:
 	    ErrorCache();

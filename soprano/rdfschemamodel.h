@@ -23,6 +23,7 @@
 #define _SOPRANO_RDF_SCHEMA_WRAPPER_H_
 
 #include "node.h"
+#include "error.h"
 
 namespace Soprano {
 
@@ -32,25 +33,25 @@ namespace Soprano {
     /**
      * \brief Provides convinience methods to handle RDFS data.
      *
-     * Interface based on Sesame's RdfSchemaSource. ( Copyright © 2002-2006 Aduna BV, GNU LGPL License applies. )
+     * Interface based on Sesame's RdfSchemaSource. (Copyright (C) 2002-2006 Aduna BV, GNU LGPL License applies.)
      *
      * \warning Backward inferencing has not been implemented yet. Thus, methods like subClassOf() return the same
      * as directSubClassOf().
      *
      * \author Sebastian Trueg <trueg@kde.org>
      */
-    class RdfSchemaWrapper
+    class RdfSchemaWrapper : public Error::ErrorCache
     {
     public:
 	RdfSchemaWrapper( Model* );
-	virtual ~RdfSchemaWrapper();
+	~RdfSchemaWrapper();
 
 	/**
 	 * Get all defined RDF/S classes.
 	 * \return a StatementIterator that iterates over all statements in the model
 	 * defining an RDF/S class.
 	 */
-	virtual StatementIterator classes() const;
+	StatementIterator classes() const;
 
 	/**
 	 * Gets all direct subClassOf relations with a specific sub- and/or superclass. 
@@ -65,14 +66,14 @@ namespace Soprano {
 	 * \return A StatementIterator containing statements of the form
 	 * (subClass, rdfs:subClassOf, superClass).
 	 */
-	virtual StatementIterator directSubClassOf( const Node& subClass, const Node& superClass = Node() ) const;
+	StatementIterator directSubClassOf( const Node& subClass, const Node& superClass = Node() ) const;
 
 	/**
 	 * Gets all direct subPropertyOf relations with a specific sub- and/or superproperty.
 	 * A property A is a direct subproperty of property B if there is no property C such
 	 * that A is a subproperty of C and C is a subproperty of B. 
 	 *
-	 * \param subPropert The subproperty of the relations that should be returned,
+	 * \param subProperty The subproperty of the relations that should be returned,
 	 * or an empty node if relations with any subproperty should be returned.
 	 * \param superProperty The superproperty of the relations that should be returned,
 	 * or an empty node if relations with any superproperty should be returned.
@@ -80,7 +81,7 @@ namespace Soprano {
 	 * \return A StatementIterator containing statements of the form
 	 * (subProperty, rdfs:subPropertyOf, superProperty).
 	 */
-	virtual StatementIterator directSubPropertyOf( const Node& subProperty, const Node& superProperty = Node() ) const;
+	StatementIterator directSubPropertyOf( const Node& subProperty, const Node& superProperty = Node() ) const;
 
 	/**
 	 * Gets all direct type relations with a specific instance and/or class.
@@ -93,7 +94,7 @@ namespace Soprano {
 	 * \return A StatementIterator containing statements of the form
 	 * (someClass, rdf:type, someType).
 	 */
-	virtual StatementIterator directType( const Node& someClass, const Node& someType ) const;
+	StatementIterator directType( const Node& someClass, const Node& someType ) const;
 
 	/**
 	 * Gets all domain relations with a specific property and/or domain class.
@@ -106,7 +107,7 @@ namespace Soprano {
 	 * \return A StatementIterator containing statements of the form
 	 * (prop, rdfs:domain, domain).
 	 */
-	virtual StatementIterator domain( const Node& prop, const Node& domain ) const;
+	StatementIterator domain( const Node& prop, const Node& domain ) const;
 
 	/**
 	 * Gets all defined properties. 
@@ -114,7 +115,7 @@ namespace Soprano {
 	 * \return A StatementIterator containing statements of the form
 	 * (someProperty, rdf:type, rdf:Property).
 	 */
-	virtual StatementIterator properties() const;	
+	StatementIterator properties() const;	
 
 	/**
 	 * Gets all range relations with a specific property and/or range class.
@@ -127,7 +128,7 @@ namespace Soprano {
 	 * \return A StatementIterator containing statements of the form
 	 * (prop, rdfs:range, range).
 	 */
-	virtual StatementIterator range( const Node& prop, const Node& range ) const;
+	StatementIterator range( const Node& prop, const Node& range ) const;
 
 	/**
 	 * Gets all subClassOf relations with a specific sub- and/or superclass.
@@ -146,7 +147,7 @@ namespace Soprano {
 	 * (subClass, rdfs:subClassOf, superClass) including those calculated through
 	 * direct inferencing.
 	 */
-	virtual StatementIterator subClassOf( const Node& subClass, const Node& superClass = Node() ) const;
+	StatementIterator subClassOf( const Node& subClass, const Node& superClass = Node() ) const;
 
 	/**
 	 * Gets all subPropertyOf relations with a specific sub- and/or superproperty.
@@ -165,7 +166,7 @@ namespace Soprano {
 	 * (subProperty, rdfs:subPropertyOf, superProperty) including those calculated through
 	 * direct inferencing.
 	 */
-	virtual StatementIterator subPropertyOf( const Node& subProperty, const Node& superProperty = Node() ) const;
+	StatementIterator subPropertyOf( const Node& subProperty, const Node& superProperty = Node() ) const;
 	
 	/**
 	 * Gets all type relations with a specific instance and/or class.
@@ -182,7 +183,7 @@ namespace Soprano {
 	 * (someClass, rdf:type, someType) including those calculated through
 	 * direct inferencing.
 	 */
-	virtual StatementIterator type( const Node& someClass, const Node& someType ) const;
+	StatementIterator type( const Node& someClass, const Node& someType ) const;
 
 	/**
 	 * Checks whether the supplied resource represents a class.
@@ -191,7 +192,7 @@ namespace Soprano {
 	 *
 	 * \return true if resource is a class, false otherwise.
 	 */
-	virtual bool isClass( const Node& resource ) const;
+	bool isClass( const Node& resource ) const;
 
 	/**
 	 * Checks whether the supplied resource represents a property.
@@ -200,7 +201,7 @@ namespace Soprano {
 	 *
 	 * \return true if resource is a property, false otherwise.
 	 */
-	virtual bool isProperty( const Node& resource ) const;
+	bool isProperty( const Node& resource ) const;
 
 	/**
 	 * Checks whether one resource is a direct subclass of another.
@@ -210,17 +211,17 @@ namespace Soprano {
 	 *
 	 * \return true if subClass is a direct subclass of superClass, false otherwise.
 	 */
-	virtual bool isDirectSubClassOf( const Node& subClass, const Node& superClass ) const;
+	bool isDirectSubClassOf( const Node& subClass, const Node& superClass ) const;
 
 	/**
 	 * Checks whether one resource is a direct subproperty of another.
 	 *
-	 * \param subClass A class.
-	 * \param superClass A class.
+	 * \param subProperty A property.
+	 * \param superProperty A property.
 	 *
 	 * \return true if subProperty is a direct subproperty of superProperty, false otherwise.
 	 */
-	virtual bool isDirectSubPropertyOf( const Node& subProperty, const Node& superProperty ) const;
+	bool isDirectSubPropertyOf( const Node& subProperty, const Node& superProperty ) const;
 
 	/**
 	 * Checks whether one resource is a direct instance of another.
@@ -230,7 +231,7 @@ namespace Soprano {
 	 *
 	 * \return true if someClass is a direct instance of someType, false otherwise.
 	 */
-	virtual bool isDirectType( const Node& someClass, const Node& someType ) const;
+	bool isDirectType( const Node& someClass, const Node& someType ) const;
 
 	/**
 	 * Checks whether one resource is a subclass of another.
@@ -243,7 +244,7 @@ namespace Soprano {
 	 *
 	 * \return true if subClass is a subclass of superClass, false otherwise.
 	 */
-	virtual bool isSubClassOf( const Node& subClass, const Node& superClass ) const;
+	bool isSubClassOf( const Node& subClass, const Node& superClass ) const;
 
 	/**
 	 * Checks whether one resource is a subproperty of another.
@@ -251,12 +252,12 @@ namespace Soprano {
 	 * Do not use this method if the Soprano backend supports inferencing.
 	 * Use isDirectSubPropertyOf instead which is much faster.
 	 *
-	 * \param subClass A class.
-	 * \param superClass A class.
+	 * \param subProperty A property.
+	 * \param superProperty A property.
 	 *
 	 * \return true if subProperty is a subproperty of superProperty, false otherwise.
 	 */
-	virtual bool isSubPropertyOf( const Node& subProperty, const Node& superProperty ) const;
+	bool isSubPropertyOf( const Node& subProperty, const Node& superProperty ) const;
 
 	/**
 	 * Checks whether one resource is a instance of another.
@@ -269,7 +270,12 @@ namespace Soprano {
 	 *
 	 * \return true if someClass is an instance of someType, false otherwise.
 	 */
-	virtual bool isType( const Node& someClass, const Node& someType ) const;
+	bool isType( const Node& someClass, const Node& someType ) const;
+
+	/**
+	 * Reimplemented from ErrorCache. The API is not effected.
+	 */
+	Error::Error lastError() const;
 
     private:
 	class Private;
