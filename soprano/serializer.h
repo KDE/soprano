@@ -24,6 +24,7 @@
 #include "plugin.h"
 #include "soprano_export.h"
 #include "sopranotypes.h"
+#include "error.h"
 
 #include <QtCore/QObject>
 
@@ -63,7 +64,7 @@ namespace Soprano
      *
      * \author Sebastian Trueg <trueg@kde.org>
      */
-    class SOPRANO_EXPORT Serializer : public Plugin
+    class SOPRANO_EXPORT Serializer : public Plugin, public Error::ErrorCache
     {
     public:
 	virtual ~Serializer();

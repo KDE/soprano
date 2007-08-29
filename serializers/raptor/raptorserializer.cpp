@@ -151,12 +151,15 @@ bool Soprano::Raptor::Serializer::serialize( StatementIterator it,
                                              RdfSerialization serialization,
                                              const QString& userSerialization ) const
 {
+    clearError();
+
     librdf_serializer* serializer = librdf_new_serializer( Redland::World::self()->worldPtr(),
                                                            0, // all factories
                                                            serializationMimeType( serialization ).toLatin1().data(),
                                                            0 );
     if ( !serializer ) {
         qDebug() << "(Soprano::Raptor::Serializer) no serializer for mimetype " << mimeTypeString( serialization );
+        setError( Redland::World::self()->lastError() );
         return false;
     }
 
@@ -175,6 +178,7 @@ bool Soprano::Raptor::Serializer::serialize( StatementIterator it,
     if ( !raptorStream ) {
         qDebug() << "(Soprano::Raptor::Serializer) failed to create Raptor stream.";
         librdf_free_serializer( serializer );
+        setError( Redland::World::self()->lastError() );
         return false;
     }
 
@@ -192,6 +196,7 @@ bool Soprano::Raptor::Serializer::serialize( StatementIterator it,
     if ( !rdfStream ) {
         qDebug() << "(Soprano::Raptor::Serializer) failed to create librdf stream.";
         raptor_free_iostream( raptorStream );
+        setError( Redland::World::self()->lastError() );
         return false;
     }
 
@@ -200,6 +205,7 @@ bool Soprano::Raptor::Serializer::serialize( StatementIterator it,
                                                          rdfStream,
                                                          raptorStream ) ) {
         qDebug() << "(Soprano::Raptor::Serializer) serialization failed.";
+        setError( Redland::World::self()->lastError() );
         success = false;
     }
 
