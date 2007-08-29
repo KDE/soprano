@@ -82,7 +82,20 @@ Soprano::BackendSetting& Soprano::BackendSetting::operator=( const BackendSettin
     return *this;
 }
 
+Soprano::BackendOption Soprano::BackendSetting::option() const
+{
+    return d->option;
+}
 
+QString Soprano::BackendSetting::userOptionName() const
+{
+    return d->userOptionName;
+}
+
+QVariant Soprano::BackendSetting::value() const
+{
+    return d->value;
+}
 
 class Soprano::Backend::Private
 {
