@@ -33,6 +33,7 @@
 namespace Soprano {
 
     class Node;
+    class NodeIterator;
     class QueryResultIteratorBackend;
     class Statement;
     class StatementIterator;
@@ -210,6 +211,34 @@ namespace Soprano {
 	 * \return A wrapper iterator over the statements in a graph query.
 	 */
 	StatementIterator iterateStatements() const;
+
+	/**
+	 * Conviniece method that creates an iterator over one column of bindings in this query result.
+	 * This method does only make sense for tuple queries.
+	 *
+	 * \param variableName The name of the requested variable.
+	 *
+	 * \warning The new iterator is just a wrapper around this one. Thus, changing it will also
+	 * change this one.
+	 * 
+	 * \return A wrapper iterator over one column in a tuple query or an invalid iterator if the
+	 * result does not contain bindings for variableName.
+	 */
+	NodeIterator iterateBindings( const QString& variableName ) const;
+
+	/**
+	 * Conviniece method that creates an iterator over one column of bindings in this query result.
+	 * This method does only make sense for tuple queries.
+	 *
+	 * \param offset The index of the requested variable.
+	 *
+	 * \warning The new iterator is just a wrapper around this one. Thus, changing it will also
+	 * change this one.
+	 * 
+	 * \return A wrapper iterator over one column in a tuple query or an invalid iterator
+	 * if offset is out of bounds, i.e. bigger or equal to bindingCount().
+	 */
+	NodeIterator iterateBindings( int offset ) const;
     };
 
 }

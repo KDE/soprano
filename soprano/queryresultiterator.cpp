@@ -27,6 +27,7 @@
 #include "statementiterator.h"
 #include "iteratorbackend.h"
 #include "bindingset.h"
+#include "nodeiterator.h"
 
 
 Soprano::QueryResultIterator::QueryResultIterator()
@@ -154,4 +155,54 @@ private:
 Soprano::StatementIterator Soprano::QueryResultIterator::iterateStatements() const
 {
     return new QueryResultStatementIteratorBackend( *this );
+}
+
+
+
+class BindingNodeIteratorBackend : public Soprano::IteratorBackend<Soprano::Node>
+{
+public:
+    BindingNodeIteratorBackend( const Soprano::QueryResultIterator& it, const QString& name )
+        : m_it( it ),
+          m_bindingName( name ),
+          m_bindingOffset( -1 ) {
+    }
+
+    BindingNodeIteratorBackend( const Soprano::QueryResultIterator& it, int binding )
+        : m_it( it ),
+          m_bindingOffset( binding ) {
+    }
+
+    bool next() {
+        return m_it.next();
+    }
+
+    Soprano::Node current() const {
+        if ( m_bindingOffset != -1 ) {
+            return m_it.binding( m_bindingOffset );
+        }
+        else {
+            return m_it.binding( m_bindingName );
+        }
+    }
+
+    void close() {
+        m_it.close();
+    }
+
+private:
+    Soprano::QueryResultIterator m_it;
+    QString m_bindingName;
+    int m_bindingOffset;
+};
+
+Soprano::NodeIterator Soprano::QueryResultIterator::iterateBindings( const QString& variableName ) const
+{
+    return new BindingNodeIteratorBackend( *this, variableName );
+}
+
+
+Soprano::NodeIterator Soprano::QueryResultIterator::iterateBindings( int offset ) const
+{
+    return new BindingNodeIteratorBackend( *this, offset );
 }
