@@ -28,6 +28,7 @@
 #include "sopranotypes.h"
 
 #include <QtCore/QStringList>
+#include <QtCore/QVariant>
 
 namespace Soprano
 {
@@ -47,23 +48,23 @@ namespace Soprano
 	BackendSetting();
 
 	/**
-	 * Create a boolean setting.
+	 * Create a boolean setting with a default true value.
 	 */
 	BackendSetting( BackendOption option );
 
 	/**
 	 * Create a standard setting with option \p s and value \p value_.
 	 */
-	BackendSetting( BackendOption s, const QString& value_ );
+	BackendSetting( BackendOption s, const QVariant& value_ );
 
 	/**
 	 * Create a user setting with user option name \p userOption and value \p value_.
 	 */
-	BackendSetting( const QString& userOption, const QString& value_ );
+	BackendSetting( const QString& userOption, const QVariant& value_ );
 
 	BackendOption option;    /**< The option that this setting sets. If Soprano::BACKEND_OPTION_USER the option is identified by userSettingName. */
 	QString userOptionName;  /**< The name of the user setting if setting is set to Soprano::BACKEND_OPTION_USER */
-	QString value;           /**< The value of the setting. For boolean options such as BACKEND_OPTION_ENABLE_INFERENCE the value can be ignored. */
+	QVariant value;          /**< The value of the setting. */
     };
 
     /**
@@ -105,8 +106,9 @@ namespace Soprano
 	 * The caller takes ownership and has to care about deletion.
 	 *
 	 * \param settings The settings that should be used to create the Model. Backend implementations
-	 *  should never ignore settings but rather return 0 if an option is not supported. Backends can,
-	 * however, define their own default settings.
+	 * should never ignore settings but rather return 0 if an option is not supported. Backends can,
+	 * however, define their own default settings. Invalid settings should result in an Error with value
+	 * Error::ERROR_INVALID_ARGUMENT.
 	 */
 	virtual StorageModel* createModel( const QList<BackendSetting>& settings = QList<BackendSetting>() ) const = 0;
 

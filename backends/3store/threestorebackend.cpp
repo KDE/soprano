@@ -43,26 +43,26 @@ Soprano::StorageModel* Soprano::ThreeStore::BackendPlugin::createModel( const QL
     Q_FOREACH( BackendSetting s, settings ) {
         if ( s.option == BACKEND_OPTION_USER ) {
             if ( s.userOptionName == "db" )
-                db = s.value;
+                db = s.value.toString();
             else if ( s.userOptionName == "host" )
-                host = s.value;
+                host = s.value.toString();
             else if ( s.userOptionName == "user" )
-                user = s.value;
+                user = s.value.toString();
             else if ( s.userOptionName == "passwd" )
-                passwd = s.value;
+                passwd = s.value.toString();
             else {
-                qDebug() << "(Soprano::ThreeStore::BackendPlugin) unsupported option: " << s.userOptionName;
+                setError( QString( "Unsupported option: %1" ).arg( s.userOptionName ), Error::ERROR_INVALID_ARGUMENT );
                 return 0;
             }
         }
         else {
-            qDebug() << "(Soprano::ThreeStore::BackendPlugin) unsupported option: " << s.option;
+            setError( QString( "Unsupported option: %1" ).arg( s.option ), Error::ERROR_INVALID_ARGUMENT );
             return 0;
         }
     }
 
     if ( db.isEmpty() ) {
-        qDebug() << "(Soprano::ThreeStore::BackendPlugin) no MySQL database set.";
+        setError( QString( "No MySQL Datebase name specified." ), Error::ERROR_INVALID_ARGUMENT );
         return 0;
     }
 

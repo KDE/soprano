@@ -29,19 +29,20 @@ Soprano::BackendSetting::BackendSetting()
 
 
 Soprano::BackendSetting::BackendSetting( BackendOption s )
-    : option( s )
+    : option( s ),
+      value( true )
 {
 }
 
 
-Soprano::BackendSetting::BackendSetting( BackendOption s, const QString& value_ )
+Soprano::BackendSetting::BackendSetting( BackendOption s, const QVariant& value_ )
     : option( s ),
       value( value_ )
 {
 }
 
 
-Soprano::BackendSetting::BackendSetting( const QString& userOption, const QString& value_ )
+Soprano::BackendSetting::BackendSetting( const QString& userOption, const QVariant& value_ )
     : option( BACKEND_OPTION_USER ),
       userOptionName( userOption ),
       value( value_ )

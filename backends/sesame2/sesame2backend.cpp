@@ -50,22 +50,25 @@ Soprano::StorageModel* Soprano::Sesame2::BackendPlugin::createModel( const QList
         if ( s.option == BACKEND_OPTION_USER ) {
             // no user options ATM
             qDebug() << "(Soprano::Sesame2::BackendPlugin) no user options supported.";
+            setError( "No user options supported.", Error::ERROR_INVALID_ARGUMENT );
             return 0;
         }
         else if ( s.option == BACKEND_OPTION_STORAGE_MEMORY ) {
-            memory = true;
+            memory = s.value.toBool();
         }
         else if ( s.option == BACKEND_OPTION_STORAGE_DIR ) {
-            path = s.value;
+            path = s.value.toString();
         }
         else {
             qDebug() << "(Soprano::Sesame2::BackendPlugin) unsupported option: " << s.option;
+            setError( QString( "Unsupported option: %1" ).arg( s.option ), Error::ERROR_INVALID_ARGUMENT );
             return 0;
         }
     }
 
     if ( !path.isEmpty() && memory ) {
         qDebug() << "(Soprano::Sesame2::BackendPlugin) Path specified for memory model. Settings mismatch.";
+        setError( "Cannot set storage path for a memory repository.", Error::ERROR_INVALID_ARGUMENT );
         return 0;
     }
 
