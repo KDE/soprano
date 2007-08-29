@@ -239,7 +239,11 @@ Soprano::PluginManager::~PluginManager()
         delete it.value();
     for( QHash<QString, Parser*>::const_iterator it = d->parsers.begin(); it != d->parsers.end(); ++it )
         delete it.value();
+    for( QHash<QString, Serializer*>::const_iterator it = d->serializers.begin(); it != d->serializers.end(); ++it )
+        delete it.value();
     for( QHash<QString, Query::Parser*>::const_iterator it = d->queryParsers.begin(); it != d->queryParsers.end(); ++it )
+        delete it.value();
+    for( QHash<QString, Query::Serializer*>::const_iterator it = d->querySerializers.begin(); it != d->querySerializers.end(); ++it )
         delete it.value();
     delete d;
 }

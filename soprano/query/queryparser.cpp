@@ -32,7 +32,8 @@ class Soprano::Query::Parser::Private
 
 
 Soprano::Query::Parser::Parser( const QString& name )
-    : Plugin( name ),
+    : QObject(),
+      Plugin( name ),
       d( new Private() )
 {
 }

@@ -1671,6 +1671,10 @@ Soprano::Query::Prefix::Prefix( const Prefix &other )
     d = other.d;
 }
 
+Soprano::Query::Prefix::~Prefix()
+{
+}
+
 Soprano::Query::Prefix& Soprano::Query::Prefix::operator=( const Prefix& other )
 {
     d = other.d;
@@ -1819,6 +1823,16 @@ void Soprano::Query::GraphPattern::setContext( RTerm *context )
 const Soprano::Query::RTerm *Soprano::Query::GraphPattern::context() const
 {
     return d->context;
+}
+
+Soprano::Query::GraphPattern* Soprano::Query::GraphPattern::clone() const
+{
+    return new GraphPattern( *this );
+}
+
+void Soprano::Query::GraphPattern::accept( ExpressionVisitor *visitor)
+{
+    visitor->visit( this );
 }
 
 //

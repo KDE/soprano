@@ -29,82 +29,103 @@
 
 #include "queryapitest.h"
 
-void QueryAPITest::syntaxErrorFounded( const Soprano::Error::Locator &locator, const QString& message )
+void QueryAPITest::initTestCase()
 {
-    qDebug() << "(Soprano::Query::Parser)" << message << locator.line() << locator.column() << endl;
+    m_manager = Soprano::PluginManager::instance();
 }
 
+void QueryAPITest::cleanupTestCase()
+{
+    delete m_manager;
+}
+
+void QueryAPITest::syntaxErrorFounded( const Soprano::Error::Locator &locator, const QString& message )
+{
+    qDebug() << "(Soprano::Query::Parser)" << message << locator.line() << locator.column();
+}
 
 void QueryAPITest::testQuery_1()
 {
-    /*Soprano::Query::Parser::QueryParser *parser = new Soprano::Query::Parser::RasqalQueryParser();
+    const Soprano::Query::Parser *parser = m_manager->discoverQueryParserByName( "rasqal" );
+    connect( parser, SIGNAL( syntaxError(const Soprano::Error::Locator &, const QString&) ),
+             this, SLOT( syntaxErrorFounded(const Soprano::Error::Locator &, const QString& )));
 
-    Soprano::Query::QueryObject *obj = parser->parseQuery(
+    Soprano::Query::Query query = parser->parseQuery(
          "SELECT ?title WHERE\
          {\
-            ?title .\
+            ?title <test> ?c .\
+            ?t <test2> \"ciao\" .\
          }"
+         , Soprano::Query::QUERY_LANGUAGE_SPARQL
     );
-
-    delete parser;
-    delete obj;*/
+    
+    disconnect( parser, SIGNAL( syntaxError(const Soprano::Error::Locator &, const QString&) ),
+             this, SLOT( syntaxErrorFounded(const Soprano::Error::Locator &, const QString& )));
 }
 
 void QueryAPITest::testQuery_2()
 {
-    /*Soprano::Query::Parser::QueryParser *parser = new Soprano::Query::Parser::RasqalQueryParser();
+    const Soprano::Query::Parser *parser = m_manager->discoverQueryParserByName( "rasqal" );
+    connect( parser, SIGNAL( syntaxError(const Soprano::Error::Locator &, const QString&) ),
+             this, SLOT( syntaxErrorFounded(const Soprano::Error::Locator &, const QString& )));
 
-    Soprano::Query::QueryObject *obj = parser->parseQuery(
+    Soprano::Query::Query query = parser->parseQuery(
         "PREFIX  dc:\
         SELECT  ?title\
         WHERE   {  dc:title ?title }"
+        , Soprano::Query::QUERY_LANGUAGE_SPARQL
     );
-
-    delete parser;
-    delete obj;*/
+    
+    disconnect( parser, SIGNAL( syntaxError(const Soprano::Error::Locator &, const QString&) ),
+             this, SLOT( syntaxErrorFounded(const Soprano::Error::Locator &, const QString& )));
 }
 
 void QueryAPITest::testQuery_3()
 {
-    /*Soprano::Query::Parser::QueryParser *parser = new Soprano::Query::Parser::RasqalQueryParser();
+    const Soprano::Query::Parser *parser = m_manager->discoverQueryParserByName( "rasqal" );
+    connect( parser, SIGNAL( syntaxError(const Soprano::Error::Locator &, const QString&) ),
+             this, SLOT( syntaxErrorFounded(const Soprano::Error::Locator &, const QString& )));
 
-    Soprano::Query::QueryObject *obj = parser->parseQuery(
+    Soprano::Query::Query query = parser->parseQuery(
         "PREFIX  dc:\
          PREFIX  :\
          SELECT  $title\
          WHERE   { :book1  dc:title  $title }"
+         , Soprano::Query::QUERY_LANGUAGE_SPARQL
     );
-
-    delete parser;
-    delete obj;*/
+    
+    disconnect( parser, SIGNAL( syntaxError(const Soprano::Error::Locator &, const QString&) ),
+             this, SLOT( syntaxErrorFounded(const Soprano::Error::Locator &, const QString& )));
 }
 
 void QueryAPITest::testQuery_4()
 {
-    /*Soprano::Query::Parser::QueryParser *parser = new Soprano::Query::Parser::RasqalQueryParser();
+    const Soprano::Query::Parser *parser = m_manager->discoverQueryParserByName( "rasqal" );
+    connect( parser, SIGNAL( syntaxError(const Soprano::Error::Locator &, const QString&) ),
+             this, SLOT( syntaxErrorFounded(const Soprano::Error::Locator &, const QString& )));
 
-    Soprano::Query::QueryObject *obj = parser->parseQuery(
+    Soprano::Query::Query query = parser->parseQuery(
         "BASE\
         PREFIX  dcore:\
         SELECT  ?title\
         WHERE   {  dcore:title ?title }"
+        , Soprano::Query::QUERY_LANGUAGE_SPARQL
     );
-
-    delete parser;
-    delete obj;*/
+    
+    disconnect( parser, SIGNAL( syntaxError(const Soprano::Error::Locator &, const QString&) ),
+             this, SLOT( syntaxErrorFounded(const Soprano::Error::Locator &, const QString& )));
 }
 
 void QueryAPITest::testSyntaxError()
 {
-    Soprano::PluginManager *manager = Soprano::PluginManager::instance();
-
-    const Soprano::Query::Parser *parser = manager->discoverQueryParserByName( "rasqal" );
+    const Soprano::Query::Parser *parser = m_manager->discoverQueryParserByName( "rasqal" );
     connect( parser, SIGNAL( syntaxError(const Soprano::Error::Locator &, const QString&) ),
              this, SLOT( syntaxErrorFounded(const Soprano::Error::Locator &, const QString& )));
 
     parser->parseQuery( " select ?a where ; broken query ", Soprano::Query::QUERY_LANGUAGE_SPARQL );
 
-    delete manager;
+    disconnect( parser, SIGNAL( syntaxError(const Soprano::Error::Locator &, const QString&) ),
+             this, SLOT( syntaxErrorFounded(const Soprano::Error::Locator &, const QString& )));
 }
 
 QTEST_MAIN(QueryAPITest)

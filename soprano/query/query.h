@@ -690,7 +690,7 @@ namespace Soprano
 
             RTermEqual* clone() const;
 
-            void accept( ExpressionVisitor *expression );
+            void accept( ExpressionVisitor *visitor );
         };
 
         class RTermNotEqual: public BinaryRTermBooleanExpression {
@@ -699,7 +699,7 @@ namespace Soprano
 
             RTermNotEqual* clone() const;
 
-            void accept( ExpressionVisitor *expression );
+            void accept( ExpressionVisitor *visitor );
         };
 
         class LangMatches: public BinaryStringBooleanExpression {
@@ -708,7 +708,7 @@ namespace Soprano
 
             LangMatches* clone() const;
 
-            void accept( ExpressionVisitor *expression );
+            void accept( ExpressionVisitor *visitor );
         }; 
 
         class Regexp: public BooleanExpression {
@@ -727,100 +727,12 @@ namespace Soprano
             void setFlags( const QString &flags );
             QString flags();
 
-            void accept( ExpressionVisitor *expression );
+            void accept( ExpressionVisitor *visitor );
 
         private:
             class Private;
             QSharedDataPointer<Private> d;
         }; 
-
-        ////////////////////////////////////////////////////////////////////////
-        // ExpressionVisitor                                                  //
-        ////////////////////////////////////////////////////////////////////////
-
-        class ExpressionVisitor {
-        public:
-	    virtual ~ExpressionVisitor() {}
-
-            virtual void visit( Not *expression ) = 0;
-
-            virtual void visit( Negate *expression ) = 0;
-            
-            virtual void visit( IsBound *expression ) = 0;
-            
-            virtual void visit( IsIRI *expression ) = 0;
-            
-            virtual void visit( IsBlank *expression ) = 0;
-            
-            virtual void visit( IsLiteral *expression ) = 0;
-            
-            virtual void visit( StringValue *expression ) = 0;
-            
-            virtual void visit( LangValue *expression ) = 0;
-            
-            virtual void visit( DataTypeValue *expression ) = 0;
-            
-            virtual void visit( LogicAnd *expression ) = 0;
-
-            virtual void visit( LogicOr *expression ) = 0;
-            
-            virtual void visit( NumericalEqual *expression ) = 0;
-            
-            virtual void visit( NumericalNotEqual *expression ) = 0;
-    
-            virtual void visit( StringEqual *expression ) = 0;
-    
-            virtual void visit( StringNotEqual *expression ) = 0;
-            
-            virtual void visit( DateTimeEqual *expression ) = 0;
-            
-            virtual void visit( DateTimeNotEqual *expression ) = 0;
-
-            virtual void visit( Numerical *expression ) = 0;
-
-            virtual void visit( NumericalLessThan *expression ) = 0;
-
-            virtual void visit( NumericalGreaterThan *expression ) = 0;
-            
-            virtual void visit( NumericalLessThanEqual *expression ) = 0;
-
-            virtual void visit( NumericalGreaterThanEqual *expression ) = 0;
-
-            virtual void visit( String *expression ) = 0;
-
-            virtual void visit( StringLessThan *expression ) = 0;
-        
-            virtual void visit( StringGreaterThan *expression ) = 0;
-            
-            virtual void visit( StringLessThanEqual *expression ) = 0;
-            
-            virtual void visit( StringGreaterThanEqual *expression ) = 0;
-
-            virtual void visit( DateTimeLessThan *expression ) = 0;
-
-            virtual void visit( DateTimeGreaterThan *expression ) = 0;
-
-            virtual void visit( DateTimeLessThanEqual *expression ) = 0;
-
-            virtual void visit( DateTimeGreaterThanEqual *expression ) = 0;
-            
-            virtual void visit( NumericalMultiply *expression ) = 0;
-
-            virtual void visit( NumericalDivide *expression ) = 0;
-            
-            virtual void visit( NumericalAdd *expression ) = 0;
-            
-            virtual void visit( NumericalSubtract *expression ) = 0;
-
-            virtual void visit( RTermEqual *expression ) = 0;
-
-            virtual void visit( RTermNotEqual *expression ) = 0;
-
-            virtual void visit( LangMatches *expression ) = 0;
-
-            virtual void visit( Regexp *expression ) = 0;
-        };
-    
 
         ////////////////////////////////////////////////////////////////////////
         // ParsedQuery                                                        //
@@ -831,6 +743,7 @@ namespace Soprano
             Prefix();
             Prefix( const QString &prefix, const QUrl &uri );
             Prefix( const Prefix &other );
+            ~Prefix();
 
             Prefix& operator=( const Prefix& other );
         
@@ -869,7 +782,11 @@ namespace Soprano
             
             void setContext( RTerm *context );
             const RTerm *context() const;
+
+            GraphPattern* clone() const;
                 
+            void accept( ExpressionVisitor *visitor );
+
         private:
             class Private;
             QSharedDataPointer<Private> d;
@@ -935,6 +852,95 @@ namespace Soprano
         private:
             class Private;
             QSharedDataPointer<Private> d;
+        };
+
+        ////////////////////////////////////////////////////////////////////////
+        // ExpressionVisitor                                                  //
+        ////////////////////////////////////////////////////////////////////////
+
+        class ExpressionVisitor {
+        public:
+        virtual ~ExpressionVisitor() {}
+
+            virtual void visit( Not *expression ) = 0;
+
+            virtual void visit( Negate *expression ) = 0;
+
+            virtual void visit( IsBound *expression ) = 0;
+
+            virtual void visit( IsIRI *expression ) = 0;
+
+            virtual void visit( IsBlank *expression ) = 0;
+
+            virtual void visit( IsLiteral *expression ) = 0;
+
+            virtual void visit( StringValue *expression ) = 0;
+
+            virtual void visit( LangValue *expression ) = 0;
+
+            virtual void visit( DataTypeValue *expression ) = 0;
+
+            virtual void visit( LogicAnd *expression ) = 0;
+
+            virtual void visit( LogicOr *expression ) = 0;
+
+            virtual void visit( NumericalEqual *expression ) = 0;
+
+            virtual void visit( NumericalNotEqual *expression ) = 0;
+   
+            virtual void visit( StringEqual *expression ) = 0;
+   
+            virtual void visit( StringNotEqual *expression ) = 0;
+
+            virtual void visit( DateTimeEqual *expression ) = 0;
+
+            virtual void visit( DateTimeNotEqual *expression ) = 0;
+
+            virtual void visit( Numerical *expression ) = 0;
+
+            virtual void visit( NumericalLessThan *expression ) = 0;
+
+            virtual void visit( NumericalGreaterThan *expression ) = 0;
+
+            virtual void visit( NumericalLessThanEqual *expression ) = 0;
+
+            virtual void visit( NumericalGreaterThanEqual *expression ) = 0;
+
+            virtual void visit( String *expression ) = 0;
+
+            virtual void visit( StringLessThan *expression ) = 0;
+
+            virtual void visit( StringGreaterThan *expression ) = 0;
+
+            virtual void visit( StringLessThanEqual *expression ) = 0;
+
+            virtual void visit( StringGreaterThanEqual *expression ) = 0;
+
+            virtual void visit( DateTimeLessThan *expression ) = 0;
+
+            virtual void visit( DateTimeGreaterThan *expression ) = 0;
+
+            virtual void visit( DateTimeLessThanEqual *expression ) = 0;
+
+            virtual void visit( DateTimeGreaterThanEqual *expression ) = 0;
+
+            virtual void visit( NumericalMultiply *expression ) = 0;
+
+            virtual void visit( NumericalDivide *expression ) = 0;
+
+            virtual void visit( NumericalAdd *expression ) = 0;
+
+            virtual void visit( NumericalSubtract *expression ) = 0;
+
+            virtual void visit( RTermEqual *expression ) = 0;
+
+            virtual void visit( RTermNotEqual *expression ) = 0;
+
+            virtual void visit( LangMatches *expression ) = 0;
+
+            virtual void visit( Regexp *expression ) = 0;
+
+            virtual void visit( GraphPattern *expression ) = 0;
         };
     };
 };

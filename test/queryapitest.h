@@ -31,6 +31,9 @@ class QueryAPITest: public QObject
 {
 Q_OBJECT
 private slots:
+    void initTestCase();
+    void cleanupTestCase();
+
     void testQuery_1();    
     void testQuery_2();    
     void testQuery_3();    
@@ -39,6 +42,9 @@ private slots:
     void testSyntaxError();
 
     void syntaxErrorFounded( const Soprano::Error::Locator &locator, const QString& message );
+
+private:
+    Soprano::PluginManager *m_manager;
 };
 
 #endif // QUERY_API_TEST_H

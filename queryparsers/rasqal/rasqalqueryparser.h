@@ -21,8 +21,8 @@
 
 #include <QString>
 
-#include "soprano/soprano_export.h"
-#include "soprano/query/queryparser.h"
+#include <soprano/soprano_export.h>
+#include <soprano/query/queryparser.h>
 
 #ifndef SOPRANO_QUERY_PARSER_RASQALQUERYPARSER_H
 #define SOPRANO_QUERY_PARSER_RASQALQUERYPARSER_H
