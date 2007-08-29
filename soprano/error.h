@@ -48,6 +48,8 @@ namespace Soprano {
 
 	/**
 	 * Represents an error in %Soprano.
+	 *
+	 * \author Sebastian Trueg <trueg@kde.org>
 	 */
 	class SOPRANO_EXPORT Error
 	{
@@ -114,6 +116,8 @@ namespace Soprano {
 	 * ParserError otherPe = e;
 	 * qDebug() << "Parsing failed at line " << otherPe.line() << " and column " << otherPe.column();
 	 * \endcode
+	 *
+	 * \author Sebastian Trueg <trueg@kde.org>
 	 */
 	class SOPRANO_EXPORT ParserError : public Error
 	{
@@ -140,6 +144,10 @@ namespace Soprano {
 	 * replace the missing exceptions for methods that do not return
 	 * an error code or another value that can state the success of the
 	 * method's operation.
+	 *
+	 * \author Sebastian Trueg <trueg@kde.org>
+	 *
+	 * \sa \ref soprano_error_handling
 	 */
 	class SOPRANO_EXPORT ErrorCache
 	{

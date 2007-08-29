@@ -44,12 +44,15 @@ namespace Soprano
      * latter case option has to be set to Soprano::BACKEND_OPTION_USER.
      *
      * \sa Backend::createModel()
+     *
+     * \author Sebastian Trueg <trueg@kde.org>
      */
     class BackendSetting
     {
     public:
 	/**
 	 * Create an empty setting.
+	 * \sa Soprano::BACKEND_OPTION_NONE
 	 */
 	BackendSetting();
 

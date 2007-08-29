@@ -1,9 +1,45 @@
 /**
  * \mainpage Soprano (aka QRDF) - A modular RDF storage framework
  *
- * Soprano is a QT-based pluggable framework for RDF storage and parsing.
+ * Soprano is a QT-based pluggable framework for RDF storage and parsing. It tries to provide a highly usable
+ * interface to several RDF storage solutions.
  *
- * \section storage RDF Storage
+ * <b>Quickstart:</b>
+ *
+ * 1. Create an RDF Model:
+ *
+ * \code
+ * Soprano::Model* model = Soprano::createModel();
+ * \endcode
+ *
+ * 2. Fill it with statements:
+ *
+ * \code
+ * model->addStatement( Soprano::Statement( QUrl( "http://mysite.org/data#A"), Soprano::RDFS::LABEL(), Soprano::LiteraValue( "A test resource" ) ) );
+ * \endcode
+ *
+ * 3. Read the data back:
+ *
+ * \code
+ * Soprano::StatementIterator it = model->listStatements();
+ * while( it.next() ) {
+ *    displayStatement( *it );
+ * }
+ * \endcode
+ *
+ *
+ * <b>Contents:</b>
+ *
+ * The following sections contain further information on the usage of %Soprano.
+ *
+ * \li \ref soprano_storage
+ * \li \ref soprano_misc
+ * \li \ref soprano_error_handling
+ */
+
+
+/**
+ * \page soprano_storage RDF Storage
  *
  * The central class in Soprano is Soprano::Model which represents an RDF repository.
  * Model provides methods to add, remove, and list statements and to query the repository.
@@ -30,12 +66,49 @@
  * Soprano::Statement are actually RDF quadruples.
  *
  * For further details on Soprano::Model usage see the class and method documentation.
- *
- *
- * \section misc RDF Parsing and Serialization
+ */
+
+
+/**
+ * \page soprano_misc RDF Parsing and Serialization
  *
  * Apart from RDF storage %Soprano also supports parsing and serialization of RDF data. Both
  * tasks are handled through plugins which are based on Soprano::Parser and Soprano::Serializer.
+ */
+
+
+/**
+ * \page soprano_error_handling Error handling in Soprano
+ *
+ * %Soprano tries to simulate exceptions through the usage of Soprano::Error::ErrorCache.
+ *
+ * Most methods in %Soprano classes have a means of reporting if an operation was successful or not. For additional error
+ * information they inherit Soprano::Error::ErrorCache which provides the method Soprano::Error::ErrorCache::lastError().
+ *
+ * Thus, advanced error handling would look as follows:
+ *
+ * \code
+ * Soprano::Model* model = Soprano::createModel();
+ * Soprano::Statement invalidStatement;
+ * if( model->addStatement( invalidStatement ) != Error::ERROR_NONE ) {
+ *    showErrorMessage( model->lastError().message() );
+ * }
+ * \endcode
+ *
+ * For methods that do not return an immediate error status Soprano::Error::Error evalutes to a boolean. Thus, one can easily
+ * check if an error occured as follows:
+ *
+ * \code
+ * myObject.someMethodThatMayFail();
+ * if( myObject.lastError() ) {
+ *    displayError( myObject.lastError() );
+ * }
+ * \endcode
+ *
+ * This has the same effect as checking for Soprano::Error::ERROR_NONE.
+ *
+ * This error handling is thread-safe. Thus, two threads can for example call methods of one Model at the same time
+ * and still get proper Soprano::Error::Error instances back.
  */
 
 // DOXYGEN_VERSION=4.0

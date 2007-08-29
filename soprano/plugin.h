@@ -25,6 +25,16 @@
 #include <QtCore/QString>
 
 namespace Soprano {
+    /**
+     * \brief Base class for all plugins in %Soprano.
+     *
+     * Each %Soprano %Plugin has a name which can be read via
+     * pluginName().
+     *
+     * \sa Soprano::PluginManager
+     *
+     * \author Sebastian Trueg <trueg@kde.org>
+     */
     class Plugin
     {
     public:

@@ -76,6 +76,8 @@ namespace Soprano
      * }
      * \endcode
      *
+     * \sa \ref soprano_error_handling
+     *
      * Model is thread-safe when used with a thread-safe backend (all "official" %Soprano backends are thread-safe).
      * However, it is recommended to create Model instances in the main thread.
      *
