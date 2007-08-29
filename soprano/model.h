@@ -255,6 +255,12 @@ namespace Soprano
 	Model();
 
     private:
+	/**
+	 * Model instances are not meant to be copied.
+	 */
+	Model( const Model& );
+	Model& operator=( const Model& );
+
 	class Private;
 	Private* const d;
     };

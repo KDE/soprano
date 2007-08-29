@@ -45,6 +45,19 @@ Soprano::Model::~Model()
     delete d;
 }
 
+// private no-op constructor not meant to be used
+Soprano::Model::Model( const Model& )
+    : d( 0 )
+{
+}
+
+
+// private no-op operator not meant to be used
+Soprano::Model& Soprano::Model::operator=( const Model& )
+{
+    return *this;
+}
+
 
 bool Soprano::Model::containsContext( const Node &context ) const
 {
