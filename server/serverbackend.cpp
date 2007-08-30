@@ -24,6 +24,9 @@
 #include "clientmodel.h"
 
 
+const quint16 Soprano::Server::ServerBackend::DEFAULT_PORT = 5000;
+
+
 class Soprano::Server::ServerBackend::Private
 {
 public:

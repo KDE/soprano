@@ -53,7 +53,7 @@ namespace Soprano
   namespace Server
   {
       /**
-       * Backend to access RDF storage models through the %Soprano daemon.
+       * \brief Backend to access RDF storage models through the %Soprano daemon.
        *
        * The %Soprano server backend can be accessed normally through PluginManager::discoverBackendByName()
        * with name "sopranoserver" or by simply creating one manually. The latter solution can have advantages
@@ -68,12 +68,14 @@ namespace Soprano
 	  Q_INTERFACES(Soprano::Backend)
 
       public:
+	  static const quint16 DEFAULT_PORT;
+
 	  /**
 	   * Create a new ServerBackend instance.
 	   *
 	   * \param port The port the %Soprano server is running on.
 	   */
-	  ServerBackend( quint16 port = 5000 );
+	  ServerBackend( quint16 port = DEFAULT_PORT );
 	  ~ServerBackend();
 
 	  StorageModel* createModel( const QString& name ) const;
