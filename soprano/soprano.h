@@ -40,6 +40,7 @@
 #include "pluginmanager.h"
 #include "error.h"
 #include "bindingset.h"
+#include "version.h"
 
 namespace Soprano {
     /**

@@ -194,15 +194,8 @@ Soprano::Error::Error Soprano::Error::ErrorCache::lastError() const
 
 void Soprano::Error::ErrorCache::setError( const Error& error ) const
 {
-    if ( error.code() ) {
-        if ( error.isParserError() ) {
-            ParserError pe( error );
-            // FIXME: create QDebug operator for Locator and also Error
-            qDebug() << "(Soprano) Parser error occured at " << pe.locator().line() << ", " << pe.locator().column() << ":" << error.message();
-        }
-        else {
-            qDebug() << "(Soprano) Error occured:" << error.message();
-        }
+    if ( error ) {
+        qDebug() << "(Soprano) Error occured: " << error;
     }
 
     d->errorMap[QThread::currentThreadId()] = error;
@@ -234,4 +227,36 @@ QString Soprano::Error::errorMessage( ErrorCode code )
 {
   // FIXME: translate the strings.
   return s_errorMessages[(int)code];
+}
+
+
+QDebug operator<<( QDebug s, const Soprano::Error::Error& error )
+{
+    if ( error.code() < Soprano::Error::ERROR_UNKNOWN ) {
+        s.nospace() << errorMessage( ( Soprano::Error::ErrorCode )error.code() ) << ": ";
+    }
+    s.nospace() << error.message();
+
+    if ( error.isParserError() ) {
+        Soprano::Error::ParserError pe( error );
+        s.nospace() << " (line: " << pe.locator().line() << ", column: " << pe.locator().column() << ")";
+    }
+
+    return s;
+}
+
+
+QTextStream& operator<<( QTextStream& s, const Soprano::Error::Error& error )
+{
+    if ( error.code() < Soprano::Error::ERROR_UNKNOWN ) {
+        s << errorMessage( ( Soprano::Error::ErrorCode )error.code() ) << ": ";
+    }
+    s << error.message();
+
+    if ( error.isParserError() ) {
+        Soprano::Error::ParserError pe( error );
+        s << " (line: " << pe.locator().line() << ", column: " << pe.locator().column() << ")";
+    }
+
+    return s;
 }

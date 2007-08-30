@@ -187,4 +187,10 @@ namespace Soprano {
     }
 }
 
+class QDebug;
+class QTextStream;
+
+SOPRANO_EXPORT QDebug operator<<( QDebug s, const Soprano::Error::Error& );
+SOPRANO_EXPORT QTextStream& operator<<( QTextStream& s, const Soprano::Error::Error& );
+
 #endif
