@@ -27,7 +27,7 @@
 #include <soprano/statement.h>
 
 
-Soprano::Server::ClientQueryResultIteratorBackend::ClientQueryResultIteratorBackend( int itId, const ClientModel* client )
+Soprano::Server::ClientQueryResultIteratorBackend::ClientQueryResultIteratorBackend( int itId, ClientModel* client )
     : m_iteratorId( itId ),
       m_model( client )
 {
@@ -42,25 +42,42 @@ Soprano::Server::ClientQueryResultIteratorBackend::~ClientQueryResultIteratorBac
 
 bool Soprano::Server::ClientQueryResultIteratorBackend::next()
 {
-    return m_model->client()->iteratorNext( m_iteratorId );
+    if ( m_model ) {
+        return m_model->client()->iteratorNext( m_iteratorId );
+    }
+    else {
+        return false;
+    }
 }
 
 
 Soprano::BindingSet Soprano::Server::ClientQueryResultIteratorBackend::current() const
 {
-    return m_model->client()->queryIteratorCurrent( m_iteratorId );
+    if ( m_model ) {
+        return m_model->client()->queryIteratorCurrent( m_iteratorId );
+    }
+    else {
+        return BindingSet();
+    }
 }
 
 
 void Soprano::Server::ClientQueryResultIteratorBackend::close()
 {
-    m_model->closeIterator( m_iteratorId );
+    if ( m_model ) {
+        m_model->closeIterator( m_iteratorId );
+    }
 }
 
 
 Soprano::Statement Soprano::Server::ClientQueryResultIteratorBackend::currentStatement() const
 {
-    return m_model->client()->queryIteratorCurrentStatement( m_iteratorId );
+    if ( m_model ) {
+        return m_model->client()->queryIteratorCurrentStatement( m_iteratorId );
+    }
+    else {
+        return Statement();
+    }
 }
 
 
@@ -94,23 +111,43 @@ QStringList Soprano::Server::ClientQueryResultIteratorBackend::bindingNames() co
 
 bool Soprano::Server::ClientQueryResultIteratorBackend::isGraph() const
 {
-    return m_model->client()->queryIteratorType( m_iteratorId ) == 1;
+    if ( m_model ) {
+        return m_model->client()->queryIteratorType( m_iteratorId ) == 1;
+    }
+    else {
+        return false;
+    }
 }
 
 
 bool Soprano::Server::ClientQueryResultIteratorBackend::isBinding() const
 {
-    return m_model->client()->queryIteratorType( m_iteratorId ) == 3;
+    if ( m_model ) {
+        return m_model->client()->queryIteratorType( m_iteratorId ) == 3;
+    }
+    else {
+        return false;
+    }
 }
 
 
 bool Soprano::Server::ClientQueryResultIteratorBackend::isBool() const
 {
-    return m_model->client()->queryIteratorType( m_iteratorId ) == 2;
+    if ( m_model ) {
+        return m_model->client()->queryIteratorType( m_iteratorId ) == 2;
+    }
+    else {
+        return false;
+    }
 }
 
 
 bool Soprano::Server::ClientQueryResultIteratorBackend::boolValue() const
 {
-    return m_model->client()->queryIteratorBoolValue( m_iteratorId );
+    if ( m_model ) {
+        return m_model->client()->queryIteratorBoolValue( m_iteratorId );
+    }
+    else {
+        return false;
+    }
 }

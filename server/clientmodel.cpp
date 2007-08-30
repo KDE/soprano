@@ -63,7 +63,12 @@ Soprano::NodeIterator Soprano::Server::ClientModel::listContexts() const
         m_openIterators.append( itId );
     }
     setError( m_client->lastError() );
-    return new ClientNodeIteratorBackend( itId, this );
+    if ( lastError() ) {
+        return NodeIterator();
+    }
+    else {
+        return new ClientNodeIteratorBackend( itId, const_cast<ClientModel*>( this ) );
+    }
 }
 
 
@@ -74,7 +79,12 @@ Soprano::QueryResultIterator Soprano::Server::ClientModel::executeQuery( const Q
         m_openIterators.append( itId );
     }
     setError( m_client->lastError() );
-    return new ClientQueryResultIteratorBackend( itId, this );
+    if ( lastError() ) {
+        return QueryResultIterator();
+    }
+    else {
+        return new ClientQueryResultIteratorBackend( itId, const_cast<ClientModel*>( this ) );
+    }
 }
 
 
@@ -85,7 +95,12 @@ Soprano::StatementIterator Soprano::Server::ClientModel::listStatements( const S
         m_openIterators.append( itId );
     }
     setError( m_client->lastError() );
-    return new ClientStatementIteratorBackend( itId, this );
+    if ( lastError() ) {
+        return StatementIterator();
+    }
+    else {
+        return new ClientStatementIteratorBackend( itId, const_cast<ClientModel*>( this ) );
+    }
 }
 
 

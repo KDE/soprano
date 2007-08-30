@@ -209,8 +209,10 @@ template<typename T> Soprano::IteratorBackend<T>* Soprano::Iterator<T>::backend(
 template<typename T> void Soprano::Iterator<T>::close()
 {
     // some evil hacking to avoid detachment of the shared data
-    const Private* cd = d.constData();
-    cd->backend->close();
+    if( isValid() ) {
+	const Private* cd = d.constData();
+	cd->backend->close();
+    }
 }
 
 template<typename T> bool Soprano::Iterator<T>::next()

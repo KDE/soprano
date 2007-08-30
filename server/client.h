@@ -49,6 +49,7 @@ namespace Soprano {
 
 	    // FIXME: put the default port in a header file
 	    bool open( const QHostAddress& address = QHostAddress::LocalHost, quint16 port = 5000 );
+	    bool isOpen();
 	    void close();
 	    
 	    // Backend methods

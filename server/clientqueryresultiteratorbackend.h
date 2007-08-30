@@ -24,6 +24,8 @@
 
 #include <soprano/queryresultiteratorbackend.h>
 
+#include <QtCore/QPointer>
+
 namespace Soprano 
 {
     class QueryResult;
@@ -35,7 +37,7 @@ namespace Soprano
 	class ClientQueryResultIteratorBackend: public Soprano::QueryResultIteratorBackend
 	{
 	public:
-	    ClientQueryResultIteratorBackend( int itId, const ClientModel* client );
+	    ClientQueryResultIteratorBackend( int itId, ClientModel* client );
 	    ~ClientQueryResultIteratorBackend();
 
 	    bool next();
@@ -53,7 +55,7 @@ namespace Soprano
 
 	private:
 	    int m_iteratorId;
-	    const ClientModel* m_model;
+	    QPointer<ClientModel> m_model;
 	};
     }
 }

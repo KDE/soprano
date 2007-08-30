@@ -68,7 +68,20 @@ bool Soprano::Server::Client::open( const QHostAddress& address, quint16 port )
 {
     d->socket->abort();
     d->socket->connectToHost( address, port );
-    return d->socket->waitForConnected();
+    if ( !d->socket->waitForConnected() ) {
+        setError( d->socket->errorString() );
+        return false;
+    }
+    else {
+        clearError();
+        return true;
+    }
+}
+
+
+bool Soprano::Server::Client::isOpen()
+{
+    return d->socket->state() == QAbstractSocket::ConnectedState;
 }
 
 
@@ -86,7 +99,7 @@ void Soprano::Server::Client::slotError( QAbstractSocket::SocketError error )
 
 int Soprano::Server::Client::createModel( const QList<BackendSetting>& settings )
 {
-    qDebug() << "(Client::createModel)";
+//    qDebug() << "(Client::createModel)";
     QMutexLocker( &d->mutex );
 
     QDataStream stream( d->socket );
@@ -110,7 +123,7 @@ int Soprano::Server::Client::createModel( const QList<BackendSetting>& settings 
 
 Soprano::BackendFeatures Soprano::Server::Client::supportedFeatures()
 {
-    qDebug() << "(Client::supportedFeatures)";
+//    qDebug() << "(Client::supportedFeatures)";
     QMutexLocker( &d->mutex );
 
     QDataStream stream( d->socket );
@@ -134,7 +147,7 @@ Soprano::BackendFeatures Soprano::Server::Client::supportedFeatures()
 
 Soprano::Error::ErrorCode Soprano::Server::Client::addStatement( int modelId, const Statement &statement )
 {
-    qDebug() << "(Client::addStatement)";
+//    qDebug() << "(Client::addStatement)";
     QMutexLocker( &d->mutex );
 
     QDataStream stream( d->socket );
@@ -157,7 +170,7 @@ Soprano::Error::ErrorCode Soprano::Server::Client::addStatement( int modelId, co
 
 int Soprano::Server::Client::listContexts( int modelId )
 {
-    qDebug() << "(Client::listContexts)";
+//    qDebug() << "(Client::listContexts)";
     QMutexLocker( &d->mutex );
 
     QDataStream stream( d->socket );
@@ -180,7 +193,7 @@ int Soprano::Server::Client::listContexts( int modelId )
 
 int Soprano::Server::Client::executeQuery( int modelId, const QueryLegacy &query )
 {
-    qDebug() << "(Client::executeQuery)";
+//    qDebug() << "(Client::executeQuery)";
     QMutexLocker( &d->mutex );
 
     QDataStream stream( d->socket );
@@ -203,7 +216,7 @@ int Soprano::Server::Client::executeQuery( int modelId, const QueryLegacy &query
 
 int Soprano::Server::Client::listStatements( int modelId, const Statement &partial )
 {
-    qDebug() << "(Client::listStatements)";
+//    qDebug() << "(Client::listStatements)";
     QMutexLocker( &d->mutex );
 
     QDataStream stream( d->socket );
@@ -226,7 +239,7 @@ int Soprano::Server::Client::listStatements( int modelId, const Statement &parti
 
 Soprano::Error::ErrorCode Soprano::Server::Client::removeStatements( int modelId, const Statement &statement )
 {
-    qDebug() << "(Client::removeStatements)";
+//    qDebug() << "(Client::removeStatements)";
     QMutexLocker( &d->mutex );
 
     QDataStream stream( d->socket );
@@ -249,7 +262,7 @@ Soprano::Error::ErrorCode Soprano::Server::Client::removeStatements( int modelId
 
 int Soprano::Server::Client::statementCount( int modelId )
 {
-    qDebug() << "(Client::statementCount)";
+//    qDebug() << "(Client::statementCount)";
     QMutexLocker( &d->mutex );
 
     QDataStream stream( d->socket );
@@ -272,7 +285,7 @@ int Soprano::Server::Client::statementCount( int modelId )
 
 bool Soprano::Server::Client::containsStatements( int modelId, const Statement &statement )
 {
-    qDebug() << "(Client::containsStatements)";
+//    qDebug() << "(Client::containsStatements)";
     QMutexLocker( &d->mutex );
 
     QDataStream stream( d->socket );
@@ -295,7 +308,7 @@ bool Soprano::Server::Client::containsStatements( int modelId, const Statement &
 
 bool Soprano::Server::Client::isEmpty( int modelId )
 {
-    qDebug() << "(Client::isEmpty)";
+//    qDebug() << "(Client::isEmpty)";
     QMutexLocker( &d->mutex );
 
     QDataStream stream( d->socket );
@@ -318,7 +331,7 @@ bool Soprano::Server::Client::isEmpty( int modelId )
 
 bool Soprano::Server::Client::iteratorNext( int id )
 {
-    qDebug() << "(Client::iteratorNext)";
+//    qDebug() << "(Client::iteratorNext)";
     QMutexLocker( &d->mutex );
 
     QDataStream stream( d->socket );
@@ -341,7 +354,7 @@ bool Soprano::Server::Client::iteratorNext( int id )
 
 Soprano::Node Soprano::Server::Client::nodeIteratorCurrent( int id )
 {
-    qDebug() << "(Client::nodeIteratorCurrent)";
+//    qDebug() << "(Client::nodeIteratorCurrent)";
     QMutexLocker( &d->mutex );
 
     QDataStream stream( d->socket );
@@ -367,7 +380,7 @@ Soprano::Node Soprano::Server::Client::nodeIteratorCurrent( int id )
 
 Soprano::Statement Soprano::Server::Client::statementIteratorCurrent( int id )
 {
-    qDebug() << "(Client::statementIteratorCurrent)";
+//    qDebug() << "(Client::statementIteratorCurrent)";
     QMutexLocker( &d->mutex );
 
     QDataStream stream( d->socket );
@@ -394,7 +407,7 @@ Soprano::Statement Soprano::Server::Client::statementIteratorCurrent( int id )
 
 Soprano::BindingSet Soprano::Server::Client::queryIteratorCurrent( int id )
 {
-    qDebug() << "(Client::queryIteratorCurrent)";
+//    qDebug() << "(Client::queryIteratorCurrent)";
     QMutexLocker( &d->mutex );
 
     QDataStream stream( d->socket );
@@ -421,7 +434,7 @@ Soprano::BindingSet Soprano::Server::Client::queryIteratorCurrent( int id )
 
 Soprano::Statement Soprano::Server::Client::queryIteratorCurrentStatement( int id )
 {
-    qDebug() << "(Client::queryIteratorCurrentStatement)";
+//    qDebug() << "(Client::queryIteratorCurrentStatement)";
     QMutexLocker( &d->mutex );
 
     QDataStream stream( d->socket );
@@ -444,7 +457,7 @@ Soprano::Statement Soprano::Server::Client::queryIteratorCurrentStatement( int i
 
 int Soprano::Server::Client::queryIteratorType( int id )
 {
-    qDebug() << "(Client::queryIteratorType)";
+//    qDebug() << "(Client::queryIteratorType)";
     QMutexLocker( &d->mutex );
 
     QDataStream stream( d->socket );
@@ -467,7 +480,7 @@ int Soprano::Server::Client::queryIteratorType( int id )
 
 bool Soprano::Server::Client::queryIteratorBoolValue( int id )
 {
-    qDebug() << "(Client::queryIteratorBoolValue)";
+//    qDebug() << "(Client::queryIteratorBoolValue)";
     QMutexLocker( &d->mutex );
 
     QDataStream stream( d->socket );
@@ -490,7 +503,7 @@ bool Soprano::Server::Client::queryIteratorBoolValue( int id )
 
 void Soprano::Server::Client::iteratorClose( int id )
 {
-    qDebug() << "(Client::iteratorClose)";
+//    qDebug() << "(Client::iteratorClose)";
     QMutexLocker( &d->mutex );
 
     QDataStream stream( d->socket );

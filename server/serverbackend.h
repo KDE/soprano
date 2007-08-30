@@ -62,14 +62,19 @@ namespace Soprano
        * Additonal BackendOptions supported:
        * \li name - The name for the Model to be created. The daemon handles a set of models which are identified by a unique name.
        */
-      class SOPRANO_EXPORT BackendPlugin : public QObject, public Soprano::Backend
+      class SOPRANO_EXPORT ServerBackend : public QObject, public Soprano::Backend
       {
 	  Q_OBJECT
 	  Q_INTERFACES(Soprano::Backend)
 
       public:
-	  BackendPlugin();
-	  ~BackendPlugin();
+	  /**
+	   * Create a new ServerBackend instance.
+	   *
+	   * \param port The port the %Soprano server is running on.
+	   */
+	  ServerBackend( quint16 port = 5000 );
+	  ~ServerBackend();
 
 	  StorageModel* createModel( const QString& name ) const;
 	  StorageModel* createModel( const QList<BackendSetting>& settings = QList<BackendSetting>() ) const;

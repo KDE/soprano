@@ -1,4 +1,4 @@
-/* 
+/*
  * This file is part of Soprano Project.
  *
  * Copyright (C) 2007 Sebastian Trueg <trueg@kde.org>
@@ -19,37 +19,35 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef _SOPRANO_SERVER_CLIENT_STATEMENT_ITERATOR_H_
-#define _SOPRANO_SERVER_CLIENT_STATEMENT_ITERATOR_H_
+#ifndef _SOPRANODCLIENT_BACKEND_TEST_H_
+#define _SOPRANODCLIENT_BACKEND_TEST_H_
 
-#include <soprano/iteratorbackend.h>
+#include "SopranoModelTest.h"
 
-#include <QtCore/QPointer>
+#include <QtCore/QProcess>
 
-namespace Soprano 
-{
-    class Statement;
-
+namespace Soprano {
+    class Model;
     namespace Server {
-
-	class ClientModel;
-
-	class ClientStatementIteratorBackend: public Soprano::IteratorBackend<Statement>
-	{
-	public:
-	    ClientStatementIteratorBackend( int itId, ClientModel* model );
-	    ~ClientStatementIteratorBackend();
-
-	    bool next();
-	    Soprano::Statement current() const;
-	    void close();
-
-	private:
-	    int m_iteratorId;
-	    QPointer<ClientModel> m_model;
-	};
+	class ServerBackend;
     }
 }
 
-#endif
+class SopranodClientTest : public SopranoModelTest
+{
+    Q_OBJECT
 
+protected:
+    virtual Soprano::Model* createModel();
+
+private Q_SLOTS:
+    void initTestCase();
+    void cleanupTestCase();
+
+private:
+    Soprano::Server::ServerBackend* m_backend;
+    QProcess m_serverProcess;
+    int m_modelCnt;
+};
+
+#endif

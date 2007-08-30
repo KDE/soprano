@@ -128,6 +128,7 @@ add_executable(errortest errortest.cpp)
 target_link_libraries(errortest soprano ${QT_QTCORE_LIBRARY} ${QT_QTTEST_LIBRARY})
 add_test(errortest ${EXECUTABLE_OUTPUT_PATH}/errortest)
 
+# Index Test
 find_package(CLucene)
 if(CLucene_FOUND)
   qt4_automoc(cluceneindextest cluceneindextest.cpp)
@@ -135,3 +136,9 @@ if(CLucene_FOUND)
   target_link_libraries(cluceneindextest soprano sopranoindex ${QT_QTCORE_LIBRARY} ${QT_QTTEST_LIBRARY} ${CLUCENE_LIBRARY})
   add_test(cluceneindextest ${EXECUTABLE_OUTPUT_PATH}/cluceneindextest)
 endif(CLucene_FOUND)
+
+# Server test
+qt4_automoc(sopranodclienttest sopranodclienttest.cpp)
+add_executable(sopranodclienttest sopranodclienttest.cpp)
+target_link_libraries(sopranodclienttest sopranomodeltest soprano_serverclientbackend ${QT_QTCORE_LIBRARY} ${QT_QTTEST_LIBRARY} ${QT_QTNETWORK_LIBRARY})
+add_test(sopranodclienttest ${EXECUTABLE_OUTPUT_PATH}/sopranodclienttest)

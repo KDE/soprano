@@ -34,7 +34,11 @@
 using namespace Soprano;
 
 SopranoModelTest::SopranoModelTest()
-    : m_model( 0 )
+    : m_st1( 0 ),
+      m_st2( 0 ),
+      m_st3( 0 ),
+      m_st4( 0 ),
+      m_model( 0 )
 {
 }
 
@@ -74,6 +78,8 @@ void SopranoModelTest::init()
 
 void SopranoModelTest::testAddModel()
 {
+    QVERIFY( m_model != 0 );
+
     Node subject1( QUrl("http://soprano.sf.net#add:model") );
 
     Node predicate1( QUrl( "http://soprano.sf.net#predicate1" ) );
@@ -114,6 +120,8 @@ void SopranoModelTest::testAddModel()
 
 void SopranoModelTest::testAddListOfStatement()
 {
+    QVERIFY( m_model != 0 );
+
     Node subject1( QUrl("http://soprano.sf.net#add:model") );
 
     Node predicate1( QUrl( "http://soprano.sf.net#predicate1" ) );
@@ -140,6 +148,8 @@ void SopranoModelTest::testAddListOfStatement()
 
 void SopranoModelTest::testAddStatementIterator()
 {
+    QVERIFY( m_model != 0 );
+
     Node subject1( QUrl("http://soprano.sf.net#add:model") );
 
     Node predicate1( QUrl( "http://soprano.sf.net#predicate1" ) );
@@ -169,6 +179,8 @@ void SopranoModelTest::testAddStatementIterator()
 
 void SopranoModelTest::testAddStatements()
 {
+    QVERIFY( m_model != 0 );
+
     Node subject1( QUrl("http://soprano.sf.net#soprano:test1") );
     Node subject2( QUrl("http://soprano.sf.net#soprano:test2") );
 
@@ -193,6 +205,8 @@ void SopranoModelTest::testAddStatements()
 
 void SopranoModelTest::testListStatements()
 {
+    QVERIFY( m_model != 0 );
+
     QList<Statement> statements;
     Node resource_1( QUrl("http://soprano.sf.net#list:resource1") );
     Node resource_2( QUrl("http://soprano.sf.net#list:resource2") );
@@ -304,6 +318,8 @@ void SopranoModelTest::testListStatements()
 
 void SopranoModelTest::testListStatementsWithContext()
 {
+    QVERIFY( m_model != 0 );
+
     // we do not want the normal test statements
     m_model->removeAllStatements();
 
@@ -362,6 +378,8 @@ void SopranoModelTest::testListStatementsWithContext()
 
 void SopranoModelTest::testRemoveStatement()
 {
+    QVERIFY( m_model != 0 );
+
     Node subject( QUrl("http://soprano.sf.net#remove:3") );
     Node predicate( QUrl( "http://soprano.sf.net#predicate" ) );
     Node object( QUrl("http://soprano.sf.net#soprano:2") );
@@ -378,6 +396,8 @@ void SopranoModelTest::testRemoveStatement()
 
 void SopranoModelTest::testRemoveAllStatement()
 {
+    QVERIFY( m_model != 0 );
+
     m_model->removeStatements( Statement( m_st1->subject(), Node(), Node() ) );
 
     QVERIFY( !m_model->containsStatements( *m_st1 ) );
@@ -402,6 +422,8 @@ void SopranoModelTest::testRemoveAllStatement()
 
 void SopranoModelTest::testGraphQuery()
 {
+    QVERIFY( m_model != 0 );
+
     QueryLegacy query("CONSTRUCT { ?s ?p ?o } WHERE { ?s ?p ?o . }", QueryLegacy::SPARQL);
 
     QueryResultIterator rs = m_model->executeQuery( query );
@@ -419,6 +441,8 @@ void SopranoModelTest::testGraphQuery()
 
 void SopranoModelTest::testBooleanQuery()
 {
+    QVERIFY( m_model != 0 );
+
     QueryLegacy query("ASK where {?a ?b ?c}", QueryLegacy::SPARQL);
 
     QueryResultIterator res = m_model->executeQuery( query );
@@ -436,6 +460,8 @@ void SopranoModelTest::testBooleanQuery()
 
 void SopranoModelTest::testInvalidQuery()
 {
+    QVERIFY( m_model != 0 );
+
     QueryLegacy query( "INVALID query", QueryLegacy::SPARQL );
 
     QueryResultIterator res = m_model->executeQuery( query );
@@ -444,6 +470,8 @@ void SopranoModelTest::testInvalidQuery()
 
 void SopranoModelTest::testQuery()
 {
+    QVERIFY( m_model != 0 );
+
     /* SPARQL */
     QueryLegacy sparql("select ?b ?c where {?a ?b ?c .}", QueryLegacy::SPARQL);
 
@@ -494,6 +522,8 @@ void SopranoModelTest::testQuery()
 
 void SopranoModelTest::testCloseStatementIteratorOnModelDelete()
 {
+    QVERIFY( m_model != 0 );
+
     Node subject1( QUrl("http://soprano.sf.net#add:model") );
 
     Node predicate1( QUrl( "http://soprano.sf.net#predicate1" ) );
@@ -558,6 +588,8 @@ static bool check3It( StatementIterator it, const Statement& s1, const Statement
 
 void SopranoModelTest::testContexts()
 {
+    QVERIFY( m_model != 0 );
+
     Node subject1( QUrl( "http://soprano.sf.net#subject1" ) );
     Node subject2( QUrl( "http://soprano.sf.net#subject2" ) );
     Node subject3( QUrl( "http://soprano.sf.net#subject3" ) );
@@ -697,6 +729,8 @@ void SopranoModelTest::testContexts()
 
 void SopranoModelTest::testListContexts()
 {
+    QVERIFY( m_model != 0 );
+
     // add some statements with contexts
 
     QList<Statement> statements;

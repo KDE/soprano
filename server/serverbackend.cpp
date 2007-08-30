@@ -24,28 +24,39 @@
 #include "clientmodel.h"
 
 
-class Soprano::Server::BackendPlugin::Private
+class Soprano::Server::ServerBackend::Private
 {
 public:
     Client* client;
+    quint16 port;
+
+    bool ensureConnect() {
+        if ( !client->isOpen() ) {
+            return client->open( QHostAddress::LocalHost, port );
+        }
+        else {
+            return true;
+        }
+    }
 };
 
 
-Soprano::Server::BackendPlugin::BackendPlugin()
+Soprano::Server::ServerBackend::ServerBackend( quint16 port )
     : Backend( "sopranoserver" ),
       d ( new Private() )
 {
     d->client = new Client( this );
+    d->port = port;
 }
 
 
-Soprano::Server::BackendPlugin::~BackendPlugin()
+Soprano::Server::ServerBackend::~ServerBackend()
 {
     delete d;
 }
 
 
-Soprano::StorageModel* Soprano::Server::BackendPlugin::createModel( const QString& name ) const
+Soprano::StorageModel* Soprano::Server::ServerBackend::createModel( const QString& name ) const
 {
     QList<BackendSetting> settings;
     settings.append( BackendSetting( "name", name ) );
@@ -53,16 +64,26 @@ Soprano::StorageModel* Soprano::Server::BackendPlugin::createModel( const QStrin
 }
 
 
-Soprano::StorageModel* Soprano::Server::BackendPlugin::createModel( const QList<BackendSetting>& settings ) const
+Soprano::StorageModel* Soprano::Server::ServerBackend::createModel( const QList<BackendSetting>& settings ) const
 {
+    if ( !d->ensureConnect() ) {
+        setError( d->client->lastError() );
+        return 0;
+    }
+
     int modelId = d->client->createModel( settings );
     setError( d->client->lastError() );
     return new ClientModel( this, modelId, d->client );
 }
 
 
-Soprano::BackendFeatures Soprano::Server::BackendPlugin::supportedFeatures() const
+Soprano::BackendFeatures Soprano::Server::ServerBackend::supportedFeatures() const
 {
+    if ( !d->ensureConnect() ) {
+        setError( d->client->lastError() );
+        return 0;
+    }
+
     return d->client->supportedFeatures();
 }
 

@@ -26,7 +26,7 @@
 #include <soprano/statement.h>
 
 
-Soprano::Server::ClientStatementIteratorBackend::ClientStatementIteratorBackend( int itId, const ClientModel* client )
+Soprano::Server::ClientStatementIteratorBackend::ClientStatementIteratorBackend( int itId, ClientModel* client )
     : m_iteratorId( itId ),
       m_model( client )
 {
@@ -41,17 +41,29 @@ Soprano::Server::ClientStatementIteratorBackend::~ClientStatementIteratorBackend
 
 bool Soprano::Server::ClientStatementIteratorBackend::next()
 {
-    return m_model->client()->iteratorNext( m_iteratorId );
+    if ( m_model ) {
+        return m_model->client()->iteratorNext( m_iteratorId );
+    }
+    else {
+        return false;
+    }
 }
 
 
 Soprano::Statement Soprano::Server::ClientStatementIteratorBackend::current() const
 {
-    return m_model->client()->statementIteratorCurrent( m_iteratorId );
+    if ( m_model ) {
+        return m_model->client()->statementIteratorCurrent( m_iteratorId );
+    }
+    else {
+        return Statement();
+    }
 }
 
 
 void Soprano::Server::ClientStatementIteratorBackend::close()
 {
-    m_model->closeIterator( m_iteratorId );
+    if ( m_model ) {
+        m_model->closeIterator( m_iteratorId );
+    }
 }

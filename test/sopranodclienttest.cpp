@@ -19,51 +19,42 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#include "clientnodeiteratorbackend.h"
-#include "client.h"
-#include "clientmodel.h"
+#include "sopranodclienttest.h"
+#include "../server/serverbackend.h"
+#include "../soprano/storagemodel.h"
 
-#include <soprano/node.h>
+#include <QtTest>
 
 
-Soprano::Server::ClientNodeIteratorBackend::ClientNodeIteratorBackend( int itId, ClientModel* client )
-    : m_iteratorId( itId ),
-      m_model( client )
+using namespace Soprano;
+using namespace Soprano::Server;
+
+
+void SopranodClientTest::initTestCase()
 {
+    m_backend = new ServerBackend();
+    m_modelCnt = 0;
+
+    // start the server
+//    m_serverProcess.start( "../server/sopranod" );
+//    QVERIFY( !m_serverProcess.waitForStarted(-1) );
 }
 
 
-Soprano::Server::ClientNodeIteratorBackend::~ClientNodeIteratorBackend()
+void SopranodClientTest::cleanupTestCase()
 {
-    close();
+    // shutdown the server
+//    m_serverProcess.terminate();
+
+    delete m_backend;
 }
 
 
-bool Soprano::Server::ClientNodeIteratorBackend::next()
+Soprano::Model* SopranodClientTest::createModel()
 {
-    if ( m_model ) {
-        return m_model->client()->iteratorNext( m_iteratorId );
-    }
-    else {
-        return false;
-    }
+    return m_backend->createModel( QString( "Testmodel%1" ).arg( m_modelCnt++ ) );
 }
 
+QTEST_MAIN( SopranodClientTest );
 
-Soprano::Node Soprano::Server::ClientNodeIteratorBackend::current() const
-{
-    if ( m_model ) {
-        return m_model->client()->nodeIteratorCurrent( m_iteratorId );
-    }
-    else {
-        return Node();
-    }
-}
-
-
-void Soprano::Server::ClientNodeIteratorBackend::close()
-{
-    if ( m_model ) {
-        m_model->closeIterator( m_iteratorId );
-    }
-}
+#include "sopranodclienttest.moc"
