@@ -36,7 +36,24 @@ static void printStatementList( Soprano::StatementIterator it )
 
 static void printQueryResult( Soprano::QueryResultIterator it )
 {
-
+    QTextStream outStream( stdout );
+    if ( it.isBool() ) {
+        outStream << it.boolValue() << endl;
+    }
+    else {
+        bool graph = it.isGraph();
+        int cnt = 0;
+        while ( it.next() ) {
+            if ( graph ) {
+                outStream << it.currentStatement() << endl;
+            }
+            else {
+                outStream << *it << endl;
+            }
+            ++cnt;
+        }
+        outStream << "Total results: " << cnt << endl;
+    }
 }
 
 static Soprano::Node parseNode( const QString& s )

@@ -25,7 +25,9 @@
 #include "soprano_export.h"
 
 #include <QtCore/QSharedDataPointer>
-#include <QtCore/QDebug>
+
+
+class QStringList;
 
 namespace Soprano {
 
@@ -132,6 +134,10 @@ namespace Soprano {
     };
 }
 
+class QDebug;
+class QTextStream;
+
 SOPRANO_EXPORT QDebug operator<<( QDebug s, const Soprano::BindingSet& );
+SOPRANO_EXPORT QTextStream& operator<<( QTextStream& s, const Soprano::BindingSet& );
 
 #endif

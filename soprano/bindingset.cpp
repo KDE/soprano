@@ -25,7 +25,8 @@
 #include <QtCore/QHash>
 #include <QtCore/QStringList>
 #include <QtCore/QSharedData>
-
+#include <QtCore/QDebug>
+#include <QtCore/QTextStream>
 
 
 class Soprano::BindingSet::Private : public QSharedData
@@ -122,6 +123,19 @@ QDebug operator<<( QDebug s, const Soprano::BindingSet& b )
         s.nospace() << n[i] << " -> " << b[n[i]];
         if ( i+1 < n.count() ) {
             s.nospace() << "; ";
+        }
+    }
+    return s;
+}
+
+
+QTextStream& operator<<( QTextStream& s, const Soprano::BindingSet& b )
+{
+    QStringList n = b.bindingNames();
+    for ( int i = 0; i < n.count(); ++i ) {
+        s << n[i] << " -> " << b[n[i]];
+        if ( i+1 < n.count() ) {
+            s << "; ";
         }
     }
     return s;
