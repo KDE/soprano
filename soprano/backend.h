@@ -102,6 +102,11 @@ namespace Soprano
 	 */
 	QVariant value() const;
 
+	/**
+	 * Set the value of the Setting.
+	 */
+	void setValue( const QVariant& value );
+
     private:
 	class Private;
 	QSharedDataPointer<Private> d;

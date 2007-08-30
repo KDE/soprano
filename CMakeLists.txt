@@ -15,6 +15,7 @@ add_subdirectory(backends)
 add_subdirectory(parsers)
 add_subdirectory(serializers)
 add_subdirectory(queryparsers)
+add_subdirectory(server)
 add_subdirectory(test) 
 add_subdirectory(rules)
 

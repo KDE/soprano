@@ -4,7 +4,7 @@
  * Soprano is a QT-based pluggable framework for RDF storage and parsing. It tries to provide a highly usable
  * interface to several RDF storage solutions.
  *
- * <b>Quickstart:</b>
+ * \section quickstart Quickstart
  *
  * 1. Create an RDF Model:
  *
@@ -28,7 +28,7 @@
  * \endcode
  *
  *
- * <b>Contents:</b>
+ * \section contents Contents
  *
  * The following sections contain further information on the usage of %Soprano.
  *
