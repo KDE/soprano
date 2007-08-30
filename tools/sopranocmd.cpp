@@ -223,15 +223,10 @@ int main( int argc, char *argv[] )
         return usage();
     }
 
-    const Soprano::Backend* backend = Soprano::discoverBackendByName( "sopranoserver" );
-    if ( !backend ) {
-        QTextStream( stderr ) << "Failed to load Soprano server backend plugin." << endl;
-        return 2;
-    }
-
-    Soprano::Model* model = dynamic_cast<const Soprano::Server::ServerBackend*>( backend )->createModel( modelName );
+    Soprano::Server::ServerBackend backend;
+    Soprano::Model* model = backend.createModel( modelName );
     if ( !model ) {
-        QTextStream( stderr ) << "Failed to create Model: " << backend->lastError() << endl;
+        QTextStream( stderr ) << "Failed to create Model: " << backend.lastError() << endl;
         return 2;
     }
 

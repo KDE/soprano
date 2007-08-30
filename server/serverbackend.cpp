@@ -23,11 +23,8 @@
 #include "client.h"
 #include "clientmodel.h"
 
-#include <QtCore/QtPlugin>
 #include <QtCore/QList>
 
-
-Q_EXPORT_PLUGIN2(soprano_serverclientbackend, Soprano::Server::ServerBackend)
 
 
 const quint16 Soprano::Server::ServerBackend::DEFAULT_PORT = 5000;

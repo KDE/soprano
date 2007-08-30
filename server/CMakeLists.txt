@@ -33,11 +33,19 @@ qt4_automoc(${soprano_server_SRC})
 qt4_automoc(${soprano_client_SRC})
 
 add_library(sopranoserver SHARED ${soprano_server_SRC})
-add_library(soprano_serverclientbackend SHARED ${soprano_client_SRC})
+add_library(sopranoclient SHARED ${soprano_client_SRC})
+add_library(soprano_serverclientbackend SHARED serverbackendplugin.cpp)
 
 add_executable(sopranod sopranod.cpp)
 
 set_target_properties(sopranoserver PROPERTIES
+        VERSION 1.0.0
+        SOVERSION 1
+        DEFINE_SYMBOL MAKE_SOPRANO_LIB
+	INSTALL_NAME_DIR ${LIB_DESTINATION}
+)
+
+set_target_properties(sopranoclient PROPERTIES
         VERSION 1.0.0
         SOVERSION 1
         DEFINE_SYMBOL MAKE_SOPRANO_LIB
@@ -52,10 +60,15 @@ target_link_libraries(
 )
 
 target_link_libraries(
-  soprano_serverclientbackend
+  sopranoclient
   ${QT_QTCORE_LIBRARY}
   ${QT_QTNETWORK_LIBRARY}
   soprano
+)
+
+target_link_libraries(
+  soprano_serverclientbackend
+  sopranoclient
 )
 
 target_link_libraries(
@@ -63,7 +76,7 @@ target_link_libraries(
   sopranoserver
 )
 
-INSTALL(TARGETS sopranoserver sopranod
+INSTALL(TARGETS sopranoserver sopranoclient sopranod
 	LIBRARY DESTINATION ${LIB_DESTINATION}
 	RUNTIME DESTINATION bin
 	ARCHIVE DESTINATION lib

@@ -15,7 +15,7 @@ add_executable(sopranocmd sopranocmd.cpp)
 
 target_link_libraries(
   sopranocmd
-  soprano_serverclientbackend
+  sopranoclient
   ${QT_QTCORE_LIBRARY}
   soprano
 )
