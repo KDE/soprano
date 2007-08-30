@@ -33,6 +33,8 @@ public:
     Client* client;
     quint16 port;
 
+    QList<ClientModel*> openModels;
+
     bool ensureConnect() {
         if ( !client->isOpen() ) {
             return client->open( QHostAddress::LocalHost, port );
@@ -55,6 +57,9 @@ Soprano::Server::ServerBackend::ServerBackend( quint16 port )
 
 Soprano::Server::ServerBackend::~ServerBackend()
 {
+    Q_FOREACH( ClientModel* model, d->openModels ) {
+        delete model;
+    }
     delete d;
 }
 
@@ -76,7 +81,9 @@ Soprano::StorageModel* Soprano::Server::ServerBackend::createModel( const QList<
 
     int modelId = d->client->createModel( settings );
     setError( d->client->lastError() );
-    return new ClientModel( this, modelId, d->client );
+    StorageModel* model = new ClientModel( this, modelId, d->client );
+    connect( model, SIGNAL( destroyed(QObject*) ), this, SLOT( modelDeleted() ) );
+    return model;
 }
 
 
@@ -88,6 +95,15 @@ Soprano::BackendFeatures Soprano::Server::ServerBackend::supportedFeatures() con
     }
 
     return d->client->supportedFeatures();
+}
+
+
+void Soprano::Server::ServerBackend::modelDeleted()
+{
+    d->openModels.removeAll( qobject_cast<ClientModel*>( sender() ) );
+    if ( d->openModels.isEmpty() ) {
+        d->client->close();
+    }
 }
 
 #include "serverbackend.moc"

@@ -103,7 +103,7 @@ void Soprano::Server::ServerConnection::slotError( QAbstractSocket::SocketError 
 
 void Soprano::Server::ServerConnection::run()
 {
-    d->socket = new QTcpSocket( this );
+    d->socket = new QTcpSocket;
     d->socket->setSocketDescriptor( d->socketDesc );
     connect( d->socket, SIGNAL(error(QAbstractSocket::SocketError)),
              this, SLOT(slotError(QAbstractSocket::SocketError)) );
@@ -184,10 +184,11 @@ void Soprano::Server::ServerConnection::run()
                 // for now we just close the connection on error.
                 qDebug() << "Unknown command: " << command;
                 d->socket->close();
-                return;
             }
         }
     }
+
+    delete d->socket;
 
     qDebug() << "(ServerConnection) done.";
 }

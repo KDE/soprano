@@ -34,6 +34,8 @@ namespace Soprano {
 
 	class ClientModel : public StorageModel
 	{
+	    Q_OBJECT
+
 	public:
 	    ClientModel( const Backend* backend, int modelId, Client* );
 	    ~ClientModel();

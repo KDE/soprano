@@ -133,3 +133,5 @@ void Soprano::Server::ClientModel::closeIterator( int id ) const
     m_client->iteratorClose( id );
     m_openIterators.removeAll( id );
 }
+
+#include "clientmodel.moc"
