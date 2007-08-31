@@ -6,6 +6,8 @@ include_directories(
   ${soprano_core_SOURCE_DIR}
   ${soprano_core_SOURCE_DIR}/query
   ${QT_INCLUDES}
+  ${CLUCENE_INCLUDE_DIR}
+  ${CLUCENE_LIBRARY_DIR}
   ${CMAKE_CURRENT_BINARY_DIR}
 )
 

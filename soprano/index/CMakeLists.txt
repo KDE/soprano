@@ -6,6 +6,7 @@ include_directories(
   ${CMAKE_SOURCE_DIR}
   ${CLUCENE_INCLUDE_DIR}
   ${CLUCENE_LIBRARY_DIR}
+  ${CMAKE_CURRENT_BINARY_DIR}
 )
 
 set( SOPRANO_INDEX_SRCS
@@ -16,6 +17,8 @@ set( SOPRANO_INDEX_SRCS
   wstring.cpp
   indexqueryresult.cpp
 )
+
+configure_file(clucene-config.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/clucene-config.h)
 
 # CLucene requires exception support and has no support for visibility=hidden
 # so we must use the default (i.e. public) value for -fvisibility

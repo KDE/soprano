@@ -1,0 +1,1 @@
+#cmakedefine CL_VERSION_19_OR_GREATER

@@ -542,7 +542,11 @@ double Soprano::Index::CLuceneIndex::getScore( const Soprano::Node& resource, lu
         lucene::search::TopDocs* docs = static_cast<lucene::search::Searchable*>( d->getIndexSearcher() )->_search( &combinedQuery, 0, 1 );
         double r = -1.0;
         if ( docs->totalHits > 0 ) {
+#ifdef CL_VERSION_19_OR_GREATER
             r = docs->scoreDocs[0].score;
+#else
+            r = docs->scoreDocs[0]->score;
+#endif
         }
         _CLDELETE( docs );
         return r;

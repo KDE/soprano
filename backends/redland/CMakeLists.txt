@@ -2,7 +2,7 @@ project(soprano_redland)
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${soprano_SOURCE_DIR}/cmake/modules)
 
-find_package(Redland REQUIRED) 
+find_package(Redland REQUIRED)
 
 include_directories(
   ${QT_QTCORE_INCLUDE_DIR}
@@ -44,7 +44,8 @@ TARGET_LINK_LIBRARIES(soprano_redlandcore soprano ${REDLAND_LIBRARIES})
 
 TARGET_LINK_LIBRARIES(soprano_redlandbackend soprano_redlandcore)
 
-ADD_DEFINITIONS(${REDLAND_CFLAGS})
+# Won't link here on amd64 without -fPIC
+ADD_DEFINITIONS(${REDLAND_CFLAGS} -fPIC)
 
 set_target_properties(soprano_redlandbackend PROPERTIES
         DEFINE_SYMBOL MAKE_REDLANDBACKEND_LIB

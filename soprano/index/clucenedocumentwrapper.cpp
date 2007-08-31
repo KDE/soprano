@@ -23,6 +23,8 @@
 #include "cluceneutils.h"
 #include "wstring.h"
 
+#include "clucene-config.h"
+
 #include <CLucene/document/Document.h>
 #include <CLucene/document/Field.h>
 
@@ -55,7 +57,13 @@ void Soprano::Index::CLuceneDocumentWrapper::addProperty( const WString& field, 
 {
     // FIXME: Do we really need to store the values? after all we have them in the RDF store anyway!
     // store this predicate (YES, the CLucene API is that bad. We actually put in Fields allocated on the heap here!)
-    d->document->add( *new Field( field.data(), text.data(), /*true, false, false*/ Field::STORE_YES|Field::INDEX_NO|Field::TERMVECTOR_NO ) );
+    d->document->add( *new Field( field.data(), text.data(),
+#ifdef CL_VERSION_19_OR_GREATER
+                                  Field::STORE_YES|Field::INDEX_NO|Field::TERMVECTOR_NO
+#else
+                                  true, false, false
+#endif
+                          ) );
 
     // We don't have to recalculate the concatenated text: just add another
     // TEXT field and Lucene will take care of this. Additional advantage:
@@ -64,7 +72,14 @@ void Soprano::Index::CLuceneDocumentWrapper::addProperty( const WString& field, 
     // means loss of information).
     //
     // (YES, the CLucene API is that bad. We actually put in Fields allocated on the heap here!)
-    d->document->add( *new Field( textFieldName().data(), text.data(), /*false, true, true*/ Field::STORE_NO|Field::INDEX_TOKENIZED|Field::TERMVECTOR_YES ) );
+    d->document->add( *new Field( textFieldName().data(), text.data(),
+#ifdef CL_VERSION_19_OR_GREATER
+                                  Field::STORE_NO|Field::INDEX_TOKENIZED|Field::TERMVECTOR_YES
+#else
+                                  false, true, true
+#endif
+                          ) );
+
 }
 
 
@@ -93,7 +108,13 @@ void Soprano::Index::CLuceneDocumentWrapper::removeProperty( const WString& fiel
     lucene::document::DocumentFieldEnumeration* e = d->document->fields();
     while ( e->hasMoreElements() ) {
         lucene::document::Field* field = e->nextElement();
-        d->document->add( *new Field( textFieldName().data(), field->stringValue(), /*false, true, true*/ Field::STORE_NO|Field::INDEX_TOKENIZED|Field::TERMVECTOR_YES ) );
+        d->document->add( *new Field( textFieldName().data(), field->stringValue(),
+#ifdef CL_VERSION_19_OR_GREATER
+                                      Field::STORE_NO|Field::INDEX_TOKENIZED|Field::TERMVECTOR_YES
+#else
+                                      false, true, true
+#endif
+                              ) );
     }
 }
 
@@ -132,7 +153,13 @@ int Soprano::Index::CLuceneDocumentWrapper::numberOfPropertyFields() const
 void Soprano::Index::CLuceneDocumentWrapper::addID( const QString& id )
 {
     // (YES, the CLucene API is that bad. We actually put in Fields allocated on the heap here!)
-    d->document->add( *new lucene::document::Field( idFieldName().data(), WString( id ).data(), /*true, true, false*/ Field::STORE_YES|Field::INDEX_UNTOKENIZED|Field::TERMVECTOR_NO ) );
+    d->document->add( *new lucene::document::Field( idFieldName().data(), WString( id ).data(),
+#ifdef CL_VERSION_19_OR_GREATER
+                                                    Field::STORE_YES|Field::INDEX_UNTOKENIZED|Field::TERMVECTOR_NO
+#else
+                                                    true, true, false
+#endif
+                          ) );
 }
 
 
