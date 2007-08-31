@@ -200,14 +200,14 @@ bool Soprano::Raptor::Serializer::serialize( StatementIterator it,
         return false;
     }
 
-    if ( librdf_serializer_serialize_stream_to_iostream( serializer,
+    /*if ( librdf_serializer_serialize_stream_to_iostream( serializer,
                                                          0,
                                                          rdfStream,
                                                          raptorStream ) ) {
         qDebug() << "(Soprano::Raptor::Serializer) serialization failed.";
         setError( Redland::World::self()->lastError() );
         success = false;
-    }
+    }*/
 
 //     librdf_free_stream( rdfStream );
 //     raptor_free_iostream( raptorStream );

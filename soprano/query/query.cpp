@@ -24,6 +24,7 @@
 
 #include "query.h"
 
+#include <QDebug>
 #include <QtCore/QVariant>
 #include <QtCore/QList>
 
@@ -1571,11 +1572,16 @@ Soprano::Query::LangMatches* Soprano::Query::LangMatches::clone() const
 class Soprano::Query::Regexp::Private : public QSharedData
 {
 public:
+    Private()
+        : expression(0)
+    {}
+
     Private( StringExpression *ex, const QString &p, const QString& f = QString() )
         : expression( ex ),
           pattern( p ),
           flags( f ) {
     }
+
     Private( const Private& other)
         : expression( 0 ),
           pattern( other.pattern ),
@@ -1583,6 +1589,7 @@ public:
         if ( other.expression ) {
             expression = other.expression->clone();                         }
     }
+
     ~Private() {
         delete expression;
     }
@@ -1591,6 +1598,11 @@ public:
     QString pattern;
     QString flags;
 };
+
+Soprano::Query::Regexp::Regexp()
+{
+    d = new Private();
+}
 
 Soprano::Query::Regexp::Regexp( StringExpression *expression, const QString &pattern )
     : d( new Private( expression, pattern ) )
@@ -1602,9 +1614,19 @@ Soprano::Query::Regexp::Regexp( StringExpression *expression, const QString &pat
 {
 }
 
-Soprano::Query::Regexp* Soprano::Query::Regexp::clone() const
+Soprano::Query::Regexp::Regexp( const Regexp& other )
 {
-    return new Regexp( *this );
+    d = other.d;
+}
+
+Soprano::Query::Regexp::~Regexp()
+{
+}
+
+Soprano::Query::Regexp& Soprano::Query::Regexp::operator=( const Regexp& other )
+{
+    d = other.d;
+    return *this;
 }
 
 void Soprano::Query::Regexp::setExpression( StringExpression *expression )
@@ -1635,6 +1657,11 @@ void Soprano::Query::Regexp::setFlags( const QString &flags )
 QString Soprano::Query::Regexp::flags()
 {
     return d->flags;
+}
+
+Soprano::Query::Regexp* Soprano::Query::Regexp::clone() const
+{
+    return new Regexp( *this );
 }
 
 void Soprano::Query::Regexp::accept( ExpressionVisitor *visitor )
@@ -1692,26 +1719,23 @@ const QUrl Soprano::Query::Prefix::uri() const
 }
 
 //
-// Soprano::Query::GraphPattern
+// Soprano::Query::TriplePattern
 //
 
-class Soprano::Query::GraphPattern::Private: public QSharedData
+class Soprano::Query::TriplePattern::Private: public QSharedData
 {
 public:
     Private()
       : subject( 0 ),
         predicate( 0 ),
-        object( 0 ),
-        context( 0 ),
-        optional( false )
+        object( 0 )
     {};
 
     Private( const Private& other )
       : subject( 0 ),
         predicate( 0 ),
-        object( 0 ),
-        context( 0 ),
-        optional( other.optional ) {
+        object( 0 )
+    {
         if ( other.subject ) {
             subject = other.subject->clone();
         }
@@ -1721,9 +1745,6 @@ public:
         if ( other.object ) {
             object = other.object->clone();
         }
-        if ( other.context ) {
-            context = other.context->clone();
-        }
     }
 
     ~Private()
@@ -1731,14 +1752,98 @@ public:
         delete subject;
         delete predicate;
         delete object;
-        delete context;
     }
 
     RTerm *subject;
     RTerm *predicate;
     RTerm *object;
-    RTerm *context;
-    bool optional;
+};
+
+Soprano::Query::TriplePattern::TriplePattern()
+{
+    d = new Private();
+}   
+
+Soprano::Query::TriplePattern::TriplePattern( RTerm* subject, RTerm* predicate, RTerm* object )
+{
+    d = new Private();
+    d->subject = subject;
+    d->predicate = predicate;
+    d->object = object;
+}
+
+Soprano::Query::TriplePattern::TriplePattern( const TriplePattern &other )
+{
+    d = other.d;
+}
+            
+Soprano::Query::TriplePattern::~TriplePattern()
+{
+}   
+
+Soprano::Query::TriplePattern& Soprano::Query::TriplePattern::operator=( const TriplePattern& other )
+{
+    d = other.d;
+    return *this;
+}
+
+void Soprano::Query::TriplePattern::setSubject( RTerm *subject )
+{
+    delete d->subject;
+    d->subject = subject;
+}
+
+const Soprano::Query::RTerm *Soprano::Query::TriplePattern::subject() const
+{
+    return d->subject;
+}
+
+void Soprano::Query::TriplePattern::setPredicate( RTerm *predicate )
+{
+    delete d->predicate;
+    d->predicate = predicate;
+}
+
+const Soprano::Query::RTerm *Soprano::Query::TriplePattern::predicate() const
+{
+   return d->predicate;
+}
+
+void Soprano::Query::TriplePattern::setObject( RTerm *object )
+{
+   delete d->object;
+   d->object = object;
+}
+
+const Soprano::Query::RTerm *Soprano::Query::TriplePattern::object() const
+{
+   return d->object;
+}
+
+Soprano::Query::TriplePattern* Soprano::Query::TriplePattern::clone() const
+{
+    return new TriplePattern( *this );
+}
+
+void Soprano::Query::TriplePattern::accept( ExpressionVisitor *visitor)
+{
+    visitor->visit( this );
+}
+
+//
+// Soprano::Query::GraphPattern
+//
+
+class Soprano::Query::GraphPattern::Private: public QSharedData
+{
+public:
+    Private()
+        : optional( false )
+    {};
+
+    bool optional;  
+    QList<TriplePattern> triplePatterns;
+    QList<GraphPattern> subGraphs;
 };
 
 Soprano::Query::GraphPattern::GraphPattern()
@@ -1746,13 +1851,9 @@ Soprano::Query::GraphPattern::GraphPattern()
    d = new Private;
 }
 
-Soprano::Query::GraphPattern::GraphPattern( RTerm *subject, RTerm *predicate, RTerm *object, RTerm *context, bool optional )
+Soprano::Query::GraphPattern::GraphPattern( bool optional )
 {
     d = new Private;
-    d->subject = subject;
-    d->predicate = predicate;
-    d->object = object;
-    d->context = context;
     d->optional = optional;
 }
 
@@ -1770,7 +1871,7 @@ Soprano::Query::GraphPattern& Soprano::Query::GraphPattern::operator=( const Gra
     d = other.d;
     return *this;
 }
-
+            
 void Soprano::Query::GraphPattern::setOptional(bool optional)
 {
     d->optional = optional;
@@ -1781,48 +1882,24 @@ bool Soprano::Query::GraphPattern::optional() const
     return d->optional;
 }
 
-void Soprano::Query::GraphPattern::setSubject( RTerm *subject )
+void Soprano::Query::GraphPattern::addTriplePattern( const TriplePattern& triplePattern )
 {
-    delete d->subject;
-    d->subject = subject;
+    d->triplePatterns.append( triplePattern );
 }
 
-const Soprano::Query::RTerm *Soprano::Query::GraphPattern::subject() const
+QList<Soprano::Query::TriplePattern> Soprano::Query::GraphPattern::triplePatterns() const
 {
-    return d->subject;
+    return d->triplePatterns;
 }
 
-void Soprano::Query::GraphPattern::setPredicate( RTerm *predicate )
+void Soprano::Query::GraphPattern::addSubGraphPattern( const GraphPattern& graphPattern )
 {
-    delete d->predicate;
-    d->predicate = predicate;
+    d->subGraphs.append( graphPattern );
 }
 
-const Soprano::Query::RTerm *Soprano::Query::GraphPattern::predicate() const
+QList<Soprano::Query::GraphPattern> Soprano::Query::GraphPattern::subGraphPatterns() const
 {
-   return d->predicate;
-}
-
-void Soprano::Query::GraphPattern::setObject( RTerm *object )
-{
-   delete d->object;
-   d->object = object;
-}
-
-const Soprano::Query::RTerm *Soprano::Query::GraphPattern::object() const
-{
-   return d->object;
-}
-
-void Soprano::Query::GraphPattern::setContext( RTerm *context )
-{
-    delete d->context;
-    d->context = context;
-}
-
-const Soprano::Query::RTerm *Soprano::Query::GraphPattern::context() const
-{
-    return d->context;
+    return d->subGraphs;
 }
 
 Soprano::Query::GraphPattern* Soprano::Query::GraphPattern::clone() const
@@ -1830,7 +1907,7 @@ Soprano::Query::GraphPattern* Soprano::Query::GraphPattern::clone() const
     return new GraphPattern( *this );
 }
 
-void Soprano::Query::GraphPattern::accept( ExpressionVisitor *visitor)
+void Soprano::Query::GraphPattern::accept( ExpressionVisitor *visitor )
 {
     visitor->visit( this );
 }
@@ -1844,15 +1921,18 @@ public:
     Private()
         : condition(0) {
     }
+
     Private( const Private& other )
         : condition(0),
-          prefixes( other.prefixes ),
           queryTerms( other.queryTerms ),
-          type( other.type ) {
+          type( other.type ),
+          graphPattern( other.graphPattern ) 
+    {
         if ( other.condition ) {
             condition = other.condition->clone();
         }
     }
+
     ~Private() {
         delete condition;
     }
@@ -1862,16 +1942,17 @@ public:
     QList<Prefix> prefixes;
     QueryTerms queryTerms;
     QueryType type;
+    GraphPattern graphPattern;
 };
 
 Soprano::Query::Query::Query()
 {
-   d = new Private;
+   d = new Private();
 }
 
 Soprano::Query::Query::Query( QueryType type )
 {
-   d = new Private;
+   d = new Private();
    d->type = type;
 }
 
@@ -1926,9 +2007,19 @@ void Soprano::Query::Query::setQueryTerms( const QueryTerms &queryTerms )
     d->queryTerms = queryTerms;
 }
 
-Soprano::Query::QueryTerms Soprano::Query::Query::terms() const
+const Soprano::Query::QueryTerms Soprano::Query::Query::queryTerms() const
 {
-    d->queryTerms;
+    return d->queryTerms;
+}
+
+void Soprano::Query::Query::setGraphPattern( const GraphPattern &graphPattern )
+{
+    d->graphPattern = graphPattern;
+}
+
+const Soprano::Query::GraphPattern Soprano::Query::Query::graphPattern() const
+{
+    return d->graphPattern;
 }
 
 bool Soprano::Query::Query::isValid() const
@@ -1947,17 +2038,17 @@ public:
     Private() {}
 
     Private( const Private& other) {
-       Q_FOREACH( RTerm* r, other.rterms ) {
-          rterms.append( r->clone() );
+       Q_FOREACH( Variable* v, other.variables ) {
+          variables.append( v->clone() );
        }
     }
     ~Private() {
-       Q_FOREACH( RTerm* r, rterms ) {
+       Q_FOREACH( Variable* r, variables ) {
           delete r;
        }
     }
 
-    QList<RTerm *> rterms;
+    QList<Variable *> variables;
 };
 
 Soprano::Query::QueryTerms::QueryTerms()
@@ -1981,21 +2072,21 @@ Soprano::Query::QueryTerms& Soprano::Query::QueryTerms::operator=( const QueryTe
 }
 
 
-void Soprano::Query::QueryTerms::addQueryTerm( RTerm *rterm )
+void Soprano::Query::QueryTerms::addVariable( Variable *variable )
 {
-   d->rterms.append( rterm );
+   d->variables.append( variable );
 }
 
-QList<const Soprano::Query::RTerm*> Soprano::Query::QueryTerms::terms() const
+QList<const Soprano::Query::Variable*> Soprano::Query::QueryTerms::variables() const
 {
-    QList<const RTerm*> l;
-    Q_FOREACH( RTerm* r, d->rterms ) {
-        l.append( r );
+    QList<const Variable*> l;
+    Q_FOREACH( Variable* v, d->variables ) {
+        l.append( v );
     }
     return l;
 }
 
 bool Soprano::Query::QueryTerms::selectAll() const
 {
-    return d->rterms.isEmpty();
+    return d->variables.isEmpty();
 }

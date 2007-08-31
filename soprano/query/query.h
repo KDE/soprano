@@ -713,10 +713,13 @@ namespace Soprano
 
         class Regexp: public BooleanExpression {
         public:
+            Regexp();
             Regexp( StringExpression *expression, const QString &pattern);
             Regexp( StringExpression *expression, const QString &pattern, const QString &flags );
+            Regexp( const Regexp& other );
+            ~Regexp();
 
-            Regexp* clone() const;
+            Regexp& operator=( const Regexp& other );
 
             void setExpression( StringExpression *expression );
             const StringExpression *expression() const;
@@ -727,6 +730,8 @@ namespace Soprano
             void setFlags( const QString &flags );
             QString flags();
 
+            Regexp* clone() const;
+            
             void accept( ExpressionVisitor *visitor );
 
         private:
@@ -755,34 +760,58 @@ namespace Soprano
             QSharedDataPointer<Private> d;
         };
 
+        class TriplePattern : public BooleanExpression {
+        public:
+            TriplePattern();
+            
+            /*
+             * TriplePattern takes ownership of the RTerm instances.
+             */
+            TriplePattern( RTerm* subject, RTerm* predicate, RTerm* object );
+            TriplePattern( const TriplePattern& other );
+            ~TriplePattern();
+
+            TriplePattern& operator=( const TriplePattern& other ); 
+
+            void setSubject( RTerm *subject );
+            const RTerm *subject() const;
+
+            void setPredicate( RTerm *predicate );
+            const RTerm *predicate() const;
+
+            void setObject( RTerm *object );
+            const RTerm *object() const;
+
+            void setContext( RTerm *context );
+            const RTerm *context() const;
+
+            TriplePattern* clone() const;
+
+            void accept( ExpressionVisitor* visitor );
+
+        private:
+            class Private;
+            QSharedDataPointer<Private> d;
+        };
+
         class GraphPattern : public BooleanExpression {
         public:
             GraphPattern();
-
-            /*
-             * GraphPattern takes ownership of the RTerm instances.
-             */
-            GraphPattern( RTerm *subject, RTerm *predicate, RTerm *object, RTerm *context = 0, bool optional = false );
+            GraphPattern( bool optional );
             GraphPattern( const GraphPattern &other );
             ~GraphPattern();
         
             GraphPattern& operator=( const GraphPattern &other );
-        
+
             void setOptional(bool optional);
             bool optional() const;
-        
-            void setSubject( RTerm *subject );
-            const RTerm *subject() const;
-            
-            void setPredicate( RTerm *predicate );
-            const RTerm *predicate() const; 
-                              
-            void setObject( RTerm *object );
-            const RTerm *object() const; 
-            
-            void setContext( RTerm *context );
-            const RTerm *context() const;
 
+            void addTriplePattern( const TriplePattern& triplePattern );
+            QList<TriplePattern> triplePatterns() const;
+       
+            void addSubGraphPattern( const GraphPattern& graphPattern );
+            QList<GraphPattern> subGraphPatterns() const;
+ 
             GraphPattern* clone() const;
                 
             void accept( ExpressionVisitor *visitor );
@@ -801,11 +830,11 @@ namespace Soprano
             QueryTerms& operator=( const QueryTerms& other);
     
             /*
-             * QueryTerms takes ownership of the RTerm instances.
+             * QueryTerms takes ownership of the Variable instances.
              */
-            void addQueryTerm( RTerm *rterm );
+            void addVariable( Variable *variable );
         
-            QList<const RTerm*> terms() const;
+            QList<const Variable*> variables() const;
             
             bool selectAll() const;
             
@@ -847,7 +876,10 @@ namespace Soprano
             QueryType type() const;
 
             void setQueryTerms( const QueryTerms &queryTerms );
-            QueryTerms terms() const;
+            const QueryTerms queryTerms() const;
+
+            void setGraphPattern( const GraphPattern& graphPattern );
+            const GraphPattern graphPattern() const;
         
         private:
             class Private;
@@ -940,6 +972,8 @@ namespace Soprano
 
             virtual void visit( Regexp *expression ) = 0;
 
+            virtual void visit( TriplePattern *expression ) = 0;
+            
             virtual void visit( GraphPattern *expression ) = 0;
         };
     };

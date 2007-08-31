@@ -35,9 +35,6 @@ private slots:
     void cleanupTestCase();
 
     void testQuery_1();    
-    void testQuery_2();    
-    void testQuery_3();    
-    void testQuery_4();
 
     void testSyntaxError();
 
