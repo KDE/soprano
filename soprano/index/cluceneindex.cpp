@@ -24,6 +24,8 @@
 #include "clucenedocumentwrapper.h"
 #include "wstring.h"
 
+#include "clucene-config.h"
+
 #include <CLucene.h>
 
 #include <QtCore/QFile>
