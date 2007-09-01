@@ -24,17 +24,21 @@
 
 #include <QtCore/QString>
 
+#include "soprano_export.h"
+
 namespace Soprano {
     namespace Inference {
 
-	class Rule;
+	class RuleSet;
 
 	/**
 	 * \brief The RuleParser can be used to parse %Soprano rule files.
 	 *
+	 * \sa RuleSet::standardRuleSet()
+	 *
 	 * \author Sebastian Trueg <trueg@kde.org>
 	 */
-	class RuleParser
+	class SOPRANO_EXPORT RuleParser
 	{
 	public:
 	    RuleParser();
@@ -42,7 +46,7 @@ namespace Soprano {
 
 	    bool parseFile( const QString& path );
 
-	    QList<Rule> rules() const;
+	    RuleSet rules() const;
 
 	private:
 	    class Private;

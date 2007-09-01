@@ -51,7 +51,7 @@ const QStringList Soprano::PluginManager::libraryPath()
 {
     QStringList pluginPaths;
 
-    pluginPaths += QString(SOPRANO_DIR);
+    pluginPaths += QString(SOPRANO_LIB_DIR);
 
     QByteArray libPath = qgetenv( "SOPRANO_LIBRARY_PATH" );
     if( !libPath.isEmpty() ) {

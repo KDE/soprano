@@ -19,9 +19,10 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#include "soprano.h"
+#include "global.h"
 #include "pluginmanager.h"
 #include "backend.h"
+#include "storagemodel.h"
 
 static const Soprano::Backend* s_defaultBackend = 0;
 

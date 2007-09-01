@@ -18,7 +18,8 @@
 #include <QtCore/QDebug>
 #include <QtCore/QList>
 
-#include <soprano/soprano.h>
+#include "soprano.h"
+
 #include "../server/client.h"
 
 

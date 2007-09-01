@@ -22,7 +22,9 @@
 #include "servercore.h"
 #include "serverconnection.h"
 
-#include <soprano/soprano.h>
+#include <soprano/backend.h>
+#include <soprano/storagemodel.h>
+#include <soprano/global.h>
 
 #include <QtCore/QHash>
 #include <QtCore/QDebug>

@@ -25,7 +25,17 @@
 #include "randomgenerator.h"
 #include "operators.h"
 
-#include <soprano/soprano.h>
+#include "querylegacy.h"
+#include "queryresultiterator.h"
+#include "node.h"
+#include "nodeiterator.h"
+#include "literalvalue.h"
+#include "statement.h"
+#include "statementiterator.h"
+#include "storagemodel.h"
+#include "backend.h"
+#include "error.h"
+#include "bindingset.h"
 
 #include <QtCore/QHash>
 #include <QtCore/QDebug>

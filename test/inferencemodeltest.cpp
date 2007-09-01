@@ -20,13 +20,14 @@
  */
 
 #include "inferencemodeltest.h"
-#include <soprano/soprano.h>
-#include <soprano/vocabulary/rdfs.h>
-#include <soprano/inference/inferencemodel.h>
-#include <soprano/inference/statementpattern.h>
-#include <soprano/inference/nodepattern.h>
-#include <soprano/inference/inferencerule.h>
-#include <soprano/inference/inferenceruleparser.h>
+#include "soprano/soprano.h"
+#include "soprano/vocabulary/rdfs.h"
+#include "soprano/inference/inferencemodel.h"
+#include "soprano/inference/statementpattern.h"
+#include "soprano/inference/nodepattern.h"
+#include "soprano/inference/inferencerule.h"
+#include "soprano/inference/inferenceruleset.h"
+#include "soprano/inference/inferenceruleparser.h"
 
 #include <QtTest/QTest>
 #include <QtCore/QDebug>
@@ -286,15 +287,14 @@ void InferenceModelTest::testPerformance()
 
 void InferenceModelTest::testRuleParser()
 {
-    // FIXME: somehow get the path to the rules file to test parsing it
-//     RuleParser parser;
-//     QVERIFY( parser.parseFile( "rdfs.rules" ) );
+    RuleSet rules = RuleSet::standardRuleSet( RDFS );
 
-//     QList<Rule> rules = parser.rules();
+    QCOMPARE( rules.count(), 10 );
 
-//     Q_FOREACH( Rule rule, rules ) {
-//         qDebug() << rule;
-//     }
+    QStringList ruleNames = rules.ruleNames();
+    Q_FOREACH( QString name, ruleNames ) {
+        qDebug() << name << ": " << rules[name];
+    }
 }
 
 

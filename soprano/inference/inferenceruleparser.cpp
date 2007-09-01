@@ -21,6 +21,7 @@
 
 #include "inferenceruleparser.h"
 #include "inferencerule.h"
+#include "inferenceruleset.h"
 #include "nodepattern.h"
 #include "statementpattern.h"
 #include "node.h"
@@ -86,7 +87,7 @@ public:
                                                      objectPattern );
     }
 
-    QList<Rule> rules;
+    RuleSet rules;
     QMap<QString, QString> prefixes;
 
     QRegExp prefixLine;
@@ -127,6 +128,7 @@ bool Soprano::Inference::RuleParser::parseFile( const QString& path )
                 d->prefixes.insert( d->prefixLine.cap( 1 ), d->prefixLine.cap( 2 ) );
             }
             else if ( d->ruleLine.exactMatch( line ) ) {
+                QString ruleName = d->ruleLine.cap( 1 );
                 Rule newRule;
                 bool success = true;
 
@@ -145,7 +147,7 @@ bool Soprano::Inference::RuleParser::parseFile( const QString& path )
                     pos += d->statementPattern.matchedLength();
                 }
 
-                d->rules.append( newRule );
+                d->rules.insert( ruleName, newRule );
             }
             else {
                 qDebug() << "Failed to parse line: " << line;
@@ -162,7 +164,7 @@ bool Soprano::Inference::RuleParser::parseFile( const QString& path )
 }
 
 
-QList<Soprano::Inference::Rule> Soprano::Inference::RuleParser::rules() const
+Soprano::Inference::RuleSet Soprano::Inference::RuleParser::rules() const
 {
     return d->rules;
 }
