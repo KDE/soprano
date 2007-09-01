@@ -20,21 +20,27 @@ set(soprano_server_SRC
 set(soprano_client_SRC
   client.h
   client.cpp
+  clientconnection.h
+  clientconnection.cpp
   clientmodel.cpp
   clientstatementiteratorbackend.cpp
   clientnodeiteratorbackend.cpp
   clientqueryresultiteratorbackend.cpp
+  operators.cpp
+)
+
+set(soprano_serverbackend_SRC
   serverbackend.h
   serverbackend.cpp
-  operators.cpp
 )
   
 qt4_automoc(${soprano_server_SRC})
 qt4_automoc(${soprano_client_SRC})
+qt4_automoc(${soprano_serverbackend_SRC})
 
 add_library(sopranoserver SHARED ${soprano_server_SRC})
 add_library(sopranoclient SHARED ${soprano_client_SRC})
-add_library(soprano_serverclientbackend SHARED serverbackendplugin.cpp)
+add_library(soprano_serverclientbackend SHARED ${soprano_serverbackend_SRC})
 
 add_executable(sopranod sopranod.cpp)
 

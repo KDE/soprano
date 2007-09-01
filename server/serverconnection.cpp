@@ -52,6 +52,9 @@ public:
     quint32 mapIterator( const StatementIterator& it );
     quint32 mapIterator( const NodeIterator& it );
     quint32 mapIterator( const QueryResultIterator& it );
+
+    void supportsProtocolVersion( QDataStream& stream );
+
     void createModel( QDataStream& stream );
     void supportedFeatures( QDataStream& );
     void addStatement( QDataStream& stream );
@@ -115,6 +118,10 @@ void Soprano::Server::ServerConnection::run()
             quint16 command = 0;
             stream >> command;
             switch( command ) {
+            case COMMAND_SUPPORTS_PROTOCOL_VERSION:
+                d->supportsProtocolVersion( stream );
+                break;
+
             case COMMAND_CREATE_MODEL:
                 d->createModel( stream );
                 break;
@@ -251,20 +258,11 @@ void Soprano::Server::ServerConnection::Private::createModel( QDataStream& strea
     qDebug() << "(ServerConnection::createModel)";
 
     // extract options
-    QList<BackendSetting> settings;
-    stream >> settings;
-
-    // we only support one option for now: "name"
     QString name;
-    Q_FOREACH( BackendSetting setting, settings ) {
-        if ( setting.option() == BACKEND_OPTION_USER &&
-             setting.userOptionName() == "name" ) {
-            name = setting.value().toString();
-        }
-        else {
-            qDebug() << "unsupported option.";
-        }
-    }
+    QList<BackendSetting> settings;
+    stream >> name >> settings;
+
+    // for now we ignore the settings
 
     // see if we already have that model
     Model* model = core->model( name );
@@ -573,6 +571,17 @@ void Soprano::Server::ServerConnection::Private::queryIteratorBoolValue( QDataSt
 
     stream << false << Error::Error( "Invalid iterator ID." );
     qDebug() << "(ServerConnection::queryIteratorBoolValue) done";
+}
+
+
+void Soprano::Server::ServerConnection::Private::supportsProtocolVersion( QDataStream& stream )
+{
+    qDebug() << "(ServerConnection::supportsProtocolVersion)";
+    quint32 requestedVersion;
+    stream >> requestedVersion;
+
+    stream << ( requestedVersion <= PROTOCOL_VERSION ? true : false );
+    qDebug() << "(ServerConnection::supportsProtocolVersion) done";
 }
 
 #include "serverconnection.moc"

@@ -29,7 +29,7 @@
 namespace Soprano {
     class Model;
     namespace Server {
-	class ServerBackend;
+	class Client;
     }
 }
 
@@ -45,7 +45,7 @@ private Q_SLOTS:
     void cleanupTestCase();
 
 private:
-    Soprano::Server::ServerBackend* m_backend;
+    Soprano::Server::Client* m_client;
     QProcess m_serverProcess;
     int m_modelCnt;
 };

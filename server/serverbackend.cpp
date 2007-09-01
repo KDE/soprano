@@ -21,92 +21,131 @@
 
 #include "serverbackend.h"
 #include "client.h"
+#include "clientconnection.h"
 #include "clientmodel.h"
 
 #include <QtCore/QList>
+#include <QtCore/QHash>
+#include <QtCore/QPointer>
+#include <QtCore/QtPlugin>
 
-
-
-const quint16 Soprano::Server::ServerBackend::DEFAULT_PORT = 5000;
+Q_EXPORT_PLUGIN2(soprano_serverclientbackend, Soprano::Server::ServerBackend)
 
 
 class Soprano::Server::ServerBackend::Private
 {
 public:
-    Client* client;
-    quint16 port;
-
-    QList<ClientModel*> openModels;
-
-    bool ensureConnect() {
-        if ( !client->isOpen() ) {
-            return client->open( QHostAddress::LocalHost, port );
-        }
-        else {
-            return true;
-        }
+    Private( ServerBackend* parent )
+        : m_parent( parent ) {
     }
+
+    // we keep one connection for each port
+    QHash<quint16, QPointer<ClientConnection> > clientMap;
+    QHash<ClientConnection*, QList<ClientModel*> > openModels;
+
+    ClientConnection* ensureConnect( quint16 port ) {
+        QPointer<ClientConnection> client = clientMap[port];
+        if ( !client ) {
+            client = new ClientConnection( m_parent );
+            clientMap[port] = client;
+        }
+
+        if ( !client->isOpen() &&
+             !client->open( QHostAddress::LocalHost, port ) ) {
+            m_parent->setError( client->lastError() );
+            return 0;
+        }
+
+        return client;
+    }
+
+private:
+    ServerBackend* m_parent;
 };
 
 
-Soprano::Server::ServerBackend::ServerBackend( quint16 port )
+Soprano::Server::ServerBackend::ServerBackend()
     : Backend( "sopranoserver" ),
-      d ( new Private() )
+      d ( new Private( this ) )
 {
-    d->client = new Client( this );
-    d->port = port;
 }
 
 
 Soprano::Server::ServerBackend::~ServerBackend()
 {
-    Q_FOREACH( ClientModel* model, d->openModels ) {
-        delete model;
-    }
     delete d;
 }
 
 
-Soprano::StorageModel* Soprano::Server::ServerBackend::createModel( const QString& name ) const
+Soprano::StorageModel* Soprano::Server::ServerBackend::createModel( const QList<BackendSetting>& settings_ ) const
 {
-    QList<BackendSetting> settings;
-    settings.append( BackendSetting( "name", name ) );
-    return createModel( settings );
-}
+    QList<BackendSetting> settings( settings_ );
 
+    // extract the port setting
+    quint16 port = Client::DEFAULT_PORT;
+    QString name;
+    QList<BackendSetting>::iterator it = settings.begin();
+    while ( it != settings.end() ) {
+        BackendSetting& setting = *it;
 
-Soprano::StorageModel* Soprano::Server::ServerBackend::createModel( const QList<BackendSetting>& settings ) const
-{
-    if ( !d->ensureConnect() ) {
-        setError( d->client->lastError() );
+        if ( setting.option() == BACKEND_OPTION_USER &&
+             setting.userOptionName() == "port" ) {
+            bool ok = true;
+            port = setting.value().toString().toInt( &ok );
+            if ( !ok ) {
+                setError( QString( "Invalid value for option 'port': %1" ).arg( setting.value().toString() ), Error::ERROR_INVALID_ARGUMENT );
+                return 0;
+            }
+
+            // remove the setting
+            settings.erase( it );
+        }
+
+        else if ( setting.option() == BACKEND_OPTION_USER &&
+                  setting.userOptionName() == "name" ) {
+            name = setting.value().toString();
+            settings.erase( it );
+        }
+    }
+
+    if ( name.isEmpty() ) {
+        setError( "No Model name specified" );
         return 0;
     }
 
-    int modelId = d->client->createModel( settings );
-    setError( d->client->lastError() );
-    StorageModel* model = new ClientModel( this, modelId, d->client );
-    connect( model, SIGNAL( destroyed(QObject*) ), this, SLOT( modelDeleted() ) );
-    return model;
-}
-
-
-Soprano::BackendFeatures Soprano::Server::ServerBackend::supportedFeatures() const
-{
-    if ( !d->ensureConnect() ) {
-        setError( d->client->lastError() );
+    ClientConnection* client = d->ensureConnect( port );
+    if ( !client ) {
         return 0;
     }
 
-    return d->client->supportedFeatures();
+    int modelId = client->createModel( name, settings );
+    setError( client->lastError() );
+    if ( modelId > 0 ) {
+        ClientModel* model = new ClientModel( 0, modelId, client );
+        connect( model, SIGNAL( destroyed(QObject*) ), this, SLOT( modelDeleted() ) );
+        d->openModels[client].append( model );
+        return model;
+    }
+    else {
+        return 0;
+    }
 }
 
 
 void Soprano::Server::ServerBackend::modelDeleted()
 {
-    d->openModels.removeAll( qobject_cast<ClientModel*>( sender() ) );
-    if ( d->openModels.isEmpty() ) {
-        d->client->close();
+    ClientModel* model = qobject_cast<ClientModel*>( sender() );
+    d->openModels[model->client()].removeAll( model );
+    if ( d->openModels[model->client()].isEmpty() ) {
+        delete model->client();
     }
+}
+
+
+Soprano::BackendFeatures Soprano::Server::ServerBackend::supportedFeatures() const
+{
+    // as we may have multiple connections, which one to choose?
+    return BACKEND_FEATURE_NONE;
 }
 
 #include "serverbackend.moc"

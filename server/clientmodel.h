@@ -25,19 +25,20 @@
 #include <soprano/storagemodel.h>
 
 #include <QtCore/QList>
+#include <QtCore/QPointer>
 
 
 namespace Soprano {
     namespace Server {
 
-	class Client;
+	class ClientConnection;
 
 	class ClientModel : public StorageModel
 	{
 	    Q_OBJECT
 
 	public:
-	    ClientModel( const Backend* backend, int modelId, Client* );
+	    ClientModel( const Backend* backend, int modelId, ClientConnection* );
 	    ~ClientModel();
 
 	    Error::ErrorCode addStatement( const Statement &statement );
@@ -50,12 +51,12 @@ namespace Soprano {
 
 	    void closeIterator( int id ) const;
 
-	    Client* client() const { return m_client; }
+	    ClientConnection* client() const { return m_client; }
 
 	private:
 	    int m_modelId;
 	    mutable QList<int> m_openIterators;
-	    Client* m_client;
+	    QPointer<ClientConnection> m_client;
 	};
     }
 }

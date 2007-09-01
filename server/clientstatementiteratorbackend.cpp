@@ -20,7 +20,7 @@
  */
 
 #include "clientstatementiteratorbackend.h"
-#include "client.h"
+#include "clientconnection.h"
 #include "clientmodel.h"
 
 #include <soprano/statement.h>

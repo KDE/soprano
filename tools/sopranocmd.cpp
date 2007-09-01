@@ -19,7 +19,7 @@
 #include <QtCore/QList>
 
 #include <soprano/soprano.h>
-#include "../server/serverbackend.h"
+#include "../server/client.h"
 
 
 static void printStatementList( Soprano::StatementIterator it )
@@ -109,27 +109,31 @@ public:
                 }
 
                 QString name = args[i].mid( 2 );
-                if ( name.length() == 0 || !allowed.contains( name ) ) {
+                if ( name.length() == 0 ) {
                     return false;
                 }
 
-                if ( i+1 < args.count() ) {
-                    if ( !args[i+1].startsWith( "--" ) ) {
-                        if ( allowed[name] ) {
+                if ( allowed.contains( name ) ) {
+                    if ( !allowed[name] ) {
+                        a.m_options.append( name );
+                    }
+                    else if ( i+1 < args.count() ) {
+                        if ( !args[i+1].startsWith( "--" ) ) {
                             a.m_settings[name] = args[i++];
                         }
                         else {
+                            QTextStream( stderr ) << "Missing parameter: " << name << endl << endl;
                             return false;
                         }
                     }
                     else {
-                        if ( !allowed[name] ) {
-                            a.m_options.append( name );
-                        }
-                        else {
-                            return false;
-                        }
+                        QTextStream( stderr ) << "Missing parameter: " << name << endl << endl;
+                        return false;
                     }
+                }
+                else {
+                    QTextStream( stderr ) << "Invalid option: " << name << endl << endl;
+                    return false;
                 }
             }
             else {
@@ -142,6 +146,10 @@ public:
         }
 
         return true;
+    }
+
+    bool hasSetting( const QString& name ) const {
+        return m_settings.contains( name );
     }
 
     QString getSetting( const QString& name ) const {
@@ -171,23 +179,51 @@ private:
 };
 
 
-#define VERSION "0.1"
+#define VERSION "0.2"
 
-int usage( const QString& error = QString() )
+int version()
 {
     QTextStream s( stderr );
     s << "sopranocmd " << VERSION << " (using Soprano " << Soprano::versionString() << ")" << endl;
     s << "   Copyright (C) 2007 Sebastian Trueg <trueg@kde.org>" << endl;
     s << "   This software is released under the GNU General Public License version 2." << endl;
+
+    return 0;
+}
+
+int usage( const QString& error = QString() )
+{
+    version();
+
+    QTextStream s( stderr );
     s << endl;
     s << "Usage:" << endl
-      << "   sopranod [--port <port>] --model <name> [<command>] <queryparameters>" << endl;
+      << "   sopranod [--version] [--help] [--port <port>] [--model <name>] [<command>] [<parameters>]" << endl
+      << endl
+      << "   --version          Print version information." << endl
+      << "   --help             Print this help." << endl
+      << "   --port <port>      Specify the port the Soprano server is running on." << endl
+      << "   --model <name>     The name of the Soprano model to perform the command on." << endl
+      << "                      This option is mandatory for all commands." << endl
+      << "   <command>          The command to perform. Can be one of 'add', 'remove', 'list', or 'query'." << endl
+      << "                      If not specified the default command is 'query'." << endl
+      << "   <parameters>       The parameters to the command." << endl
+      << "                      - For command 'query' this is a SPARQL query string." << endl
+      << "                      - For commands 'add' and 'remove' this is a list of 3 or 4 RDF node definitions." << endl
+      << "                      - For command 'list' this is a list of one to four node definitions." << endl
+      << endl;
+    s << "   Nodes are defined the SPARQL way:" << endl
+      << "   - Resouce and blank nodes are defined in angle brackets: <http://www.test.org#A>" << endl
+      << "   - Literal nodes are defined as a combination of their string value and their datatype URI: \"Hello World\"^^<http://www.w3.org/2001/XMLSchema#string>" << endl
+      << "   - An empty string evaluates to an empy node (\"\" does the trick)" << endl;
 
     if ( !error.isEmpty() ) {
         s << endl << error << endl;
+        return 0;
     }
-
-    return 1;
+    else {
+        return 1;
+    }
 }
 
 
@@ -198,9 +234,18 @@ int main( int argc, char *argv[] )
     QHash<QString, bool> allowedCmdLineArgs;
     allowedCmdLineArgs.insert( "port", true );
     allowedCmdLineArgs.insert( "model", true );
+    allowedCmdLineArgs.insert( "version", false );
+    allowedCmdLineArgs.insert( "help", false );
 
     CmdLineArgs args;
     if ( !CmdLineArgs::parseCmdLine( args, app.arguments(), allowedCmdLineArgs ) ) {
+        return usage();
+    }
+
+    if ( args.optionSet( "version" ) ) {
+        return version();
+    }
+    if ( args.optionSet( "help" ) ) {
         return usage();
     }
 
@@ -223,10 +268,20 @@ int main( int argc, char *argv[] )
         return usage();
     }
 
-    Soprano::Server::ServerBackend backend;
-    Soprano::Model* model = backend.createModel( modelName );
+    quint16 port = Soprano::Server::Client::DEFAULT_PORT;
+    if ( args.hasSetting( "port" ) ) {
+        port = args.getSetting( "port" ).toInt();
+    }
+
+    Soprano::Server::Client client;
+    if ( !client.connect( port ) ) {
+        QTextStream( stderr ) << "Failed to connect to server on port " << port << endl;
+        return 3;
+    }
+
+    Soprano::Model* model = client.createModel( modelName );
     if ( !model ) {
-        QTextStream( stderr ) << "Failed to create Model: " << backend.lastError() << endl;
+        QTextStream( stderr ) << "Failed to create Model: " << client.lastError() << endl;
         return 2;
     }
 

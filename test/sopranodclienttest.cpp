@@ -20,7 +20,7 @@
  */
 
 #include "sopranodclienttest.h"
-#include "../server/serverbackend.h"
+#include "../server/client.h"
 #include "../soprano/storagemodel.h"
 
 #include <QtTest>
@@ -32,7 +32,8 @@ using namespace Soprano::Server;
 
 void SopranodClientTest::initTestCase()
 {
-    m_backend = new ServerBackend();
+    m_client = new Client();
+    QVERIFY( m_client->connect() );
     m_modelCnt = 0;
 
     // start the server
@@ -46,13 +47,13 @@ void SopranodClientTest::cleanupTestCase()
     // shutdown the server
 //    m_serverProcess.terminate();
 
-    delete m_backend;
+    delete m_client;
 }
 
 
 Soprano::Model* SopranodClientTest::createModel()
 {
-    return m_backend->createModel( QString( "Testmodel%1" ).arg( m_modelCnt++ ) );
+    return m_client->createModel( QString( "Testmodel%1" ).arg( m_modelCnt++ ) );
 }
 
 QTEST_MAIN( SopranodClientTest );

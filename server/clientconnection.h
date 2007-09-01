@@ -19,8 +19,8 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef _SOPRANO_SERVER_CLIENT_H_
-#define _SOPRANO_SERVER_CLIENT_H_
+#ifndef _SOPRANO_SERVER_CLIENT_CONNECTION_H_
+#define _SOPRANO_SERVER_CLIENT_CONNECTION_H_
 
 #include <soprano/error.h>
 #include <soprano/sopranotypes.h>
@@ -39,13 +39,13 @@ namespace Soprano {
     class QueryLegacy;
 
     namespace Server {
-	class Client : public QObject, public Error::ErrorCache
+	class ClientConnection : public QObject, public Error::ErrorCache
 	{
 	    Q_OBJECT
 
 	public:
-	    Client( QObject* parent = 0 );
-	    ~Client();
+	    ClientConnection( QObject* parent = 0 );
+	    ~ClientConnection();
 
 	    // FIXME: put the default port in a header file
 	    bool open( const QHostAddress& address = QHostAddress::LocalHost, quint16 port = 5000 );
@@ -56,7 +56,7 @@ namespace Soprano {
 	    /**
 	     * Create a new Model and return its ID.
 	     */
-	    int createModel( const QList<BackendSetting>& );
+	    int createModel( const QString& name, const QList<BackendSetting>& );
 	    Soprano::BackendFeatures supportedFeatures();
 
 	    // Model methods
@@ -84,6 +84,8 @@ namespace Soprano {
 	    void slotError( QAbstractSocket::SocketError error );
 
 	private:
+	    bool checkProtocolVersion();
+
 	    class Private;
 	    Private* const d;
 	};

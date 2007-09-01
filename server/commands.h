@@ -24,10 +24,11 @@
 
 #include <qglobal.h>
 
+#define PROTOCOL_VERSION 1
+
 namespace Soprano {
     namespace Server {
 	const quint16 COMMAND_CREATE_MODEL = 0x1;
-	const quint16 COMMAND_SUPPORTED_FEATURES = 0x16;
 	const quint16 COMMAND_MODEL_ADD_STATEMENT = 0x2;
 	const quint16 COMMAND_MODEL_REMOVE_STATEMENTS = 0x3;
 	const quint16 COMMAND_MODEL_LIST_STATEMENTS = 0x4;
@@ -42,6 +43,8 @@ namespace Soprano {
 	const quint16 COMMAND_ITERATOR_QUERY_CURRENT_STATEMENT = 0x13;
 	const quint16 COMMAND_ITERATOR_QUERY_TYPE = 0x14;
 	const quint16 COMMAND_ITERATOR_QUERY_BOOL_VALUE = 0x15;
+	const quint16 COMMAND_SUPPORTED_FEATURES = 0x16;
+	const quint16 COMMAND_SUPPORTS_PROTOCOL_VERSION = 0x17;
     }
 }
 

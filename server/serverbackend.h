@@ -29,52 +29,41 @@
 
 namespace Soprano
 {
-  namespace Server
-  {
-      /**
-       * \brief Backend to access RDF storage models through the %Soprano daemon.
-       *
-       * The %Soprano server backend can be accessed normally through PluginManager::discoverBackendByName()
-       * with name "sopranoserver" or by simply creating one manually. The latter solution can have advantages
-       * as it uses a new connection to the server.
-       *
-       * A ServerBackend keeps one open connection to the %Soprano server until the last Model is deleted.
-       * This has the advantage that calling methods in the Models is very fast since there is no need for
-       * establishing a new connection. Since the local Model instances on the client side are just very slim
-       * wrappers creating them through createModel() is very fast.
-       *
-       * Additonal BackendOptions supported:
-       * \li name - The name for the Model to be created. The daemon handles a set of models which are identified by a unique name.
-       */
-      class SOPRANO_EXPORT ServerBackend : public QObject, public Soprano::Backend
-      {
-	  Q_OBJECT
-	  Q_INTERFACES(Soprano::Backend)
+    namespace Server
+    {
+	/**
+	 * \brief Backend to access RDF storage models through the %Soprano daemon.
+	 *
+	 * Additonal BackendOptions supported:
+	 * \li name - The name for the Model to be created. The daemon handles a set of models which are identified by a unique name.
+	 * This option has to be specified.
+	 * \li port - The port the Backend is supposed to try to connect to the soprano server.
+	 *
+	 * The Backend maintains a set of connections, one for each port, i.e. each different server instance.
+	 */
+	class SOPRANO_EXPORT ServerBackend : public QObject, public Soprano::Backend
+	{
+	    Q_OBJECT
+	    Q_INTERFACES(Soprano::Backend)
 
-      public:
-	  static const quint16 DEFAULT_PORT;
+	public:
+	    /**
+	     * Create a new ServerBackend instance.
+	     */
+	    ServerBackend();
+	    ~ServerBackend();
 
-	  /**
-	   * Create a new ServerBackend instance.
-	   *
-	   * \param port The port the %Soprano server is running on.
-	   */
-	  ServerBackend( quint16 port = DEFAULT_PORT );
-	  ~ServerBackend();
+	    StorageModel* createModel( const QList<BackendSetting>& settings = QList<BackendSetting>() ) const;
+	    BackendFeatures supportedFeatures() const;
 
-	  StorageModel* createModel( const QString& name ) const;
-	  StorageModel* createModel( const QList<BackendSetting>& settings = QList<BackendSetting>() ) const;
+	private Q_SLOTS:
+	    void modelDeleted();
 
-	  BackendFeatures supportedFeatures() const;
-
-      private Q_SLOTS:
-	  void modelDeleted();
-
-      private:
-	  class Private;
-	  Private* const d;
-      };
-  }
+	private:
+	    class Private;
+	    Private* const d;
+	};
+    }
 }
 
 #endif

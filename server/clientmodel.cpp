@@ -20,7 +20,7 @@
  */
 
 #include "clientmodel.h"
-#include "client.h"
+#include "clientconnection.h"
 #include "clientnodeiteratorbackend.h"
 #include "clientstatementiteratorbackend.h"
 #include "clientqueryresultiteratorbackend.h"
@@ -32,7 +32,7 @@
 #include <soprano/queryresultiterator.h>
 
 
-Soprano::Server::ClientModel::ClientModel( const Backend* backend, int modelId, Client* client )
+Soprano::Server::ClientModel::ClientModel( const Backend* backend, int modelId, ClientConnection* client )
     : StorageModel( backend ),
       m_modelId( modelId ),
       m_client( client )
@@ -50,88 +50,135 @@ Soprano::Server::ClientModel::~ClientModel()
 
 Soprano::Error::ErrorCode Soprano::Server::ClientModel::addStatement( const Statement &statement )
 {
-    Error::ErrorCode c = m_client->addStatement( m_modelId, statement );
-    setError( m_client->lastError() );
-    return c;
+    if ( m_client ) {
+        Error::ErrorCode c = m_client->addStatement( m_modelId, statement );
+        setError( m_client->lastError() );
+        return c;
+    }
+    else {
+        setError( "Not connected to server." );
+        return Error::ERROR_UNKNOWN;
+    }
 }
 
 
 Soprano::NodeIterator Soprano::Server::ClientModel::listContexts() const
 {
-    int itId = m_client->listContexts( m_modelId );
-    if ( itId > 0 ) {
-        m_openIterators.append( itId );
-    }
-    setError( m_client->lastError() );
-    if ( lastError() ) {
-        return NodeIterator();
+    if ( m_client ) {
+        int itId = m_client->listContexts( m_modelId );
+        if ( itId > 0 ) {
+            m_openIterators.append( itId );
+        }
+        setError( m_client->lastError() );
+        if ( lastError() ) {
+            return NodeIterator();
+        }
+        else {
+            return new ClientNodeIteratorBackend( itId, const_cast<ClientModel*>( this ) );
+        }
     }
     else {
-        return new ClientNodeIteratorBackend( itId, const_cast<ClientModel*>( this ) );
+        setError( "Not connected to server." );
+        return NodeIterator();
     }
 }
 
 
 Soprano::QueryResultIterator Soprano::Server::ClientModel::executeQuery( const QueryLegacy &query ) const
 {
-    int itId = m_client->executeQuery( m_modelId, query );
-    if ( itId > 0 ) {
-        m_openIterators.append( itId );
-    }
-    setError( m_client->lastError() );
-    if ( lastError() ) {
-        return QueryResultIterator();
+    if ( m_client ) {
+        int itId = m_client->executeQuery( m_modelId, query );
+        if ( itId > 0 ) {
+            m_openIterators.append( itId );
+        }
+        setError( m_client->lastError() );
+        if ( lastError() ) {
+            return QueryResultIterator();
+        }
+        else {
+            return new ClientQueryResultIteratorBackend( itId, const_cast<ClientModel*>( this ) );
+        }
     }
     else {
-        return new ClientQueryResultIteratorBackend( itId, const_cast<ClientModel*>( this ) );
+        setError( "Not connected to server." );
+        return QueryResultIterator();
     }
 }
 
 
 Soprano::StatementIterator Soprano::Server::ClientModel::listStatements( const Statement &partial ) const
 {
-    int itId = m_client->listStatements( m_modelId, partial );
-    if ( itId > 0 ) {
-        m_openIterators.append( itId );
-    }
-    setError( m_client->lastError() );
-    if ( lastError() ) {
-        return StatementIterator();
+    if ( m_client ) {
+        int itId = m_client->listStatements( m_modelId, partial );
+        if ( itId > 0 ) {
+            m_openIterators.append( itId );
+        }
+        setError( m_client->lastError() );
+        if ( lastError() ) {
+            return StatementIterator();
+        }
+        else {
+            return new ClientStatementIteratorBackend( itId, const_cast<ClientModel*>( this ) );
+        }
     }
     else {
-        return new ClientStatementIteratorBackend( itId, const_cast<ClientModel*>( this ) );
+        setError( "Not connected to server." );
+        return StatementIterator();
     }
 }
 
 
 Soprano::Error::ErrorCode Soprano::Server::ClientModel::removeStatements( const Statement &statement )
 {
-    Error::ErrorCode c = m_client->removeStatements( m_modelId, statement );
-    setError( m_client->lastError() );
-    return c;
+    if ( m_client ) {
+        Error::ErrorCode c = m_client->removeStatements( m_modelId, statement );
+        setError( m_client->lastError() );
+        return c;
+    }
+    else {
+        setError( "Not connected to server." );
+        return Error::ERROR_UNKNOWN;
+    }
 }
 
 
 int Soprano::Server::ClientModel::statementCount() const
 {
-    int cnt = m_client->statementCount( m_modelId );
-    setError( m_client->lastError() );
-    return cnt;
+    if ( m_client ) {
+        int cnt = m_client->statementCount( m_modelId );
+        setError( m_client->lastError() );
+        return cnt;
+    }
+    else {
+        setError( "Not connected to server." );
+        return -1;
+    }
 }
 
 
 bool Soprano::Server::ClientModel::containsStatements( const Statement &statement ) const
 {
-    bool c = m_client->containsStatements( m_modelId, statement );
-    setError( m_client->lastError() );
-    return c;
+    if ( m_client ) {
+        bool c = m_client->containsStatements( m_modelId, statement );
+        setError( m_client->lastError() );
+        return c;
+    }
+    else {
+        setError( "Not connected to server." );
+        return false;
+    }
 }
 
 
 void Soprano::Server::ClientModel::closeIterator( int id ) const
 {
-    m_client->iteratorClose( id );
-    m_openIterators.removeAll( id );
+    if ( m_client ) {
+        m_client->iteratorClose( id );
+        m_openIterators.removeAll( id );
+    }
+    else {
+        setError( "Not connected to server." );
+    }
 }
 
 #include "clientmodel.moc"
