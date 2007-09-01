@@ -28,6 +28,7 @@
 
 #include "soprano_export.h"
 #include "iteratorbackend.h"
+#include "error.h"
 
 namespace Soprano {
 
@@ -68,7 +69,7 @@ namespace Soprano {
      * 
      * \author Daniele Galdi <daniele.galdi@gmail.com><br>Sebastian Trueg <trueg@kde.org>
      */
-    template<typename T> class SOPRANO_EXPORT Iterator
+    template<typename T> class SOPRANO_EXPORT Iterator : public Error::ErrorCache
     {
     public:
 	/**
@@ -212,6 +213,10 @@ template<typename T> void Soprano::Iterator<T>::close()
     if( isValid() ) {
 	const Private* cd = d.constData();
 	cd->backend->close();
+	setError( cd->backend->lastError() );
+    }
+    else {
+	setError( "Invalid iterator." );
     }
 }
 
@@ -219,12 +224,28 @@ template<typename T> bool Soprano::Iterator<T>::next()
 {
     // some evil hacking to avoid detachment of the shared data
     const Private* cd = d.constData();
-    return isValid() ? cd->backend->next() : false;
+    if( isValid() ) {
+	bool hasNext = cd->backend->next();
+	setError( cd->backend->lastError() );
+	return hasNext;
+    }
+    else {
+	setError( "Invalid iterator." );
+	return false;
+    }
 }
 
 template<typename T> T Soprano::Iterator<T>::current() const
 {
-    return isValid() ? d->backend->current() : T();
+    if( isValid() ){
+	T c = d->backend->current();
+	setError( d->backend->lastError() );
+	return c;
+    }
+    else {
+	setError( "Invalid iterator." );
+	return T();
+    }
 }
 
 template<typename T> T Soprano::Iterator<T>::operator*() const

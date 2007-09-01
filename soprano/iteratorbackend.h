@@ -23,7 +23,8 @@
 #ifndef SOPRANO_ITERATOR_BACKEND_H
 #define SOPRANO_ITERATOR_BACKEND_H
 
-#include <soprano/soprano_export.h>
+#include "soprano_export.h"
+#include "error.h"
 
 namespace Soprano {
 
@@ -35,7 +36,7 @@ namespace Soprano {
      *
      * \author Daniele Galdi <daniele.galdi@gmail.com><br>Sebastian Trueg <trueg@kde.org>
      */
-    template<class T> class SOPRANO_EXPORT IteratorBackend
+    template<class T> class SOPRANO_EXPORT IteratorBackend : public Error::ErrorCache
     {
     public:
 	virtual ~IteratorBackend() {}

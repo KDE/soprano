@@ -48,6 +48,8 @@ Soprano::Redland::RedlandStatementIterator::~RedlandStatementIterator()
 
 bool Soprano::Redland::RedlandStatementIterator::next()
 {
+    clearError();
+
     if ( m_initialized ) {
         // Move to the next element
         librdf_stream_next( m_stream );
@@ -65,6 +67,7 @@ bool Soprano::Redland::RedlandStatementIterator::next()
         }
     }
     else {
+        setError( "Invalid iterator" );
         return false;
     }
 }
@@ -73,8 +76,11 @@ bool Soprano::Redland::RedlandStatementIterator::next()
 Soprano::Statement Soprano::Redland::RedlandStatementIterator::current() const
 {
     if ( !m_stream || librdf_stream_end( m_stream ) ) {
+        setError( "Invalid iterator" );
         return Statement();
     }
+
+    clearError();
 
     librdf_statement *st = librdf_stream_get_object( m_stream );
     if ( !st ) {
@@ -97,6 +103,8 @@ Soprano::Statement Soprano::Redland::RedlandStatementIterator::current() const
 
 void Soprano::Redland::RedlandStatementIterator::close()
 {
+    clearError();
+
     if( m_stream ) {
         librdf_free_stream( m_stream );
         m_stream = 0;

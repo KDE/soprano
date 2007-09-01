@@ -59,13 +59,15 @@ bool Soprano::Sesame2::NodeIteratorBackend::next()
     if ( d->result.hasNext() ) {
         jobject next = d->result.next();
         if ( next ) {
+            clearError();
             d->current = convertNode( next );
             return true;
         }
-        else {
-            JNIWrapper::instance()->debugException();
-        }
     }
+
+    // if there is an exception d->result returns false and it
+    // is sufficient to catch it once here
+    setError( JNIWrapper::instance()->convertAndClearException() );
 
     return false;
 }
@@ -80,4 +82,5 @@ Soprano::Node Soprano::Sesame2::NodeIteratorBackend::current() const
 void Soprano::Sesame2::NodeIteratorBackend::close()
 {
     d->result.close();
+    setError( JNIWrapper::instance()->convertAndClearException() );
 }

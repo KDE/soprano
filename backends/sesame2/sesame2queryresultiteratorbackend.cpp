@@ -78,18 +78,23 @@ Soprano::Sesame2::QueryResultIteratorBackend::~QueryResultIteratorBackend()
 bool Soprano::Sesame2::QueryResultIteratorBackend::next()
 {
     if ( d->result.hasNext() ) {
-        if ( d->tupleResult ) {
-            d->currentBindings.setObject( d->result.next() );
-        }
-        else {
-            d->currentStatement = convertStatement( d->result.next() );
-        }
+        jobject next = d->result.next();
+        if ( next ) {
+            if ( d->tupleResult ) {
+                d->currentBindings.setObject( next );
+            }
+            else {
+                d->currentStatement = convertStatement( next );
+            }
 
-        return true;
+            return true;
+        }
     }
-    else {
-        return false;
-    }
+
+    // if there is an exception d->result returns false and it
+    // is sufficient to catch it once here
+    setError( JNIWrapper::instance()->convertAndClearException() );
+    return false;
 }
 
 
@@ -103,10 +108,12 @@ Soprano::Node Soprano::Sesame2::QueryResultIteratorBackend::binding( const QStri
 {
     // make sure we do not crash
     if ( d->currentBindings.object() ) {
-        return convertNode( d->currentBindings.getValue( JNIWrapper::instance()->convertString( name ) ) );
+        jobject node = d->currentBindings.getValue( JNIWrapper::instance()->convertString( name ) );
+        setError( JNIWrapper::instance()->convertAndClearException() );
+        return convertNode( node );
     }
     else {
-        qDebug() << "(Soprano::Sesame2::QueryResultIteratorBackend) called binding on an invalid iterator.";
+        setError( "Invalid iterator" );
         return Node();
     }
 }
@@ -158,4 +165,5 @@ bool Soprano::Sesame2::QueryResultIteratorBackend::boolValue() const
 void Soprano::Sesame2::QueryResultIteratorBackend::close()
 {
     d->result.close();
+    setError( JNIWrapper::instance()->convertAndClearException() );
 }

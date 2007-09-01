@@ -148,6 +148,10 @@ public:
         m_result.close();
     }
 
+    Soprano::Error::Error lastError() const {
+        return m_result.lastError();
+    }
+
 private:
     Soprano::QueryResultIterator m_result;
 };
@@ -188,6 +192,10 @@ public:
 
     void close() {
         m_it.close();
+    }
+
+    Soprano::Error::Error lastError() const {
+        return m_it.lastError();
     }
 
 private:

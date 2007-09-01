@@ -88,6 +88,10 @@ public:
         m_it.close();
     }
 
+    Soprano::Error::Error lastError() const {
+        return m_it.lastError();
+    }
+
 private:
     Soprano::StatementIterator m_it;
     Which m_which;
