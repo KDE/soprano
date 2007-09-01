@@ -200,21 +200,23 @@ int usage( const QString& error = QString() )
     s << "Usage:" << endl
       << "   sopranod [--version] [--help] [--port <port>] [--model <name>] [<command>] [<parameters>]" << endl
       << endl
-      << "   --version          Print version information." << endl
-      << "   --help             Print this help." << endl
-      << "   --port <port>      Specify the port the Soprano server is running on." << endl
-      << "   --model <name>     The name of the Soprano model to perform the command on." << endl
+      << "   --version          Print version information." << endl << endl
+      << "   --help             Print this help." << endl << endl
+      << "   --port <port>      Specify the port the Soprano server is running on." << endl << endl
+      << "   --model <name>     The name of the Soprano model to perform the command on." << endl << endl
       << "                      This option is mandatory for all commands." << endl
       << "   <command>          The command to perform. Can be one of 'add', 'remove', 'list', or 'query'." << endl
-      << "                      If not specified the default command is 'query'." << endl
+      << "                      If not specified the default command is 'query'." << endl << endl
       << "   <parameters>       The parameters to the command." << endl
       << "                      - For command 'query' this is a SPARQL query string." << endl
       << "                      - For commands 'add' and 'remove' this is a list of 3 or 4 RDF node definitions." << endl
-      << "                      - For command 'list' this is a list of one to four node definitions." << endl
-      << endl;
+      << "                      - For command 'list' this is a list of one to four node definitions." << endl << endl;
+
     s << "   Nodes are defined the SPARQL way:" << endl
-      << "   - Resouce and blank nodes are defined in angle brackets: <http://www.test.org#A>" << endl
-      << "   - Literal nodes are defined as a combination of their string value and their datatype URI: \"Hello World\"^^<http://www.w3.org/2001/XMLSchema#string>" << endl
+      << "   - Resouce and blank nodes are defined in angle brackets." << endl
+      << "     Example: <http://www.test.org#A>" << endl
+      << "   - Literal nodes are defined as a combination of their string value and their datatype URI." << endl
+      << "     Example: \"Hello World\"^^<http://www.w3.org/2001/XMLSchema#string>" << endl
       << "   - An empty string evaluates to an empy node (\"\" does the trick)" << endl;
 
     if ( !error.isEmpty() ) {
