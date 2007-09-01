@@ -285,11 +285,24 @@ void InferenceModelTest::testPerformance()
 }
 
 
+void InferenceModelTest::testRuleParser_data()
+{
+    QTest::addColumn<int>( "ruleset" );
+    QTest::addColumn<int>( "ruleCount" );
+
+    QTest::newRow( "rdfs" ) << ( int )RDFS << 10;
+    QTest::newRow( "nrl" ) << ( int )NRL << 3;
+}
+
+
 void InferenceModelTest::testRuleParser()
 {
-    RuleSet rules = RuleSet::standardRuleSet( RDFS );
+    QFETCH( int, ruleset );
+    QFETCH( int, ruleCount );
 
-    QCOMPARE( rules.count(), 10 );
+    RuleSet rules = RuleSet::standardRuleSet( ( StandardRuleSet )ruleset );
+
+    QCOMPARE( rules.count(), ruleCount );
 
     QStringList ruleNames = rules.ruleNames();
     Q_FOREACH( QString name, ruleNames ) {
