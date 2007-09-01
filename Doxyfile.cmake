@@ -94,7 +94,7 @@ INPUT                  = ${soprano_SOURCE_DIR}/soprano \
                          ${soprano_SOURCE_DIR}/soprano/index/cluceneindex.h \
                          ${soprano_SOURCE_DIR}/soprano/index/indexqueryresult.h \
                          ${soprano_SOURCE_DIR}/server/servercore.h \
-                         ${soprano_SOURCE_DIR}/server/serverbackend.h
+                         ${soprano_SOURCE_DIR}/server/client.h
 INPUT_ENCODING         = UTF-8
 FILE_PATTERNS          = *.h
 RECURSIVE              = NO
