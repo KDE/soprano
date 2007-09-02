@@ -76,7 +76,7 @@ public:
         if ( !indexReader ) {
             try {
                 closeWriter();
-                indexReader = lucene::index::IndexReader::open( indexDir );
+                indexReader = lucene::index::IndexReader::open( indexDir, false );
             } catch (CLuceneError& err) {
                 qDebug() << "(Soprano::Index::CLuceneIndex) could not create reader " << err.what();
                 throw err;
@@ -89,7 +89,7 @@ public:
         if ( !indexWriter ) {
             try {
                 closeReader();
-                indexWriter = _CLNEW lucene::index::IndexWriter( indexDir, analyzer, !indexPresent() );
+                indexWriter = _CLNEW lucene::index::IndexWriter( indexDir, analyzer, !indexPresent(), false );
             }
             catch( CLuceneError& err ) {
                 qDebug() << "(Soprano::Index::CLuceneIndex) could not create index writer " << err.what();

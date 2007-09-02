@@ -32,13 +32,26 @@ Q_EXPORT_PLUGIN2(soprano_sesame2backend, Soprano::Sesame2::BackendPlugin)
 
 Soprano::Sesame2::BackendPlugin::BackendPlugin()
   : QObject(),
-    Backend( "sesame2" )
+    Backend( "sesame2" ),
+    m_jniWrapper( 0 )
 {
+}
+
+
+Soprano::Sesame2::BackendPlugin::~BackendPlugin()
+{
+    delete m_jniWrapper;
 }
 
 
 Soprano::StorageModel* Soprano::Sesame2::BackendPlugin::createModel( const QList<BackendSetting>& settings ) const
 {
+    m_mutex.lock();
+    if ( !m_jniWrapper ) {
+        m_jniWrapper = new JNIWrapper();
+    }
+    m_mutex.unlock();
+
     clearError();
 
     QString path;

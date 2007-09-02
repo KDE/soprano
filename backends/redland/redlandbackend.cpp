@@ -68,6 +68,9 @@ Soprano::StorageModel* Soprano::Redland::BackendPlugin::createModel( const QList
     redlandOptions["hash-type"] = "memory";
     redlandOptions["new"] = "no";
 
+    // for persistant stores we need an indentifier
+    redlandOptions["name"] = "soprano";
+
     Q_FOREACH( BackendSetting s, settings ) {
         if ( s.option() == BACKEND_OPTION_USER ) {
             redlandOptions[s.userOptionName()] = s.value().toString();
@@ -88,7 +91,9 @@ Soprano::StorageModel* Soprano::Redland::BackendPlugin::createModel( const QList
 
     // remove unused options from the option hash
     QString storageType = redlandOptions["storageType"];
+    QString storageName = redlandOptions["name"];
     redlandOptions.remove( "storageType" );
+    redlandOptions.remove( "name" );
 
     QString os = createRedlandOptionString( redlandOptions );
 
@@ -97,7 +102,7 @@ Soprano::StorageModel* Soprano::Redland::BackendPlugin::createModel( const QList
     // create a new storage
     librdf_storage* storage = librdf_new_storage( World::self()->worldPtr(),
                                                   storageType.toLatin1().data(),
-                                                  0,
+                                                  storageName.toLatin1().data(),
                                                   os.toLatin1().data() );
     if( !storage ) {
         qDebug() << "(Soprano::Redland) storage creation failed!" << endl;

@@ -437,19 +437,19 @@ void Soprano::Server::ServerConnection::Private::iteratorNext( QDataStream& stre
 
     QHash<quint32, StatementIterator>::iterator it = openStatementIterators.find( id );
     if ( it != openStatementIterators.end() ) {
-        stream << it.value().next() << Error::Error();
+        stream << it.value().next() << it.value().lastError();
         return;
     }
 
     QHash<quint32, NodeIterator>::iterator it2 = openNodeIterators.find( id );
     if ( it2 != openNodeIterators.end() ) {
-        stream << it2.value().next() << Error::Error();
+        stream << it2.value().next() << it.value().lastError();
         return;
     }
 
     QHash<quint32, QueryResultIterator>::iterator it3 = openQueryIterators.find( id );
     if ( it3 != openQueryIterators.end() ) {
-        stream << it3.value().next() << Error::Error();
+        stream << it3.value().next() << it.value().lastError();
         return;
     }
 
@@ -466,19 +466,22 @@ void Soprano::Server::ServerConnection::Private::iteratorCurrent( QDataStream& s
 
     QHash<quint32, StatementIterator>::iterator it = openStatementIterators.find( id );
     if ( it != openStatementIterators.end() ) {
-        stream << Error::Error() << it.value().current();
+        Statement s = it.value().current();
+        stream << it.value().lastError() << s;
         return;
     }
 
     QHash<quint32, NodeIterator>::iterator it2 = openNodeIterators.find( id );
     if ( it2 != openNodeIterators.end() ) {
-        stream << Error::Error() << it2.value().current();
+        Node n = it2.value().current();
+        stream << it.value().lastError() << n;
         return;
     }
 
     QHash<quint32, QueryResultIterator>::iterator it3 = openQueryIterators.find( id );
     if ( it3 != openQueryIterators.end() ) {
-        stream << Error::Error() << it3.value().current();
+        BindingSet set = it3.value().current();
+        stream << it.value().lastError() << set;
         return;
     }
 
@@ -497,24 +500,24 @@ void Soprano::Server::ServerConnection::Private::iteratorClose( QDataStream& str
     QHash<quint32, StatementIterator>::iterator it = openStatementIterators.find( id );
     if ( it != openStatementIterators.end() ) {
         it.value().close();
+        stream << it.value().lastError();
         openStatementIterators.erase( it );
-        stream << Error::Error();
         return;
     }
 
     QHash<quint32, NodeIterator>::iterator it2 = openNodeIterators.find( id );
     if ( it2 != openNodeIterators.end() ) {
         it2.value().close();
+        stream << it.value().lastError();
         openNodeIterators.erase( it2 );
-        stream << Error::Error();
         return;
     }
 
     QHash<quint32, QueryResultIterator>::iterator it3 = openQueryIterators.find( id );
     if ( it3 != openQueryIterators.end() ) {
         it3.value().close();
+        stream << it.value().lastError();
         openQueryIterators.erase( it3 );
-        stream << Error::Error();
         return;
     }
 
@@ -531,7 +534,7 @@ void Soprano::Server::ServerConnection::Private::queryIteratorCurrentStatement( 
 
     QHash<quint32, QueryResultIterator>::iterator it = openQueryIterators.find( id );
     if ( it != openQueryIterators.end() ) {
-        stream << it.value().currentStatement() << Error::Error();
+        stream << it.value().currentStatement() << it.value().lastError();
         return;
     }
 
@@ -558,7 +561,7 @@ void Soprano::Server::ServerConnection::Private::queryIteratorType( QDataStream&
         else {
             type = 3;
         }
-        stream << type << Error::Error();
+        stream << type << it.value().lastError();
         return;
     }
 
@@ -575,7 +578,7 @@ void Soprano::Server::ServerConnection::Private::queryIteratorBoolValue( QDataSt
 
     QHash<quint32, QueryResultIterator>::iterator it = openQueryIterators.find( id );
     if ( it != openQueryIterators.end() ) {
-        stream << it.value().boolValue() << Error::Error();
+        stream << it.value().boolValue() << it.value().lastError();
         return;
     }
 

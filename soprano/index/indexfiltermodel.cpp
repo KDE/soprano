@@ -72,7 +72,7 @@ Soprano::Index::CLuceneIndex* Soprano::Index::IndexFilterModel::index() const
 Soprano::Error::ErrorCode Soprano::Index::IndexFilterModel::addStatement( const Soprano::Statement &statement )
 {
     Error::ErrorCode c = FilterModel::addStatement( statement );
-    if ( c == Error::ERROR_NONE ) {
+    if ( c == Error::ERROR_NONE && statement.object().isLiteral() ) {
         c = d->index->addStatement( statement );
         if ( c != Error::ERROR_NONE ) {
             setError( d->index->lastError() );

@@ -42,9 +42,12 @@ Soprano::Server::ClientNodeIteratorBackend::~ClientNodeIteratorBackend()
 bool Soprano::Server::ClientNodeIteratorBackend::next()
 {
     if ( m_model ) {
-        return m_model->client()->iteratorNext( m_iteratorId );
+        bool r = m_model->client()->iteratorNext( m_iteratorId );
+        setError( m_model->client()->lastError() );
+        return r;
     }
     else {
+        setError( "Connection to server closed." );
         return false;
     }
 }
@@ -53,9 +56,12 @@ bool Soprano::Server::ClientNodeIteratorBackend::next()
 Soprano::Node Soprano::Server::ClientNodeIteratorBackend::current() const
 {
     if ( m_model ) {
-        return m_model->client()->nodeIteratorCurrent( m_iteratorId );
+        Node s = m_model->client()->nodeIteratorCurrent( m_iteratorId );
+        setError( m_model->client()->lastError() );
+        return s;
     }
     else {
+        setError( "Connection to server closed." );
         return Node();
     }
 }
@@ -65,5 +71,9 @@ void Soprano::Server::ClientNodeIteratorBackend::close()
 {
     if ( m_model ) {
         m_model->closeIterator( m_iteratorId );
+        setError( m_model->client()->lastError() );
+    }
+    else {
+        setError( "Connection to server closed." );
     }
 }

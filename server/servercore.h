@@ -22,7 +22,7 @@
 #ifndef _SOPRANO_SERVER_CORE_H_
 #define _SOPRANO_SERVER_CORE_H_
 
-#include <QtNetwork/QTcpServer>
+#include <QtCore/QObject>
 
 #include <soprano/error.h>
 
@@ -45,20 +45,22 @@ namespace Soprano {
 	 * create an instance and then call start() to make the server listen
 	 * for incoming connections.
 	 *
-	 * Optionally ServerCore can be configured using normal BackendSetting
-	 * settings through setBackendSettings().
-	 *
 	 * \code
 	 * Soprano::Server::ServerCore core;
 	 * core.start();
 	 * \endcode
+	 *
+	 * Optionally ServerCore can be configured using normal BackendSetting
+	 * settings through setBackendSettings().
+	 *
+	 * \author Sebastian Trueg <trueg@kde.org>
 	 */
-	class ServerCore : private QTcpServer, public Error::ErrorCache
+	class ServerCore : public QObject, public Error::ErrorCache
 	{
 	    Q_OBJECT
 
 	public:
-	    ServerCore();
+	    ServerCore( QObject* parent = 0 );
 	    virtual ~ServerCore();
 
 	    static const quint16 DEFAULT_PORT;
@@ -83,13 +85,20 @@ namespace Soprano {
 	    void setBackendSettings( const QList<BackendSetting>& settings );
 
 	    /**
+	     * Retrieve the backend settings configured via setBackendSettings().
+	     *
+	     * \return A list of BackendSetting objects.
+	     */
+	    QList<BackendSetting> backendSettings() const;
+
+	    /**
 	     * Get or create Model with the specific name.
-	     * This method will use createModel() to create a new Model
+	     * The default implementation will use createModel() to create a new Model
 	     * if none with the specified name exists.
 	     *
 	     * \param name The name of the requested Model.
 	     */
-	    Model* model( const QString& name );
+	    virtual Model* model( const QString& name );
 
 	    /**
 	     * Start the Server. Calling this method will make the Server
@@ -119,8 +128,6 @@ namespace Soprano {
 	    virtual Model* createModel( const QList<BackendSetting>& settings );
 
 	private:
-	    void incomingConnection( int );
-
 	    class Private;
 	    Private* const d;
 	};

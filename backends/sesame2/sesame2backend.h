@@ -25,23 +25,30 @@
 #include <soprano/backend.h>
 #include <soprano/soprano_export.h>
 
-#include <QObject>
+#include <QtCore/QObject>
+#include <QtCore/QMutex>
 
-namespace Soprano
-{
-  namespace Sesame2
-    {
-      class SOPRANO_EXPORT BackendPlugin : public QObject, public Soprano::Backend
+
+class JNIWrapper;
+
+namespace Soprano {
+    namespace Sesame2 {
+	class SOPRANO_EXPORT BackendPlugin : public QObject, public Soprano::Backend
 	{
-	  Q_OBJECT
-	  Q_INTERFACES(Soprano::Backend)
+	    Q_OBJECT
+	    Q_INTERFACES(Soprano::Backend)
 
 	public:
-	  BackendPlugin();
+	    BackendPlugin();
+	    ~BackendPlugin();
 
-	  StorageModel* createModel( const QList<BackendSetting>& settings = QList<BackendSetting>() ) const;
+	    StorageModel* createModel( const QList<BackendSetting>& settings = QList<BackendSetting>() ) const;
 
-	  BackendFeatures supportedFeatures() const;
+	    BackendFeatures supportedFeatures() const;
+
+	private:
+	    mutable JNIWrapper* m_jniWrapper;
+	    mutable QMutex m_mutex;
 	};
     }
 }

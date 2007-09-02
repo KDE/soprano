@@ -33,7 +33,7 @@ namespace Soprano
      */
     // FIXME: what about the used charsets? Should we and if so, how should we include them?
     enum RdfSerialization {
-	SERIALIZATION_UNKNOWNN = 0x0,   /**< The serialization is unknown. */
+	SERIALIZATION_UNKNOWN = 0x0,  /**< The serialization is unknown. */
 	SERIALIZATION_RDF_XML = 0x1,   /**< Standard RDF/XML serialization */
 	SERIALIZATION_N3 = 0x2,        /**< Notation 3: http://www.w3.org/DesignIssues/Notation3 */
 	SERIALIZATION_N_TRIPLES = 0x4, /**< N-Triples as defined by W3: http://www.w3.org/TR/rdf-testcases/#ntriples */
@@ -44,13 +44,13 @@ namespace Soprano
     Q_DECLARE_FLAGS(RdfSerializations, RdfSerialization)
 
     /**
-     * \return The mimetype of serialization or an empty string is serialization is SERIALIZATION_UNKNOWNN
+     * \return The mimetype of serialization or an empty string is serialization is SERIALIZATION_UNKNOWN
      */
     SOPRANO_EXPORT QString serializationMimeType( RdfSerialization serialization );
 
     /**
      * Parse a mimetype and match it to the Soprano::RdfSerialization enum.
-     * \return the Soprano::RdfSerialization type that matches mimetype or SERIALIZATION_UNKNOWNN if the mimetype 
+     * \return the Soprano::RdfSerialization type that matches mimetype or SERIALIZATION_UNKNOWN if the mimetype 
      * could not be parsed.
      */
     SOPRANO_EXPORT RdfSerialization mimeTypeToSerialization( const QString& mimetype );

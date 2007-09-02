@@ -39,3 +39,4 @@
 #include "error.h"
 #include "bindingset.h"
 #include "version.h"
+#include "sopranotypes.h"

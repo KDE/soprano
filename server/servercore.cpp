@@ -35,19 +35,40 @@
 const quint16 Soprano::Server::ServerCore::DEFAULT_PORT = 5000;
 
 
-class Soprano::Server::ServerCore::Private
+class Soprano::Server::ServerCore::Private : public QTcpServer
 {
 public:
+    Private( ServerCore* parent )
+        : QTcpServer( parent ),
+          m_parent( parent ) {
+    }
+
     const Backend* backend;
     QList<BackendSetting> settings;
 
     QHash<QString, Model*> models;
     QList<ServerConnection*> connections;
+
+private:
+    void incomingConnection( int );
+
+    ServerCore* m_parent;
 };
 
 
-Soprano::Server::ServerCore::ServerCore()
-    : d( new Private() )
+void Soprano::Server::ServerCore::Private::incomingConnection( int connection )
+{
+    qDebug() << "(ServerCore) new connection.";
+    ServerConnection* conn = new ServerConnection( m_parent, connection );
+    connections.append( conn );
+    connect( conn, SIGNAL(finished()), m_parent, SLOT(serverConnectionFinished()));
+    conn->start();
+}
+
+
+Soprano::Server::ServerCore::ServerCore( QObject* parent )
+    : QObject( parent ),
+      d( new Private( this ) )
 {
     // default backend
     d->backend = Soprano::usedBackend();
@@ -82,6 +103,12 @@ void Soprano::Server::ServerCore::setBackendSettings( const QList<BackendSetting
 }
 
 
+QList<Soprano::BackendSetting> Soprano::Server::ServerCore::backendSettings() const
+{
+    return d->settings;
+}
+
+
 Soprano::Model* Soprano::Server::ServerCore::model( const QString& name )
 {
     QHash<QString, Model*>::const_iterator it = d->models.find( name );
@@ -107,7 +134,7 @@ Soprano::Model* Soprano::Server::ServerCore::model( const QString& name )
 bool Soprano::Server::ServerCore::start( quint16 port )
 {
     clearError();
-    if ( !listen( QHostAddress::LocalHost, port ) ) {
+    if ( !d->listen( QHostAddress::LocalHost, port ) ) {
         setError( QString( "Failed to start listening at port %1 on localhost." ).arg( port ) );
         qDebug() << "Failed to start listening at port " << port;
         return false;
@@ -116,16 +143,6 @@ bool Soprano::Server::ServerCore::start( quint16 port )
         qDebug() << "Listening on port " << port;
         return true;
     }
-}
-
-
-void Soprano::Server::ServerCore::incomingConnection( int connection )
-{
-    qDebug() << "(ServerCore) new connection.";
-    ServerConnection* conn = new ServerConnection( this, connection );
-    d->connections.append( conn );
-    connect( conn, SIGNAL(finished()), this, SLOT(serverConnectionFinished()));
-    conn->start();
 }
 
 

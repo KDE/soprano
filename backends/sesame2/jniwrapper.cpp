@@ -34,15 +34,8 @@
 #include <QtCore/QThread>
 
 
-class JNIWrapperFactory
-{
-public:
-    JNIWrapper instance;
-};
 
-
-Q_GLOBAL_STATIC( JNIWrapperFactory, jniWrapperFactory );
-
+JNIWrapper* JNIWrapper::s_instance = 0;
 
 class JNIWrapper::Private
 {
@@ -57,6 +50,8 @@ public:
 JNIWrapper::JNIWrapper()
     : d( new Private() )
 {
+    s_instance = this;
+
     // prepare the VM options
     JavaVMInitArgs vmArgs;
     JavaVMOption vmOptions[2];
@@ -80,12 +75,13 @@ JNIWrapper::~JNIWrapper()
 {
     d->jvm->DestroyJavaVM();
     delete d;
+    s_instance = 0;
 }
 
 
 JNIWrapper* JNIWrapper::instance()
 {
-    return &jniWrapperFactory()->instance;
+    return s_instance;
 }
 
 
@@ -141,10 +137,15 @@ jobject JNIWrapper::constructObject( const char* className,  const char* constru
 
 QString JNIWrapper::convertString( jstring s )
 {
-    const jchar* chars = env()->GetStringChars( s, 0 );
-    QString qs = QString::fromUtf16( chars );
-    env()->ReleaseStringChars( s, chars );
-    return qs;
+    if ( s ) {
+        const jchar* chars = env()->GetStringChars( s, 0 );
+        QString qs = QString::fromUtf16( chars );
+        env()->ReleaseStringChars( s, chars );
+        return qs;
+    }
+    else {
+        return QString();
+    }
 }
 
 

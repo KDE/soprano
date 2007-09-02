@@ -39,6 +39,14 @@ namespace Soprano
 	public:
 	  BackendPlugin();
 
+	  /**
+	   * Supported user options are:
+	   * \li name - The name of the RDF storage for persistant storage types. Defaults to "soprano".
+	   * \li storageType - The storage type, can be one of the redland storage types, defaults to "hashes".
+	   * \li All supported redland options as can be used with librdf_new_storage(), defaults are:
+	   *     contexts=yes, new=no. Soprano::BackendOptions Soprano::BACKEND_OPTION_STORAGE_DIR and
+	   *     Soprano::BACKEND_OPTION_STORAGE_MEMORY change the values of redland options "dir" and "has-type".
+	   */
 	  StorageModel* createModel( const QList<BackendSetting>& settings = QList<BackendSetting>() ) const;
 
 	  BackendFeatures supportedFeatures() const;

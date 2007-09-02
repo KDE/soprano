@@ -160,28 +160,24 @@ jobject Soprano::Sesame2::ValueFactory::convertStatement( const Statement& state
     jobject subject = convertNode( statement.subject() );
     if ( JNIWrapper::instance()->exceptionOccured() ) {
         qDebug() << "(Soprano::Sesame2::ValueFactory::convertStatement) conversion of subject failed";
-        JNIWrapper::instance()->debugException();
         return 0;
     }
 
     jobject predicate = convertNode( statement.predicate() );
     if ( JNIWrapper::instance()->exceptionOccured() ) {
         qDebug() << "(Soprano::Sesame2::ValueFactory::convertStatement) conversion of predicate failed";
-        JNIWrapper::instance()->debugException();
         return 0;
     }
 
     jobject object = convertNode( statement.object() );
     if ( JNIWrapper::instance()->exceptionOccured() ) {
         qDebug() << "(Soprano::Sesame2::ValueFactory::convertStatement) conversion of object failed";
-        JNIWrapper::instance()->debugException();
         return 0;
     }
 
     jobject context = convertNode( statement.context() );
     if ( JNIWrapper::instance()->exceptionOccured() ) {
         qDebug() << "(Soprano::Sesame2::ValueFactory::convertStatement) conversion of context failed";
-        JNIWrapper::instance()->debugException();
         return 0;
     }
 

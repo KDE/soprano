@@ -31,6 +31,9 @@ static void printStatementList( Soprano::StatementIterator it )
         outStream << *it << endl;
         ++cnt;
     }
+    if ( it.lastError() ) {
+        outStream << "Error occured: " << it.lastError() << endl;
+    }
     outStream << "Total results: " << cnt << endl;
 }
 
@@ -52,6 +55,9 @@ static void printQueryResult( Soprano::QueryResultIterator it )
                 outStream << *it << endl;
             }
             ++cnt;
+        }
+        if ( it.lastError() ) {
+            outStream << "Error occured: " << it.lastError() << endl;
         }
         outStream << "Total results: " << cnt << endl;
     }
@@ -120,7 +126,7 @@ public:
                     }
                     else if ( i+1 < args.count() ) {
                         if ( !args[i+1].startsWith( "--" ) ) {
-                            a.m_settings[name] = args[i++];
+                            a.m_settings[name] = args[++i];
                         }
                         else {
                             QTextStream( stderr ) << "Missing parameter: " << name << endl << endl;

@@ -43,9 +43,12 @@ Soprano::Server::ClientQueryResultIteratorBackend::~ClientQueryResultIteratorBac
 bool Soprano::Server::ClientQueryResultIteratorBackend::next()
 {
     if ( m_model ) {
-        return m_model->client()->iteratorNext( m_iteratorId );
+        bool r = m_model->client()->iteratorNext( m_iteratorId );
+        setError( m_model->client()->lastError() );
+        return r;
     }
     else {
+        setError( "Connection to server closed." );
         return false;
     }
 }
@@ -54,9 +57,12 @@ bool Soprano::Server::ClientQueryResultIteratorBackend::next()
 Soprano::BindingSet Soprano::Server::ClientQueryResultIteratorBackend::current() const
 {
     if ( m_model ) {
-        return m_model->client()->queryIteratorCurrent( m_iteratorId );
+        BindingSet s = m_model->client()->queryIteratorCurrent( m_iteratorId );
+        setError( m_model->client()->lastError() );
+        return s;
     }
     else {
+        setError( "Connection to server closed." );
         return BindingSet();
     }
 }
@@ -66,6 +72,10 @@ void Soprano::Server::ClientQueryResultIteratorBackend::close()
 {
     if ( m_model ) {
         m_model->closeIterator( m_iteratorId );
+        setError( m_model->client()->lastError() );
+    }
+    else {
+        setError( "Connection to server closed." );
     }
 }
 
@@ -73,9 +83,12 @@ void Soprano::Server::ClientQueryResultIteratorBackend::close()
 Soprano::Statement Soprano::Server::ClientQueryResultIteratorBackend::currentStatement() const
 {
     if ( m_model ) {
-        return m_model->client()->queryIteratorCurrentStatement( m_iteratorId );
+        Statement s = m_model->client()->queryIteratorCurrentStatement( m_iteratorId );
+        setError( m_model->client()->lastError() );
+        return s;
     }
     else {
+        setError( "Connection to server closed." );
         return Statement();
     }
 }
@@ -112,9 +125,12 @@ QStringList Soprano::Server::ClientQueryResultIteratorBackend::bindingNames() co
 bool Soprano::Server::ClientQueryResultIteratorBackend::isGraph() const
 {
     if ( m_model ) {
-        return m_model->client()->queryIteratorType( m_iteratorId ) == 1;
+        bool r = m_model->client()->queryIteratorType( m_iteratorId ) == 1;
+        setError( m_model->client()->lastError() );
+        return r;
     }
     else {
+        setError( "Connection to server closed." );
         return false;
     }
 }
@@ -123,9 +139,12 @@ bool Soprano::Server::ClientQueryResultIteratorBackend::isGraph() const
 bool Soprano::Server::ClientQueryResultIteratorBackend::isBinding() const
 {
     if ( m_model ) {
-        return m_model->client()->queryIteratorType( m_iteratorId ) == 3;
+        bool r = m_model->client()->queryIteratorType( m_iteratorId ) == 3;
+        setError( m_model->client()->lastError() );
+        return r;
     }
     else {
+        setError( "Connection to server closed." );
         return false;
     }
 }
@@ -134,9 +153,12 @@ bool Soprano::Server::ClientQueryResultIteratorBackend::isBinding() const
 bool Soprano::Server::ClientQueryResultIteratorBackend::isBool() const
 {
     if ( m_model ) {
-        return m_model->client()->queryIteratorType( m_iteratorId ) == 2;
+        bool r = m_model->client()->queryIteratorType( m_iteratorId ) == 2;
+        setError( m_model->client()->lastError() );
+        return r;
     }
     else {
+        setError( "Connection to server closed." );
         return false;
     }
 }
@@ -145,9 +167,12 @@ bool Soprano::Server::ClientQueryResultIteratorBackend::isBool() const
 bool Soprano::Server::ClientQueryResultIteratorBackend::boolValue() const
 {
     if ( m_model ) {
-        return m_model->client()->queryIteratorBoolValue( m_iteratorId );
+        bool r = m_model->client()->queryIteratorBoolValue( m_iteratorId );
+        setError( m_model->client()->lastError() );
+        return r;
     }
     else {
+        setError( "Connection to server closed." );
         return false;
     }
 }

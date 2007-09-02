@@ -35,6 +35,7 @@
 class JNIWrapper
 {
 public:
+    JNIWrapper();
     ~JNIWrapper();
 
     JNIEnv* env() const;
@@ -59,13 +60,10 @@ public:
     static JNIWrapper* instance();
 
 private:
-    JNIWrapper();
+    static JNIWrapper* s_instance;
 
     class Private;
     Private* const d;
-
-    // little dummy class we need for the QT global static magic
-    friend class JNIWrapperFactory;
 };
 
 #endif
