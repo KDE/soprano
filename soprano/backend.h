@@ -115,28 +115,11 @@ namespace Soprano
     /**
      * \brief Soprano::Backend defines the interface for a Soprano backend plugin.
      *
-     * To create a new backend simply create a class that implements this interface
-     * and is derived from QObject. Then use the Q_INTERFACES macro to define that it
-     * is in fact a Backend plugin and export the plugin via the Q_EXPORT_PLUGIN2 macro.
+     * The Backend interface defines two important methods: createModel() and supportedFeatures().
+     * It inherits from Error::ErrorCache for error handling and subclasses should use clearError()
+     * and setError() to report the status.
      *
-     * \code
-     * class MyBackend : public QObject, public Soprano::Backend
-     * {
-     *   Q_OBJECT
-     *   Q_INTERFACES(Soprano::Backend)
-     *
-     *  public:
-     *   StorageModel* createModel() const;
-     *   StorageModel* createModel( const QString& name, const QStringList& options = QStringList() ) const;
-     * };
-     * \endcode
-     *
-     * In the implementation file export the plugin so it can be picked up by the
-     * plugin loading framework:
-     *
-     * \code
-     * Q_EXPORT_PLUGIN2(soprano_mybackend, MyBackend)
-     * \endcode
+     * \sa \ref soprano_writing_plugins
      *
      * \author Sebastian Trueg <trueg@kde.org>
      */

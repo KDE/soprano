@@ -37,7 +37,7 @@
 
 class TestVisitor : public Soprano::Query::ExpressionVisitor {
 public:
-    QString output;    
+    QString output;
 
     void visit( Soprano::Query::Not *expression )
     {
@@ -97,11 +97,11 @@ public:
     void visit( Soprano::Query::NumericalNotEqual *expression )
     {
     }
-   
+
     void visit( Soprano::Query::StringEqual *expression )
     {
     }
-   
+
     void visit( Soprano::Query::StringNotEqual *expression )
     {
     }
@@ -223,34 +223,34 @@ public:
         const Soprano::Query::RTerm* object = triplePattern->object();
 
         qDebug() << "TriplePattern:";
-    	print( "Subject: ", subject );   
-    	print( "Predicate: ", predicate);   
-    	print( "Object: ", object);   
+    	print( "Subject: ", subject );
+    	print( "Predicate: ", predicate);
+    	print( "Object: ", object);
     }
 
     void visit( Soprano::Query::GraphPattern *graphPattern )
     {
         qDebug() << "GraphPattern: " << graphPattern->optional();
-        
+
         QListIterator<Soprano::Query::TriplePattern> tripleiter(graphPattern->triplePatterns());
         while ( tripleiter.hasNext() )
         {
             Soprano::Query::TriplePattern pattern = tripleiter.next();
-            pattern.accept( this );    
+            pattern.accept( this );
         }
-        
+
         QListIterator<Soprano::Query::GraphPattern> graphiter(graphPattern->subGraphPatterns());
         while ( graphiter.hasNext() )
         {
             Soprano::Query::GraphPattern pattern = graphiter.next();
-            pattern.accept( this );    
+            pattern.accept( this );
         }
     }
 
     TestVisitor( Soprano::Query::Query* query )
     {
         qDebug() << "Query: ";
-        
+
         QListIterator<Soprano::Query::Prefix> prefixiter(query->prefixes());
         while ( prefixiter.hasNext() )
         {
@@ -261,11 +261,11 @@ public:
         Soprano::Query::QueryTerms queryTerms = query->queryTerms();
         Q_FOREACH( const Soprano::Query::Variable *variable, queryTerms.variables() )
         {
-            qDebug() << "\tVariable:" << variable->name();    
-        } 
-        
+            qDebug() << "\tVariable:" << variable->name();
+        }
+
         const Soprano::Query::GraphPattern graphPattern = query->graphPattern();
-        
+
         Q_FOREACH( Soprano::Query::TriplePattern pattern, graphPattern.triplePatterns() )
         {
             pattern.accept( this );
@@ -292,16 +292,9 @@ void QueryAPITest::cleanupTestCase()
     delete m_manager;
 }
 
-void QueryAPITest::syntaxErrorFounded( const Soprano::Error::Locator &locator, const QString& message )
-{
-    qDebug() << "(Soprano::Query::Parser)" << message << locator.line() << locator.column();
-}
-
 void QueryAPITest::testQuery_1()
 {
     const Soprano::Query::Parser *parser = m_manager->discoverQueryParserByName( "rasqal" );
-    connect( parser, SIGNAL( syntaxError(const Soprano::Error::Locator &, const QString&) ),
-             this, SLOT( syntaxErrorFounded(const Soprano::Error::Locator &, const QString& )));
 
     Soprano::Query::Query query = parser->parseQuery(
         "PREFIX foaf:   <http://xmlns.com/foaf/0.1/>\
@@ -309,26 +302,22 @@ void QueryAPITest::testQuery_1()
         WHERE  {\
             ?x foaf:name ?name .\
             ?x foaf:desc ?anon\
-        }" 
+        }"
         , Soprano::Query::QUERY_LANGUAGE_SPARQL
     );
 
+    QVERIFY( !parser->lastError() );
+
     TestVisitor visitor( &query );
-    
-    disconnect( parser, SIGNAL( syntaxError(const Soprano::Error::Locator &, const QString&) ),
-             this, SLOT( syntaxErrorFounded(const Soprano::Error::Locator &, const QString& )));
 }
 
 void QueryAPITest::testSyntaxError()
 {
     const Soprano::Query::Parser *parser = m_manager->discoverQueryParserByName( "rasqal" );
-    connect( parser, SIGNAL( syntaxError(const Soprano::Error::Locator &, const QString&) ),
-             this, SLOT( syntaxErrorFounded(const Soprano::Error::Locator &, const QString& )));
 
     parser->parseQuery( " select ?a where ; broken query ", Soprano::Query::QUERY_LANGUAGE_SPARQL );
-
-    disconnect( parser, SIGNAL( syntaxError(const Soprano::Error::Locator &, const QString&) ),
-             this, SLOT( syntaxErrorFounded(const Soprano::Error::Locator &, const QString& )));
+    QVERIFY( parser->lastError() );
+    qDebug() << parser->lastError();
 }
 
 QTEST_MAIN(QueryAPITest)

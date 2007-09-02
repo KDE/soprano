@@ -54,6 +54,8 @@ namespace Soprano {
 	 * made visible in the public API to provide the possibility for advanced queries
 	 * and data modifications.
 	 *
+	 * CLuceneIndex is thread-safe.
+	 *
 	 * <b>Data organization</b>
 	 *
 	 * In the %Soprano index each resouce gets its own clucene document. Only statements with literal

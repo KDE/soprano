@@ -43,17 +43,35 @@ namespace Soprano {
 
 	/**
 	 * Advance to the next element in the iterator.
+	 *
+	 * Implementations of this method should reset the error by eith calling
+	 * clearError() or setError().
+	 *
 	 *\return true if there is another  and false if the end has been reached.
+	 *
+	 * \sa Iterator::next()
 	 */
 	virtual bool next() = 0;
 
 	/**
-	 *\return the current element.
+	 * Get the element the iterator currently points to.
+	 *
+	 * Implementations of this method should reset the error by eith calling
+	 * clearError() or setError().
+	 *
+	 * \return the current element.
+	 *
+	 * \sa Iterator::current()
 	 */
 	virtual T current() const = 0;
 
 	/**
 	 * Close the iterator and release any locks on the underlying Model.
+	 *
+	 * Implementations of this method should reset the error by eith calling
+	 * clearError() or setError().
+	 *
+	 * \sa Iterator::close()
 	 */
 	virtual void close() = 0;
 

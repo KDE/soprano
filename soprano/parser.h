@@ -60,30 +60,7 @@ namespace Soprano
      * StatementIterator it = p->parseFile( "myrdffile.rdf", SERIALIZATION_RDF_XML );
      * \endcode
      *
-     *  
-     * \section pluginwriting Creating a new Parser plugin
-     *
-     * To create a new parser plugin simply create a class that implements this interface
-     * and is derived from QObject. Then use the Q_INTERFACES macro to define that it
-     * is in fact a Backend plugin and export the plugin via the Q_EXPORT_PLUGIN2 macro.
-     *
-     * \code
-     * class MyBackend : public QObject, public Soprano::Parser
-     * {
-     *   Q_OBJECT
-     *   Q_INTERFACES(Soprano::Parser)
-     *
-     *  public:
-     *   StatementIterator parseStream( QTextStream* stream, const QUrl& baseUri, RdfSerialization serialization = SERIALIZATION_UNKNOWNN, const QString& userSerialization = QString() ) const;
-     * };
-     * \endcode
-     *
-     * In the implementation file export the plugin so it can be picked up by the
-     * plugin loading framework:
-     *
-     * \code
-     * Q_EXPORT_PLUGIN2(soprano_mybackend, MyBackend)
-     * \endcode
+     * \sa \ref soprano_writing_plugins
      *
      * \author Daniele Galdi <daniele.galdi@gmail.com><br>Sebastian Trueg <trueg@kde.org>
      */

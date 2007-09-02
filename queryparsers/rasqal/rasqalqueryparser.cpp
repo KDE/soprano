@@ -38,7 +38,7 @@ static Soprano::Query::Prefix convert_rasqal_prefix( rasqal_prefix* rprefix )
 {
     char* uri_value = (char *)raptor_uri_to_string(rprefix->uri);
     Soprano::Query::Prefix prefix( (const char*)rprefix->prefix, QUrl(uri_value));
-    
+
     free(uri_value);
 
     return prefix;
@@ -58,10 +58,10 @@ static Soprano::Query::RTerm* convert_rasqal_literal( rasqal_literal* rl )
             break;
         case RASQAL_LITERAL_BLANK:
         case RASQAL_LITERAL_URI:
-        { 
+        {
             QUrl uri( (const char*)rasqal_literal_as_string( rl ) );
             return new Soprano::Query::Node( Soprano::Node(uri) );
-        }    
+        }
         /*case RASQAL_LITERAL_STRING:
             break;
         case RASQAL_LITERAL_BOOLEAN:
@@ -98,10 +98,10 @@ static Soprano::Query::RTerm* convert_rasqal_literal( rasqal_literal* rl )
 static Soprano::Query::TriplePattern convert_rasqal_triple_pattern( rasqal_triple* rtp )
 {
     Soprano::Query::TriplePattern triple;
-  
-    triple.setSubject( convert_rasqal_literal( rtp->subject ) );  
-    triple.setPredicate( convert_rasqal_literal( rtp->predicate ) );  
-    triple.setObject( convert_rasqal_literal( rtp->object ) );  
+
+    triple.setSubject( convert_rasqal_literal( rtp->subject ) );
+    triple.setPredicate( convert_rasqal_literal( rtp->predicate ) );
+    triple.setObject( convert_rasqal_literal( rtp->object ) );
 
     return triple;
 }
@@ -137,11 +137,11 @@ static Soprano::Query::QueryTerms get_query_terms( rasqal_query *rq )
         {
             rasqal_variable* variable = (rasqal_variable*)raptor_sequence_get_at(binding_sequence, i);
             Soprano::Query::Variable* var = new Soprano::Query::Variable( (char *)variable->name );
-            queryTerms.addVariable( var ); 
+            queryTerms.addVariable( var );
         }
     }
 
-    return queryTerms;    
+    return queryTerms;
 }
 
 Soprano::Rasqal::QueryParser::QueryParser()
@@ -178,20 +178,20 @@ Soprano::Query::Query Soprano::Rasqal::QueryParser::parseQuery( const QString &q
     // Prefix
 
     raptor_sequence* prefix_sequence = rasqal_query_get_prefix_sequence( rq );
-    if ( prefix_sequence )	
+    if ( prefix_sequence )
     {
         for (int i=0; i < raptor_sequence_size(prefix_sequence); i++)
         {
             rasqal_prefix *prefix = (rasqal_prefix*)raptor_sequence_get_at(prefix_sequence, i);
-    	    queryobj.addPrefix( convert_rasqal_prefix( prefix ) );    
-        }    
+    	    queryobj.addPrefix( convert_rasqal_prefix( prefix ) );
+        }
     }
 
     // Query Terms
-   
+
     queryobj.setQueryTerms( get_query_terms( rq ) );
 
-    // Top level GraphPattern 
+    // Top level GraphPattern
 
     rasqal_graph_pattern* graph_pattern = (rasqal_graph_pattern*)rasqal_query_get_query_graph_pattern( rq );
     queryobj.setGraphPattern( convert_rasqal_graph_pattern(graph_pattern) );
@@ -220,7 +220,7 @@ void Soprano::Rasqal::QueryParser::raptor_message_handler( void *query_parser, r
 
 void Soprano::Rasqal::QueryParser::emitSyntaxError( const Error::Locator& locator, const QString& message )
 {
-    emit syntaxError( locator, message );
+    setError( Error::ParserError( locator, message ) );
 }
 
 #include "rasqalqueryparser.moc"

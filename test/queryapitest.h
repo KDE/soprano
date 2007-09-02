@@ -38,8 +38,6 @@ private slots:
 
     void testSyntaxError();
 
-    void syntaxErrorFounded( const Soprano::Error::Locator &locator, const QString& message );
-
 private:
     Soprano::PluginManager *m_manager;
 };

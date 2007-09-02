@@ -23,53 +23,27 @@
 #ifndef SOPRANO_QUERY_QUERYPARSER_H
 #define SOPRANO_QUERY_QUERYPARSER_H
 
-#include "soprano/plugin.h"
-#include "soprano/sopranotypes.h"
-#include "soprano/soprano_export.h"
-
-#include <QtCore/QObject>
+#include "plugin.h"
+#include "sopranotypes.h"
+#include "soprano_export.h"
+#include "error.h"
 
 namespace Soprano {
-    namespace Error {
-	class Locator;
-    }
-
     namespace Query {
 
-    class Query;
+	class Query;
 
 	/**
 	 * \brief Soprano::Query::Parser defines the interface for a Soprano query parser plugin.
 	 *
 	 * Each parser plugin may support multiple query languages (supportedQueryLanguages() and supportedUserQueryLanguages()).
-	 * 
-	 * To create a new query parser plugin simply create a class that implements this interface
-	 * and is derived from QObject. Then use the Q_INTERFACES macro to define that it
-	 * is in fact a Backend plugin and export the plugin via the Q_EXPORT_PLUGIN2 macro.
 	 *
-	 * \code
-	 * class MyQueryParser : public Soprano::Query::Parser
-	 * {
-	 *   Q_INTERFACES(Soprano::Query::Parser)
-	 *
-	 *  public:
-	 *   Query parseQuery( const QString &query, QueryLanguage lang, const QString& userQueryLanguage = QString() );
-	 *   QueryLanguages supportedQueryLanguages() const;
-	 * };
-	 * \endcode
-	 *
-	 * In the implementation file export the plugin so it can be picked up by the
-	 * plugin loading framework:
-	 *
-	 * \code
-	 * Q_EXPORT_PLUGIN2(soprano_myqueryparser, MyBackend)
-	 * \endcode
+	 * \sa \ref soprano_writing_plugins
 	 *
 	 * \author Daniele Galdi <daniele.galdi@gmail.com><br>Sebastian Trueg <trueg@kde.org>
 	 */
-	class SOPRANO_EXPORT Parser : public QObject, public Plugin
+	class SOPRANO_EXPORT Parser : public Plugin, public Error::ErrorCache
 	{
-    Q_OBJECT
 	public:
 	    virtual ~Parser();
 
@@ -118,9 +92,6 @@ namespace Soprano {
 	     * \return A list of supported query languages.
 	     */
 	    virtual QStringList supportedUserQueryLanguages() const;
-
-	Q_SIGNALS:
-	    void syntaxError( const Soprano::Error::Locator &locator, const QString& message );
 
 	protected:
 	    Parser( const QString& name );

@@ -39,28 +39,8 @@ namespace Soprano
      * \brief Soprano::Serializer defines the interface for a Soprano RDF serializer plugin.
      *
      * Each serializer plugin may support multiple RDF serializations (supportedSerializations()).
-     * 
-     * To create a new serializer plugin simply create a class that implements this interface
-     * and is derived from QObject. Then use the Q_INTERFACES macro to define that it
-     * is in fact a Backend plugin and export the plugin via the Q_EXPORT_PLUGIN2 macro.
      *
-     * \code
-     * class MySerializer : public QObject, public Soprano::Serializer
-     * {
-     *   Q_OBJECT
-     *   Q_INTERFACES(Soprano::Serializer)
-     *
-     *  public:
-     *   bool serialize( StatementIterator it, QTextStream& stream, RdfSerialization serialization, const QString& userSerialization = QString() ) const = 0;
-     * };
-     * \endcode
-     *
-     * In the implementation file export the plugin so it can be picked up by the
-     * plugin loading framework:
-     *
-     * \code
-     * Q_EXPORT_PLUGIN2(soprano_mybackend, MyBackend)
-     * \endcode
+     * \sa \ref soprano_writing_plugins
      *
      * \author Sebastian Trueg <trueg@kde.org>
      */

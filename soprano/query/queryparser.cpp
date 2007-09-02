@@ -32,8 +32,7 @@ class Soprano::Query::Parser::Private
 
 
 Soprano::Query::Parser::Parser( const QString& name )
-    : QObject(),
-      Plugin( name ),
+    : Plugin( name ),
       d( new Private() )
 {
 }
@@ -60,5 +59,3 @@ QStringList Soprano::Query::Parser::supportedUserQueryLanguages() const
 {
     return QStringList();
 }
-
-#include "queryparser.moc"

@@ -30,6 +30,8 @@
 
 #include <QtCore/QFile>
 #include <QtCore/QDebug>
+#include <QtCore/QMutex>
+#include <QtCore/QMutexLocker>
 
 
 
@@ -67,6 +69,8 @@ public:
     // if > 0 a transaction is running
     int transactionID;
     QHash<Node, lucene::document::Document*> documentCache;
+
+    QMutex mutex;
 
     bool indexPresent() const {
         return lucene::index::IndexReader::indexExists( indexDir );
@@ -205,6 +209,8 @@ bool Soprano::Index::CLuceneIndex::open( const QString& folder )
 
     clearError();
 
+    QMutexLocker lock( &d->mutex );
+
     try {
         d->indexDir = lucene::store::FSDirectory::getDirectory( QFile::encodeName( folder ).data(), !QFile::exists( folder ) );
     }
@@ -231,6 +237,7 @@ bool Soprano::Index::CLuceneIndex::open( const QString& folder )
 
 void Soprano::Index::CLuceneIndex::close()
 {
+    QMutexLocker lock( &d->mutex );
     d->closeReader();
     d->closeWriter();
 }
@@ -238,12 +245,15 @@ void Soprano::Index::CLuceneIndex::close()
 
 bool Soprano::Index::CLuceneIndex::isOpen() const
 {
+    QMutexLocker lock( &d->mutex );
     return ( d->indexDir != 0 );
 }
 
 
 lucene::document::Document* Soprano::Index::CLuceneIndex::documentForResource( const Node& resource )
 {
+    QMutexLocker lock( &d->mutex );
+
     clearError();
 
     if ( d->transactionID == 0 ) {
@@ -299,6 +309,8 @@ lucene::document::Document* Soprano::Index::CLuceneIndex::documentForResource( c
 
 int Soprano::Index::CLuceneIndex::startTransaction()
 {
+    QMutexLocker lock( &d->mutex );
+
     clearError();
 
     if ( d->transactionID == 0 ) {
@@ -315,6 +327,8 @@ int Soprano::Index::CLuceneIndex::startTransaction()
 
 bool Soprano::Index::CLuceneIndex::closeTransaction( int id )
 {
+    QMutexLocker lock( &d->mutex );
+
     if ( id == d->transactionID && id > 0 ) {
         // update all documents
         for ( QHash<Node, lucene::document::Document*>::iterator it = d->documentCache.begin();
@@ -396,8 +410,10 @@ Soprano::Error::ErrorCode Soprano::Index::CLuceneIndex::addStatement( const Sopr
 
     lucene::document::Document* document = documentForResource( statement.subject() );
     if ( document ) {
+        d->mutex.lock();
         CLuceneDocumentWrapper docWrapper( document );
         docWrapper.addProperty( field, text );
+        d->mutex.unlock();
         success = true;
     }
     else {
@@ -439,8 +455,10 @@ Soprano::Error::ErrorCode Soprano::Index::CLuceneIndex::removeStatement( const S
     lucene::document::Document* document = documentForResource( statement.subject() );
     if ( document ) {
         try {
+            d->mutex.lock();
             CLuceneDocumentWrapper docWrapper( document );
             docWrapper.removeProperty( statement.predicate().toString(), statement.object().toString() );
+            d->mutex.unlock();
             success = true;
         }
         catch( CLuceneError& err ) {
@@ -460,6 +478,8 @@ Soprano::Error::ErrorCode Soprano::Index::CLuceneIndex::removeStatement( const S
 
 Soprano::Node Soprano::Index::CLuceneIndex::getResource( int documentNumber )
 {
+    QMutexLocker lock( &d->mutex );
+
     Soprano::Node node;
     if ( lucene::document::Document* document = d->getIndexSearcher()->doc( documentNumber ) ) {
         node = getResource( document );
@@ -471,6 +491,8 @@ Soprano::Node Soprano::Index::CLuceneIndex::getResource( int documentNumber )
 
 Soprano::Node Soprano::Index::CLuceneIndex::getResource( lucene::document::Document* document )
 {
+    QMutexLocker lock( &d->mutex );
+
     QString id = WString( document->get( idFieldName().data() ) );
     if ( id.startsWith( bnodeIdPrefix() ) ) {
         return Soprano::Node( QUrl( id.mid( bnodeIdPrefix().length() ) ), Soprano::Node::BlankNode );
@@ -500,6 +522,8 @@ lucene::search::Hits* Soprano::Index::CLuceneIndex::search( const QString& query
 
 lucene::search::Hits* Soprano::Index::CLuceneIndex::search( lucene::search::Query* query )
 {
+    QMutexLocker lock( &d->mutex );
+
     clearError();
     try {
         return d->getIndexSearcher()->search( query );
@@ -531,6 +555,8 @@ double Soprano::Index::CLuceneIndex::getScore( const Soprano::Node& resource, co
 
 double Soprano::Index::CLuceneIndex::getScore( const Soprano::Node& resource, lucene::search::Query* query )
 {
+    QMutexLocker lock( &d->mutex );
+
     clearError();
     try {
         // rewrite the query
@@ -563,6 +589,8 @@ double Soprano::Index::CLuceneIndex::getScore( const Soprano::Node& resource, lu
 
 void Soprano::Index::CLuceneIndex::dump( QTextStream& s ) const
 {
+    QMutexLocker lock( &d->mutex );
+
     clearError();
     try  {
         lucene::index::IndexReader* reader = d->getIndexReader();

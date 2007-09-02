@@ -26,8 +26,7 @@
 #include "query.h"
 #include "sopranotypes.h"
 #include "soprano_export.h"
-
-#include <QtCore/QObject>
+#include "error.h"
 
 class QTextStream;
 
@@ -40,33 +39,12 @@ namespace Soprano {
 	 * \brief Soprano::Query::Serializer defines the interface for a Soprano query serializer plugin.
 	 *
 	 * Each serializer plugin may support multiple query languages (supportedQueryLanguages() and supportedUserQueryLanguages()).
-	 * 
-	 * To create a new query serializer plugin simply create a class that implements this interface
-	 * and is derived from QObject. Then use the Q_INTERFACES macro to define that it
-	 * is in fact a Backend plugin and export the plugin via the Q_EXPORT_PLUGIN2 macro.
 	 *
-	 * \code
-	 * class MyQuerySerializer : public QObject, public Soprano::Query::Serializer
-	 * {
-	 *   Q_OBJECT
-	 *   Q_INTERFACES(Soprano::Query::Serializer)
-	 *
-	 *  public:
-	 *   QString serializeQuery( const Query& query, QueryLanguage lang, const QString& userQueryLanguage = QString() );
-	 *   QueryLanguages supportedQueryLanguages() const;
-	 * };
-	 * \endcode
-	 *
-	 * In the implementation file export the plugin so it can be picked up by the
-	 * plugin loading framework:
-	 *
-	 * \code
-	 * Q_EXPORT_PLUGIN2(soprano_myqueryserializer, MyBackend)
-	 * \endcode
+	 * \sa \ref soprano_writing_plugins
 	 *
 	 * \author Daniele Galdi <daniele.galdi@gmail.com><br>Sebastian Trueg <trueg@kde.org>
 	 */
-	class SOPRANO_EXPORT Serializer : public Plugin
+	class SOPRANO_EXPORT Serializer : public Plugin, public Error::ErrorCache
 	{
 	public:
 	    virtual ~Serializer();

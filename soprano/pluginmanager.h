@@ -46,6 +46,8 @@ namespace Soprano
    * Normally there is no need to use this class as all important methods have
    * global counterparts in the Soprano namespace.
    *
+   * \sa \ref soprano_writing_plugins
+   *
    * \author Sebastian Trueg <trueg@kde.org>
    */
   class SOPRANO_EXPORT PluginManager : public QObject

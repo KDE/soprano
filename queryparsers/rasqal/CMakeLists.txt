@@ -13,6 +13,8 @@ include_directories(
   ${CMAKE_INSTALL_PREFIX}/include
   ${soprano_rasqalqueryparser_BINARY_DIR}
   ${soprano_SOURCE_DIR}
+  ${soprano_core_SOURCE_DIR}
+  ${soprano_core_SOURCE_DIR}/query
 )
 
 set(rasqalqueryparser_SRC

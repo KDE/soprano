@@ -19,21 +19,22 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#include <QString>
+#ifndef SOPRANO_QUERY_PARSER_RASQALQUERYPARSER_H
+#define SOPRANO_QUERY_PARSER_RASQALQUERYPARSER_H
+
+#include <QtCore/QObject>
 
 #include <soprano/soprano_export.h>
 #include <soprano/query/queryparser.h>
-
-#ifndef SOPRANO_QUERY_PARSER_RASQALQUERYPARSER_H
-#define SOPRANO_QUERY_PARSER_RASQALQUERYPARSER_H
 
 namespace Soprano {
 
     namespace Rasqal {
 
-        class SOPRANO_EXPORT QueryParser : public Soprano::Query::Parser {
-        Q_OBJECT
-        Q_INTERFACES(Soprano::Query::Parser)
+        class SOPRANO_EXPORT QueryParser : public QObject, public Soprano::Query::Parser
+	{
+	    Q_OBJECT
+	    Q_INTERFACES(Soprano::Query::Parser)
 
         public:
             QueryParser();

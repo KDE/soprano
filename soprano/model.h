@@ -76,6 +76,9 @@ namespace Soprano
      * }
      * \endcode
      *
+     * For this to work properly Model implementations have to reset the error in each method
+     * by either calling clearError() or setError().
+     *
      * \sa \ref soprano_error_handling
      *
      * Model is thread-safe when used with a thread-safe backend (all "official" %Soprano backends are thread-safe).
