@@ -34,6 +34,7 @@ Q_OBJECT
 
 private Q_SLOTS:
     void initTestCase();
+    void testNodeIterator_data();
     void testNodeIterator();
     void cleanupTestCase();
 

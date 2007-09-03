@@ -33,10 +33,13 @@ namespace Soprano {
     class Statement;
 
     namespace Sesame2 {
+
+	class Model;
+
 	class StatementIteratorBackend : public Soprano::IteratorBackend<Statement>
 	{
 	public:
-	    StatementIteratorBackend( const JObjectRef& result );
+	    StatementIteratorBackend( const JObjectRef& result, const Model* model );
 	    ~StatementIteratorBackend();
 
 	    bool next();

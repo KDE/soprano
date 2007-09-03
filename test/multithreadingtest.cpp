@@ -81,6 +81,10 @@ public:
         return m_model;
     }
 
+    QString name() const {
+        return m_name;
+    }
+
 protected:
     void run() {
         m_success = performTest();
@@ -134,6 +138,23 @@ public:
 };
 
 
+class QueryTest : public TestingThread
+{
+public:
+    QueryTest( QueryLegacy query )
+        : TestingThread( "query" ),
+          m_query( query ) {
+    }
+
+    bool performTest() {
+        QueryResultIterator it = model()->executeQuery( m_query );
+
+        return !it.lastError() && it.isValid() && it.next();
+    }
+
+private:
+    QueryLegacy m_query;
+};
 
 
 void MultiThreadingTest::startAllTests( Model* m )
@@ -156,6 +177,7 @@ void MultiThreadingTest::initTestCase()
 {
     m_testThreads.append( new AddStatementTest() );
     m_testThreads.append( new RemoveStatementTest() );
+    m_testThreads.append( new QueryTest( QueryLegacy( "select * where { ?s ?p ?o . }", QueryLegacy::SPARQL ) ) );
 }
 
 
@@ -167,8 +189,23 @@ void MultiThreadingTest::cleanupTestCase()
 }
 
 
+Q_DECLARE_METATYPE( TestingThread* );
+
+void MultiThreadingTest::testNodeIterator_data()
+{
+    QTest::addColumn<TestingThread*>( "thread" );
+
+    Q_FOREACH( QThread* t, m_testThreads ) {
+        TestingThread* tt = dynamic_cast<TestingThread*>( t );
+        QTest::newRow( tt->name().toLatin1().data() ) << tt;
+    }
+}
+
+
 void MultiThreadingTest::testNodeIterator()
 {
+    QFETCH( TestingThread*, thread );
+
     Model* model = createModel();
     QVERIFY( model != 0 );
 
@@ -181,7 +218,7 @@ void MultiThreadingTest::testNodeIterator()
     NodeIterator it = model->listContexts();
 
     // we start the thread with an open iterator
-    startAllTests( model );
+    thread->start( model );
 
     // now wait little to give the threads some time to mess things up (in case we have a bug)
     QTime t;
@@ -198,7 +235,7 @@ void MultiThreadingTest::testNodeIterator()
     QVERIFY( allContexts.contains( context1 ) );
     QVERIFY( allContexts.contains( context2 ) );
 
-    verifyAllTests();
+    QVERIFY( thread->verifyResult() );
 
     delete model;
 }

@@ -24,6 +24,7 @@
 #include "sesame2utils.h"
 #include "sesame2types.h"
 #include "sesame2bindingset.h"
+#include "sesame2model.h"
 #include "jniwrapper.h"
 
 #include <soprano/statement.h>
@@ -60,12 +61,15 @@ public:
     BindingSet currentBindings;
 
     QStringList bindingNames;
+
+    const Model* model;
 };
 
 
-Soprano::Sesame2::QueryResultIteratorBackend::QueryResultIteratorBackend( const JObjectRef& result )
+Soprano::Sesame2::QueryResultIteratorBackend::QueryResultIteratorBackend( const JObjectRef& result, const Model* model )
     : d( new Private( result ) )
 {
+    d->model = model;
 }
 
 
@@ -164,6 +168,10 @@ bool Soprano::Sesame2::QueryResultIteratorBackend::boolValue() const
 
 void Soprano::Sesame2::QueryResultIteratorBackend::close()
 {
-    d->result.close();
-    setError( JNIWrapper::instance()->convertAndClearException() );
+    if ( d->model ) {
+        d->result.close();
+        setError( JNIWrapper::instance()->convertAndClearException() );
+        d->model->removeIterator( this );
+        d->model = 0;
+    }
 }

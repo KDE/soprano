@@ -37,10 +37,13 @@ namespace Soprano {
     class Statement;
 
     namespace Sesame2 {
+
+	class Model;
+
 	class QueryResultIteratorBackend : public Soprano::QueryResultIteratorBackend
 	{
 	public:
-	    QueryResultIteratorBackend( const JObjectRef& result );
+	    QueryResultIteratorBackend( const JObjectRef& result, const Model* );
 	    ~QueryResultIteratorBackend();
 
 	    bool next();

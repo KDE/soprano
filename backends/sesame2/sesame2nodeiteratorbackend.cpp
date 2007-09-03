@@ -22,6 +22,7 @@
 #include "sesame2nodeiteratorbackend.h"
 #include "sesame2iterator.h"
 #include "sesame2utils.h"
+#include "sesame2model.h"
 #include "jniwrapper.h"
 
 #include <soprano/node.h>
@@ -39,12 +40,15 @@ public:
     Iterator result;
 
     Node current;
+
+    const Model* model;
 };
 
 
-Soprano::Sesame2::NodeIteratorBackend::NodeIteratorBackend( const JObjectRef& result )
+Soprano::Sesame2::NodeIteratorBackend::NodeIteratorBackend( const JObjectRef& result, const Model* model )
     : d( new Private( result ) )
 {
+    d->model = model;
 }
 
 
@@ -81,6 +85,10 @@ Soprano::Node Soprano::Sesame2::NodeIteratorBackend::current() const
 
 void Soprano::Sesame2::NodeIteratorBackend::close()
 {
-    d->result.close();
-    setError( JNIWrapper::instance()->convertAndClearException() );
+    if ( d->model ) {
+        d->result.close();
+        setError( JNIWrapper::instance()->convertAndClearException() );
+        d->model->removeIterator( this );
+        d->model = 0;
+    }
 }

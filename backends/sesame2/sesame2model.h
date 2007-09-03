@@ -33,6 +33,9 @@
 namespace Soprano {
     namespace Sesame2 {
 
+	class StatementIteratorBackend;
+	class NodeIteratorBackend;
+	class QueryResultIteratorBackend;
 	class RepositoryWrapper;
 
 	class Model : public StorageModel
@@ -49,11 +52,15 @@ namespace Soprano {
 	    int statementCount() const;
 	    bool containsStatements( const Statement &statement ) const;
 
+	    void removeIterator( StatementIteratorBackend* it ) const;
+	    void removeIterator( NodeIteratorBackend* it ) const;
+	    void removeIterator( QueryResultIteratorBackend* r ) const;
+
 	private:
 	    void closeIterators();
 
-	    RepositoryWrapper* m_repository;
-	    mutable QList<JObjectRef> m_openIterators;
+	    class Private;
+	    Private* d;
 	};
     }
 }

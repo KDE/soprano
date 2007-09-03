@@ -39,32 +39,51 @@
 #include <soprano/nodeiterator.h>
 
 #include <QtCore/QDebug>
+#include <QtCore/QReadWriteLock>
+#include <QtCore/QReadLocker>
+#include <QtCore/QWriteLocker>
 
+
+class Soprano::Sesame2::Model::Private {
+public:
+    RepositoryWrapper* repository;
+
+    QReadWriteLock readWriteLock;
+
+    QList<StatementIteratorBackend*> statementIterators;
+    QList<NodeIteratorBackend*> nodeIterators;
+    QList<QueryResultIteratorBackend*> queryIterators;
+};
 
 
 Soprano::Sesame2::Model::Model( const Backend* backend, RepositoryWrapper* repo )
-    : Soprano::StorageModel( backend ),
-      m_repository( repo )
+    : Soprano::StorageModel( backend )
 {
+    d = new Private;
+    d->repository = repo;
 }
 
 
 Soprano::Sesame2::Model::~Model()
 {
     closeIterators();
-    delete m_repository;
+    delete d->repository;
+    delete d;
 }
 
 
 Soprano::Error::ErrorCode Soprano::Sesame2::Model::addStatement( const Statement &statement )
 {
     clearError();
-    if ( JObjectRef sesameStatement = m_repository->valueFactory()->convertStatement( statement ) ) {
+
+    QWriteLocker lock( &d->readWriteLock );
+
+    if ( JObjectRef sesameStatement = d->repository->valueFactory()->convertStatement( statement ) ) {
         if ( JNIWrapper::instance()->exceptionOccured() ) {
             setError( JNIWrapper::instance()->convertAndClearException() );
             return Error::ERROR_UNKNOWN;
         }
-        m_repository->repositoryConnection()->addStatement( sesameStatement );
+        d->repository->repositoryConnection()->addStatement( sesameStatement );
         if ( JNIWrapper::instance()->exceptionOccured() ) {
             qDebug() << "(Soprano::Sesame2::Model::addStatements) failed.";
             setError( JNIWrapper::instance()->convertAndClearException() );
@@ -84,9 +103,11 @@ Soprano::NodeIterator Soprano::Sesame2::Model::listContexts() const
 {
     clearError();
 
+    QReadLocker lock( &d->readWriteLock );
+
     QList<Soprano::Node> contexts;
 
-    JObjectRef ids = m_repository->repositoryConnection()->getContextIDs();
+    JObjectRef ids = d->repository->repositoryConnection()->getContextIDs();
 
     if ( JNIWrapper::instance()->exceptionOccured() ) {
         qDebug() << "(Soprano::Sesame2::Model::listContexts) failed.";
@@ -94,14 +115,18 @@ Soprano::NodeIterator Soprano::Sesame2::Model::listContexts() const
         return NodeIterator();
     }
     else {
-        m_openIterators.append( ids );
-        return new NodeIteratorBackend( ids );
+        NodeIteratorBackend* it = new NodeIteratorBackend( ids, this );
+        d->nodeIterators.append( it );
+        d->readWriteLock.lockForRead();
+        return it;
     }
 }
 
 
 Soprano::QueryResultIterator Soprano::Sesame2::Model::executeQuery( const QueryLegacy &query ) const
 {
+    QReadLocker lock( &d->readWriteLock );
+
     clearError();
 
     if ( query.type() != Soprano::QueryLegacy::SPARQL ) {
@@ -115,11 +140,13 @@ Soprano::QueryResultIterator Soprano::Sesame2::Model::executeQuery( const QueryL
     JObjectRef sparqlQueryLang = JNIWrapper::instance()->env()->GetStaticObjectField( JNIWrapper::instance()->env()->FindClass( ORG_OPENRDF_QUERY_QUERYLANGUAGE ),
                                                                                       sparqlID );
 
-    JObjectRef queryResult = m_repository->repositoryConnection()->query( sparqlQueryLang, JStringRef( query.query() ) );
+    JObjectRef queryResult = d->repository->repositoryConnection()->query( sparqlQueryLang, JStringRef( query.query() ) );
 
     if ( queryResult ) {
-        m_openIterators.append( queryResult );
-        return new QueryResultIteratorBackend( queryResult );
+        QueryResultIteratorBackend* it = new QueryResultIteratorBackend( queryResult, this );
+        d->readWriteLock.lockForRead();
+        d->queryIterators.append( it );
+        return it;
     }
     else {
         setError( JNIWrapper::instance()->convertAndClearException() );
@@ -130,70 +157,76 @@ Soprano::QueryResultIterator Soprano::Sesame2::Model::executeQuery( const QueryL
 
 Soprano::StatementIterator Soprano::Sesame2::Model::listStatements( const Statement& statement ) const
 {
+    QReadLocker lock( &d->readWriteLock );
+
     clearError();
 
     // we are not using convertStatement here since we support wildcards
-    JObjectRef subject = m_repository->valueFactory()->convertNode( statement.subject() );
+    JObjectRef subject = d->repository->valueFactory()->convertNode( statement.subject() );
     if ( JNIWrapper::instance()->exceptionOccured() ) {
         setError( JNIWrapper::instance()->convertAndClearException() );
         return StatementIterator();
     }
-    JObjectRef predicate = m_repository->valueFactory()->convertNode( statement.predicate() );
+    JObjectRef predicate = d->repository->valueFactory()->convertNode( statement.predicate() );
     if ( JNIWrapper::instance()->exceptionOccured() ) {
         setError( JNIWrapper::instance()->convertAndClearException() );
         return StatementIterator();
     }
-    JObjectRef object = m_repository->valueFactory()->convertNode( statement.object() );
+    JObjectRef object = d->repository->valueFactory()->convertNode( statement.object() );
     if ( JNIWrapper::instance()->exceptionOccured() ) {
         setError( JNIWrapper::instance()->convertAndClearException() );
         return StatementIterator();
     }
-    JObjectRef context = m_repository->valueFactory()->convertNode( statement.context() );
+    JObjectRef context = d->repository->valueFactory()->convertNode( statement.context() );
     if ( JNIWrapper::instance()->exceptionOccured() ) {
         setError( JNIWrapper::instance()->convertAndClearException() );
         return StatementIterator();
     }
 
-    JObjectRef results = m_repository->repositoryConnection()->getStatements( subject, predicate, object, context );
+    JObjectRef results = d->repository->repositoryConnection()->getStatements( subject, predicate, object, context );
     if ( JNIWrapper::instance()->exceptionOccured() ) {
         qDebug() << "(Soprano::Sesame2::Model::listStatements) failed.";
         setError( JNIWrapper::instance()->convertAndClearException() );
         return StatementIterator();
     }
     else {
-        m_openIterators.append( results );
-        return new StatementIteratorBackend( results );
+        StatementIteratorBackend* it = new StatementIteratorBackend( results, this );
+        d->statementIterators.append( it );
+        d->readWriteLock.lockForRead();
+        return it;
     }
 }
 
 
 Soprano::Error::ErrorCode Soprano::Sesame2::Model::removeStatements( const Statement &statement )
 {
+    QWriteLocker lock( &d->readWriteLock );
+
     clearError();
 
     // we are not using convertStatement here since we support wildcards
-    JObjectRef subject = m_repository->valueFactory()->convertNode( statement.subject() );
+    JObjectRef subject = d->repository->valueFactory()->convertNode( statement.subject() );
     if ( JNIWrapper::instance()->exceptionOccured() ) {
         setError( JNIWrapper::instance()->convertAndClearException() );
         return Error::ERROR_UNKNOWN;
     }
-    JObjectRef predicate = m_repository->valueFactory()->convertNode( statement.predicate() );
+    JObjectRef predicate = d->repository->valueFactory()->convertNode( statement.predicate() );
     if ( JNIWrapper::instance()->exceptionOccured() ) {
         setError( JNIWrapper::instance()->convertAndClearException() );
         return Error::ERROR_UNKNOWN;
     }
-    JObjectRef object = m_repository->valueFactory()->convertNode( statement.object() );
+    JObjectRef object = d->repository->valueFactory()->convertNode( statement.object() );
     if ( JNIWrapper::instance()->exceptionOccured() ) {
         setError( JNIWrapper::instance()->convertAndClearException() );
         return Error::ERROR_UNKNOWN;
     }
-    JObjectRef context = m_repository->valueFactory()->convertNode( statement.context() );
+    JObjectRef context = d->repository->valueFactory()->convertNode( statement.context() );
     if ( JNIWrapper::instance()->exceptionOccured() ) {
         setError( JNIWrapper::instance()->convertAndClearException() );
         return Error::ERROR_UNKNOWN;
     }
 
-    m_repository->repositoryConnection()->remove( subject, predicate, object, context );
+    d->repository->repositoryConnection()->remove( subject, predicate, object, context );
     if ( JNIWrapper::instance()->exceptionOccured() ) {
         qDebug() << "(Soprano::Sesame2::Model::removeStatements) failed.";
         setError( JNIWrapper::instance()->convertAndClearException() );
@@ -206,8 +239,10 @@ Soprano::Error::ErrorCode Soprano::Sesame2::Model::removeStatements( const State
 
 int Soprano::Sesame2::Model::statementCount() const
 {
+    QReadLocker lock( &d->readWriteLock );
+
     clearError();
-    int size = m_repository->repositoryConnection()->size();
+    int size = d->repository->repositoryConnection()->size();
     if ( JNIWrapper::instance()->exceptionOccured() ) {
         setError( JNIWrapper::instance()->convertAndClearException() );
         return -1;
@@ -220,31 +255,33 @@ int Soprano::Sesame2::Model::statementCount() const
 
 bool Soprano::Sesame2::Model::containsStatements( const Statement &statement ) const
 {
+    QReadLocker lock( &d->readWriteLock );
+
     clearError();
 
     // we are not using convertStatement here since we support wildcards
-    JObjectRef subject = m_repository->valueFactory()->convertNode( statement.subject() );
+    JObjectRef subject = d->repository->valueFactory()->convertNode( statement.subject() );
     if ( JNIWrapper::instance()->exceptionOccured() ) {
         setError( JNIWrapper::instance()->convertAndClearException() );
         return false;
     }
-    JObjectRef predicate = m_repository->valueFactory()->convertNode( statement.predicate() );
+    JObjectRef predicate = d->repository->valueFactory()->convertNode( statement.predicate() );
     if ( JNIWrapper::instance()->exceptionOccured() ) {
         setError( JNIWrapper::instance()->convertAndClearException() );
         return false;
     }
-    JObjectRef object = m_repository->valueFactory()->convertNode( statement.object() );
+    JObjectRef object = d->repository->valueFactory()->convertNode( statement.object() );
     if ( JNIWrapper::instance()->exceptionOccured() ) {
         setError( JNIWrapper::instance()->convertAndClearException() );
         return false;
     }
-    JObjectRef context = m_repository->valueFactory()->convertNode( statement.context() );
+    JObjectRef context = d->repository->valueFactory()->convertNode( statement.context() );
     if ( JNIWrapper::instance()->exceptionOccured() ) {
         setError( JNIWrapper::instance()->convertAndClearException() );
         return false;
     }
 
-    bool r = m_repository->repositoryConnection()->hasStatement( subject, predicate, object, context );
+    bool r = d->repository->repositoryConnection()->hasStatement( subject, predicate, object, context );
     if ( JNIWrapper::instance()->exceptionOccured() ) {
         qDebug() << "(Soprano::Sesame2::Model::containsStatements) failed.";
         setError( JNIWrapper::instance()->convertAndClearException() );
@@ -256,8 +293,37 @@ bool Soprano::Sesame2::Model::containsStatements( const Statement &statement ) c
 
 void Soprano::Sesame2::Model::closeIterators()
 {
-    Q_FOREACH( JObjectRef it, m_openIterators ) {
-        Iterator( it ).close();
+    for ( QList<StatementIteratorBackend*>::iterator it = d->statementIterators.begin();
+          it != d->statementIterators.end(); ++it ) {
+        ( *it )->close();
     }
-    m_openIterators.clear();
+    for ( QList<NodeIteratorBackend*>::iterator it = d->nodeIterators.begin();
+          it != d->nodeIterators.end(); ++it ) {
+        ( *it )->close();
+    }
+    for ( QList<QueryResultIteratorBackend*>::iterator it = d->queryIterators.begin();
+          it != d->queryIterators.end(); ++it ) {
+        ( *it )->close();
+    }
+}
+
+
+void Soprano::Sesame2::Model::removeIterator( StatementIteratorBackend* it ) const
+{
+    d->statementIterators.removeAll( it );
+    d->readWriteLock.unlock();
+}
+
+
+void Soprano::Sesame2::Model::removeIterator( NodeIteratorBackend* it ) const
+{
+    d->nodeIterators.removeAll( it );
+    d->readWriteLock.unlock();
+}
+
+
+void Soprano::Sesame2::Model::removeIterator( QueryResultIteratorBackend* r ) const
+{
+    d->queryIterators.removeAll( r );
+    d->readWriteLock.unlock();
 }
