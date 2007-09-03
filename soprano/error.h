@@ -30,6 +30,13 @@
 
 namespace Soprano {
     namespace Error {
+	/**
+	 * %Soprano defines a number of error codes that are
+	 * used to provide a quick success status check in methods
+	 * such as Model::addStatement().
+	 *
+	 * \sa Error::code()
+	 */
 	enum ErrorCode {
 	    ERROR_NONE = 0,          /**< No error occured, i.e. success. */
 	    ERROR_INVALID_ARGUMENT,  /**< Error indicating that a method argument was invalid. For example an invalid Statement in Model::addStatement(). */
@@ -50,6 +57,8 @@ namespace Soprano {
 	 * Represents an error in %Soprano.
 	 *
 	 * \author Sebastian Trueg <trueg@kde.org>
+	 *
+	 * \sa \ref soprano_error_handling
 	 */
 	class SOPRANO_EXPORT Error
 	{
@@ -69,8 +78,14 @@ namespace Soprano {
 	     */
 	    Error( const QString& message, int code = ERROR_UNKNOWN );
 
+	    /**
+	     * Copy constructor
+	     */
 	    Error( const Error& );
 
+	    /**
+	     * Destructor
+	     */
 	    virtual ~Error();
 
 	    Error& operator=( const Error& );
@@ -78,7 +93,7 @@ namespace Soprano {
 	    /**
 	     * An %Error evalutes to a boolean, indicating if an %Error is "set".
 	     *
-	     * \return \p false if code() == ERROR_NONE, \p true otherwise.
+	     * \return \p false if code() == #ERROR_NONE, \p true otherwise.
 	     *
 	     * Thus, an Error object can easily be checked as follows:
 	     *
@@ -91,9 +106,36 @@ namespace Soprano {
 	     */
 	    operator bool() const { return code() != ERROR_NONE; }
 
+	    /**
+	     * A string explaining the error in detail.
+	     * This string is not necessarily translated (this
+	     * depends on the plugin implementation).
+	     *
+	     * \return An error message describing the error or an empty string
+	     * for no-error (i.e. success) instances.
+	     */
 	    QString message() const;
+
+	    /**
+	     * An error code. If the error code is #ERROR_NONE the
+	     * Error instance represents success.
+	     * The code can either be one of the values of ErrorCode
+	     * or a value above #ERROR_UNKNOWN.
+	     *
+	     * Example: The redland backend defines the error code
+	     * as:
+	     * \code
+	     * ERROR_UNKNOWN + librdf_log_message_code()
+	     * \endcode
+	     *
+	     * \sa ErrorCode
+	     */
 	    int code() const;
 
+	    /**
+	     * \return \p true if this Error instance represents a parser error.
+	     * In that case the error can be converted to a ParserError.
+	     */
 	    bool isParserError() const;
 	
 	protected:
@@ -118,6 +160,8 @@ namespace Soprano {
 	 * \endcode
 	 *
 	 * \author Sebastian Trueg <trueg@kde.org>
+	 *
+	 * \sa \ref soprano_error_handling
 	 */
 	class SOPRANO_EXPORT ParserError : public Error
 	{
@@ -158,7 +202,7 @@ namespace Soprano {
 	     * Get the last error that occured in the current thread.
 	     */
 	    virtual Error lastError() const;
-
+	    
 	protected:
 	    ErrorCache();
 
