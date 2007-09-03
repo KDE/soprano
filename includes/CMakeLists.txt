@@ -35,8 +35,10 @@ install(FILES
   include)
 
 add_subdirectory(Error)
-add_subdirectory(Index)
 add_subdirectory(Server)
 add_subdirectory(Inference)
 add_subdirectory(Query)
 add_subdirectory(Vocabulary)
+if(CLucene_FOUND)
+  add_subdirectory(Index)
+endif(CLucene_FOUND)
