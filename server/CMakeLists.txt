@@ -97,6 +97,6 @@ INSTALL(TARGETS soprano_serverclientbackend
 install(
   FILES 
   servercore.h
-  serverbackend.h
+  client.h
   DESTINATION include/soprano
 )

@@ -19,6 +19,7 @@ add_subdirectory(server)
 add_subdirectory(tools)
 add_subdirectory(test) 
 add_subdirectory(rules)
+add_subdirectory(includes)
 
 # apidox
 find_package(Doxygen)

@@ -159,11 +159,14 @@ public:
     Private()
         : backend( 0 ) {
     }
-
+	
     ~Private() {
-        delete backend;
+	if( backend ) {
+	    backend->close();
+	    delete backend;
+	}
     }
-
+    
     IteratorBackend<T>* backend;
 };
 
