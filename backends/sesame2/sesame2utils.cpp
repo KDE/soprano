@@ -43,9 +43,9 @@ public:
         Q_ASSERT( classLiteral );
     }
 
-    jclass classURI;
-    jclass classBNode;
-    jclass classLiteral;
+    JClassRef classURI;
+    JClassRef classBNode;
+    JClassRef classLiteral;
 };
 
 Q_GLOBAL_STATIC( ClassCache, classCache );

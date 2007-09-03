@@ -40,9 +40,9 @@ public:
 
     JObjectRef object() const { return m_object; }
 
-    jclass objectClass();
+    JClassRef objectClass();
 
-    bool isInstanceOf( jclass ) const;
+    bool isInstanceOf( const JClassRef& ) const;
 
     jmethodID getMethodID( const QString& name, const QString& signature ) const;
 

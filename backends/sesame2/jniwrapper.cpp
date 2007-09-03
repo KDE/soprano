@@ -154,6 +154,7 @@ Soprano::Error::Error JNIWrapper::convertAndClearException()
 {
     jthrowable exception = env()->ExceptionOccurred();
     if ( exception ) {
+        env()->ExceptionDescribe();
         JNIObjectWrapper exWr( exception );
         jmethodID id = exWr.getMethodID( "getMessage", "()L"JAVA_LANG_STRING";" );
         QString message = JStringRef( exWr.callObjectMethod( id ) ).toQString();

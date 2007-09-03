@@ -61,6 +61,7 @@ class JStringRef : public JObjectRef
 {
 public:
     JStringRef();
+    JStringRef( jstring );
     JStringRef( const JObjectRef& );
     JStringRef( const QString& );
 
@@ -68,6 +69,18 @@ public:
     operator jstring() const;
 
     QString toQString() const;
+};
+
+
+class JClassRef : public JObjectRef
+{
+public:
+    JClassRef();
+    JClassRef( jclass clazz );
+    JClassRef( const JObjectRef& );
+
+    jclass data() const;
+    operator jclass() const;
 };
 
 #endif

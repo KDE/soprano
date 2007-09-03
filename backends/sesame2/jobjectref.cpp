@@ -167,6 +167,12 @@ JStringRef::JStringRef()
 }
 
 
+JStringRef::JStringRef( jstring s )
+    : JObjectRef( s )
+{
+}
+
+
 JStringRef::JStringRef( const JObjectRef& other )
     : JObjectRef( other )
 {
@@ -210,4 +216,33 @@ QString JStringRef::toQString() const
     else {
         return QString();
     }
+}
+
+
+JClassRef::JClassRef()
+    : JObjectRef()
+{
+}
+
+
+JClassRef::JClassRef( jclass clazz )
+    : JObjectRef( clazz )
+{
+}
+
+
+JClassRef::JClassRef( const JObjectRef& ref )
+    : JObjectRef( ref )
+{
+}
+
+jclass JClassRef::data() const
+{
+    return reinterpret_cast<jclass>( JObjectRef::data() );
+}
+
+
+JClassRef::operator jclass() const
+{
+    return data();
 }

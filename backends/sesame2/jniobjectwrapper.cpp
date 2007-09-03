@@ -112,15 +112,15 @@ JObjectRef JNIObjectWrapper::callObjectMethod( jmethodID methodId, ... )
 }
 
 
-jclass JNIObjectWrapper::objectClass()
+JClassRef JNIObjectWrapper::objectClass()
 {
     return JNIWrapper::instance()->env()->GetObjectClass( object() );
 }
 
 
-bool JNIObjectWrapper::isInstanceOf( jclass clazz ) const
+bool JNIObjectWrapper::isInstanceOf( const JClassRef& clazz ) const
 {
-    return JNIWrapper::instance()->env()->IsInstanceOf( object(), clazz );
+    return JNIWrapper::instance()->env()->IsInstanceOf( object(), clazz.data() );
 }
 
 

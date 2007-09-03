@@ -100,7 +100,7 @@ public:
     }
 
     // caching class instance
-    jclass classResource() {
+    JClassRef classResource() {
         if ( !m_classResource ) {
             m_classResource = JNIWrapper::instance()->env()->FindClass( ORG_OPENRDF_MODEL_RESOURCE );
             JNIWrapper::instance()->debugException();
@@ -108,7 +108,7 @@ public:
         return m_classResource;
     }
 
-    jclass classTupleQuery() {
+    JClassRef classTupleQuery() {
         if ( !m_classTupleQuery ) {
             m_classTupleQuery = JNIWrapper::instance()->env()->FindClass( ORG_OPENRDF_QUERY_TUPLEQUERY );
             JNIWrapper::instance()->debugException();
@@ -116,7 +116,7 @@ public:
         return m_classTupleQuery;
     }
 
-    jclass classGraphQuery() {
+    JClassRef classGraphQuery() {
         if ( !m_classGraphQuery ) {
             m_classGraphQuery = JNIWrapper::instance()->env()->FindClass( ORG_OPENRDF_QUERY_GRAPHQUERY );
             JNIWrapper::instance()->debugException();
@@ -135,9 +135,9 @@ private:
     jmethodID m_IDsize;
     jmethodID m_IDprepareQuery;
 
-    jclass m_classResource;
-    jclass m_classTupleQuery;
-    jclass m_classGraphQuery;
+    JClassRef m_classResource;
+    JClassRef m_classTupleQuery;
+    JClassRef m_classGraphQuery;
 };
 
 
