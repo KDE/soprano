@@ -26,6 +26,8 @@
 
 #include <jni.h>
 
+#include "jobjectref.h"
+
 namespace Soprano {
 
     class Statement;
@@ -34,7 +36,7 @@ namespace Soprano {
 	class StatementIteratorBackend : public Soprano::IteratorBackend<Statement>
 	{
 	public:
-	    StatementIteratorBackend( jobject result );
+	    StatementIteratorBackend( const JObjectRef& result );
 	    ~StatementIteratorBackend();
 
 	    bool next();

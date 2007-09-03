@@ -28,6 +28,8 @@
 
 #include <jni.h>
 
+#include "jobjectref.h"
+
 namespace Soprano {
     namespace Sesame2 {
 
@@ -51,7 +53,7 @@ namespace Soprano {
 	    void closeIterators();
 
 	    RepositoryWrapper* m_repository;
-	    mutable QList<jobject> m_openIterators;
+	    mutable QList<JObjectRef> m_openIterators;
 	};
     }
 }

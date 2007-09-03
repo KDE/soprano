@@ -26,17 +26,19 @@
 
 #include <jni.h>
 
+#include "jobjectref.h"
+
 
 class JNIObjectWrapper
 {
 public:
     JNIObjectWrapper();
-    JNIObjectWrapper( jobject object );
+    JNIObjectWrapper( const JObjectRef& object );
     ~JNIObjectWrapper();
 
-    void setObject( jobject o ) { m_object = o; }
+    void setObject( const JObjectRef& o );
 
-    jobject object() const { return m_object; }
+    JObjectRef object() const { return m_object; }
 
     jclass objectClass();
 
@@ -47,11 +49,11 @@ public:
     void callVoidMethod( jmethodID methodId, ... );
     bool callBooleanMethod( jmethodID methodId, ... );
     long callLongMethod( jmethodID methodId, ... );
-    jobject callObjectMethod( jmethodID methodId, ... );
+    JObjectRef callObjectMethod( jmethodID methodId, ... );
 
     
 private:
-    jobject m_object;
+    JObjectRef m_object;
 };
 
 #endif

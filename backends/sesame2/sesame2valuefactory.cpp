@@ -109,7 +109,7 @@ private:
 };
 
 
-Soprano::Sesame2::ValueFactory::ValueFactory( jobject o )
+Soprano::Sesame2::ValueFactory::ValueFactory( const JObjectRef& o )
     : JNIObjectWrapper( o ),
       d( new Private( this ) )
 {
@@ -122,29 +122,26 @@ Soprano::Sesame2::ValueFactory::~ValueFactory()
 }
 
 
-jobject Soprano::Sesame2::ValueFactory::convertNode( const Node& node )
+JObjectRef Soprano::Sesame2::ValueFactory::convertNode( const Node& node )
 {
     switch( node.type() ) {
     case Node::ResourceNode:
-        return callObjectMethod( d->IDcreateURI(),
-                                 JNIWrapper::instance()->convertString( node.toString() ) );
+        return callObjectMethod( d->IDcreateURI(), JStringRef( node.toString() ).data() );
 
     case Node::BlankNode:
-        return callObjectMethod( d->IDcreateBNode(),
-                                 JNIWrapper::instance()->convertString( node.toString() ) );
+        return callObjectMethod( d->IDcreateBNode(), JStringRef( node.toString() ).data() );
 
     case Node::LiteralNode:
         // FIXME: is it more performant to create the instances directly from the values instead of strings?
         if ( node.language().isEmpty() ) {
             return callObjectMethod( d->IDcreateLiteralWithLang(),
-                                     JNIWrapper::instance()->convertString( node.toString() ),
-                                     JNIWrapper::instance()->convertString( node.language() ) );
+                                     JStringRef( node.toString() ).data(),
+                                     JStringRef( node.language() ).data() );
         }
         else{
-            jobject dataTypeUri = callObjectMethod( d->IDcreateURI(),
-                                                    JNIWrapper::instance()->convertString( node.dataType().toString() ) );
+            jobject dataTypeUri = callObjectMethod( d->IDcreateURI(), JStringRef( node.dataType().toString() ).data() );
             return callObjectMethod( d->IDcreateLiteralWithDataType(),
-                                     JNIWrapper::instance()->convertString( node.toString() ),
+                                     JStringRef( node.toString() ).data(),
                                      dataTypeUri );
         }
 
@@ -155,36 +152,36 @@ jobject Soprano::Sesame2::ValueFactory::convertNode( const Node& node )
 }
 
 
-jobject Soprano::Sesame2::ValueFactory::convertStatement( const Statement& statement )
+JObjectRef Soprano::Sesame2::ValueFactory::convertStatement( const Statement& statement )
 {
-    jobject subject = convertNode( statement.subject() );
+    JObjectRef subject = convertNode( statement.subject() );
     if ( JNIWrapper::instance()->exceptionOccured() ) {
         qDebug() << "(Soprano::Sesame2::ValueFactory::convertStatement) conversion of subject failed";
         return 0;
     }
 
-    jobject predicate = convertNode( statement.predicate() );
+    JObjectRef predicate = convertNode( statement.predicate() );
     if ( JNIWrapper::instance()->exceptionOccured() ) {
         qDebug() << "(Soprano::Sesame2::ValueFactory::convertStatement) conversion of predicate failed";
         return 0;
     }
 
-    jobject object = convertNode( statement.object() );
+    JObjectRef object = convertNode( statement.object() );
     if ( JNIWrapper::instance()->exceptionOccured() ) {
         qDebug() << "(Soprano::Sesame2::ValueFactory::convertStatement) conversion of object failed";
         return 0;
     }
 
-    jobject context = convertNode( statement.context() );
+    JObjectRef context = convertNode( statement.context() );
     if ( JNIWrapper::instance()->exceptionOccured() ) {
         qDebug() << "(Soprano::Sesame2::ValueFactory::convertStatement) conversion of context failed";
         return 0;
     }
 
     if ( context ) {
-        return callObjectMethod( d->IDcreateStatementWithContext(), subject, predicate, object, context );
+        return callObjectMethod( d->IDcreateStatementWithContext(), subject.data(), predicate.data(), object.data(), context.data() );
     }
     else {
-        return callObjectMethod( d->IDcreateStatement(), subject, predicate, object );
+        return callObjectMethod( d->IDcreateStatement(), subject.data(), predicate.data(), object.data() );
     }
 }

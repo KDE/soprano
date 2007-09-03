@@ -37,6 +37,7 @@ if(JAVA_INCLUDE_PATH)
       sesame2nodeiteratorbackend.cpp
       sesame2queryresultiteratorbackend.cpp
       sesame2bindingset.cpp
+      jobjectref.cpp
       )
 
     qt4_automoc(${sesame2_backend_SRC})

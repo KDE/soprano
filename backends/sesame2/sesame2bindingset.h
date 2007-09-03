@@ -30,10 +30,10 @@ namespace Soprano {
 	class BindingSet : public JNIObjectWrapper
 	{
 	public:
-	    BindingSet( jobject = 0 );
+	    BindingSet( const JObjectRef& = JObjectRef() );
 	    ~BindingSet();
 
-	    jobject getValue( jstring s );
+	    JObjectRef getValue( const JStringRef& s );
 
 	private:
 	    class Private;

@@ -26,6 +26,8 @@
 
 #include <jni.h>
 
+#include "jobjectref.h"
+
 class QString;
 class QStringList;
 
@@ -38,7 +40,7 @@ namespace Soprano {
 	class QueryResultIteratorBackend : public Soprano::QueryResultIteratorBackend
 	{
 	public:
-	    QueryResultIteratorBackend( jobject result );
+	    QueryResultIteratorBackend( const JObjectRef& result );
 	    ~QueryResultIteratorBackend();
 
 	    bool next();

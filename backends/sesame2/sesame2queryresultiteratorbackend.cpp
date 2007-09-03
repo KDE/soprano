@@ -36,7 +36,7 @@
 class Soprano::Sesame2::QueryResultIteratorBackend::Private
 {
 public:
-    Private( jobject result_ )
+    Private( const JObjectRef& result_ )
         : result( result_ ) {
         tupleResult = JNIWrapper::instance()->env()->IsInstanceOf( result_,
                                                                    JNIWrapper::instance()->env()->FindClass( ORG_OPENRDF_QUERY_TUPLEQUERYRESULT ) );
@@ -47,7 +47,7 @@ public:
             JNIObjectWrapper listWrapper( bindingList );
             Iterator it( listWrapper.callObjectMethod( listWrapper.getMethodID( "iterator", "()L"JAVA_UTIL_ITERATOR";" ) ) );
             while ( it.hasNext() ) {
-                bindingNames.append( JNIWrapper::instance()->convertString( reinterpret_cast<jstring>( it.next() ) ) );
+                bindingNames.append( JStringRef( it.next() ).toQString() );
             }
         }
     }
@@ -63,7 +63,7 @@ public:
 };
 
 
-Soprano::Sesame2::QueryResultIteratorBackend::QueryResultIteratorBackend( jobject result )
+Soprano::Sesame2::QueryResultIteratorBackend::QueryResultIteratorBackend( const JObjectRef& result )
     : d( new Private( result ) )
 {
 }
@@ -78,7 +78,7 @@ Soprano::Sesame2::QueryResultIteratorBackend::~QueryResultIteratorBackend()
 bool Soprano::Sesame2::QueryResultIteratorBackend::next()
 {
     if ( d->result.hasNext() ) {
-        jobject next = d->result.next();
+        JObjectRef next = d->result.next();
         if ( next ) {
             if ( d->tupleResult ) {
                 d->currentBindings.setObject( next );
@@ -108,7 +108,7 @@ Soprano::Node Soprano::Sesame2::QueryResultIteratorBackend::binding( const QStri
 {
     // make sure we do not crash
     if ( d->currentBindings.object() ) {
-        jobject node = d->currentBindings.getValue( JNIWrapper::instance()->convertString( name ) );
+        JObjectRef node = d->currentBindings.getValue( JStringRef( name ) );
         setError( JNIWrapper::instance()->convertAndClearException() );
         return convertNode( node );
     }

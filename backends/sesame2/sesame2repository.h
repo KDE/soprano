@@ -23,6 +23,7 @@
 #define _SESAME2_REPOSITORY_H_
 
 #include "jniobjectwrapper.h"
+#include "jobjectref.h"
 
 namespace Soprano {
 
@@ -52,7 +53,7 @@ namespace Soprano {
 	     */
 	    void close();
 
-	    jobject getContextIDs();
+	    JObjectRef getContextIDs();
 
 	    /**
 	     * Create a repository that stores its data in path.
@@ -65,7 +66,7 @@ namespace Soprano {
 	    static RepositoryWrapper* create();
 
 	private:
-	    RepositoryWrapper( jobject );
+	    RepositoryWrapper( const JObjectRef& );
 
 	    class Private;
 	    Private* const d;

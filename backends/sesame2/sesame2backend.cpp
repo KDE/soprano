@@ -23,6 +23,7 @@
 #include "sesame2model.h"
 #include "jniwrapper.h"
 #include "sesame2repository.h"
+#include "jobjectref.h"
 
 #include <QtCore/QtPlugin>
 #include <QtCore/QDebug>
@@ -35,6 +36,12 @@ Soprano::Sesame2::BackendPlugin::BackendPlugin()
     Backend( "sesame2" ),
     m_jniWrapper( 0 )
 {
+    // stupid java threading! Looks as if the query parsers need to be initialized in the main thread! Well, even this does not
+    // guarantee that but at least it covers most cases.... :(
+    m_jniWrapper = new JNIWrapper();
+    jclass clazz = m_jniWrapper->env()->FindClass( "org/openrdf/query/parser/QueryParserRegistry" );
+    jmethodID id = m_jniWrapper->env()->GetStaticMethodID( clazz, "getInstance", "()Lorg/openrdf/query/parser/QueryParserRegistry;" );
+    m_jniWrapper->env()->CallStaticObjectMethod( clazz, id );
 }
 
 

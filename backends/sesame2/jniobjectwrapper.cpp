@@ -33,7 +33,7 @@ JNIObjectWrapper::JNIObjectWrapper()
 }
 
 
-JNIObjectWrapper::JNIObjectWrapper( jobject object )
+JNIObjectWrapper::JNIObjectWrapper( const JObjectRef& object )
     : m_object( object )
 {
 }
@@ -41,13 +41,12 @@ JNIObjectWrapper::JNIObjectWrapper( jobject object )
 
 JNIObjectWrapper::~JNIObjectWrapper()
 {
-    // FIXME: do we need to delete the object???
 }
 
 
 jmethodID JNIObjectWrapper::getMethodID( const QString& name, const QString& signature ) const
 {
-    jmethodID id = JNIWrapper::instance()->env()->GetMethodID( JNIWrapper::instance()->env()->GetObjectClass( object() ),
+    jmethodID id = JNIWrapper::instance()->env()->GetMethodID( JNIWrapper::instance()->env()->GetObjectClass( m_object ),
                                                                name.toUtf8().data(),
                                                                signature.toUtf8().data() );
     if ( !id ) {
@@ -99,9 +98,9 @@ long JNIObjectWrapper::callLongMethod( jmethodID methodId, ... )
 }
 
 
-jobject JNIObjectWrapper::callObjectMethod( jmethodID methodId, ... )
+JObjectRef JNIObjectWrapper::callObjectMethod( jmethodID methodId, ... )
 {
-    jobject returnVal;
+    JObjectRef returnVal;
     va_list args;
     va_start( args, methodId );
     returnVal = JNIWrapper::instance()->env()->CallObjectMethodV( object(),
@@ -122,4 +121,10 @@ jclass JNIObjectWrapper::objectClass()
 bool JNIObjectWrapper::isInstanceOf( jclass clazz ) const
 {
     return JNIWrapper::instance()->env()->IsInstanceOf( object(), clazz );
+}
+
+
+void JNIObjectWrapper::setObject( const JObjectRef& o )
+{
+    m_object = o;
 }

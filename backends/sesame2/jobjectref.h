@@ -19,34 +19,55 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef _SOPRANO_SESAME2_NODE_ITERATOR_BACKEND_H_
-#define _SOPRANO_SESAME2_NODE_ITERATOR_BACKEND_H_
+#ifndef _JOBJECT_REF_H_
+#define _JOBJECT_REF_H_
 
-#include <soprano/iteratorbackend.h>
+#include <QtCore/QSharedDataPointer>
+#include <QtCore/QSharedData>
 
 #include <jni.h>
-#include "jobjectref.h"
 
-namespace Soprano {
+class JObjectRef
+{
+public:
+    JObjectRef();
+    JObjectRef( jobject object );
+    JObjectRef( const JObjectRef& object );
+    virtual ~JObjectRef();
 
-    class Node;
+    JObjectRef& operator=( const JObjectRef& );
+    JObjectRef& operator=( jobject );
 
-    namespace Sesame2 {
-	class NodeIteratorBackend : public Soprano::IteratorBackend<Node>
-	{
-	public:
-	    NodeIteratorBackend( const JObjectRef& result );
-	    ~NodeIteratorBackend();
+    jobject data() const;
 
-	    bool next();
-	    Node current() const;
-	    void close();
+    operator jobject() const;
 
-	private:
-	    class Private;
-	    Private* const d;
-	};
-    }
-}
+    bool operator!() const;
+
+    bool operator!=( const JObjectRef& ) const;
+    bool operator==( const JObjectRef& ) const;
+    
+    bool isGlobal() const;
+
+    JObjectRef toGlobalRef() const;
+
+private:
+    class Private;
+    Private* d;
+};
+
+
+class JStringRef : public JObjectRef
+{
+public:
+    JStringRef();
+    JStringRef( const JObjectRef& );
+    JStringRef( const QString& );
+
+    jstring data() const;
+    operator jstring() const;
+
+    QString toQString() const;
+};
 
 #endif

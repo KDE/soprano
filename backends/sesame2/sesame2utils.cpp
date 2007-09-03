@@ -52,15 +52,15 @@ Q_GLOBAL_STATIC( ClassCache, classCache );
 
 
 
-QUrl Soprano::Sesame2::convertURI( jobject uri )
+QUrl Soprano::Sesame2::convertURI( const JObjectRef& uri )
 {
     JNIObjectWrapper uriWrapper( uri );
-    jobject uriString = uriWrapper.callObjectMethod( uriWrapper.getMethodID( "toString", "()L"JAVA_LANG_STRING";" ) );
-    return QUrl( JNIWrapper::instance()->convertString( reinterpret_cast<jstring>( uriString ) ) );
+    JStringRef uriString = uriWrapper.callObjectMethod( uriWrapper.getMethodID( "toString", "()L"JAVA_LANG_STRING";" ) );
+    return QUrl( uriString.toQString() );
 }
 
 
-Soprano::Node Soprano::Sesame2::convertNode( jobject resource )
+Soprano::Node Soprano::Sesame2::convertNode( const JObjectRef& resource )
 {
     JNIObjectWrapper resourceWrapper( resource );
 
@@ -72,21 +72,19 @@ Soprano::Node Soprano::Sesame2::convertNode( jobject resource )
         return convertURI( resource );
     }
     else if ( JNIWrapper::instance()->env()->IsInstanceOf( resource, classCache()->classBNode ) ) {
-        jobject uri = resourceWrapper.callObjectMethod( resourceWrapper.getMethodID( "getID", "()L"JAVA_LANG_STRING";" ) );
-        return QUrl( JNIWrapper::instance()->convertString( reinterpret_cast<jstring>( uri ) ) );
+        JStringRef uri = resourceWrapper.callObjectMethod( resourceWrapper.getMethodID( "getID", "()L"JAVA_LANG_STRING";" ) );
+        return QUrl( uri.toQString() );
     }
     else if ( JNIWrapper::instance()->env()->IsInstanceOf( resource, classCache()->classLiteral ) ) {
-        jobject value = resourceWrapper.callObjectMethod( resourceWrapper.getMethodID( "getLabel", "()L"JAVA_LANG_STRING";" ) );
-        jobject lang = resourceWrapper.callObjectMethod( resourceWrapper.getMethodID( "getLanguage", "()L"JAVA_LANG_STRING";" ) );
-        jobject dataType = resourceWrapper.callObjectMethod( resourceWrapper.getMethodID( "getDatatype", "()L"ORG_OPENRDF_MODEL_URI";" ) );
+        JStringRef value = resourceWrapper.callObjectMethod( resourceWrapper.getMethodID( "getLabel", "()L"JAVA_LANG_STRING";" ) );
+        JStringRef lang = resourceWrapper.callObjectMethod( resourceWrapper.getMethodID( "getLanguage", "()L"JAVA_LANG_STRING";" ) );
+        JObjectRef dataType = resourceWrapper.callObjectMethod( resourceWrapper.getMethodID( "getDatatype", "()L"ORG_OPENRDF_MODEL_URI";" ) );
 
         if ( dataType ) {
-            return Node( LiteralValue::fromString( JNIWrapper::instance()->convertString( reinterpret_cast<jstring>( value ) ), convertURI( dataType ) ),
-                         JNIWrapper::instance()->convertString( reinterpret_cast<jstring>( lang ) ) );
+            return Node( LiteralValue::fromString( value.toQString(), convertURI( dataType ) ), lang.toQString() );
         }
         else {
-            return Node( LiteralValue( JNIWrapper::instance()->convertString( reinterpret_cast<jstring>( value ) ) ),
-                         JNIWrapper::instance()->convertString( reinterpret_cast<jstring>( lang ) ) );
+            return Node( LiteralValue( value.toQString() ), lang.toQString() );
         }
     }
     else {
@@ -96,16 +94,16 @@ Soprano::Node Soprano::Sesame2::convertNode( jobject resource )
 }
 
 
-Soprano::Statement Soprano::Sesame2::convertStatement( jobject o )
+Soprano::Statement Soprano::Sesame2::convertStatement( const JObjectRef& o )
 {
     Q_ASSERT( JNIWrapper::instance()->env()->IsInstanceOf( o, JNIWrapper::instance()->env()->FindClass( ORG_OPENRDF_MODEL_STATEMENT ) ) );
 
     JNIObjectWrapper statementWrapper( o );
 
-    jobject subject = statementWrapper.callObjectMethod( statementWrapper.getMethodID( "getSubject", "()L"ORG_OPENRDF_MODEL_RESOURCE";" ) );
-    jobject predicate = statementWrapper.callObjectMethod( statementWrapper.getMethodID( "getPredicate", "()L"ORG_OPENRDF_MODEL_URI";" ) );
-    jobject object = statementWrapper.callObjectMethod( statementWrapper.getMethodID( "getObject", "()L"ORG_OPENRDF_MODEL_VALUE";" ) );
-    jobject context = statementWrapper.callObjectMethod( statementWrapper.getMethodID( "getContext", "()L"ORG_OPENRDF_MODEL_RESOURCE";" ) );
+    JObjectRef subject = statementWrapper.callObjectMethod( statementWrapper.getMethodID( "getSubject", "()L"ORG_OPENRDF_MODEL_RESOURCE";" ) );
+    JObjectRef predicate = statementWrapper.callObjectMethod( statementWrapper.getMethodID( "getPredicate", "()L"ORG_OPENRDF_MODEL_URI";" ) );
+    JObjectRef object = statementWrapper.callObjectMethod( statementWrapper.getMethodID( "getObject", "()L"ORG_OPENRDF_MODEL_VALUE";" ) );
+    JObjectRef context = statementWrapper.callObjectMethod( statementWrapper.getMethodID( "getContext", "()L"ORG_OPENRDF_MODEL_RESOURCE";" ) );
 
     return Statement( convertNode( subject ),
                       convertNode( predicate ),

@@ -23,6 +23,7 @@
 #define _SESAME2_REPOSITORY_CONNECTION_H_
 
 #include "jniobjectwrapper.h"
+#include "jobjectref.h"
 
 namespace Soprano {
     namespace Sesame2 {
@@ -30,40 +31,42 @@ namespace Soprano {
 	class RepositoryConnection : public JNIObjectWrapper
 	{
 	public:
-	    RepositoryConnection( jobject );
+	    RepositoryConnection( const JObjectRef& );
 	    ~RepositoryConnection();
 
 	    /**
 	     * method throws exceptions
 	     */
-	    jobject getContextIDs();
+	    JObjectRef getContextIDs();
 
 	    /**
 	     * method throws exceptions
 	     */
-	    void addStatement( jobject );
+	    void addStatement( const JObjectRef& );
 
 	    /**
 	     * args may be 0 as wildcard
 	     */
-	    jobject getStatements( jobject subject, jobject predicate, jobject object, jobject context );
+	    JObjectRef getStatements( const JObjectRef& subject, const JObjectRef& predicate, const JObjectRef& object, const JObjectRef& context );
 
 	    /**
 	     * args may be 0 as wildcard
 	     */
-	    bool hasStatement( jobject subject, jobject predicate, jobject object, jobject context );
+	    bool hasStatement( const JObjectRef& subject, const JObjectRef& predicate, const JObjectRef& object, const JObjectRef& context );
 
 	    /**
 	     * args may be 0 as wildcard
 	     */
-	    void remove( jobject subject, jobject predicate, jobject object, jobject context );
+	    void remove( const JObjectRef& subject, const JObjectRef& predicate, const JObjectRef& object, const JObjectRef& context );
 
 	    /**
 	     * This will call prepareQuery and query.evaluate
 	     */
-	    jobject query( jobject queryLang, jstring query );
+	    JObjectRef query( const JObjectRef& queryLang, const JStringRef& query );
 
 	    long size();
+
+	    void close();
 
 	private:
 	    class Private;

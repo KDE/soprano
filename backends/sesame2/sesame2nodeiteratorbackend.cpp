@@ -32,7 +32,7 @@
 class Soprano::Sesame2::NodeIteratorBackend::Private
 {
 public:
-    Private( jobject result_ )
+    Private( const JObjectRef& result_ )
         : result( result_ ) {
     }
 
@@ -42,7 +42,7 @@ public:
 };
 
 
-Soprano::Sesame2::NodeIteratorBackend::NodeIteratorBackend( jobject result )
+Soprano::Sesame2::NodeIteratorBackend::NodeIteratorBackend( const JObjectRef& result )
     : d( new Private( result ) )
 {
 }
@@ -57,7 +57,7 @@ Soprano::Sesame2::NodeIteratorBackend::~NodeIteratorBackend()
 bool Soprano::Sesame2::NodeIteratorBackend::next()
 {
     if ( d->result.hasNext() ) {
-        jobject next = d->result.next();
+        JObjectRef next = d->result.next();
         if ( next ) {
             clearError();
             d->current = convertNode( next );

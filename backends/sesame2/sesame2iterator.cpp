@@ -57,7 +57,7 @@ private:
 };
 
 
-Soprano::Sesame2::Iterator::Iterator( jobject o )
+Soprano::Sesame2::Iterator::Iterator( const JObjectRef& o )
     : JNIObjectWrapper( o ),
       d( new Private( this ) )
 {
@@ -87,7 +87,7 @@ bool Soprano::Sesame2::Iterator::hasNext()
 }
 
 
-jobject Soprano::Sesame2::Iterator::next()
+JObjectRef Soprano::Sesame2::Iterator::next()
 {
     return callObjectMethod( d->IDnext() );
 }

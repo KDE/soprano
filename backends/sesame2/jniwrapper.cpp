@@ -100,7 +100,7 @@ JNIEnv* JNIWrapper::env() const
 }
 
 
-jobject JNIWrapper::constructObject( const char* className,  const char* constructorSig, ... )
+JObjectRef JNIWrapper::constructObject( const char* className,  const char* constructorSig, ... )
 {
     static const char* constructorName = "<init>";
     static const char* defaultConstructorSig = "()V";
@@ -122,7 +122,7 @@ jobject JNIWrapper::constructObject( const char* className,  const char* constru
     va_list args;
     va_start( args, constructorSig );
 
-    jobject newObject = env()->NewObjectV( clazz, constructorId, args );
+    JObjectRef newObject = env()->NewObjectV( clazz, constructorId, args );
 
     va_end( args );
 
@@ -132,31 +132,6 @@ jobject JNIWrapper::constructObject( const char* className,  const char* constru
     }
 
     return newObject;
-}
-
-
-QString JNIWrapper::convertString( jstring s )
-{
-    if ( s ) {
-        const jchar* chars = env()->GetStringChars( s, 0 );
-        QString qs = QString::fromUtf16( chars );
-        env()->ReleaseStringChars( s, chars );
-        return qs;
-    }
-    else {
-        return QString();
-    }
-}
-
-
-jstring JNIWrapper::convertString( const QString& s )
-{
-    jstring js = env()->NewStringUTF( s.toUtf8().data() );
-    if ( !js ) {
-        qDebug() << "Failed to create string object with value:" << s;
-        debugException();
-    }
-    return js;
 }
 
 
@@ -181,7 +156,7 @@ Soprano::Error::Error JNIWrapper::convertAndClearException()
     if ( exception ) {
         JNIObjectWrapper exWr( exception );
         jmethodID id = exWr.getMethodID( "getMessage", "()L"JAVA_LANG_STRING";" );
-        QString message = JNIWrapper::instance()->convertString( reinterpret_cast<jstring>( exWr.callObjectMethod( id ) ) );
+        QString message = JStringRef( exWr.callObjectMethod( id ) ).toQString();
         env()->ExceptionClear();
         return Soprano::Error::Error( message, Soprano::Error::ERROR_UNKNOWN );
     }

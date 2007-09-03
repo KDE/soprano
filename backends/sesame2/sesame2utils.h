@@ -24,6 +24,8 @@
 
 #include <jni.h>
 
+#include "jobjectref.h"
+
 class QUrl;
 
 namespace Soprano {
@@ -32,9 +34,9 @@ namespace Soprano {
     class Statement;
 
     namespace Sesame2 {
-	QUrl convertURI( jobject uri );
-	Node convertNode( jobject resource );
-	Statement convertStatement( jobject o );
+	QUrl convertURI( const JObjectRef& uri );
+	Node convertNode( const JObjectRef& resource );
+	Statement convertStatement( const JObjectRef& o );
     }
 }
 

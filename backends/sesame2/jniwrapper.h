@@ -28,6 +28,8 @@
 
 #include <soprano/error.h>
 
+#include "jobjectref.h"
+
 /**
  * The JNI wrapper takes care of creating, initializing, and deleting the Java VM.
  * It also properly attaches new threads to the VM
@@ -40,9 +42,7 @@ public:
 
     JNIEnv* env() const;
 
-    QString convertString( jstring s );
-    jstring convertString( const QString& s );
-    jobject constructObject( const char* className, const char* constructorSignature = 0, ... );
+    JObjectRef constructObject( const char* className, const char* constructorSignature = 0, ... );
 
     bool exceptionOccured();
 

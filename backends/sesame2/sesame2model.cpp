@@ -30,6 +30,7 @@
 #include "sesame2nodeiteratorbackend.h"
 #include "sesame2queryresultiteratorbackend.h"
 #include "jniwrapper.h"
+#include "jobjectref.h"
 
 #include <soprano/statementiterator.h>
 #include <soprano/queryresultiterator.h>
@@ -58,7 +59,7 @@ Soprano::Sesame2::Model::~Model()
 Soprano::Error::ErrorCode Soprano::Sesame2::Model::addStatement( const Statement &statement )
 {
     clearError();
-    if ( jobject sesameStatement = m_repository->valueFactory()->convertStatement( statement ) ) {
+    if ( JObjectRef sesameStatement = m_repository->valueFactory()->convertStatement( statement ) ) {
         if ( JNIWrapper::instance()->exceptionOccured() ) {
             setError( JNIWrapper::instance()->convertAndClearException() );
             return Error::ERROR_UNKNOWN;
@@ -85,7 +86,7 @@ Soprano::NodeIterator Soprano::Sesame2::Model::listContexts() const
 
     QList<Soprano::Node> contexts;
 
-    jobject ids = m_repository->repositoryConnection()->getContextIDs();
+    JObjectRef ids = m_repository->repositoryConnection()->getContextIDs();
 
     if ( JNIWrapper::instance()->exceptionOccured() ) {
         qDebug() << "(Soprano::Sesame2::Model::listContexts) failed.";
@@ -111,11 +112,10 @@ Soprano::QueryResultIterator Soprano::Sesame2::Model::executeQuery( const QueryL
     jfieldID sparqlID = JNIWrapper::instance()->env()->GetStaticFieldID( JNIWrapper::instance()->env()->FindClass( ORG_OPENRDF_QUERY_QUERYLANGUAGE ),
                                                                          "SPARQL",
                                                                          "L"ORG_OPENRDF_QUERY_QUERYLANGUAGE";" );
-    jobject sparqlQueryLang = JNIWrapper::instance()->env()->GetStaticObjectField( JNIWrapper::instance()->env()->FindClass( ORG_OPENRDF_QUERY_QUERYLANGUAGE ),
-                                                                                   sparqlID );
+    JObjectRef sparqlQueryLang = JNIWrapper::instance()->env()->GetStaticObjectField( JNIWrapper::instance()->env()->FindClass( ORG_OPENRDF_QUERY_QUERYLANGUAGE ),
+                                                                                      sparqlID );
 
-    jobject queryResult = m_repository->repositoryConnection()->query( sparqlQueryLang,
-                                                                       JNIWrapper::instance()->convertString( query.query() ) );
+    JObjectRef queryResult = m_repository->repositoryConnection()->query( sparqlQueryLang, JStringRef( query.query() ) );
 
     if ( queryResult ) {
         m_openIterators.append( queryResult );
@@ -133,28 +133,28 @@ Soprano::StatementIterator Soprano::Sesame2::Model::listStatements( const Statem
     clearError();
 
     // we are not using convertStatement here since we support wildcards
-    jobject subject = m_repository->valueFactory()->convertNode( statement.subject() );
+    JObjectRef subject = m_repository->valueFactory()->convertNode( statement.subject() );
     if ( JNIWrapper::instance()->exceptionOccured() ) {
         setError( JNIWrapper::instance()->convertAndClearException() );
         return StatementIterator();
     }
-    jobject predicate = m_repository->valueFactory()->convertNode( statement.predicate() );
+    JObjectRef predicate = m_repository->valueFactory()->convertNode( statement.predicate() );
     if ( JNIWrapper::instance()->exceptionOccured() ) {
         setError( JNIWrapper::instance()->convertAndClearException() );
         return StatementIterator();
     }
-    jobject object = m_repository->valueFactory()->convertNode( statement.object() );
+    JObjectRef object = m_repository->valueFactory()->convertNode( statement.object() );
     if ( JNIWrapper::instance()->exceptionOccured() ) {
         setError( JNIWrapper::instance()->convertAndClearException() );
         return StatementIterator();
     }
-    jobject context = m_repository->valueFactory()->convertNode( statement.context() );
+    JObjectRef context = m_repository->valueFactory()->convertNode( statement.context() );
     if ( JNIWrapper::instance()->exceptionOccured() ) {
         setError( JNIWrapper::instance()->convertAndClearException() );
         return StatementIterator();
     }
 
-    jobject results = m_repository->repositoryConnection()->getStatements( subject, predicate, object, context );
+    JObjectRef results = m_repository->repositoryConnection()->getStatements( subject, predicate, object, context );
     if ( JNIWrapper::instance()->exceptionOccured() ) {
         qDebug() << "(Soprano::Sesame2::Model::listStatements) failed.";
         setError( JNIWrapper::instance()->convertAndClearException() );
@@ -172,22 +172,22 @@ Soprano::Error::ErrorCode Soprano::Sesame2::Model::removeStatements( const State
     clearError();
 
     // we are not using convertStatement here since we support wildcards
-    jobject subject = m_repository->valueFactory()->convertNode( statement.subject() );
+    JObjectRef subject = m_repository->valueFactory()->convertNode( statement.subject() );
     if ( JNIWrapper::instance()->exceptionOccured() ) {
         setError( JNIWrapper::instance()->convertAndClearException() );
         return Error::ERROR_UNKNOWN;
     }
-    jobject predicate = m_repository->valueFactory()->convertNode( statement.predicate() );
+    JObjectRef predicate = m_repository->valueFactory()->convertNode( statement.predicate() );
     if ( JNIWrapper::instance()->exceptionOccured() ) {
         setError( JNIWrapper::instance()->convertAndClearException() );
         return Error::ERROR_UNKNOWN;
     }
-    jobject object = m_repository->valueFactory()->convertNode( statement.object() );
+    JObjectRef object = m_repository->valueFactory()->convertNode( statement.object() );
     if ( JNIWrapper::instance()->exceptionOccured() ) {
         setError( JNIWrapper::instance()->convertAndClearException() );
         return Error::ERROR_UNKNOWN;
     }
-    jobject context = m_repository->valueFactory()->convertNode( statement.context() );
+    JObjectRef context = m_repository->valueFactory()->convertNode( statement.context() );
     if ( JNIWrapper::instance()->exceptionOccured() ) {
         setError( JNIWrapper::instance()->convertAndClearException() );
         return Error::ERROR_UNKNOWN;
@@ -223,22 +223,22 @@ bool Soprano::Sesame2::Model::containsStatements( const Statement &statement ) c
     clearError();
 
     // we are not using convertStatement here since we support wildcards
-    jobject subject = m_repository->valueFactory()->convertNode( statement.subject() );
+    JObjectRef subject = m_repository->valueFactory()->convertNode( statement.subject() );
     if ( JNIWrapper::instance()->exceptionOccured() ) {
         setError( JNIWrapper::instance()->convertAndClearException() );
         return false;
     }
-    jobject predicate = m_repository->valueFactory()->convertNode( statement.predicate() );
+    JObjectRef predicate = m_repository->valueFactory()->convertNode( statement.predicate() );
     if ( JNIWrapper::instance()->exceptionOccured() ) {
         setError( JNIWrapper::instance()->convertAndClearException() );
         return false;
     }
-    jobject object = m_repository->valueFactory()->convertNode( statement.object() );
+    JObjectRef object = m_repository->valueFactory()->convertNode( statement.object() );
     if ( JNIWrapper::instance()->exceptionOccured() ) {
         setError( JNIWrapper::instance()->convertAndClearException() );
         return false;
     }
-    jobject context = m_repository->valueFactory()->convertNode( statement.context() );
+    JObjectRef context = m_repository->valueFactory()->convertNode( statement.context() );
     if ( JNIWrapper::instance()->exceptionOccured() ) {
         setError( JNIWrapper::instance()->convertAndClearException() );
         return false;
@@ -256,7 +256,7 @@ bool Soprano::Sesame2::Model::containsStatements( const Statement &statement ) c
 
 void Soprano::Sesame2::Model::closeIterators()
 {
-    Q_FOREACH( jobject it, m_openIterators ) {
+    Q_FOREACH( JObjectRef it, m_openIterators ) {
         Iterator( it ).close();
     }
     m_openIterators.clear();

@@ -23,6 +23,7 @@
 #define _SESAME2_VALUE_FACTORY_H_
 
 #include "jniobjectwrapper.h"
+#include "jobjectref.h"
 
 namespace Soprano {
 
@@ -33,18 +34,18 @@ namespace Soprano {
 	class ValueFactory : public JNIObjectWrapper
 	{
 	public:
-	    ValueFactory( jobject );
+	    ValueFactory( const JObjectRef& );
 	    ~ValueFactory();
 
 	    /**
 	     * method throws exceptions
 	     */
-	    jobject convertNode( const Node& node );
+	    JObjectRef convertNode( const Node& node );
 
 	    /**
 	     * method throws exceptions
 	     */
-	    jobject convertStatement( const Statement& statement );
+	    JObjectRef convertStatement( const Statement& statement );
 
 	private:
 	    class Private;

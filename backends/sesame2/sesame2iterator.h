@@ -30,12 +30,12 @@ namespace Soprano {
 	class Iterator : public JNIObjectWrapper
 	{
 	public:
-	    Iterator( jobject );
+	    Iterator( const JObjectRef& );
 	    ~Iterator();
 
 	    bool hasNext();
 
-	    jobject next();
+	    JObjectRef next();
 
 	    void close();
 

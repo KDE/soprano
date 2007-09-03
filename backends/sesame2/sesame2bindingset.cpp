@@ -40,7 +40,7 @@ private:
 };
 
 
-Soprano::Sesame2::BindingSet::BindingSet( jobject o )
+Soprano::Sesame2::BindingSet::BindingSet( const JObjectRef& o )
     : JNIObjectWrapper( o ),
       d( new Private( this ) )
 {
@@ -53,7 +53,7 @@ Soprano::Sesame2::BindingSet::~BindingSet()
 }
 
 
-jobject Soprano::Sesame2::BindingSet::getValue( jstring s )
+JObjectRef Soprano::Sesame2::BindingSet::getValue( const JStringRef& s )
 {
-    return callObjectMethod( d->IDgetValue(), s );
+    return callObjectMethod( d->IDgetValue(), s.data() );
 }
