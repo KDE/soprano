@@ -79,8 +79,10 @@ namespace Soprano {
 	    /**
 	     * Open the index.
 	     * \param folder The folder where the index is stored.
+	     * \param force If true any CLucene locks on the folder are removed. This is useful
+	     * if a previous session crashed and left an unused lock lying around.
 	     */
-	    bool open( const QString& folder );
+	    bool open( const QString& folder, bool force = false );
 
 	    void close();
 

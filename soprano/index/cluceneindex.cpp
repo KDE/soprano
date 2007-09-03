@@ -203,7 +203,7 @@ Soprano::Index::CLuceneIndex::~CLuceneIndex()
 }
 
 
-bool Soprano::Index::CLuceneIndex::open( const QString& folder )
+bool Soprano::Index::CLuceneIndex::open( const QString& folder, bool force )
 {
     close();
 
@@ -227,8 +227,16 @@ bool Soprano::Index::CLuceneIndex::open( const QString& folder )
     // get rid of any locks that may have been left by previous (crashed)
     // sessions
     if ( lucene::index::IndexReader::isLocked( d->indexDir ) ) {
-        qDebug() << "(Soprano::Index::CLuceneIndex::open) Removing lock for folder " << folder;
-        lucene::index::IndexReader::unlock( d->indexDir );
+        if ( force ) {
+            qDebug() << "(Soprano::Index::CLuceneIndex::open) unlocking directory " << folder;
+            lucene::index::IndexReader::unlock( d->indexDir );
+        }
+        else {
+            qDebug() << "(Soprano::Index::CLuceneIndex::open) index folder is locked! Make sure no other clucene processes work on the same data." << folder;
+
+            setError( QString( "Index folder '%1' is locked." ).arg( folder ) );
+            return false;
+        }
     }
 
     return true;

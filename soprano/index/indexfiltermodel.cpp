@@ -90,10 +90,13 @@ Soprano::Error::ErrorCode Soprano::Index::IndexFilterModel::removeStatements( co
     // FIXME: can we handle this is the CLuceneIndex?
     Soprano::StatementIterator it = parentModel()->listStatements( statement );
     while ( it.next() ) {
-        Error::ErrorCode c = d->index->removeStatement( *it );
-        if ( c != Error::ERROR_NONE ) {
-            setError( d->index->lastError() );
-            return c;
+        Statement s = *it;
+        if ( s.object().isLiteral() ) {
+            Error::ErrorCode c = d->index->removeStatement( *it );
+            if ( c != Error::ERROR_NONE ) {
+                setError( d->index->lastError() );
+                return c;
+            }
         }
     }
 
