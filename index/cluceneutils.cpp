@@ -21,7 +21,7 @@
 
 #include "cluceneutils.h"
 #include "wstring.h"
-#include "../error.h"
+#include "error.h"
 
 namespace Soprano {
     namespace Index {

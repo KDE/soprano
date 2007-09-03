@@ -21,6 +21,11 @@ add_subdirectory(test)
 add_subdirectory(rules)
 add_subdirectory(includes)
 
+find_package(CLucene)
+if(CLucene_FOUND)
+  add_subdirectory(index)
+endif(CLucene_FOUND)
+
 # apidox
 find_package(Doxygen)
 

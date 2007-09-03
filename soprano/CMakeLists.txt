@@ -142,8 +142,3 @@ INSTALL(FILES
   query/queryserializer.h
   soprano.h
   DESTINATION include/soprano)
-
-find_package(CLucene)
-if(CLucene_FOUND)
-  add_subdirectory(index)
-endif(CLucene_FOUND)

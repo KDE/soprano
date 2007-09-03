@@ -27,9 +27,9 @@
 #include <QtCore/QDir>
 
 #include "../soprano/soprano.h"
-#include "../soprano/index/indexfiltermodel.h"
-#include "../soprano/index/cluceneindex.h"
-#include "../soprano/index/wstring.h"
+#include "../index/indexfiltermodel.h"
+#include "../index/cluceneindex.h"
+#include "../index/wstring.h"
 
 #include <CLucene.h>
 

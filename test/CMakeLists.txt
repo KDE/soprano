@@ -103,7 +103,7 @@ add_test(queryapitest ${EXECUTABLE_OUTPUT_PATH}/queryapitest)
 
 # WString test
 qt4_automoc(wstringtest wstringtest.cpp)
-add_executable(wstringtest wstringtest.cpp ../soprano/index/wstring.cpp)
+add_executable(wstringtest wstringtest.cpp ../index/wstring.cpp)
 target_link_libraries(wstringtest ${QT_QTCORE_LIBRARY} ${QT_QTTEST_LIBRARY})
 add_test(wstringtest ${EXECUTABLE_OUTPUT_PATH}/wstringtest)
 

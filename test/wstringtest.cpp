@@ -13,7 +13,7 @@
  */
 
 #include "wstringtest.h"
-#include "../soprano/index/wstring.h"
+#include "../index/wstring.h"
 
 #include <wchar.h>
 
