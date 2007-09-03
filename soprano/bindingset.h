@@ -36,7 +36,7 @@ namespace Soprano {
     /**
      * \brief Represents one set of bindings in the result of a select query.
      *
-     * BindingSet is mostly a convinience class for caching of query
+     * BindingSet is mostly a convenience class for caching of query
      * results.
      *
      * \sa QueryResultIterator

@@ -101,17 +101,17 @@ namespace Soprano
 	virtual Error::ErrorCode addStatement( const Statement &statement ) = 0;
 
 	/**
-	 * Convinience method which adds all statements in model to this Model.
+	 * Convenience method which adds all statements in model to this Model.
 	 */
 	Error::ErrorCode addModel( const Model &model );
 
 	/**
-	 * Convinience method which adds all statements in iter to this Model.
+	 * Convenience method which adds all statements in iter to this Model.
 	 */
 	Error::ErrorCode addStatements( StatementIterator iter );
 
 	/**
-	 * Convinience method which adds all %statements in statements to this Model.
+	 * Convenience method which adds all %statements in statements to this Model.
 	 */
 	Error::ErrorCode addStatements( const QList<Statement> &statements );
 
@@ -135,7 +135,7 @@ namespace Soprano
 	virtual bool containsStatements( const Statement &statement ) const = 0;
 
 	/**
-	 * Convinience method which is based on containsStatements
+	 * Convenience method which is based on containsStatements
 	 */
 	bool containsContext( const Node &context ) const;
 
@@ -185,14 +185,14 @@ namespace Soprano
 	virtual StatementIterator listStatements( const Statement &partial ) const = 0;
 
 	/**
-	 * Convinience method which lists all statements in this Model.
+	 * Convenience method which lists all statements in this Model.
 	 *
 	 * \return An iterator for all the matched Statements, on error an invalid iterator is returned.
 	 */
 	StatementIterator listStatements() const;
 
 	/**
-	 * Convinience method which lists all statements in context.
+	 * Convenience method which lists all statements in context.
 	 *
 	 * \return An iterator for all the matched Statements, on error an invalid iterator is returned.
 	 */
@@ -207,17 +207,17 @@ namespace Soprano
 	virtual Error::ErrorCode removeStatements( const Statement &statement ) = 0;
 
 	/**
-	 * Convinience method which removes all %statements in statements.
+	 * Convenience method which removes all %statements in statements.
 	 */
 	Error::ErrorCode removeStatements( const QList<Statement> &statements );
 
         /**
-	 * Convinience method that removes all statements in the context.
+	 * Convenience method that removes all statements in the context.
 	 */
 	Error::ErrorCode removeContext( const Node& );
 
 	/**
-	 * Convinience method that clear the Model of all statements
+	 * Convenience method that clear the Model of all statements
 	 */
 	Error::ErrorCode removeAllStatements();
 

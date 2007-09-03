@@ -98,7 +98,7 @@ namespace Soprano {
 	     *
 	     * \return A list of query results.
 	     */
-	    QList<QueryResult> query( const QString& cluceneQuery ) const;
+//	    QList<QueryResult> query( const QString& cluceneQuery ) const;
 
 	    /**
 	     * Extract full text matching parts of a %query and replace them with

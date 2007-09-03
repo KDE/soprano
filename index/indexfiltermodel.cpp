@@ -104,18 +104,18 @@ Soprano::Error::ErrorCode Soprano::Index::IndexFilterModel::removeStatements( co
 }
 
 
-QList<Soprano::Index::QueryResult> Soprano::Index::IndexFilterModel::query( const QString& cluceneQuery ) const
-{
-    lucene::search::Hits* hits = index()->search( cluceneQuery );
-    QList<QueryResult> results;
-    if ( hits ) {
-        for ( int i = 0; i < hits->length(); ++i ) {
-            results.append( QueryResult( index()->getResource( &hits->doc( i ) ), hits->score( i ) ) );
-        }
-        _CLDELETE( hits );
-    }
-    return results;
-}
+// QList<Soprano::Index::QueryResult> Soprano::Index::IndexFilterModel::query( const QString& cluceneQuery ) const
+// {
+//     lucene::search::Hits* hits = index()->search( cluceneQuery );
+//     QList<QueryResult> results;
+//     if ( hits ) {
+//         for ( int i = 0; i < hits->length(); ++i ) {
+//             results.append( QueryResult( index()->getResource( &hits->doc( i ) ), hits->score( i ) ) );
+//         }
+//         _CLDELETE( hits );
+//     }
+//     return results;
+// }
 
 
 // Soprano::Query::Query Soprano::Index::IndexFilterModel::evaluateAndRewriteQuery( const Soprano::Query::Query& query ) const

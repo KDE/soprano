@@ -117,7 +117,7 @@ namespace Soprano {
 	Statement currentStatement() const;
 
 	/**
-	 * Convinience method that puts all current bindings into one map.
+	 * Convenience method that puts all current bindings into one map.
 	 * This method does only make sense for tuple queries.
 	 */
 	BindingSet currentBindings() const;
@@ -196,13 +196,13 @@ namespace Soprano {
 	bool boolValue() const;
 
 	/**
-	 * Convinience method that collects all binding sets that are left
+	 * Convenience method that collects all binding sets that are left
 	 * in the iterator.
 	 */
 	QList<BindingSet> allBindings();
 
 	/**
-	 * Conviniece method that creates an iterator over the statements in this query result.
+	 * Convenience method that creates an iterator over the statements in this query result.
 	 * This method does only make sense for graph queries.
 	 *
 	 * \warning The new iterator is just a wrapper around this one. Thus, changing it will also
@@ -213,7 +213,7 @@ namespace Soprano {
 	StatementIterator iterateStatements() const;
 
 	/**
-	 * Conviniece method that creates an iterator over one column of bindings in this query result.
+	 * Convenience method that creates an iterator over one column of bindings in this query result.
 	 * This method does only make sense for tuple queries.
 	 *
 	 * \param variableName The name of the requested variable.
@@ -227,7 +227,7 @@ namespace Soprano {
 	NodeIterator iterateBindings( const QString& variableName ) const;
 
 	/**
-	 * Conviniece method that creates an iterator over one column of bindings in this query result.
+	 * Convenience method that creates an iterator over one column of bindings in this query result.
 	 * This method does only make sense for tuple queries.
 	 *
 	 * \param offset The index of the requested variable.

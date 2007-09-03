@@ -175,7 +175,7 @@ namespace Soprano {
 	    void setError( const Error& ) const;
 
 	    /**
-	     * Convinience method to set simple string error messages with a default
+	     * Convenience method to set simple string error messages with a default
 	     * error code ERROR_UNKNOWN.
 	     */
 	    void setError( const QString& errorMessage, int code = ERROR_UNKNOWN ) const;

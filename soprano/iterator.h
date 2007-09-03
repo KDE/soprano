@@ -126,7 +126,7 @@ namespace Soprano {
 	bool isValid() const;
 
 	/**
-	 * Convinience method which extracts all elements (this does not include the
+	 * Convenience method which extracts all elements (this does not include the
 	 * elements that have already been read from the iterator) from the iterator
 	 * and returns them in a list.
 	 *

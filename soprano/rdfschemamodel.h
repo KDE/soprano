@@ -31,7 +31,7 @@ namespace Soprano {
     class StatementIterator;
 
     /**
-     * \brief Provides convinience methods to handle RDFS data.
+     * \brief Provides convenience methods to handle RDFS data.
      *
      * Interface based on Sesame's RdfSchemaSource. (Copyright (C) 2002-2006 Aduna BV, GNU LGPL License applies.)
      *

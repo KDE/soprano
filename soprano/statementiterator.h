@@ -70,7 +70,7 @@ namespace Soprano {
 	StatementIterator& operator=( const StatementIterator& );
 
 	/**
-	 * Convinience method which extracts all statements (this does not include the
+	 * Convenience method which extracts all statements (this does not include the
 	 * statements that have already been read from the iterator) from the iterator
 	 * and returns them in a list.
 	 *
@@ -81,7 +81,7 @@ namespace Soprano {
 	QList<Statement> allStatements() { return allElements(); }
 
 	/**
-	 * Conviniece method that creates an iterator over the subject nodes of the statements
+	 * Convenience method that creates an iterator over the subject nodes of the statements
 	 * in this iterator.
 	 *
 	 * \warning The new iterator is just a wrapper around this one. Thus, changing it will also
@@ -92,7 +92,7 @@ namespace Soprano {
 	NodeIterator iterateSubjects() const;
 
 	/**
-	 * Conviniece method that creates an iterator over the predicate nodes of the statements
+	 * Convenience method that creates an iterator over the predicate nodes of the statements
 	 * in this iterator.
 	 *
 	 * \warning The new iterator is just a wrapper around this one. Thus, changing it will also
@@ -103,7 +103,7 @@ namespace Soprano {
 	NodeIterator iteratePredicates() const;
 
 	/**
-	 * Conviniece method that creates an iterator over the object nodes of the statements
+	 * Convenience method that creates an iterator over the object nodes of the statements
 	 * in this iterator.
 	 *
 	 * \warning The new iterator is just a wrapper around this one. Thus, changing it will also
@@ -114,7 +114,7 @@ namespace Soprano {
 	NodeIterator iterateObjects() const;
 
 	/**
-	 * Conviniece method that creates an iterator over the context nodes of the statements
+	 * Convenience method that creates an iterator over the context nodes of the statements
 	 * in this iterator.
 	 *
 	 * \warning The new iterator is just a wrapper around this one. Thus, changing it will also

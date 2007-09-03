@@ -67,7 +67,7 @@ namespace Soprano {
 	NodeIterator& operator=( const NodeIterator& );
 
 	/**
-	 * Convinience method which extracts all nodes (this does not include the
+	 * Convenience method which extracts all nodes (this does not include the
 	 * nodes that have already been read from the iterator) from the iterator
 	 * and returns them in a list.
 	 *
