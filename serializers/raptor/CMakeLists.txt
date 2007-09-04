@@ -1,9 +1,5 @@
 project(soprano_raptor_serializer)
 
-set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${soprano_SOURCE_DIR}/cmake/modules)
-
-find_package(Redland REQUIRED) 
-
 include_directories(
   ${QT_QTCORE_INCLUDE_DIR}
   ${CMAKE_SOURCE_DIR}

@@ -1,9 +1,5 @@
 project(soprano_rasqalqueryparser)
 
-#IF(REDLAND_FOUND)
-
-set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${soprano_SOURCE_DIR}/cmake/modules)
-
 include_directories(
   ${QT_QTCORE_INCLUDE_DIR}
   ${CMAKE_SOURCE_DIR}
@@ -39,5 +35,3 @@ INSTALL(TARGETS soprano_rasqalqueryparser
 	RUNTIME DESTINATION bin/soprano
 	ARCHIVE DESTINATION lib/soprano
 )
-
-#ENDIF(REDLAND_FOUND)

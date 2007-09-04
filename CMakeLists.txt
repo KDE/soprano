@@ -23,12 +23,6 @@ else(JAVA_INCLUDE_PATH)
   message(STATUS "Could not find Java JNI")
 endif(JAVA_INCLUDE_PATH)
 
-if(NOT REDLAND_FOUND AND JNI_1_6_FOUND AND TSTORE_FOUND)
-  message("WARNING: No Soprano backends will be compiled due to missing dependancies!")
-  message("WARNING: Soprano will not be very useful without storage backends!")
-endif(NOT REDLAND_FOUND AND JNI_1_6_FOUND AND TSTORE_FOUND)
-
-
 set (LIB_SUFFIX "" CACHE STRING "Define suffix of directory name (32/64)" )
 set (LIB_DESTINATION "${CMAKE_INSTALL_PREFIX}/lib${LIB_SUFFIX}" CACHE STRING "Library directory name" FORCE)
 
@@ -65,3 +59,59 @@ if(DOXYGEN_EXECUTABLE)
     COMMAND ${DOXYGEN_EXECUTABLE} Doxyfile
     COMMAND docs/html/installdox -l qt4.tag@${QTDOCS} docs/html/*.html)
 endif(DOXYGEN_EXECUTABLE)
+
+message("---------------------------------------------------------------------------------------")
+message("-- Soprano Components that will be built:")
+if(NOT REDLAND_FOUND AND JNI_1_6_FOUND AND TSTORE_FOUND)
+  message("   WARNING: No Soprano backends will be compiled due to missing dependancies!")
+  message("   WARNING: Soprano will not be very useful without storage backends!")
+endif(NOT REDLAND_FOUND AND JNI_1_6_FOUND AND TSTORE_FOUND)
+if(REDLAND_FOUND)
+  message("   * Redland storage backend")
+endif(REDLAND_FOUND)
+if(JNI_1_6_FOUND)
+  message("   * Sesame2 storage backend (java-based)")
+endif(JNI_1_6_FOUND)
+if(TSTORE_FOUND)
+  message("   * 3Store storage backend (the 3Store backend depends on a running and configured MySQL DB")
+  message("     and does not support removing of statements")
+endif(TSTORE_FOUND)
+
+if(REDLAND_FOUND)
+  message("   * Raptor RDF parser")
+endif(REDLAND_FOUND)
+
+if(REDLAND_FOUND)
+  message("   * Raptor RDF serializer")
+endif(REDLAND_FOUND)
+
+if(CLucene_FOUND)
+  message("   * The CLucene-based full-text search index library")
+endif(CLucene_FOUND)
+
+
+message("")
+message("-- Soprano Components that will NOT be built:")
+if(NOT REDLAND_FOUND)
+  message("   * Redland storage backend")
+endif(NOT REDLAND_FOUND)
+if(NOT JNI_1_6_FOUND)
+  message("   * Sesame2 storage backend (java-based)")
+endif(NOT JNI_1_6_FOUND)
+if(NOT TSTORE_FOUND)
+  message("   * 3Store storage backend")
+endif(NOT TSTORE_FOUND)
+
+if(NOT REDLAND_FOUND)
+  message("   * Raptor RDF parser")
+endif(NOT REDLAND_FOUND)
+
+if(NOT REDLAND_FOUND)
+  message("   * Raptor RDF serializer")
+endif(NOT REDLAND_FOUND)
+
+if(NOT CLucene_FOUND)
+  message("   * The CLucene-based full-text search index library")
+endif(NOT CLucene_FOUND)
+
+message("---------------------------------------------------------------------------------------")
