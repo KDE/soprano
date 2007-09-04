@@ -209,8 +209,8 @@ Soprano::QueryResultIterator Soprano::Redland::RedlandModel::executeQuery( const
         return QueryResultIterator();
     }
 
-    librdf_query_set_limit( q , query.limit() );
-    librdf_query_set_offset( q, query.offset() );
+//     librdf_query_set_limit( q , query.limit() );
+//     librdf_query_set_offset( q, query.offset() );
 
     librdf_query_results *res = librdf_model_query_execute( d->model, q );
     if ( !res ) {

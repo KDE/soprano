@@ -119,6 +119,12 @@ bool Soprano::Error::Error::isParserError() const
 }
 
 
+Soprano::Error::ParserError Soprano::Error::Error::toParserError() const
+{
+    return ParserError( *this );
+}
+
+
 Soprano::Error::ParserError::ParserError()
     : Error( new ParserErrorData() )
 {

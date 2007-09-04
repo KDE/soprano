@@ -23,7 +23,10 @@
 #ifndef SOPRANO_QUERY_H
 #define SOPRANO_QUERY_H
 
-#include "soprano/soprano_export.h"
+#include "soprano_export.h"
+#include "sopranotypes.h"
+
+#include <QtCore/QSharedDataPointer>
 
 class QString;
 
@@ -38,36 +41,26 @@ namespace Soprano
     {
     public:
 	enum QueryType {
-	    SPARQL = 0,
-	    RDQL
+	    SPARQL = Query::QUERY_LANGUAGE_SPARQL, /**< \sa Query::QUERY_LANGUAGE_SPARQL */
+	    RDQL = Query::QUERY_LANGUAGE_RDQL      /**< \sa Query::QUERY_LANGUAGE_RDQL */
 	};
 
-	QueryLegacy( const QString &query, QueryType type);
-
-	QueryLegacy( const QString &query, QueryType type, int limit, int offset );
-
+	QueryLegacy( const QString &query, QueryType type );
 	QueryLegacy( const QueryLegacy &other );
-
 	~QueryLegacy();
+
+	QueryLegacy& operator=( const QueryLegacy& other );
 
 	QueryType type() const;
 
 	QString query() const;
-
-	int limit() const;
-
-	void setLimit(int limit);
-
-	int offset() const;
-
-	void setOffset(int offset);
 
 	static QString queryTypeToString( QueryType queryType);
 	static int queryTypeFromString( const QString& );
 
     private:
 	class Private;
-	Private* const d;
+	QSharedDataPointer<Private> d;
     };
 }
 

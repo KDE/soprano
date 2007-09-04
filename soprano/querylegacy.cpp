@@ -22,17 +22,14 @@
 #include "querylegacy.h"
 
 #include <QtCore/QString>
+#include <QtCore/QSharedData>
 
 
-class Soprano::QueryLegacy::Private
+class Soprano::QueryLegacy::Private : public QSharedData
 {
 public:
-  Private() : limit(-1), offset(-1)
-  {}
-  int limit;
-  int offset;
-  QString query;
-  QueryType type;
+    QString query;
+    QueryType type;
 };
 
 Soprano::QueryLegacy::QueryLegacy( const QString &query, QueryType type )
@@ -42,27 +39,20 @@ Soprano::QueryLegacy::QueryLegacy( const QString &query, QueryType type )
   d->type = type;
 }
 
-Soprano::QueryLegacy::QueryLegacy( const QString &query, QueryType type, int limit, int offset )
-    : d( new Private() )
-{
-  d->query = query;
-  d->type = type;
-  d->limit = limit;
-  d->offset = offset;
-}
-
 Soprano::QueryLegacy::QueryLegacy( const QueryLegacy &other )
-    : d( new Private() )
 {
-  d->query = other.query();
-  d->type = other.type();
-  d->limit = other.limit();
-  d->offset = other.offset();
+    d = other.d;
 }
 
 Soprano::QueryLegacy::~QueryLegacy()
 {
-  delete d;
+}
+
+
+Soprano::QueryLegacy& Soprano::QueryLegacy::operator=( const QueryLegacy& other )
+{
+    d = other.d;
+    return *this;
 }
 
 Soprano::QueryLegacy::QueryType Soprano::QueryLegacy::type() const
@@ -74,27 +64,6 @@ QString Soprano::QueryLegacy::query() const
 {
   return d->query;
 }
-
-int Soprano::QueryLegacy::limit() const
-{
-  return d->limit;
-}
-
-void Soprano::QueryLegacy::setLimit(int limit)
-{
-  d->limit = limit;
-}
-
-int Soprano::QueryLegacy::offset() const
-{
-  return d->offset;
-}
-
-void Soprano::QueryLegacy::setOffset(int offset)
-{
-  d->offset = offset;
-}
-
 
 QString Soprano::QueryLegacy::queryTypeToString( QueryType queryType )
 {

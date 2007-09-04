@@ -52,6 +52,7 @@ namespace Soprano {
 	SOPRANO_EXPORT QString errorMessage( ErrorCode );
 
 	class ErrorData;
+	class ParserError;
 
 	/**
 	 * Represents an error in %Soprano.
@@ -137,6 +138,20 @@ namespace Soprano {
 	     * In that case the error can be converted to a ParserError.
 	     */
 	    bool isParserError() const;
+
+	    /**
+	     * Converts this error into a ParserError.
+	     * This has the same effect as
+	     * \code
+	     * Error e;
+	     * ParserError p1( e );
+	     * \endcode
+	     *
+	     * \return If isParserError() returns true a ParserError
+	     * with a valid Locator value, otherwise a ParserError with
+	     * an empty Locator.
+	     */
+	    ParserError toParserError() const;
 	
 	protected:
 	    Error( ErrorData* );
