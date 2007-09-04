@@ -156,7 +156,17 @@ void Soprano::Server::ServerCore::serverConnectionFinished()
 
 Soprano::Model* Soprano::Server::ServerCore::createModel( const QList<BackendSetting>& settings )
 {
-    return backend()->createModel( settings );
+    Model* m = backend()->createModel( settings );
+    if ( m ) {
+        clearError();
+    }
+    else if ( backend()->lastError() ) {
+        setError( backend()->lastError() );
+    }
+    else {
+        setError( "Could not create new Model for unknown reason" );
+    }
+    return m;
 }
 
 #include "servercore.moc"

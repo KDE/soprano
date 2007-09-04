@@ -351,7 +351,6 @@ bool Soprano::Server::ClientConnection::iteratorNext( int id )
     bool r;
     Error::Error error;
     stream >> r >> error;
-
     setError( error );
     return r;
 }
@@ -364,20 +363,17 @@ Soprano::Node Soprano::Server::ClientConnection::nodeIteratorCurrent( int id )
 
     QDataStream stream( d->socket );
 
-    stream << COMMAND_ITERATOR_CURRENT << ( quint32 )id;
+    stream << COMMAND_ITERATOR_CURRENT_NODE << ( quint32 )id;
 
     if ( !d->socket->waitForReadyRead() ) {
         setError( "Command timed out." );
         return Node();
     }
 
-    // special case: see ServerConnection::Private::iteratorCurrent
     Node node;
     Error::Error error;
-    stream >> error;
-    if ( !error ) {
-        stream >> node;
-    }
+    stream >> node >> error;
+
     setError( error );
     return node;
 }
@@ -390,20 +386,16 @@ Soprano::Statement Soprano::Server::ClientConnection::statementIteratorCurrent( 
 
     QDataStream stream( d->socket );
 
-    stream << COMMAND_ITERATOR_CURRENT << ( quint32 )id;
+    stream << COMMAND_ITERATOR_CURRENT_STATEMENT << ( quint32 )id;
 
     if ( !d->socket->waitForReadyRead() ) {
         setError( "Command timed out." );
         return Statement();
     }
 
-    // special case: see ServerConnection::Private::iteratorCurrent
     Statement statement;
     Error::Error error;
-    stream >> error;
-    if ( !error ) {
-        stream >> statement;
-    }
+    stream >> statement >> error;
 
     setError( error );
     return statement;
@@ -417,20 +409,16 @@ Soprano::BindingSet Soprano::Server::ClientConnection::queryIteratorCurrent( int
 
     QDataStream stream( d->socket );
 
-    stream << COMMAND_ITERATOR_CURRENT << ( quint32 )id;
+    stream << COMMAND_ITERATOR_CURRENT_BINDINGSET << ( quint32 )id;
 
     if ( !d->socket->waitForReadyRead() ) {
         setError( "Command timed out." );
         return BindingSet();
     }
 
-    // special case: see ServerConnection::Private::iteratorCurrent
     BindingSet set;
     Error::Error error;
-    stream >> error;
-    if ( !error ) {
-        stream >> set;
-    }
+    stream >> set >> error;
 
     setError( error );
     return set;
@@ -444,7 +432,7 @@ Soprano::Statement Soprano::Server::ClientConnection::queryIteratorCurrentStatem
 
     QDataStream stream( d->socket );
 
-    stream << COMMAND_ITERATOR_QUERY_CURRENT_STATEMENT << ( quint32 )id;
+    stream << COMMAND_ITERATOR_CURRENT_STATEMENT << ( quint32 )id;
 
     if ( !d->socket->waitForReadyRead() ) {
         setError( "Command timed out." );

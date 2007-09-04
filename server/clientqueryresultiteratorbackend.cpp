@@ -168,7 +168,7 @@ bool Soprano::Server::ClientQueryResultIteratorBackend::boolValue() const
 {
     if ( m_model ) {
         bool r = m_model->client()->queryIteratorBoolValue( m_iteratorId );
-        setError( m_model->client()->lastError() );
+        setError( m_model->lastError() );
         return r;
     }
     else {

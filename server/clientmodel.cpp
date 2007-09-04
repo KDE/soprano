@@ -173,8 +173,12 @@ bool Soprano::Server::ClientModel::containsStatements( const Statement &statemen
 void Soprano::Server::ClientModel::closeIterator( int id ) const
 {
     if ( m_client ) {
-        m_client->iteratorClose( id );
-        m_openIterators.removeAll( id );
+        clearError();
+        if ( m_openIterators.contains( id ) ) {
+            m_client->iteratorClose( id );
+            m_openIterators.removeAll( id );
+            setError( m_client->lastError() );
+        }
     }
     else {
         setError( "Not connected to server." );

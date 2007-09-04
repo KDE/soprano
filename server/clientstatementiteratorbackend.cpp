@@ -71,7 +71,7 @@ void Soprano::Server::ClientStatementIteratorBackend::close()
 {
     if ( m_model ) {
         m_model->closeIterator( m_iteratorId );
-        setError( m_model->client()->lastError() );
+        setError( m_model->lastError() );
     }
     else {
         setError( "Connection to server closed." );

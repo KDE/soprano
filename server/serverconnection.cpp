@@ -77,7 +77,9 @@ public:
     void query( QDataStream& );
 
     void iteratorNext( QDataStream& stream );
-    void iteratorCurrent( QDataStream& stream );
+    void statementIteratorCurrent( QDataStream& stream );
+    void nodeIteratorCurrent( QDataStream& stream );
+    void queryIteratorCurrent( QDataStream& stream );
     void iteratorClose( QDataStream& stream );
     void queryIteratorCurrentStatement( QDataStream& stream );
     void queryIteratorType( QDataStream& stream );
@@ -176,16 +178,20 @@ void Soprano::Server::ServerConnection::run()
                 d->iteratorNext( stream );
                 break;
 
-            case COMMAND_ITERATOR_CURRENT:
-                d->iteratorCurrent( stream );
+            case COMMAND_ITERATOR_CURRENT_STATEMENT:
+                d->statementIteratorCurrent( stream );
+                break;
+
+            case COMMAND_ITERATOR_CURRENT_NODE:
+                d->nodeIteratorCurrent( stream );
+                break;
+
+            case COMMAND_ITERATOR_CURRENT_BINDINGSET:
+                d->queryIteratorCurrent( stream );
                 break;
 
             case COMMAND_ITERATOR_CLOSE:
                 d->iteratorClose( stream );
-                break;
-
-            case COMMAND_ITERATOR_QUERY_CURRENT_STATEMENT:
-                d->queryIteratorCurrentStatement( stream );
                 break;
 
             case COMMAND_ITERATOR_QUERY_TYPE:
@@ -435,21 +441,21 @@ void Soprano::Server::ServerConnection::Private::iteratorNext( QDataStream& stre
     quint32 id = 0;
     stream >> id;
 
-    QHash<quint32, StatementIterator>::iterator it = openStatementIterators.find( id );
-    if ( it != openStatementIterators.end() ) {
-        stream << it.value().next() << it.value().lastError();
+    QHash<quint32, StatementIterator>::iterator it1 = openStatementIterators.find( id );
+    if ( it1 != openStatementIterators.end() ) {
+        stream << it1.value().next() << it1.value().lastError();
         return;
     }
 
     QHash<quint32, NodeIterator>::iterator it2 = openNodeIterators.find( id );
     if ( it2 != openNodeIterators.end() ) {
-        stream << it2.value().next() << it.value().lastError();
+        stream << it2.value().next() << it2.value().lastError();
         return;
     }
 
     QHash<quint32, QueryResultIterator>::iterator it3 = openQueryIterators.find( id );
     if ( it3 != openQueryIterators.end() ) {
-        stream << it3.value().next() << it.value().lastError();
+        stream << it3.value().next() << it3.value().lastError();
         return;
     }
 
@@ -458,36 +464,60 @@ void Soprano::Server::ServerConnection::Private::iteratorNext( QDataStream& stre
 }
 
 
-void Soprano::Server::ServerConnection::Private::iteratorCurrent( QDataStream& stream )
+void Soprano::Server::ServerConnection::Private::statementIteratorCurrent( QDataStream& stream )
 {
-    qDebug() << "(ServerConnection::iteratorCurrent)";
+    qDebug() << "(ServerConnection::statementIteratorCurrent)";
     quint32 id = 0;
     stream >> id;
 
     QHash<quint32, StatementIterator>::iterator it = openStatementIterators.find( id );
     if ( it != openStatementIterators.end() ) {
-        Statement s = it.value().current();
-        stream << it.value().lastError() << s;
+        stream << it.value().current() << it.value().lastError();
         return;
     }
 
-    QHash<quint32, NodeIterator>::iterator it2 = openNodeIterators.find( id );
-    if ( it2 != openNodeIterators.end() ) {
-        Node n = it2.value().current();
-        stream << it.value().lastError() << n;
+    // could be a graph query iterator
+    QHash<quint32, QueryResultIterator>::iterator it2 = openQueryIterators.find( id );
+    if ( it2 != openQueryIterators.end() ) {
+        stream << it2.value().currentStatement() << it2.value().lastError();
         return;
     }
 
-    QHash<quint32, QueryResultIterator>::iterator it3 = openQueryIterators.find( id );
-    if ( it3 != openQueryIterators.end() ) {
-        BindingSet set = it3.value().current();
-        stream << it.value().lastError() << set;
+    stream << Statement() << Error::Error( "Invalid iterator ID." );
+    qDebug() << "(ServerConnection::statementIteratorCurrent) done";
+}
+
+
+void Soprano::Server::ServerConnection::Private::nodeIteratorCurrent( QDataStream& stream )
+{
+    qDebug() << "(ServerConnection::nodeIteratorCurrent)";
+    quint32 id = 0;
+    stream >> id;
+
+    QHash<quint32, NodeIterator>::iterator it = openNodeIterators.find( id );
+    if ( it != openNodeIterators.end() ) {
+        stream << it.value().current() << it.value().lastError();
+        return;
+    }
+    stream << Node() << Error::Error( "Invalid iterator ID." );
+    qDebug() << "(ServerConnection::nodeIteratorCurrent) done";
+}
+
+
+void Soprano::Server::ServerConnection::Private::queryIteratorCurrent( QDataStream& stream )
+{
+    qDebug() << "(ServerConnection::queryIteratorCurrent)";
+    quint32 id = 0;
+    stream >> id;
+
+    QHash<quint32, QueryResultIterator>::iterator it = openQueryIterators.find( id );
+    if ( it != openQueryIterators.end() ) {
+        stream << it.value().current() << it.value().lastError();
         return;
     }
 
-    // special case: we have multiple return types and do not know which would be the corrent one here. So we return nothing.
-    stream << Error::Error( "Invalid iterator ID." );
-    qDebug() << "(ServerConnection::iteratorCurrent) done";
+    stream << BindingSet() << Error::Error( "Invalid iterator ID." );
+    qDebug() << "(ServerConnection::queryIteratorCurrent) done";
 }
 
 
@@ -497,18 +527,18 @@ void Soprano::Server::ServerConnection::Private::iteratorClose( QDataStream& str
     quint32 id = 0;
     stream >> id;
 
-    QHash<quint32, StatementIterator>::iterator it = openStatementIterators.find( id );
-    if ( it != openStatementIterators.end() ) {
-        it.value().close();
-        stream << it.value().lastError();
-        openStatementIterators.erase( it );
+    QHash<quint32, StatementIterator>::iterator it1 = openStatementIterators.find( id );
+    if ( it1 != openStatementIterators.end() ) {
+        it1.value().close();
+        stream << it1.value().lastError();
+        openStatementIterators.erase( it1 );
         return;
     }
 
     QHash<quint32, NodeIterator>::iterator it2 = openNodeIterators.find( id );
     if ( it2 != openNodeIterators.end() ) {
         it2.value().close();
-        stream << it.value().lastError();
+        stream << it2.value().lastError();
         openNodeIterators.erase( it2 );
         return;
     }
@@ -516,30 +546,13 @@ void Soprano::Server::ServerConnection::Private::iteratorClose( QDataStream& str
     QHash<quint32, QueryResultIterator>::iterator it3 = openQueryIterators.find( id );
     if ( it3 != openQueryIterators.end() ) {
         it3.value().close();
-        stream << it.value().lastError();
+        stream << it3.value().lastError();
         openQueryIterators.erase( it3 );
         return;
     }
 
     stream << Error::Error( "Invalid iterator ID." );
     qDebug() << "(ServerConnection::iteratorClose) done";
-}
-
-
-void Soprano::Server::ServerConnection::Private::queryIteratorCurrentStatement( QDataStream& stream )
-{
-    qDebug() << "(ServerConnection::queryIteratorCurrentStatement)";
-    quint32 id = 0;
-    stream >> id;
-
-    QHash<quint32, QueryResultIterator>::iterator it = openQueryIterators.find( id );
-    if ( it != openQueryIterators.end() ) {
-        stream << it.value().currentStatement() << it.value().lastError();
-        return;
-    }
-
-    stream << Statement() << Error::Error( "Invalid iterator ID." );
-    qDebug() << "(ServerConnection::queryIteratorCurrentStatement) done";
 }
 
 
