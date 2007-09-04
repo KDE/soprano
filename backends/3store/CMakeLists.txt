@@ -1,51 +1,43 @@
 project(soprano_tstore)
 
-set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${soprano_SOURCE_DIR}/cmake/modules)
+include_directories(
+  ${QT_QTCORE_INCLUDE_DIR}
+  ${CMAKE_SOURCE_DIR}
+  ${QT_INCLUDE_DIR}
+  ${soprano_core_SOURCE_DIR}
+  ${soprano_core_BINARY_DIR}
+  ${soprano_tstore_BINARY_DIR}
+  ${TSTORE_INCLUDE_DIR}
+  ${CMAKE_INSTALL_PREFIX}/include
+  )
 
-find_package(TStore)
+set(tstore_backend_SRC
+  threestoreutil.cpp
+  threestoreutil.h
+  threestorequeryresult.cpp
+  threestorequeryresult.h
+  threestoremodel.cpp
+  threestoremodel.h
+  threestorebackend.cpp
+  threestorebackend.h
+  threestorecore.h
+  threestorecore.cpp
+  )
 
-if(TSTORE_FOUND)
+qt4_automoc(${tstore_backend_SRC})
 
-  include_directories(
-    ${QT_QTCORE_INCLUDE_DIR}
-    ${CMAKE_SOURCE_DIR}
-    ${QT_INCLUDE_DIR}
-    ${soprano_core_SOURCE_DIR}
-    ${soprano_core_BINARY_DIR}
-    ${soprano_tstore_BINARY_DIR}
-    ${TSTORE_INCLUDE_DIR}
-    ${CMAKE_INSTALL_PREFIX}/include
-    )
-  
-  set(tstore_backend_SRC
-    threestoreutil.cpp
-    threestoreutil.h
-    threestorequeryresult.cpp
-    threestorequeryresult.h
-    threestoremodel.cpp
-    threestoremodel.h
-    threestorebackend.cpp
-    threestorebackend.h
-    threestorecore.h
-    threestorecore.cpp
-    )
+add_library(soprano_tstorebackend SHARED ${tstore_backend_SRC})
 
-  qt4_automoc(${tstore_backend_SRC})
+ADD_DEFINITIONS(${TSTORE_CFLAGS})
 
-  add_library(soprano_tstorebackend SHARED ${tstore_backend_SRC})
+TARGET_LINK_LIBRARIES(soprano_tstorebackend soprano ${TSTORE_LIBRARIES})
 
-  ADD_DEFINITIONS(${TSTORE_CFLAGS})
+set_target_properties(soprano_tstorebackend PROPERTIES
+  DEFINE_SYMBOL MAKE_TSTOREBACKEND_LIB
+  )
 
-  TARGET_LINK_LIBRARIES(soprano_tstorebackend soprano ${TSTORE_LIBRARIES})
-
-  set_target_properties(soprano_tstorebackend PROPERTIES
-    DEFINE_SYMBOL MAKE_TSTOREBACKEND_LIB
-    )
-
-  INSTALL(TARGETS soprano_tstorebackend
-    LIBRARY DESTINATION ${LIB_DESTINATION}/soprano
-    RUNTIME DESTINATION bin/soprano
-    ARCHIVE DESTINATION lib/soprano
-    )
-
-endif(TSTORE_FOUND)
+INSTALL(TARGETS soprano_tstorebackend
+  LIBRARY DESTINATION ${LIB_DESTINATION}/soprano
+  RUNTIME DESTINATION bin/soprano
+  ARCHIVE DESTINATION lib/soprano
+  )

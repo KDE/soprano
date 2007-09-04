@@ -2,8 +2,6 @@ project(soprano_redland)
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${soprano_SOURCE_DIR}/cmake/modules)
 
-find_package(Redland REQUIRED)
-
 include_directories(
   ${QT_QTCORE_INCLUDE_DIR}
   ${CMAKE_SOURCE_DIR}
@@ -13,7 +11,7 @@ include_directories(
   ${REDLAND_INCLUDE_DIR}
   ${RASQAL_INCLUDE_DIR}
   ${CMAKE_INSTALL_PREFIX}/include
-)
+  )
 
 set(redland_core_SRC
   redlandutil.cpp
@@ -27,12 +25,12 @@ set(redland_core_SRC
   redlandmodel.cpp
   redlandmodel.h
   redlandnodeiteratorbackend.cpp
-)
+  )
 
 set(redland_backend_SRC
   redlandbackend.cpp
   redlandbackend.h
-)
+  )
 
 qt4_automoc(${redland_backend_SRC})
 
@@ -48,11 +46,11 @@ TARGET_LINK_LIBRARIES(soprano_redlandbackend soprano_redlandcore)
 ADD_DEFINITIONS(${REDLAND_CFLAGS} -fPIC)
 
 set_target_properties(soprano_redlandbackend PROPERTIES
-        DEFINE_SYMBOL MAKE_REDLANDBACKEND_LIB
-)
+  DEFINE_SYMBOL MAKE_REDLANDBACKEND_LIB
+  )
 
 INSTALL(TARGETS soprano_redlandbackend
-	LIBRARY DESTINATION ${LIB_DESTINATION}/soprano
-	RUNTIME DESTINATION bin/soprano
-	ARCHIVE DESTINATION lib/soprano
-)
+  LIBRARY DESTINATION ${LIB_DESTINATION}/soprano
+  RUNTIME DESTINATION bin/soprano
+  ARCHIVE DESTINATION lib/soprano
+  )

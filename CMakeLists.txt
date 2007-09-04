@@ -7,6 +7,28 @@ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_SOURCE_DIR}/cmake/modules)
 find_package(GNUWIN32) 
 find_package(Qt4 REQUIRED) 
 
+find_package(Redland)
+find_package(TStore)
+
+find_package(JNI)
+if(JAVA_INCLUDE_PATH)
+  file(READ ${JAVA_INCLUDE_PATH}/jni.h jni_header_data)
+  string(REGEX MATCH "JNI_VERSION_1_6" JNI_1_6_FOUND ${jni_header_data})
+  if(JNI_1_6_FOUND)
+    message(STATUS "Found Java JNI >= 1.6: ${JAVA_INCLUDE_PATH}, ${JAVA_JVM_LIBRARY}")
+  else(JNI_1_6_FOUND)
+    message( "Need JRE version 1.6 or higher for the Sesame2 backend.")
+  endif(JNI_1_6_FOUND)
+else(JAVA_INCLUDE_PATH)
+  message(STATUS "Could not find Java JNI")
+endif(JAVA_INCLUDE_PATH)
+
+if(NOT REDLAND_FOUND AND JNI_1_6_FOUND AND TSTORE_FOUND)
+  message("WARNING: No Soprano backends will be compiled due to missing dependancies!")
+  message("WARNING: Soprano will not be very useful without storage backends!")
+endif(NOT REDLAND_FOUND AND JNI_1_6_FOUND AND TSTORE_FOUND)
+
+
 set (LIB_SUFFIX "" CACHE STRING "Define suffix of directory name (32/64)" )
 set (LIB_DESTINATION "${CMAKE_INSTALL_PREFIX}/lib${LIB_SUFFIX}" CACHE STRING "Library directory name" FORCE)
 
