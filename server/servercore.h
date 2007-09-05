@@ -35,6 +35,8 @@ namespace Soprano {
 
     namespace Server {
 	/**
+	 * \class ServerCore servercore.h soprano/Server/ServerCore
+	 *
 	 * \brief Central %Soprano server class.
 	 *
 	 * The %ServerCore provides a %Soprano server which maintains a set

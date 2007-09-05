@@ -36,6 +36,8 @@ namespace Soprano
     class StatementIterator;
 
     /**
+     * \class Serializer serializer.h soprano/Serializer
+     *
      * \brief Soprano::Serializer defines the interface for a Soprano RDF serializer plugin.
      *
      * Each serializer plugin may support multiple RDF serializations (supportedSerializations()).

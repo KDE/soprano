@@ -37,6 +37,8 @@ namespace Soprano {
 
     namespace Server {
 	/**
+	 * \class Client client.h soprano/Server/Client
+	 *
 	 * \brief Creates a connection to the %Soprano server.
 	 *
 	 * The %Soprano server can be accessed normally through PluginManager::discoverBackendByName()

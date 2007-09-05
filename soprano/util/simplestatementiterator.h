@@ -30,6 +30,8 @@
 namespace Soprano {
 
     /**
+     * \class SimpleStatementIterator simplestatementiterator.h soprano/SimpleStatementIterator
+     *
      * \brief The most simple version of a StatementIterator simply iterates over
      * a list of Statements.
      *

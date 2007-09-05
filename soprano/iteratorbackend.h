@@ -29,6 +29,8 @@
 namespace Soprano {
 
     /**
+     * \class IteratorBackend iteratorbackend.h soprano/IteratorBackend
+     *
      * \brief The actual work in a Iterator instance is done by an
      * IteratorBackend.
      *

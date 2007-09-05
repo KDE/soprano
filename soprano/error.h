@@ -55,7 +55,9 @@ namespace Soprano {
 	class ParserError;
 
 	/**
-	 * Represents an error in %Soprano.
+	 * \class Error error.h soprano/Error/Error
+	 *
+	 * \brief Represents an error in %Soprano.
 	 *
 	 * \author Sebastian Trueg <trueg@kde.org>
 	 *
@@ -163,6 +165,10 @@ namespace Soprano {
 	class Locator;
 
 	/**
+	 * \class ParserError error.h soprano/Error/ParserError
+	 *
+	 * \brief Represents a parser error in %Soprano.
+	 *
 	 * ParserError represents an error during parsing of either a query string (Soprano::Query::Parser::parseQuery())
 	 * or an RDF serialization (Soprano::Parser::parseStream()).
 	 * Error and ParserError can be used together and copied without loosing information.
@@ -200,6 +206,8 @@ namespace Soprano {
 	};
 
 	/**
+	 * \class ErrorCache error.h soprano/Error/ErrorCache
+	 *
 	 * The ErrorCache caches Error instances for different threads.
 	 * Each thread has its own last error. This mechanism tries to
 	 * replace the missing exceptions for methods that do not return

@@ -26,6 +26,8 @@
 
 namespace Soprano {
     /**
+     * \class Plugin plugin.h soprano/Plugin
+     *
      * \brief Base class for all plugins in %Soprano.
      *
      * Each %Soprano %Plugin has a name which can be read via

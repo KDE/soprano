@@ -37,6 +37,8 @@ namespace Soprano
     class StorageModel;
 
     /**
+     * \class BackendSetting backend.h soprano/BackendSetting
+     *
      * \brief Wraps one setting for Model creation.
      *
      * A BackendSetting consists of an option type and an option value. The option type can either be a predefined
@@ -113,6 +115,8 @@ namespace Soprano
     };
 
     /**
+     * \class Backend backend.h soprano/Backend
+     *
      * \brief Soprano::Backend defines the interface for a Soprano backend plugin.
      *
      * The Backend interface defines two important methods: createModel() and supportedFeatures().

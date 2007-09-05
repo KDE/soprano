@@ -33,6 +33,8 @@
 namespace Soprano {
 
     /**
+     * \class Iterator iterator.h soprano/Iterator
+     *
      * \brief The basic %Soprano iterator class.
      *
      * Iterators in %Soprano are very easy to use through two methods

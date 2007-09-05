@@ -34,6 +34,8 @@ namespace Soprano {
 
     namespace Inference {
 	/**
+	 * \class NodePattern nodepattern.h soprano/Inference/NodePattern
+	 *
 	 * \brief Smallest building block of an inference Rule.
 	 *
 	 * There are two types of NodePattern:

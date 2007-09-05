@@ -31,6 +31,8 @@
 namespace Soprano
 {
     /**
+     * \class LiteralValue literalvalue.h soprano/LiteralValue
+     *
      * \brief Represents a literal value of an RDF node.
      *
      * LiteralValue is based on QVariant to support

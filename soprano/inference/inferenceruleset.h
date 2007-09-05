@@ -42,6 +42,8 @@ namespace Soprano {
 	class Rule;
 
 	/**
+	 * \class RuleSet inferenceruleset.h soprano/Inference/RuleSet
+	 *
 	 * \brief A set of inference rules.
 	 *
 	 * RuleSet represents a set of inference rules. Each Rule

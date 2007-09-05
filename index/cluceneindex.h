@@ -47,6 +47,8 @@ namespace Soprano {
     namespace Index {
 
 	/**
+	 * \class CLuceneIndex cluceneindex.h soprano/Index/CLuceneIndex
+	 *
 	 * \brief The CLuceneIndex provides a wrapper around a CLucene index 
 	 * which stores RDF statements.
 	 *

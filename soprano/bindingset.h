@@ -34,6 +34,8 @@ namespace Soprano {
     class Node;
 
     /**
+     * \class BindingSet bindingset.h soprano/BindingSet
+     *
      * \brief Represents one set of bindings in the result of a select query.
      *
      * BindingSet is mostly a convenience class for caching of query

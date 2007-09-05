@@ -28,6 +28,8 @@
 namespace Soprano
 {
     /**
+     * \class Statement statement.h soprano/Statement
+     *
      * \brief A Statement instance represents one RDF quadruple.
      *
      * In %Soprano statements are quadruples, i.e. in addition to the subject, predicate, and

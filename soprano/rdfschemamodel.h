@@ -31,6 +31,8 @@ namespace Soprano {
     class StatementIterator;
 
     /**
+     * \class RdfSchemaWrapper rdfschemawrapper.h soprano/RdfSchemaWrapper
+     *
      * \brief Provides convenience methods to handle RDFS data.
      *
      * Interface based on Sesame's RdfSchemaSource. (Copyright (C) 2002-2006 Aduna BV, GNU LGPL License applies.)

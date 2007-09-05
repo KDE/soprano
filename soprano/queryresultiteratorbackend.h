@@ -36,6 +36,8 @@ namespace Soprano {
     class Statement;
     
     /**
+     * \class QueryResultIteratorBackend queryresultiteratorbackend.h soprano/QueryResultIteratorBackend
+     *
      * \brief QueryResultIteratorBackend is the actual working horse behind QueryResultIterator.
      *
      * Each Backend implementation has to have its own version of QueryResultIteratorBackend.

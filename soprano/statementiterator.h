@@ -38,6 +38,8 @@ namespace Soprano {
     class StatementIteratorBackend;
 
     /**
+     * \class StatementIterator statementiterator.h soprano/StatementIterator
+     *
      * \brief An iterator that provides a stream of Statements.
      *
      * The most common use of StatementIterator is through Model::listStatements().

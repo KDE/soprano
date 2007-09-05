@@ -33,6 +33,8 @@ class QString;
 namespace Soprano
 {
     /**
+     * \class QueryLegacy querylegacy.h soprano/QueryLegacy
+     *
      * \brief Deprecated query class.
      *
      * \deprecated Will be replaced by a real query API soon.

@@ -35,6 +35,8 @@ namespace Soprano {
     class NodeIteratorBackend;
 
     /**
+     * \class NodeIterator nodeiterator.h soprano/NodeIterator
+     *
      * \brief An iterator that provides a stream of Nodes.
      *
      * The most common use of %NodeIterator is through Model::listContexts().

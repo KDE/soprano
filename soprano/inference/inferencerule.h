@@ -37,6 +37,8 @@ namespace Soprano {
     namespace Inference {
 
         /**
+	 * \class Rule inferencerule.h soprano/Inference/Rule
+	 *
 	 * \brief A rule used by the InferenceModel to generate inferenced statements.
 	 *
 	 * Rules can be created manually by adding preconditions and the effect via addPrecondition() and
