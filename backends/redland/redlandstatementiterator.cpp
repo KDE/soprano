@@ -50,14 +50,14 @@ bool Soprano::Redland::RedlandStatementIterator::next()
 {
     clearError();
 
-    if ( m_initialized ) {
-        // Move to the next element
-        librdf_stream_next( m_stream );
-    }
-
-    m_initialized = true;
-
     if ( m_stream ) {
+        if ( m_initialized ) {
+            // Move to the next element
+            librdf_stream_next( m_stream );
+        }
+
+        m_initialized = true;
+
         if ( librdf_stream_end( m_stream ) ) {
             close();
             return false;
