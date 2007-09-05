@@ -332,18 +332,33 @@ void SopranoModelTest::testRemoveStatements()
 {
     QVERIFY( m_model != 0 );
 
-    Node subject( QUrl("http://soprano.sf.net#remove:3") );
-    Node predicate( QUrl( "http://soprano.sf.net#predicate" ) );
-    Node object( QUrl("http://soprano.sf.net#soprano:2") );
+    // make sure empty contexts are used as wildcards
+    Statement s1( m_st1 );
+    Statement s2( s1 );
+    Statement s3( s1 );
+    s1.setContext( Node() );
+    s2.setContext( QUrl( "http://soprano.org/test#context" ) );
+    s3.setObject( LiteralValue( "Hello World" ) );
 
-    Statement st(subject, predicate, object);
-    m_model->addStatement( st );
+    QVERIFY( m_model->addStatement( s1 ) == Error::ERROR_NONE );
+    QVERIFY( m_model->addStatement( s2 ) == Error::ERROR_NONE );
+    QVERIFY( m_model->addStatement( s3 ) == Error::ERROR_NONE );
 
-    QVERIFY( m_model->containsStatements(st) );
+    QVERIFY( m_model->removeStatements( s1 ) == Error::ERROR_NONE );
+    QVERIFY( !m_model->lastError() );
+    QVERIFY( !m_model->containsStatement( s1 ) );
+    QVERIFY( !m_model->lastError() );
+    QVERIFY( !m_model->containsStatement( s2 ) );
+    QVERIFY( !m_model->lastError() );
 
-    m_model->removeStatements( st );
+    QVERIFY( m_model->containsStatement( s3 ) );
+    QVERIFY( !m_model->lastError() );
 
-    QVERIFY( !m_model->containsStatements(st) );
+    // other wildcard nodes
+    QVERIFY( m_model->removeStatements( Statement( s3.subject(), Node(), s3.object() ) ) == Error::ERROR_NONE );
+    QVERIFY( !m_model->lastError() );
+    QVERIFY( !m_model->containsStatement( s3 ) );
+    QVERIFY( !m_model->lastError() );
 }
 
 void SopranoModelTest::testRemoveAllStatement()
@@ -408,6 +423,34 @@ void SopranoModelTest::testContainsStatement()
     // make sure a wildcard statement throws an error.
     QVERIFY( !m_model->containsStatement( Statement( res1, pre, Node() ) ) );
     QVERIFY( m_model->lastError() );
+}
+
+
+void SopranoModelTest::testContainsStatements()
+{
+    QVERIFY( m_model != 0 );
+
+    // check all wildcard combinations
+    QVERIFY( m_model->containsStatements( Statement( m_st1.subject(), Node(), Node() ) ) );
+    QVERIFY( m_model->containsStatements( Statement( Node(), m_st1.predicate(), Node() ) ) );
+    QVERIFY( m_model->containsStatements( Statement( Node(), Node(), m_st1.object() ) ) );
+
+    // check context wildcards
+    Statement s( QUrl( "http://soprano.org/test#A" ),
+                 QUrl( "http://soprano.org/test#isRelated" ),
+                 LiteralValue( "Hello World" ),
+                 QUrl( "http://soprano.org/test#context" ) );
+    QVERIFY( m_model->addStatement( s ) == Error::ERROR_NONE );
+
+    QVERIFY( m_model->containsStatements( Statement( s.subject(), Node(), Node() ) ) );
+    QVERIFY( m_model->containsStatements( Statement( Node(), s.predicate(), Node() ) ) );
+    QVERIFY( m_model->containsStatements( Statement( Node(), Node(), s.object() ) ) );
+    QVERIFY( m_model->containsStatements( Statement( s.subject(), Node(), Node(), s.context() ) ) );
+    QVERIFY( m_model->containsStatements( Statement( Node(), s.predicate(), Node(), s.context() ) ) );
+    QVERIFY( m_model->containsStatements( Statement( Node(), Node(), s.object(), s.context() ) ) );
+    QVERIFY( m_model->containsStatements( Statement( Node(), Node(), Node(), s.context() ) ) );
+
+    QVERIFY( !m_model->containsStatements( Statement( Node(), Node(), Node(), QUrl( "http://soprano.org/test#SomeOtherContext" ) ) ) );
 }
 
 void SopranoModelTest::testGraphQuery()

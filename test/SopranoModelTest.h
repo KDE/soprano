@@ -53,6 +53,7 @@ private Q_SLOTS:
   void testRemoveAllStatement();
 
   void testContainsStatement();
+  void testContainsStatements();
 
   void testGraphQuery();
   void testBooleanQuery();
