@@ -99,6 +99,7 @@ Soprano::Error::ErrorCode Soprano::Index::IndexFilterModel::removeStatements( co
             }
         }
     }
+    it.close();
 
     return FilterModel::removeStatements( statement );
 }
