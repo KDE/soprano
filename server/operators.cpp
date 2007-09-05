@@ -72,10 +72,13 @@ QDataStream& operator<<( QDataStream& stream, const Soprano::Node& node )
     if ( node.type() == Soprano::Node::LiteralNode ) {
         stream << node.literal() << node.language();
     }
-    else if ( node.type() == Soprano::Node::ResourceNode ||
-              node.type() == Soprano::Node::BlankNode ) {
+    else if ( node.type() == Soprano::Node::ResourceNode ) {
         stream << node.uri();
     }
+    else if ( node.type() == Soprano::Node::BlankNode ) {
+        stream << node.identifier();
+    }
+
     return stream;
 }
 
@@ -176,11 +179,15 @@ QDataStream& operator>>( QDataStream& stream, Soprano::Node& node )
         stream >> v >> lang;
         node = Soprano::Node( v, lang );
     }
-    else if ( type == Soprano::Node::ResourceNode ||
-              type == Soprano::Node::BlankNode ) {
+    else if ( type == Soprano::Node::ResourceNode ) {
         QUrl url;
         stream >> url;
-        node = Soprano::Node( url, ( Soprano::Node::Type )type );
+        node = Soprano::Node( url );
+    }
+    else if ( type == Soprano::Node::BlankNode ) {
+        QString id;
+        stream >> id;
+        node = Soprano::Node( id );
     }
     else {
         node = Soprano::Node();
