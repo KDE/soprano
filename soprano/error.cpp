@@ -222,7 +222,7 @@ void Soprano::Error::ErrorCache::clearError() const
 
 static const char* s_errorMessages[] = {
   "Success",
-  "Invalid statement",
+  "Invalid argument",
   "Unsupported operation",
   "Parsing failed",
   "Unknown error"
@@ -232,7 +232,12 @@ static const char* s_errorMessages[] = {
 QString Soprano::Error::errorMessage( ErrorCode code )
 {
   // FIXME: translate the strings.
-  return s_errorMessages[(int)code];
+    if ( code < ERROR_UNKNOWN ) {
+        return s_errorMessages[(int)code];
+    }
+    else {
+        return s_errorMessages[( int )ERROR_UNKNOWN];
+    }
 }
 
 

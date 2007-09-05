@@ -85,6 +85,11 @@ namespace Soprano {
 	/**
 	 * Default implementation simple pipes the call through to the parent model.
 	 */
+	virtual bool containsStatement( const Statement &statement ) const;
+
+	/**
+	 * Default implementation simple pipes the call through to the parent model.
+	 */
 	virtual bool containsStatements( const Statement &statement ) const;
 
 	/**
@@ -96,6 +101,11 @@ namespace Soprano {
 	 * Default implementation simple pipes the call through to the parent model.
 	 */
 	virtual StatementIterator listStatements( const Statement &partial ) const;
+
+	/**
+	 * Default implementation simple pipes the call through to the parent model.
+	 */
+	virtual Error::ErrorCode removeStatement( const Statement &statement );
 
 	/**
 	 * Default implementation simple pipes the call through to the parent model.

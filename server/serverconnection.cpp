@@ -68,8 +68,10 @@ public:
     void createModel( QDataStream& stream );
     void supportedFeatures( QDataStream& );
     void addStatement( QDataStream& stream );
+    void removeStatement( QDataStream& stream );
     void removeStatements( QDataStream& stream );
     void listStatements( QDataStream& stream );
+    void containsStatement( QDataStream& stream );
     void containsStatements( QDataStream& stream );
     void listContexts( QDataStream& stream );
     void statementCount( QDataStream& stream );
@@ -146,12 +148,20 @@ void Soprano::Server::ServerConnection::run()
                 d->addStatement( stream );
                 break;
 
+            case COMMAND_MODEL_REMOVE_STATEMENT:
+                d->removeStatement( stream );
+                break;
+
             case COMMAND_MODEL_REMOVE_STATEMENTS:
                 d->removeStatements( stream );
                 break;
 
             case COMMAND_MODEL_LIST_STATEMENTS:
                 d->listStatements( stream );
+                break;
+
+            case COMMAND_MODEL_CONTAINS_STATEMENT:
+                d->containsStatement( stream );
                 break;
 
             case COMMAND_MODEL_CONTAINS_STATEMENTS:
@@ -319,12 +329,31 @@ void Soprano::Server::ServerConnection::Private::addStatement( QDataStream& stre
         Statement s;
         stream >> s;
 
-        stream << model->addStatement( s ) << model->lastError();
+        stream << model->addStatement( s );
+        stream << model->lastError();
     }
     else {
         stream << Error::ERROR_INVALID_ARGUMENT << Error::Error( "Invalid model id" );
     }
     qDebug() << "(ServerConnection::addStatement) done";
+}
+
+
+void Soprano::Server::ServerConnection::Private::removeStatement( QDataStream& stream )
+{
+    qDebug() << "(ServerConnection::removeStatement)";
+    Model* model = getModel( stream );
+    if ( model ) {
+        Statement s;
+        stream >> s;
+
+        stream << model->removeStatement( s );
+        stream << model->lastError();
+    }
+    else {
+        stream << Error::ERROR_INVALID_ARGUMENT << Error::Error( "Invalid model id" );
+    }
+    qDebug() << "(ServerConnection::removeStatement) done";
 }
 
 
@@ -336,7 +365,8 @@ void Soprano::Server::ServerConnection::Private::removeStatements( QDataStream& 
         Statement s;
         stream >> s;
 
-        stream << model->removeStatements( s ) << model->lastError();
+        stream << model->removeStatements( s );
+        stream << model->lastError();
     }
     else {
         stream << Error::ERROR_INVALID_ARGUMENT << Error::Error( "Invalid model id" );
@@ -363,6 +393,24 @@ void Soprano::Server::ServerConnection::Private::listStatements( QDataStream& st
 }
 
 
+void Soprano::Server::ServerConnection::Private::containsStatement( QDataStream& stream )
+{
+    qDebug() << "(ServerConnection::containsStatement)";
+    Model* model = getModel( stream );
+    if ( model ) {
+        Statement s;
+        stream >> s;
+
+        stream << model->containsStatement( s );
+        stream << model->lastError();
+    }
+    else {
+        stream << Error::ERROR_INVALID_ARGUMENT << Error::Error( "Invalid model id" );
+    }
+    qDebug() << "(ServerConnection::containsStatement) done";
+}
+
+
 void Soprano::Server::ServerConnection::Private::containsStatements( QDataStream& stream )
 {
     qDebug() << "(ServerConnection::containsStatements)";
@@ -371,8 +419,8 @@ void Soprano::Server::ServerConnection::Private::containsStatements( QDataStream
         Statement s;
         stream >> s;
 
-        bool b = model->containsStatements( s );
-        stream << b << model->lastError();
+        stream << model->containsStatements( s );
+        stream << model->lastError();
     }
     else {
         stream << Error::ERROR_INVALID_ARGUMENT << Error::Error( "Invalid model id" );
@@ -427,7 +475,8 @@ void Soprano::Server::ServerConnection::Private::isEmpty( QDataStream& stream )
 {
     Model* model = getModel( stream );
     if ( model ) {
-        stream << model->isEmpty() << model->lastError();
+        stream << model->isEmpty();
+        stream << model->lastError();
     }
     else {
         stream << Error::ERROR_INVALID_ARGUMENT << Error::Error( "Invalid model id" );
@@ -443,19 +492,22 @@ void Soprano::Server::ServerConnection::Private::iteratorNext( QDataStream& stre
 
     QHash<quint32, StatementIterator>::iterator it1 = openStatementIterators.find( id );
     if ( it1 != openStatementIterators.end() ) {
-        stream << it1.value().next() << it1.value().lastError();
+        stream << it1.value().next();
+        stream << it1.value().lastError();
         return;
     }
 
     QHash<quint32, NodeIterator>::iterator it2 = openNodeIterators.find( id );
     if ( it2 != openNodeIterators.end() ) {
-        stream << it2.value().next() << it2.value().lastError();
+        stream << it2.value().next();
+        stream << it2.value().lastError();
         return;
     }
 
     QHash<quint32, QueryResultIterator>::iterator it3 = openQueryIterators.find( id );
     if ( it3 != openQueryIterators.end() ) {
-        stream << it3.value().next() << it3.value().lastError();
+        stream << it3.value().next();
+        stream << it3.value().lastError();
         return;
     }
 
@@ -472,14 +524,16 @@ void Soprano::Server::ServerConnection::Private::statementIteratorCurrent( QData
 
     QHash<quint32, StatementIterator>::iterator it = openStatementIterators.find( id );
     if ( it != openStatementIterators.end() ) {
-        stream << it.value().current() << it.value().lastError();
+        stream << it.value().current();
+        stream << it.value().lastError();
         return;
     }
 
     // could be a graph query iterator
     QHash<quint32, QueryResultIterator>::iterator it2 = openQueryIterators.find( id );
     if ( it2 != openQueryIterators.end() ) {
-        stream << it2.value().currentStatement() << it2.value().lastError();
+        stream << it2.value().currentStatement();
+        stream << it2.value().lastError();
         return;
     }
 
@@ -496,7 +550,8 @@ void Soprano::Server::ServerConnection::Private::nodeIteratorCurrent( QDataStrea
 
     QHash<quint32, NodeIterator>::iterator it = openNodeIterators.find( id );
     if ( it != openNodeIterators.end() ) {
-        stream << it.value().current() << it.value().lastError();
+        stream << it.value().current();
+        stream << it.value().lastError();
         return;
     }
     stream << Node() << Error::Error( "Invalid iterator ID." );
@@ -512,7 +567,8 @@ void Soprano::Server::ServerConnection::Private::queryIteratorCurrent( QDataStre
 
     QHash<quint32, QueryResultIterator>::iterator it = openQueryIterators.find( id );
     if ( it != openQueryIterators.end() ) {
-        stream << it.value().current() << it.value().lastError();
+        stream << it.value().current();
+        stream << it.value().lastError();
         return;
     }
 
@@ -591,7 +647,8 @@ void Soprano::Server::ServerConnection::Private::queryIteratorBoolValue( QDataSt
 
     QHash<quint32, QueryResultIterator>::iterator it = openQueryIterators.find( id );
     if ( it != openQueryIterators.end() ) {
-        stream << it.value().boolValue() << it.value().lastError();
+        stream << it.value().boolValue();
+        stream << it.value().lastError();
         return;
     }
 

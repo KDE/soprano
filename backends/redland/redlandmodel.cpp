@@ -296,10 +296,26 @@ Soprano::StatementIterator Soprano::Redland::RedlandModel::listStatements( const
 }
 
 
-// internal method
 Soprano::Error::ErrorCode Soprano::Redland::RedlandModel::removeStatement( const Statement& statement )
 {
+    d->readWriteLock.lockForWrite();
+    Error::ErrorCode r = removeOneStatement( statement );
+    d->readWriteLock.unlock();
+    if ( r == Error::ERROR_NONE ) {
+        emit statementsRemoved();
+    }
+    return r;
+}
+
+
+Soprano::Error::ErrorCode Soprano::Redland::RedlandModel::removeOneStatement( const Statement& statement )
+{
     clearError();
+
+    if ( !statement.isValid() ) {
+        setError( "Cannot remove invalid statement", Error::ERROR_INVALID_ARGUMENT );
+        return Error::ERROR_INVALID_ARGUMENT;
+    }
 
     librdf_statement* redlandStatement = Util::createStatement( statement );
     if ( !redlandStatement ) {
@@ -336,17 +352,20 @@ Soprano::Error::ErrorCode Soprano::Redland::RedlandModel::removeStatements( cons
     clearError();
 
     if ( isContextOnlyStatement( statement ) ) {
-        QWriteLocker lock( &d->readWriteLock );
+        d->readWriteLock.lockForWrite();
 
         librdf_node *ctx = Util::createNode( statement.context() );
 
         if (  librdf_model_context_remove_statements( d->model, ctx ) ) {
             Util::freeNode( ctx );
             setError( Redland::World::self()->lastError() );
+            d->readWriteLock.unlock();
             return Error::ERROR_UNKNOWN;
         }
 
         Util::freeNode( ctx );
+
+        d->readWriteLock.unlock();
 
         emit statementsRemoved();
 
@@ -358,17 +377,21 @@ Soprano::Error::ErrorCode Soprano::Redland::RedlandModel::removeStatements( cons
         // FIXME: use redland streams for this
         QList<Statement> statementsToRemove = listStatements( statement ).allStatements();
 
-        QWriteLocker lock( &d->readWriteLock );
+        d->readWriteLock.lockForWrite();
 
         int cnt = 0;
         for ( QList<Statement>::const_iterator it = statementsToRemove.constBegin();
               it != statementsToRemove.constEnd(); ++it ) {
             ++cnt;
-            Error::ErrorCode error = removeStatement( *it );
+            Error::ErrorCode error = removeOneStatement( *it );
             if ( error != Error::ERROR_NONE ) {
+                d->readWriteLock.unlock();
                 return error;
             }
         }
+
+        d->readWriteLock.unlock();
+
         if ( cnt ) {
             emit statementsRemoved();
         }
@@ -376,13 +399,7 @@ Soprano::Error::ErrorCode Soprano::Redland::RedlandModel::removeStatements( cons
     }
 
     else {
-        QWriteLocker lock( &d->readWriteLock );
-
-        Error::ErrorCode error = removeStatement( statement );
-        if ( error == Error::ERROR_NONE ) {
-            emit statementsRemoved();
-        }
-        return error;
+        return removeStatement( statement );
     }
 }
 

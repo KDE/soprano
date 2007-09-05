@@ -41,7 +41,7 @@ Soprano::Model* Sesame2BackendTest::createModel()
 // this test was used to determine if Sesame2::Model::closeIterators() is necessary. It is.
 void Sesame2BackendTest::testIteratorClose()
 {
-    StatementIterator it = m_model->listStatements( *m_st1 );
+    StatementIterator it = m_model->listStatements( m_st1 );
 
     // now the iterator is open
 
@@ -49,10 +49,10 @@ void Sesame2BackendTest::testIteratorClose()
     it.close();
 
     // try read-only stuff
-    QVERIFY( m_model->listStatements( *m_st2 ).next() );
+    QVERIFY( m_model->listStatements( m_st2 ).next() );
 
     // try other stuff (actually the fear is that this will hang)
-    QVERIFY( m_model->removeStatements( *m_st2 ) == Error::ERROR_NONE );
+    QVERIFY( m_model->removeStatements( m_st2 ) == Error::ERROR_NONE );
 }
 
 QTEST_MAIN( Sesame2BackendTest );

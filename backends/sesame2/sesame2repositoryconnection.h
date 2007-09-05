@@ -59,6 +59,8 @@ namespace Soprano {
 	     */
 	    void remove( const JObjectRef& subject, const JObjectRef& predicate, const JObjectRef& object, const JObjectRef& context );
 
+	    void remove( const JObjectRef& statement );
+
 	    /**
 	     * This will call prepareQuery and query.evaluate
 	     */

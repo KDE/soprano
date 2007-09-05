@@ -34,21 +34,14 @@
 using namespace Soprano;
 
 SopranoModelTest::SopranoModelTest()
-    : m_st1( 0 ),
-      m_st2( 0 ),
-      m_st3( 0 ),
-      m_st4( 0 ),
-      m_model( 0 )
+    : m_model( 0 )
 {
 }
 
 void SopranoModelTest::cleanup()
 {
-    delete m_st1;
-    delete m_st2;
-    delete m_st3;
-    delete m_st4;
     delete m_model;
+    m_model = 0;
 }
 
 void SopranoModelTest::init()
@@ -65,57 +58,15 @@ void SopranoModelTest::init()
     Node object1( "Literal value1" );
     Node object2( "Literal value2" );
 
-    m_st1 = new Statement(subject1, predicate1, object1);
-    m_st2 = new Statement(subject2, predicate1, object1);
-    m_st3 = new Statement(subject1, predicate2, object2);
-    m_st4 = new Statement(subject2, predicate2, object2);
+    m_st1 = Statement(subject1, predicate1, object1);
+    m_st2 = Statement(subject2, predicate1, object1);
+    m_st3 = Statement(subject1, predicate2, object2);
+    m_st4 = Statement(subject2, predicate2, object2);
 
-    m_model->addStatement( *m_st1 );
-    m_model->addStatement( *m_st2 );
-    m_model->addStatement( *m_st3 );
-    m_model->addStatement( *m_st4 );
-}
-
-void SopranoModelTest::testAddModel()
-{
-    QVERIFY( m_model != 0 );
-
-    Node subject1( QUrl("http://soprano.sf.net#add:model") );
-
-    Node predicate1( QUrl( "http://soprano.sf.net#predicate1" ) );
-    Node predicate2( QUrl( "http://soprano.sf.net#predicate2" ) );
-    Node predicate3( QUrl( "http://soprano.sf.net#predicate3" ) );
-
-    Node object1( "Literal value1" );
-
-    Statement st1(subject1, predicate1, object1);
-    Statement st2(subject1, predicate2, object1);
-    Statement st3(subject1, predicate3, object1);
-
-    Model *memory = createModel();
-    QVERIFY( memory );
-
-    memory->addStatement( st1 );
-    memory->addStatement( st2 );
-
-    m_model->addModel( *memory );
-
-    QVERIFY( m_model->containsStatements( st1 ) );
-    QVERIFY( m_model->containsStatements( st2 ) );
-    QVERIFY( !m_model->containsStatements( st3 ) );
-
-    // partial statement match
-    Statement stPartial1( subject1, Node(), object1 );
-    Statement stPartial2( subject1, Node(), Node() );
-    Statement stPartial3;
-    Statement stPartial4( subject1, Node(), QUrl( "http://soprao.sf.net#notInTheStore" ) );
-
-    QVERIFY( m_model->containsStatements( stPartial1 ) );
-    QVERIFY( m_model->containsStatements( stPartial2 ) );
-    QVERIFY( m_model->containsStatements( stPartial3 ) );
-    QVERIFY( !m_model->containsStatements( stPartial4 ) );
-
-    delete memory;
+    m_model->addStatement( m_st1 );
+    m_model->addStatement( m_st2 );
+    m_model->addStatement( m_st3 );
+    m_model->addStatement( m_st4 );
 }
 
 void SopranoModelTest::testAddListOfStatement()
@@ -146,36 +97,6 @@ void SopranoModelTest::testAddListOfStatement()
     QVERIFY( m_model->containsStatements( st3 ) );
 }
 
-void SopranoModelTest::testAddStatementIterator()
-{
-    QVERIFY( m_model != 0 );
-
-    Node subject1( QUrl("http://soprano.sf.net#add:model") );
-
-    Node predicate1( QUrl( "http://soprano.sf.net#predicate1" ) );
-    Node predicate2( QUrl( "http://soprano.sf.net#predicate2" ) );
-    Node predicate3( QUrl( "http://soprano.sf.net#predicate3" ) );
-
-    Node object1( "Literal value1" );
-
-    Statement st1(subject1, predicate1, object1);
-    Statement st2(subject1, predicate2, object1);
-    Statement st3(subject1, predicate3, object1);
-
-    Model *memory = createModel();
-    QVERIFY( memory );
-
-    memory->addStatement( st1 );
-    memory->addStatement( st2 );
-
-    m_model->addStatements( memory->listStatements() );
-
-    QVERIFY( m_model->containsStatements( st1 ) );
-    QVERIFY( m_model->containsStatements( st2 ) );
-    QVERIFY( !m_model->containsStatements( st3 ) );
-
-    delete memory;
-}
 
 void SopranoModelTest::testAddStatements()
 {
@@ -310,7 +231,7 @@ void SopranoModelTest::testListStatements()
         ++cnt;
         Statement st = *it4;
 
-        QVERIFY( statements.indexOf( st ) != -1 || st == *m_st1 || st == *m_st2 || st == *m_st3 || st == *m_st4 );
+        QVERIFY( statements.indexOf( st ) != -1 || st == m_st1 || st == m_st2 || st == m_st3 || st == m_st4 );
     }
 
     QCOMPARE( cnt, 124 );
@@ -380,6 +301,37 @@ void SopranoModelTest::testRemoveStatement()
 {
     QVERIFY( m_model != 0 );
 
+    // test removing a single statement
+    QVERIFY( m_model->removeStatement( m_st1 ) == Error::ERROR_NONE );
+    QVERIFY( !m_model->lastError() );
+    QVERIFY( !m_model->containsStatement( m_st1 ) );
+
+    // make sure empty contexts are not used as wildcards
+    Statement s1( m_st1 );
+    Statement s2( s1 );
+    s1.setContext( Node() );
+    s2.setContext( QUrl( "http://soprano.org/test#context" ) );
+
+    QVERIFY( m_model->addStatement( s1 ) == Error::ERROR_NONE );
+    QVERIFY( m_model->addStatement( s2 ) == Error::ERROR_NONE );
+
+    QVERIFY( m_model->removeStatement( s1 ) == Error::ERROR_NONE );
+    QVERIFY( !m_model->lastError() );
+    QVERIFY( !m_model->containsStatement( s1 ) );
+    QVERIFY( !m_model->lastError() );
+    QVERIFY( m_model->containsStatement( s2 ) );
+    QVERIFY( !m_model->lastError() );
+
+    // make sure invalid statements throw an error
+    s1.setObject( Node() );
+    QVERIFY( m_model->removeStatement( Statement( s1 ) ) != Error::ERROR_NONE );
+    QVERIFY( m_model->lastError() );
+}
+
+void SopranoModelTest::testRemoveStatements()
+{
+    QVERIFY( m_model != 0 );
+
     Node subject( QUrl("http://soprano.sf.net#remove:3") );
     Node predicate( QUrl( "http://soprano.sf.net#predicate" ) );
     Node object( QUrl("http://soprano.sf.net#soprano:2") );
@@ -398,26 +350,64 @@ void SopranoModelTest::testRemoveAllStatement()
 {
     QVERIFY( m_model != 0 );
 
-    m_model->removeStatements( Statement( m_st1->subject(), Node(), Node() ) );
+    m_model->removeStatements( Statement( m_st1.subject(), Node(), Node() ) );
 
-    QVERIFY( !m_model->containsStatements( *m_st1 ) );
-    QVERIFY( m_model->containsStatements( *m_st2 ) );
-    QVERIFY( !m_model->containsStatements( *m_st3 ) );
-    QVERIFY( m_model->containsStatements( *m_st4 ) );
+    QVERIFY( !m_model->containsStatements( m_st1 ) );
+    QVERIFY( m_model->containsStatements( m_st2 ) );
+    QVERIFY( !m_model->containsStatements( m_st3 ) );
+    QVERIFY( m_model->containsStatements( m_st4 ) );
 
-    m_model->removeStatements( Statement( Node(), m_st3->predicate(), Node() ) );
+    m_model->removeStatements( Statement( Node(), m_st3.predicate(), Node() ) );
 
-    QVERIFY( !m_model->containsStatements( *m_st1 ) );
-    QVERIFY( m_model->containsStatements( *m_st2 ) );
-    QVERIFY( !m_model->containsStatements( *m_st3 ) );
-    QVERIFY( !m_model->containsStatements( *m_st4 ) );
+    QVERIFY( !m_model->containsStatements( m_st1 ) );
+    QVERIFY( m_model->containsStatements( m_st2 ) );
+    QVERIFY( !m_model->containsStatements( m_st3 ) );
+    QVERIFY( !m_model->containsStatements( m_st4 ) );
 
-    m_model->removeStatements( Statement( Node(), Node(), m_st2->object() ) );
+    m_model->removeStatements( Statement( Node(), Node(), m_st2.object() ) );
 
-    QVERIFY( !m_model->containsStatements( *m_st1 ) );
-    QVERIFY( !m_model->containsStatements( *m_st2 ) );
-    QVERIFY( !m_model->containsStatements( *m_st3 ) );
-    QVERIFY( !m_model->containsStatements( *m_st4 ) );
+    QVERIFY( !m_model->containsStatements( m_st1 ) );
+    QVERIFY( !m_model->containsStatements( m_st2 ) );
+    QVERIFY( !m_model->containsStatements( m_st3 ) );
+    QVERIFY( !m_model->containsStatements( m_st4 ) );
+}
+
+
+void SopranoModelTest::testContainsStatement()
+{
+    QVERIFY( m_model != 0 );
+
+    Node res1( QUrl( "http://soprano.org/test#A" ) );
+    Node res2( QUrl( "http://soprano.org/test#B" ) );
+    Node res3( QUrl( "http://soprano.org/test#C" ) );
+    Node res4( QUrl( "http://soprano.org/test#D" ) );
+
+    Node pre( QUrl( "http://soprano.org/test#isRelated" ) );
+
+    Node context1( QUrl( "http://soprano.org/test#contextA" ) );
+    Node context2( QUrl( "http://soprano.org/test#contextB" ) );
+
+    QVERIFY( m_model->addStatement( Statement( res1, pre, res2 ) ) == Error::ERROR_NONE );
+    QVERIFY( m_model->addStatement( Statement( res1, pre, res3, context1 ) ) == Error::ERROR_NONE );
+    QVERIFY( m_model->addStatement( Statement( res1, pre, res4, context2 ) ) == Error::ERROR_NONE );
+
+    // check simple contains statement
+    QVERIFY( m_model->containsStatement( Statement( res1, pre, res2 ) ) );
+    QVERIFY( !m_model->lastError() );
+    QVERIFY( m_model->containsStatement( Statement( res1, pre, res3, context1 ) ) );
+    QVERIFY( !m_model->lastError() );
+    QVERIFY( m_model->containsStatement( Statement( res1, pre, res4, context2 ) ) );
+    QVERIFY( !m_model->lastError() );
+
+    // make sure the context is not used as wildcard
+    QVERIFY( !m_model->containsStatement( Statement( res1, pre, res3 ) ) );
+    QVERIFY( !m_model->lastError() );
+    QVERIFY( !m_model->containsStatement( Statement( res1, pre, res4 ) ) );
+    QVERIFY( !m_model->lastError() );
+
+    // make sure a wildcard statement throws an error.
+    QVERIFY( !m_model->containsStatement( Statement( res1, pre, Node() ) ) );
+    QVERIFY( m_model->lastError() );
 }
 
 void SopranoModelTest::testGraphQuery()
@@ -503,21 +493,21 @@ void SopranoModelTest::testQuery()
 
     /* RDQL */
 
-    QueryLegacy rdql("select ?b ?c where (<http://soprano.sf.net#init:test1>, ?b, ?c)", QueryLegacy::RDQL);
+//     QueryLegacy rdql("select ?b ?c where (<http://soprano.sf.net#init:test1>, ?b, ?c)", QueryLegacy::RDQL);
 
-    QueryResultIterator rs2 = m_model->executeQuery( rdql );
+//     QueryResultIterator rs2 = m_model->executeQuery( rdql );
 
-    int cnt2 = 0;
-    while ( rs2.next() )
-    {
-        QVERIFY( !rs2.isGraph() );
-        QVERIFY( rs2.isBinding() );
-        QVERIFY( !rs2.isBool() );
+//     int cnt2 = 0;
+//     while ( rs2.next() )
+//     {
+//         QVERIFY( !rs2.isGraph() );
+//         QVERIFY( rs2.isBinding() );
+//         QVERIFY( !rs2.isBool() );
 
-        ++cnt2;
-    }
+//         ++cnt2;
+//     }
 
-    QVERIFY( cnt2 == 2 );
+//     QVERIFY( cnt2 == 2 );
 }
 
 void SopranoModelTest::testCloseStatementIteratorOnModelDelete()

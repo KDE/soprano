@@ -65,6 +65,8 @@ namespace Soprano
 
 		Soprano::StatementIterator listStatements( const Statement &partial ) const;
 
+		Error::ErrorCode removeStatement( const Statement &statement );
+
 		Error::ErrorCode removeStatements( const Statement &statement );
 
 		int statementCount() const;
@@ -81,7 +83,7 @@ namespace Soprano
 		void removeIterator( NodeIteratorBackend* it ) const;
 		void removeQueryResult( RedlandQueryResult* r ) const;
 
-		Error::ErrorCode removeStatement( const Statement& );
+		Error::ErrorCode removeOneStatement( const Statement &statement );
 
 		friend class RedlandStatementIterator;
 		friend class RedlandQueryResult;

@@ -82,7 +82,12 @@ namespace Soprano {
 	    Error::ErrorCode addStatement( const Statement& );
 
 	    /**
-	     * Remove a statement from the model.
+	     * Remove one statement from the model.
+	     */
+	    Error::ErrorCode removeStatement( const Statement& );
+
+	    /**
+	     * Remove statements from the model.
 	     */
 	    Error::ErrorCode removeStatements( const Statement& );
 
@@ -169,11 +174,6 @@ namespace Soprano {
 	     * \return the number of new statements infered.
 	     */
 	    int inferRule( const Rule& rule, bool recurse );
-
-	    /**
-	     * We can only handle removing one statement at a time.
-	     */
-	    void removeStatement( const Statement& );
 
 	    /**
 	     * Get a list of all inference graphs (i.e. graphs that contain infered statements) that have statement 

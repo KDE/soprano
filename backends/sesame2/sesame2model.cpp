@@ -198,6 +198,34 @@ Soprano::StatementIterator Soprano::Sesame2::Model::listStatements( const Statem
 }
 
 
+Soprano::Error::ErrorCode Soprano::Sesame2::Model::removeStatement( const Statement &statement )
+{
+    if ( !statement.isValid() ) {
+        setError( "Invalid statement", Error::ERROR_INVALID_ARGUMENT );
+        return Error::ERROR_INVALID_ARGUMENT;
+    }
+
+    // Sesame does not seems to support the "default context", i.e. no context, it is always used
+    // as a wildcard, thus we have to do some serious hacking to get our way
+    if ( statement.context().isEmpty() ) {
+        QList<Statement> sl = listStatements( statement ).allStatements();
+        // this may look weird but is perfectly ok since an empty context is used as
+        // a wildcard in listStatements but not in QList.contains
+        if ( sl.contains( statement ) ) {
+            Error::ErrorCode c = Soprano::Model::removeStatements( sl );
+            if ( lastError() ) {
+                return c;
+            }
+            sl.removeAll( statement );
+            return addStatements( sl );
+        }
+    }
+    else {
+        return removeStatements( statement );
+    }
+}
+
+
 Soprano::Error::ErrorCode Soprano::Sesame2::Model::removeStatements( const Statement &statement )
 {
     QWriteLocker lock( &d->readWriteLock );
@@ -250,6 +278,15 @@ int Soprano::Sesame2::Model::statementCount() const
     else {
         return size;
     }
+}
+
+
+bool Soprano::Sesame2::Model::containsStatement( const Statement &statement ) const
+{
+    // As it seems sesame cannot handle the default graph in RepositoryConnection.hasStatement
+    // it is always used as a wildcard. Thus, we have to use the default implementation based
+    // on listStatements
+    return StorageModel::containsStatement( statement );
 }
 
 

@@ -25,10 +25,10 @@
 #define SOPRANO_TEST_H
 
 #include <soprano/backend.h>
+#include "../soprano/statement.h"
 
 namespace Soprano {
   class Model;
-  class Statement;
 }
 
 class SopranoModelTest: public QObject
@@ -42,16 +42,17 @@ private Q_SLOTS:
   void init();
   void cleanup();
 
-  void testAddModel();   
   void testAddListOfStatement(); 
-  void testAddStatementIterator();
   void testAddStatements();
 
   void testListStatements();
   void testListStatementsWithContext();
 
   void testRemoveStatement();
+  void testRemoveStatements();
   void testRemoveAllStatement();
+
+  void testContainsStatement();
 
   void testGraphQuery();
   void testBooleanQuery();
@@ -67,10 +68,10 @@ private Q_SLOTS:
 protected:
   virtual Soprano::Model* createModel() = 0;
 
-   Soprano::Statement* m_st1;
-   Soprano::Statement* m_st2;
-   Soprano::Statement* m_st3;
-   Soprano::Statement* m_st4;
+   Soprano::Statement m_st1;
+   Soprano::Statement m_st2;
+   Soprano::Statement m_st3;
+   Soprano::Statement m_st4;
 
    Soprano::Model* m_model;
 };

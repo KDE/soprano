@@ -64,9 +64,11 @@ namespace Soprano {
 	    int listContexts( int modelId );
 	    int executeQuery( int modelId, const QueryLegacy &query );
 	    int listStatements( int modelId, const Statement &partial );
+	    Error::ErrorCode removeStatement( int modelId, const Statement &statement );
 	    Error::ErrorCode removeStatements( int modelId, const Statement &statement );
 	    int statementCount( int modelId );
 	    bool isEmpty( int modelId );
+	    bool containsStatement( int modelId, const Statement &statement );
 	    bool containsStatements( int modelId, const Statement &statement );
 
 	    // Iterator methods

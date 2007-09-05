@@ -54,9 +54,32 @@ bool Soprano::StorageModel::isEmpty() const
     return statementCount() == 0;
 }
 
+bool Soprano::StorageModel::containsStatement( const Statement &statement ) const
+{
+    if ( !statement.isValid() ) {
+        setError( "Cannot check for invalid statement", Error::ERROR_INVALID_ARGUMENT );
+        return false;
+    }
+
+    return listStatements( statement ).allStatements().contains( statement );
+}
+
 bool Soprano::StorageModel::containsStatements( const Statement &statement ) const
 {
     return listStatements( statement ).next();
+}
+
+Soprano::Error::ErrorCode Soprano::StorageModel::removeStatements( const Statement &statement )
+{
+    QList<Statement> sl = listStatements( statement ).allStatements();
+    for ( QList<Statement>::const_iterator it = sl.constBegin(); it != sl.constEnd(); ++it ) {
+        Error::ErrorCode r = removeStatement( *it );
+        if ( r != Error::ERROR_NONE ) {
+            return r;
+        }
+    }
+
+    return Error::ERROR_NONE;
 }
 
 #include "storagemodel.moc"

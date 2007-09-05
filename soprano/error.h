@@ -38,12 +38,12 @@ namespace Soprano {
 	 * \sa Error::code()
 	 */
 	enum ErrorCode {
-	    ERROR_NONE = 0,          /**< No error occured, i.e. success. */
-	    ERROR_INVALID_ARGUMENT,  /**< Error indicating that a method argument was invalid. For example an invalid Statement in Model::addStatement(). */
+	    ERROR_NONE = 0x0,              /**< No error occured, i.e. success. */
+	    ERROR_INVALID_ARGUMENT = 0x1,  /**< Error indicating that a method argument was invalid. For example an invalid Statement in Model::addStatement(). */
 	    ERROR_INVALID_STATEMENT = ERROR_INVALID_ARGUMENT, /**< \deprecated: use ERROR_INVALID_ARGUMENT */
-	    ERROR_NOT_SUPPORTED,     /**< Error indicating that a certain functionality is not supported. */
-	    ERROR_PARSING_FAILED,    /**< Parsing a query or an RDF serialization failed. */
-	    ERROR_UNKNOWN            /**< An unknown error occured. */
+	    ERROR_NOT_SUPPORTED = 0x2,     /**< Error indicating that a certain functionality is not supported. */
+	    ERROR_PARSING_FAILED = 0x3,    /**< Parsing a query or an RDF serialization failed. */
+	    ERROR_UNKNOWN = 0x1000         /**< An unknown error occured. */
 	};
 
 	/**

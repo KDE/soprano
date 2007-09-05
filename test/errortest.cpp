@@ -47,6 +47,12 @@ void ErrorTest::testOperator()
 
     QCOMPARE( e1.message(), e2.message() );
     QCOMPARE( e1.code(), e2.code() );
+
+    Error error;
+    error = Error( "test error" );
+
+    QCOMPARE( error.message(), QString( "test error" ) );
+    QCOMPARE( error.code(), ( int )error.code() );
 }
 
 

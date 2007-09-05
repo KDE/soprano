@@ -103,16 +103,6 @@ namespace Soprano
 	virtual Error::ErrorCode addStatement( const Statement &statement ) = 0;
 
 	/**
-	 * Convenience method which adds all statements in model to this Model.
-	 */
-	Error::ErrorCode addModel( const Model &model );
-
-	/**
-	 * Convenience method which adds all statements in iter to this Model.
-	 */
-	Error::ErrorCode addStatements( StatementIterator iter );
-
-	/**
 	 * Convenience method which adds all %statements in statements to this Model.
 	 */
 	Error::ErrorCode addStatements( const QList<Statement> &statements );
@@ -130,11 +120,27 @@ namespace Soprano
 	virtual NodeIterator listContexts() const = 0;
 
 	/**
-	 * The default implementation is simply based on listStatements( const Statement& ).
+	 * Check if the model contains certain statements.
 	 *
-	 * \return true if the Model contains the given Statement.
+	 * \param statement A partially defined statement that serves as
+	 * a pattern.
+	 *
+	 * \return true if the Model contains a Statement matching the given statement
+	 * pattern.
 	 */
 	virtual bool containsStatements( const Statement &statement ) const = 0;
+
+	/**
+	 * Check if the model contains a statements.
+	 *
+	 * \param statement The statement in question. This has to be a valid statement,
+	 * i.e. subject, predicate, and object need to be defined. If the context node
+	 * is empty the default graph is searched.
+	 *
+	 * \return \p true if the Model contains the Statement, \p false otherwise or
+	 * is statement is invalid.
+	 */
+	virtual bool containsStatement( const Statement &statement ) const = 0;
 
 	/**
 	 * Convenience method which is based on containsStatements
@@ -201,7 +207,18 @@ namespace Soprano
 	StatementIterator listStatementsInContext( const Node &context ) const;
 
 	/**
-	 * Remove all statements that match the partial statement.
+	 * Remove one statement. For removing statements with wildward matching see removeStatements().
+	 *
+	 * \param statement The statement that should be removed. This has to be a valid statement.
+	 *
+	 * \return #Error::ERROR_NONE on success and an error code if statement was invalid or an error
+	 * occured.
+	 */
+	virtual Error::ErrorCode removeStatement( const Statement &statement ) = 0;
+
+	/**
+	 * Remove all statements that match the partial statement. For removing
+	 * one specific statement see removeStatement().
 	 *
 	 * \param statement A possible partially defined statement that serves as
 	 * a filter for all statements that should be removed.

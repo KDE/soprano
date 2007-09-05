@@ -101,39 +101,6 @@ Soprano::Error::ErrorCode Soprano::Model::removeAllStatements()
 }
 
 
-Soprano::Error::ErrorCode Soprano::Model::addModel( const Model &model )
-{
-    StatementIterator stmi = model.listStatements( Statement() );
-    if ( !stmi.isValid() ) {
-        return Error::ERROR_UNKNOWN;
-    }
-
-    while ( stmi.next() ) {
-        Error::ErrorCode c = addStatement( *stmi );
-        if ( Error::ERROR_NONE != c ) {
-            return c;
-        }
-    }
-
-    return Error::ERROR_NONE;
-}
-
-Soprano::Error::ErrorCode Soprano::Model::addStatements( StatementIterator iter )
-{
-    if ( !iter.isValid() ) {
-        return Error::ERROR_UNKNOWN;
-    }
-
-    while ( iter.next() ) {
-        Error::ErrorCode c = addStatement( *iter );
-        if ( Error::ERROR_NONE != c ) {
-            return c;
-        }
-    }
-
-    return Error::ERROR_NONE;
-}
-
 Soprano::Error::ErrorCode Soprano::Model::addStatements( const QList<Statement> &statements )
 {
     QListIterator<Statement> iter(statements);

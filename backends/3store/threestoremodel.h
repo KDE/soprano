@@ -50,7 +50,7 @@ namespace Soprano {
 
 	    Soprano::StatementIterator listStatements( const Statement &partial ) const;
 
-	    Error::ErrorCode removeStatements( const Statement &statement );
+	    Error::ErrorCode removeStatement( const Statement &statement );
 
 	    int statementCount() const;
 

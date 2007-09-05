@@ -128,6 +128,20 @@ Soprano::StatementIterator Soprano::Server::ClientModel::listStatements( const S
 }
 
 
+Soprano::Error::ErrorCode Soprano::Server::ClientModel::removeStatement( const Statement &statement )
+{
+    if ( m_client ) {
+        Error::ErrorCode c = m_client->removeStatement( m_modelId, statement );
+        setError( m_client->lastError() );
+        return c;
+    }
+    else {
+        setError( "Not connected to server." );
+        return Error::ERROR_UNKNOWN;
+    }
+}
+
+
 Soprano::Error::ErrorCode Soprano::Server::ClientModel::removeStatements( const Statement &statement )
 {
     if ( m_client ) {
@@ -152,6 +166,20 @@ int Soprano::Server::ClientModel::statementCount() const
     else {
         setError( "Not connected to server." );
         return -1;
+    }
+}
+
+
+bool Soprano::Server::ClientModel::containsStatement( const Statement &statement ) const
+{
+    if ( m_client ) {
+        bool c = m_client->containsStatement( m_modelId, statement );
+        setError( m_client->lastError() );
+        return c;
+    }
+    else {
+        setError( "Not connected to server." );
+        return false;
     }
 }
 

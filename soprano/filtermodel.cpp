@@ -108,6 +108,15 @@ Soprano::NodeIterator Soprano::FilterModel::listContexts() const
 }
 
 
+bool Soprano::FilterModel::containsStatement( const Statement &statement ) const
+{
+    Q_ASSERT( d->parent );
+    bool b = d->parent->containsStatement( statement );
+    setError( d->parent->lastError() );
+    return b;
+}
+
+
 bool Soprano::FilterModel::containsStatements( const Statement &statement ) const
 {
     Q_ASSERT( d->parent );
@@ -132,6 +141,15 @@ Soprano::StatementIterator Soprano::FilterModel::listStatements( const Statement
     StatementIterator it = d->parent->listStatements( partial );
     setError( d->parent->lastError() );
     return it;
+}
+
+
+Soprano::Error::ErrorCode Soprano::FilterModel::removeStatement( const Statement &statement )
+{
+    Q_ASSERT( d->parent );
+    Error::ErrorCode c = d->parent->removeStatement( statement );
+    setError( d->parent->lastError() );
+    return c;
 }
 
 

@@ -45,17 +45,17 @@ add_library(soprano_serverclientbackend SHARED ${soprano_serverbackend_SRC})
 add_executable(sopranod sopranod.cpp)
 
 set_target_properties(sopranoserver PROPERTIES
-        VERSION 1.0.0
-        SOVERSION 1
-        DEFINE_SYMBOL MAKE_SOPRANO_LIB
-	INSTALL_NAME_DIR ${LIB_DESTINATION}
+  VERSION 1.0.0
+  SOVERSION 1
+  DEFINE_SYMBOL MAKE_SOPRANO_LIB
+  INSTALL_NAME_DIR ${LIB_DESTINATION}
 )
 
 set_target_properties(sopranoclient PROPERTIES
-        VERSION 1.0.0
-        SOVERSION 1
-        DEFINE_SYMBOL MAKE_SOPRANO_LIB
-	INSTALL_NAME_DIR ${LIB_DESTINATION}
+  VERSION 1.0.0
+  SOVERSION 1
+  DEFINE_SYMBOL MAKE_SOPRANO_LIB
+  INSTALL_NAME_DIR ${LIB_DESTINATION}
 )
 
 target_link_libraries(
@@ -80,6 +80,7 @@ target_link_libraries(
 target_link_libraries(
   sopranod
   sopranoserver
+  soprano
 )
 
 INSTALL(TARGETS sopranoserver sopranoclient sopranod

@@ -265,6 +265,29 @@ Soprano::Error::ErrorCode Soprano::Server::ClientConnection::removeStatements( i
 }
 
 
+Soprano::Error::ErrorCode Soprano::Server::ClientConnection::removeStatement( int modelId, const Statement &statement )
+{
+//    qDebug() << "(ClientConnection::removeStatement)";
+    QMutexLocker( &d->mutex );
+
+    QDataStream stream( d->socket );
+
+    stream << COMMAND_MODEL_REMOVE_STATEMENT << ( quint32 )modelId << statement;
+
+    if ( !d->socket->waitForReadyRead() ) {
+        setError( "Command timed out." );
+        return Error::ERROR_UNKNOWN;
+    }
+
+    Error::ErrorCode ec;
+    Error::Error error;
+    stream >> ec >> error;
+
+    setError( error );
+    return ec;
+}
+
+
 int Soprano::Server::ClientConnection::statementCount( int modelId )
 {
 //    qDebug() << "(ClientConnection::statementCount)";
@@ -285,6 +308,29 @@ int Soprano::Server::ClientConnection::statementCount( int modelId )
 
     setError( error );
     return count;
+}
+
+
+bool Soprano::Server::ClientConnection::containsStatement( int modelId, const Statement &statement )
+{
+//    qDebug() << "(ClientConnection::containsStatement)";
+    QMutexLocker( &d->mutex );
+
+    QDataStream stream( d->socket );
+
+    stream << COMMAND_MODEL_CONTAINS_STATEMENT << ( quint32 )modelId << statement;
+
+    if ( !d->socket->waitForReadyRead() ) {
+        setError( "Command timed out." );
+        return false;
+    }
+
+    bool r;
+    Error::Error error;
+    stream >> r >> error;
+
+    setError( error );
+    return r;
 }
 
 

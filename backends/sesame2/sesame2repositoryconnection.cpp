@@ -36,6 +36,7 @@ public:
           m_IDgetStatements( 0 ),
           m_IDhasStatement( 0 ),
           m_IDremove( 0 ),
+          m_IDremoveStatement( 0 ),
           m_IDsize( 0 ),
           m_IDprepareQuery( 0 ),
           m_classResource( 0 ),
@@ -81,6 +82,14 @@ public:
             JNIWrapper::instance()->debugException();
         }
         return m_IDremove;
+    }
+
+    jmethodID IDremoveStatement() {
+        if ( !m_IDremoveStatement ) {
+            m_IDremoveStatement = m_parent->getMethodID( "remove", "(L"ORG_OPENRDF_MODEL_STATEMENT";[L"ORG_OPENRDF_MODEL_RESOURCE";)V" );
+            JNIWrapper::instance()->debugException();
+        }
+        return m_IDremoveStatement;
     }
 
     jmethodID IDsize() {
@@ -132,6 +141,7 @@ private:
     jmethodID m_IDgetStatements;
     jmethodID m_IDhasStatement;
     jmethodID m_IDremove;
+    jmethodID m_IDremoveStatement;
     jmethodID m_IDsize;
     jmethodID m_IDprepareQuery;
 
@@ -193,6 +203,13 @@ void Soprano::Sesame2::RepositoryConnection::remove( const JObjectRef& subject, 
                                                                            d->classResource(),
                                                                            context );
     callVoidMethod( d->IDremove(), subject.data(), predicate.data(), object.data(), contexts );
+}
+
+
+void Soprano::Sesame2::RepositoryConnection::remove( const JObjectRef& statement )
+{
+    jobjectArray contexts = JNIWrapper::instance()->env()->NewObjectArray( 0, d->classResource(), 0 );
+    callVoidMethod( d->IDremoveStatement(), statement.data(), contexts );
 }
 
 

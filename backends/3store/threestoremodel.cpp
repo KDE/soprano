@@ -201,7 +201,7 @@ Soprano::StatementIterator Soprano::ThreeStore::Model::listStatements( const Sta
 }
 
 
-Soprano::Error::ErrorCode Soprano::ThreeStore::Model::removeStatements( const Statement &statement )
+Soprano::Error::ErrorCode Soprano::ThreeStore::Model::removeStatement( const Statement &statement )
 {
     // FIXME
     return Error::ERROR_UNKNOWN;
