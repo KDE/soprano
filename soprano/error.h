@@ -154,8 +154,10 @@ namespace Soprano {
 	    ParserError toParserError() const;
 	
 	protected:
+	    /** \cond protected_error_members */
 	    Error( ErrorData* );
 	    QSharedDataPointer<ErrorData> d;
+	    /** \endcond */
 	};
 
 	class Locator;
