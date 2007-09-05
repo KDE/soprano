@@ -53,31 +53,40 @@ namespace Soprano
 	    /**
 	     * Default costructor.
 	     * Creates an empty node.
+	     *
+	     * \sa createEmptyNode()
 	     */
 	    Node();
 
 	    // This constructor is non-explicit for a reason: it makes creating
 	    // Statements much much easier and more readable
 	    /**
-	     * Creates a resource or blank node.
+	     * Creates a resource node.
 	     *
 	     * \param uri The URI of the node. If empty the type will be ignored
 	     *            and an empty node will be created.
-	     * \param type ResourceNode or BlankNode. Otherwise an empty node will
-	     *             be created.
+	     *
+	     * \sa createResourceNode()
 	     */
-	    Node( const QUrl &uri, Type type = ResourceNode );
+	    Node( const QUrl &uri );
+
+	    /**
+	     * Creates a blank node.
+	     *
+	     * \param id An identifier for the blank node.
+	     *
+	     * \sa createBlankNode()
+	     */
+	    explicit Node( const QString& id );
 
 	    /**
 	     * Creates a literal node.
 	     *
 	     * \param value The value of a node. If empty the node will become
 	     *              an empty node.
-	     *
 	     * \param language The language of the literal value.
 	     *
-	     * Caution: This constructor allows to create Nodes with
-	     *          empty uris or values.
+	     * \sa createLiteralNode()
 	     */
 	    Node( const LiteralValue& value,
 		  const QString& language = QString() );
@@ -138,10 +147,17 @@ namespace Soprano
 	    bool isBlank() const;
 
 	    /**
-	     * \return The URI if the node is a Resource or blank node.
+	     * \return The URI if the node is a Resource node.
 	     *         An null QUrl otherwise.
 	     */
 	    QUrl uri() const;
+
+	    /**
+	     * Retrieve a blank node's identifier.
+	     * \return The node's identifier if it is a blank node, a null
+	     * string otherwise.
+	     */
+	    QString identifier() const;
 
 	    /**
 	     * \return The Literal value if the node is a Literal node.
@@ -171,14 +187,69 @@ namespace Soprano
 	     */
 	    QString toString() const;
 
+	    /**
+	     * Convenience method to create an empty node.
+	     * Using this method instead of the default constructor
+	     * may result in better readable code.
+	     *
+	     * \return An empty Node.
+	     */
+	    static Node createEmptyNode();
+
+	    /**
+	     * Convenience method to create a resource node.
+	     * Using this method instead of the constructor
+	     * may result in better readable code.
+	     *
+	     * \param uri The URI of the node. If empty the type will be ignored
+	     *            and an empty node will be created.
+	     * 
+	     * \return A resource Node or an empty Node if the specified URI is empty.
+	     */
+	    static Node createResourceNode( const QUrl& uri );
+
+	    /**
+	     * Convenience method to create a blank node.
+	     * Using this method instead of the constructor
+	     * may result in better readable code.
+	     *
+	     * \param id An identifier for the blank node.
+	     *
+	     * \return A blank node or an empty Node if the specified
+	     * identifier was empty.
+	     */
+	    static Node createBlankNode( const QString& id );
+
+	    /**
+	     * Convenience method to create a literal node.
+	     * Using this method instead of the constructor
+	     * may result in better readable code.
+	     *
+	     * \param value The value of a node. If empty the node will become
+	     *              an empty node.
+	     * \param language The language of the literal value.
+	     *
+	     * \return A literal node or an empty node if the specified value
+	     * was empty.
+	     */
+	    static Node createLiteralNode( const LiteralValue& value, const QString& language );
+
 	private:
-	    class Private;
-	    QSharedDataPointer<Private> d;
+	    class NodeData;
+	    class ResourceNodeData;
+	    class BNodeData;
+	    class LiteralNodeData;
+	    QSharedDataPointer<NodeData> d;
 	};
 
 }
 
 SOPRANO_EXPORT QDebug operator<<( QDebug s, const Soprano::Node& );
+
+/**
+ * Default Soprano::Node stream operator. The operator serializes the Node
+ * based on the N-Triples standard, except that it uses Unicode strings.
+ */
 SOPRANO_EXPORT QTextStream& operator<<( QTextStream& s, const Soprano::Node& );
 
 #endif // SOPRANO_NODE_H

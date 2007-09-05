@@ -73,7 +73,7 @@ Soprano::Node Soprano::Sesame2::convertNode( const JObjectRef& resource )
     }
     else if ( JNIWrapper::instance()->env()->IsInstanceOf( resource, classCache()->classBNode ) ) {
         JStringRef uri = resourceWrapper.callObjectMethod( resourceWrapper.getMethodID( "getID", "()L"JAVA_LANG_STRING";" ) );
-        return QUrl( uri.toQString() );
+        return Node( uri.toQString() );
     }
     else if ( JNIWrapper::instance()->env()->IsInstanceOf( resource, classCache()->classLiteral ) ) {
         JStringRef value = resourceWrapper.callObjectMethod( resourceWrapper.getMethodID( "getLabel", "()L"JAVA_LANG_STRING";" ) );

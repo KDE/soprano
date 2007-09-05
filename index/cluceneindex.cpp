@@ -503,7 +503,7 @@ Soprano::Node Soprano::Index::CLuceneIndex::getResource( lucene::document::Docum
 
     QString id = WString( document->get( idFieldName().data() ) );
     if ( id.startsWith( bnodeIdPrefix() ) ) {
-        return Soprano::Node( QUrl( id.mid( bnodeIdPrefix().length() ) ), Soprano::Node::BlankNode );
+        return Soprano::Node( id.mid( bnodeIdPrefix().length() ) );
     }
     else {
         return Soprano::Node( QUrl( id ) );

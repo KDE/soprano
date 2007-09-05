@@ -126,10 +126,10 @@ JObjectRef Soprano::Sesame2::ValueFactory::convertNode( const Node& node )
 {
     switch( node.type() ) {
     case Node::ResourceNode:
-        return callObjectMethod( d->IDcreateURI(), JStringRef( node.toString() ).data() );
+        return callObjectMethod( d->IDcreateURI(), JStringRef( node.uri().toString() ).data() );
 
     case Node::BlankNode:
-        return callObjectMethod( d->IDcreateBNode(), JStringRef( node.toString() ).data() );
+        return callObjectMethod( d->IDcreateBNode(), JStringRef( node.identifier() ).data() );
 
     case Node::LiteralNode:
         // FIXME: is it more performant to create the instances directly from the values instead of strings?

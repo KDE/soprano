@@ -55,8 +55,8 @@ void SopranoModelTest::init()
     Node predicate1( QUrl( "http://soprano.sf.net#predicate1" ) );
     Node predicate2( QUrl( "http://soprano.sf.net#predicate2" ) );
 
-    Node object1( "Literal value1" );
-    Node object2( "Literal value2" );
+    Node object1( LiteralValue( "Literal value1" ) );
+    Node object2( LiteralValue( "Literal value2" ) );
 
     m_st1 = Statement(subject1, predicate1, object1);
     m_st2 = Statement(subject2, predicate1, object1);
@@ -79,7 +79,7 @@ void SopranoModelTest::testAddListOfStatement()
     Node predicate2( QUrl( "http://soprano.sf.net#predicate2" ) );
     Node predicate3( QUrl( "http://soprano.sf.net#predicate3" ) );
 
-    Node object1( "Literal value1" );
+    Node object1( LiteralValue( "Literal value1" ) );
 
     Statement st1(subject1, predicate1, object1);
     Statement st2(subject1, predicate2, object1);
@@ -108,8 +108,8 @@ void SopranoModelTest::testAddStatements()
     Node predicate1( QUrl( "http://soprano.sf.net#predicate1" ) );
     Node predicate2( QUrl( "http://soprano.sf.net#predicate2" ) );
 
-    Node object1( "Literal value1" );
-    Node object2( "Literal value2" );
+    Node object1( LiteralValue( "Literal value1" ) );
+    Node object2( LiteralValue( "Literal value2" ) );
 
     Statement st1(subject1, predicate1, object1);
     Statement st2(subject2, predicate1, object1);
@@ -563,7 +563,7 @@ void SopranoModelTest::testCloseStatementIteratorOnModelDelete()
     Node predicate2( QUrl( "http://soprano.sf.net#predicate2" ) );
     Node predicate3( QUrl( "http://soprano.sf.net#predicate3" ) );
 
-    Node object1( "Literal value1" );
+    Node object1( LiteralValue( "Literal value1" ) );
 
     Statement st1(subject1, predicate1, object1);
     Statement st2(subject1, predicate2, object1);
@@ -631,9 +631,9 @@ void SopranoModelTest::testContexts()
     Node predicate2( QUrl( "http://soprano.sf.net#predicate2" ) );
     Node predicate3( QUrl( "http://soprano.sf.net#predicate3" ) );
 
-    Node object1( "literal 1" );
-    Node object2( "literal 2" );
-    Node object3( "literal 3" );
+    LiteralValue object1( "literal 1" );
+    LiteralValue object2( "literal 2" );
+    LiteralValue object3( "literal 3" );
 
     Node context1( QUrl( "http://soprano.sf.net/contexts/context1" ) );
     Node context2( QUrl( "http://soprano.sf.net/contexts/context2" ) );

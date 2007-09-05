@@ -35,7 +35,7 @@ Soprano::Node Soprano::Redland::Util::createNode( librdf_node *node )
     return Soprano::Node( QUrl::fromEncoded( (const char *)librdf_uri_as_string(uri), QUrl::StrictMode ) );
   }
   else if ( librdf_node_is_blank( node ) ) {
-    return Soprano::Node( QUrl::fromEncoded( (const char *)librdf_node_get_blank_identifier( node ), QUrl::StrictMode ), Node::BlankNode );
+    return Soprano::Node( QString::fromUtf8( (const char *)librdf_node_get_blank_identifier( node ), QUrl::StrictMode ) );
   }
   else if ( librdf_node_is_literal( node ) ) {
     librdf_uri* datatype = librdf_node_get_literal_value_datatype_uri( node );
@@ -60,7 +60,7 @@ librdf_node *Soprano::Redland::Util::createNode( const Node &node )
       return librdf_new_node_from_uri_string( world, (unsigned char *)node.uri().toEncoded().data() );
   }
   else if ( node.isBlank() ) {
-      return librdf_new_node_from_blank_identifier( world, (unsigned char *) node.uri().toEncoded().data() );
+      return librdf_new_node_from_blank_identifier( world, (unsigned char *) node.identifier().toUtf8().data() );
   }
   else if ( node.isLiteral() ) {
       return librdf_new_node_from_typed_literal( world,

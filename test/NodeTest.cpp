@@ -60,12 +60,12 @@ void NodeTest::testCreateLiteralNode()
 
 void NodeTest::testCreateBlankNode()
 {
-  QUrl uri("uri:soprano:test");
-  Node node( uri, Node::BlankNode );
+  QString id("uri:soprano:test");
+  Node node( id );
 
   QCOMPARE( node.type(), Node::BlankNode );
   QVERIFY( node.isValid() );
-  QCOMPARE( node.uri(), uri );
+  QCOMPARE( node.identifier(), id );
   QVERIFY( !node.literal().isValid() );
 }
 

@@ -54,7 +54,7 @@ public:
 
             if ( datatypeId == result->con->uri_dt ) {
                 if ( *binding->lexical == '_' ) {
-                    return Soprano::Node( QUrl::fromEncoded( binding->lexical+2 ), Soprano::Node::BlankNode );
+                    return Soprano::Node( QString::fromAscii( binding->lexical+2 ) );
                 }
                 else {
                     return Soprano::Node( QUrl::fromEncoded( binding->lexical ) );
@@ -88,10 +88,10 @@ public:
         switch( l->type ) {
         case RASQAL_LITERAL_URI:
 //            qDebug() << "(Soprano::ThreeStore::QueryResult) creating node from uri" << literalString;
-            return Node( literalString, Node::ResourceNode );
+            return Node( QUrl( literalString ) );
 
         case RASQAL_LITERAL_BLANK:
-            return Node( literalString, Node::BlankNode );
+            return Node( literalString );
 
         case RASQAL_LITERAL_STRING:
             return Node( LiteralValue::fromString( literalString, QVariant::String ) );
