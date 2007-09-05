@@ -120,7 +120,7 @@ void IndexTest::testRemoveStatement()
     m_indexModel->index()->dump( s );
 
     // now remove one of them
-    QVERIFY( m_indexModel->removeStatements( s1 ) == Error::ERROR_NONE );
+    QVERIFY( m_indexModel->removeStatement( s1 ) == Error::ERROR_NONE );
 
     m_indexModel->index()->dump( s );
 

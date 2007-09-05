@@ -91,6 +91,13 @@ namespace Soprano {
 	     *
 	     * This will remove the statement from the index and then forward the call to the parent model.
 	     */
+	    Soprano::Error::ErrorCode removeStatement( const Soprano::Statement &statement );
+
+	    /**
+	     * Removes statements.
+	     *
+	     * This will remove the statements from the index and then forward the call to the parent model.
+	     */
 	    Soprano::Error::ErrorCode removeStatements( const Soprano::Statement &statement );
 
 	    /**

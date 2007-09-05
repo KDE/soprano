@@ -211,7 +211,7 @@ namespace Soprano
 	 *
 	 * \param statement The statement that should be removed. This has to be a valid statement.
 	 *
-	 * \return #Error::ERROR_NONE on success and an error code if statement was invalid or an error
+	 * \return Error::ERROR_NONE on success and an error code if statement was invalid or an error
 	 * occured.
 	 */
 	virtual Error::ErrorCode removeStatement( const Statement &statement ) = 0;
@@ -252,13 +252,6 @@ namespace Soprano
 	 * Default implementation is based on Model::listStatements
 	 */
 	virtual Error::ErrorCode write( QTextStream &os ) const;
-
-	/**
-	 * Print all statements in this Model to stdout.
-	 *
-	 * Default implementation is based on Model::write
-	 */
-	virtual Error::ErrorCode print() const;
 	
     signals:
 	/**

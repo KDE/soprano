@@ -138,8 +138,6 @@ void InferenceModelTest::testRemoveStatementsSingle()
     m_infModel->addStatement( s1 );
     m_infModel->addStatement( s2 );
 
-    m_model->print();
-
     m_infModel->removeStatements( s1 );
 
     // now we should only have a single statement left

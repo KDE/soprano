@@ -36,12 +36,6 @@ Soprano::Sesame2::BackendPlugin::BackendPlugin()
     Backend( "sesame2" ),
     m_jniWrapper( 0 )
 {
-    // stupid java threading! Looks as if the query parsers need to be initialized in the main thread! Well, even this does not
-    // guarantee that but at least it covers most cases.... :(
-    m_jniWrapper = new JNIWrapper();
-    JClassRef clazz = m_jniWrapper->env()->FindClass( "org/openrdf/query/parser/QueryParserRegistry" );
-    jmethodID id = m_jniWrapper->env()->GetStaticMethodID( clazz, "getInstance", "()Lorg/openrdf/query/parser/QueryParserRegistry;" );
-    m_jniWrapper->env()->CallStaticObjectMethod( clazz, id );
 }
 
 
@@ -56,6 +50,12 @@ Soprano::StorageModel* Soprano::Sesame2::BackendPlugin::createModel( const QList
     m_mutex.lock();
     if ( !m_jniWrapper ) {
         m_jniWrapper = new JNIWrapper();
+
+        // stupid java threading! Looks as if the query parsers need to be initialized in the main thread! Well, even this does not
+        // guarantee that but at least it covers most cases.... :(
+        JClassRef clazz = m_jniWrapper->env()->FindClass( "org/openrdf/query/parser/QueryParserRegistry" );
+        jmethodID id = m_jniWrapper->env()->GetStaticMethodID( clazz, "getInstance", "()Lorg/openrdf/query/parser/QueryParserRegistry;" );
+        m_jniWrapper->env()->CallStaticObjectMethod( clazz, id );
     }
     m_mutex.unlock();
 

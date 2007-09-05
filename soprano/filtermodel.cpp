@@ -171,15 +171,27 @@ int Soprano::FilterModel::statementCount() const
 }
 
 
-void Soprano::FilterModel::slotStatementsAdded()
+void Soprano::FilterModel::parentStatementsAdded()
 {
     emit statementsAdded();
 }
 
 
-void Soprano::FilterModel::slotStatementsRemoved()
+void Soprano::FilterModel::parentStatementsRemoved()
 {
     emit statementsRemoved();
+}
+
+
+void Soprano::FilterModel::slotStatementsAdded()
+{
+    parentStatementsAdded();
+}
+
+
+void Soprano::FilterModel::slotStatementsRemoved()
+{
+    parentStatementsRemoved();
 }
 
 #include "filtermodel.moc"

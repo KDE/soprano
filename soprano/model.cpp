@@ -123,11 +123,4 @@ Soprano::Error::ErrorCode Soprano::Model::write( QTextStream &os ) const
     }
 }
 
-
-Soprano::Error::ErrorCode Soprano::Model::print() const
-{
-    QTextStream os( stdout );
-    write( os );
-}
-
 #include "model.moc"

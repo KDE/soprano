@@ -82,6 +82,19 @@ Soprano::Error::ErrorCode Soprano::Index::IndexFilterModel::addStatement( const 
 }
 
 
+Soprano::Error::ErrorCode Soprano::Index::IndexFilterModel::removeStatement( const Soprano::Statement &statement )
+{
+    Error::ErrorCode c = FilterModel::removeStatement( statement );
+    if ( c == Error::ERROR_NONE ) {
+        c = d->index->removeStatement( statement );
+        if ( c != Error::ERROR_NONE ) {
+            setError( d->index->lastError() );
+        }
+    }
+    return c;
+}
+
+
 Soprano::Error::ErrorCode Soprano::Index::IndexFilterModel::removeStatements( const Soprano::Statement &statement )
 {
     // since we use backends that directly implement this method we don't know which

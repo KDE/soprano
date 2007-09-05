@@ -130,20 +130,32 @@ namespace Soprano {
 	 */
 	FilterModel( Model* parent );
 
-    protected Q_SLOTS:
+	/**
+	 * Handle a statementsAdded() signal from the parent Model.
+	 *
+	 * The default implementation simply re-emits the signal.
+	 */
+	virtual void parentStatementsAdded();
+
+	/**
+	 * Handle a statementsRemoved() signal from the parent Model.
+	 *
+	 * The default implementation simply re-emits the signal.
+	 */
+	virtual void parentStatementsRemoved();
+
+    private Q_SLOTS:
 	/**
 	 * This slot gets connected to Model::statementsAdded of the parent
 	 * model.
-	 * The default implementation simply re-emits the signal.
 	 */
-	virtual void slotStatementsAdded();
+	void slotStatementsAdded();
 
 	/**
 	 * This slot gets connected to Model::statementsRemoved of the parent
 	 * model.
-	 * The default implementation simply re-emits the signal.
 	 */
-	virtual void slotStatementsRemoved();
+	void slotStatementsRemoved();
 
     private:
 	class Private;
