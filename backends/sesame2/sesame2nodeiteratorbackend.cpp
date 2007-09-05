@@ -54,6 +54,7 @@ Soprano::Sesame2::NodeIteratorBackend::NodeIteratorBackend( const JObjectRef& re
 
 Soprano::Sesame2::NodeIteratorBackend::~NodeIteratorBackend()
 {
+    close();
     delete d;
 }
 

@@ -54,6 +54,7 @@ Soprano::Sesame2::StatementIteratorBackend::StatementIteratorBackend( const JObj
 
 Soprano::Sesame2::StatementIteratorBackend::~StatementIteratorBackend()
 {
+    close();
     delete d;
 }
 

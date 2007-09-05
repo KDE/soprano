@@ -75,6 +75,7 @@ Soprano::Sesame2::QueryResultIteratorBackend::QueryResultIteratorBackend( const 
 
 Soprano::Sesame2::QueryResultIteratorBackend::~QueryResultIteratorBackend()
 {
+    close();
     delete d;
 }
 
