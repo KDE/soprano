@@ -230,6 +230,9 @@ template<typename T> bool Soprano::Iterator<T>::next()
     if( isValid() ) {
 	bool hasNext = cd->backend->next();
 	setError( cd->backend->lastError() );
+	if( !hasNext ) {
+	    cd->backend->close();
+	}
 	return hasNext;
     }
     else {
