@@ -107,13 +107,14 @@ Soprano::StatementIterator Soprano::Raptor::Parser::parseFile( const QString& fi
     librdf_stream* stream = librdf_parser_parse_as_stream( parser, redlandUri, redlandBaseUri );
 
     librdf_free_uri( redlandUri );
-    librdf_free_parser( parser );
 
     if ( !stream ) {
+        librdf_free_parser( parser );
         setError( Redland::World::self()->lastError() );
         return StatementIterator();
     }
     else {
+        // FIXME: delete the parser once the stream is done.
         return new Redland::RedlandStatementIterator( 0, stream, Node() );
     }
 }
@@ -144,13 +145,14 @@ Soprano::StatementIterator Soprano::Raptor::Parser::parseString( const QString& 
     librdf_stream* stream = librdf_parser_parse_string_as_stream( parser,
                                                                   ( const unsigned char* )data.toUtf8().data(),
                                                                   redlandBaseUri );
-    librdf_free_parser( parser );
 
     if ( !stream ) {
+        librdf_free_parser( parser );
         setError( Redland::World::self()->lastError() );
         return StatementIterator();
     }
     else {
+        // FIXME: delete the parser once the stream is done.
         return new Redland::RedlandStatementIterator( 0, stream, Node() );
     }
 }
