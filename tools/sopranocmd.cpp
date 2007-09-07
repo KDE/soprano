@@ -225,7 +225,6 @@ int usage( const QString& error = QString() )
       << "                      (only applicable when querying against the Soprano server.)" << endl << endl
       << "   --model <name>     The name of the Soprano model to perform the command on." << endl
       << "                      (only applicable when querying against the Soprano server.)" << endl << endl
-      << "                      This option is mandatory for all commands." << endl
       << "   --backend          The backend to use. If this option is not specified the Soprano server" << endl
       << "                      will be contacted. Possible backends are:" << endl
       << "                      " << backendNames().join( ", " ) << endl << endl
