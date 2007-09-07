@@ -188,7 +188,7 @@ private:
 };
 
 
-#define VERSION "0.2"
+#define VERSION "0.8"
 
 int version()
 {
