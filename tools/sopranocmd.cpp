@@ -17,11 +17,13 @@
 #include <QtCore/QTextStream>
 #include <QtCore/QDebug>
 #include <QtCore/QList>
+#include <QtCore/QDir>
 
-#include "soprano.h"
+#include "../soprano/soprano.h"
 
 #include "../server/client.h"
 
+using namespace Soprano;
 
 static void printStatementList( Soprano::StatementIterator it )
 {
@@ -198,6 +200,16 @@ int version()
     return 0;
 }
 
+QStringList backendNames()
+{
+    QStringList names;
+    QList<const Backend*> backends = PluginManager::instance()->allBackends();
+    Q_FOREACH( const Backend* backend, backends ) {
+        names << backend->pluginName();
+    }
+    return names;
+}
+
 int usage( const QString& error = QString() )
 {
     version();
@@ -209,9 +221,16 @@ int usage( const QString& error = QString() )
       << endl
       << "   --version          Print version information." << endl << endl
       << "   --help             Print this help." << endl << endl
-      << "   --port <port>      Specify the port the Soprano server is running on." << endl << endl
-      << "   --model <name>     The name of the Soprano model to perform the command on." << endl << endl
+      << "   --port <port>      Specify the port the Soprano server is running on." << endl
+      << "                      (only applicable when querying against the Soprano server.)" << endl << endl
+      << "   --model <name>     The name of the Soprano model to perform the command on." << endl
+      << "                      (only applicable when querying against the Soprano server.)" << endl << endl
       << "                      This option is mandatory for all commands." << endl
+      << "   --backend          The backend to use. If this option is not specified the Soprano server" << endl
+      << "                      will be contacted. Possible backends are:" << endl
+      << "                      " << backendNames().join( ", " ) << endl << endl
+      << "   --dir              The storage directory. This only applies when specifying the backend. Defaults" << endl
+      << "                      to current directory." << endl << endl
       << "   <command>          The command to perform. Can be one of 'add', 'remove', 'list', or 'query'." << endl
       << "                      If not specified the default command is 'query'." << endl << endl
       << "   <parameters>       The parameters to the command." << endl
@@ -245,6 +264,8 @@ int main( int argc, char *argv[] )
     allowedCmdLineArgs.insert( "model", true );
     allowedCmdLineArgs.insert( "version", false );
     allowedCmdLineArgs.insert( "help", false );
+    allowedCmdLineArgs.insert( "backend", true );
+    allowedCmdLineArgs.insert( "dir", true );
 
     CmdLineArgs args;
     if ( !CmdLineArgs::parseCmdLine( args, app.arguments(), allowedCmdLineArgs ) ) {
@@ -258,11 +279,45 @@ int main( int argc, char *argv[] )
         return usage();
     }
 
+    QString backendName = args.getSetting( "backend" );
+    QString dir = args.getSetting( "dir" );
     QString command;
     QString modelName = args.getSetting( "model" );
 
-    if ( modelName.isEmpty() ) {
+    if ( modelName.isEmpty() && backendName.isEmpty() ) {
         return usage( "No model name specified." );
+    }
+
+    Soprano::Server::Client client;
+    Soprano::Model* model = 0;
+    if ( backendName.isEmpty() ) {
+        quint16 port = Soprano::Server::Client::DEFAULT_PORT;
+        if ( args.hasSetting( "port" ) ) {
+            port = args.getSetting( "port" ).toInt();
+        }
+        if ( !client.connect( port ) ) {
+            QTextStream( stderr ) << "Failed to connect to server on port " << port << endl;
+            return 3;
+        }
+        model = client.createModel( modelName );
+    }
+    else {
+        const Backend* backend = Soprano::PluginManager::instance()->discoverBackendByName( backendName );
+        if ( !backend ) {
+            QTextStream( stderr ) << "Failed to load backend " << backendName << endl;
+            return 1;
+        }
+        if ( dir.isEmpty() ) {
+            dir = QDir::currentPath();
+        }
+        QList<BackendSetting> settings;
+        settings.append( BackendSetting( BACKEND_OPTION_STORAGE_DIR, dir ) );
+        model = backend->createModel( settings );
+    }
+
+    if ( !model ) {
+        QTextStream( stderr ) << "Failed to create Model: " << client.lastError() << endl;
+        return 2;
     }
 
     int firstArg = 0;
@@ -274,24 +329,8 @@ int main( int argc, char *argv[] )
         ++firstArg;
     }
     else {
+        delete model;
         return usage();
-    }
-
-    quint16 port = Soprano::Server::Client::DEFAULT_PORT;
-    if ( args.hasSetting( "port" ) ) {
-        port = args.getSetting( "port" ).toInt();
-    }
-
-    Soprano::Server::Client client;
-    if ( !client.connect( port ) ) {
-        QTextStream( stderr ) << "Failed to connect to server on port " << port << endl;
-        return 3;
-    }
-
-    Soprano::Model* model = client.createModel( modelName );
-    if ( !model ) {
-        QTextStream( stderr ) << "Failed to create Model: " << client.lastError() << endl;
-        return 2;
     }
 
     int queryTime = 0;
@@ -311,6 +350,7 @@ int main( int argc, char *argv[] )
         // parse node commands (max 4)
         Soprano::Node n1, n2, n3, n4;
         if ( args.count() > 5 ) {
+            delete model;
             return usage();
         }
 
@@ -329,10 +369,12 @@ int main( int argc, char *argv[] )
 
         if ( !n1.isResource() && !n1.isEmpty() ) {
             QTextStream( stderr ) << "Subject needs to be a resource node." << endl;
+            delete model;
             return 1;
         }
         if ( !n2.isResource() && !n2.isEmpty() ) {
             QTextStream( stderr ) << "Predicate needs to be a resource node." << endl;
+            delete model;
             return 1;
         }
 
@@ -347,6 +389,7 @@ int main( int argc, char *argv[] )
         else if ( command == "add" ) {
             if ( n1.isEmpty() || n2.isEmpty() || n3.isEmpty() ) {
                 QTextStream( stderr ) << "At least subject, predicate, and object have to be defined." << endl;
+                delete model;
                 return 1;
             }
             model->addStatement( Soprano::Statement( n1, n2, n3, n4 ) );
@@ -358,16 +401,19 @@ int main( int argc, char *argv[] )
         }
         else {
             QTextStream( stderr ) << "Unsupported command: " << command << endl;
+            delete model;
             return 1;
         }
     }
 
     if ( !model->lastError() ) {
         QTextStream( stderr ) << "Query time: " << QTime().addMSecs( queryTime ).toString( "hh:mm:ss.z" ) << endl;
+        delete model;
         return 0;
     }
     else {
         QTextStream( stderr ) << "Query failed: " << model->lastError() << endl;
+        delete model;
         return 2;
     }
 }
