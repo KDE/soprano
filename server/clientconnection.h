@@ -65,11 +65,12 @@ namespace Soprano {
 	    int executeQuery( int modelId, const QueryLegacy &query );
 	    int listStatements( int modelId, const Statement &partial );
 	    Error::ErrorCode removeStatement( int modelId, const Statement &statement );
-	    Error::ErrorCode removeStatements( int modelId, const Statement &statement );
+	    Error::ErrorCode removeAllStatements( int modelId, const Statement &statement );
 	    int statementCount( int modelId );
 	    bool isEmpty( int modelId );
 	    bool containsStatement( int modelId, const Statement &statement );
-	    bool containsStatements( int modelId, const Statement &statement );
+	    bool containsAnyStatement( int modelId, const Statement &statement );
+	    Node createBlankNode( int modelId );
 
 	    // Iterator methods
 	    bool iteratorNext( int id );

@@ -86,6 +86,7 @@ namespace Soprano {
     class SOPRANO_EXPORT QueryResultIterator : public Iterator<BindingSet>
     {
     public:
+	//@{
 	/**
 	 * Creates and empty, invalid iterator.
 	 */
@@ -111,7 +112,9 @@ namespace Soprano {
 	 * Copies of iterators share their data.
 	 */
 	QueryResultIterator& operator=( const QueryResultIterator& );
+	//@}
 
+	//@{
 	/**
 	 * Retrieve the current Statement after a call to next.
 	 * This method does only make sense for graph queries.
@@ -124,6 +127,17 @@ namespace Soprano {
 	 */
 	BindingSet currentBindings() const;
 
+	/**
+	 * This method does only make sense for boolean queries.
+	 *
+	 * \return The result of a boolean query (SPARQL ASK).
+	 *
+	 * \sa isBool()
+	 */
+	bool boolValue() const;
+	//@}
+
+	//@{
 	/**
 	 * Get the current binding for a variable.
 	 *
@@ -163,7 +177,9 @@ namespace Soprano {
 	 * \return The names of the bound variables in this query result.
 	 */
 	QStringList bindingNames() const;
+	//@}
 
+	//@{
 	/**
 	 * Check if this is a graph result.
 	 *
@@ -187,16 +203,9 @@ namespace Soprano {
 	 * boolValue() returns a valid value.
 	 */
 	bool isBool() const;
+	//@}
 
-	/**
-	 * This method does only make sense for boolean queries.
-	 *
-	 * \return The result of a boolean query (SPARQL ASK).
-	 *
-	 * \sa isBool()
-	 */
-	bool boolValue() const;
-
+	//@{
 	/**
 	 * Convenience method that collects all binding sets that are left
 	 * in the iterator.
@@ -241,8 +250,8 @@ namespace Soprano {
 	 * if offset is out of bounds, i.e. bigger or equal to bindingCount().
 	 */
 	NodeIterator iterateBindings( int offset ) const;
+	//@}
     };
-
 }
 
 #endif // SOPRANO_RESULT_SET_H

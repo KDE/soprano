@@ -89,7 +89,7 @@ namespace Soprano {
 	    /**
 	     * Remove statements from the model.
 	     */
-	    Error::ErrorCode removeStatements( const Statement& );
+	    Error::ErrorCode removeAllStatements( const Statement& );
 
 	    /**
 	     * Add an inference rule to the set of rules.

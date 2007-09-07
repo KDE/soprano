@@ -21,7 +21,6 @@
 
 #include "indexfiltermodel.h"
 #include "cluceneindex.h"
-#include "indexqueryresult.h"
 
 #include <soprano/statementiterator.h>
 
@@ -95,7 +94,7 @@ Soprano::Error::ErrorCode Soprano::Index::IndexFilterModel::removeStatement( con
 }
 
 
-Soprano::Error::ErrorCode Soprano::Index::IndexFilterModel::removeStatements( const Soprano::Statement &statement )
+Soprano::Error::ErrorCode Soprano::Index::IndexFilterModel::removeAllStatements( const Soprano::Statement &statement )
 {
     // since we use backends that directly implement this method we don't know which
     // statements are actually removed (there is no signal for that)
@@ -114,25 +113,5 @@ Soprano::Error::ErrorCode Soprano::Index::IndexFilterModel::removeStatements( co
     }
     it.close();
 
-    return FilterModel::removeStatements( statement );
+    return FilterModel::removeAllStatements( statement );
 }
-
-
-// QList<Soprano::Index::QueryResult> Soprano::Index::IndexFilterModel::query( const QString& cluceneQuery ) const
-// {
-//     lucene::search::Hits* hits = index()->search( cluceneQuery );
-//     QList<QueryResult> results;
-//     if ( hits ) {
-//         for ( int i = 0; i < hits->length(); ++i ) {
-//             results.append( QueryResult( index()->getResource( &hits->doc( i ) ), hits->score( i ) ) );
-//         }
-//         _CLDELETE( hits );
-//     }
-//     return results;
-// }
-
-
-// Soprano::Query::Query Soprano::Index::IndexFilterModel::evaluateAndRewriteQuery( const Soprano::Query::Query& query ) const
-// {
-
-// }

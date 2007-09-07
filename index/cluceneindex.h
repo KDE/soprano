@@ -27,6 +27,8 @@
 #include "statement.h"
 #include "soprano_export.h"
 #include "error.h"
+#include "iterator.h"
+#include "indexqueryhit.h"
 
 
 namespace lucene {
@@ -146,37 +148,32 @@ namespace Soprano {
 	    Error::ErrorCode addFieldToResourceDocument( const Node& resource, lucene::document::Field* field );
 
 	    /**
-	     * Evaluates the given query and returns the results as a Hits instance.
+	     * Evaluates the given query and returns the results as an iterator over QueryHit objects.
+	     * Each hit is a resource and a score. Resource properties may be read from the model.
 	     */
-	    lucene::search::Hits* search( const QString& query );
+	    Iterator<QueryHit> search( const QString& query );
 
 	    /**
-	     * Evaluates the given query and returns the results as a Hits instance.
+	     * \overload
 	     */
-	    lucene::search::Hits* search( lucene::search::Query* query );
-
-	    /**
-	     * Gets the score for a particular Resource and query. Returns a value < 0
-	     * when the Resource does not match the query.
-	     */
-	    double getScore( const Soprano::Node& resource, const QString& query );
+	    Iterator<QueryHit> search( lucene::search::Query* query );
 
 	    /**
 	     * Gets the score for a particular Resource and query. Returns a value < 0
 	     * when the Resource does not match the query.
 	     */
-	    double getScore( const Soprano::Node& resource, lucene::search::Query* query );
+//	    double getScore( const Soprano::Node& resource, const QString& query );
 
 	    /**
-	     * Returns the Resource corresponding with the specified Document number.
-	     * Note that all of Lucene's restrictions of using document numbers apply.
+	     * Gets the score for a particular Resource and query. Returns a value < 0
+	     * when the Resource does not match the query.
 	     */
-	    Soprano::Node getResource( int documentNumber );
+//	    double getScore( const Soprano::Node& resource, lucene::search::Query* query );
 
 	    /**
 	     * Returns the Resource corresponding with the specified Document.
 	     */
-	    Soprano::Node getResource( lucene::document::Document* document );
+	    static Soprano::Node getResource( lucene::document::Document* document );
 
 	    /**
 	     * Dump the index contents to the stream

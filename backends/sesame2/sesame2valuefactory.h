@@ -47,6 +47,11 @@ namespace Soprano {
 	     */
 	    JObjectRef convertStatement( const Statement& statement );
 
+	    /**
+	     * method throws exceptions
+	     */
+	    JObjectRef createBNode();
+
 	private:
 	    class Private;
 	    Private* const d;

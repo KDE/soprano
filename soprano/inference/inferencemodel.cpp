@@ -135,7 +135,7 @@ Soprano::Error::ErrorCode Soprano::Inference::InferenceModel::addStatement( cons
 }
 
 
-Soprano::Error::ErrorCode Soprano::Inference::InferenceModel::removeStatements( const Statement& statement )
+Soprano::Error::ErrorCode Soprano::Inference::InferenceModel::removeAllStatements( const Statement& statement )
 {
     // FIXME: should we check if the statement could match some rule at all and if not do nothing?
 
@@ -177,7 +177,7 @@ Soprano::Error::ErrorCode Soprano::Inference::InferenceModel::removeStatement( c
                                                                                  Vocabulary::SIL::INFERENCE_METADATA() ) ).iterateObjects().allNodes();
             for( QList<Node>::const_iterator it = graphSources.constBegin();
                  it != graphSources.constEnd(); ++it ) {
-                c = FilterModel::removeStatements( Statement( *it, Node(), Node(), Vocabulary::SIL::INFERENCE_METADATA() ) );
+                c = FilterModel::removeAllStatements( Statement( *it, Node(), Node(), Vocabulary::SIL::INFERENCE_METADATA() ) );
                 if ( c != Error::ERROR_NONE ) {
                     return c;
                 }
@@ -186,7 +186,7 @@ Soprano::Error::ErrorCode Soprano::Inference::InferenceModel::removeStatement( c
 
 
         // Step 2: remove the graph metadata
-        c = FilterModel::removeStatements( Statement( graph, Node(), Node(), Vocabulary::SIL::INFERENCE_METADATA() ) );
+        c = FilterModel::removeAllStatements( Statement( graph, Node(), Node(), Vocabulary::SIL::INFERENCE_METADATA() ) );
         if ( c != Error::ERROR_NONE ) {
             return c;
         }
@@ -350,7 +350,7 @@ int Soprano::Inference::InferenceModel::inferRule( const Rule& rule, bool recurs
         Statement inferedStatement = rule.bindEffect( *it );
 
         // we only add infered statements if they are not already present (in any named graph, aka. context)
-        if ( !parentModel()->containsStatements( inferedStatement ) ) {
+        if ( !parentModel()->containsAnyStatement( inferedStatement ) ) {
             ++inferedStatementsCount;
 
             QUrl inferenceGraphUrl = createRandomUri();

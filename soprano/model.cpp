@@ -80,7 +80,7 @@ Soprano::Error::ErrorCode Soprano::Model::removeStatements( const QList<Statemen
 {
     for ( QList<Statement>::const_iterator it = statements.constBegin();
           it != statements.constEnd(); ++it ) {
-        Error::ErrorCode c = removeStatements( *it );
+        Error::ErrorCode c = removeStatement( *it );
         if ( c != Error::ERROR_NONE ) {
             return c;
         }
@@ -91,13 +91,13 @@ Soprano::Error::ErrorCode Soprano::Model::removeStatements( const QList<Statemen
 
 Soprano::Error::ErrorCode Soprano::Model::removeContext( const Node& context )
 {
-    return removeStatements( Statement( Node(), Node(), Node(), context ) );
+    return removeAllStatements( Statement( Node(), Node(), Node(), context ) );
 }
 
 
 Soprano::Error::ErrorCode Soprano::Model::removeAllStatements()
 {
-    return removeStatements( Statement() );
+    return removeAllStatements( Statement() );
 }
 
 

@@ -113,7 +113,7 @@ public:
 
         // check if the statements have really been added
         Q_FOREACH( Statement s, data ) {
-            if( !model()->containsStatements( s ) )
+            if( !model()->containsStatement( s ) )
                 return false;
         }
 

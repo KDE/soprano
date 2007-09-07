@@ -55,6 +55,7 @@ namespace Soprano {
 	 */
 	virtual ~FilterModel();
 
+	//@{
 	/**
 	 * Set the parent Model.
 	 * \param model The Model that this filter will forward any commands to.
@@ -66,56 +67,81 @@ namespace Soprano {
 	 * \return The parent Model or 0 if none has been set.
 	 */
 	virtual Model* parentModel() const;
+	//@}
 
+	//@{
 	/**
-	 * Default implementation simple pipes the call through to the parent model.
+	 * Default implementation simply pipes the call through to the parent model.
 	 */
 	virtual Error::ErrorCode addStatement( const Statement &statement );
+	//@}
 
+	//@{
 	/**
-	 * Default implementation simple pipes the call through to the parent model.
-	 */
-	virtual bool isEmpty() const;
-
-	/**
-	 * Default implementation simple pipes the call through to the parent model.
-	 */
-	virtual NodeIterator listContexts() const;
-
-	/**
-	 * Default implementation simple pipes the call through to the parent model.
-	 */
-	virtual bool containsStatement( const Statement &statement ) const;
-
-	/**
-	 * Default implementation simple pipes the call through to the parent model.
-	 */
-	virtual bool containsStatements( const Statement &statement ) const;
-
-	/**
-	 * Default implementation simple pipes the call through to the parent model.
-	 */
-	virtual QueryResultIterator executeQuery( const QueryLegacy &query ) const;
-
-	/**
-	 * Default implementation simple pipes the call through to the parent model.
-	 */
-	virtual StatementIterator listStatements( const Statement &partial ) const;
-
-	/**
-	 * Default implementation simple pipes the call through to the parent model.
+	 * Default implementation simply pipes the call through to the parent model.
 	 */
 	virtual Error::ErrorCode removeStatement( const Statement &statement );
 
 	/**
-	 * Default implementation simple pipes the call through to the parent model.
+	 * Default implementation simply pipes the call through to the parent model.
 	 */
-	virtual Error::ErrorCode removeStatements( const Statement &statement );
+	virtual Error::ErrorCode removeAllStatements( const Statement &statement );
+	//@}
+
+	//@{
+	/**
+	 * Default implementation simply pipes the call through to the parent model.
+	 */
+	virtual StatementIterator listStatements( const Statement &partial ) const;
 
 	/**
-	 * Default implementation simple pipes the call through to the parent model.
+	 * Default implementation simply pipes the call through to the parent model.
+	 */
+	virtual NodeIterator listContexts() const;
+
+	/**
+	 * Default implementation simply pipes the call through to the parent model.
+	 */
+	virtual QueryResultIterator executeQuery( const QueryLegacy &query ) const;
+	//@}
+
+	//@{
+	/**
+	 * Default implementation simply pipes the call through to the parent model.
+	 */
+	virtual bool containsStatement( const Statement &statement ) const;
+
+	/**
+	 * Default implementation simply pipes the call through to the parent model.
+	 */
+	virtual bool containsAnyStatement( const Statement &statement ) const;
+	//@}
+
+	//@{
+	/**
+	 * Default implementation simply pipes the call through to the parent model.
+	 */
+	virtual bool isEmpty() const;
+
+	/**
+	 * Default implementation simply pipes the call through to the parent model.
 	 */
 	virtual int statementCount() const;
+	//@}
+
+	//@{
+	/**
+	 * Default implementation simply pipes the call through to the parent model.
+	 */
+	virtual Error::ErrorCode write( QTextStream &os ) const;
+	//@}
+
+	//@{
+	/**
+	 * Default implementation simply pipes the call through to the parent model.
+	 */
+	virtual Node createBlankNode();
+	//@}
 
     protected:
 	/**

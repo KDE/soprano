@@ -44,7 +44,7 @@ namespace Soprano {
 
 	    NodeIterator listContexts() const;
 
-	    bool containsStatements( const Statement &statement ) const;
+	    bool containsAnyStatement( const Statement &statement ) const;
 
 	    Soprano::QueryResultIterator executeQuery( const QueryLegacy &query ) const;
 
@@ -53,6 +53,8 @@ namespace Soprano {
 	    Error::ErrorCode removeStatement( const Statement &statement );
 
 	    int statementCount() const;
+
+	    Node createBlankNode();
 
 	private:
 	    class Private;

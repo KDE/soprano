@@ -45,6 +45,7 @@ namespace Soprano
     class SOPRANO_EXPORT Statement
 	{
 	public:
+	    //@{
 	    /**
 	     * Default Constructor, build an empty (invalid) Statement.
 	     */
@@ -68,19 +69,56 @@ namespace Soprano
 	    virtual ~Statement();
 
 	    Statement& operator=( const Statement& other );
+	    //@}
 
-	    bool operator==( const Statement& other );
-	    bool operator!=( const Statement& other );
+	    //@{
+	    bool operator==( const Statement& other ) const;
+	    bool operator!=( const Statement& other ) const;
 
 	    /**
 	     * Match this statement against other. The only difference
 	     * to operator== is that empty nodes are matched as wildcards,
 	     * i.e. they match any other node.
 	     *
+	     * \sa Node::matches()
+	     *
 	     * \return \p true if this statement matches other, \p false if not.
 	     */
 	    bool matches( const Statement& other ) const;
+	    //@}
 
+	    //@{
+	    /**
+	     * A Statement is valid if subject, predicate and object are valid.
+	     *
+	     * \return @p true if the Statement is valid, @p false otherwise
+	     */
+	    bool isValid() const;
+	    //@}
+
+	    //@{
+	    /**
+	     * \return The subject.
+	     */
+	    Node subject() const;
+
+	    /**
+	     * \return The predicate.
+	     */
+	    Node predicate() const;
+
+	    /**
+	     * \return The object.
+	     */
+	    Node object() const;
+
+	    /**
+	     * \return The Context node.
+	     */
+	    Node context() const;
+	    //@}
+
+	    //@{
 	    /**
 	     * Change the Statement subject.
 	     *
@@ -89,22 +127,11 @@ namespace Soprano
 	    void setSubject( const Node &subject );
 
 	    /**
-	     * \return The subject.
-	     */
-	    Node subject() const;
-
-	    /**
 	     * Change the Statement predicate.
 	     *
 	     * \param predicate The new predicate.
 	     */
 	    void setPredicate( const Node &predicate );
-
-	    /**
-	     * \return The predicate.
-	     */
-	    Node predicate() const;
-
 	    /**
 	     * Change the Statement object.
 	     *
@@ -113,30 +140,12 @@ namespace Soprano
 	    void setObject( const Node &object );
 
 	    /**
-	     * \return The object.
-	     */
-	    Node object() const;
-
-	    /**
 	     * Change the Statement context.
 	     *
 	     * \param context The new Context.
 	     */
 	    void setContext( const Node &context );
-
-	    /**
-	     * \return The Context node.
-	     */
-	    Node context() const;
-
-	    /**
-	     * A Statement is valid if subject, predicate and object are valid.
-	     *
-	     * \return @p true if the Statement is valid, @p false otherwise
-	     */
-	    bool isValid() const;
-
-	    bool operator==( const Statement& other ) const;
+	    //@}
 
 	private:
 	    class Private;

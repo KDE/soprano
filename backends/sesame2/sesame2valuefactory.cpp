@@ -37,6 +37,7 @@ public:
         : m_parent( parent ),
           m_IDcreateURI( 0 ),
           m_IDcreateBNode( 0 ),
+          m_IDcreateBNodeFromString( 0 ),
           m_IDcreateLiteralWithLang( 0 ),
           m_IDcreateLiteralWithDataType( 0 ),
           m_IDcreateStatement( 0 ),
@@ -55,10 +56,19 @@ public:
     jmethodID IDcreateBNode() {
         if ( !m_IDcreateBNode ) {
             m_IDcreateBNode = m_parent->getMethodID( "createBNode",
-                                                     "(L"JAVA_LANG_STRING";)L"ORG_OPENRDF_MODEL_BNODE";" );
+                                                     "()L"ORG_OPENRDF_MODEL_BNODE";" );
             JNIWrapper::instance()->debugException();
         }
         return m_IDcreateBNode;
+    }
+
+    jmethodID IDcreateBNodeFromString() {
+        if ( !m_IDcreateBNodeFromString ) {
+            m_IDcreateBNodeFromString = m_parent->getMethodID( "createBNode",
+                                                               "(L"JAVA_LANG_STRING";)L"ORG_OPENRDF_MODEL_BNODE";" );
+            JNIWrapper::instance()->debugException();
+        }
+        return m_IDcreateBNodeFromString;
     }
 
     jmethodID IDcreateLiteralWithLang() {
@@ -102,6 +112,7 @@ private:
 
     jmethodID m_IDcreateURI;
     jmethodID m_IDcreateBNode;
+    jmethodID m_IDcreateBNodeFromString;
     jmethodID m_IDcreateLiteralWithLang;
     jmethodID m_IDcreateLiteralWithDataType;
     jmethodID m_IDcreateStatement;
@@ -122,6 +133,12 @@ Soprano::Sesame2::ValueFactory::~ValueFactory()
 }
 
 
+JObjectRef Soprano::Sesame2::ValueFactory::createBNode()
+{
+    return callObjectMethod( d->IDcreateBNode() );
+}
+
+
 JObjectRef Soprano::Sesame2::ValueFactory::convertNode( const Node& node )
 {
     switch( node.type() ) {
@@ -129,7 +146,7 @@ JObjectRef Soprano::Sesame2::ValueFactory::convertNode( const Node& node )
         return callObjectMethod( d->IDcreateURI(), JStringRef( node.uri().toString() ).data() );
 
     case Node::BlankNode:
-        return callObjectMethod( d->IDcreateBNode(), JStringRef( node.identifier() ).data() );
+        return callObjectMethod( d->IDcreateBNodeFromString(), JStringRef( node.identifier() ).data() );
 
     case Node::LiteralNode:
         // FIXME: is it more performant to create the instances directly from the values instead of strings?

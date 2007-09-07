@@ -172,7 +172,7 @@ Soprano::NodeIterator Soprano::Redland::RedlandModel::listContexts() const
     return it;
 }
 
-bool Soprano::Redland::RedlandModel::containsStatements( const Statement &statement ) const
+bool Soprano::Redland::RedlandModel::containsAnyStatement( const Statement &statement ) const
 {
     clearError();
 
@@ -347,7 +347,7 @@ Soprano::Error::ErrorCode Soprano::Redland::RedlandModel::removeOneStatement( co
 }
 
 
-Soprano::Error::ErrorCode Soprano::Redland::RedlandModel::removeStatements( const Statement &statement )
+Soprano::Error::ErrorCode Soprano::Redland::RedlandModel::removeAllStatements( const Statement &statement )
 {
     clearError();
 
@@ -432,15 +432,14 @@ Soprano::Error::ErrorCode Soprano::Redland::RedlandModel::write( QTextStream &os
     }
 }
 
-Soprano::Error::ErrorCode Soprano::Redland::RedlandModel::print() const
+Soprano::Node Soprano::Redland::RedlandModel::createBlankNode()
 {
     clearError();
-
-    QReadLocker lock( &d->readWriteLock );
-
-    librdf_model_print( d->model, stdout );
-
-    return Error::ERROR_NONE;
+    Node n = Util::createNode( librdf_new_node_from_blank_identifier( Redland::World::self()->worldPtr(), 0 ) );
+    if ( n.isEmpty() ) {
+        setError( Redland::World::self()->lastError() );
+    }
+    return n;
 }
 
 

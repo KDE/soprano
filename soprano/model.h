@@ -95,6 +95,7 @@ namespace Soprano
     public:
 	virtual ~Model();
 
+	//@{
 	/**
 	 * Add the Statement to the Model.
 	 *
@@ -106,11 +107,69 @@ namespace Soprano
 	 * Convenience method which adds all %statements in statements to this Model.
 	 */
 	Error::ErrorCode addStatements( const QList<Statement> &statements );
+        //@}
+
+	//@{
+	/**
+	 * Remove one statement. For removing statements with wildward matching see removeAllStatements().
+	 *
+	 * \param statement The statement that should be removed. This has to be a valid statement.
+	 *
+	 * \return Error::ERROR_NONE on success and an error code if statement was invalid or an error
+	 * occured.
+	 */
+	virtual Error::ErrorCode removeStatement( const Statement &statement ) = 0;
 
 	/**
-	 * \return true if the Model doesn't contains any Statement.
+	 * Remove all statements that match the partial statement. For removing
+	 * one specific statement see removeStatement().
+	 *
+	 * \param statement A possible partially defined statement that serves as
+	 * a filter for all statements that should be removed.
 	 */
-	virtual bool isEmpty() const = 0;
+	virtual Error::ErrorCode removeAllStatements( const Statement &statement ) = 0;
+
+	/**
+	 * Convenience method which removes all %statements in statements.
+	 */
+	Error::ErrorCode removeStatements( const QList<Statement> &statements );
+
+        /**
+	 * Convenience method that removes all statements in the context.
+	 */
+	Error::ErrorCode removeContext( const Node& );
+
+	/**
+	 * Convenience method that clear the Model of all statements
+	 */
+	Error::ErrorCode removeAllStatements();
+	//@}
+
+
+	//@{
+	/**
+	 * Return an iterator over Model Statements that "partial"
+	 * match the input Statement.
+	 *
+	 * \param partial The partial Statement to match.
+	 *
+	 * \return An iterator for all the matched Statements, on error an invalid iterator is returned.
+	 */
+	virtual StatementIterator listStatements( const Statement &partial ) const = 0;
+
+	/**
+	 * Convenience method which lists all statements in this Model.
+	 *
+	 * \return An iterator for all the matched Statements, on error an invalid iterator is returned.
+	 */
+	StatementIterator listStatements() const;
+
+	/**
+	 * Convenience method which lists all statements in context.
+	 *
+	 * \return An iterator for all the matched Statements, on error an invalid iterator is returned.
+	 */
+	StatementIterator listStatementsInContext( const Node &context ) const;
 
 	/**
 	 * List all contexts in the model, i.e. all named graphs.
@@ -120,33 +179,11 @@ namespace Soprano
 	virtual NodeIterator listContexts() const = 0;
 
 	/**
-	 * Check if the model contains certain statements.
+	 * Execute the given query over the Model.
 	 *
-	 * \param statement A partially defined statement that serves as
-	 * a pattern.
-	 *
-	 * \return true if the Model contains a Statement matching the given statement
-	 * pattern.
+	 * \return All the Statements that match the query, on error an invalid iterator is returned.
 	 */
-	virtual bool containsStatements( const Statement &statement ) const = 0;
-
-	/**
-	 * Check if the model contains a statements.
-	 *
-	 * \param statement The statement in question. This has to be a valid statement,
-	 * i.e. subject, predicate, and object need to be defined. If the context node
-	 * is empty the default graph is searched.
-	 *
-	 * \return \p true if the Model contains the Statement, \p false otherwise or
-	 * is statement is invalid.
-	 */
-	virtual bool containsStatement( const Statement &statement ) const = 0;
-
-	/**
-	 * Convenience method which is based on containsStatements
-	 */
-	bool containsContext( const Node &context ) const;
-
+	virtual QueryResultIterator executeQuery( const QueryLegacy &query ) const = 0;
 	// possible interfaces for queries:
 	// 1. the most simple one: a string query. let the backend do the parsing, make our Query stuff optional
 	//
@@ -174,84 +211,69 @@ namespace Soprano
 	//QueryResultIterator query( const Query::Query& query ) const;
 
 	// 3. Support both, provide default implementation of the first one in StorageModel by using QueryParsers
+	//@}
+
+
+	//@{
+	/**
+	 * Check if the model contains certain statements.
+	 *
+	 * \param statement A partially defined statement that serves as
+	 * a pattern.
+	 *
+	 * \return true if the Model contains a Statement matching the given statement
+	 * pattern.
+	 */
+	virtual bool containsAnyStatement( const Statement &statement ) const = 0;
 
 	/**
-	 * Execute the given query over the Model.
+	 * Check if the model contains a statements.
 	 *
-	 * \return All the Statements that match the query, on error an invalid iterator is returned.
+	 * \param statement The statement in question. This has to be a valid statement,
+	 * i.e. subject, predicate, and object need to be defined. If the context node
+	 * is empty the default graph is searched.
+	 *
+	 * \return \p true if the Model contains the Statement, \p false otherwise or
+	 * is statement is invalid.
 	 */
-	virtual QueryResultIterator executeQuery( const QueryLegacy &query ) const = 0;
+	virtual bool containsStatement( const Statement &statement ) const = 0;
 
 	/**
-	 * Return an iterator over Model Statements that "partial"
-	 * match the input Statement.
-	 *
-	 * \param partial The partial Statement to match.
-	 *
-	 * \return An iterator for all the matched Statements, on error an invalid iterator is returned.
+	 * Convenience method which is based on containsAnyStatement
 	 */
-	virtual StatementIterator listStatements( const Statement &partial ) const = 0;
+	bool containsContext( const Node &context ) const;
 
 	/**
-	 * Convenience method which lists all statements in this Model.
-	 *
-	 * \return An iterator for all the matched Statements, on error an invalid iterator is returned.
+	 * \return true if the Model doesn't contains any Statement.
 	 */
-	StatementIterator listStatements() const;
-
-	/**
-	 * Convenience method which lists all statements in context.
-	 *
-	 * \return An iterator for all the matched Statements, on error an invalid iterator is returned.
-	 */
-	StatementIterator listStatementsInContext( const Node &context ) const;
-
-	/**
-	 * Remove one statement. For removing statements with wildward matching see removeStatements().
-	 *
-	 * \param statement The statement that should be removed. This has to be a valid statement.
-	 *
-	 * \return Error::ERROR_NONE on success and an error code if statement was invalid or an error
-	 * occured.
-	 */
-	virtual Error::ErrorCode removeStatement( const Statement &statement ) = 0;
-
-	/**
-	 * Remove all statements that match the partial statement. For removing
-	 * one specific statement see removeStatement().
-	 *
-	 * \param statement A possible partially defined statement that serves as
-	 * a filter for all statements that should be removed.
-	 */
-	virtual Error::ErrorCode removeStatements( const Statement &statement ) = 0;
-
-	/**
-	 * Convenience method which removes all %statements in statements.
-	 */
-	Error::ErrorCode removeStatements( const QList<Statement> &statements );
-
-        /**
-	 * Convenience method that removes all statements in the context.
-	 */
-	Error::ErrorCode removeContext( const Node& );
-
-	/**
-	 * Convenience method that clear the Model of all statements
-	 */
-	Error::ErrorCode removeAllStatements();
+	virtual bool isEmpty() const = 0;
 
 	/**
 	 * The number of statements stored in this Model.
 	 * \return The size of the Model, or -1 on error.
 	 */
 	virtual int statementCount() const = 0;
+	//@}
 
+
+	//@{
 	/**
 	 * Write all statements in this Model to os.
 	 *
 	 * Default implementation is based on Model::listStatements
 	 */
 	virtual Error::ErrorCode write( QTextStream &os ) const;
+	//@}
+
+
+	//@{
+	/**
+	 * Creates a new blank node with a unique identifier.
+	 *
+	 * \return A blank node that can be used to create new statements.
+	 */
+	virtual Node createBlankNode() = 0;
+	//@}
 	
     signals:
 	/**

@@ -61,12 +61,12 @@ namespace Soprano {
 	/**
 	 * Default implementation is based on Model::listStatements
 	 */
-	virtual bool containsStatements( const Statement &statement ) const;
+	virtual bool containsAnyStatement( const Statement &statement ) const;
 
 	/**
 	 * Default implementation is based on listStatements() and removeStatement().
 	 */
-	virtual Error::ErrorCode removeStatements( const Statement &statement );
+	virtual Error::ErrorCode removeAllStatements( const Statement &statement );
 
 	/**
 	 * \return The backend that was used to create this model.

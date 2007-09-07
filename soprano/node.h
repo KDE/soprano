@@ -51,6 +51,10 @@ namespace Soprano
 	    };
 
 	    /**
+	     * \name Constructors
+	     */
+	    //@{
+	    /**
 	     * Default costructor.
 	     * Creates an empty node.
 	     *
@@ -94,7 +98,12 @@ namespace Soprano
 	    Node( const Node &other );
 
 	    ~Node();
+	    //@}
 
+	    /**
+	     * \name Operators
+	     */
+	    //@{
 	    Node& operator=( const Node& other );
 
 	    /**
@@ -115,7 +124,12 @@ namespace Soprano
 	     * \return true if this node matches other, false if not.
 	     */
 	    bool matches( const Node& other ) const;
+	    //@}
 
+	    /**
+	     * \name Type information
+	     */
+	    //@{
 	    /**
 	     * \return The Node type.
 	     */
@@ -145,20 +159,35 @@ namespace Soprano
 	     * \return true if the Node is a Blank node (anonymous).
 	     */
 	    bool isBlank() const;
+	    //@}
 
+	    /**
+	     * \name Resource nodes
+	     */
+	    //@{
 	    /**
 	     * \return The URI if the node is a Resource node.
 	     *         An null QUrl otherwise.
 	     */
 	    QUrl uri() const;
+	    //@}
 
+	    /**
+	     * \name Blank nodes
+	     */
+	    //@{
 	    /**
 	     * Retrieve a blank node's identifier.
 	     * \return The node's identifier if it is a blank node, a null
 	     * string otherwise.
 	     */
 	    QString identifier() const;
+	    //@}
 
+	    /**
+	     * \name Literal nodes
+	     */
+	    //@{
 	    /**
 	     * \return The Literal value if the node is a Literal node.
 	     *         An null QString otherwise.
@@ -181,12 +210,15 @@ namespace Soprano
 	     *         or an empty string if the node is not a literal.
 	     */
 	    QString language() const;
+	    //@}
 
+	    //@{
 	    /**
 	     *\return A String representation of the Node.
 	     */
 	    QString toString() const;
-
+	    //@}
+	    
 	    /**
 	     * Convenience method to create an empty node.
 	     * Using this method instead of the default constructor
@@ -212,6 +244,10 @@ namespace Soprano
 	     * Convenience method to create a blank node.
 	     * Using this method instead of the constructor
 	     * may result in better readable code.
+	     *
+	     * If you need to create a new blank node which is not
+	     * used in the model yet and, thus, has a unique identifier
+	     * see Model::createBlankNode().
 	     *
 	     * \param id An identifier for the blank node.
 	     *

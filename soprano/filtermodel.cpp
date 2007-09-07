@@ -117,10 +117,10 @@ bool Soprano::FilterModel::containsStatement( const Statement &statement ) const
 }
 
 
-bool Soprano::FilterModel::containsStatements( const Statement &statement ) const
+bool Soprano::FilterModel::containsAnyStatement( const Statement &statement ) const
 {
     Q_ASSERT( d->parent );
-    bool b = d->parent->containsStatements( statement );
+    bool b = d->parent->containsAnyStatement( statement );
     setError( d->parent->lastError() );
     return b;
 }
@@ -153,10 +153,10 @@ Soprano::Error::ErrorCode Soprano::FilterModel::removeStatement( const Statement
 }
 
 
-Soprano::Error::ErrorCode Soprano::FilterModel::removeStatements( const Statement &statement )
+Soprano::Error::ErrorCode Soprano::FilterModel::removeAllStatements( const Statement &statement )
 {
     Q_ASSERT( d->parent );
-    Error::ErrorCode c = d->parent->removeStatements( statement );
+    Error::ErrorCode c = d->parent->removeAllStatements( statement );
     setError( d->parent->lastError() );
     return c;
 }
@@ -168,6 +168,24 @@ int Soprano::FilterModel::statementCount() const
     int cnt = d->parent->statementCount();
     setError( d->parent->lastError() );
     return cnt;
+}
+
+
+Soprano::Node Soprano::FilterModel::createBlankNode()
+{
+    Q_ASSERT( d->parent );
+    Node n = d->parent->createBlankNode();
+    setError( d->parent->lastError() );
+    return n;
+}
+
+
+Soprano::Error::ErrorCode Soprano::FilterModel::write( QTextStream &os ) const
+{
+    Q_ASSERT( d->parent );
+    Error::ErrorCode c = d->parent->write( os );
+    setError( d->parent->lastError() );
+    return c;
 }
 
 

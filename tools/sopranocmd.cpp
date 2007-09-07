@@ -353,7 +353,7 @@ int main( int argc, char *argv[] )
             queryTime = time.elapsed();
         }
         else if ( command == "remove" ) {
-            model->removeStatements( Soprano::Statement( n1, n2, n3, n4 ) );
+            model->removeAllStatements( Soprano::Statement( n1, n2, n3, n4 ) );
             queryTime = time.elapsed();
         }
         else {

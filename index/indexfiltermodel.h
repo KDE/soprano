@@ -98,16 +98,7 @@ namespace Soprano {
 	     *
 	     * This will remove the statements from the index and then forward the call to the parent model.
 	     */
-	    Soprano::Error::ErrorCode removeStatements( const Soprano::Statement &statement );
-
-	    /**
-	     * Query the literal index.
-	     *
-	     * \param cluceneQuery The query to use.
-	     *
-	     * \return A list of query results.
-	     */
-//	    QList<QueryResult> query( const QString& cluceneQuery ) const;
+	    Soprano::Error::ErrorCode removeAllStatements( const Soprano::Statement &statement );
 
 	    /**
 	     * Extract full text matching parts of a %query and replace them with

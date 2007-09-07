@@ -61,7 +61,7 @@ HIDE_SCOPE_NAMES       = NO
 SHOW_INCLUDE_FILES     = YES
 INLINE_INFO            = YES
 SORT_MEMBER_DOCS       = NO
-SORT_BRIEF_DOCS        = YES
+SORT_BRIEF_DOCS        = NO
 SORT_BY_SCOPE_NAME     = NO
 GENERATE_TODOLIST      = YES
 GENERATE_TESTLIST      = YES
@@ -92,7 +92,7 @@ INPUT                  = ${soprano_SOURCE_DIR}/soprano \
                          ${soprano_SOURCE_DIR}/soprano/inference \
                          ${soprano_SOURCE_DIR}/index/indexfiltermodel.h \
                          ${soprano_SOURCE_DIR}/index/cluceneindex.h \
-                         ${soprano_SOURCE_DIR}/index/indexqueryresult.h \
+                         ${soprano_SOURCE_DIR}/index/indexqueryhit.h \
                          ${soprano_SOURCE_DIR}/server/servercore.h \
                          ${soprano_SOURCE_DIR}/server/client.h
 INPUT_ENCODING         = UTF-8

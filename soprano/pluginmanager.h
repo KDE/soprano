@@ -59,6 +59,7 @@ namespace Soprano
     public:
 	~PluginManager();
 
+	//@{
 	/**
 	 * Find a backend plugin by its name.
 	 *
@@ -77,6 +78,10 @@ namespace Soprano
 	 */
 	const Backend* discoverBackendByFeatures( BackendFeatures features, const QStringList& userFeatures = QStringList() );
 
+	QList<const Backend*> allBackends();
+	//@}
+
+	//@{
 	/**
 	 * Find a parser plugin by its name.
 	 *
@@ -99,6 +104,10 @@ namespace Soprano
 	 */
 	const Parser* discoverParserForSerialization( RdfSerialization serialization, const QString& userSerialization = QString() );
 
+	QList<const Parser*> allParsers();
+	//@}
+
+	//@{
 	/**
 	 * Find a serializer plugin by its name.
 	 *
@@ -121,6 +130,10 @@ namespace Soprano
 	 */
 	const Serializer* discoverSerializerForSerialization( RdfSerialization serialization, const QString& userSerialization = QString() );
 
+	QList<const Serializer*> allSerializers();
+	//@}
+
+	//@{
 	/**
 	 * Find a query parser plugin by its name.
 	 *
@@ -141,6 +154,10 @@ namespace Soprano
 	 */
 	const Query::Parser* discoverQueryParserForQueryLanguage( Query::QueryLanguage lang, const QString& userQueryLanguage = QString() );
 
+	QList<const Query::Parser*> allQueryParsers();
+	//@}
+
+	//@{
 	/**
 	 * Find a query serializer plugin by its name.
 	 *
@@ -161,15 +178,8 @@ namespace Soprano
 	 */
 	const Query::Serializer* discoverQuerySerializerForQueryLanguage( Query::QueryLanguage lang, const QString& userQueryLanguage = QString() );
 
-	QList<const Backend*> allBackends();
-
-	QList<const Parser*> allParsers();
-
-	QList<const Serializer*> allSerializers();
-
-	QList<const Query::Parser*> allQueryParsers();
-
 	QList<const Query::Serializer*> allQuerySerializers();
+	//@}
 
 	static PluginManager* instance();
 

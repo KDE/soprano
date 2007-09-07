@@ -15,7 +15,8 @@ set( SOPRANO_INDEX_SRCS
   cluceneutils.cpp
   indexfiltermodel.cpp
   wstring.cpp
-  indexqueryresult.cpp
+  indexqueryhit.cpp
+  indexqueryhititeratorbackend.cpp
 )
 
 configure_file(clucene-config.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/clucene-config.h)
@@ -58,6 +59,6 @@ install(
   FILES 
   indexfiltermodel.h
   cluceneindex.h
-  indexqueryresult.h
+  indexqueryhit.h
   DESTINATION include/soprano
 )

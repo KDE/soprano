@@ -144,7 +144,7 @@ Soprano::NodeIterator Soprano::ThreeStore::Model::listContexts() const
 }
 
 
-bool Soprano::ThreeStore::Model::containsStatements( const Statement &statement ) const
+bool Soprano::ThreeStore::Model::containsAnyStatement( const Statement &statement ) const
 {
     // our listStatements does not support fully defined statements
     if ( statement.isValid() ) {
@@ -160,7 +160,7 @@ bool Soprano::ThreeStore::Model::containsStatements( const Statement &statement 
         return false;
     }
     else {
-        return Soprano::Model::containsStatements( statement );
+        return Soprano::Model::containsAnyStatement( statement );
     }
 }
 
@@ -211,4 +211,11 @@ Soprano::Error::ErrorCode Soprano::ThreeStore::Model::removeStatement( const Sta
 int Soprano::ThreeStore::Model::statementCount() const
 {
     return -1;
+}
+
+
+Soprano::Node Soprano::ThreeStore::Model::createBlankNode()
+{
+    // FIXME:
+    return Node();
 }

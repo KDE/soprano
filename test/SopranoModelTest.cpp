@@ -92,9 +92,9 @@ void SopranoModelTest::testAddListOfStatement()
 
     m_model->addStatements( statements );
 
-    QVERIFY( m_model->containsStatements( st1 ) );
-    QVERIFY( m_model->containsStatements( st2 ) );
-    QVERIFY( m_model->containsStatements( st3 ) );
+    QVERIFY( m_model->containsAnyStatement( st1 ) );
+    QVERIFY( m_model->containsAnyStatement( st2 ) );
+    QVERIFY( m_model->containsAnyStatement( st3 ) );
 }
 
 
@@ -344,7 +344,7 @@ void SopranoModelTest::testRemoveStatements()
     QVERIFY( m_model->addStatement( s2 ) == Error::ERROR_NONE );
     QVERIFY( m_model->addStatement( s3 ) == Error::ERROR_NONE );
 
-    QVERIFY( m_model->removeStatements( s1 ) == Error::ERROR_NONE );
+    QVERIFY( m_model->removeAllStatements( s1 ) == Error::ERROR_NONE );
     QVERIFY( !m_model->lastError() );
     QVERIFY( !m_model->containsStatement( s1 ) );
     QVERIFY( !m_model->lastError() );
@@ -355,7 +355,7 @@ void SopranoModelTest::testRemoveStatements()
     QVERIFY( !m_model->lastError() );
 
     // other wildcard nodes
-    QVERIFY( m_model->removeStatements( Statement( s3.subject(), Node(), s3.object() ) ) == Error::ERROR_NONE );
+    QVERIFY( m_model->removeAllStatements( Statement( s3.subject(), Node(), s3.object() ) ) == Error::ERROR_NONE );
     QVERIFY( !m_model->lastError() );
     QVERIFY( !m_model->containsStatement( s3 ) );
     QVERIFY( !m_model->lastError() );
@@ -365,26 +365,26 @@ void SopranoModelTest::testRemoveAllStatement()
 {
     QVERIFY( m_model != 0 );
 
-    m_model->removeStatements( Statement( m_st1.subject(), Node(), Node() ) );
+    m_model->removeAllStatements( Statement( m_st1.subject(), Node(), Node() ) );
 
-    QVERIFY( !m_model->containsStatements( m_st1 ) );
-    QVERIFY( m_model->containsStatements( m_st2 ) );
-    QVERIFY( !m_model->containsStatements( m_st3 ) );
-    QVERIFY( m_model->containsStatements( m_st4 ) );
+    QVERIFY( !m_model->containsAnyStatement( m_st1 ) );
+    QVERIFY( m_model->containsAnyStatement( m_st2 ) );
+    QVERIFY( !m_model->containsAnyStatement( m_st3 ) );
+    QVERIFY( m_model->containsAnyStatement( m_st4 ) );
 
-    m_model->removeStatements( Statement( Node(), m_st3.predicate(), Node() ) );
+    m_model->removeAllStatements( Statement( Node(), m_st3.predicate(), Node() ) );
 
-    QVERIFY( !m_model->containsStatements( m_st1 ) );
-    QVERIFY( m_model->containsStatements( m_st2 ) );
-    QVERIFY( !m_model->containsStatements( m_st3 ) );
-    QVERIFY( !m_model->containsStatements( m_st4 ) );
+    QVERIFY( !m_model->containsAnyStatement( m_st1 ) );
+    QVERIFY( m_model->containsAnyStatement( m_st2 ) );
+    QVERIFY( !m_model->containsAnyStatement( m_st3 ) );
+    QVERIFY( !m_model->containsAnyStatement( m_st4 ) );
 
-    m_model->removeStatements( Statement( Node(), Node(), m_st2.object() ) );
+    m_model->removeAllStatements( Statement( Node(), Node(), m_st2.object() ) );
 
-    QVERIFY( !m_model->containsStatements( m_st1 ) );
-    QVERIFY( !m_model->containsStatements( m_st2 ) );
-    QVERIFY( !m_model->containsStatements( m_st3 ) );
-    QVERIFY( !m_model->containsStatements( m_st4 ) );
+    QVERIFY( !m_model->containsAnyStatement( m_st1 ) );
+    QVERIFY( !m_model->containsAnyStatement( m_st2 ) );
+    QVERIFY( !m_model->containsAnyStatement( m_st3 ) );
+    QVERIFY( !m_model->containsAnyStatement( m_st4 ) );
 }
 
 
@@ -431,9 +431,9 @@ void SopranoModelTest::testContainsStatements()
     QVERIFY( m_model != 0 );
 
     // check all wildcard combinations
-    QVERIFY( m_model->containsStatements( Statement( m_st1.subject(), Node(), Node() ) ) );
-    QVERIFY( m_model->containsStatements( Statement( Node(), m_st1.predicate(), Node() ) ) );
-    QVERIFY( m_model->containsStatements( Statement( Node(), Node(), m_st1.object() ) ) );
+    QVERIFY( m_model->containsAnyStatement( Statement( m_st1.subject(), Node(), Node() ) ) );
+    QVERIFY( m_model->containsAnyStatement( Statement( Node(), m_st1.predicate(), Node() ) ) );
+    QVERIFY( m_model->containsAnyStatement( Statement( Node(), Node(), m_st1.object() ) ) );
 
     // check context wildcards
     Statement s( QUrl( "http://soprano.org/test#A" ),
@@ -442,15 +442,15 @@ void SopranoModelTest::testContainsStatements()
                  QUrl( "http://soprano.org/test#context" ) );
     QVERIFY( m_model->addStatement( s ) == Error::ERROR_NONE );
 
-    QVERIFY( m_model->containsStatements( Statement( s.subject(), Node(), Node() ) ) );
-    QVERIFY( m_model->containsStatements( Statement( Node(), s.predicate(), Node() ) ) );
-    QVERIFY( m_model->containsStatements( Statement( Node(), Node(), s.object() ) ) );
-    QVERIFY( m_model->containsStatements( Statement( s.subject(), Node(), Node(), s.context() ) ) );
-    QVERIFY( m_model->containsStatements( Statement( Node(), s.predicate(), Node(), s.context() ) ) );
-    QVERIFY( m_model->containsStatements( Statement( Node(), Node(), s.object(), s.context() ) ) );
-    QVERIFY( m_model->containsStatements( Statement( Node(), Node(), Node(), s.context() ) ) );
+    QVERIFY( m_model->containsAnyStatement( Statement( s.subject(), Node(), Node() ) ) );
+    QVERIFY( m_model->containsAnyStatement( Statement( Node(), s.predicate(), Node() ) ) );
+    QVERIFY( m_model->containsAnyStatement( Statement( Node(), Node(), s.object() ) ) );
+    QVERIFY( m_model->containsAnyStatement( Statement( s.subject(), Node(), Node(), s.context() ) ) );
+    QVERIFY( m_model->containsAnyStatement( Statement( Node(), s.predicate(), Node(), s.context() ) ) );
+    QVERIFY( m_model->containsAnyStatement( Statement( Node(), Node(), s.object(), s.context() ) ) );
+    QVERIFY( m_model->containsAnyStatement( Statement( Node(), Node(), Node(), s.context() ) ) );
 
-    QVERIFY( !m_model->containsStatements( Statement( Node(), Node(), Node(), QUrl( "http://soprano.org/test#SomeOtherContext" ) ) ) );
+    QVERIFY( !m_model->containsAnyStatement( Statement( Node(), Node(), Node(), QUrl( "http://soprano.org/test#SomeOtherContext" ) ) ) );
 }
 
 void SopranoModelTest::testGraphQuery()
@@ -668,27 +668,27 @@ void SopranoModelTest::testContexts()
     QVERIFY( m_model->addStatement( s2_c0 ) == Error::ERROR_NONE );
     QVERIFY( m_model->addStatement( s3_c0 ) == Error::ERROR_NONE );
 
-    // check containsStatements plain
-    QVERIFY( m_model->containsStatements( s1_c1 ) );
-    QVERIFY( m_model->containsStatements( s2_c1 ) );
-    QVERIFY( m_model->containsStatements( s3_c1 ) );
+    // check containsAnyStatement plain
+    QVERIFY( m_model->containsAnyStatement( s1_c1 ) );
+    QVERIFY( m_model->containsAnyStatement( s2_c1 ) );
+    QVERIFY( m_model->containsAnyStatement( s3_c1 ) );
 
-    QVERIFY( m_model->containsStatements( s1_c2 ) );
-    QVERIFY( m_model->containsStatements( s2_c2 ) );
-    QVERIFY( m_model->containsStatements( s3_c2 ) );
+    QVERIFY( m_model->containsAnyStatement( s1_c2 ) );
+    QVERIFY( m_model->containsAnyStatement( s2_c2 ) );
+    QVERIFY( m_model->containsAnyStatement( s3_c2 ) );
 
-    QVERIFY( m_model->containsStatements( s1_c0 ) );
-    QVERIFY( m_model->containsStatements( s2_c0 ) );
-    QVERIFY( m_model->containsStatements( s3_c0 ) );
+    QVERIFY( m_model->containsAnyStatement( s1_c0 ) );
+    QVERIFY( m_model->containsAnyStatement( s2_c0 ) );
+    QVERIFY( m_model->containsAnyStatement( s3_c0 ) );
 
-    // check containsStatements with wildcard for context
-    QVERIFY( m_model->containsStatements( Statement( s1_c1.subject(), s1_c1.predicate(), s1_c1.object() ) ) );
-    QVERIFY( m_model->containsStatements( Statement( s2_c1.subject(), s2_c1.predicate(), s2_c1.object() ) ) );
-    QVERIFY( m_model->containsStatements( Statement( s3_c1.subject(), s3_c1.predicate(), s3_c1.object() ) ) );
+    // check containsAnyStatement with wildcard for context
+    QVERIFY( m_model->containsAnyStatement( Statement( s1_c1.subject(), s1_c1.predicate(), s1_c1.object() ) ) );
+    QVERIFY( m_model->containsAnyStatement( Statement( s2_c1.subject(), s2_c1.predicate(), s2_c1.object() ) ) );
+    QVERIFY( m_model->containsAnyStatement( Statement( s3_c1.subject(), s3_c1.predicate(), s3_c1.object() ) ) );
 
-    QVERIFY( m_model->containsStatements( Statement( s1_c2.subject(), s1_c2.predicate(), s1_c2.object() ) ) );
-    QVERIFY( m_model->containsStatements( Statement( s2_c2.subject(), s2_c2.predicate(), s2_c2.object() ) ) );
-    QVERIFY( m_model->containsStatements( Statement( s3_c2.subject(), s3_c2.predicate(), s3_c2.object() ) ) );
+    QVERIFY( m_model->containsAnyStatement( Statement( s1_c2.subject(), s1_c2.predicate(), s1_c2.object() ) ) );
+    QVERIFY( m_model->containsAnyStatement( Statement( s2_c2.subject(), s2_c2.predicate(), s2_c2.object() ) ) );
+    QVERIFY( m_model->containsAnyStatement( Statement( s3_c2.subject(), s3_c2.predicate(), s3_c2.object() ) ) );
 
     // check listStatements single
     checkSingleIt( m_model->listStatements( s1_c1 ), s1_c1 );
@@ -722,41 +722,41 @@ void SopranoModelTest::testContexts()
 
     // check remove context
     QVERIFY( m_model->removeContext( context1 ) == Error::ERROR_NONE );
-    QVERIFY( !m_model->containsStatements( s1_c1 ) );
-    QVERIFY( !m_model->containsStatements( s2_c1 ) );
-    QVERIFY( !m_model->containsStatements( s3_c1 ) );
+    QVERIFY( !m_model->containsAnyStatement( s1_c1 ) );
+    QVERIFY( !m_model->containsAnyStatement( s2_c1 ) );
+    QVERIFY( !m_model->containsAnyStatement( s3_c1 ) );
 
-    QVERIFY( m_model->containsStatements( s1_c2 ) );
-    QVERIFY( m_model->containsStatements( s2_c2 ) );
-    QVERIFY( m_model->containsStatements( s3_c2 ) );
+    QVERIFY( m_model->containsAnyStatement( s1_c2 ) );
+    QVERIFY( m_model->containsAnyStatement( s2_c2 ) );
+    QVERIFY( m_model->containsAnyStatement( s3_c2 ) );
 
-    QVERIFY( m_model->containsStatements( s1_c0 ) );
-    QVERIFY( m_model->containsStatements( s2_c0 ) );
-    QVERIFY( m_model->containsStatements( s3_c0 ) );
+    QVERIFY( m_model->containsAnyStatement( s1_c0 ) );
+    QVERIFY( m_model->containsAnyStatement( s2_c0 ) );
+    QVERIFY( m_model->containsAnyStatement( s3_c0 ) );
 
     // check remove with context
-    QVERIFY( m_model->removeStatements( s1_c2 ) == Error::ERROR_NONE );
-    QVERIFY( !m_model->containsStatements( s1_c2 ) );
-    QVERIFY( m_model->containsStatements( s2_c2 ) );
-    QVERIFY( m_model->containsStatements( s3_c2 ) );
+    QVERIFY( m_model->removeAllStatements( s1_c2 ) == Error::ERROR_NONE );
+    QVERIFY( !m_model->containsAnyStatement( s1_c2 ) );
+    QVERIFY( m_model->containsAnyStatement( s2_c2 ) );
+    QVERIFY( m_model->containsAnyStatement( s3_c2 ) );
 
-    QVERIFY( m_model->containsStatements( s1_c0 ) );
-    QVERIFY( m_model->containsStatements( s2_c0 ) );
-    QVERIFY( m_model->containsStatements( s3_c0 ) );
+    QVERIFY( m_model->containsAnyStatement( s1_c0 ) );
+    QVERIFY( m_model->containsAnyStatement( s2_c0 ) );
+    QVERIFY( m_model->containsAnyStatement( s3_c0 ) );
 
     // check remove without context
     QVERIFY( m_model->addStatement( s1_c3 ) == Error::ERROR_NONE );
     QVERIFY( m_model->addStatement( s2_c3 ) == Error::ERROR_NONE );
     QVERIFY( m_model->addStatement( s3_c3 ) == Error::ERROR_NONE );
 
-    QVERIFY( m_model->containsStatements( s1_c3 ) );
-    QVERIFY( m_model->containsStatements( s2_c3 ) );
-    QVERIFY( m_model->containsStatements( s3_c3 ) );
+    QVERIFY( m_model->containsAnyStatement( s1_c3 ) );
+    QVERIFY( m_model->containsAnyStatement( s2_c3 ) );
+    QVERIFY( m_model->containsAnyStatement( s3_c3 ) );
 
-    QVERIFY( m_model->removeStatements( s1_c0 ) == Error::ERROR_NONE );
+    QVERIFY( m_model->removeAllStatements( s1_c0 ) == Error::ERROR_NONE );
 
-    QVERIFY( !m_model->containsStatements( s1_c0 ) );
-    QVERIFY( !m_model->containsStatements( s1_c3 ) );
+    QVERIFY( !m_model->containsAnyStatement( s1_c0 ) );
+    QVERIFY( !m_model->containsAnyStatement( s1_c3 ) );
 }
 
 

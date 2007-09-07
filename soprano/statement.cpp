@@ -65,7 +65,7 @@ Statement& Statement::operator=( const Statement& other )
     return *this;
 }
 
-bool Statement::operator==( const Statement& other )
+bool Statement::operator==( const Statement& other ) const
 {
     return ( d->subject == other.subject() &&
              d->predicate == other.predicate() &&
@@ -73,20 +73,12 @@ bool Statement::operator==( const Statement& other )
              d->context == other.context() );
 }
 
-bool Statement::operator!=( const Statement& other )
+bool Statement::operator!=( const Statement& other ) const
 {
     return ( d->subject != other.subject() ||
              d->predicate != other.predicate() ||
              d->object != other.object() ||
              d->context != other.context() );
-}
-
-bool Soprano::Statement::matches( const Statement& other ) const
-{
-    return ( d->subject.matches( other.subject() ) &&
-             d->predicate.matches( other.predicate() ) &&
-             d->object.matches( other.object() ) &&
-             d->context.matches( other.context() ) );
 }
 
 void Statement::setSubject( const Node &subject )
@@ -142,15 +134,6 @@ bool Statement::isValid() const
         return valid && d->context.isResource();
     }
     return valid;
-}
-
-
-bool Soprano::Statement::operator==( const Statement& other ) const
-{
-    return ( d->subject == other.d->subject &&
-             d->predicate == other.d->predicate &&
-             d->object == other.d->object &&
-             d->context == other.d->context );
 }
 
 

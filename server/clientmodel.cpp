@@ -142,10 +142,10 @@ Soprano::Error::ErrorCode Soprano::Server::ClientModel::removeStatement( const S
 }
 
 
-Soprano::Error::ErrorCode Soprano::Server::ClientModel::removeStatements( const Statement &statement )
+Soprano::Error::ErrorCode Soprano::Server::ClientModel::removeAllStatements( const Statement &statement )
 {
     if ( m_client ) {
-        Error::ErrorCode c = m_client->removeStatements( m_modelId, statement );
+        Error::ErrorCode c = m_client->removeAllStatements( m_modelId, statement );
         setError( m_client->lastError() );
         return c;
     }
@@ -184,16 +184,30 @@ bool Soprano::Server::ClientModel::containsStatement( const Statement &statement
 }
 
 
-bool Soprano::Server::ClientModel::containsStatements( const Statement &statement ) const
+bool Soprano::Server::ClientModel::containsAnyStatement( const Statement &statement ) const
 {
     if ( m_client ) {
-        bool c = m_client->containsStatements( m_modelId, statement );
+        bool c = m_client->containsAnyStatement( m_modelId, statement );
         setError( m_client->lastError() );
         return c;
     }
     else {
         setError( "Not connected to server." );
         return false;
+    }
+}
+
+
+Soprano::Node Soprano::Server::ClientModel::createBlankNode()
+{
+    if ( m_client ) {
+        Node n = m_client->createBlankNode( m_modelId );
+        setError( m_client->lastError() );
+        return n;
+    }
+    else {
+        setError( "Not connected to server." );
+        return Node();
     }
 }
 

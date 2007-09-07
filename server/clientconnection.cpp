@@ -242,14 +242,14 @@ int Soprano::Server::ClientConnection::listStatements( int modelId, const Statem
 }
 
 
-Soprano::Error::ErrorCode Soprano::Server::ClientConnection::removeStatements( int modelId, const Statement &statement )
+Soprano::Error::ErrorCode Soprano::Server::ClientConnection::removeAllStatements( int modelId, const Statement &statement )
 {
-//    qDebug() << "(ClientConnection::removeStatements)";
+//    qDebug() << "(ClientConnection::removeAllStatements)";
     QMutexLocker( &d->mutex );
 
     QDataStream stream( d->socket );
 
-    stream << COMMAND_MODEL_REMOVE_STATEMENTS << ( quint32 )modelId << statement;
+    stream << COMMAND_MODEL_REMOVE_ALL_STATEMENTS << ( quint32 )modelId << statement;
 
     if ( !d->socket->waitForReadyRead() ) {
         setError( "Command timed out." );
@@ -334,14 +334,14 @@ bool Soprano::Server::ClientConnection::containsStatement( int modelId, const St
 }
 
 
-bool Soprano::Server::ClientConnection::containsStatements( int modelId, const Statement &statement )
+bool Soprano::Server::ClientConnection::containsAnyStatement( int modelId, const Statement &statement )
 {
-//    qDebug() << "(ClientConnection::containsStatements)";
+//    qDebug() << "(ClientConnection::containsAnyStatement)";
     QMutexLocker( &d->mutex );
 
     QDataStream stream( d->socket );
 
-    stream << COMMAND_MODEL_CONTAINS_STATEMENTS << ( quint32 )modelId << statement;
+    stream << COMMAND_MODEL_CONTAINS_ANY_STATEMENT << ( quint32 )modelId << statement;
 
     if ( !d->socket->waitForReadyRead() ) {
         setError( "Command timed out." );
@@ -377,6 +377,29 @@ bool Soprano::Server::ClientConnection::isEmpty( int modelId )
 
     setError( error );
     return r;
+}
+
+
+Soprano::Node Soprano::Server::ClientConnection::createBlankNode( int modelId )
+{
+//    qDebug() << "(ClientConnection::isEmpty)";
+    QMutexLocker( &d->mutex );
+
+    QDataStream stream( d->socket );
+
+    stream << COMMAND_MODEL_CREATE_BLANK_NODE << ( quint32 )modelId;
+
+    if ( !d->socket->waitForReadyRead() ) {
+        setError( "Command timed out." );
+        return Node();
+    }
+
+    Node n;
+    Error::Error error;
+    stream >> n >> error;
+
+    setError( error );
+    return n;
 }
 
 

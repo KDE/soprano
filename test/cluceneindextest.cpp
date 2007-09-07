@@ -71,31 +71,31 @@ void IndexTest::testAddStatement()
                   LiteralValue( "Wurst" ) );
 
     QVERIFY( m_indexModel->addStatement( s1 ) == Error::ERROR_NONE );
-    QVERIFY( m_indexModel->containsStatements( s1 ) );
+    QVERIFY( m_indexModel->containsAnyStatement( s1 ) );
 
     // now check if the statement was properly indexed
-    lucene::search::Hits* hits = m_indexModel->index()->search( "Hello World" );
-    QVERIFY( hits != 0 );
-    QCOMPARE( hits->length(), 1 );
-    QCOMPARE( WString( hits->doc( 0 ).get( L"id" ) ), WString( s1.subject().toString() ) );
-    _CLDELETE( hits );
+    Iterator<QueryHit> hits = m_indexModel->index()->search( "Hello World" );
+    QVERIFY( hits.next() );
+    QCOMPARE( hits.current().resource(), s1.subject() );
+    QVERIFY( !hits.next() );
+    hits.close();
 
     QVERIFY( m_indexModel->addStatement( s2 ) == Error::ERROR_NONE );
-    QVERIFY( m_indexModel->containsStatements( s2 ) );
+    QVERIFY( m_indexModel->containsAnyStatement( s2 ) );
 
     // check the previous one again to make sure the index is not borked
     hits = m_indexModel->index()->search( "Hello World" );
-    QVERIFY( hits != 0 );
-    QCOMPARE( hits->length(), 1 );
-    QCOMPARE( WString( hits->doc( 0 ).get( L"id" ) ), WString( s1.subject().toString() ) );
-    _CLDELETE( hits );
+    QVERIFY( hits.next() );
+    QCOMPARE( hits.current().resource(), s1.subject() );
+    QVERIFY( !hits.next() );
+    hits.close();
 
     // and check for the second statement
     hits = m_indexModel->index()->search( "Wurst" );
-    QVERIFY( hits != 0 );
-    QCOMPARE( hits->length(), 1 );
-    QCOMPARE( WString( hits->doc( 0 ).get( L"id" ) ), WString( s2.subject().toString() ) );
-    _CLDELETE( hits );
+    QVERIFY( hits.next() );
+    QCOMPARE( hits.current().resource(), s2.subject() );
+    QVERIFY( !hits.next() );
+    hits.close();
 }
 
 
@@ -112,10 +112,10 @@ void IndexTest::testRemoveStatement()
                   LiteralValue( "Wurst" ) );
 
     QVERIFY( m_indexModel->addStatement( s1 ) == Error::ERROR_NONE );
-    QVERIFY( m_indexModel->containsStatements( s1 ) );
+    QVERIFY( m_indexModel->containsAnyStatement( s1 ) );
     m_indexModel->index()->dump( s );
     QVERIFY( m_indexModel->addStatement( s2 ) == Error::ERROR_NONE );
-    QVERIFY( m_indexModel->containsStatements( s2 ) );
+    QVERIFY( m_indexModel->containsAnyStatement( s2 ) );
 
     m_indexModel->index()->dump( s );
 
@@ -125,9 +125,8 @@ void IndexTest::testRemoveStatement()
     m_indexModel->index()->dump( s );
 
     // now make sure that the index does not contain it anymore
-    lucene::search::Hits* hits = m_indexModel->index()->search( "Hello World" );
-    QVERIFY( hits != 0 );
-    QCOMPARE( hits->length(), 0 );
+    Iterator<QueryHit> hits = m_indexModel->index()->search( "Hello World" );
+    QVERIFY( !hits.next() );
 }
 
 

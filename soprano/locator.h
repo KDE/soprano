@@ -36,24 +36,28 @@ namespace Soprano
 	 */
 	class Locator {
 	public:
+	    //@{
 	    Locator();
 	    Locator( int line, int column, int byte = -1, const QString& filename = QString() );
 	    Locator( const Locator &other );
 	    ~Locator();
 
 	    Locator& operator=( const Locator &other );
+	    //@}
 
+	    //@{
 	    int line() const;
-	    void setLine( int line );
-
 	    int column() const;
-	    void setColumn( int column );
-
 	    int byte() const;
-	    void setByte( int byte );
-
 	    QString fileName() const;
+	    //@}
+
+	    //@{
+	    void setLine( int line );
+	    void setColumn( int column );
+	    void setByte( int byte );
 	    void setFileName( const QString& fileName );
+	    //@}
 
 	private:
 	    class Private;

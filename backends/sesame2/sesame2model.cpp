@@ -212,21 +212,26 @@ Soprano::Error::ErrorCode Soprano::Sesame2::Model::removeStatement( const Statem
         // this may look weird but is perfectly ok since an empty context is used as
         // a wildcard in listStatements but not in QList.contains
         if ( sl.contains( statement ) ) {
-            Error::ErrorCode c = Soprano::Model::removeStatements( sl );
-            if ( lastError() ) {
-                return c;
+            // we cannot use Model::removeStatements here since otherwise we might end
+            // up in an endless loop if we have statements in the default context (i.e. empty)
+            for ( QList<Statement>::const_iterator it = sl.constBegin();
+                  it != sl.constEnd(); ++it ) {
+                Error::ErrorCode c = removeAllStatements( *it );
+                if ( lastError() ) {
+                    return c;
+                }
             }
             sl.removeAll( statement );
             return addStatements( sl );
         }
     }
     else {
-        return removeStatements( statement );
+        return removeAllStatements( statement );
     }
 }
 
 
-Soprano::Error::ErrorCode Soprano::Sesame2::Model::removeStatements( const Statement &statement )
+Soprano::Error::ErrorCode Soprano::Sesame2::Model::removeAllStatements( const Statement &statement )
 {
     QWriteLocker lock( &d->readWriteLock );
 
@@ -256,7 +261,7 @@ Soprano::Error::ErrorCode Soprano::Sesame2::Model::removeStatements( const State
 
     d->repository->repositoryConnection()->remove( subject, predicate, object, context );
     if ( JNIWrapper::instance()->exceptionOccured() ) {
-        qDebug() << "(Soprano::Sesame2::Model::removeStatements) failed.";
+        qDebug() << "(Soprano::Sesame2::Model::removeAllStatements) failed.";
         setError( JNIWrapper::instance()->convertAndClearException() );
         return Error::ERROR_UNKNOWN;
     }
@@ -290,7 +295,7 @@ bool Soprano::Sesame2::Model::containsStatement( const Statement &statement ) co
 }
 
 
-bool Soprano::Sesame2::Model::containsStatements( const Statement &statement ) const
+bool Soprano::Sesame2::Model::containsAnyStatement( const Statement &statement ) const
 {
     QReadLocker lock( &d->readWriteLock );
 
@@ -320,11 +325,19 @@ bool Soprano::Sesame2::Model::containsStatements( const Statement &statement ) c
 
     bool r = d->repository->repositoryConnection()->hasStatement( subject, predicate, object, context );
     if ( JNIWrapper::instance()->exceptionOccured() ) {
-        qDebug() << "(Soprano::Sesame2::Model::containsStatements) failed.";
+        qDebug() << "(Soprano::Sesame2::Model::containsAnyStatements) failed.";
         setError( JNIWrapper::instance()->convertAndClearException() );
         return false;
     }
     return r;
+}
+
+
+Soprano::Node Soprano::Sesame2::Model::createBlankNode()
+{
+    JObjectRef bnode = d->repository->valueFactory()->createBNode();
+    setError( JNIWrapper::instance()->convertAndClearException() );
+    return convertNode( bnode );
 }
 
 

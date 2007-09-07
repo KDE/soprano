@@ -19,8 +19,10 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef _SORPANO_INDEX_QUERY_RESULT_H_
-#define _SORPANO_INDEX_QUERY_RESULT_H_
+#ifndef _SORPANO_INDEX_QUERY_HIT_H_
+#define _SORPANO_INDEX_QUERY_HIT_H_
+
+#include "soprano_export.h"
 
 #include <QtCore/QSharedDataPointer>
 
@@ -30,35 +32,35 @@ namespace Soprano {
 
     namespace Index {
 	/**
-	 * \brief QueryResult represents a result from an IndexFilterModel query. 
+	 * \brief QueryHit represents a hit from an IndexFilterModel query. 
 	 * It basically is an RDF resource combined with a hit score.
 	 */
-	class QueryResult
+	class SOPRANO_EXPORT QueryHit
 	{
 	public:
 	    /**
-	     * Create an empty result.
+	     * Create an empty hit.
 	     */
-	    QueryResult();
+	    QueryHit();
 
 	    /**
 	     * Default copy constructor.
 	     */
-	    QueryResult( const QueryResult& );
+	    QueryHit( const QueryHit& );
 	    
 	    /**
-	     * Create a new result.
-	     * \param resource The resource of the result.
+	     * Create a new hit.
+	     * \param resource The resource of the hit.
 	     * \param score The hit score.
 	     */
-	    QueryResult( const Node& resource, double score );
+	    QueryHit( const Node& resource, double score );
 
 	    /**
 	     * Destructor.
 	     */
-	    ~QueryResult();
+	    ~QueryHit();
 
-	    QueryResult& operator=( const QueryResult& );
+	    QueryHit& operator=( const QueryHit& );
 
 	    double score() const;
 	    Node resource() const;

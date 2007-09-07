@@ -64,12 +64,12 @@ bool Soprano::StorageModel::containsStatement( const Statement &statement ) cons
     return listStatements( statement ).allStatements().contains( statement );
 }
 
-bool Soprano::StorageModel::containsStatements( const Statement &statement ) const
+bool Soprano::StorageModel::containsAnyStatement( const Statement &statement ) const
 {
     return listStatements( statement ).next();
 }
 
-Soprano::Error::ErrorCode Soprano::StorageModel::removeStatements( const Statement &statement )
+Soprano::Error::ErrorCode Soprano::StorageModel::removeAllStatements( const Statement &statement )
 {
     QList<Statement> sl = listStatements( statement ).allStatements();
     for ( QList<Statement>::const_iterator it = sl.constBegin(); it != sl.constEnd(); ++it ) {

@@ -49,10 +49,11 @@ namespace Soprano {
 	    QueryResultIterator executeQuery( const QueryLegacy &query ) const;
 	    StatementIterator listStatements( const Statement &partial ) const;
 	    Error::ErrorCode removeStatement( const Statement &statement );
-	    Error::ErrorCode removeStatements( const Statement &statement );
+	    Error::ErrorCode removeAllStatements( const Statement &statement );
 	    int statementCount() const;
 	    bool containsStatement( const Statement &statement ) const;
-	    bool containsStatements( const Statement &statement ) const;
+	    bool containsAnyStatement( const Statement &statement ) const;
+	    Node createBlankNode();
 
 	    void removeIterator( StatementIteratorBackend* it ) const;
 	    void removeIterator( NodeIteratorBackend* it ) const;

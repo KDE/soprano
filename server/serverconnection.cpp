@@ -69,14 +69,15 @@ public:
     void supportedFeatures( QDataStream& );
     void addStatement( QDataStream& stream );
     void removeStatement( QDataStream& stream );
-    void removeStatements( QDataStream& stream );
+    void removeAllStatements( QDataStream& stream );
     void listStatements( QDataStream& stream );
     void containsStatement( QDataStream& stream );
-    void containsStatements( QDataStream& stream );
+    void containsAnyStatement( QDataStream& stream );
     void listContexts( QDataStream& stream );
     void statementCount( QDataStream& stream );
     void isEmpty( QDataStream& stream );
     void query( QDataStream& );
+    void createBlankNode( QDataStream& );
 
     void iteratorNext( QDataStream& stream );
     void statementIteratorCurrent( QDataStream& stream );
@@ -152,8 +153,8 @@ void Soprano::Server::ServerConnection::run()
                 d->removeStatement( stream );
                 break;
 
-            case COMMAND_MODEL_REMOVE_STATEMENTS:
-                d->removeStatements( stream );
+            case COMMAND_MODEL_REMOVE_ALL_STATEMENTS:
+                d->removeAllStatements( stream );
                 break;
 
             case COMMAND_MODEL_LIST_STATEMENTS:
@@ -164,8 +165,8 @@ void Soprano::Server::ServerConnection::run()
                 d->containsStatement( stream );
                 break;
 
-            case COMMAND_MODEL_CONTAINS_STATEMENTS:
-                d->containsStatements( stream );
+            case COMMAND_MODEL_CONTAINS_ANY_STATEMENT:
+                d->containsAnyStatement( stream );
                 break;
 
             case COMMAND_MODEL_LIST_CONTEXTS:
@@ -210,6 +211,10 @@ void Soprano::Server::ServerConnection::run()
 
             case COMMAND_ITERATOR_QUERY_BOOL_VALUE:
                 d->queryIteratorBoolValue( stream );
+                break;
+
+            case COMMAND_MODEL_CREATE_BLANK_NODE:
+                d->createBlankNode( stream );
                 break;
 
             default:
@@ -357,21 +362,21 @@ void Soprano::Server::ServerConnection::Private::removeStatement( QDataStream& s
 }
 
 
-void Soprano::Server::ServerConnection::Private::removeStatements( QDataStream& stream )
+void Soprano::Server::ServerConnection::Private::removeAllStatements( QDataStream& stream )
 {
-    qDebug() << "(ServerConnection::removeStatements)";
+    qDebug() << "(ServerConnection::removeAllStatements)";
     Model* model = getModel( stream );
     if ( model ) {
         Statement s;
         stream >> s;
 
-        stream << model->removeStatements( s );
+        stream << model->removeAllStatements( s );
         stream << model->lastError();
     }
     else {
         stream << Error::ERROR_INVALID_ARGUMENT << Error::Error( "Invalid model id" );
     }
-    qDebug() << "(ServerConnection::removeStatements) done";
+    qDebug() << "(ServerConnection::removeAllStatements) done";
 }
 
 
@@ -411,21 +416,21 @@ void Soprano::Server::ServerConnection::Private::containsStatement( QDataStream&
 }
 
 
-void Soprano::Server::ServerConnection::Private::containsStatements( QDataStream& stream )
+void Soprano::Server::ServerConnection::Private::containsAnyStatement( QDataStream& stream )
 {
-    qDebug() << "(ServerConnection::containsStatements)";
+    qDebug() << "(ServerConnection::containsAnyStatement)";
     Model* model = getModel( stream );
     if ( model ) {
         Statement s;
         stream >> s;
 
-        stream << model->containsStatements( s );
+        stream << model->containsAnyStatement( s );
         stream << model->lastError();
     }
     else {
         stream << Error::ERROR_INVALID_ARGUMENT << Error::Error( "Invalid model id" );
     }
-    qDebug() << "(ServerConnection::containsStatements) done";
+    qDebug() << "(ServerConnection::containsAnyStatement) done";
 }
 
 
@@ -476,6 +481,19 @@ void Soprano::Server::ServerConnection::Private::isEmpty( QDataStream& stream )
     Model* model = getModel( stream );
     if ( model ) {
         stream << model->isEmpty();
+        stream << model->lastError();
+    }
+    else {
+        stream << Error::ERROR_INVALID_ARGUMENT << Error::Error( "Invalid model id" );
+    }
+}
+
+
+void Soprano::Server::ServerConnection::Private::createBlankNode( QDataStream& stream )
+{
+    Model* model = getModel( stream );
+    if ( model ) {
+        stream << model->createBlankNode();
         stream << model->lastError();
     }
     else {

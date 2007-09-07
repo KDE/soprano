@@ -19,10 +19,10 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#include "indexqueryresult.h"
+#include "indexqueryhit.h"
 #include "node.h"
 
-class Soprano::Index::QueryResult::Private : public QSharedData
+class Soprano::Index::QueryHit::Private : public QSharedData
 {
     public:
     Private( const Node& res = Node(), double s = 0.0 )
@@ -35,43 +35,43 @@ class Soprano::Index::QueryResult::Private : public QSharedData
 };
 
 
-Soprano::Index::QueryResult::QueryResult()
+Soprano::Index::QueryHit::QueryHit()
     : d( new Private() )
 {
 }
 
 
-Soprano::Index::QueryResult::QueryResult( const Node& res,  double s )
+Soprano::Index::QueryHit::QueryHit( const Node& res,  double s )
     : d( new Private( res, s ) )
 {
 }
 
 
-Soprano::Index::QueryResult::QueryResult( const QueryResult& other )
+Soprano::Index::QueryHit::QueryHit( const QueryHit& other )
 {
     d = other.d;
 }
 
 
-Soprano::Index::QueryResult::~QueryResult()
+Soprano::Index::QueryHit::~QueryHit()
 {
 }
 
 
-Soprano::Index::QueryResult& Soprano::Index::QueryResult::operator=( const QueryResult& other )
+Soprano::Index::QueryHit& Soprano::Index::QueryHit::operator=( const QueryHit& other )
 {
     d = other.d;
     return *this;
 }
 
 
-double Soprano::Index::QueryResult::score() const
+double Soprano::Index::QueryHit::score() const
 {
     return d->score;
 }
 
 
-Soprano::Node Soprano::Index::QueryResult::resource() const
+Soprano::Node Soprano::Index::QueryHit::resource() const
 {
     return d->resource;
 }
