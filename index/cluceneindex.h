@@ -74,12 +74,19 @@ namespace Soprano {
 	class SOPRANO_EXPORT CLuceneIndex : public Error::ErrorCache
 	{
 	public:
+	    //@{
 	    /**
 	     * \param analyzer The analyzer to be used. If 0 a standard analyzer will be created.
 	     */
 	    CLuceneIndex( lucene::analysis::Analyzer* analyzer = 0 );
-	    ~CLuceneIndex();
 
+	    /**
+	     * Destructor
+	     */
+	    ~CLuceneIndex();
+	    //@}
+
+	    //@{
 	    /**
 	     * Open the index.
 	     * \param folder The folder where the index is stored.
@@ -88,10 +95,29 @@ namespace Soprano {
 	     */
 	    bool open( const QString& folder, bool force = false );
 
+	    /**
+	     * Close the index. Write back any changes.
+	     */
 	    void close();
 
+	    /**
+	     * \return \p true If the index has been opened successfully.
+	     * \sa open()
+	     */
 	    bool isOpen() const;
+	    //@}
 
+	    //@{
+	    /**
+	     * Get the number of indexed resources.
+	     *
+	     * \return The number of indexed resoruces or -1 on error (In the case of error
+	     * lastError() provides more information.
+	     */
+	    int resourceCount() const;
+	    //@}
+
+	    //@{
 	    /**
 	     * Start a new transaction. After calling this method multiple fields and statements may be added to the
 	     * index and nothing is written back to disk. A transaction has to be closed. Otherwise the data will not be written to the index.
@@ -114,7 +140,9 @@ namespace Soprano {
 	     * a wrong transaction id has been supplied, or a clucene error occured.
 	     */
 	    bool closeTransaction( int id );
+	    //@}
 
+	    //@{
 	    /**
 	     * Indexes a statement.
 	     * \return An error code or 0 on success
@@ -126,7 +154,9 @@ namespace Soprano {
 	     * \return An error code or 0 on success
 	     */
 	    Error::ErrorCode removeStatement( const Soprano::Statement& );
+	    //@}
 
+	    //@{
 	    /**
 	     * Get a document for a specific resource. This is only possible after starting a transaction.
 	     *
@@ -134,22 +164,20 @@ namespace Soprano {
 	     *
 	     * \return The document representing the resource or 0 if no transaction has been started or
 	     * a clucene error occured.
+	     *
+	     * \warning This is an advanced method. Calling this method is thread-safe but using the 
+	     * returned document is not.
 	     */
 	    lucene::document::Document* documentForResource( const Node& resource );
-	    
-	    /**
-	     * Add a field to a document.
-	     *
-	     * \param resource The resource to identify the document.
-	     * \param field The clucene field to add. The index will take ownership of field.
-	     *
-	     * \return An error code or 0 on success
-	     */
-	    Error::ErrorCode addFieldToResourceDocument( const Node& resource, lucene::document::Field* field );
+	    //@}
 
+	    //@{
 	    /**
-	     * Evaluates the given query and returns the results as an iterator over QueryHit objects.
+	     * Evaluates the given query.
 	     * Each hit is a resource and a score. Resource properties may be read from the model.
+	     *
+	     * \return The results as an iterator over QueryHit objects or an invalid iterator
+	     * on error.
 	     */
 	    Iterator<QueryHit> search( const QString& query );
 
@@ -157,6 +185,7 @@ namespace Soprano {
 	     * \overload
 	     */
 	    Iterator<QueryHit> search( lucene::search::Query* query );
+	    //@}
 
 	    /**
 	     * Gets the score for a particular Resource and query. Returns a value < 0
@@ -175,10 +204,12 @@ namespace Soprano {
 	     */
 	    static Soprano::Node getResource( lucene::document::Document* document );
 
+	    //@{
 	    /**
 	     * Dump the index contents to the stream
 	     */
 	    void dump( QTextStream& ) const;
+	    //@}
 
 	private:
 	    class Private;
