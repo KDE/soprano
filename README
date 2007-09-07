@@ -21,3 +21,5 @@ Soprano has the following features:
 * Rule-based Forward inference engine.
 * Full-text index based on CLucene which indexes all literal 
   statements (i.e. those statements with a literal object node)
+
+See INSTALL for installation instructions.
