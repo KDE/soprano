@@ -32,6 +32,8 @@ namespace Soprano {
 
     namespace Index {
 	/**
+	 * \class QueryHit indexqueryhit.h soprano/Index/QueryHit
+	 *
 	 * \brief QueryHit represents a hit from an IndexFilterModel query. 
 	 * It basically is an RDF resource combined with a hit score.
 	 */
