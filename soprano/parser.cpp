@@ -52,7 +52,7 @@ Soprano::StatementIterator Soprano::Parser::parseFile( const QString& filename, 
     QFile f( filename );
     if ( f.open( QIODevice::ReadOnly | QIODevice::Text ) ) {
         QTextStream s( &f );
-        return parseStream( &s, baseUri, serialization, userSerialization );
+        return parseStream( s, baseUri, serialization, userSerialization );
     }
     else {
         qDebug() << "(Soprano::Parser) unable to open file " << filename;
@@ -65,7 +65,7 @@ Soprano::StatementIterator Soprano::Parser::parseString( const QString& data, co
 {
     QString buffer( data );
     QTextStream s( &buffer, QIODevice::ReadOnly );
-    return parseStream( &s, baseUri, serialization, userSerialization );
+    return parseStream( s, baseUri, serialization, userSerialization );
 }
 
 

@@ -159,12 +159,12 @@ Soprano::StatementIterator Soprano::Raptor::Parser::parseString( const QString& 
 
 
 Soprano::StatementIterator
-Soprano::Raptor::Parser::parseStream( QTextStream* stream,
+Soprano::Raptor::Parser::parseStream( QTextStream& stream,
                                       const QUrl& baseUri,
                                       RdfSerialization serialization,
                                       const QString& userSerialization ) const
 {
-    return parseString( stream->readAll(), baseUri, serialization );
+    return parseString( stream.readAll(), baseUri, serialization );
 }
 
 #include "raptorparser.moc"

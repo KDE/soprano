@@ -50,7 +50,7 @@ namespace Soprano {
 					   const QUrl& baseUri, 
 					   RdfSerialization serialization,
 					   const QString& userSerialization = QString() ) const;
-	    StatementIterator parseStream( QTextStream*, 
+	    StatementIterator parseStream( QTextStream&, 
 					   const QUrl& baseUri, 
 					   RdfSerialization serialization,
 					   const QString& userSerialization = QString() ) const;

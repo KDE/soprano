@@ -151,7 +151,7 @@ namespace Soprano
 	 *
 	 * \return An iterator that iterates over the result statements.
 	 */ 
-	virtual StatementIterator parseStream( QTextStream* stream, const QUrl& baseUri, RdfSerialization serialization, const QString& userSerialization = QString() ) const = 0;
+	virtual StatementIterator parseStream( QTextStream& stream, const QUrl& baseUri, RdfSerialization serialization, const QString& userSerialization = QString() ) const = 0;
 
     protected:
 	Parser( const QString& name );

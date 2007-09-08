@@ -44,6 +44,8 @@ private Q_SLOTS:
     void initTestCase();
     void cleanupTestCase();
 
+    void testPerformance();
+
 private:
     Soprano::Server::Client* m_client;
     QProcess m_serverProcess;
