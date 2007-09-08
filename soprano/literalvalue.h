@@ -63,12 +63,20 @@ namespace Soprano
     class SOPRANO_EXPORT LiteralValue
 	{
 	public:
+	    //@{
 	    /**
 	     * Create an empty literal value
 	     */
 	    LiteralValue();
+
+	    /**
+	     * Destructor
+	     */
 	    ~LiteralValue();
 
+	    /**
+	     * Default copy constructor
+	     */
 	    LiteralValue( const LiteralValue& other );
 
 	    /**
@@ -151,7 +159,9 @@ namespace Soprano
 	     * http://www.w3.org/2001/XMLSchema#dateTime)
 	     */
 	    LiteralValue( const QDateTime& datetime );
-	    
+	    //@}
+
+	    //@{
 	    /**
 	     * Creates a copy of \a other
 	     */
@@ -237,11 +247,15 @@ namespace Soprano
 	     * be set to dateTime (http://www.w3.org/2001/XMLSchema#dateTime).
 	     */
 	    LiteralValue& operator=( const QDateTime& datetime );
+	    //@}
 
+	    //@{
 	    bool operator==( const LiteralValue& other ) const;
 
 	    bool operator!=( const LiteralValue& other ) const;
+	    //@}
 
+	    //@{
 	    bool isValid() const;
 
 	    bool isInt() const;
@@ -261,7 +275,9 @@ namespace Soprano
 	    bool isDate() const;
 	    bool isTime() const;
 	    bool isDateTime() const;
+	    //@}
 
+	    //@{
 	    int toInt() const;
 	    qlonglong toInt64() const;
 	    uint toUnsignedInt() const;
@@ -278,7 +294,9 @@ namespace Soprano
 	    QDate toDate() const;
 	    QTime toTime() const;
 	    QDateTime toDateTime() const;
+	    //@}
 
+	    //@{
 	    /**
 	     * The XML Schema datatype URI.
 	     *
@@ -286,6 +304,13 @@ namespace Soprano
 	     * stored type or an empty QUrl if the LiteralValue is empty.
 	     */
 	    QUrl dataTypeUri() const;
+
+	    /**
+	     * The type of the data.
+	     *
+	     * \return The QVariant type of the stored data or QVariant::Invalid
+	     * if it is an empty value.
+	     */
 	    QVariant::Type type() const;
 
 	    /**
@@ -294,6 +319,7 @@ namespace Soprano
 	     * in the converted variant.
 	     */
 	    QVariant variant() const;
+	    //@}
 
 	    /**
 	     * Create a LiteralValue object by parsing string \a value based on \a type.
@@ -318,6 +344,11 @@ namespace Soprano
 	     */
 	    static QVariant::Type typeFromDataTypeUri( const QUrl& dataTypeUri );
 
+	    /**
+	     * Convert a QVariant::Type into an XML Schema URI.
+	     * \return The XML Schema URI that corresponds to \p type or an empty QUrl if
+	     * the type os unknown, i.e. can not be mapped to an XML Schema type.
+	     */
 	    static QUrl dataTypeUriFromType( QVariant::Type type );
 
 	private:
