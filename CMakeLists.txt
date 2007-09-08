@@ -39,6 +39,7 @@ add_subdirectory(includes)
 
 find_package(CLucene)
 if(CLucene_FOUND)
+  set(SOPRANO_BUILD_INDEX_LIB 1 CACHE INTERNAL "Soprano Index is built" FORCE)
   add_subdirectory(index)
 endif(CLucene_FOUND)
 

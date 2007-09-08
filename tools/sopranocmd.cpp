@@ -73,6 +73,9 @@ static Soprano::Node parseNode( const QString& s )
     else if ( s[0] == '<' && s[s.length()-1] == '>' ) {
         return Soprano::Node( QUrl( s.mid( 1, s.length()-2 ) ) );
     }
+    else if ( s[0] == '_' && s.length() > 2 && s[1] == ':' ) {
+        return Soprano::Node::createBlankNode( s.mid( 2 ) );
+    }
     else if ( s[0] == '"' ) {
         QString value = s;
         QString literalType;
@@ -188,7 +191,7 @@ private:
 };
 
 
-#define VERSION "0.8"
+#define VERSION "0.9"
 
 int version()
 {
@@ -237,11 +240,16 @@ int usage( const QString& error = QString() )
       << "                      - For commands 'add' and 'remove' this is a list of 3 or 4 RDF node definitions." << endl
       << "                      - For command 'list' this is a list of one to four node definitions." << endl << endl;
 
-    s << "   Nodes are defined the SPARQL way:" << endl
-      << "   - Resouce and blank nodes are defined in angle brackets." << endl
+    s << "   Nodes are defined in an N-Triples-like notation:" << endl
+      << "   - Resouce nodes are defined in angle brackets." << endl
       << "     Example: <http://www.test.org#A>" << endl
-      << "   - Literal nodes are defined as a combination of their string value and their datatype URI." << endl
-      << "     Example: \"Hello World\"^^<http://www.w3.org/2001/XMLSchema#string>" << endl
+      << "   - Blank nodes are defined as \"_:\" followed by their identifier." << endl
+      << "     Example: _:a" << endl
+      << "   - Literal nodes are defined as a combination of their string value and their datatype URI" << endl
+      << "     or as a simple literal string:" << endl
+      << "     Examples: \"Hello World\"^^<http://www.w3.org/2001/XMLSchema#string>" << endl
+      << "               42" << endl
+      << "               0.7" << endl
       << "   - An empty string evaluates to an empy node (\"\" does the trick)" << endl;
 
     if ( !error.isEmpty() ) {
