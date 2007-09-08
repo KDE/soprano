@@ -81,7 +81,9 @@ namespace Soprano {
 	    CLuceneIndex( lucene::analysis::Analyzer* analyzer = 0 );
 
 	    /**
-	     * Destructor
+	     * Destructor. 
+	     *
+	     * Calls close(). 
 	     */
 	    ~CLuceneIndex();
 	    //@}
@@ -96,7 +98,7 @@ namespace Soprano {
 	    bool open( const QString& folder, bool force = false );
 
 	    /**
-	     * Close the index. Write back any changes.
+	     * Close the index. Write back any changes, close any open transactions. (Is called in ~CLuceneIndex())
 	     */
 	    void close();
 
@@ -187,17 +189,19 @@ namespace Soprano {
 	    Iterator<QueryHit> search( lucene::search::Query* query );
 	    //@}
 
+#if 0
 	    /**
 	     * Gets the score for a particular Resource and query. Returns a value < 0
 	     * when the Resource does not match the query.
 	     */
-//	    double getScore( const Soprano::Node& resource, const QString& query );
+	    double getScore( const Soprano::Node& resource, const QString& query );
 
 	    /**
 	     * Gets the score for a particular Resource and query. Returns a value < 0
 	     * when the Resource does not match the query.
 	     */
-//	    double getScore( const Soprano::Node& resource, lucene::search::Query* query );
+	    double getScore( const Soprano::Node& resource, lucene::search::Query* query );
+#endif
 
 	    /**
 	     * Returns the Resource corresponding with the specified Document.

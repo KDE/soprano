@@ -538,56 +538,57 @@ int Soprano::Index::CLuceneIndex::resourceCount() const
     }
 }
 
+#if 0
+double Soprano::Index::CLuceneIndex::getScore( const Soprano::Node& resource, const QString& query )
+{
+    clearError();
+    try {
+        lucene::search::Query* q = lucene::queryParser::QueryParser::parse( WString( query ).data(), textFieldName().data(), d->analyzer );
+        double score = getScore( resource, q );
+        _CLDELETE( q );
+        return score;
+    }
+    catch( CLuceneError& err ) {
+        qDebug() << "search failed: " << err.what();
+        setError( exceptionToError( err ) );
+        return 0.0;
+    }
+}
 
-// double Soprano::Index::CLuceneIndex::getScore( const Soprano::Node& resource, const QString& query )
-// {
-//     clearError();
-//     try {
-//         lucene::search::Query* q = lucene::queryParser::QueryParser::parse( WString( query ).data(), textFieldName().data(), d->analyzer );
-//         double score = getScore( resource, q );
-//         _CLDELETE( q );
-//         return score;
-//     }
-//     catch( CLuceneError& err ) {
-//         qDebug() << "search failed: " << err.what();
-//         setError( exceptionToError( err ) );
-//         return 0.0;
-//     }
-// }
 
+double Soprano::Index::CLuceneIndex::getScore( const Soprano::Node& resource, lucene::search::Query* query )
+{
+    QMutexLocker lock( &d->mutex );
 
-// double Soprano::Index::CLuceneIndex::getScore( const Soprano::Node& resource, lucene::search::Query* query )
-// {
-//     QMutexLocker lock( &d->mutex );
+    clearError();
+    try {
+        // rewrite the query
+        lucene::index::Term queryTerm( idFieldName().data(), WString( d->getId( resource ) ).data() );
+        lucene::search::TermQuery idQuery( &queryTerm );
+        lucene::search::BooleanQuery combinedQuery;
+        combinedQuery.add( &idQuery, true, false );
+        combinedQuery.add( query, true, false );
 
-//     clearError();
-//     try {
-//         // rewrite the query
-//         lucene::index::Term queryTerm( idFieldName().data(), WString( d->getId( resource ) ).data() );
-//         lucene::search::TermQuery idQuery( &queryTerm );
-//         lucene::search::BooleanQuery combinedQuery;
-//         combinedQuery.add( &idQuery, true, false );
-//         combinedQuery.add( query, true, false );
-
-//         // fetch the score when the URI matches the original query
-//         lucene::search::TopDocs* docs = static_cast<lucene::search::Searchable*>( d->getIndexSearcher() )->_search( &combinedQuery, 0, 1 );
-//         double r = -1.0;
-//         if ( docs->totalHits > 0 ) {
-// #ifdef CL_VERSION_19_OR_GREATER
-//             r = docs->scoreDocs[0].score;
-// #else
-//             r = docs->scoreDocs[0]->score;
-// #endif
-//         }
-//         _CLDELETE( docs );
-//         return r;
-//     }
-//     catch( CLuceneError& err ) {
-//         qDebug() << "search failed: " << err.what();
-//         setError( exceptionToError( err ) );
-//         return 0.0;
-//     }
-// }
+        // fetch the score when the URI matches the original query
+        lucene::search::TopDocs* docs = static_cast<lucene::search::Searchable*>( d->getIndexSearcher() )->_search( &combinedQuery, 0, 1 );
+        double r = -1.0;
+        if ( docs->totalHits > 0 ) {
+#ifdef CL_VERSION_19_OR_GREATER
+            r = docs->scoreDocs[0].score;
+#else
+            r = docs->scoreDocs[0]->score;
+#endif
+        }
+        _CLDELETE( docs );
+        return r;
+    }
+    catch( CLuceneError& err ) {
+        qDebug() << "search failed: " << err.what();
+        setError( exceptionToError( err ) );
+        return 0.0;
+    }
+}
+#endif
 
 
 void Soprano::Index::CLuceneIndex::dump( QTextStream& s ) const
