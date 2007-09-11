@@ -33,7 +33,16 @@ public:
           rdfStatement( RDF_NS"Statement" ),
           rdfSubject( RDF_NS"subject" ),
           rdfPredicate( RDF_NS"predicate" ),
-          rdfObject( RDF_NS"object" ) {
+          rdfObject( RDF_NS"object" ),
+          rdfBag( RDF_NS"Bag" ),
+          rdfSeq( RDF_NS"Seq" ),
+          rdfAlt( RDF_NS"Alt" ),
+          rdfValue( RDF_NS"value" ),
+          rdfList( RDF_NS"List" ),
+          rdfNil( RDF_NS"nil" ),
+          rdfFirst( RDF_NS"first" ),
+          rdfRest( RDF_NS"rest" ),
+          rdfXMLLiteral( RDF_NS"XMLLiteral" ) {
     }
 
     QUrl rdfNamespace;
@@ -43,6 +52,15 @@ public:
     QUrl rdfSubject;
     QUrl rdfPredicate;
     QUrl rdfObject;
+    QUrl rdfBag;
+    QUrl rdfSeq;
+    QUrl rdfAlt;
+    QUrl rdfValue;
+    QUrl rdfList;
+    QUrl rdfNil;
+    QUrl rdfFirst;
+    QUrl rdfRest;
+    QUrl rdfXMLLiteral;
 };
 
 Q_GLOBAL_STATIC( Rdf, rdf );
@@ -87,4 +105,58 @@ QUrl Soprano::Vocabulary::RDF::PREDICATE()
 QUrl Soprano::Vocabulary::RDF::OBJECT()
 {
     return rdf()->rdfObject;
+}
+
+
+QUrl Soprano::Vocabulary::RDF::BAG()
+{
+    return rdf()->rdfBag;
+}
+
+
+QUrl Soprano::Vocabulary::RDF::SEQ()
+{
+    return rdf()->rdfSeq;
+}
+
+
+QUrl Soprano::Vocabulary::RDF::ALT()
+{
+    return rdf()->rdfAlt;
+}
+
+
+QUrl Soprano::Vocabulary::RDF::VALUE()
+{
+    return rdf()->rdfValue;
+}
+
+
+QUrl Soprano::Vocabulary::RDF::LIST()
+{
+    return rdf()->rdfList;
+}
+
+
+QUrl Soprano::Vocabulary::RDF::NIL()
+{
+    return rdf()->rdfNil;
+}
+
+
+QUrl Soprano::Vocabulary::RDF::FIRST()
+{
+    return rdf()->rdfFirst;
+}
+
+
+QUrl Soprano::Vocabulary::RDF::REST()
+{
+    return rdf()->rdfRest;
+}
+
+
+QUrl Soprano::Vocabulary::RDF::XMLLITERAL()
+{
+    return rdf()->rdfXMLLiteral;
 }

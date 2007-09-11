@@ -24,7 +24,6 @@
 
 #include <QtCore/QUrl>
 
-// FIXME: add all the missing URIs
 namespace Soprano {
     namespace Vocabulary {
 	namespace RDF {
@@ -38,6 +37,15 @@ namespace Soprano {
 	    QUrl SUBJECT();
 	    QUrl PREDICATE();
 	    QUrl OBJECT();
+	    QUrl BAG();
+	    QUrl SEQ();
+	    QUrl ALT();
+	    QUrl VALUE();
+	    QUrl LIST();
+	    QUrl NIL();
+	    QUrl FIRST();
+	    QUrl REST();
+	    QUrl XMLLITERAL();
 	}
     }
 }
