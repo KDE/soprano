@@ -27,6 +27,7 @@
 #include <QtCore/QDebug>
 #include <QtCore/QFile>
 #include <QtCore/QTextStream>
+#include <QtCore/QTime>
 
 
 // FIXME: Use the QTest framework to create data tables
@@ -792,6 +793,42 @@ void SopranoModelTest::testListContexts()
     QVERIFY( allContexts.contains( context1 ) );
     QVERIFY( allContexts.contains( context2 ) );
     QVERIFY( allContexts.contains( context3 ) );
+}
+
+
+void SopranoModelTest::testPerformance()
+{
+    QVERIFY( m_model );
+
+    m_model->removeAllStatements();
+
+    QTime time;
+    time.start();
+
+    m_model->addStatement( m_st1 );
+    int e = time.elapsed();
+    qDebug() << "Time for adding one statement: " << e;
+
+    QList<Statement> sl;
+    for ( int i = 0; i < 1000; ++i ) {
+        sl.append( Statement( Node::createResourceNode( QString( "http://soprano.org/test/resource%1" ).arg( i ) ),
+                              Node::createResourceNode( QString( "http://soprano.org/test/property%1" ).arg( i ) ),
+                              Node::createResourceNode( QString( "http://soprano.org/test/object%1" ).arg( i ) ) ) );
+    }
+
+    time.start();
+    m_model->addStatements( sl );
+    e = time.elapsed();
+    qDebug() << "Time for adding a list of " << sl.count() << " statements: " << e;
+
+    m_model->removeAllStatements();
+
+    time.start();
+    for ( QList<Statement>::const_iterator it = sl.constBegin(); it != sl.constEnd(); ++it ) {
+        m_model->addStatement( *it );
+    }
+    e = time.elapsed();
+    qDebug() << "Time for adding " << sl.count() << " statements one after the other: " << e;
 }
 
 #include "SopranoModelTest.moc"

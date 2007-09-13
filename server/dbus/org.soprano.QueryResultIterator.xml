@@ -1,0 +1,46 @@
+<!DOCTYPE node PUBLIC "-//freedesktop//DTD D-BUS Object Introspection 1.0//EN"
+         "http://www.freedesktop.org/standards/dbus/1.0/introspect.dtd">
+<node>
+  <interface name="org.soprano.QueryResultIterator">
+    <method name="next">
+      <arg name="reply" type="b" direction="out" />
+    </method>
+    <method name="current">
+      <arg name="node" type="a{s(isss)}" direction="out" />
+      <annotation name="com.trolltech.QtDBus.QtTypeName.Out0" value="Soprano::BindingSet" />
+    </method>
+    <method name="close" />
+    <method name="currentStatement">
+      <arg name="statement" type="((isss)(isss)(isss)(isss))" direction="out" />
+      <annotation name="com.trolltech.QtDBus.QtTypeName.Out0" value="Soprano::Statement" />
+    </method>
+    <method name="bindingByName">
+      <arg name="name" type="s" direction="in" />
+      <arg name="node" type="(isss)" direction="out" />
+      <annotation name="com.trolltech.QtDBus.QtTypeName.Out0" value="Soprano::Node" />
+    </method>
+    <method name="bindingByIndex">
+      <arg name="index" type="i" direction="in" />
+      <arg name="node" type="(isss)" direction="out" />
+      <annotation name="com.trolltech.QtDBus.QtTypeName.Out0" value="Soprano::Node" />
+    </method>
+    <method name="bindingCount">
+      <arg name="names" type="i" direction="out" />
+    </method>
+    <method name="bindingNames">
+      <arg name="names" type="as" direction="out" />
+    </method>
+    <method name="boolValue">
+      <arg name="reply" type="b" direction="out" />
+    </method>
+    <method name="isGraph">
+      <arg name="reply" type="b" direction="out" />
+    </method>
+    <method name="isBinding">
+      <arg name="reply" type="b" direction="out" />
+    </method>
+    <method name="isBool">
+      <arg name="reply" type="b" direction="out" />
+    </method>
+  </interface>
+</node>

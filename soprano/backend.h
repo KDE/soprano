@@ -143,6 +143,8 @@ namespace Soprano
 	 * should never ignore settings but rather return 0 if an option is not supported. Backends can,
 	 * however, define their own default settings. Invalid settings should result in an Error with value
 	 * Error::ERROR_INVALID_ARGUMENT.
+	 *
+	 * \sa BackendSetting
 	 */
 	virtual StorageModel* createModel( const BackendSettings& settings = BackendSettings() ) const = 0;
 

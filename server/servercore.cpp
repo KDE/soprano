@@ -21,6 +21,7 @@
 
 #include "servercore.h"
 #include "serverconnection.h"
+#include "dbus/serveradaptor.h"
 
 #include <soprano/backend.h>
 #include <soprano/storagemodel.h>
@@ -40,6 +41,7 @@ class Soprano::Server::ServerCore::Private : public QTcpServer
 public:
     Private( ServerCore* parent )
         : QTcpServer( parent ),
+          dbusAdaptor( 0 ),
           m_parent( parent ) {
     }
 
@@ -48,6 +50,8 @@ public:
 
     QHash<QString, Model*> models;
     QList<ServerConnection*> connections;
+
+    DBusServerAdaptor* dbusAdaptor;
 
 private:
     void incomingConnection( int );
@@ -142,6 +146,20 @@ bool Soprano::Server::ServerCore::start( quint16 port )
     else {
         qDebug() << "Listening on port " << port;
         return true;
+    }
+}
+
+
+void Soprano::Server::ServerCore::registerAsDBusObject( const QString& objectPath )
+{
+    if ( !d->dbusAdaptor ) {
+        QString path( objectPath );
+        if ( path.isEmpty() ) {
+            path = "/org/soprano/Server";
+        }
+
+        d->dbusAdaptor = new Soprano::Server::DBusServerAdaptor( this );
+        QDBusConnection::sessionBus().registerObject( path, this );
     }
 }
 

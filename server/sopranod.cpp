@@ -19,6 +19,7 @@
 #include "soprano/pluginmanager.h"
 #include "soprano/version.h"
 
+#include "dbus/serveradaptor.h"
 
 #define VERSION "1.0"
 
@@ -83,6 +84,9 @@ int main( int argc, char** argv )
     }
 
     Soprano::Server::ServerCore core;
+
+    QDBusConnection::sessionBus().registerService( "org.soprano.Server" );
+    core.registerAsDBusObject();
 
     if ( !backendName.isEmpty() ) {
         const Soprano::Backend* backend = Soprano::PluginManager::instance()->discoverBackendByName( backendName );

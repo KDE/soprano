@@ -19,35 +19,40 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef _SOPRANODCLIENT_BACKEND_TEST_H_
-#define _SOPRANODCLIENT_BACKEND_TEST_H_
+#ifndef _SOPRANO_SERVER_DBUS_UTIL_H_
+#define _SOPRANO_SERVER_DBUS_UTIL_H_
 
-#include "SopranoModelTest.h"
-
-#include <QtCore/QProcess>
+class QDBusMessage;
+class QDBusError;
+class QString;
 
 namespace Soprano {
-    class Model;
+
+    namespace Error {
+	class Error;
+    }
+
     namespace Server {
-	class Client;
+
+	class IteratorWrapper;
+
+	namespace DBus {
+	    /**
+	     * Encodes \p e into a DBus error reply and sends it back to the sender of \p m.
+	     */
+	    void sendErrorReply( const QDBusMessage& m, const Soprano::Error::Error& e );
+
+	    /**
+	     * Converts a DBus error as encoded by sendErrorReply() to a Soprano::Error.
+	     */
+	    Soprano::Error::Error convertError( const QDBusError& e );
+
+	    QString createUniqueModelPath();
+	    QString createUniqueIteratorPath();
+
+	    void registerIterator( IteratorWrapper* it );
+	}
     }
 }
-
-class SopranodClientTest : public SopranoModelTest
-{
-    Q_OBJECT
-
-protected:
-    virtual Soprano::Model* createModel();
-
-private Q_SLOTS:
-    void initTestCase();
-    void cleanupTestCase();
-
-private:
-    Soprano::Server::Client* m_client;
-    QProcess m_serverProcess;
-    int m_modelCnt;
-};
 
 #endif

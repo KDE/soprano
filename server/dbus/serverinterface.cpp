@@ -19,35 +19,15 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef _SOPRANODCLIENT_BACKEND_TEST_H_
-#define _SOPRANODCLIENT_BACKEND_TEST_H_
+#include "serverinterface.h"
 
-#include "SopranoModelTest.h"
-
-#include <QtCore/QProcess>
-
-namespace Soprano {
-    class Model;
-    namespace Server {
-	class Client;
-    }
+Soprano::Server::DBusServerInterface::DBusServerInterface( const QString& service, const QString& path, const QDBusConnection& connection, QObject* parent )
+    : QDBusAbstractInterface( service, path, "org.soprano.Server", connection, parent )
+{
 }
 
-class SopranodClientTest : public SopranoModelTest
+Soprano::Server::DBusServerInterface::~DBusServerInterface()
 {
-    Q_OBJECT
+}
 
-protected:
-    virtual Soprano::Model* createModel();
-
-private Q_SLOTS:
-    void initTestCase();
-    void cleanupTestCase();
-
-private:
-    Soprano::Server::Client* m_client;
-    QProcess m_serverProcess;
-    int m_modelCnt;
-};
-
-#endif
+#include "serverinterface.moc"

@@ -1,4 +1,4 @@
-/*
+/* 
  * This file is part of Soprano Project.
  *
  * Copyright (C) 2007 Sebastian Trueg <trueg@kde.org>
@@ -19,35 +19,28 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef _SOPRANODCLIENT_BACKEND_TEST_H_
-#define _SOPRANODCLIENT_BACKEND_TEST_H_
+#ifndef _SOPRANO_SERVER_DBUS_OPERATORS_H_
+#define _SOPRANO_SERVER_DBUS_OPERATORS_H_
 
-#include "SopranoModelTest.h"
 
-#include <QtCore/QProcess>
+#include <soprano/node.h>
+#include <soprano/statement.h>
+#include <soprano/bindingset.h>
 
-namespace Soprano {
-    class Model;
-    namespace Server {
-	class Client;
-    }
-}
+#include <QtDBus/QDBusArgument>
 
-class SopranodClientTest : public SopranoModelTest
-{
-    Q_OBJECT
+Q_DECLARE_METATYPE(Soprano::Statement);
+Q_DECLARE_METATYPE(Soprano::Node);
+Q_DECLARE_METATYPE(Soprano::BindingSet);
 
-protected:
-    virtual Soprano::Model* createModel();
 
-private Q_SLOTS:
-    void initTestCase();
-    void cleanupTestCase();
+QDBusArgument& operator<<( QDBusArgument& arg, const Soprano::Node& );
+const QDBusArgument& operator>>( const QDBusArgument& arg, Soprano::Node& );
 
-private:
-    Soprano::Server::Client* m_client;
-    QProcess m_serverProcess;
-    int m_modelCnt;
-};
+QDBusArgument& operator<<( QDBusArgument& arg, const Soprano::Statement& );
+const QDBusArgument& operator>>( const QDBusArgument& arg, Soprano::Statement& );
+
+QDBusArgument& operator<<( QDBusArgument& arg, const Soprano::BindingSet& );
+const QDBusArgument& operator>>( const QDBusArgument& arg, Soprano::BindingSet& );
 
 #endif

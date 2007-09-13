@@ -62,9 +62,11 @@ private Q_SLOTS:
 
   void testListContexts();
 
-  void testCloseStatementIteratorOnModelDelete();
+  virtual void testCloseStatementIteratorOnModelDelete();
 
   void testContexts();
+
+  void testPerformance();
 
 protected:
   virtual Soprano::Model* createModel() = 0;

@@ -19,35 +19,33 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef _SOPRANODCLIENT_BACKEND_TEST_H_
-#define _SOPRANODCLIENT_BACKEND_TEST_H_
+#ifndef _SOPRANO_SERVER_DBUS_CLIENT_STATEMENT_ITERATOR_BACKEND_H_
+#define _SOPRANO_SERVER_DBUS_CLIENT_STATEMENT_ITERATOR_BACKEND_H_
 
-#include "SopranoModelTest.h"
-
-#include <QtCore/QProcess>
+#include <soprano/iteratorbackend.h>
 
 namespace Soprano {
-    class Model;
+
+    class Statement;
+
     namespace Server {
-	class Client;
+
+	class DBusStatementIteratorInterface;
+
+	class DBusClientStatementIteratorBackend : public IteratorBackend<Statement>
+	{
+	public:
+	    DBusClientStatementIteratorBackend( const QString& serviceName, const QString& objectPath );
+	    ~DBusClientStatementIteratorBackend();
+
+	    bool next();
+	    Soprano::Statement current() const;
+	    void close();
+
+	private:
+	    DBusStatementIteratorInterface* m_interface;
+	};
     }
 }
-
-class SopranodClientTest : public SopranoModelTest
-{
-    Q_OBJECT
-
-protected:
-    virtual Soprano::Model* createModel();
-
-private Q_SLOTS:
-    void initTestCase();
-    void cleanupTestCase();
-
-private:
-    Soprano::Server::Client* m_client;
-    QProcess m_serverProcess;
-    int m_modelCnt;
-};
 
 #endif

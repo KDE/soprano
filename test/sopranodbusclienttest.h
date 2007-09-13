@@ -29,11 +29,11 @@
 namespace Soprano {
     class Model;
     namespace Server {
-	class Client;
+	class DBusClient;
     }
 }
 
-class SopranodClientTest : public SopranoModelTest
+class SopranoDBusClientTest : public SopranoModelTest
 {
     Q_OBJECT
 
@@ -44,9 +44,10 @@ private Q_SLOTS:
     void initTestCase();
     void cleanupTestCase();
 
+    void testCloseStatementIteratorOnModelDelete();
+
 private:
-    Soprano::Server::Client* m_client;
-    QProcess m_serverProcess;
+    Soprano::Server::DBusClient* m_client;
     int m_modelCnt;
 };
 

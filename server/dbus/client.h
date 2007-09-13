@@ -1,4 +1,4 @@
-/*
+/* 
  * This file is part of Soprano Project.
  *
  * Copyright (C) 2007 Sebastian Trueg <trueg@kde.org>
@@ -19,35 +19,40 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef _SOPRANODCLIENT_BACKEND_TEST_H_
-#define _SOPRANODCLIENT_BACKEND_TEST_H_
-
-#include "SopranoModelTest.h"
-
-#include <QtCore/QProcess>
+#ifndef _SOPRANO_SERVER_DBUS_CLIENT_H_
+#define _SOPRANO_SERVER_DBUS_CLIENT_H_
 
 namespace Soprano {
-    class Model;
     namespace Server {
-	class Client;
+	/**
+	 * Core class to handle a connection to a Soprano server through the
+	 * DBus interface.
+	 */
+	class DBusClient : public QObject
+	{
+	public:
+	    DBusClient( QObject* parent );
+	    ~DBusClient();
+
+	    /**
+	     * Retrive a list of all models that are available.
+	     *
+	     * \return A list of model names to be used with createModel()
+	     */
+	    QStringList allModels() const;
+
+	    /**
+	     * Creates a new Model instance that wraps a dbus server model.
+	     *
+	     * \param name The name of the model to access.
+	     * \param settings Settings for future extension. Not used yet.
+	     *
+	     * \return A new Model instance wrapping the requested server
+	     * model or 0 on error (check lastError() for details.)
+	     */
+	    Model* createModel( const QString& name, const BackendSettings& settings );
+	};
     }
 }
-
-class SopranodClientTest : public SopranoModelTest
-{
-    Q_OBJECT
-
-protected:
-    virtual Soprano::Model* createModel();
-
-private Q_SLOTS:
-    void initTestCase();
-    void cleanupTestCase();
-
-private:
-    Soprano::Server::Client* m_client;
-    QProcess m_serverProcess;
-    int m_modelCnt;
-};
 
 #endif

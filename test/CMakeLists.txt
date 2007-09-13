@@ -147,5 +147,10 @@ endif(SOPRANO_BUILD_INDEX_LIB)
 # Server test
 qt4_automoc(sopranodclienttest sopranodclienttest.cpp)
 add_executable(sopranodclienttest sopranodclienttest.cpp)
-target_link_libraries(sopranodclienttest sopranomodeltest soprano_serverclientbackend ${QT_QTCORE_LIBRARY} ${QT_QTTEST_LIBRARY} ${QT_QTNETWORK_LIBRARY})
+target_link_libraries(sopranodclienttest sopranomodeltest sopranoclient ${QT_QTCORE_LIBRARY} ${QT_QTTEST_LIBRARY} ${QT_QTNETWORK_LIBRARY})
 add_test(sopranodclienttest ${EXECUTABLE_OUTPUT_PATH}/sopranodclienttest)
+
+qt4_automoc(sopranodbusclienttest sopranodbusclienttest.cpp)
+add_executable(sopranodbusclienttest sopranodbusclienttest.cpp)
+target_link_libraries(sopranodbusclienttest sopranomodeltest sopranoclient sopranoserver_dbus ${QT_QTCORE_LIBRARY} ${QT_QTTEST_LIBRARY} ${QT_QTNETWORK_LIBRARY})
+add_test(sopranodbusclienttest ${EXECUTABLE_OUTPUT_PATH}/sopranodclienttest)

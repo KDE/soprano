@@ -60,15 +60,19 @@ set_target_properties(sopranoclient PROPERTIES
 
 target_link_libraries(
   sopranoserver
+  sopranoserver_dbus
   ${QT_QTCORE_LIBRARY}
   ${QT_QTNETWORK_LIBRARY}
+  QtDBus
   soprano
 )
 
 target_link_libraries(
   sopranoclient
+  sopranoclient_dbus
   ${QT_QTCORE_LIBRARY}
   ${QT_QTNETWORK_LIBRARY}
+  QtDBus
   soprano
 )
 
@@ -101,3 +105,5 @@ install(
   client.h
   DESTINATION include/soprano
 )
+
+add_subdirectory(dbus)

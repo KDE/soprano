@@ -25,6 +25,7 @@
 #include <QtCore/QObject>
 
 #include <soprano/error.h>
+#include <soprano/soprano_export.h>
 
 
 namespace Soprano {
@@ -55,9 +56,14 @@ namespace Soprano {
 	 * Optionally ServerCore can be configured using normal BackendSetting
 	 * settings through setBackendSettings().
 	 *
+	 * Be aware the ServerCode supports multiple ways of communication.
+	 * start() opens a TCP socket to accept new connections, registerAsDBusObject()
+	 * registers a DBus interface on the DBus session bus. Both ways of
+	 * communication can be used simultaneously.
+	 *
 	 * \author Sebastian Trueg <trueg@kde.org>
 	 */
-	class ServerCore : public QObject, public Error::ErrorCache
+	class SOPRANO_EXPORT ServerCore : public QObject, public Error::ErrorCache
 	{
 	    Q_OBJECT
 
@@ -118,6 +124,15 @@ namespace Soprano {
 	     * \return \p true if the server was successfully started, \p false otherwise.
 	     */
 	    bool start( quint16 port = DEFAULT_PORT );
+
+	    /**
+	     * Register the ServerCore as a DBus object. The process needs to be registered
+	     * as a DBus service before (QDBusConnection::registerService()).
+	     *
+	     * \param objectPath The DBus object path to register the server as. If empty
+	     * the default path will be used (/org/soprano/Server).
+	     */
+	    void registerAsDBusObject( const QString& objectPath = QString() );
 
 	private Q_SLOTS:
 	    void serverConnectionFinished();
