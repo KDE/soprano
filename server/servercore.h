@@ -103,6 +103,13 @@ namespace Soprano {
 	    virtual Model* model( const QString& name );
 
 	    /**
+	     * Retrieve all models that have been loaded.
+	     *
+	     * \return A list of Model names.
+	     */
+	    virtual QStringList allModels() const;
+
+	    /**
 	     * Start the Server. Calling this method will make the Server
 	     * listen on the specified port for incoming client connections.
 	     *

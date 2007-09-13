@@ -169,4 +169,10 @@ Soprano::Model* Soprano::Server::ServerCore::createModel( const QList<BackendSet
     return m;
 }
 
+
+QStringList Soprano::Server::ServerCore::allModels() const
+{
+    return d->models.keys();
+}
+
 #include "servercore.moc"
