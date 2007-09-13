@@ -114,6 +114,8 @@ namespace Soprano
 	QSharedDataPointer<Private> d;
     };
 
+    typedef QList<BackendSetting> BackendSettings;
+
     /**
      * \class Backend backend.h soprano/Backend
      *
@@ -142,7 +144,7 @@ namespace Soprano
 	 * however, define their own default settings. Invalid settings should result in an Error with value
 	 * Error::ERROR_INVALID_ARGUMENT.
 	 */
-	virtual StorageModel* createModel( const QList<BackendSetting>& settings = QList<BackendSetting>() ) const = 0;
+	virtual StorageModel* createModel( const BackendSettings& settings = BackendSettings() ) const = 0;
 
 	/**
 	 * Each backend can support a set of features. Backends without any features do not make much sense.

@@ -51,6 +51,15 @@ namespace Soprano {
 	 */
 	SOPRANO_EXPORT QString errorMessage( ErrorCode );
 
+	/**
+	 * Converts a plain error code (as for example used in Error::code())
+	 * into an ErrorCode value.
+	 *
+	 * \return \p code converted to ErrorCode. If it is an unknown value,
+	 * ERROR_UNKNOWN will be returned.
+	 */
+	SOPRANO_EXPORT ErrorCode convertErrorCode( int code );
+
 	class ErrorData;
 	class ParserError;
 

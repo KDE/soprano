@@ -243,6 +243,17 @@ QString Soprano::Error::errorMessage( ErrorCode code )
 }
 
 
+Soprano::Error::ErrorCode Soprano::Error::convertErrorCode( int code )
+{
+    if ( code >= 0 && code <= s_maxErr ) {
+        return ( ErrorCode )code;
+    }
+    else {
+        return ERROR_UNKNOWN;
+    }
+}
+
+
 QDebug operator<<( QDebug s, const Soprano::Error::Error& error )
 {
     if ( error.code() < Soprano::Error::ERROR_UNKNOWN ) {
