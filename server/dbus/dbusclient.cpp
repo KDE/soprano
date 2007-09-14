@@ -22,7 +22,7 @@
 #include "dbusclient.h"
 #include "dbusserverinterface.h"
 #include "dbusutil.h"
-#include "dbusclientmodel.h"
+#include "dbusmodel.h"
 #include "dbusoperators.h"
 
 
@@ -68,7 +68,7 @@ Soprano::Model* Soprano::Client::DBusClient::createModel( const QString& name, c
     setError( DBus::convertError( reply.error() ) );
 
     if ( reply.isValid() ) {
-        return new DBusClientModel( d->interface->service(), reply.value(), 0 /* no backend */ );
+        return new DBusModel( d->interface->service(), reply.value() );
     }
     else {
         return 0;

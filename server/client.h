@@ -42,7 +42,7 @@ namespace Soprano {
 	 * \brief Creates a connection to the %Soprano server.
 	 *
 	 * The %Soprano server can be accessed normally through PluginManager::discoverBackendByName()
-	 * with name "sopranoserver" or by simply creating an instance of Client. The latter solution can have advantages
+	 * with name "sopranoserver" or by simply creating an instance of TcpClient. The latter solution can have advantages
 	 * as it uses a new connection to the server.
 	 *
 	 * \author Sebastian Trueg <trueg@kde.org>

@@ -27,7 +27,7 @@ set(soprano_client_dbus_SRC
   dbusqueryresultiteratorinterface.cpp
   dbusserverinterface.cpp
   dbusclient.cpp
-  dbusclientmodel.cpp
+  dbusmodel.cpp
   dbusclientnodeiteratorbackend.cpp
   dbusclientstatementiteratorbackend.cpp
   dbusclientqueryresultiteratorbackend.cpp
@@ -59,5 +59,6 @@ add_library(sopranoclient_dbus STATIC ${soprano_client_dbus_SRC})
 install(
   FILES 
   dbusclient.h
+  dbusmodel.h
   DESTINATION include/soprano
 )
