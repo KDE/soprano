@@ -19,10 +19,10 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#include "serveradaptor.h"
+#include "dbusserveradaptor.h"
 #include "dbusutil.h"
 #include "../servercore.h"
-#include "modeladaptor.h"
+#include "dbusmodeladaptor.h"
 
 #include <soprano/model.h>
 
@@ -86,4 +86,4 @@ QString Soprano::Server::DBusServerAdaptor::createModel( const QString& name, co
     }
 }
 
-#include "serveradaptor.moc"
+#include "dbusserveradaptor.moc"

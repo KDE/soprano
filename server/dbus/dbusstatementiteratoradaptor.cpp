@@ -19,7 +19,7 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#include "statementiteratoradaptor.h"
+#include "dbusstatementiteratoradaptor.h"
 #include "dbusutil.h"
 #include "iteratorwrapper.h"
 
@@ -62,4 +62,4 @@ void Soprano::Server::DBusStatementIteratorAdaptor::close( const QDBusMessage& m
     }
 }
 
-#include "statementiteratoradaptor.moc"
+#include "dbusstatementiteratoradaptor.moc"

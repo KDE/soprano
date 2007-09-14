@@ -10,12 +10,12 @@ include_directories(
 
 set(soprano_server_dbus_SRC
   dbusutil.cpp
-  modeladaptor.cpp
+  dbusmodeladaptor.cpp
   iteratorwrapper.cpp
-  statementiteratoradaptor.cpp
-  nodeiteratoradaptor.cpp
-  queryresultiteratoradaptor.cpp
-  serveradaptor.cpp
+  dbusstatementiteratoradaptor.cpp
+  dbusnodeiteratoradaptor.cpp
+  dbusqueryresultiteratoradaptor.cpp
+  dbusserveradaptor.cpp
   dbusoperators.cpp
 )
 

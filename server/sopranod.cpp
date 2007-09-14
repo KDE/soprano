@@ -19,7 +19,7 @@
 #include "soprano/pluginmanager.h"
 #include "soprano/version.h"
 
-#include "dbus/serveradaptor.h"
+#include "dbus/dbusserveradaptor.h"
 
 #define VERSION "1.0"
 

@@ -21,7 +21,7 @@
 
 #include "servercore.h"
 #include "serverconnection.h"
-#include "dbus/serveradaptor.h"
+#include "dbus/dbusserveradaptor.h"
 
 #include <soprano/backend.h>
 #include <soprano/storagemodel.h>
