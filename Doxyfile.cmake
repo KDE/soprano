@@ -94,7 +94,7 @@ INPUT                  = ${soprano_SOURCE_DIR}/soprano \
                          ${soprano_SOURCE_DIR}/index/cluceneindex.h \
                          ${soprano_SOURCE_DIR}/index/indexqueryhit.h \
                          ${soprano_SOURCE_DIR}/server/servercore.h \
-                         ${soprano_SOURCE_DIR}/server/client.h \
+                         ${soprano_SOURCE_DIR}/server/tcpclient.h \
                          ${soprano_SOURCE_DIR}/server/dbus/dbusclient.h \
                          ${soprano_SOURCE_DIR}/server/dbus/dbusmodel.h
 INPUT_ENCODING         = UTF-8

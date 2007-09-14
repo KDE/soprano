@@ -41,6 +41,8 @@ namespace Soprano {
 	 *
 	 * DBusClient creates a connection to a running Soprano Server via its DBus
 	 * interface. All DBus communication is handled internally.
+	 *
+	 * \author Sebastian Trueg <trueg@kde.org>
 	 */
 	class SOPRANO_EXPORT DBusClient : public QObject, public Error::ErrorCache
 	{
