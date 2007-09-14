@@ -28,7 +28,7 @@
 #include "soprano/locator.h"
 
 
-void Soprano::Server::DBus::sendErrorReply( const QDBusMessage& m, const Soprano::Error::Error& e )
+void Soprano::DBus::sendErrorReply( const QDBusMessage& m, const Soprano::Error::Error& e )
 {
     // we use an encoded error name to get all our error info through
     QString errorName, errorMessage;
@@ -52,7 +52,7 @@ void Soprano::Server::DBus::sendErrorReply( const QDBusMessage& m, const Soprano
 }
 
 
-Soprano::Error::Error Soprano::Server::DBus::convertError( const QDBusError& e )
+Soprano::Error::Error Soprano::DBus::convertError( const QDBusError& e )
 {
     if ( e.isValid() ) {
         QString errorName = e.name();
@@ -94,14 +94,14 @@ namespace {
     }
 }
 
-QString Soprano::Server::DBus::createUniqueModelPath()
+QString Soprano::DBus::createUniqueModelPath()
 {
     int id = uniqueID();
     return QString( "/Model%1" ).arg( id );
 }
 
 
-QString Soprano::Server::DBus::createUniqueIteratorPath()
+QString Soprano::DBus::createUniqueIteratorPath()
 {
     int id = uniqueID();
     return QString( "/Iterator%1" ).arg( id );

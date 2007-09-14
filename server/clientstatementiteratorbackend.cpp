@@ -26,20 +26,20 @@
 #include <soprano/statement.h>
 
 
-Soprano::Server::ClientStatementIteratorBackend::ClientStatementIteratorBackend( int itId, ClientModel* client )
+Soprano::Client::ClientStatementIteratorBackend::ClientStatementIteratorBackend( int itId, ClientModel* client )
     : m_iteratorId( itId ),
       m_model( client )
 {
 }
 
 
-Soprano::Server::ClientStatementIteratorBackend::~ClientStatementIteratorBackend()
+Soprano::Client::ClientStatementIteratorBackend::~ClientStatementIteratorBackend()
 {
     close();
 }
 
 
-bool Soprano::Server::ClientStatementIteratorBackend::next()
+bool Soprano::Client::ClientStatementIteratorBackend::next()
 {
     if ( m_model ) {
         bool r = m_model->client()->iteratorNext( m_iteratorId );
@@ -53,7 +53,7 @@ bool Soprano::Server::ClientStatementIteratorBackend::next()
 }
 
 
-Soprano::Statement Soprano::Server::ClientStatementIteratorBackend::current() const
+Soprano::Statement Soprano::Client::ClientStatementIteratorBackend::current() const
 {
     if ( m_model ) {
         Statement s = m_model->client()->statementIteratorCurrent( m_iteratorId );
@@ -67,7 +67,7 @@ Soprano::Statement Soprano::Server::ClientStatementIteratorBackend::current() co
 }
 
 
-void Soprano::Server::ClientStatementIteratorBackend::close()
+void Soprano::Client::ClientStatementIteratorBackend::close()
 {
     if ( m_model ) {
         m_model->closeIterator( m_iteratorId );

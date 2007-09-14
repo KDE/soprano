@@ -21,12 +21,12 @@
 
 #include "nodeiteratorinterface.h"
 
-Soprano::Server::DBusNodeIteratorInterface::DBusNodeIteratorInterface( const QString& service, const QString& path, const QDBusConnection& connection, QObject* parent )
+Soprano::Client::DBusNodeIteratorInterface::DBusNodeIteratorInterface( const QString& service, const QString& path, const QDBusConnection& connection, QObject* parent )
     : QDBusAbstractInterface( service, path, "org.soprano.NodeIterator", connection, parent )
 {
 }
 
-Soprano::Server::DBusNodeIteratorInterface::~DBusNodeIteratorInterface()
+Soprano::Client::DBusNodeIteratorInterface::~DBusNodeIteratorInterface()
 {
 }
 

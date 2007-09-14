@@ -38,7 +38,7 @@ Q_DECLARE_METATYPE(Soprano::Node);
 
 
 namespace Soprano {
-    namespace Server {
+    namespace Client {
 	class DBusModelInterface : public QDBusAbstractInterface
 	{
 	    Q_OBJECT

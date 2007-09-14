@@ -28,7 +28,7 @@ namespace Soprano {
 
     class Node;
 
-    namespace Server {
+    namespace Client {
 
 	class DBusNodeIteratorInterface;
 

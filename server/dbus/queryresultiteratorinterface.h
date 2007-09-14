@@ -37,7 +37,7 @@ namespace Soprano {
 
     class BindingSet;
 
-    namespace Server {
+    namespace Client {
 	class DBusQueryResultIteratorInterface: public QDBusAbstractInterface
 	{
 	    Q_OBJECT

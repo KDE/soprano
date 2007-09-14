@@ -28,7 +28,7 @@ namespace Soprano {
 
     class Statement;
 
-    namespace Server {
+    namespace Client {
 
 	class DBusStatementIteratorInterface;
 

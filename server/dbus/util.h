@@ -32,26 +32,19 @@ namespace Soprano {
 	class Error;
     }
 
-    namespace Server {
+    namespace DBus {
+	/**
+	 * Encodes \p e into a DBus error reply and sends it back to the sender of \p m.
+	 */
+	void sendErrorReply( const QDBusMessage& m, const Soprano::Error::Error& e );
 
-	class IteratorWrapper;
+	/**
+	 * Converts a DBus error as encoded by sendErrorReply() to a Soprano::Error.
+	 */
+	Soprano::Error::Error convertError( const QDBusError& e );
 
-	namespace DBus {
-	    /**
-	     * Encodes \p e into a DBus error reply and sends it back to the sender of \p m.
-	     */
-	    void sendErrorReply( const QDBusMessage& m, const Soprano::Error::Error& e );
-
-	    /**
-	     * Converts a DBus error as encoded by sendErrorReply() to a Soprano::Error.
-	     */
-	    Soprano::Error::Error convertError( const QDBusError& e );
-
-	    QString createUniqueModelPath();
-	    QString createUniqueIteratorPath();
-
-	    void registerIterator( IteratorWrapper* it );
-	}
+	QString createUniqueModelPath();
+	QString createUniqueIteratorPath();
     }
 }
 

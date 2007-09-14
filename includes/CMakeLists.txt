@@ -36,6 +36,7 @@ install(FILES
 
 add_subdirectory(Error)
 add_subdirectory(Server)
+add_subdirectory(Client)
 add_subdirectory(Inference)
 add_subdirectory(Query)
 add_subdirectory(Vocabulary)

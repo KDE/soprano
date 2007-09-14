@@ -26,19 +26,19 @@
 #include <soprano/statement.h>
 
 
-Soprano::Server::DBusClientStatementIteratorBackend::DBusClientStatementIteratorBackend( const QString& serviceName, const QString& objectPath )
+Soprano::Client::DBusClientStatementIteratorBackend::DBusClientStatementIteratorBackend( const QString& serviceName, const QString& objectPath )
 {
     m_interface = new DBusStatementIteratorInterface( serviceName, objectPath, QDBusConnection::sessionBus(), 0 );
 }
 
 
-Soprano::Server::DBusClientStatementIteratorBackend::~DBusClientStatementIteratorBackend()
+Soprano::Client::DBusClientStatementIteratorBackend::~DBusClientStatementIteratorBackend()
 {
     delete m_interface;
 }
 
 
-bool Soprano::Server::DBusClientStatementIteratorBackend::next()
+bool Soprano::Client::DBusClientStatementIteratorBackend::next()
 {
     QDBusReply<bool> reply = m_interface->next();
     setError( DBus::convertError( reply.error() ) );
@@ -51,7 +51,7 @@ bool Soprano::Server::DBusClientStatementIteratorBackend::next()
 }
 
 
-Soprano::Statement Soprano::Server::DBusClientStatementIteratorBackend::current() const
+Soprano::Statement Soprano::Client::DBusClientStatementIteratorBackend::current() const
 {
     QDBusReply<Statement> reply = m_interface->current();
     setError( DBus::convertError( reply.error() ) );
@@ -59,7 +59,7 @@ Soprano::Statement Soprano::Server::DBusClientStatementIteratorBackend::current(
 }
 
 
-void Soprano::Server::DBusClientStatementIteratorBackend::close()
+void Soprano::Client::DBusClientStatementIteratorBackend::close()
 {
     QDBusReply<void> reply = m_interface->close();
     setError( DBus::convertError( reply.error() ) );

@@ -27,20 +27,20 @@
 #include <soprano/statement.h>
 
 
-Soprano::Server::ClientQueryResultIteratorBackend::ClientQueryResultIteratorBackend( int itId, ClientModel* client )
+Soprano::Client::ClientQueryResultIteratorBackend::ClientQueryResultIteratorBackend( int itId, ClientModel* client )
     : m_iteratorId( itId ),
       m_model( client )
 {
 }
 
 
-Soprano::Server::ClientQueryResultIteratorBackend::~ClientQueryResultIteratorBackend()
+Soprano::Client::ClientQueryResultIteratorBackend::~ClientQueryResultIteratorBackend()
 {
     close();
 }
 
 
-bool Soprano::Server::ClientQueryResultIteratorBackend::next()
+bool Soprano::Client::ClientQueryResultIteratorBackend::next()
 {
     if ( m_model ) {
         bool r = m_model->client()->iteratorNext( m_iteratorId );
@@ -54,7 +54,7 @@ bool Soprano::Server::ClientQueryResultIteratorBackend::next()
 }
 
 
-Soprano::BindingSet Soprano::Server::ClientQueryResultIteratorBackend::current() const
+Soprano::BindingSet Soprano::Client::ClientQueryResultIteratorBackend::current() const
 {
     if ( m_model ) {
         BindingSet s = m_model->client()->queryIteratorCurrent( m_iteratorId );
@@ -68,7 +68,7 @@ Soprano::BindingSet Soprano::Server::ClientQueryResultIteratorBackend::current()
 }
 
 
-void Soprano::Server::ClientQueryResultIteratorBackend::close()
+void Soprano::Client::ClientQueryResultIteratorBackend::close()
 {
     if ( m_model ) {
         m_model->closeIterator( m_iteratorId );
@@ -80,7 +80,7 @@ void Soprano::Server::ClientQueryResultIteratorBackend::close()
 }
 
 
-Soprano::Statement Soprano::Server::ClientQueryResultIteratorBackend::currentStatement() const
+Soprano::Statement Soprano::Client::ClientQueryResultIteratorBackend::currentStatement() const
 {
     if ( m_model ) {
         Statement s = m_model->client()->queryIteratorCurrentStatement( m_iteratorId );
@@ -94,35 +94,35 @@ Soprano::Statement Soprano::Server::ClientQueryResultIteratorBackend::currentSta
 }
 
 
-Soprano::Node Soprano::Server::ClientQueryResultIteratorBackend::binding( const QString &name ) const
+Soprano::Node Soprano::Client::ClientQueryResultIteratorBackend::binding( const QString &name ) const
 {
     // FIXME: use an extra method for performance
     return current()[name];
 }
 
 
-Soprano::Node Soprano::Server::ClientQueryResultIteratorBackend::binding( int offset ) const
+Soprano::Node Soprano::Client::ClientQueryResultIteratorBackend::binding( int offset ) const
 {
     // FIXME: use an extra method for performance
     return current()[offset];
 }
 
 
-int Soprano::Server::ClientQueryResultIteratorBackend::bindingCount() const
+int Soprano::Client::ClientQueryResultIteratorBackend::bindingCount() const
 {
     // FIXME: use an extra method for performance
     return current().count();
 }
 
 
-QStringList Soprano::Server::ClientQueryResultIteratorBackend::bindingNames() const
+QStringList Soprano::Client::ClientQueryResultIteratorBackend::bindingNames() const
 {
     // FIXME: use an extra method for performance
     return current().bindingNames();
 }
 
 
-bool Soprano::Server::ClientQueryResultIteratorBackend::isGraph() const
+bool Soprano::Client::ClientQueryResultIteratorBackend::isGraph() const
 {
     if ( m_model ) {
         bool r = m_model->client()->queryIteratorType( m_iteratorId ) == 1;
@@ -136,7 +136,7 @@ bool Soprano::Server::ClientQueryResultIteratorBackend::isGraph() const
 }
 
 
-bool Soprano::Server::ClientQueryResultIteratorBackend::isBinding() const
+bool Soprano::Client::ClientQueryResultIteratorBackend::isBinding() const
 {
     if ( m_model ) {
         bool r = m_model->client()->queryIteratorType( m_iteratorId ) == 3;
@@ -150,7 +150,7 @@ bool Soprano::Server::ClientQueryResultIteratorBackend::isBinding() const
 }
 
 
-bool Soprano::Server::ClientQueryResultIteratorBackend::isBool() const
+bool Soprano::Client::ClientQueryResultIteratorBackend::isBool() const
 {
     if ( m_model ) {
         bool r = m_model->client()->queryIteratorType( m_iteratorId ) == 2;
@@ -164,7 +164,7 @@ bool Soprano::Server::ClientQueryResultIteratorBackend::isBool() const
 }
 
 
-bool Soprano::Server::ClientQueryResultIteratorBackend::boolValue() const
+bool Soprano::Client::ClientQueryResultIteratorBackend::boolValue() const
 {
     if ( m_model ) {
         bool r = m_model->client()->queryIteratorBoolValue( m_iteratorId );

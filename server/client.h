@@ -35,9 +35,9 @@ namespace Soprano {
 
     class Model;
 
-    namespace Server {
+    namespace Client {
 	/**
-	 * \class Client client.h soprano/Server/Client
+	 * \class TcpClient client.h soprano/Client/TcpClient
 	 *
 	 * \brief Creates a connection to the %Soprano server.
 	 *
@@ -47,7 +47,7 @@ namespace Soprano {
 	 *
 	 * \author Sebastian Trueg <trueg@kde.org>
 	 */
-	class SOPRANO_EXPORT Client : public QObject, public Error::ErrorCache
+	class SOPRANO_EXPORT TcpClient : public QObject, public Error::ErrorCache
 	{
 	    Q_OBJECT;
 
@@ -55,12 +55,12 @@ namespace Soprano {
 	    /**
 	     * Create a new Client instance.
 	     */
-	    Client( QObject* parent = 0 );
+	    TcpClient( QObject* parent = 0 );
 
 	    /**
 	     * Destructor.
 	     */
-	    virtual ~Client();
+	    virtual ~TcpClient();
 
 	    /**
 	     * The default %Soprano server connection port.

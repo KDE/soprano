@@ -26,13 +26,13 @@
 #include "dbusoperators.h"
 
 
-class Soprano::Server::DBusClient::Private
+class Soprano::Client::DBusClient::Private
 {
 public:
     DBusServerInterface* interface;
 };
 
-Soprano::Server::DBusClient::DBusClient( const QString& servicename, QObject* parent )
+Soprano::Client::DBusClient::DBusClient( const QString& servicename, QObject* parent )
     : QObject( parent ),
       d( new Private() )
 {
@@ -47,13 +47,13 @@ Soprano::Server::DBusClient::DBusClient( const QString& servicename, QObject* pa
 }
 
 
-Soprano::Server::DBusClient::~DBusClient()
+Soprano::Client::DBusClient::~DBusClient()
 {
     delete d;
 }
 
 
-QStringList Soprano::Server::DBusClient::allModels() const
+QStringList Soprano::Client::DBusClient::allModels() const
 {
     QDBusReply<QStringList> reply = d->interface->allModels();
     setError( DBus::convertError( reply.error() ) );
@@ -61,7 +61,7 @@ QStringList Soprano::Server::DBusClient::allModels() const
 }
 
 
-Soprano::Model* Soprano::Server::DBusClient::createModel( const QString& name, const BackendSettings& settings )
+Soprano::Model* Soprano::Client::DBusClient::createModel( const QString& name, const BackendSettings& settings )
 {
     Q_UNUSED( settings );
     QDBusReply<QString> reply = d->interface->createModel( name );

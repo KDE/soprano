@@ -33,7 +33,7 @@ namespace Soprano {
 
     class Node;
 
-    namespace Server {
+    namespace Client {
 	class DBusNodeIteratorInterface: public QDBusAbstractInterface
 	{
 	    Q_OBJECT

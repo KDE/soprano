@@ -28,7 +28,7 @@
 
 namespace Soprano {
     class Model;
-    namespace Server {
+    namespace Client {
 	class DBusClient;
     }
 }
@@ -47,7 +47,7 @@ private Q_SLOTS:
     void testCloseStatementIteratorOnModelDelete();
 
 private:
-    Soprano::Server::DBusClient* m_client;
+    Soprano::Client::DBusClient* m_client;
     int m_modelCnt;
 };
 

@@ -25,7 +25,7 @@
 #include <soprano/storagemodel.h>
 
 namespace Soprano {
-    namespace Server {
+    namespace Client {
 
 	class DBusModelInterface;
 

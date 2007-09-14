@@ -21,12 +21,12 @@
 
 #include "modelinterface.h"
 
-Soprano::Server::DBusModelInterface::DBusModelInterface( const QString& service, const QString& path, const QDBusConnection& connection, QObject* parent )
+Soprano::Client::DBusModelInterface::DBusModelInterface( const QString& service, const QString& path, const QDBusConnection& connection, QObject* parent )
     : QDBusAbstractInterface( service, path, "org.soprano.Model", connection, parent )
 {
 }
 
-Soprano::Server::DBusModelInterface::~DBusModelInterface()
+Soprano::Client::DBusModelInterface::~DBusModelInterface()
 {
 }
 

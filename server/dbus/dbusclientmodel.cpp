@@ -35,19 +35,19 @@
 
 #include <QDebug>
 
-Soprano::Server::DBusClientModel::DBusClientModel( const QString& serviceName, const QString& dbusObject, const Backend* backend )
+Soprano::Client::DBusClientModel::DBusClientModel( const QString& serviceName, const QString& dbusObject, const Backend* backend )
     : StorageModel( backend )
 {
     m_interface = new DBusModelInterface( serviceName, dbusObject, QDBusConnection::sessionBus(), this );
 }
 
 
-Soprano::Server::DBusClientModel::~DBusClientModel()
+Soprano::Client::DBusClientModel::~DBusClientModel()
 {
 }
 
 
-Soprano::Error::ErrorCode Soprano::Server::DBusClientModel::addStatement( const Statement &statement )
+Soprano::Error::ErrorCode Soprano::Client::DBusClientModel::addStatement( const Statement &statement )
 {
     QDBusReply<int> reply = m_interface->addStatement( statement );
     setError( DBus::convertError( reply.error() ) );
@@ -60,7 +60,7 @@ Soprano::Error::ErrorCode Soprano::Server::DBusClientModel::addStatement( const 
 }
 
 
-Soprano::NodeIterator Soprano::Server::DBusClientModel::listContexts() const
+Soprano::NodeIterator Soprano::Client::DBusClientModel::listContexts() const
 {
     QDBusReply<QString> reply = m_interface->listContexts();
     setError( DBus::convertError( reply.error() ) );
@@ -73,7 +73,7 @@ Soprano::NodeIterator Soprano::Server::DBusClientModel::listContexts() const
 }
 
 
-Soprano::QueryResultIterator Soprano::Server::DBusClientModel::executeQuery( const QueryLegacy &query ) const
+Soprano::QueryResultIterator Soprano::Client::DBusClientModel::executeQuery( const QueryLegacy &query ) const
 {
     QDBusReply<QString> reply = m_interface->executeQuery( query.query(), ( int )query.type() );
     setError( DBus::convertError( reply.error() ) );
@@ -86,7 +86,7 @@ Soprano::QueryResultIterator Soprano::Server::DBusClientModel::executeQuery( con
 }
 
 
-Soprano::StatementIterator Soprano::Server::DBusClientModel::listStatements( const Statement &partial ) const
+Soprano::StatementIterator Soprano::Client::DBusClientModel::listStatements( const Statement &partial ) const
 {
     QDBusReply<QString> reply = m_interface->listStatements( partial );
     setError( DBus::convertError( reply.error() ) );
@@ -99,7 +99,7 @@ Soprano::StatementIterator Soprano::Server::DBusClientModel::listStatements( con
 }
 
 
-Soprano::Error::ErrorCode Soprano::Server::DBusClientModel::removeStatement( const Statement &statement )
+Soprano::Error::ErrorCode Soprano::Client::DBusClientModel::removeStatement( const Statement &statement )
 {
     QDBusReply<int> reply = m_interface->removeStatement( statement );
     setError( DBus::convertError( reply.error() ) );
@@ -112,7 +112,7 @@ Soprano::Error::ErrorCode Soprano::Server::DBusClientModel::removeStatement( con
 }
 
 
-Soprano::Error::ErrorCode Soprano::Server::DBusClientModel::removeAllStatements( const Statement &statement )
+Soprano::Error::ErrorCode Soprano::Client::DBusClientModel::removeAllStatements( const Statement &statement )
 {
     QDBusReply<int> reply = m_interface->removeAllStatements( statement );
     setError( DBus::convertError( reply.error() ) );
@@ -125,7 +125,7 @@ Soprano::Error::ErrorCode Soprano::Server::DBusClientModel::removeAllStatements(
 }
 
 
-int Soprano::Server::DBusClientModel::statementCount() const
+int Soprano::Client::DBusClientModel::statementCount() const
 {
     QDBusReply<int> reply = m_interface->statementCount();
     setError( DBus::convertError( reply.error() ) );
@@ -138,7 +138,7 @@ int Soprano::Server::DBusClientModel::statementCount() const
 }
 
 
-bool Soprano::Server::DBusClientModel::containsStatement( const Statement &statement ) const
+bool Soprano::Client::DBusClientModel::containsStatement( const Statement &statement ) const
 {
     QDBusReply<bool> reply = m_interface->containsStatement( statement );
     setError( DBus::convertError( reply.error() ) );
@@ -151,7 +151,7 @@ bool Soprano::Server::DBusClientModel::containsStatement( const Statement &state
 }
 
 
-bool Soprano::Server::DBusClientModel::containsAnyStatement( const Statement &statement ) const
+bool Soprano::Client::DBusClientModel::containsAnyStatement( const Statement &statement ) const
 {
     QDBusReply<bool> reply = m_interface->containsAnyStatement( statement );
     setError( DBus::convertError( reply.error() ) );
@@ -164,7 +164,7 @@ bool Soprano::Server::DBusClientModel::containsAnyStatement( const Statement &st
 }
 
 
-Soprano::Node Soprano::Server::DBusClientModel::createBlankNode()
+Soprano::Node Soprano::Client::DBusClientModel::createBlankNode()
 {
     QDBusReply<Node> reply = m_interface->createBlankNode();
     setError( DBus::convertError( reply.error() ) );

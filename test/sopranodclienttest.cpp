@@ -29,12 +29,12 @@
 
 
 using namespace Soprano;
-using namespace Soprano::Server;
+using namespace Soprano::Client;
 
 
 void SopranodClientTest::initTestCase()
 {
-    m_client = new Client();
+    m_client = new TcpClient();
     QVERIFY( m_client->connect() );
     m_modelCnt = 0;
 

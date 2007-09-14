@@ -26,20 +26,20 @@
 #include <soprano/node.h>
 
 
-Soprano::Server::ClientNodeIteratorBackend::ClientNodeIteratorBackend( int itId, ClientModel* client )
+Soprano::Client::ClientNodeIteratorBackend::ClientNodeIteratorBackend( int itId, ClientModel* client )
     : m_iteratorId( itId ),
       m_model( client )
 {
 }
 
 
-Soprano::Server::ClientNodeIteratorBackend::~ClientNodeIteratorBackend()
+Soprano::Client::ClientNodeIteratorBackend::~ClientNodeIteratorBackend()
 {
     close();
 }
 
 
-bool Soprano::Server::ClientNodeIteratorBackend::next()
+bool Soprano::Client::ClientNodeIteratorBackend::next()
 {
     if ( m_model ) {
         bool r = m_model->client()->iteratorNext( m_iteratorId );
@@ -53,7 +53,7 @@ bool Soprano::Server::ClientNodeIteratorBackend::next()
 }
 
 
-Soprano::Node Soprano::Server::ClientNodeIteratorBackend::current() const
+Soprano::Node Soprano::Client::ClientNodeIteratorBackend::current() const
 {
     if ( m_model ) {
         Node s = m_model->client()->nodeIteratorCurrent( m_iteratorId );
@@ -67,7 +67,7 @@ Soprano::Node Soprano::Server::ClientNodeIteratorBackend::current() const
 }
 
 
-void Soprano::Server::ClientNodeIteratorBackend::close()
+void Soprano::Client::ClientNodeIteratorBackend::close()
 {
     if ( m_model ) {
         m_model->closeIterator( m_iteratorId );

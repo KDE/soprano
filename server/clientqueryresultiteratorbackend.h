@@ -30,7 +30,7 @@ namespace Soprano
 {
     class QueryResult;
 
-    namespace Server {
+    namespace Client {
 
 	class ClientModel;
 

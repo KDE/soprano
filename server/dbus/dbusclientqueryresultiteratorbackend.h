@@ -30,7 +30,7 @@ namespace Soprano {
     class Statement;
     class Node;
 
-    namespace Server {
+    namespace Client {
 
 	class DBusQueryResultIteratorInterface;
 

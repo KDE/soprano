@@ -32,7 +32,7 @@ namespace Soprano {
 
     class Model;
 
-    namespace Server {
+    namespace Client {
 	/**
 	 * \class DBusClient dbusclient.h Server/DBusClient
 	 *

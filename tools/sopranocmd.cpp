@@ -295,10 +295,10 @@ int main( int argc, char *argv[] )
         return usage( "No model name specified." );
     }
 
-    Soprano::Server::Client client;
+    Soprano::Client::TcpClient client;
     Soprano::Model* model = 0;
     if ( backendName.isEmpty() ) {
-        quint16 port = Soprano::Server::Client::DEFAULT_PORT;
+        quint16 port = Soprano::Client::TcpClient::DEFAULT_PORT;
         if ( args.hasSetting( "port" ) ) {
             port = args.getSetting( "port" ).toInt();
         }

@@ -23,31 +23,31 @@
 #include "clientconnection.h"
 #include "clientmodel.h"
 
-const quint16 Soprano::Server::Client::DEFAULT_PORT = 5000;
+const quint16 Soprano::Client::TcpClient::DEFAULT_PORT = 5000;
 
 
-class Soprano::Server::Client::Private
+class Soprano::Client::TcpClient::Private
 {
 public:
     ClientConnection connection;
 };
 
 
-Soprano::Server::Client::Client( QObject* parent )
+Soprano::Client::TcpClient::TcpClient( QObject* parent )
     : QObject( parent ),
       d( new Private() )
 {
 }
 
 
-Soprano::Server::Client::~Client()
+Soprano::Client::TcpClient::~TcpClient()
 {
     disconnect();
     delete d;
 }
 
 
-bool Soprano::Server::Client::connect( int port )
+bool Soprano::Client::TcpClient::connect( int port )
 {
     if ( !d->connection.isOpen() ) {
         return d->connection.open( QHostAddress::LocalHost, port );
@@ -59,19 +59,19 @@ bool Soprano::Server::Client::connect( int port )
 }
 
 
-bool Soprano::Server::Client::isConnected()
+bool Soprano::Client::TcpClient::isConnected()
 {
     return d->connection.isOpen();
 }
 
 
-void Soprano::Server::Client::disconnect()
+void Soprano::Client::TcpClient::disconnect()
 {
     d->connection.close();
 }
 
 
-Soprano::Model* Soprano::Server::Client::createModel( const QString& name, const QList<BackendSetting>& settings )
+Soprano::Model* Soprano::Client::TcpClient::createModel( const QString& name, const QList<BackendSetting>& settings )
 {
     int modelId = d->connection.createModel( name, settings );
     setError( d->connection.lastError() );
@@ -85,7 +85,7 @@ Soprano::Model* Soprano::Server::Client::createModel( const QString& name, const
 }
 
 
-// QStringList Soprano::Server::Client::models() const
+// QStringList Soprano::Client::TcpClient::allModels() const
 // {
 
 // }

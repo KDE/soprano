@@ -21,12 +21,12 @@
 
 #include "queryresultiteratorinterface.h"
 
-Soprano::Server::DBusQueryResultIteratorInterface::DBusQueryResultIteratorInterface( const QString& service, const QString& path, const QDBusConnection& connection, QObject* parent )
+Soprano::Client::DBusQueryResultIteratorInterface::DBusQueryResultIteratorInterface( const QString& service, const QString& path, const QDBusConnection& connection, QObject* parent )
     : QDBusAbstractInterface( service, path, "org.soprano.QueryResultIterator", connection, parent )
 {
 }
 
-Soprano::Server::DBusQueryResultIteratorInterface::~DBusQueryResultIteratorInterface()
+Soprano::Client::DBusQueryResultIteratorInterface::~DBusQueryResultIteratorInterface()
 {
 }
 

@@ -29,7 +29,7 @@
 
 
 namespace Soprano {
-    namespace Server {
+    namespace Client {
 
 	class ClientConnection;
 

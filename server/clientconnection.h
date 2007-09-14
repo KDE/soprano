@@ -38,7 +38,7 @@ namespace Soprano {
     class BackendSetting;
     class QueryLegacy;
 
-    namespace Server {
+    namespace Client {
 	class ClientConnection : public QObject, public Error::ErrorCache
 	{
 	    Q_OBJECT

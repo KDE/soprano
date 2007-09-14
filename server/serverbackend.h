@@ -29,7 +29,7 @@
 
 namespace Soprano
 {
-    namespace Server
+    namespace Client
     {
 	/**
 	 * \brief Backend to access RDF storage models through the %Soprano daemon.

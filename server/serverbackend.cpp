@@ -29,10 +29,10 @@
 #include <QtCore/QPointer>
 #include <QtCore/QtPlugin>
 
-Q_EXPORT_PLUGIN2(soprano_serverclientbackend, Soprano::Server::ServerBackend)
+Q_EXPORT_PLUGIN2(soprano_serverclientbackend, Soprano::Client::ServerBackend)
 
 
-class Soprano::Server::ServerBackend::Private
+class Soprano::Client::ServerBackend::Private
 {
 public:
     Private( ServerBackend* parent )
@@ -64,25 +64,25 @@ private:
 };
 
 
-Soprano::Server::ServerBackend::ServerBackend()
+Soprano::Client::ServerBackend::ServerBackend()
     : Backend( "sopranoserver" ),
       d ( new Private( this ) )
 {
 }
 
 
-Soprano::Server::ServerBackend::~ServerBackend()
+Soprano::Client::ServerBackend::~ServerBackend()
 {
     delete d;
 }
 
 
-Soprano::StorageModel* Soprano::Server::ServerBackend::createModel( const QList<BackendSetting>& settings_ ) const
+Soprano::StorageModel* Soprano::Client::ServerBackend::createModel( const QList<BackendSetting>& settings_ ) const
 {
     QList<BackendSetting> settings( settings_ );
 
     // extract the port setting
-    quint16 port = Client::DEFAULT_PORT;
+    quint16 port = TcpClient::DEFAULT_PORT;
     QString name;
     QList<BackendSetting>::iterator it = settings.begin();
     while ( it != settings.end() ) {
@@ -132,7 +132,7 @@ Soprano::StorageModel* Soprano::Server::ServerBackend::createModel( const QList<
 }
 
 
-void Soprano::Server::ServerBackend::modelDeleted()
+void Soprano::Client::ServerBackend::modelDeleted()
 {
     ClientModel* model = qobject_cast<ClientModel*>( sender() );
     d->openModels[model->client()].removeAll( model );
@@ -142,7 +142,7 @@ void Soprano::Server::ServerBackend::modelDeleted()
 }
 
 
-Soprano::BackendFeatures Soprano::Server::ServerBackend::supportedFeatures() const
+Soprano::BackendFeatures Soprano::Client::ServerBackend::supportedFeatures() const
 {
     // as we may have multiple connections, which one to choose?
     return BACKEND_FEATURE_NONE;

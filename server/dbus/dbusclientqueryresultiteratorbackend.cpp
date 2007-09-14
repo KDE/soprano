@@ -27,19 +27,19 @@
 #include <soprano/bindingset.h>
 
 
-Soprano::Server::DBusClientQueryResultIteratorBackend::DBusClientQueryResultIteratorBackend( const QString& serviceName, const QString& objectPath )
+Soprano::Client::DBusClientQueryResultIteratorBackend::DBusClientQueryResultIteratorBackend( const QString& serviceName, const QString& objectPath )
 {
     m_interface = new DBusQueryResultIteratorInterface( serviceName, objectPath, QDBusConnection::sessionBus(), 0 );
 }
 
 
-Soprano::Server::DBusClientQueryResultIteratorBackend::~DBusClientQueryResultIteratorBackend()
+Soprano::Client::DBusClientQueryResultIteratorBackend::~DBusClientQueryResultIteratorBackend()
 {
     delete m_interface;
 }
 
 
-bool Soprano::Server::DBusClientQueryResultIteratorBackend::next()
+bool Soprano::Client::DBusClientQueryResultIteratorBackend::next()
 {
     QDBusReply<bool> reply = m_interface->next();
     setError( DBus::convertError( reply.error() ) );
@@ -52,7 +52,7 @@ bool Soprano::Server::DBusClientQueryResultIteratorBackend::next()
 }
 
 
-Soprano::BindingSet Soprano::Server::DBusClientQueryResultIteratorBackend::current() const
+Soprano::BindingSet Soprano::Client::DBusClientQueryResultIteratorBackend::current() const
 {
     QDBusReply<BindingSet> reply = m_interface->current();
     setError( DBus::convertError( reply.error() ) );
@@ -60,14 +60,14 @@ Soprano::BindingSet Soprano::Server::DBusClientQueryResultIteratorBackend::curre
 }
 
 
-void Soprano::Server::DBusClientQueryResultIteratorBackend::close()
+void Soprano::Client::DBusClientQueryResultIteratorBackend::close()
 {
     QDBusReply<void> reply = m_interface->close();
     setError( DBus::convertError( reply.error() ) );
 }
 
 
-Soprano::Statement Soprano::Server::DBusClientQueryResultIteratorBackend::currentStatement() const
+Soprano::Statement Soprano::Client::DBusClientQueryResultIteratorBackend::currentStatement() const
 {
     QDBusReply<Statement> reply = m_interface->currentStatement();
     setError( DBus::convertError( reply.error() ) );
@@ -75,7 +75,7 @@ Soprano::Statement Soprano::Server::DBusClientQueryResultIteratorBackend::curren
 }
 
 
-Soprano::Node Soprano::Server::DBusClientQueryResultIteratorBackend::binding( const QString &name ) const
+Soprano::Node Soprano::Client::DBusClientQueryResultIteratorBackend::binding( const QString &name ) const
 {
     QDBusReply<Node> reply = m_interface->bindingByName( name );
     setError( DBus::convertError( reply.error() ) );
@@ -83,7 +83,7 @@ Soprano::Node Soprano::Server::DBusClientQueryResultIteratorBackend::binding( co
 }
 
 
-Soprano::Node Soprano::Server::DBusClientQueryResultIteratorBackend::binding( int offset ) const
+Soprano::Node Soprano::Client::DBusClientQueryResultIteratorBackend::binding( int offset ) const
 {
     QDBusReply<Node> reply = m_interface->bindingByIndex( offset );
     setError( DBus::convertError( reply.error() ) );
@@ -91,7 +91,7 @@ Soprano::Node Soprano::Server::DBusClientQueryResultIteratorBackend::binding( in
 }
 
 
-int Soprano::Server::DBusClientQueryResultIteratorBackend::bindingCount() const
+int Soprano::Client::DBusClientQueryResultIteratorBackend::bindingCount() const
 {
     QDBusReply<int> reply = m_interface->bindingCount();
     setError( DBus::convertError( reply.error() ) );
@@ -99,7 +99,7 @@ int Soprano::Server::DBusClientQueryResultIteratorBackend::bindingCount() const
 }
 
 
-QStringList Soprano::Server::DBusClientQueryResultIteratorBackend::bindingNames() const
+QStringList Soprano::Client::DBusClientQueryResultIteratorBackend::bindingNames() const
 {
     QDBusReply<QStringList> reply = m_interface->bindingNames();
     setError( DBus::convertError( reply.error() ) );
@@ -107,7 +107,7 @@ QStringList Soprano::Server::DBusClientQueryResultIteratorBackend::bindingNames(
 }
 
 
-bool Soprano::Server::DBusClientQueryResultIteratorBackend::isGraph() const
+bool Soprano::Client::DBusClientQueryResultIteratorBackend::isGraph() const
 {
     QDBusReply<bool> reply = m_interface->isGraph();
     setError( DBus::convertError( reply.error() ) );
@@ -120,7 +120,7 @@ bool Soprano::Server::DBusClientQueryResultIteratorBackend::isGraph() const
 }
 
 
-bool Soprano::Server::DBusClientQueryResultIteratorBackend::isBinding() const
+bool Soprano::Client::DBusClientQueryResultIteratorBackend::isBinding() const
 {
     QDBusReply<bool> reply = m_interface->isBinding();
     setError( DBus::convertError( reply.error() ) );
@@ -133,7 +133,7 @@ bool Soprano::Server::DBusClientQueryResultIteratorBackend::isBinding() const
 }
 
 
-bool Soprano::Server::DBusClientQueryResultIteratorBackend::isBool() const
+bool Soprano::Client::DBusClientQueryResultIteratorBackend::isBool() const
 {
     QDBusReply<bool> reply = m_interface->isBool();
     setError( DBus::convertError( reply.error() ) );
@@ -146,7 +146,7 @@ bool Soprano::Server::DBusClientQueryResultIteratorBackend::isBool() const
 }
 
 
-bool Soprano::Server::DBusClientQueryResultIteratorBackend::boolValue() const
+bool Soprano::Client::DBusClientQueryResultIteratorBackend::boolValue() const
 {
     QDBusReply<bool> reply = m_interface->boolValue();
     setError( DBus::convertError( reply.error() ) );

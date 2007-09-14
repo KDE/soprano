@@ -27,7 +27,7 @@
 
 
 using namespace Soprano;
-using namespace Soprano::Server;
+using namespace Soprano::Client;
 
 
 void SopranoDBusClientTest::initTestCase()

@@ -32,7 +32,7 @@
 #include <soprano/queryresultiterator.h>
 
 
-Soprano::Server::ClientModel::ClientModel( const Backend* backend, int modelId, ClientConnection* client )
+Soprano::Client::ClientModel::ClientModel( const Backend* backend, int modelId, ClientConnection* client )
     : StorageModel( backend ),
       m_modelId( modelId ),
       m_client( client )
@@ -40,7 +40,7 @@ Soprano::Server::ClientModel::ClientModel( const Backend* backend, int modelId, 
 }
 
 
-Soprano::Server::ClientModel::~ClientModel()
+Soprano::Client::ClientModel::~ClientModel()
 {
     for ( int i = 0; i < m_openIterators.count(); ++i ) {
         m_client->iteratorClose( m_openIterators[i] );
@@ -48,7 +48,7 @@ Soprano::Server::ClientModel::~ClientModel()
 }
 
 
-Soprano::Error::ErrorCode Soprano::Server::ClientModel::addStatement( const Statement &statement )
+Soprano::Error::ErrorCode Soprano::Client::ClientModel::addStatement( const Statement &statement )
 {
     if ( m_client ) {
         Error::ErrorCode c = m_client->addStatement( m_modelId, statement );
@@ -62,7 +62,7 @@ Soprano::Error::ErrorCode Soprano::Server::ClientModel::addStatement( const Stat
 }
 
 
-Soprano::NodeIterator Soprano::Server::ClientModel::listContexts() const
+Soprano::NodeIterator Soprano::Client::ClientModel::listContexts() const
 {
     if ( m_client ) {
         int itId = m_client->listContexts( m_modelId );
@@ -84,7 +84,7 @@ Soprano::NodeIterator Soprano::Server::ClientModel::listContexts() const
 }
 
 
-Soprano::QueryResultIterator Soprano::Server::ClientModel::executeQuery( const QueryLegacy &query ) const
+Soprano::QueryResultIterator Soprano::Client::ClientModel::executeQuery( const QueryLegacy &query ) const
 {
     if ( m_client ) {
         int itId = m_client->executeQuery( m_modelId, query );
@@ -106,7 +106,7 @@ Soprano::QueryResultIterator Soprano::Server::ClientModel::executeQuery( const Q
 }
 
 
-Soprano::StatementIterator Soprano::Server::ClientModel::listStatements( const Statement &partial ) const
+Soprano::StatementIterator Soprano::Client::ClientModel::listStatements( const Statement &partial ) const
 {
     if ( m_client ) {
         int itId = m_client->listStatements( m_modelId, partial );
@@ -128,7 +128,7 @@ Soprano::StatementIterator Soprano::Server::ClientModel::listStatements( const S
 }
 
 
-Soprano::Error::ErrorCode Soprano::Server::ClientModel::removeStatement( const Statement &statement )
+Soprano::Error::ErrorCode Soprano::Client::ClientModel::removeStatement( const Statement &statement )
 {
     if ( m_client ) {
         Error::ErrorCode c = m_client->removeStatement( m_modelId, statement );
@@ -142,7 +142,7 @@ Soprano::Error::ErrorCode Soprano::Server::ClientModel::removeStatement( const S
 }
 
 
-Soprano::Error::ErrorCode Soprano::Server::ClientModel::removeAllStatements( const Statement &statement )
+Soprano::Error::ErrorCode Soprano::Client::ClientModel::removeAllStatements( const Statement &statement )
 {
     if ( m_client ) {
         Error::ErrorCode c = m_client->removeAllStatements( m_modelId, statement );
@@ -156,7 +156,7 @@ Soprano::Error::ErrorCode Soprano::Server::ClientModel::removeAllStatements( con
 }
 
 
-int Soprano::Server::ClientModel::statementCount() const
+int Soprano::Client::ClientModel::statementCount() const
 {
     if ( m_client ) {
         int cnt = m_client->statementCount( m_modelId );
@@ -170,7 +170,7 @@ int Soprano::Server::ClientModel::statementCount() const
 }
 
 
-bool Soprano::Server::ClientModel::containsStatement( const Statement &statement ) const
+bool Soprano::Client::ClientModel::containsStatement( const Statement &statement ) const
 {
     if ( m_client ) {
         bool c = m_client->containsStatement( m_modelId, statement );
@@ -184,7 +184,7 @@ bool Soprano::Server::ClientModel::containsStatement( const Statement &statement
 }
 
 
-bool Soprano::Server::ClientModel::containsAnyStatement( const Statement &statement ) const
+bool Soprano::Client::ClientModel::containsAnyStatement( const Statement &statement ) const
 {
     if ( m_client ) {
         bool c = m_client->containsAnyStatement( m_modelId, statement );
@@ -198,7 +198,7 @@ bool Soprano::Server::ClientModel::containsAnyStatement( const Statement &statem
 }
 
 
-Soprano::Node Soprano::Server::ClientModel::createBlankNode()
+Soprano::Node Soprano::Client::ClientModel::createBlankNode()
 {
     if ( m_client ) {
         Node n = m_client->createBlankNode( m_modelId );
@@ -212,7 +212,7 @@ Soprano::Node Soprano::Server::ClientModel::createBlankNode()
 }
 
 
-void Soprano::Server::ClientModel::closeIterator( int id ) const
+void Soprano::Client::ClientModel::closeIterator( int id ) const
 {
     if ( m_client ) {
         clearError();

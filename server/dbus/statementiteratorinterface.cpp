@@ -21,12 +21,12 @@
 
 #include "statementiteratorinterface.h"
 
-Soprano::Server::DBusStatementIteratorInterface::DBusStatementIteratorInterface( const QString& service, const QString& path, const QDBusConnection& connection, QObject* parent )
+Soprano::Client::DBusStatementIteratorInterface::DBusStatementIteratorInterface( const QString& service, const QString& path, const QDBusConnection& connection, QObject* parent )
     : QDBusAbstractInterface( service, path, "org.soprano.StatementIterator", connection, parent )
 {
 }
 
-Soprano::Server::DBusStatementIteratorInterface::~DBusStatementIteratorInterface()
+Soprano::Client::DBusStatementIteratorInterface::~DBusStatementIteratorInterface()
 {
 }
 
