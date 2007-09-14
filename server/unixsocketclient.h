@@ -37,7 +37,7 @@ namespace Soprano {
 
     namespace Client {
 	/**
-	 * \class Client client.h soprano/Server/Client
+	 * \class UnixSocketClient unixsocketclient.h soprano/Client/UnixSocketClient
 	 *
 	 * \brief Creates a connection to the %Soprano server through a unix socket interface.
 	 *
