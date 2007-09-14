@@ -62,6 +62,8 @@ namespace Soprano {
 	 * communication can be used simultaneously.
 	 *
 	 * \author Sebastian Trueg <trueg@kde.org>
+	 *
+	 * \warning <b>The API of this class is subject to change. It is likely that it will be split into several classes.</b>
 	 */
 	class SOPRANO_EXPORT ServerCore : public QObject, public Error::ErrorCache
 	{
