@@ -155,6 +155,7 @@ namespace Soprano {
 }
 
 
+/** \cond iterator_implementation */
 template<typename T> class Soprano::Iterator<T>::Private : public QSharedData
 {
 public:
@@ -276,6 +277,7 @@ template<typename T> QList<T> Soprano::Iterator<T>::allElements()
     close();
     return sl;
 }
+/** \endcond */
 
 #endif
 

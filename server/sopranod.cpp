@@ -13,15 +13,30 @@
 #include <QtCore/QCoreApplication>
 #include <QtCore/QTextStream>
 #include <QtCore/QStringList>
+#include <QtCore/QFile>
+#include <QtCore/QDir>
 
 #include "servercore.h"
 #include "soprano/backend.h"
 #include "soprano/pluginmanager.h"
 #include "soprano/version.h"
-
 #include "dbus/dbusserveradaptor.h"
 
-#define VERSION "1.0"
+#include <signal.h>
+
+#define VERSION "1.6"
+
+namespace {
+    void signalHandler( int signal )
+    {
+        switch( signal ) {
+        case SIGHUP:
+        case SIGINT:
+        case SIGQUIT:
+            QCoreApplication::exit( 1 );
+        }
+    }
+}
 
 int usage()
 {
@@ -31,7 +46,7 @@ int usage()
     s << "   This software is released under the GNU General Public License version 2." << endl;
     s << endl;
     s << "Usage:" << endl
-      << "   sopranod [--port <port>] [--backend <name>] [--storagedir <dir>]" << endl;
+      << "   sopranod [--backend <name>] [--storagedir <dir>] [--port <port>]" << endl;
 
     return 1;
 }
@@ -39,6 +54,14 @@ int usage()
 int main( int argc, char** argv )
 {
     QCoreApplication app( argc, argv );
+
+    struct sigaction sa;
+    ::memset( &sa, 0, sizeof( sa ) );
+    sa.sa_handler = signalHandler;
+    sigaction( SIGHUP, &sa, 0 );
+    sigaction( SIGINT, &sa, 0 );
+    sigaction( SIGQUIT, &sa, 0 );
+
     QStringList args = app.arguments();
     QString backendName;
     int port = Soprano::Server::ServerCore::DEFAULT_PORT;
@@ -66,7 +89,7 @@ int main( int argc, char** argv )
         else if ( args[i] == "--port" ) {
             ++i;
             if ( i < args.count() ) {
-                bool ok;
+                bool ok = true;
                 port = args[i].toInt( &ok );
                 if ( !ok ) {
                     return usage();
@@ -83,7 +106,7 @@ int main( int argc, char** argv )
         ++i;
     }
 
-    Soprano::Server::ServerCore core;
+    Soprano::Server::ServerCore core( &app );
 
     QDBusConnection::sessionBus().registerService( "org.soprano.Server" );
     core.registerAsDBusObject();
@@ -97,6 +120,15 @@ int main( int argc, char** argv )
         core.setBackend( backend );
     }
 
-    core.start( port );
-    return app.exec();
+    // make sure we have a soprano dir
+    if ( !QFile::exists( QDir::homePath() + "/.soprano" ) ) {
+        QDir::home().mkdir( ".soprano" );
+    }
+
+    if ( core.start() && core.listen( port ) ) {
+        return app.exec();
+    }
+    else {
+        return 1;
+    }
 }

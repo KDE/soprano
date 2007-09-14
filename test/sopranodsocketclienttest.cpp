@@ -1,4 +1,4 @@
-/* 
+/*
  * This file is part of Soprano Project.
  *
  * Copyright (C) 2007 Sebastian Trueg <trueg@kde.org>
@@ -19,47 +19,38 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef _SOPRANO_SERVER_CONNECTION_H_
-#define _SOPRANO_SERVER_CONNECTION_H_
+#include "sopranodsocketclienttest.h"
+#include "../server/unixsocketclient.h"
+#include "../soprano/storagemodel.h"
 
-#include <QtCore/QThread>
-#include <QtNetwork/QTcpSocket>
+#include <QtTest>
+#include <QtCore/QTime>
+#include <QtCore/QList>
 
 
-namespace Soprano {
+using namespace Soprano;
+using namespace Soprano::Client;
 
-    class Backend;
 
-    namespace Server {
-
-	class ServerCore;
-
-	class ServerConnection : public QThread
-	{
-	    Q_OBJECT
-
-	public:
-	    /**
-	     * Create a new ServerConnection.
-	     *
-	     * \param core The ServerCore that maintains all Models.
-	     * \param socket The connection socket.
-	     */
-	    ServerConnection( ServerCore* core );
-	    ~ServerConnection();
-
-	    void close();
-
-	    void start( QIODevice* socket );
-
-	protected:
-	    void run();
-
-	private:
-	    class Private;
-	    Private* const d;
-	};
-    }
+void SopranodSocketClientTest::initTestCase()
+{
+    m_client = new UnixSocketClient();
+    QVERIFY( m_client->connect() );
+    m_modelCnt = 0;
 }
 
-#endif
+
+void SopranodSocketClientTest::cleanupTestCase()
+{
+    delete m_client;
+}
+
+
+Soprano::Model* SopranodSocketClientTest::createModel()
+{
+    return m_client->createModel( QString( "Testmodel%1" ).arg( m_modelCnt++ ) );
+}
+
+QTEST_MAIN( SopranodSocketClientTest );
+
+#include "sopranodsocketclienttest.moc"

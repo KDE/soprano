@@ -43,20 +43,21 @@ public:
     QHash<quint16, QPointer<ClientConnection> > clientMap;
     QHash<ClientConnection*, QList<ClientModel*> > openModels;
 
+    // FIXME: use TcpClient
     ClientConnection* ensureConnect( quint16 port ) {
-        QPointer<ClientConnection> client = clientMap[port];
-        if ( !client ) {
-            client = new ClientConnection( m_parent );
-            clientMap[port] = client;
-        }
+//         QPointer<ClientConnection> client = clientMap[port];
+//         if ( !client ) {
+//             client = new ClientConnection( m_parent );
+//             clientMap[port] = client;
+//         }
 
-        if ( !client->isOpen() &&
-             !client->open( QHostAddress::LocalHost, port ) ) {
-            m_parent->setError( client->lastError() );
-            return 0;
-        }
+//         if ( !client->isOpen() &&
+//              !client->open( QHostAddress::LocalHost, port ) ) {
+//             m_parent->setError( client->lastError() );
+//             return 0;
+//         }
 
-        return client;
+//         return client;
     }
 
 private:

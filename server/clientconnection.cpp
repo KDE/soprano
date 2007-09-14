@@ -22,6 +22,7 @@
 #include "clientconnection.h"
 #include "operators.h"
 #include "commands.h"
+#include "socketdevice.h"
 
 #include <soprano/node.h>
 #include <soprano/statement.h>
@@ -33,8 +34,13 @@
 #include <QtNetwork/QTcpSocket>
 #include <QtCore/QMutex>
 #include <QtCore/QMutexLocker>
+#include <QtCore/QDir>
 
 using namespace Soprano::Server;
+
+namespace {
+    const int s_defaultTimeout = 30000;
+}
 
 class Soprano::Client::ClientConnection::Private
 {
@@ -43,7 +49,7 @@ public:
         : socket( 0 ) {
     }
 
-    QTcpSocket* socket;
+    QIODevice* socket;
     QMutex mutex;
 };
 
@@ -52,54 +58,18 @@ Soprano::Client::ClientConnection::ClientConnection( QObject* parent )
     : QObject( parent ),
       d( new Private() )
 {
-    d->socket = new QTcpSocket( this );
-    connect( d->socket, SIGNAL(error(QAbstractSocket::SocketError)),
-             this, SLOT(slotError(QAbstractSocket::SocketError)) );
 }
 
 
 Soprano::Client::ClientConnection::~ClientConnection()
 {
-    close();
     delete d;
 }
 
 
-bool Soprano::Client::ClientConnection::open( const QHostAddress& address, quint16 port )
+void Soprano::Client::ClientConnection::connect( QIODevice* dev )
 {
-    d->socket->abort();
-    d->socket->connectToHost( address, port );
-    if ( !d->socket->waitForConnected() ) {
-        setError( d->socket->errorString() );
-        return false;
-    }
-    else {
-        if ( !checkProtocolVersion() ) {
-            close();
-            return false;
-        }
-        else {
-            return true;
-        }
-    }
-}
-
-
-bool Soprano::Client::ClientConnection::isOpen()
-{
-    return d->socket->state() == QAbstractSocket::ConnectedState;
-}
-
-
-void Soprano::Client::ClientConnection::close()
-{
-    d->socket->disconnectFromHost();
-}
-
-
-void Soprano::Client::ClientConnection::slotError( QAbstractSocket::SocketError error )
-{
-    qDebug() << "Error: " << error;
+    d->socket = dev;
 }
 
 
@@ -112,7 +82,7 @@ int Soprano::Client::ClientConnection::createModel( const QString& name, const Q
 
     stream << COMMAND_CREATE_MODEL << name << settings;
 
-    if ( !d->socket->waitForReadyRead() ) {
+    if ( !d->socket->waitForReadyRead(s_defaultTimeout) ) {
         setError( "Command timed out." );
         return 0;
     }
@@ -136,7 +106,7 @@ Soprano::BackendFeatures Soprano::Client::ClientConnection::supportedFeatures()
 
     stream << COMMAND_SUPPORTED_FEATURES;
 
-    if ( !d->socket->waitForReadyRead() ) {
+    if ( !d->socket->waitForReadyRead(s_defaultTimeout) ) {
         setError( "Command timed out." );
         return 0;
     }
@@ -160,7 +130,7 @@ Soprano::Error::ErrorCode Soprano::Client::ClientConnection::addStatement( int m
 
     stream << COMMAND_MODEL_ADD_STATEMENT << ( quint32 )modelId << statement;
 
-    if ( !d->socket->waitForReadyRead() ) {
+    if ( !d->socket->waitForReadyRead(s_defaultTimeout) ) {
         setError( "Command timed out." );
         return Error::ERROR_UNKNOWN;
     }
@@ -183,7 +153,7 @@ int Soprano::Client::ClientConnection::listContexts( int modelId )
 
     stream << COMMAND_MODEL_LIST_CONTEXTS << ( quint32 )modelId;
 
-    if ( !d->socket->waitForReadyRead() ) {
+    if ( !d->socket->waitForReadyRead(s_defaultTimeout) ) {
         setError( "Command timed out." );
         return Error::ERROR_UNKNOWN;
     }
@@ -206,7 +176,7 @@ int Soprano::Client::ClientConnection::executeQuery( int modelId, const QueryLeg
 
     stream << COMMAND_MODEL_QUERY << ( quint32 )modelId << query.query() << ( quint16 )query.type();
 
-    if ( !d->socket->waitForReadyRead() ) {
+    if ( !d->socket->waitForReadyRead(s_defaultTimeout) ) {
         setError( "Command timed out." );
         return Error::ERROR_UNKNOWN;
     }
@@ -229,7 +199,7 @@ int Soprano::Client::ClientConnection::listStatements( int modelId, const Statem
 
     stream << COMMAND_MODEL_LIST_STATEMENTS << ( quint32 )modelId << partial;
 
-    if ( !d->socket->waitForReadyRead() ) {
+    if ( !d->socket->waitForReadyRead(s_defaultTimeout) ) {
         setError( "Command timed out." );
         return Error::ERROR_UNKNOWN;
     }
@@ -252,7 +222,7 @@ Soprano::Error::ErrorCode Soprano::Client::ClientConnection::removeAllStatements
 
     stream << COMMAND_MODEL_REMOVE_ALL_STATEMENTS << ( quint32 )modelId << statement;
 
-    if ( !d->socket->waitForReadyRead() ) {
+    if ( !d->socket->waitForReadyRead(s_defaultTimeout) ) {
         setError( "Command timed out." );
         return Error::ERROR_UNKNOWN;
     }
@@ -275,7 +245,7 @@ Soprano::Error::ErrorCode Soprano::Client::ClientConnection::removeStatement( in
 
     stream << COMMAND_MODEL_REMOVE_STATEMENT << ( quint32 )modelId << statement;
 
-    if ( !d->socket->waitForReadyRead() ) {
+    if ( !d->socket->waitForReadyRead(s_defaultTimeout) ) {
         setError( "Command timed out." );
         return Error::ERROR_UNKNOWN;
     }
@@ -298,7 +268,7 @@ int Soprano::Client::ClientConnection::statementCount( int modelId )
 
     stream << COMMAND_MODEL_STATEMENT_COUNT << ( quint32 )modelId;
 
-    if ( !d->socket->waitForReadyRead() ) {
+    if ( !d->socket->waitForReadyRead(s_defaultTimeout) ) {
         setError( "Command timed out." );
         return Error::ERROR_UNKNOWN;
     }
@@ -321,7 +291,7 @@ bool Soprano::Client::ClientConnection::containsStatement( int modelId, const St
 
     stream << COMMAND_MODEL_CONTAINS_STATEMENT << ( quint32 )modelId << statement;
 
-    if ( !d->socket->waitForReadyRead() ) {
+    if ( !d->socket->waitForReadyRead(s_defaultTimeout) ) {
         setError( "Command timed out." );
         return false;
     }
@@ -344,7 +314,7 @@ bool Soprano::Client::ClientConnection::containsAnyStatement( int modelId, const
 
     stream << COMMAND_MODEL_CONTAINS_ANY_STATEMENT << ( quint32 )modelId << statement;
 
-    if ( !d->socket->waitForReadyRead() ) {
+    if ( !d->socket->waitForReadyRead(s_defaultTimeout) ) {
         setError( "Command timed out." );
         return false;
     }
@@ -367,7 +337,7 @@ bool Soprano::Client::ClientConnection::isEmpty( int modelId )
 
     stream << COMMAND_MODEL_IS_EMPTY << ( quint32 )modelId;
 
-    if ( !d->socket->waitForReadyRead() ) {
+    if ( !d->socket->waitForReadyRead(s_defaultTimeout) ) {
         setError( "Command timed out." );
         return false;
     }
@@ -390,7 +360,7 @@ Soprano::Node Soprano::Client::ClientConnection::createBlankNode( int modelId )
 
     stream << COMMAND_MODEL_CREATE_BLANK_NODE << ( quint32 )modelId;
 
-    if ( !d->socket->waitForReadyRead() ) {
+    if ( !d->socket->waitForReadyRead(s_defaultTimeout) ) {
         setError( "Command timed out." );
         return Node();
     }
@@ -413,7 +383,7 @@ bool Soprano::Client::ClientConnection::iteratorNext( int id )
 
     stream << COMMAND_ITERATOR_NEXT << ( quint32 )id;
 
-    if ( !d->socket->waitForReadyRead() ) {
+    if ( !d->socket->waitForReadyRead(s_defaultTimeout) ) {
         setError( "Command timed out." );
         return false;
     }
@@ -435,7 +405,7 @@ Soprano::Node Soprano::Client::ClientConnection::nodeIteratorCurrent( int id )
 
     stream << COMMAND_ITERATOR_CURRENT_NODE << ( quint32 )id;
 
-    if ( !d->socket->waitForReadyRead() ) {
+    if ( !d->socket->waitForReadyRead(s_defaultTimeout) ) {
         setError( "Command timed out." );
         return Node();
     }
@@ -458,7 +428,7 @@ Soprano::Statement Soprano::Client::ClientConnection::statementIteratorCurrent( 
 
     stream << COMMAND_ITERATOR_CURRENT_STATEMENT << ( quint32 )id;
 
-    if ( !d->socket->waitForReadyRead() ) {
+    if ( !d->socket->waitForReadyRead(s_defaultTimeout) ) {
         setError( "Command timed out." );
         return Statement();
     }
@@ -481,7 +451,7 @@ Soprano::BindingSet Soprano::Client::ClientConnection::queryIteratorCurrent( int
 
     stream << COMMAND_ITERATOR_CURRENT_BINDINGSET << ( quint32 )id;
 
-    if ( !d->socket->waitForReadyRead() ) {
+    if ( !d->socket->waitForReadyRead(s_defaultTimeout) ) {
         setError( "Command timed out." );
         return BindingSet();
     }
@@ -504,7 +474,7 @@ Soprano::Statement Soprano::Client::ClientConnection::queryIteratorCurrentStatem
 
     stream << COMMAND_ITERATOR_CURRENT_STATEMENT << ( quint32 )id;
 
-    if ( !d->socket->waitForReadyRead() ) {
+    if ( !d->socket->waitForReadyRead(s_defaultTimeout) ) {
         setError( "Command timed out." );
         return Statement();
     }
@@ -527,7 +497,7 @@ int Soprano::Client::ClientConnection::queryIteratorType( int id )
 
     stream << COMMAND_ITERATOR_QUERY_TYPE << ( quint32 )id;
 
-    if ( !d->socket->waitForReadyRead() ) {
+    if ( !d->socket->waitForReadyRead(s_defaultTimeout) ) {
         setError( "Command timed out." );
         return 0;
     }
@@ -550,7 +520,7 @@ bool Soprano::Client::ClientConnection::queryIteratorBoolValue( int id )
 
     stream << COMMAND_ITERATOR_QUERY_BOOL_VALUE << ( quint32 )id;
 
-    if ( !d->socket->waitForReadyRead() ) {
+    if ( !d->socket->waitForReadyRead(s_defaultTimeout) ) {
         setError( "Command timed out." );
         return false;
     }
@@ -573,7 +543,7 @@ void Soprano::Client::ClientConnection::iteratorClose( int id )
 
     stream << COMMAND_ITERATOR_CLOSE << ( quint32 )id;
 
-    if ( !d->socket->waitForReadyRead() ) {
+    if ( !d->socket->waitForReadyRead(s_defaultTimeout) ) {
         setError( "Command timed out." );
         return;
     }
@@ -593,7 +563,7 @@ bool Soprano::Client::ClientConnection::checkProtocolVersion()
     stream << COMMAND_SUPPORTS_PROTOCOL_VERSION << ( quint32 )PROTOCOL_VERSION;
 
     // wait for a reply, but not forever, in case we are connected to something unknown
-    if ( !d->socket->waitForReadyRead() ) {
+    if ( !d->socket->waitForReadyRead(s_defaultTimeout) ) {
         setError( "Command timed out." );
         return false;
     }

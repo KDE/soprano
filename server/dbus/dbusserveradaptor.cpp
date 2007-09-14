@@ -23,6 +23,7 @@
 #include "dbusutil.h"
 #include "../servercore.h"
 #include "dbusmodeladaptor.h"
+#include "modelwrapper.h"
 
 #include <soprano/model.h>
 
@@ -61,11 +62,6 @@ QStringList Soprano::Server::DBusServerAdaptor::allModels( const QDBusMessage& m
 QString Soprano::Server::DBusServerAdaptor::createModel( const QString& name, const QDBusMessage& m )
 {
     // handle method call org.soprano.Server.createModel
-//     if ( !settings.isEmpty() ) {
-//         DBus::sendErrorReply( m, Error::Error( "Not settings supported yet" ) );
-//         return QString();
-//     }
-
     Model* model = d->core->model( name );
     if ( model ) {
         QHash<Model*, QString>::const_iterator it = d->modelDBusObjectPaths.find( model );
@@ -73,9 +69,11 @@ QString Soprano::Server::DBusServerAdaptor::createModel( const QString& name, co
             return it.value();
         }
         else {
-            ( void )new DBusModelAdaptor( model );
+            // FIXME: memory leak!
+            ModelWrapper* mw = new ModelWrapper( model );
+            ( void )new DBusModelAdaptor( model, mw );
             QString objectPath = "/Model_" + name;
-            QDBusConnection::sessionBus().registerObject( objectPath, model );
+            QDBusConnection::sessionBus().registerObject( objectPath, mw );
             d->modelDBusObjectPaths.insert( model, objectPath );
             return objectPath;
         }

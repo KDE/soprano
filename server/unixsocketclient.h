@@ -24,7 +24,6 @@
 
 #include <QtCore/QObject>
 #include <QtCore/QList>
-#include <QtNetwork/QHostAddress>
 
 #include "error.h"
 #include "backend.h"
@@ -38,17 +37,13 @@ namespace Soprano {
 
     namespace Client {
 	/**
-	 * \class TcpClient tcpclient.h soprano/Client/TcpClient
+	 * \class Client client.h soprano/Server/Client
 	 *
-	 * \brief Creates a connection to the %Soprano server.
-	 *
-	 * The %Soprano server can be accessed normally through PluginManager::discoverBackendByName()
-	 * with name "sopranoserver" or by simply creating an instance of TcpClient. The latter solution can have advantages
-	 * as it uses a new connection to the server.
+	 * \brief Creates a connection to the %Soprano server through a unix socket interface.
 	 *
 	 * \author Sebastian Trueg <trueg@kde.org>
 	 */
-	class SOPRANO_EXPORT TcpClient : public QObject, public Error::ErrorCache
+	class SOPRANO_EXPORT UnixSocketClient : public QObject, public Error::ErrorCache
 	{
 	    Q_OBJECT;
 
@@ -56,17 +51,12 @@ namespace Soprano {
 	    /**
 	     * Create a new Client instance.
 	     */
-	    TcpClient( QObject* parent = 0 );
+	    UnixSocketClient( QObject* parent = 0 );
 
 	    /**
 	     * Destructor.
 	     */
-	    virtual ~TcpClient();
-
-	    /**
-	     * The default %Soprano server connection port.
-	     */
-	    static const quint16 DEFAULT_PORT;
+	    virtual ~UnixSocketClient();
 
 	    /**
 	     * Tries to connect to the %Soprano server.
@@ -74,7 +64,7 @@ namespace Soprano {
 	     * \return \p true on success, \p false if an error occured.
 	     * Check lastError() for details.
 	     */
-	    bool connect( const QHostAddress& address = QHostAddress::LocalHost, int port = DEFAULT_PORT );
+	    bool connect( const QString& name = QString() );
 
 	    /**
 	     * Check if the client is connected to a server.
@@ -114,9 +104,6 @@ namespace Soprano {
 	     * opened by the server.
 	     */
 //	    QStringList models() const;
-
-	private Q_SLOTS:
-	    void slotError( QAbstractSocket::SocketError error );
 
 	private:
 	    class Private;

@@ -47,10 +47,7 @@ namespace Soprano {
 	    ClientConnection( QObject* parent = 0 );
 	    ~ClientConnection();
 
-	    // FIXME: put the default port in a header file
-	    bool open( const QHostAddress& address = QHostAddress::LocalHost, quint16 port = 5000 );
-	    bool isOpen();
-	    void close();
+	    void connect( QIODevice* );
 	    
 	    // Backend methods
 	    /**
@@ -83,12 +80,9 @@ namespace Soprano {
 
 	    void iteratorClose( int id );
 
-	private Q_SLOTS:
-	    void slotError( QAbstractSocket::SocketError error );
-
-	private:
 	    bool checkProtocolVersion();
 
+	private:
 	    class Private;
 	    Private* const d;
 	};

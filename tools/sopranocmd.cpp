@@ -191,7 +191,7 @@ private:
 };
 
 
-#define VERSION "0.9"
+#define VERSION "0.98"
 
 int version()
 {
@@ -220,12 +220,10 @@ int usage( const QString& error = QString() )
     QTextStream s( stderr );
     s << endl;
     s << "Usage:" << endl
-      << "   sopranod [--version] [--help] [--port <port>] [--model <name>] [<command>] [<parameters>]" << endl
+      << "   sopranocmd [--version] [--help] [--port <port>] [--host <host>] [--model <name>] [<command>] [<parameters>]" << endl
       << endl
       << "   --version          Print version information." << endl << endl
       << "   --help             Print this help." << endl << endl
-      << "   --port <port>      Specify the port the Soprano server is running on." << endl
-      << "                      (only applicable when querying against the Soprano server.)" << endl << endl
       << "   --model <name>     The name of the Soprano model to perform the command on." << endl
       << "                      (only applicable when querying against the Soprano server.)" << endl << endl
       << "   --backend          The backend to use. If this option is not specified the Soprano server" << endl
@@ -233,6 +231,10 @@ int usage( const QString& error = QString() )
       << "                      " << backendNames().join( ", " ) << endl << endl
       << "   --dir              The storage directory. This only applies when specifying the backend. Defaults" << endl
       << "                      to current directory." << endl << endl
+      << "   --port <port>      Specify the port the Soprano server is running on." << endl
+      << "                      (only applicable when querying against the Soprano server.)" << endl << endl
+      << "   --host <host>      Specify the host the Soprano server is running on (defaults to localhost)." << endl
+      << "                      (only applicable when querying against the Soprano server.)" << endl << endl
       << "   <command>          The command to perform. Can be one of 'add', 'remove', 'list', or 'query'." << endl
       << "                      If not specified the default command is 'query'." << endl << endl
       << "   <parameters>       The parameters to the command." << endl
@@ -267,12 +269,13 @@ int main( int argc, char *argv[] )
     QCoreApplication app( argc, argv );
 
     QHash<QString, bool> allowedCmdLineArgs;
-    allowedCmdLineArgs.insert( "port", true );
     allowedCmdLineArgs.insert( "model", true );
     allowedCmdLineArgs.insert( "version", false );
     allowedCmdLineArgs.insert( "help", false );
     allowedCmdLineArgs.insert( "backend", true );
     allowedCmdLineArgs.insert( "dir", true );
+    allowedCmdLineArgs.insert( "port", true );
+    allowedCmdLineArgs.insert( "host", true );
 
     CmdLineArgs args;
     if ( !CmdLineArgs::parseCmdLine( args, app.arguments(), allowedCmdLineArgs ) ) {
@@ -298,11 +301,16 @@ int main( int argc, char *argv[] )
     Soprano::Client::TcpClient client;
     Soprano::Model* model = 0;
     if ( backendName.isEmpty() ) {
+        QHostAddress host = QHostAddress::LocalHost;
         quint16 port = Soprano::Client::TcpClient::DEFAULT_PORT;
         if ( args.hasSetting( "port" ) ) {
             port = args.getSetting( "port" ).toInt();
         }
-        if ( !client.connect( port ) ) {
+        if ( args.hasSetting( "host" ) ) {
+            host = args.getSetting( "host" );
+        }
+
+        if ( !client.connect( host, port ) ) {
             QTextStream( stderr ) << "Failed to connect to server on port " << port << endl;
             return 3;
         }

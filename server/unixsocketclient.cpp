@@ -19,47 +19,46 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#include "tcpclient.h"
+#include "unixsocketclient.h"
 #include "clientconnection.h"
 #include "clientmodel.h"
+#include "socketdevice.h"
 
-#include <QtNetwork/QTcpSocket>
-
-
-const quint16 Soprano::Client::TcpClient::DEFAULT_PORT = 5000;
+#include <QtCore/QDir>
 
 
-class Soprano::Client::TcpClient::Private
+class Soprano::Client::UnixSocketClient::Private
 {
 public:
     ClientConnection connection;
-    QTcpSocket socket;
+    SocketDevice socket;
 };
 
 
-Soprano::Client::TcpClient::TcpClient( QObject* parent )
+Soprano::Client::UnixSocketClient::UnixSocketClient( QObject* parent )
     : QObject( parent ),
       d( new Private() )
 {
     d->connection.connect( &d->socket );
-    QObject::connect( &d->socket, SIGNAL(error(QAbstractSocket::SocketError)),
-                      this, SLOT(slotError(QAbstractSocket::SocketError)) );
 }
 
 
-Soprano::Client::TcpClient::~TcpClient()
+Soprano::Client::UnixSocketClient::~UnixSocketClient()
 {
     disconnect();
     delete d;
 }
 
 
-bool Soprano::Client::TcpClient::connect( const QHostAddress& address, int port )
+bool Soprano::Client::UnixSocketClient::connect( const QString& name )
 {
     if ( !d->socket.isValid() ) {
-        d->socket.abort();
-        d->socket.connectToHost( address, port );
-        if ( !d->socket.waitForConnected() ) {
+        QString path( name );
+        if ( path.isEmpty() ) {
+            path = QDir::homePath() + QLatin1String( "/.soprano/socket" );
+        }
+
+        if ( !d->socket.open( path, QIODevice::ReadWrite ) ) {
             setError( d->socket.errorString() );
             return false;
         }
@@ -80,19 +79,19 @@ bool Soprano::Client::TcpClient::connect( const QHostAddress& address, int port 
 }
 
 
-bool Soprano::Client::TcpClient::isConnected()
+bool Soprano::Client::UnixSocketClient::isConnected()
 {
     return d->socket.isValid();
 }
 
 
-void Soprano::Client::TcpClient::disconnect()
+void Soprano::Client::UnixSocketClient::disconnect()
 {
-    d->socket.abort();
+    d->socket.close();
 }
 
 
-Soprano::Model* Soprano::Client::TcpClient::createModel( const QString& name, const QList<BackendSetting>& settings )
+Soprano::Model* Soprano::Client::UnixSocketClient::createModel( const QString& name, const QList<BackendSetting>& settings )
 {
     int modelId = d->connection.createModel( name, settings );
     setError( d->connection.lastError() );
@@ -106,16 +105,9 @@ Soprano::Model* Soprano::Client::TcpClient::createModel( const QString& name, co
 }
 
 
-
-void Soprano::Client::TcpClient::slotError( QAbstractSocket::SocketError error )
-{
-    qDebug() << "Error: " << error;
-}
-
-
-// QStringList Soprano::Client::TcpClient::allModels() const
+// QStringList Soprano::Client::UnixSocketClient::models() const
 // {
 
 // }
 
-#include "tcpclient.moc"
+#include "unixsocketclient.moc"

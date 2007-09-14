@@ -21,6 +21,8 @@
 
 #include "servercore.h"
 #include "serverconnection.h"
+#include "socketserver.h"
+#include "socketdevice.h"
 #include "dbus/dbusserveradaptor.h"
 
 #include <soprano/backend.h>
@@ -29,6 +31,7 @@
 
 #include <QtCore/QHash>
 #include <QtCore/QDebug>
+#include <QtCore/QDir>
 #include <QtNetwork/QTcpServer>
 #include <QtNetwork/QHostAddress>
 
@@ -36,13 +39,13 @@
 const quint16 Soprano::Server::ServerCore::DEFAULT_PORT = 5000;
 
 
-class Soprano::Server::ServerCore::Private : public QTcpServer
+class Soprano::Server::ServerCore::Private
 {
 public:
-    Private( ServerCore* parent )
-        : QTcpServer( parent ),
-          dbusAdaptor( 0 ),
-          m_parent( parent ) {
+    Private()
+        : dbusAdaptor( 0 ),
+          tcpServer( 0 ),
+          socketServer( 0 ) {
     }
 
     const Backend* backend;
@@ -53,26 +56,14 @@ public:
 
     DBusServerAdaptor* dbusAdaptor;
 
-private:
-    void incomingConnection( int );
-
-    ServerCore* m_parent;
+    QTcpServer* tcpServer;
+    SocketServer* socketServer;
 };
-
-
-void Soprano::Server::ServerCore::Private::incomingConnection( int connection )
-{
-    qDebug() << "(ServerCore) new connection.";
-    ServerConnection* conn = new ServerConnection( m_parent, connection );
-    connections.append( conn );
-    connect( conn, SIGNAL(finished()), m_parent, SLOT(serverConnectionFinished()));
-    conn->start();
-}
 
 
 Soprano::Server::ServerCore::ServerCore( QObject* parent )
     : QObject( parent ),
-      d( new Private( this ) )
+      d( new Private() )
 {
     // default backend
     d->backend = Soprano::usedBackend();
@@ -135,16 +126,46 @@ Soprano::Model* Soprano::Server::ServerCore::model( const QString& name )
 }
 
 
-bool Soprano::Server::ServerCore::start( quint16 port )
+bool Soprano::Server::ServerCore::listen( quint16 port )
 {
     clearError();
-    if ( !d->listen( QHostAddress::LocalHost, port ) ) {
+    if ( !d->tcpServer ) {
+        d->tcpServer = new QTcpServer( this );
+        connect( d->tcpServer, SIGNAL( newConnection() ),
+                 this, SLOT( slotNewTcpConnection() ) );
+    }
+
+    if ( !d->tcpServer->listen( QHostAddress::LocalHost, port ) ) {
         setError( QString( "Failed to start listening at port %1 on localhost." ).arg( port ) );
         qDebug() << "Failed to start listening at port " << port;
         return false;
     }
     else {
         qDebug() << "Listening on port " << port;
+        return true;
+    }
+}
+
+
+bool Soprano::Server::ServerCore::start( const QString& name )
+{
+    clearError();
+    if ( !d->socketServer ) {
+        d->socketServer = new SocketServer( this );
+        connect( d->socketServer, SIGNAL( newConnection() ),
+                 this, SLOT( slotNewSocketConnection() ) );
+    }
+
+    QString path( name );
+    if ( path.isEmpty() ) {
+        path = QDir::homePath() + QLatin1String( "/.soprano/socket" );
+    }
+
+    if ( !d->socketServer->listen( path ) ) {
+        setError( QString( "Failed to start listening at %1." ).arg( path ) );
+        return false;
+    }
+    else {
         return true;
     }
 }
@@ -191,6 +212,26 @@ Soprano::Model* Soprano::Server::ServerCore::createModel( const QList<BackendSet
 QStringList Soprano::Server::ServerCore::allModels() const
 {
     return d->models.keys();
+}
+
+
+void Soprano::Server::ServerCore::slotNewTcpConnection()
+{
+    qDebug() << "(ServerCore) new tcp connection.";
+    ServerConnection* conn = new ServerConnection( this );
+    d->connections.append( conn );
+    connect( conn, SIGNAL(finished()), this, SLOT(serverConnectionFinished()));
+    conn->start( d->tcpServer->nextPendingConnection() );
+}
+
+
+void Soprano::Server::ServerCore::slotNewSocketConnection()
+{
+    qDebug() << "(ServerCore) new socket connection.";
+    ServerConnection* conn = new ServerConnection( this );
+    d->connections.append( conn );
+    connect( conn, SIGNAL(finished()), this, SLOT(serverConnectionFinished()));
+    conn->start( d->socketServer->nextPendingConnection() );
 }
 
 #include "servercore.moc"

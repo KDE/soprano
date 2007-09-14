@@ -118,6 +118,11 @@ namespace Soprano {
 	    virtual QStringList allModels() const;
 
 	    /**
+	     * Start the core on a unix socket.
+	     */
+	    bool start( const QString& socketPath = QString() );
+
+	    /**
 	     * Start the Server. Calling this method will make the Server
 	     * listen on the specified port for incoming client connections.
 	     *
@@ -125,7 +130,7 @@ namespace Soprano {
 	     *
 	     * \return \p true if the server was successfully started, \p false otherwise.
 	     */
-	    bool start( quint16 port = DEFAULT_PORT );
+	    bool listen( quint16 port = DEFAULT_PORT );
 
 	    /**
 	     * Register the ServerCore as a DBus object. The process needs to be registered
@@ -137,6 +142,8 @@ namespace Soprano {
 	    void registerAsDBusObject( const QString& objectPath = QString() );
 
 	private Q_SLOTS:
+	    void slotNewTcpConnection();
+	    void slotNewSocketConnection();
 	    void serverConnectionFinished();
 
 	protected:

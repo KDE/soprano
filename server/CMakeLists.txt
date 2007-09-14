@@ -15,11 +15,23 @@ set(soprano_server_SRC
   serverconnection.cpp
   randomgenerator.cpp
   operators.cpp
+  socketserver.cpp
+  socketdevice.cpp
+  dbus/dbusutil.cpp
+  dbus/dbusmodeladaptor.cpp
+  dbus/iteratorwrapper.cpp
+  dbus/modelwrapper.cpp
+  dbus/dbusstatementiteratoradaptor.cpp
+  dbus/dbusnodeiteratoradaptor.cpp
+  dbus/dbusqueryresultiteratoradaptor.cpp
+  dbus/dbusserveradaptor.cpp
+  dbus/dbusoperators.cpp
 )
 
 set(soprano_client_SRC
   tcpclient.h
   tcpclient.cpp
+  unixsocketclient.cpp
   clientconnection.h
   clientconnection.cpp
   clientmodel.cpp
@@ -27,6 +39,19 @@ set(soprano_client_SRC
   clientnodeiteratorbackend.cpp
   clientqueryresultiteratorbackend.cpp
   operators.cpp
+  socketdevice.cpp
+  dbus/dbusutil.cpp
+  dbus/dbusmodelinterface.cpp
+  dbus/dbusstatementiteratorinterface.cpp
+  dbus/dbusnodeiteratorinterface.cpp
+  dbus/dbusqueryresultiteratorinterface.cpp
+  dbus/dbusserverinterface.cpp
+  dbus/dbusclient.cpp
+  dbus/dbusmodel.cpp
+  dbus/dbusclientnodeiteratorbackend.cpp
+  dbus/dbusclientstatementiteratorbackend.cpp
+  dbus/dbusclientqueryresultiteratorbackend.cpp
+  dbus/dbusoperators.cpp
 )
 
 set(soprano_serverbackend_SRC
@@ -60,7 +85,6 @@ set_target_properties(sopranoclient PROPERTIES
 
 target_link_libraries(
   sopranoserver
-  sopranoserver_dbus
   ${QT_QTCORE_LIBRARY}
   ${QT_QTNETWORK_LIBRARY}
   QtDBus
@@ -69,7 +93,6 @@ target_link_libraries(
 
 target_link_libraries(
   sopranoclient
-  sopranoclient_dbus
   ${QT_QTCORE_LIBRARY}
   ${QT_QTNETWORK_LIBRARY}
   QtDBus

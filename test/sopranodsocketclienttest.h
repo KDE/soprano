@@ -1,4 +1,4 @@
-/* 
+/*
  * This file is part of Soprano Project.
  *
  * Copyright (C) 2007 Sebastian Trueg <trueg@kde.org>
@@ -19,47 +19,34 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef _SOPRANO_SERVER_CONNECTION_H_
-#define _SOPRANO_SERVER_CONNECTION_H_
+#ifndef _SOPRANOD_SOCKET_CLIENT_BACKEND_TEST_H_
+#define _SOPRANOD_SOCKET_CLIENT_BACKEND_TEST_H_
 
-#include <QtCore/QThread>
-#include <QtNetwork/QTcpSocket>
+#include "SopranoModelTest.h"
 
+#include <QtCore/QProcess>
 
 namespace Soprano {
-
-    class Backend;
-
-    namespace Server {
-
-	class ServerCore;
-
-	class ServerConnection : public QThread
-	{
-	    Q_OBJECT
-
-	public:
-	    /**
-	     * Create a new ServerConnection.
-	     *
-	     * \param core The ServerCore that maintains all Models.
-	     * \param socket The connection socket.
-	     */
-	    ServerConnection( ServerCore* core );
-	    ~ServerConnection();
-
-	    void close();
-
-	    void start( QIODevice* socket );
-
-	protected:
-	    void run();
-
-	private:
-	    class Private;
-	    Private* const d;
-	};
+    class Model;
+    namespace Client {
+	class UnixSocketClient;
     }
 }
+
+class SopranodSocketClientTest : public SopranoModelTest
+{
+    Q_OBJECT
+
+protected:
+    virtual Soprano::Model* createModel();
+
+private Q_SLOTS:
+    void initTestCase();
+    void cleanupTestCase();
+
+private:
+    Soprano::Client::UnixSocketClient* m_client;
+    int m_modelCnt;
+};
 
 #endif

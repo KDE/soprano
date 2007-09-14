@@ -1,4 +1,4 @@
-/* 
+/*
  * This file is part of Soprano Project.
  *
  * Copyright (C) 2007 Sebastian Trueg <trueg@kde.org>
@@ -19,47 +19,43 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef _SOPRANO_SERVER_CONNECTION_H_
-#define _SOPRANO_SERVER_CONNECTION_H_
+#ifndef _SOPRANO_SOCKET_SERVER_H_
+#define _SOPRANO_SOCKET_SERVER_H_
 
-#include <QtCore/QThread>
-#include <QtNetwork/QTcpSocket>
+#include <QtCore/QObject>
 
+#include "../soprano/error.h"
 
-namespace Soprano {
+class QString;
+class SocketDevice;
 
-    class Backend;
+class SocketServer : public QObject, public Soprano::Error::ErrorCache
+{
+    Q_OBJECT
 
-    namespace Server {
+public:
+    SocketServer( QObject* parent = 0 );
+    virtual ~SocketServer();
 
-	class ServerCore;
+    bool listen( const QString& socketName );
+    void close();
 
-	class ServerConnection : public QThread
-	{
-	    Q_OBJECT
+    QString socketName() const;
 
-	public:
-	    /**
-	     * Create a new ServerConnection.
-	     *
-	     * \param core The ServerCore that maintains all Models.
-	     * \param socket The connection socket.
-	     */
-	    ServerConnection( ServerCore* core );
-	    ~ServerConnection();
+    SocketDevice* nextPendingConnection();
 
-	    void close();
+Q_SIGNALS:
+    void newConnection();
 
-	    void start( QIODevice* socket );
+protected:
+    virtual void incomingConnection( int socketDescriptor );
 
-	protected:
-	    void run();
+private Q_SLOTS:
+    void slotServerSocketActivated();
 
-	private:
-	    class Private;
-	    Private* const d;
-	};
-    }
-}
+private:
+    class Private;
+    Private* const d;
+};
 
 #endif

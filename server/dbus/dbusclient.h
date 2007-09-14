@@ -63,6 +63,8 @@ namespace Soprano {
 	     */
 	    ~DBusClient();
 
+	    // FIXME: add method to check if the server can be found
+
 	    /**
 	     * Retrive a list of all models that are available.
 	     *

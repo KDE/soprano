@@ -58,7 +58,7 @@ public:
 };
 
 
-Soprano::Server::DBusModelAdaptor::DBusModelAdaptor( Model* parent )
+Soprano::Server::DBusModelAdaptor::DBusModelAdaptor( Model* model, QObject* parent )
     : QDBusAbstractAdaptor( parent ),
       d( new Private() )
 {
@@ -66,7 +66,7 @@ Soprano::Server::DBusModelAdaptor::DBusModelAdaptor( Model* parent )
     qDBusRegisterMetaType<Soprano::Statement>();
     qDBusRegisterMetaType<Soprano::BindingSet>();
 
-    d->model = parent;
+    d->model = model;
     setAutoRelaySignals(true);
     connect( QDBusConnection::sessionBus().interface(), SIGNAL(serviceOwnerChanged(const QString&, const QString&, const QString&)),
              this, SLOT(slotServiceOwnerChanged(const QString&, const QString&, const QString&)) );

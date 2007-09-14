@@ -1,4 +1,4 @@
-/* 
+/*
  * This file is part of Soprano Project.
  *
  * Copyright (C) 2007 Sebastian Trueg <trueg@kde.org>
@@ -19,45 +19,32 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef _SOPRANO_SERVER_CONNECTION_H_
-#define _SOPRANO_SERVER_CONNECTION_H_
+#ifndef _SOPRANO_SERVER_DBUS_MODEL_WRAPPER_H_
+#define _SOPRANO_SERVER_DBUS_MODEL_WRAPPER_H_
 
-#include <QtCore/QThread>
-#include <QtNetwork/QTcpSocket>
-
+#include <QtCore/QObject>
 
 namespace Soprano {
 
-    class Backend;
+    class Model;
 
     namespace Server {
-
-	class ServerCore;
-
-	class ServerConnection : public QThread
+	/**
+	 * The only purpose of the ModelWrapper is to provide
+	 * a QObject parent for the DBus interfaces of the Soprano
+	 * models.
+	 */
+	class ModelWrapper : public QObject
 	{
 	    Q_OBJECT
-
+	    
 	public:
-	    /**
-	     * Create a new ServerConnection.
-	     *
-	     * \param core The ServerCore that maintains all Models.
-	     * \param socket The connection socket.
-	     */
-	    ServerConnection( ServerCore* core );
-	    ~ServerConnection();
+	    ModelWrapper( Model* model, QObject* parent = 0 );
 
-	    void close();
-
-	    void start( QIODevice* socket );
-
-	protected:
-	    void run();
+	    inline Model* model() { return m_model; }
 
 	private:
-	    class Private;
-	    Private* const d;
+	    Model* m_model;
 	};
     }
 }

@@ -1,4 +1,4 @@
-/* 
+/*
  * This file is part of Soprano Project.
  *
  * Copyright (C) 2007 Sebastian Trueg <trueg@kde.org>
@@ -19,47 +19,32 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef _SOPRANO_SERVER_CONNECTION_H_
-#define _SOPRANO_SERVER_CONNECTION_H_
+#ifndef _SOPRANO_SOCKET_DEVICE_H_
+#define _SOPRANO_SOCKET_DEVICE_H_
 
-#include <QtCore/QThread>
-#include <QtNetwork/QTcpSocket>
+#include <QtCore/QIODevice>
 
+class SocketDevice : public QIODevice
+{
+public:
+    SocketDevice( QObject* parent = 0 );
+    ~SocketDevice();
 
-namespace Soprano {
+    bool open( int sd, OpenMode mode );
+    bool open( const QString& socketName, OpenMode mode );
+    void close();
 
-    class Backend;
+    bool isValid();
 
-    namespace Server {
+    bool waitForReadyRead( int msecs = 3000 );
 
-	class ServerCore;
+protected:
+    qint64 readData( char* data, qint64 maxSize );
+    qint64 writeData( const char* data, qint64 maxSize );
 
-	class ServerConnection : public QThread
-	{
-	    Q_OBJECT
-
-	public:
-	    /**
-	     * Create a new ServerConnection.
-	     *
-	     * \param core The ServerCore that maintains all Models.
-	     * \param socket The connection socket.
-	     */
-	    ServerConnection( ServerCore* core );
-	    ~ServerConnection();
-
-	    void close();
-
-	    void start( QIODevice* socket );
-
-	protected:
-	    void run();
-
-	private:
-	    class Private;
-	    Private* const d;
-	};
-    }
-}
+private:
+    class Private;
+    Private* const d;
+};
 
 #endif
