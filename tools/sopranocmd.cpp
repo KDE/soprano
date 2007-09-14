@@ -21,7 +21,7 @@
 
 #include "../soprano/soprano.h"
 
-#include "../server/client.h"
+#include "../server/tcpclient.h"
 
 using namespace Soprano;
 

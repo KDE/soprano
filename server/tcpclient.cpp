@@ -19,7 +19,7 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#include "client.h"
+#include "tcpclient.h"
 #include "clientconnection.h"
 #include "clientmodel.h"
 
@@ -90,4 +90,4 @@ Soprano::Model* Soprano::Client::TcpClient::createModel( const QString& name, co
 
 // }
 
-#include "client.moc"
+#include "tcpclient.moc"

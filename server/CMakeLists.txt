@@ -18,8 +18,8 @@ set(soprano_server_SRC
 )
 
 set(soprano_client_SRC
-  client.h
-  client.cpp
+  tcpclient.h
+  tcpclient.cpp
   clientconnection.h
   clientconnection.cpp
   clientmodel.cpp
@@ -102,7 +102,7 @@ INSTALL(TARGETS soprano_serverclientbackend
 install(
   FILES 
   servercore.h
-  client.h
+  tcpclient.h
   DESTINATION include/soprano
 )
 

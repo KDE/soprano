@@ -20,7 +20,7 @@
  */
 
 #include "serverbackend.h"
-#include "client.h"
+#include "tcpclient.h"
 #include "clientconnection.h"
 #include "clientmodel.h"
 
