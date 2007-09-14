@@ -19,7 +19,7 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#include "util.h"
+#include "dbusutil.h"
 
 #include <QtDBus/QtDBus>
 #include <QtCore/QMutex>

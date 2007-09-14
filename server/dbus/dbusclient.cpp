@@ -20,8 +20,8 @@
  */
 
 #include "dbusclient.h"
-#include "serverinterface.h"
-#include "util.h"
+#include "dbusserverinterface.h"
+#include "dbusutil.h"
 #include "dbusclientmodel.h"
 #include "dbusoperators.h"
 

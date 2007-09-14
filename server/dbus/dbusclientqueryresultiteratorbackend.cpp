@@ -20,8 +20,8 @@
  */
 
 #include "dbusclientqueryresultiteratorbackend.h"
-#include "queryresultiteratorinterface.h"
-#include "util.h"
+#include "dbusqueryresultiteratorinterface.h"
+#include "dbusutil.h"
 
 #include <soprano/statement.h>
 #include <soprano/bindingset.h>

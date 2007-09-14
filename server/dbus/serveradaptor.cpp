@@ -20,7 +20,7 @@
  */
 
 #include "serveradaptor.h"
-#include "util.h"
+#include "dbusutil.h"
 #include "../servercore.h"
 #include "modeladaptor.h"
 

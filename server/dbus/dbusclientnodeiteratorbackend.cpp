@@ -20,8 +20,8 @@
  */
 
 #include "dbusclientnodeiteratorbackend.h"
-#include "nodeiteratorinterface.h"
-#include "util.h"
+#include "dbusnodeiteratorinterface.h"
+#include "dbusutil.h"
 
 #include <soprano/node.h>
 

@@ -19,15 +19,15 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#include "queryresultiteratorinterface.h"
+#include "dbusserverinterface.h"
 
-Soprano::Client::DBusQueryResultIteratorInterface::DBusQueryResultIteratorInterface( const QString& service, const QString& path, const QDBusConnection& connection, QObject* parent )
-    : QDBusAbstractInterface( service, path, "org.soprano.QueryResultIterator", connection, parent )
+Soprano::Client::DBusServerInterface::DBusServerInterface( const QString& service, const QString& path, const QDBusConnection& connection, QObject* parent )
+    : QDBusAbstractInterface( service, path, "org.soprano.Server", connection, parent )
 {
 }
 
-Soprano::Client::DBusQueryResultIteratorInterface::~DBusQueryResultIteratorInterface()
+Soprano::Client::DBusServerInterface::~DBusServerInterface()
 {
 }
 
-#include "queryresultiteratorinterface.moc"
+#include "dbusserverinterface.moc"

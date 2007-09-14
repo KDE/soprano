@@ -20,7 +20,7 @@
  */
 
 #include "statementiteratoradaptor.h"
-#include "util.h"
+#include "dbusutil.h"
 #include "iteratorwrapper.h"
 
 Soprano::Server::DBusStatementIteratorAdaptor::DBusStatementIteratorAdaptor( IteratorWrapper* it )

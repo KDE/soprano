@@ -20,8 +20,8 @@
  */
 
 #include "dbusclientmodel.h"
-#include "modelinterface.h"
-#include "util.h"
+#include "dbusmodelinterface.h"
+#include "dbusutil.h"
 #include "dbusclientnodeiteratorbackend.h"
 #include "dbusclientstatementiteratorbackend.h"
 #include "dbusclientqueryresultiteratorbackend.h"

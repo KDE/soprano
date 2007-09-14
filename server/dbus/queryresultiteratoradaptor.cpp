@@ -20,7 +20,7 @@
  */
 
 #include "queryresultiteratoradaptor.h"
-#include "util.h"
+#include "dbusutil.h"
 #include "iteratorwrapper.h"
 
 #include <soprano/node.h>

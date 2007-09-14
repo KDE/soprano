@@ -19,15 +19,15 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#include "nodeiteratorinterface.h"
+#include "dbusmodelinterface.h"
 
-Soprano::Client::DBusNodeIteratorInterface::DBusNodeIteratorInterface( const QString& service, const QString& path, const QDBusConnection& connection, QObject* parent )
-    : QDBusAbstractInterface( service, path, "org.soprano.NodeIterator", connection, parent )
+Soprano::Client::DBusModelInterface::DBusModelInterface( const QString& service, const QString& path, const QDBusConnection& connection, QObject* parent )
+    : QDBusAbstractInterface( service, path, "org.soprano.Model", connection, parent )
 {
 }
 
-Soprano::Client::DBusNodeIteratorInterface::~DBusNodeIteratorInterface()
+Soprano::Client::DBusModelInterface::~DBusModelInterface()
 {
 }
 
-#include "nodeiteratorinterface.moc"
+#include "dbusmodelinterface.moc"

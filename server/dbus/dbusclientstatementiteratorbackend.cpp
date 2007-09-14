@@ -20,8 +20,8 @@
  */
 
 #include "dbusclientstatementiteratorbackend.h"
-#include "statementiteratorinterface.h"
-#include "util.h"
+#include "dbusstatementiteratorinterface.h"
+#include "dbusutil.h"
 
 #include <soprano/statement.h>
 

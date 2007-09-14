@@ -20,7 +20,7 @@
  */
 
 #include "nodeiteratoradaptor.h"
-#include "util.h"
+#include "dbusutil.h"
 #include "iteratorwrapper.h"
 
 Soprano::Server::DBusNodeIteratorAdaptor::DBusNodeIteratorAdaptor( IteratorWrapper* it )

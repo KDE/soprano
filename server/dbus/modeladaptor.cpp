@@ -20,7 +20,7 @@
  */
 
 #include "modeladaptor.h"
-#include "util.h"
+#include "dbusutil.h"
 #include "iteratorwrapper.h"
 #include "statementiteratoradaptor.h"
 #include "nodeiteratoradaptor.h"

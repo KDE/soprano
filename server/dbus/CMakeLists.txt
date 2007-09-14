@@ -9,7 +9,7 @@ include_directories(
 )
 
 set(soprano_server_dbus_SRC
-  util.cpp
+  dbusutil.cpp
   modeladaptor.cpp
   iteratorwrapper.cpp
   statementiteratoradaptor.cpp
@@ -20,12 +20,12 @@ set(soprano_server_dbus_SRC
 )
 
 set(soprano_client_dbus_SRC
-  util.cpp
-  modelinterface.cpp
-  statementiteratorinterface.cpp
-  nodeiteratorinterface.cpp
-  queryresultiteratorinterface.cpp
-  serverinterface.cpp
+  dbusutil.cpp
+  dbusmodelinterface.cpp
+  dbusstatementiteratorinterface.cpp
+  dbusnodeiteratorinterface.cpp
+  dbusqueryresultiteratorinterface.cpp
+  dbusserverinterface.cpp
   dbusclient.cpp
   dbusclientmodel.cpp
   dbusclientnodeiteratorbackend.cpp
