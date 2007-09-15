@@ -31,14 +31,8 @@
 #include <QtCore/QMetaObject>
 #include <QtCore/QVariant>
 #include <QtDBus/QtDBus>
-#include <QtCore/QByteArray>
 #include <QtCore/QList>
-#include <QtCore/QLinkedList>
-#include <QtCore/QMap>
-#include <QtCore/QString>
 #include <QtCore/QStringList>
-#include <QtCore/QVariant>
-#include <QtCore/QTimer>
 #include <QtCore/QMutex>
 #include <QtCore/QPointer>
 #include <QtCore/QMultiHash>
@@ -67,7 +61,14 @@ Soprano::Server::DBusModelAdaptor::DBusModelAdaptor( Model* model, QObject* pare
     qDBusRegisterMetaType<Soprano::BindingSet>();
 
     d->model = model;
-    setAutoRelaySignals(true);
+
+    // we cannot use setAutoRelaySignals here since that would connect (non-existing)
+    // signals from parent instead of model
+    connect( model, SIGNAL( statementsAdded() ),
+             this, SIGNAL( statementsAdded() ) );
+    connect( model, SIGNAL( statementsRemoved() ),
+             this, SIGNAL( statementsRemoved() ) );
+
     connect( QDBusConnection::sessionBus().interface(), SIGNAL(serviceOwnerChanged(const QString&, const QString&, const QString&)),
              this, SLOT(slotServiceOwnerChanged(const QString&, const QString&, const QString&)) );
 }

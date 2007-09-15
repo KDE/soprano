@@ -112,7 +112,6 @@ namespace Soprano {
 
         private Q_SLOTS:
 	    void slotServiceOwnerChanged( const QString & name, const QString & oldOwner, const QString & newOwner );
-/* 	    void slotGarbageCollection(); */
 
 	private:
 	    class Private;
