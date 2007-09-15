@@ -120,6 +120,10 @@ namespace Soprano {
 		QList<QVariant> argumentList;
 		return callWithArgumentList(QDBus::Block, QLatin1String("statementCount"), argumentList);
 	    }
+
+	Q_SIGNALS:
+	    void statementsAdded();
+	    void statementsRemoved();
 	};
     }
 }

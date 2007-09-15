@@ -47,6 +47,10 @@ Soprano::Client::DBusModel::DBusModel( const QString& serviceName, const QString
       d( new Private() )
 {
     d->interface = new DBusModelInterface( serviceName, dbusObject, QDBusConnection::sessionBus(), this );
+    connect( d->interface, SIGNAL( statementsAdded() ),
+             this, SIGNAL( statementsAdded() ) );
+    connect( d->interface, SIGNAL( statementsRemoved() ),
+             this, SIGNAL( statementsRemoved() ) );
 }
 
 
