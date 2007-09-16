@@ -27,7 +27,6 @@
 #include <soprano/node.h>
 #include <soprano/statement.h>
 #include <soprano/model.h>
-#include <soprano/querylegacy.h>
 #include <soprano/bindingset.h>
 #include <soprano/backend.h>
 
@@ -167,14 +166,14 @@ int Soprano::Client::ClientConnection::listContexts( int modelId )
 }
 
 
-int Soprano::Client::ClientConnection::executeQuery( int modelId, const QueryLegacy &query )
+int Soprano::Client::ClientConnection::executeQuery( int modelId, const QString &query, Query::QueryLanguage type, const QString& userQueryLanguage )
 {
 //    qDebug() << "(ClientConnection::executeQuery)";
     QMutexLocker( &d->mutex );
 
     QDataStream stream( d->socket );
 
-    stream << COMMAND_MODEL_QUERY << ( quint32 )modelId << query.query() << ( quint16 )query.type();
+    stream << COMMAND_MODEL_QUERY << ( quint32 )modelId << query << ( quint16 )type << userQueryLanguage;
 
     if ( !d->socket->waitForReadyRead(s_defaultTimeout) ) {
         setError( "Command timed out." );

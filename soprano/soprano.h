@@ -21,7 +21,6 @@
  */
 
 #include "global.h"
-#include "querylegacy.h"
 #include "query.h"
 #include "queryresultiterator.h"
 #include "node.h"
@@ -40,3 +39,4 @@
 #include "bindingset.h"
 #include "version.h"
 #include "sopranotypes.h"
+#include "vocabulary.h"

@@ -1,4 +1,4 @@
-/*
+/* 
  * This file is part of Soprano Project.
  *
  * Copyright (C) 2007 Sebastian Trueg <trueg@kde.org>
@@ -19,7 +19,28 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#include "rdf.h"
-#include "rdfs.h"
-#include "xmls.h"
-#include "nrl.h"
+#include <QObject>
+
+#ifndef NRLMODEL_TEST_H
+#define NRLMODEL_TEST_H
+
+namespace Soprano {
+    class NRLModel;
+    class Model;
+}
+
+class NRLModelTest: public QObject
+{
+  Q_OBJECT
+
+private Q_SLOTS:
+    void init();
+    void testAddStatement();
+    void cleanup();
+
+private:
+    Soprano::Model* m_model;
+    Soprano::NRLModel* m_nrlModel;
+};
+
+#endif

@@ -5,6 +5,7 @@ include_directories(
   ${soprano_SOURCE_DIR}/data
   ${soprano_core_SOURCE_DIR}
   ${soprano_core_SOURCE_DIR}/query
+  ${soprano_core_SOURCE_DIR}/vocabulary
   ${QT_INCLUDES}
   ${CLUCENE_INCLUDE_DIR}
   ${CLUCENE_LIBRARY_DIR}
@@ -159,3 +160,9 @@ qt4_automoc(sopranodbusclienttest sopranodbusclienttest.cpp)
 add_executable(sopranodbusclienttest sopranodbusclienttest.cpp)
 target_link_libraries(sopranodbusclienttest sopranomodeltest sopranoclient ${QT_QTCORE_LIBRARY} ${QT_QTTEST_LIBRARY} ${QT_QTNETWORK_LIBRARY})
 add_test(sopranodbusclienttest ${EXECUTABLE_OUTPUT_PATH}/sopranodclienttest)
+
+# NRL Model test
+qt4_automoc(nrlmodeltest nrlmodeltest.cpp)
+add_executable(nrlmodeltest nrlmodeltest.cpp)
+target_link_libraries(nrlmodeltest soprano sopranoindex ${QT_QTCORE_LIBRARY} ${QT_QTTEST_LIBRARY})
+add_test(nrlmodeltest ${EXECUTABLE_OUTPUT_PATH}/nrlmodeltest)

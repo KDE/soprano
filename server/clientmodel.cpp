@@ -84,10 +84,10 @@ Soprano::NodeIterator Soprano::Client::ClientModel::listContexts() const
 }
 
 
-Soprano::QueryResultIterator Soprano::Client::ClientModel::executeQuery( const QueryLegacy &query ) const
+Soprano::QueryResultIterator Soprano::Client::ClientModel::executeQuery( const QString& query, Query::QueryLanguage language, const QString& userQueryLanguage ) const
 {
     if ( m_client ) {
-        int itId = m_client->executeQuery( m_modelId, query );
+        int itId = m_client->executeQuery( m_modelId, query, language, userQueryLanguage );
         if ( itId > 0 ) {
             m_openIterators.append( itId );
         }

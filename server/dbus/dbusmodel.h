@@ -22,7 +22,7 @@
 #ifndef _SOPRANO_SERVER_DBUS_CLIENT_MODEL_H_
 #define _SOPRANO_SERVER_DBUS_CLIENT_MODEL_H_
 
-#include <soprano/model.h>
+#include <soprano/storagemodel.h>
 #include <soprano/soprano_export.h>
 
 namespace Soprano {
@@ -44,7 +44,7 @@ namespace Soprano {
 	 *
 	 * \author Sebastian Trueg <trueg@kde.org>
 	 */
-	class SOPRANO_EXPORT DBusModel : public Soprano::Model
+	class SOPRANO_EXPORT DBusModel : public Soprano::StorageModel
 	{
 	    Q_OBJECT
 
@@ -54,13 +54,14 @@ namespace Soprano {
 	     *
 	     * \param serviceName The name of the DBus service that provides the Model.
 	     * \param dbusObject The path to the Model object in the DBus service.
+	     * \param backend The backend that created this model. Should always be set to 0.
 	     */
-	    DBusModel( const QString& serviceName, const QString& dbusObject );
+	    DBusModel( const QString& serviceName, const QString& dbusObject, const Backend* backend = 0 );
 	    ~DBusModel();
 
 	    Error::ErrorCode addStatement( const Statement &statement );
 	    NodeIterator listContexts() const;
-	    QueryResultIterator executeQuery( const QueryLegacy &query ) const;
+	    QueryResultIterator executeQuery( const QString& query, Query::QueryLanguage language, const QString& userQueryLanguage = QString() ) const;
 	    StatementIterator listStatements( const Statement &partial ) const;
 	    Error::ErrorCode removeStatement( const Statement &statement );
 	    Error::ErrorCode removeAllStatements( const Statement &statement );

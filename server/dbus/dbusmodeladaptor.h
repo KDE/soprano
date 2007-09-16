@@ -98,7 +98,7 @@ namespace Soprano {
 	    bool containsAnyStatement( const Soprano::Statement& statement, const QDBusMessage& m );
 	    bool containsStatement( const Soprano::Statement& statement, const QDBusMessage& m );
 	    Soprano::Node createBlankNode( const QDBusMessage& m );
-	    QString executeQuery( const QString &query, int queryLang, const QDBusMessage& m );
+	    QString executeQuery( const QString &query, int queryLang, const QString& userQueryLanguage, const QDBusMessage& m );
 	    bool isEmpty( const QDBusMessage& m );
 	    QString listContexts( const QDBusMessage& m );
 	    QString listStatements( const Soprano::Statement& statement, const QDBusMessage& m );

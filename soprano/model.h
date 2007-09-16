@@ -28,7 +28,7 @@
 
 #include "soprano_export.h"
 #include "error.h"
-
+#include "sopranotypes.h"
 
 class QTextStream;
 
@@ -40,6 +40,9 @@ namespace Soprano
     class Statement;
     class StatementIterator;
     class NodeIterator;
+    namespace Query {
+	class Query;
+    }
 
     /**
      * \class Model model.h soprano/Model
@@ -181,36 +184,27 @@ namespace Soprano
 	/**
 	 * Execute the given query over the Model.
 	 *
-	 * \return All the Statements that match the query, on error an invalid iterator is returned.
+	 * \param query The query to evaluate.
+	 *
+	 * \return An iterator over all results matching the query, 
+	 * on error an invalid iterator is returned.
+	 *
+	 * \sa Query::QueryParser
 	 */
-	virtual QueryResultIterator executeQuery( const QueryLegacy &query ) const = 0;
-	// possible interfaces for queries:
-	// 1. the most simple one: a string query. let the backend do the parsing, make our Query stuff optional
-	//
-	// Advantages:
-	//  * Simple, no change in backends necessary
-	//
-	// Disadvantages:
-	//  * Our Query API is only optional and using it means a lot of converting
-	//  * No possibility of reporting syntax errors.
-	//
-	//QueryResultIterator query( const QString& query, QueryLanguage language, const QString& userQueryLanguage = QString() ) const;
+	virtual QueryResultIterator executeQuery( const Query::Query& query ) const = 0;
 
-	// 2. Use our query stuff
-	// 2.1 only Query, no string representation without serializer
-	// 2.2 Query does contain the original string it was parsed from (seems not very clean API-wise)
-	//
-	// Advantages:
-	//  * Cleaner Model API
-	//  * Possibility of query optimization and modification by FilterModels
-	//
-	// Disadvantages:
-	//  * More complicated for Model users: query objects have to be created, in many cases using a QueryParser?
-	//  * The backend needs to support the Query API or use a serializer to convert the query back to string form
-	//
-	//QueryResultIterator query( const Query::Query& query ) const;
-
-	// 3. Support both, provide default implementation of the first one in StorageModel by using QueryParsers
+	/**
+	 * Execute the given query over the Model.
+	 *
+	 * \param query The query to evaluate.
+	 * \param language The %query language used to encode \p query.
+	 * \param userQueryLanguage If \p language equals Query::QUERY_LANGUAGE_USER
+	 * userQueryLanguage defines the language to use.
+	 * 
+	 * \return An iterator over all results matching the query, 
+	 * on error an invalid iterator is returned.
+	 */
+	virtual QueryResultIterator executeQuery( const QString& query, Query::QueryLanguage language, const QString& userQueryLanguage = QString() ) const = 0;
 	//@}
 
 
@@ -275,7 +269,7 @@ namespace Soprano
 	virtual Node createBlankNode() = 0;
 	//@}
 	
-    signals:
+    Q_SIGNALS:
 	/**
 	 * Emitted when new statements have been added to the model.
 	 *

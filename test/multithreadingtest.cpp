@@ -141,19 +141,19 @@ public:
 class QueryTest : public TestingThread
 {
 public:
-    QueryTest( QueryLegacy query )
+    QueryTest( const QString& query )
         : TestingThread( "query" ),
           m_query( query ) {
     }
 
     bool performTest() {
-        QueryResultIterator it = model()->executeQuery( m_query );
+        QueryResultIterator it = model()->executeQuery( m_query, Query::QUERY_LANGUAGE_SPARQL );
 
         return !it.lastError() && it.isValid() && it.next();
     }
 
 private:
-    QueryLegacy m_query;
+    QString m_query;
 };
 
 
@@ -177,7 +177,7 @@ void MultiThreadingTest::initTestCase()
 {
     m_testThreads.append( new AddStatementTest() );
     m_testThreads.append( new RemoveStatementTest() );
-    m_testThreads.append( new QueryTest( QueryLegacy( "select * where { ?s ?p ?o . }", QueryLegacy::SPARQL ) ) );
+    m_testThreads.append( new QueryTest( "select * where { ?s ?p ?o . }" ) );
 }
 
 

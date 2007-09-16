@@ -458,9 +458,9 @@ void SopranoModelTest::testGraphQuery()
 {
     QVERIFY( m_model != 0 );
 
-    QueryLegacy query("CONSTRUCT { ?s ?p ?o } WHERE { ?s ?p ?o . }", QueryLegacy::SPARQL);
+    QString query( "CONSTRUCT { ?s ?p ?o } WHERE { ?s ?p ?o . }" );
 
-    QueryResultIterator rs = m_model->executeQuery( query );
+    QueryResultIterator rs = m_model->executeQuery( query, Query::QUERY_LANGUAGE_SPARQL );
     QVERIFY( rs.isGraph() );
     QVERIFY( !rs.isBinding() );
     QVERIFY( !rs.isBool() );
@@ -496,9 +496,7 @@ void SopranoModelTest::testInvalidQuery()
 {
     QVERIFY( m_model != 0 );
 
-    QueryLegacy query( "INVALID query", QueryLegacy::SPARQL );
-
-    QueryResultIterator res = m_model->executeQuery( query );
+    QueryResultIterator res = m_model->executeQuery( "INVALID query", Query::QUERY_LANGUAGE_SPARQL );
     QVERIFY( !res.isValid() );
 }
 
@@ -507,9 +505,9 @@ void SopranoModelTest::testQuery()
     QVERIFY( m_model != 0 );
 
     /* SPARQL */
-    QueryLegacy sparql("select ?b ?c where {?a ?b ?c .}", QueryLegacy::SPARQL);
+    QString sparql("select ?b ?c where {?a ?b ?c .}");
 
-    QueryResultIterator rs1 = m_model->executeQuery( sparql );
+    QueryResultIterator rs1 = m_model->executeQuery( sparql, Query::QUERY_LANGUAGE_SPARQL );
 
     int cnt = 0;
     while ( rs1.next() )
@@ -524,7 +522,7 @@ void SopranoModelTest::testQuery()
     QVERIFY( cnt == 4 );
 
     // test bindings
-    rs1 = m_model->executeQuery( sparql );
+    rs1 = m_model->executeQuery( sparql, Query::QUERY_LANGUAGE_SPARQL );
     qDebug() << rs1.bindingNames();
     while ( rs1.next() ) {
         QCOMPARE( rs1.bindingCount(), 2 );

@@ -36,7 +36,6 @@ namespace Soprano {
     class Statement;
     class BindingSet;
     class BackendSetting;
-    class QueryLegacy;
 
     namespace Client {
 	class ClientConnection : public QObject, public Error::ErrorCache
@@ -59,7 +58,7 @@ namespace Soprano {
 	    // Model methods
 	    Error::ErrorCode addStatement( int modelId, const Statement &statement );
 	    int listContexts( int modelId );
-	    int executeQuery( int modelId, const QueryLegacy &query );
+	    int executeQuery( int modelId, const QString &query, Query::QueryLanguage type, const QString& userQueryLanguage );
 	    int listStatements( int modelId, const Statement &partial );
 	    Error::ErrorCode removeStatement( int modelId, const Statement &statement );
 	    Error::ErrorCode removeAllStatements( int modelId, const Statement &statement );

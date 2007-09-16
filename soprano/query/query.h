@@ -29,6 +29,8 @@
 #include <QDateTime>
 #include <QtCore/QSharedData>
 
+#include "soprano_export.h"
+
 // FIXME: - set operations such as intersect
 //        - I think it would be sufficient to have equal on expressions rather
 //          then one for strings and one or numericals and so on
@@ -44,7 +46,7 @@ namespace Soprano
 
         class ExpressionVisitor;
 
-        class Expression {
+        class SOPRANO_EXPORT Expression {
         public:
             virtual ~Expression();
         
@@ -56,7 +58,7 @@ namespace Soprano
             Expression();
         };
     
-        class RTerm {
+        class SOPRANO_EXPORT RTerm {
         public:
             virtual ~RTerm();
 
@@ -70,7 +72,7 @@ namespace Soprano
         };
 
 
-        class Variable : public RTerm {
+        class SOPRANO_EXPORT Variable : public RTerm {
         public:
             Variable();
             Variable( const QString &name );
@@ -90,7 +92,7 @@ namespace Soprano
         };
 
 
-        class Node : public RTerm {
+        class SOPRANO_EXPORT Node : public RTerm {
         public:
             Node();
             Node( const Soprano::Node &node );
@@ -116,7 +118,7 @@ namespace Soprano
 
 
         // An expression that return a xsd:boolean
-        class BooleanExpression: public Expression {
+        class SOPRANO_EXPORT BooleanExpression: public Expression {
         public:
             virtual ~BooleanExpression();
 
@@ -127,7 +129,7 @@ namespace Soprano
         };
 
         // An expression that return a xsd:integer, xsd:decimal, xsd:float, and xsd:double
-        class NumericalExpression: public Expression {
+        class SOPRANO_EXPORT NumericalExpression: public Expression {
         public:
             virtual ~NumericalExpression();
 
@@ -140,7 +142,7 @@ namespace Soprano
         /**
          * A numerical constant.
         */
-        class Numerical : public NumericalExpression {
+        class SOPRANO_EXPORT Numerical : public NumericalExpression {
         public:
             Numerical();
             Numerical( int    value );
@@ -172,7 +174,7 @@ namespace Soprano
         };
    
         // An expression that return a xsd:string or rdfs:Datatype
-        class StringExpression: public Expression {
+        class SOPRANO_EXPORT StringExpression: public Expression {
         public:
             virtual ~StringExpression();
 
@@ -185,7 +187,7 @@ namespace Soprano
         /**
         * A string constant
         */
-        class String : public StringExpression {
+        class SOPRANO_EXPORT String : public StringExpression {
         public:
             String();
             String( const QString &value );
@@ -207,7 +209,7 @@ namespace Soprano
         // Unary Expressions                                                  //
         ////////////////////////////////////////////////////////////////////////
 
-        class UnaryBooleanExpression: public BooleanExpression {
+        class SOPRANO_EXPORT UnaryBooleanExpression: public BooleanExpression {
         public:
             UnaryBooleanExpression( BooleanExpression *expression );
 
@@ -219,7 +221,7 @@ namespace Soprano
             QSharedDataPointer<Private> d;
         };
 
-        class UnaryRTermBooleanExpression: public BooleanExpression {
+        class SOPRANO_EXPORT UnaryRTermBooleanExpression: public BooleanExpression {
         public:
             UnaryRTermBooleanExpression( RTerm *rterm );
         
@@ -231,7 +233,7 @@ namespace Soprano
             QSharedDataPointer<Private> d;
         };
 
-        class UnaryRTermStringExpression: public StringExpression {
+        class SOPRANO_EXPORT UnaryRTermStringExpression: public StringExpression {
         public:
             UnaryRTermStringExpression( RTerm *rterm );
         
@@ -243,7 +245,7 @@ namespace Soprano
             QSharedDataPointer<Private> d;
         };
 
-        class UnaryNumericalExpression: public NumericalExpression {
+        class SOPRANO_EXPORT UnaryNumericalExpression: public NumericalExpression {
         public:
             UnaryNumericalExpression( NumericalExpression *expression );
 
@@ -257,7 +259,7 @@ namespace Soprano
 
         /* XQUERY Tests */
 
-        class Not: public UnaryBooleanExpression {
+        class SOPRANO_EXPORT Not: public UnaryBooleanExpression {
         public:
             Not();
             Not( BooleanExpression *expression );
@@ -284,7 +286,7 @@ namespace Soprano
          * - http://www.w3.org/TR/2005/WD-rdf-sparql-query-20051123/#SparqlOps
          */
 
-        class IsBound: public BooleanExpression {
+        class SOPRANO_EXPORT IsBound: public BooleanExpression {
         public:
             IsBound();
             IsBound( Variable *variable );
@@ -305,7 +307,7 @@ namespace Soprano
             QSharedDataPointer<Private> d;
         };
 
-        class IsIRI: public UnaryRTermBooleanExpression {
+        class SOPRANO_EXPORT IsIRI: public UnaryRTermBooleanExpression {
         public:
             IsIRI( RTerm *rterm );
             ~IsIRI();
@@ -315,7 +317,7 @@ namespace Soprano
             void accept( ExpressionVisitor *visitor );
         };
 
-        class IsBlank: public UnaryRTermBooleanExpression {
+        class SOPRANO_EXPORT IsBlank: public UnaryRTermBooleanExpression {
         public:
             IsBlank( RTerm *rterm );
             ~IsBlank();
@@ -325,7 +327,7 @@ namespace Soprano
             void accept( ExpressionVisitor *visitor );
         };
 
-        class IsLiteral: public UnaryRTermBooleanExpression {
+        class SOPRANO_EXPORT IsLiteral: public UnaryRTermBooleanExpression {
         public:
             IsLiteral( RTerm *rterm );
             ~IsLiteral();
@@ -339,7 +341,7 @@ namespace Soprano
          * SPARQL Accessors
          */
         
-        class StringValue: public UnaryRTermStringExpression {
+        class SOPRANO_EXPORT StringValue: public UnaryRTermStringExpression {
         public:
             StringValue( RTerm *rterm );
 
@@ -348,7 +350,7 @@ namespace Soprano
             void accept( ExpressionVisitor *visitor );
         };
 
-        class LangValue: public UnaryRTermStringExpression {
+        class SOPRANO_EXPORT LangValue: public UnaryRTermStringExpression {
         public:
             // RTerm must be a literal
             LangValue( RTerm *rterm );
@@ -358,7 +360,7 @@ namespace Soprano
             void accept( ExpressionVisitor *visitor );
         };
 
-        class DataTypeValue: public UnaryRTermStringExpression {
+        class SOPRANO_EXPORT DataTypeValue: public UnaryRTermStringExpression {
         public:
             // RTerm must be a literal
             DataTypeValue( RTerm *rterm );
@@ -372,7 +374,7 @@ namespace Soprano
         // Binary Expression                                                  //
         ////////////////////////////////////////////////////////////////////////
 
-        class BinaryBooleanExpression: public BooleanExpression {
+        class SOPRANO_EXPORT BinaryBooleanExpression: public BooleanExpression {
         public:
             BinaryBooleanExpression( BooleanExpression *first, BooleanExpression *second );
 
@@ -387,7 +389,7 @@ namespace Soprano
             QSharedDataPointer<Private> d;
         };
 
-        class BinaryNumericalBooleanExpression: public BooleanExpression {
+        class SOPRANO_EXPORT BinaryNumericalBooleanExpression: public BooleanExpression {
         public:
             BinaryNumericalBooleanExpression( NumericalExpression *first, NumericalExpression *second );
 
@@ -402,7 +404,7 @@ namespace Soprano
             QSharedDataPointer<Private> d;
         };
 
-        class BinaryStringBooleanExpression: public BooleanExpression {
+        class SOPRANO_EXPORT BinaryStringBooleanExpression: public BooleanExpression {
         public:
             BinaryStringBooleanExpression( StringExpression *first, StringExpression *second );
 
@@ -417,7 +419,7 @@ namespace Soprano
             QSharedDataPointer<Private> d;
         };
 
-        class BinaryDateTimeBooleanExpression: public BooleanExpression {
+        class SOPRANO_EXPORT BinaryDateTimeBooleanExpression: public BooleanExpression {
         public:
             BinaryDateTimeBooleanExpression( const QDateTime& first, const QDateTime& second );
 
@@ -432,7 +434,7 @@ namespace Soprano
             QSharedDataPointer<Private> d;
         };
 
-        class BinaryRTermBooleanExpression: public BooleanExpression {
+        class SOPRANO_EXPORT BinaryRTermBooleanExpression: public BooleanExpression {
         public:
             BinaryRTermBooleanExpression( RTerm *first, RTerm *second );
 
@@ -447,7 +449,7 @@ namespace Soprano
             QSharedDataPointer<Private> d;
         };
 
-        class BinaryNumericalExpression: public NumericalExpression {
+        class SOPRANO_EXPORT BinaryNumericalExpression: public NumericalExpression {
         public:
             BinaryNumericalExpression( NumericalExpression *first, NumericalExpression *second );
 
@@ -462,7 +464,7 @@ namespace Soprano
             QSharedDataPointer<Private> d;
         };
 
-        class LogicOr: public BinaryBooleanExpression {
+        class SOPRANO_EXPORT LogicOr: public BinaryBooleanExpression {
         public:
             LogicOr( BooleanExpression *first, BooleanExpression *second );
 
@@ -471,7 +473,7 @@ namespace Soprano
             void accept( ExpressionVisitor *visitor );
         };
 
-        class LogicAnd: public BinaryBooleanExpression {
+        class SOPRANO_EXPORT LogicAnd: public BinaryBooleanExpression {
         public:
             LogicAnd( BooleanExpression *first, BooleanExpression *second );
             
@@ -480,7 +482,7 @@ namespace Soprano
             void accept( ExpressionVisitor *visitor );
         };
 
-        class NumericalEqual: public BinaryNumericalBooleanExpression {
+        class SOPRANO_EXPORT NumericalEqual: public BinaryNumericalBooleanExpression {
         public:
             NumericalEqual( NumericalExpression *first, NumericalExpression *second );
 
@@ -490,7 +492,7 @@ namespace Soprano
         };
 
         // trueg: I think the NotEqual expressions are superfluous since they can be done via Not(Equal(expr, expr))
-        class NumericalNotEqual: public BinaryNumericalBooleanExpression {
+        class SOPRANO_EXPORT NumericalNotEqual: public BinaryNumericalBooleanExpression {
         public:
             NumericalNotEqual( NumericalExpression *first, NumericalExpression *second );
 
@@ -499,7 +501,7 @@ namespace Soprano
             void accept( ExpressionVisitor *visitor );
         };
 
-        class StringEqual: public BinaryStringBooleanExpression {
+        class SOPRANO_EXPORT StringEqual: public BinaryStringBooleanExpression {
         public:
             StringEqual( StringExpression *first, StringExpression *second );
 
@@ -508,7 +510,7 @@ namespace Soprano
             void accept( ExpressionVisitor *visitor );
         };
 
-        class StringNotEqual: public BinaryStringBooleanExpression {
+        class SOPRANO_EXPORT StringNotEqual: public BinaryStringBooleanExpression {
         public:
             StringNotEqual( StringExpression *first, StringExpression *second );
 
@@ -517,7 +519,7 @@ namespace Soprano
             void accept( ExpressionVisitor *visitor );
         };
 
-        class DateTimeEqual: public BinaryDateTimeBooleanExpression {
+        class SOPRANO_EXPORT DateTimeEqual: public BinaryDateTimeBooleanExpression {
         public:
             DateTimeEqual( const QDateTime& first, const QDateTime& second );
 
@@ -526,7 +528,7 @@ namespace Soprano
             void accept( ExpressionVisitor *visitor );
         }; 
 
-        class DateTimeNotEqual: public BinaryDateTimeBooleanExpression {
+        class SOPRANO_EXPORT DateTimeNotEqual: public BinaryDateTimeBooleanExpression {
         public:
             DateTimeNotEqual( const QDateTime& first, const QDateTime& second );
 
@@ -535,7 +537,7 @@ namespace Soprano
             void accept( ExpressionVisitor *visitor );
         };
 
-        class NumericalLessThan: public BinaryNumericalBooleanExpression {
+        class SOPRANO_EXPORT NumericalLessThan: public BinaryNumericalBooleanExpression {
         public:
             NumericalLessThan( NumericalExpression *first, NumericalExpression *second );
 
@@ -544,7 +546,7 @@ namespace Soprano
             void accept( ExpressionVisitor *visitor );
         };
 
-        class NumericalGreaterThan: public BinaryNumericalBooleanExpression {
+        class SOPRANO_EXPORT NumericalGreaterThan: public BinaryNumericalBooleanExpression {
         public:
             NumericalGreaterThan( NumericalExpression *first, NumericalExpression *second );
 
@@ -553,7 +555,7 @@ namespace Soprano
             void accept( ExpressionVisitor *visitor );
         };
 
-        class NumericalLessThanEqual: public BinaryNumericalBooleanExpression {
+        class SOPRANO_EXPORT NumericalLessThanEqual: public BinaryNumericalBooleanExpression {
         public:
             NumericalLessThanEqual( NumericalExpression *first, NumericalExpression *second );
 
@@ -562,7 +564,7 @@ namespace Soprano
             void accept( ExpressionVisitor *visitor );
         };
 
-        class NumericalGreaterThanEqual: public BinaryNumericalBooleanExpression {
+        class SOPRANO_EXPORT NumericalGreaterThanEqual: public BinaryNumericalBooleanExpression {
         public:
             NumericalGreaterThanEqual( NumericalExpression *first, NumericalExpression *second );
 
@@ -571,7 +573,7 @@ namespace Soprano
             void accept( ExpressionVisitor *visitor );
         };
 
-        class StringLessThan: public BinaryStringBooleanExpression {
+        class SOPRANO_EXPORT StringLessThan: public BinaryStringBooleanExpression {
         public:
             StringLessThan( StringExpression *first, StringExpression *second );
 
@@ -580,7 +582,7 @@ namespace Soprano
             void accept( ExpressionVisitor *visitor );
         };
 
-        class StringGreaterThan: public BinaryStringBooleanExpression {
+        class SOPRANO_EXPORT StringGreaterThan: public BinaryStringBooleanExpression {
         public:
             StringGreaterThan( StringExpression *first, StringExpression *second );
 
@@ -589,7 +591,7 @@ namespace Soprano
             void accept( ExpressionVisitor *visitor );
         };
 
-        class StringLessThanEqual: public BinaryStringBooleanExpression {
+        class SOPRANO_EXPORT StringLessThanEqual: public BinaryStringBooleanExpression {
         public:
             StringLessThanEqual( StringExpression *first, StringExpression *second );
 
@@ -598,7 +600,7 @@ namespace Soprano
             void accept( ExpressionVisitor *visitor );
         };
 
-        class StringGreaterThanEqual: public BinaryStringBooleanExpression {
+        class SOPRANO_EXPORT StringGreaterThanEqual: public BinaryStringBooleanExpression {
         public:
             StringGreaterThanEqual( StringExpression *first, StringExpression *second );
 
@@ -607,7 +609,7 @@ namespace Soprano
             void accept( ExpressionVisitor *visitor );
         };
 
-        class DateTimeLessThan: public BinaryDateTimeBooleanExpression {
+        class SOPRANO_EXPORT DateTimeLessThan: public BinaryDateTimeBooleanExpression {
         public:
             DateTimeLessThan( const QDateTime& first, const QDateTime& second );
 
@@ -616,7 +618,7 @@ namespace Soprano
             void accept( ExpressionVisitor *visitor );
         };
 
-        class DateTimeGreaterThan: public BinaryDateTimeBooleanExpression {
+        class SOPRANO_EXPORT DateTimeGreaterThan: public BinaryDateTimeBooleanExpression {
         public:
             DateTimeGreaterThan( const QDateTime& first, const QDateTime& second );
 
@@ -625,7 +627,7 @@ namespace Soprano
             void accept( ExpressionVisitor *visitor );
         };
 
-        class DateTimeLessThanEqual: public BinaryDateTimeBooleanExpression {
+        class SOPRANO_EXPORT DateTimeLessThanEqual: public BinaryDateTimeBooleanExpression {
         public:
             DateTimeLessThanEqual( const QDateTime& first, const QDateTime& second );
 
@@ -634,7 +636,7 @@ namespace Soprano
             void accept( ExpressionVisitor *visitor );
         };
 
-        class DateTimeGreaterThanEqual: public BinaryDateTimeBooleanExpression {
+        class SOPRANO_EXPORT DateTimeGreaterThanEqual: public BinaryDateTimeBooleanExpression {
         public:
             DateTimeGreaterThanEqual( const QDateTime& first, const QDateTime& second );
 
@@ -643,7 +645,7 @@ namespace Soprano
             void accept( ExpressionVisitor *visitor );
         };
 
-        class NumericalMultiply: public BinaryNumericalExpression {
+        class SOPRANO_EXPORT NumericalMultiply: public BinaryNumericalExpression {
         public:
             NumericalMultiply( NumericalExpression *first, NumericalExpression *second );
 
@@ -652,7 +654,7 @@ namespace Soprano
             void accept( ExpressionVisitor *visitor ); 
         };
 
-        class NumericalDivide: public BinaryNumericalExpression {
+        class SOPRANO_EXPORT NumericalDivide: public BinaryNumericalExpression {
         public:
             NumericalDivide( NumericalExpression *first, NumericalExpression *second );
 
@@ -661,7 +663,7 @@ namespace Soprano
             void accept( ExpressionVisitor *visitor );
         };
 
-        class NumericalAdd: public BinaryNumericalExpression {
+        class SOPRANO_EXPORT NumericalAdd: public BinaryNumericalExpression {
         public:
             NumericalAdd( NumericalExpression *first, NumericalExpression *second );
 
@@ -670,7 +672,7 @@ namespace Soprano
             void accept( ExpressionVisitor *visitor );
         };
 
-        class NumericalSubtract: public BinaryNumericalExpression {
+        class SOPRANO_EXPORT NumericalSubtract: public BinaryNumericalExpression {
         public:
             NumericalSubtract( NumericalExpression *first, NumericalExpression *second );
 
@@ -684,7 +686,7 @@ namespace Soprano
          * - http://www.w3.org/TR/2005/WD-rdf-sparql-query-20051123/#SparqlOps       
          */
 
-        class RTermEqual: public BinaryRTermBooleanExpression {
+        class SOPRANO_EXPORT RTermEqual: public BinaryRTermBooleanExpression {
         public:
             RTermEqual( RTerm *first, RTerm *second );
 
@@ -693,7 +695,7 @@ namespace Soprano
             void accept( ExpressionVisitor *visitor );
         };
 
-        class RTermNotEqual: public BinaryRTermBooleanExpression {
+        class SOPRANO_EXPORT RTermNotEqual: public BinaryRTermBooleanExpression {
         public:
             RTermNotEqual( RTerm *first, RTerm *second );
 
@@ -702,7 +704,7 @@ namespace Soprano
             void accept( ExpressionVisitor *visitor );
         };
 
-        class LangMatches: public BinaryStringBooleanExpression {
+        class SOPRANO_EXPORT LangMatches: public BinaryStringBooleanExpression {
         public:
             LangMatches( StringExpression *first, StringExpression *second );
 
@@ -711,7 +713,7 @@ namespace Soprano
             void accept( ExpressionVisitor *visitor );
         }; 
 
-        class Regexp: public BooleanExpression {
+        class SOPRANO_EXPORT Regexp: public BooleanExpression {
         public:
             Regexp();
             Regexp( StringExpression *expression, const QString &pattern);
@@ -743,7 +745,7 @@ namespace Soprano
         // ParsedQuery                                                        //
         ////////////////////////////////////////////////////////////////////////
 
-        class Prefix {
+        class SOPRANO_EXPORT Prefix {
         public:
             Prefix();
             Prefix( const QString &prefix, const QUrl &uri );
@@ -760,7 +762,7 @@ namespace Soprano
             QSharedDataPointer<Private> d;
         };
 
-        class TriplePattern : public BooleanExpression {
+        class SOPRANO_EXPORT TriplePattern : public BooleanExpression {
         public:
             TriplePattern();
             
@@ -794,7 +796,7 @@ namespace Soprano
             QSharedDataPointer<Private> d;
         };
 
-        class GraphPattern : public BooleanExpression {
+        class SOPRANO_EXPORT GraphPattern : public BooleanExpression {
         public:
             GraphPattern();
             GraphPattern( bool optional );
@@ -821,7 +823,7 @@ namespace Soprano
             QSharedDataPointer<Private> d;
         };
         
-        class QueryTerms {
+        class SOPRANO_EXPORT QueryTerms {
         public:
             QueryTerms();
             QueryTerms( const QueryTerms& other );
@@ -843,7 +845,12 @@ namespace Soprano
             QSharedDataPointer<Private> d;
         };
         
-        class Query {
+	/**
+	 * \class Query query.h soprano/Query/Query
+	 *
+	 * \warning <b>The API is subject to change and far from being stable.</b>
+	 */
+        class SOPRANO_EXPORT Query {
         public:
             // Query types
             enum QueryType {
@@ -890,7 +897,7 @@ namespace Soprano
         // ExpressionVisitor                                                  //
         ////////////////////////////////////////////////////////////////////////
 
-        class ExpressionVisitor {
+        class SOPRANO_EXPORT ExpressionVisitor {
         public:
         virtual ~ExpressionVisitor() {}
 

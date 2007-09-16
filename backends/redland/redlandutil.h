@@ -45,8 +45,6 @@ namespace Soprano
   
 	  librdf_statement *createStatement( const Statement &statement );
 
-	  const char *queryType( const QueryLegacy &query );
-
 	  /**
 	   * Calls librdf_free_node if \a node is not null.
 	   * The only reason for this method are the stupid asserts that clutter stderr.

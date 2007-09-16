@@ -3,6 +3,7 @@ project(soprano_server)
 include_directories(
   ${soprano_server_BINARY_DIR}
   ${soprano_core_SOURCE_DIR}
+  ${soprano_core_BINARY_DIR}
   ${soprano_core_SOURCE_DIR}/query
   ${QT_INCLUDES}
   ${CMAKE_SOURCE_DIR}

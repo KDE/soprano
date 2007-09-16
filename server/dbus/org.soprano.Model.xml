@@ -44,6 +44,7 @@
     <method name="executeQuery">
       <arg name="query" type="s" direction="in" />
       <arg name="queryLang" type="i" direction="in" />
+      <arg name="userQueryLang" type="s" direction="in" />
       <arg name="iterator" type="s" direction="out" />
     </method>
     <method name="createBlankNode">

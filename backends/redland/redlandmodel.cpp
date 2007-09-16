@@ -22,7 +22,6 @@
 
 #include "redlandmodel.h"
 
-#include <soprano/querylegacy.h>
 #include <soprano/queryresultiterator.h>
 #include <soprano/statementiterator.h>
 #include <soprano/nodeiterator.h>
@@ -197,13 +196,17 @@ bool Soprano::Redland::RedlandModel::containsAnyStatement( const Statement &stat
 }
 
 
-Soprano::QueryResultIterator Soprano::Redland::RedlandModel::executeQuery( const QueryLegacy &query ) const
+Soprano::QueryResultIterator Soprano::Redland::RedlandModel::executeQuery( const QString &query, Query::QueryLanguage language, const QString& userQueryLanguage ) const
 {
     QReadLocker lock( &d->readWriteLock );
 
     clearError();
 
-    librdf_query *q = librdf_new_query( d->world, Util::queryType( query ), 0L, (unsigned char *)query.query().toLatin1().data(), 0L );
+    librdf_query *q = librdf_new_query( d->world,
+                                        Query::queryLanguageToString( language, userQueryLanguage ).toLower().toLatin1().data(),
+                                        0,
+                                        (unsigned char *)query.toLatin1().data(),
+                                        0 );
     if ( !q ) {
         setError( Redland::World::self()->lastError() );
         return QueryResultIterator();

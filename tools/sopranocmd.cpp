@@ -19,6 +19,7 @@
 #include <QtCore/QList>
 #include <QtCore/QDir>
 
+// FIXME: do not include the global header
 #include "../soprano/soprano.h"
 
 #include "../server/tcpclient.h"
@@ -356,7 +357,7 @@ int main( int argc, char *argv[] )
         QTime time;
         time.start();
 
-        Soprano::QueryResultIterator it = model->executeQuery( Soprano::QueryLegacy( query, Soprano::QueryLegacy::SPARQL ) );
+        Soprano::QueryResultIterator it = model->executeQuery( query, Soprano::Query::QUERY_LANGUAGE_SPARQL );
         queryTime = time.elapsed();
         printQueryResult( it );
     }

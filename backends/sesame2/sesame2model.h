@@ -46,7 +46,7 @@ namespace Soprano {
 
 	    Error::ErrorCode addStatement( const Statement &statement );
 	    NodeIterator listContexts() const;
-	    QueryResultIterator executeQuery( const QueryLegacy &query ) const;
+	    QueryResultIterator executeQuery( const QString &query, Query::QueryLanguage language, const QString& userQueryLanguage = QString() ) const;
 	    StatementIterator listStatements( const Statement &partial ) const;
 	    Error::ErrorCode removeStatement( const Statement &statement );
 	    Error::ErrorCode removeAllStatements( const Statement &statement );

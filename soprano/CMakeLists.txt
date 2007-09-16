@@ -21,10 +21,9 @@ include_directories(
   )
 
 configure_file(config.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/config.h)
+configure_file(version.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/version.h)
 
 SET(soprano_SRCS
-  querylegacy.cpp
-  querylegacy.h
   queryresultiterator.cpp
   queryresultiterator.h
   queryresultiteratorbackend.cpp
@@ -80,6 +79,7 @@ SET(soprano_SRCS
   inference/inferencemodel.h
   inference/inferencemodel.cpp
   inference/inferenceruleparser.cpp
+  nrlmodel.cpp
   )
 
 qt4_automoc(${soprano_SRCS})
@@ -103,7 +103,6 @@ INSTALL(TARGETS soprano
 
 INSTALL(FILES 
   parser.h
-  querylegacy.h
   queryresultiterator.h
   queryresultiteratorbackend.h
   node.h

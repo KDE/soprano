@@ -1,6 +1,6 @@
 install(FILES
   Query
-  QueryParser
-  QuerySerializer
+  Parser
+  Serializer
   DESTINATION
   include/soprano/Query)

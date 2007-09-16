@@ -25,16 +25,16 @@
 #include "soprano_export.h"
 
 /// @brief Soprano version as string at compile time.
-#define SOPRANO_VERSION_STRING "1.9.0"
+#define SOPRANO_VERSION_STRING "${CMAKE_SOPRANO_VERSION_STRING}"
 
 /// @brief The major Soprano version number at compile time
-#define SOPRANO_VERSION_MAJOR 1
+#define SOPRANO_VERSION_MAJOR ${CMAKE_SOPRANO_VERSION_MAJOR}
 
 /// @brief The minor Soprano version number at compile time
-#define SOPRANO_VERSION_MINOR 9
+#define SOPRANO_VERSION_MINOR ${CMAKE_SOPRANO_VERSION_MINOR}
 
 /// @brief The Soprano release version number at compile time
-#define SOPRANO_VERSION_RELEASE 0
+#define SOPRANO_VERSION_RELEASE ${CMAKE_SOPRANO_VERSION_RELEASE}
 
 namespace Soprano {
     /**

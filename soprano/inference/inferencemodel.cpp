@@ -24,7 +24,6 @@
 #include "sil.h"
 #include "statement.h"
 #include "inferencerule.h"
-#include "querylegacy.h"
 #include "statementpattern.h"
 #include "nodepattern.h"
 #include "queryresultiterator.h"
@@ -237,7 +236,7 @@ QList<Soprano::Node> Soprano::Inference::InferenceModel::inferedGraphsForStateme
 
         query += " }";
 
-        QueryResultIterator it = parentModel()->executeQuery( QueryLegacy( query, QueryLegacy::SPARQL ) );
+        QueryResultIterator it = parentModel()->executeQuery( query, Query::QUERY_LANGUAGE_SPARQL );
         while ( it.next() ) {
             // Step 2: Check for which graph it is source statement
             query = QString( "SELECT ?g WHERE { "
@@ -250,7 +249,7 @@ QList<Soprano::Node> Soprano::Inference::InferenceModel::inferedGraphsForStateme
                     .arg( Vocabulary::RDF::TYPE().toString() )
                     .arg( Vocabulary::SIL::INFERENCE_GRAPH().toString() );
 
-            QueryResultIterator it2 = parentModel()->executeQuery( QueryLegacy( query, QueryLegacy::SPARQL ) );
+            QueryResultIterator it2 = parentModel()->executeQuery( query, Query::QUERY_LANGUAGE_SPARQL );
             while ( it2.next() ) {
                 // Step 3: remove the whole infered graph and its metadata
                 graphs += it2.binding( 0 );
@@ -276,7 +275,7 @@ QList<Soprano::Node> Soprano::Inference::InferenceModel::inferedGraphsForStateme
                             .arg( Vocabulary::SIL::SOURCE_STATEMENT().toString() )
                             .arg( node.toString() );
 
-            QueryResultIterator it2 = parentModel()->executeQuery( QueryLegacy( query, QueryLegacy::SPARQL ) );
+            QueryResultIterator it2 = parentModel()->executeQuery( query, Query::QUERY_LANGUAGE_SPARQL );
             while ( it2.next() ) {
                 // Step 3: remove the whole infered graph and its metadata
                 graphs += it2.binding( 0 );
@@ -303,12 +302,11 @@ void Soprano::Inference::InferenceModel::performInference()
 void Soprano::Inference::InferenceModel::clearInference()
 {
     // remove all infered statements
-    QueryLegacy query( QString( "select ?g where { ?g <%1> <%2> . }" )
+    QString query( QString( "select ?g where { ?g <%1> <%2> . }" )
                        .arg( Vocabulary::RDF::TYPE().toString() )
-                       .arg( Vocabulary::SIL::INFERENCE_GRAPH().toString() ),
-                       QueryLegacy::SPARQL );
+                       .arg( Vocabulary::SIL::INFERENCE_GRAPH().toString() ) );
 
-    QList<BindingSet> bindings = parentModel()->executeQuery( query ).allBindings();
+    QList<BindingSet> bindings = parentModel()->executeQuery( query, Query::QUERY_LANGUAGE_SPARQL ).allBindings();
     for ( QList<BindingSet>::const_iterator it = bindings.constBegin(); it != bindings.constEnd(); ++it ) {
         parentModel()->removeContext( it->value( 0 ) );
     }
@@ -333,13 +331,13 @@ int Soprano::Inference::InferenceModel::inferStatement( const Statement& stateme
 
 int Soprano::Inference::InferenceModel::inferRule( const Rule& rule, bool recurse )
 {
-    QueryLegacy q( rule.createSparqlQuery( d->optimizedQueries ), QueryLegacy::SPARQL );
+    QString q = rule.createSparqlQuery( d->optimizedQueries );
 
 //    qDebug() << "Rule query: " << q.query();
 
     int inferedStatementsCount = 0;
     // cache the bindings since we work recursively
-    QList<BindingSet> bindings = parentModel()->executeQuery( q ).allBindings();
+    QList<BindingSet> bindings = parentModel()->executeQuery( q, Query::QUERY_LANGUAGE_SPARQL ).allBindings();
     for ( QList<BindingSet>::const_iterator it = bindings.constBegin(); it != bindings.constEnd(); ++it ) {
 
 //         qDebug() << "rule bindings:";

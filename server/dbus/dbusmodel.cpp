@@ -28,7 +28,6 @@
 
 #include <soprano/backend.h>
 #include <soprano/error.h>
-#include <soprano/querylegacy.h>
 #include <soprano/nodeiterator.h>
 #include <soprano/statementiterator.h>
 #include <soprano/queryresultiterator.h>
@@ -42,8 +41,8 @@ public:
 };
 
 
-Soprano::Client::DBusModel::DBusModel( const QString& serviceName, const QString& dbusObject )
-    : Model(),
+Soprano::Client::DBusModel::DBusModel( const QString& serviceName, const QString& dbusObject, const Backend* backend )
+    : StorageModel( backend ),
       d( new Private() )
 {
     d->interface = new DBusModelInterface( serviceName, dbusObject, QDBusConnection::sessionBus(), this );
@@ -85,9 +84,9 @@ Soprano::NodeIterator Soprano::Client::DBusModel::listContexts() const
 }
 
 
-Soprano::QueryResultIterator Soprano::Client::DBusModel::executeQuery( const QueryLegacy &query ) const
+Soprano::QueryResultIterator Soprano::Client::DBusModel::executeQuery( const QString& query, Query::QueryLanguage language, const QString& userQueryLanguage ) const
 {
-    QDBusReply<QString> reply = d->interface->executeQuery( query.query(), ( int )query.type() );
+    QDBusReply<QString> reply = d->interface->executeQuery( query, ( int )language, userQueryLanguage );
     setError( DBus::convertError( reply.error() ) );
     if ( reply.isValid() ) {
         return new DBusClientQueryResultIteratorBackend( d->interface->service(), reply.value() );

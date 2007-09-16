@@ -61,7 +61,7 @@ namespace Soprano
 
 		bool containsAnyStatement( const Statement &statement ) const;
 
-		Soprano::QueryResultIterator executeQuery( const QueryLegacy &query ) const;
+		Soprano::QueryResultIterator executeQuery( const QString &query, Query::QueryLanguage language, const QString& userQueryLanguage = QString() ) const;
 
 		Soprano::StatementIterator listStatements( const Statement &partial ) const;
 

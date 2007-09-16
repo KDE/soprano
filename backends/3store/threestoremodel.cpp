@@ -24,8 +24,8 @@
 
 #include <soprano/queryresultiterator.h>
 #include <soprano/statementiterator.h>
-#include <soprano/querylegacy.h>
 #include <soprano/nodeiterator.h>
+#include <soprano/sopranotypes.h>
 
 #include <QtCore/QDebug>
 
@@ -165,14 +165,14 @@ bool Soprano::ThreeStore::Model::containsAnyStatement( const Statement &statemen
 }
 
 
-Soprano::QueryResultIterator Soprano::ThreeStore::Model::executeQuery( const QueryLegacy &query ) const
+Soprano::QueryResultIterator Soprano::ThreeStore::Model::executeQuery( const QString &query, Query::QueryLanguage language, const QString& userQueryLanguage ) const
 {
-    qDebug() << "(Soprano::ThreeStore::Model) executing query: " << query.query();
+    qDebug() << "(Soprano::ThreeStore::Model) executing query: " << query;
 
     // FIXME: should we use another base URI?
     ts_query* q = ts_query_prepare( d->connection,
-                                    QueryLegacy::queryTypeToString( query.type() ).toUtf8().data(),
-                                    query.query().toUtf8().data(),
+                                    Query::queryLanguageToString( language, userQueryLanguage ).toUtf8().data(),
+                                    query.toUtf8().data(),
                                     "3store:default#");
 
     if ( ts_result* res = ts_query_execute( d->connection, q ) ) {
@@ -195,7 +195,7 @@ Soprano::StatementIterator Soprano::ThreeStore::Model::listStatements( const Sta
         query += QString( "%2 . }" ).arg( statementToConstructGraphPattern( partial ) );
     }
 
-    QueryResultIterator r = executeQuery( QueryLegacy( query, QueryLegacy::SPARQL ) );
+    QueryResultIterator r = executeQuery( query, Query::QUERY_LANGUAGE_SPARQL );
 
     return r.iterateStatements();
 }

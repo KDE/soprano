@@ -35,7 +35,6 @@
 #include <soprano/statementiterator.h>
 #include <soprano/queryresultiterator.h>
 #include <soprano/statement.h>
-#include <soprano/querylegacy.h>
 #include <soprano/nodeiterator.h>
 
 #include <QtCore/QDebug>
@@ -123,14 +122,14 @@ Soprano::NodeIterator Soprano::Sesame2::Model::listContexts() const
 }
 
 
-Soprano::QueryResultIterator Soprano::Sesame2::Model::executeQuery( const QueryLegacy &query ) const
+Soprano::QueryResultIterator Soprano::Sesame2::Model::executeQuery( const QString &query, Query::QueryLanguage language, const QString& userQueryLanguage ) const
 {
     QReadLocker lock( &d->readWriteLock );
 
     clearError();
 
-    if ( query.type() != Soprano::QueryLegacy::SPARQL ) {
-        setError( Error::Error( "Unsupported query language." ) );
+    if ( language != Soprano::Query::QUERY_LANGUAGE_SPARQL ) {
+        setError( Error::Error( QString( "Unsupported query language." ).arg( Query::queryLanguageToString( language, userQueryLanguage ) ) ) );
         return QueryResultIterator();
     }
 
@@ -140,7 +139,7 @@ Soprano::QueryResultIterator Soprano::Sesame2::Model::executeQuery( const QueryL
     JObjectRef sparqlQueryLang = JNIWrapper::instance()->env()->GetStaticObjectField( JNIWrapper::instance()->env()->FindClass( ORG_OPENRDF_QUERY_QUERYLANGUAGE ),
                                                                                       sparqlID );
 
-    JObjectRef queryResult = d->repository->repositoryConnection()->query( sparqlQueryLang, JStringRef( query.query() ) );
+    JObjectRef queryResult = d->repository->repositoryConnection()->query( sparqlQueryLang, JStringRef( query ) );
 
     if ( queryResult ) {
         QueryResultIteratorBackend* it = new QueryResultIteratorBackend( queryResult, this );

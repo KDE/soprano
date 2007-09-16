@@ -25,6 +25,7 @@
 #include "soprano_export.h"
 
 #include <QtCore/QFlags>
+#include <QtCore/QString>
 
 namespace Soprano
 {
@@ -109,6 +110,8 @@ namespace Soprano
 	    QUERY_LANGUAGE_USER = 0x1000 /**< The user type can be used to introduce unknown query lanaguages by name */
 	};
 	Q_DECLARE_FLAGS( QueryLanguages, QueryLanguage )
+
+        SOPRANO_EXPORT QString queryLanguageToString( QueryLanguage lang, const QString& userQueryLanguage = QString() );
     }
 }
 

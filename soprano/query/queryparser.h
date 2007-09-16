@@ -34,6 +34,8 @@ namespace Soprano {
 	class Query;
 
 	/**
+	 * \class Parser queryparser.h soprano/Query/Parser
+	 *
 	 * \brief Soprano::Query::Parser defines the interface for a Soprano query parser plugin.
 	 *
 	 * Each parser plugin may support multiple query languages (supportedQueryLanguages() and supportedUserQueryLanguages()).

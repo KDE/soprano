@@ -68,3 +68,20 @@ Soprano::RdfSerialization Soprano::mimeTypeToSerialization( const QString& mimet
     }
     return SERIALIZATION_UNKNOWN;
 }
+
+
+QString Soprano::Query::queryLanguageToString( QueryLanguage lang, const QString& userQueryLanguage )
+{
+    switch( lang ) {
+    case QUERY_LANGUAGE_NONE:
+        return QLatin1String( "none" );
+    case QUERY_LANGUAGE_SPARQL:
+        return QLatin1String( "SPARQL" );
+    case QUERY_LANGUAGE_RDQL:
+        return QLatin1String( "RDQL" );
+    case QUERY_LANGUAGE_SERQL:
+        return QLatin1String( "SERQL" );
+    default:
+        return userQueryLanguage;
+    }
+}

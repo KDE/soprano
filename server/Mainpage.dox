@@ -1,0 +1,90 @@
+/**
+ * \page soprano_server Soprano Server
+ *
+ * %Soprano provides simple server and client librarys which allow for remote access to %Soprano models.
+ *
+ * \sa \ref soprano_server_protocol, Soprano::Server, Soprano::Client
+ */
+
+/**
+ * \page soprano_server_protocol Soprano Server Protocol
+ *
+ * \warning The protocol described on this page is used internally by the Soprano TCP and Unix socket server and client.
+ * Normally there is no need to deal with it except if you want to write a client or server in another
+ * programming language.
+ *
+ * The server protocol is quite simple and is based on a set of commands and binary serializations for
+ * data types. It has been optimized for speed and nothing else so it always tries to comunicate as
+ * little data as possible.
+ *
+ * \section soprano_server_protocol_commands Commands
+ *
+ * Commands are identified by unsigned 16bit integer values (native bit order). Issuing a command
+ * is done by sending the command number followed by the command parameters.
+ *
+ * The following table lists the available commands.
+ *
+ * <table>
+ * <tr><th>Command</th><th>Code</th><th>Parameters</th><th>Return values</th><th>Description</th></tr>
+ * <tr><td>Create model</td><td>0x1</td><td>name (string), settings (List of #Soprano::BackendSetting)</td><td>model ID (unsigned 32bit int)</td><td>Retrieve the ID for a model (if the model does not yet exist, it is craeted.</td></tr>
+ * <tr><td>FIXME...</td></tr>
+ * </table>
+ *
+ * \section soprano_server_protocol_types Types
+ *
+ * The default implementation of the protocol uses QDataStream. Thus, all basic types are encoded as QDataStream does it.
+ *
+ * \subsection soprano_server_protocol_types_node Soprano::Node
+ *
+ * A %Soprano node starts with the node type encoded as unsigned 8bit. For the possible values see Soprano::Node::Type.
+ * If it is a literal node (Soprano::Node::LiteralNode) after the type follow the literal value (Soprano::LiteralValue)
+ * and the language (string). If it is a resource (Soprano::Node::ResourceNode) or blank node (Soprano::Node::BlankNode)
+ * after the type follows the URI of the node (URI). If it is an empty node, nothing follows the type.
+ *
+ * \subsection soprano_server_protocol_types_statement Soprano::Statement
+ *
+ * A %Soprano statement is encoded simply by encoding the subject, predicate, object, and context node in that order.
+ *
+ * \subsection soprano_server_protocol_types_literalvalue Soprano::LiteralValue
+ *
+ * A %Soprano literal value is encoded as a QVariant: The type of the data (unsigned 32bit) followed
+ * by a null flag (8bit) and the data of the specified type.
+ *
+ * \subsection soprano_server_protocol_types_bindingset Soprano::BindingSet
+ *
+ * FIXME...
+ */
+
+/**
+ * \namespace Soprano::Server
+ *
+ * \sa \ref soprano_server, Soprano::Client
+ */
+
+/**
+ * \namespace Soprano::Client
+ *
+ * The server clients have the following restrictions:
+ *
+ * <b>TCP %Client:</b>
+ * \li No signals are emitted (Model::statementsAdded() and Model::statementsRemoved())
+ * \li No permission handling, i.e. each process running on the machine can access a running %Soprano server,
+ *     indifferent of the user id of the server process.
+ * \li Queries are always transmitted as strings and thus, might be serialized on the client side and parsed
+ *     again on the server side when using Model::executeQuery( const Query& ) const.
+ *
+ * <b>Unix Socket %Client:</b>
+ * \li No signals are emitted (Model::statementsAdded() and Model::statementsRemoved())
+ * \li Queries are always transmitted as strings and thus, might be serialized on the client side and parsed
+ *     again on the server side when using Model::executeQuery( const Query& ) const.
+ *
+ * <b>DBus %Client:</b>
+ * \li Queries are always transmitted as strings and thus, might be serialized on the client side and parsed
+ *     again on the server side when using Model::executeQuery( const Query& ) const.
+ *
+ * While the TCP comunication is the fastest due to its missing permission handling it is not recommended to use
+ * it yet. The best solution at the moment is the DBus client. Although being the slowest (slightly slower than
+ * the Unix Socket client) it is reliable and feature-complete (signals are transmitted).
+ *
+ * \sa \ref soprano_server, Soprano::Server
+ */

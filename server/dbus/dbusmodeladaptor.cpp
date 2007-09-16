@@ -40,7 +40,6 @@
 
 #include "soprano/model.h"
 #include "soprano/node.h"
-#include "soprano/querylegacy.h"
 
 
 class Soprano::Server::DBusModelAdaptor::Private
@@ -118,10 +117,10 @@ Soprano::Node Soprano::Server::DBusModelAdaptor::createBlankNode( const QDBusMes
     return node;
 }
 
-QString Soprano::Server::DBusModelAdaptor::executeQuery( const QString &query, int queryLang, const QDBusMessage& m )
+QString Soprano::Server::DBusModelAdaptor::executeQuery( const QString &query, int queryLang, const QString& userQueryLanguage, const QDBusMessage& m )
 {
     // handle method call org.soprano.Model.executeQuery
-    QueryResultIterator it = d->model->executeQuery( QueryLegacy( query, ( QueryLegacy::QueryType )queryLang ) );
+    QueryResultIterator it = d->model->executeQuery( query, ( Query::QueryLanguage )queryLang, userQueryLanguage );
     if ( it.isValid() ) {
         IteratorWrapper* itW = new IteratorWrapper( it, this );
         d->openIterators.insert( m.service(), itW );

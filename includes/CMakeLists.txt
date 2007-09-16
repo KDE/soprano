@@ -23,7 +23,6 @@ install(FILES
   Plugin
   Serializer
   SimpleStatementIterator
-  QueryLegacy
   RdfSchemaWrapper
   StorageModel
   DESTINATION

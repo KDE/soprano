@@ -36,6 +36,8 @@ namespace Soprano {
 	class Query;
 
 	/**
+	 * \class Serializer queryserializer.h soprano/Query/Serializer
+	 *
 	 * \brief Soprano::Query::Serializer defines the interface for a Soprano query serializer plugin.
 	 *
 	 * Each serializer plugin may support multiple query languages (supportedQueryLanguages() and supportedUserQueryLanguages()).
@@ -62,7 +64,7 @@ namespace Soprano {
 	     *
 	     * \return \p true if the %serialization was successful,  false otherwise.
 	     */
-	    virtual bool serializeQuery( const Query& query, QTextStream& stream, QueryLanguage lang, const QString& userQueryLanguage = QString() ) = 0;
+	    virtual bool serializeQuery( const Query& query, QTextStream& stream, QueryLanguage lang, const QString& userQueryLanguage = QString() ) const = 0;
 
 	    /**
 	     * A query serializer can support different query languages.

@@ -26,7 +26,6 @@
 #include "operators.h"
 #include "socketdevice.h"
 
-#include "querylegacy.h"
 #include "queryresultiterator.h"
 #include "node.h"
 #include "nodeiterator.h"
@@ -454,8 +453,9 @@ void Soprano::Server::ServerConnection::Private::query( QDataStream& stream )
     if ( model ) {
         QString queryString;
         quint16 queryLang;
-        stream >> queryString >> queryLang;
-        QueryResultIterator it = model->executeQuery( QueryLegacy( queryString, ( QueryLegacy::QueryType )queryLang ) );
+        QString userLang;
+        stream >> queryString >> queryLang >> userLang;
+        QueryResultIterator it = model->executeQuery( queryString, ( Query::QueryLanguage )queryLang, userLang );
         stream << mapIterator( it ) << model->lastError();
     }
     else {

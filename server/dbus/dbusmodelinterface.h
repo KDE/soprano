@@ -75,10 +75,10 @@ namespace Soprano {
 		return callWithArgumentList(QDBus::Block, QLatin1String("createBlankNode"), argumentList);
 	    }
 
-	    inline QDBusReply<QString> executeQuery(const QString &query, int queryLang)
+	    inline QDBusReply<QString> executeQuery( const QString &query, int queryLang, const QString& userQueryLanguage )
 	    {
 		QList<QVariant> argumentList;
-		argumentList << qVariantFromValue(query) << qVariantFromValue(queryLang);
+		argumentList << qVariantFromValue(query) << qVariantFromValue(queryLang) << qVariantFromValue(userQueryLanguage);
 		return callWithArgumentList(QDBus::Block, QLatin1String("executeQuery"), argumentList);
 	    }
 

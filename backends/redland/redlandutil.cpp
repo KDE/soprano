@@ -23,7 +23,6 @@
 #include "redlandutil.h"
 
 #include "node.h"
-#include "querylegacy.h"
 #include "statement.h"
 #include "redlandworld.h"
 
@@ -90,19 +89,6 @@ Soprano::Statement Soprano::Redland::Util::createStatement( librdf_statement *st
   librdf_node *object = librdf_statement_get_object( st );
 
   return Soprano::Statement( createNode( subject), createNode( predicate), createNode( object ) );
-}
-
-const char *Soprano::Redland::Util::queryType( const QueryLegacy &query )
-{
-  if ( query.type() == QueryLegacy::RDQL )
-  {
-    return "rdql";
-  }
-  else if (query.type() == QueryLegacy::SPARQL )
-  {
-    return "sparql";
-  }
-  return 0L;
 }
 
 void Soprano::Redland::Util::freeNode( librdf_node* node )

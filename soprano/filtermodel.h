@@ -102,7 +102,12 @@ namespace Soprano {
 	/**
 	 * Default implementation simply pipes the call through to the parent model.
 	 */
-	virtual QueryResultIterator executeQuery( const QueryLegacy &query ) const;
+	virtual QueryResultIterator executeQuery( const Query::Query& query ) const;
+
+	/**
+	 * Default implementation simply pipes the call through to the parent model.
+	 */
+	virtual QueryResultIterator executeQuery( const QString& query, Query::QueryLanguage language, const QString& userQueryLanguage = QString() ) const;
 	//@}
 
 	//@{

@@ -5,7 +5,7 @@
 #---------------------------------------------------------------------------
 DOXYFILE_ENCODING      = UTF-8
 PROJECT_NAME           = Soprano
-PROJECT_NUMBER         = 1.9.0
+PROJECT_NUMBER         = ${CMAKE_SOPRANO_VERSION_STRING}
 OUTPUT_DIRECTORY       = docs
 CREATE_SUBDIRS         = NO
 OUTPUT_LANGUAGE        = English
@@ -93,6 +93,7 @@ INPUT                  = ${soprano_SOURCE_DIR}/soprano \
                          ${soprano_SOURCE_DIR}/index/indexfiltermodel.h \
                          ${soprano_SOURCE_DIR}/index/cluceneindex.h \
                          ${soprano_SOURCE_DIR}/index/indexqueryhit.h \
+                         ${soprano_SOURCE_DIR}/server/Mainpage.dox \
                          ${soprano_SOURCE_DIR}/server/servercore.h \
                          ${soprano_SOURCE_DIR}/server/tcpclient.h \
                          ${soprano_SOURCE_DIR}/server/unixsocketclient.h \
