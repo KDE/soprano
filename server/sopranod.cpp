@@ -17,9 +17,9 @@
 #include <QtCore/QDir>
 
 #include "servercore.h"
-#include "soprano/backend.h"
-#include "soprano/pluginmanager.h"
-#include "soprano/version.h"
+#include "backend.h"
+#include "pluginmanager.h"
+#include "version.h"
 #include "dbus/dbusserveradaptor.h"
 
 #include <signal.h>

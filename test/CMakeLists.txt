@@ -2,10 +2,12 @@ project(soprano_tests)
 
 include_directories(
   ${soprano_SOURCE_DIR}
+  ${soprano_BINARY_DIR}
   ${soprano_SOURCE_DIR}/data
   ${soprano_core_SOURCE_DIR}
   ${soprano_core_SOURCE_DIR}/query
   ${soprano_core_SOURCE_DIR}/vocabulary
+  ${soprano_core_BINARY_DIR}
   ${QT_INCLUDES}
   ${CLUCENE_INCLUDE_DIR}
   ${CLUCENE_LIBRARY_DIR}
