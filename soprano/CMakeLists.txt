@@ -120,7 +120,7 @@ INSTALL(FILES
   backend.h
   error.h
   literalvalue.h
-  version.h
+  ${CMAKE_CURRENT_BINARY_DIR}/version.h
   rdfschemawrapper.h
   bindingset.h
   serializer.h
