@@ -142,4 +142,5 @@ INSTALL(FILES
   query/queryparser.h
   query/queryserializer.h
   soprano.h
+  vocabulary.h
   DESTINATION include/soprano)
