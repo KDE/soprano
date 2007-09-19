@@ -65,7 +65,13 @@ bool Soprano::StorageModel::containsStatement( const Statement &statement ) cons
         return false;
     }
 
-    return listStatements( statement ).allStatements().contains( statement );
+    StatementIterator it = listStatements( statement );
+    while ( it.next() ) {
+        if ( *it == statement ) {
+            return true;
+        }
+    }
+    return false;
 }
 
 bool Soprano::StorageModel::containsAnyStatement( const Statement &statement ) const
