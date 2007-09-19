@@ -102,7 +102,7 @@ Soprano::NodeIterator Soprano::Sesame2::Model::listContexts() const
 {
     clearError();
 
-    QReadLocker lock( &d->readWriteLock );
+    d->readWriteLock.lockForRead();
 
     QList<Soprano::Node> contexts;
 
@@ -111,12 +111,12 @@ Soprano::NodeIterator Soprano::Sesame2::Model::listContexts() const
     if ( JNIWrapper::instance()->exceptionOccured() ) {
         qDebug() << "(Soprano::Sesame2::Model::listContexts) failed.";
         setError( JNIWrapper::instance()->convertAndClearException() );
+        d->readWriteLock.unlock();
         return NodeIterator();
     }
     else {
         NodeIteratorBackend* it = new NodeIteratorBackend( ids, this );
         d->nodeIterators.append( it );
-        d->readWriteLock.lockForRead();
         return it;
     }
 }
@@ -124,7 +124,7 @@ Soprano::NodeIterator Soprano::Sesame2::Model::listContexts() const
 
 Soprano::QueryResultIterator Soprano::Sesame2::Model::executeQuery( const QString &query, Query::QueryLanguage language, const QString& userQueryLanguage ) const
 {
-    QReadLocker lock( &d->readWriteLock );
+    d->readWriteLock.lockForRead();
 
     clearError();
 
@@ -143,12 +143,12 @@ Soprano::QueryResultIterator Soprano::Sesame2::Model::executeQuery( const QStrin
 
     if ( queryResult ) {
         QueryResultIteratorBackend* it = new QueryResultIteratorBackend( queryResult, this );
-        d->readWriteLock.lockForRead();
         d->queryIterators.append( it );
         return it;
     }
     else {
         setError( JNIWrapper::instance()->convertAndClearException() );
+        d->readWriteLock.unlock();
         return QueryResultIterator();
     }
 }
@@ -156,7 +156,7 @@ Soprano::QueryResultIterator Soprano::Sesame2::Model::executeQuery( const QStrin
 
 Soprano::StatementIterator Soprano::Sesame2::Model::listStatements( const Statement& statement ) const
 {
-    QReadLocker lock( &d->readWriteLock );
+    d->readWriteLock.lockForRead();
 
     clearError();
 
@@ -164,21 +164,25 @@ Soprano::StatementIterator Soprano::Sesame2::Model::listStatements( const Statem
     JObjectRef subject = d->repository->valueFactory()->convertNode( statement.subject() );
     if ( JNIWrapper::instance()->exceptionOccured() ) {
         setError( JNIWrapper::instance()->convertAndClearException() );
+        d->readWriteLock.unlock();
         return StatementIterator();
     }
     JObjectRef predicate = d->repository->valueFactory()->convertNode( statement.predicate() );
     if ( JNIWrapper::instance()->exceptionOccured() ) {
         setError( JNIWrapper::instance()->convertAndClearException() );
+        d->readWriteLock.unlock();
         return StatementIterator();
     }
     JObjectRef object = d->repository->valueFactory()->convertNode( statement.object() );
     if ( JNIWrapper::instance()->exceptionOccured() ) {
         setError( JNIWrapper::instance()->convertAndClearException() );
+        d->readWriteLock.unlock();
         return StatementIterator();
     }
     JObjectRef context = d->repository->valueFactory()->convertNode( statement.context() );
     if ( JNIWrapper::instance()->exceptionOccured() ) {
         setError( JNIWrapper::instance()->convertAndClearException() );
+        d->readWriteLock.unlock();
         return StatementIterator();
     }
 
@@ -186,12 +190,12 @@ Soprano::StatementIterator Soprano::Sesame2::Model::listStatements( const Statem
     if ( JNIWrapper::instance()->exceptionOccured() ) {
         qDebug() << "(Soprano::Sesame2::Model::listStatements) failed.";
         setError( JNIWrapper::instance()->convertAndClearException() );
+        d->readWriteLock.unlock();
         return StatementIterator();
     }
     else {
         StatementIteratorBackend* it = new StatementIteratorBackend( results, this );
         d->statementIterators.append( it );
-        d->readWriteLock.lockForRead();
         return it;
     }
 }
