@@ -69,6 +69,8 @@ Soprano::Model* Soprano::FilterModel::parentModel() const
 
 void Soprano::FilterModel::setParentModel( Model* model )
 {
+    Q_ASSERT( model != this );
+
     if ( model != d->parent ) {
         if ( d->parent ) {
             d->parent->disconnect( this );
