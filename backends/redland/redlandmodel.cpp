@@ -32,9 +32,7 @@
 #include "redlandstatementiterator.h"
 #include "redlandnodeiteratorbackend.h"
 
-#include <QtCore/QReadWriteLock>
-#include <QtCore/QReadLocker>
-#include <QtCore/QWriteLocker>
+#include <QtCore/QMutex>
 #include <QtCore/QDebug>
 
 
@@ -59,7 +57,7 @@ public:
     librdf_model *model;
     librdf_storage *storage;
 
-    QReadWriteLock readWriteLock;
+    QMutex mutex;
 
     QList<RedlandStatementIterator*> iterators;
     QList<Redland::NodeIteratorBackend*> nodeIterators;
@@ -154,16 +152,16 @@ Soprano::NodeIterator Soprano::Redland::RedlandModel::listContexts() const
 {
     clearError();
 
-    d->readWriteLock.lockForRead();
+    d->mutex.lock();
 
     librdf_iterator *iter = librdf_model_get_contexts( d->model );
     if (!iter) {
         setError( Redland::World::self()->lastError() );
-        d->readWriteLock.unlock();
+        d->mutex.unlock();
         return 0;
     }
 
-    // second lock for the iterator itself
+    // we do not unlock d->readWriteLock here. That is done once the iterator closes
     NodeIteratorBackend* it = new NodeIteratorBackend( this, iter );
     d->nodeIterators.append( it );
     return it;
@@ -197,7 +195,7 @@ bool Soprano::Redland::RedlandModel::containsAnyStatement( const Statement &stat
 
 Soprano::QueryResultIterator Soprano::Redland::RedlandModel::executeQuery( const QString &query, Query::QueryLanguage language, const QString& userQueryLanguage ) const
 {
-    d->readWriteLock.lockForRead();
+    d->mutex.lock();
 
     clearError();
 
@@ -208,34 +206,29 @@ Soprano::QueryResultIterator Soprano::Redland::RedlandModel::executeQuery( const
                                         0 );
     if ( !q ) {
         setError( Redland::World::self()->lastError() );
-        d->readWriteLock.unlock();
+        d->mutex.unlock();
         return QueryResultIterator();
     }
-
-//     librdf_query_set_limit( q , query.limit() );
-//     librdf_query_set_offset( q, query.offset() );
 
     librdf_query_results *res = librdf_model_query_execute( d->model, q );
     if ( !res ) {
         setError( Redland::World::self()->lastError() );
-        d->readWriteLock.unlock();
+        d->mutex.unlock();
         return QueryResultIterator();
     }
 
     librdf_free_query( q );
 
-    // second lock for the iterator itself
+    // we do not unlock d->readWriteLock here. That is done once the iterator closes
     RedlandQueryResult* result = new RedlandQueryResult( this, res );
-
     d->results.append( result );
-
     return QueryResultIterator( result );
 }
 
 
 Soprano::StatementIterator Soprano::Redland::RedlandModel::listStatements( const Statement &partial ) const
 {
-    d->readWriteLock.lockForRead();
+    d->mutex.lock();
 
     clearError();
 
@@ -246,7 +239,7 @@ Soprano::StatementIterator Soprano::Redland::RedlandModel::listStatements( const
         librdf_stream *stream = librdf_model_context_as_stream( d->model, ctx );
         if ( !stream ) {
             setError( Redland::World::self()->lastError() );
-            d->readWriteLock.unlock();
+            d->mutex.unlock();
             return StatementIterator();
         }
         Util::freeNode( ctx );
@@ -261,7 +254,7 @@ Soprano::StatementIterator Soprano::Redland::RedlandModel::listStatements( const
         librdf_statement *st = Util::createStatement( partial );
         if ( !st ) {
             setError( Redland::World::self()->lastError() );
-            d->readWriteLock.unlock();
+            d->mutex.unlock();
             return StatementIterator();
         }
 
@@ -282,13 +275,13 @@ Soprano::StatementIterator Soprano::Redland::RedlandModel::listStatements( const
             Util::freeNode( ctx );
             Util::freeStatement( st );
             setError( Redland::World::self()->lastError() );
-            d->readWriteLock.unlock();
+            d->mutex.unlock();
             return StatementIterator();
         }
         Util::freeNode( ctx );
         Util::freeStatement( st );
 
-        // second lock for the iterator itself
+        // we do not unlock d->readWriteLock here. That is done once the iterator closes
         RedlandStatementIterator* it = new RedlandStatementIterator( this, stream, partial.context() );
         d->iterators.append( it );
         return StatementIterator( it );
@@ -298,10 +291,10 @@ Soprano::StatementIterator Soprano::Redland::RedlandModel::listStatements( const
 
 Soprano::Error::ErrorCode Soprano::Redland::RedlandModel::removeStatement( const Statement& statement )
 {
-    d->readWriteLock.lockForWrite();
+    d->mutex.lock();
 
     Error::ErrorCode r = removeOneStatement( statement );
-    d->readWriteLock.unlock();
+    d->mutex.unlock();
     if ( r == Error::ERROR_NONE ) {
         emit statementsRemoved();
     }
@@ -353,20 +346,20 @@ Soprano::Error::ErrorCode Soprano::Redland::RedlandModel::removeAllStatements( c
     clearError();
 
     if ( isContextOnlyStatement( statement ) ) {
-        d->readWriteLock.lockForWrite();
+        d->mutex.lock();
 
         librdf_node *ctx = Util::createNode( statement.context() );
 
         if ( librdf_model_context_remove_statements( d->model, ctx ) ) {
             Util::freeNode( ctx );
             setError( Redland::World::self()->lastError() );
-            d->readWriteLock.unlock();
+            d->mutex.unlock();
             return Error::ERROR_UNKNOWN;
         }
 
         Util::freeNode( ctx );
 
-        d->readWriteLock.unlock();
+        d->mutex.unlock();
 
         emit statementsRemoved();
 
@@ -378,7 +371,7 @@ Soprano::Error::ErrorCode Soprano::Redland::RedlandModel::removeAllStatements( c
         // FIXME: use redland streams for this
         QList<Statement> statementsToRemove = listStatements( statement ).allStatements();
 
-        d->readWriteLock.lockForWrite();
+        d->mutex.lock();
 
         int cnt = 0;
         for ( QList<Statement>::const_iterator it = statementsToRemove.constBegin();
@@ -386,12 +379,12 @@ Soprano::Error::ErrorCode Soprano::Redland::RedlandModel::removeAllStatements( c
             ++cnt;
             Error::ErrorCode error = removeOneStatement( *it );
             if ( error != Error::ERROR_NONE ) {
-                d->readWriteLock.unlock();
+                d->mutex.unlock();
                 return error;
             }
         }
 
-        d->readWriteLock.unlock();
+        d->mutex.unlock();
 
         if ( cnt ) {
             emit statementsRemoved();
@@ -447,19 +440,19 @@ Soprano::Node Soprano::Redland::RedlandModel::createBlankNode()
 void Soprano::Redland::RedlandModel::removeIterator( RedlandStatementIterator* it ) const
 {
     d->iterators.removeAll( it );
-    d->readWriteLock.unlock();
+    d->mutex.unlock();
 }
 
 
 void Soprano::Redland::RedlandModel::removeIterator( Redland::NodeIteratorBackend* it ) const
 {
     d->nodeIterators.removeAll( it );
-    d->readWriteLock.unlock();
+    d->mutex.unlock();
 }
 
 
 void Soprano::Redland::RedlandModel::removeQueryResult( RedlandQueryResult* r ) const
 {
     d->results.removeAll( r );
-    d->readWriteLock.unlock();
+    d->mutex.unlock();
 }
