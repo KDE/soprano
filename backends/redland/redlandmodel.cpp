@@ -112,7 +112,7 @@ Soprano::Error::ErrorCode Soprano::Redland::RedlandModel::addStatement( const St
 
     clearError();
 
-    QWriteLocker lock( &d->readWriteLock );
+    QMutexLocker lock( &d->mutex );
 
     librdf_statement* redlandStatement = Util::createStatement( statement );
     if ( !redlandStatement ) {
@@ -172,7 +172,7 @@ bool Soprano::Redland::RedlandModel::containsAnyStatement( const Statement &stat
     clearError();
 
     if ( isContextOnlyStatement( statement ) ) {
-        QReadLocker lock( &d->readWriteLock );
+        QMutexLocker lock( &d->mutex );
 
         librdf_node *ctx = Util::createNode( statement.context() );
         if ( !ctx ) {
@@ -400,7 +400,7 @@ Soprano::Error::ErrorCode Soprano::Redland::RedlandModel::removeAllStatements( c
 
 int Soprano::Redland::RedlandModel::statementCount() const
 {
-    QReadLocker lock( &d->readWriteLock );
+    QMutexLocker lock( &d->mutex );
     clearError();
     int size = librdf_model_size( d->model );
     if ( size < 0 ) {
@@ -411,7 +411,7 @@ int Soprano::Redland::RedlandModel::statementCount() const
 
 Soprano::Error::ErrorCode Soprano::Redland::RedlandModel::write( QTextStream &os ) const
 {
-    QReadLocker lock( &d->readWriteLock );
+    QMutexLocker lock( &d->mutex );
 
     clearError();
 
