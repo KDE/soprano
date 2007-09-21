@@ -51,6 +51,7 @@ namespace Soprano {
 	    Error::ErrorCode removeStatement( const Statement &statement );
 	    Error::ErrorCode removeAllStatements( const Statement &statement );
 	    int statementCount() const;
+	    bool isEmpty() const;
 	    bool containsStatement( const Statement &statement ) const;
 	    bool containsAnyStatement( const Statement &statement ) const;
 	    Node createBlankNode();

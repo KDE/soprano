@@ -68,6 +68,8 @@ namespace Soprano {
 
 	    long size();
 
+	    bool isEmpty();
+
 	    void close();
 
 	private:

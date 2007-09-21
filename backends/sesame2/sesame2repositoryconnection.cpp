@@ -38,6 +38,7 @@ public:
           m_IDremove( 0 ),
           m_IDremoveStatement( 0 ),
           m_IDsize( 0 ),
+          m_IDisEmpty( 0 ),
           m_IDprepareQuery( 0 ),
           m_classResource( 0 ),
           m_classTupleQuery( 0 ),
@@ -100,6 +101,14 @@ public:
         return m_IDsize;
     }
 
+    jmethodID IDisEmpty() {
+        if ( !m_IDisEmpty ) {
+            m_IDisEmpty = m_parent->getMethodID( "isEmpty", "()Z" );
+            JNIWrapper::instance()->debugException();
+        }
+        return m_IDisEmpty;
+    }
+
     jmethodID IDprepareQuery() {
         if ( !m_IDprepareQuery ) {
             m_IDprepareQuery = m_parent->getMethodID( "prepareQuery", "(L"ORG_OPENRDF_QUERY_QUERYLANGUAGE";L"JAVA_LANG_STRING";)L"ORG_OPENRDF_QUERY_QUERY";" );
@@ -143,6 +152,7 @@ private:
     jmethodID m_IDremove;
     jmethodID m_IDremoveStatement;
     jmethodID m_IDsize;
+    jmethodID m_IDisEmpty;
     jmethodID m_IDprepareQuery;
 
     JClassRef m_classResource;
@@ -218,6 +228,13 @@ long Soprano::Sesame2::RepositoryConnection::size()
     // sesame wants an empty array for the contexts
     static const jobjectArray contexts = JNIWrapper::instance()->env()->NewObjectArray( 0, d->classResource(), 0 );
     return callLongMethod( d->IDsize() );
+}
+
+
+bool Soprano::Sesame2::RepositoryConnection::isEmpty()
+{
+    // sesame wants an empty array for the contexts
+    return callBooleanMethod( d->IDisEmpty() );
 }
 
 

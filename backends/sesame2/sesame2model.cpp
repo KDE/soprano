@@ -289,6 +289,22 @@ int Soprano::Sesame2::Model::statementCount() const
 }
 
 
+bool Soprano::Sesame2::Model::isEmpty() const
+{
+    QReadLocker lock( &d->readWriteLock );
+
+    clearError();
+    bool empty = d->repository->repositoryConnection()->isEmpty();
+    if ( JNIWrapper::instance()->exceptionOccured() ) {
+        setError( JNIWrapper::instance()->convertAndClearException() );
+        return true;
+    }
+    else {
+        return empty;
+    }
+}
+
+
 bool Soprano::Sesame2::Model::containsStatement( const Statement &statement ) const
 {
     // As it seems sesame cannot handle the default graph in RepositoryConnection.hasStatement
