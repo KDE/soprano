@@ -27,22 +27,22 @@
 namespace Soprano {
     namespace Vocabulary {
 	namespace XMLSchema {
-            QUrl NAMESPACE();
-            QUrl INT();
-            QUrl INTEGER();
-	    QUrl NEGATIVEINTEGER();
-	    QUrl DECIMAL();
-	    QUrl SHORT();
-            QUrl LONG();
-	    QUrl UNSIGNEDINT();
-	    QUrl UNSIGNEDSHORT();
-	    QUrl UNSIGNEDLONG();
-            QUrl STRING();
-            QUrl DOUBLE();
-            QUrl BOOLEAN();
-            QUrl DATE();
-            QUrl DATETIME();
-	    QUrl TIME();
+            QUrl xmlsNamespace();
+            QUrl xmlsInt();
+            QUrl integer();
+	    QUrl negativeInteger();
+	    QUrl decimal();
+	    QUrl xmlsShort();
+            QUrl xmlsLong();
+	    QUrl unsignedInt();
+	    QUrl unsignedShort();
+	    QUrl unsignedLong();
+            QUrl string();
+            QUrl xmlsDouble();
+            QUrl boolean();
+            QUrl date();
+            QUrl dateTime();
+	    QUrl time();
         }
     }
 }

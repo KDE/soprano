@@ -28,6 +28,7 @@
 #include <QtCore/QFile>
 #include <QtCore/QTextStream>
 #include <QtCore/QTime>
+#include <QtCore/QUrl>
 
 
 // FIXME: Use the QTest framework to create data tables
@@ -41,9 +42,16 @@ SopranoModelTest::SopranoModelTest()
 
 void SopranoModelTest::cleanup()
 {
-    delete m_model;
+    deleteModel( m_model );
     m_model = 0;
 }
+
+
+void SopranoModelTest::deleteModel( Model* m )
+{
+    delete m;
+}
+
 
 void SopranoModelTest::init()
 {
@@ -577,7 +585,7 @@ void SopranoModelTest::testCloseStatementIteratorOnModelDelete()
     StatementIterator it = model->listStatements();
     QVERIFY( it.next() );
 
-    delete model;
+    deleteModel( model );
 
     QVERIFY( !it.next() );
 }
@@ -786,11 +794,57 @@ void SopranoModelTest::testListContexts()
     NodeIterator it = m_model->listContexts();
 
     QList<Node> allContexts = it.allNodes();
-    QCOMPARE( 3, allContexts.count() );
+    QCOMPARE( allContexts.count(), 3 );
 
     QVERIFY( allContexts.contains( context1 ) );
     QVERIFY( allContexts.contains( context2 ) );
     QVERIFY( allContexts.contains( context3 ) );
+}
+
+
+Q_DECLARE_METATYPE( Soprano::LiteralValue );
+
+void SopranoModelTest::testLiteralTypes_data()
+{
+    QTest::addColumn<LiteralValue>( "literal" );
+    QTest::addColumn<QUrl>( "predicate" );
+
+    QString ns = "http://soprano.org/literalTest#";
+
+    // all the standard literal types
+    QTest::newRow("intValue") << LiteralValue( 42 ) << QUrl(ns + "intValue");
+    QTest::newRow("boolFalseValue") << LiteralValue( false ) << QUrl(ns + "boolFalseValue");
+    QTest::newRow("boolTrueValue") << LiteralValue( true ) << QUrl(ns + "boolTrueValue");
+    QTest::newRow("doubleValue") << LiteralValue( 42.3 ) << QUrl(ns + "doubleValue");
+    QTest::newRow("dateValue") << LiteralValue( QDate::currentDate() ) << QUrl(ns + "dateValue");
+    QTest::newRow("timeValue") << LiteralValue( QTime::currentTime() ) << QUrl(ns + "timeValue");
+    QTest::newRow("dateTimeValue") << LiteralValue( QDateTime::currentDateTime() ) << QUrl(ns + "dateTimeValue");
+    QTest::newRow("stringValue") << LiteralValue( "Hello World" ) << QUrl(ns + "stringValue");
+
+    // and now some utf8 encoding tests
+    QTest::newRow("stringValueWithGermanUmlauts") << LiteralValue( QString::fromUtf8("ö ä ü Ö Ä Ü ß") ) << QUrl(ns + "stringValueWithGermanUmlauts");
+    QTest::newRow("stringValueWithFrenchAccents") << LiteralValue( QString::fromUtf8("é è â É È Â") ) << QUrl(ns + "stringValueWithFrenchAccents");
+    QTest::newRow("stringValueWithRussianChars") << LiteralValue( QString::fromUtf8("Я Б Г Д Ж Й") ) << QUrl(ns + "stringValueWithRussianChars");
+}
+
+
+void SopranoModelTest::testLiteralTypes()
+{
+    QVERIFY( m_model != 0 );
+
+    QFETCH( LiteralValue, literal );
+    QFETCH( QUrl, predicate );
+
+//    qDebug() << "testing literal: " << literal;
+
+    QUrl sub( "http://soprano.org/literalTest#X" );
+
+    QVERIFY( m_model->addStatement( Statement( sub, predicate, literal ) ) == Error::ERROR_NONE );
+
+    StatementIterator it = m_model->listStatements( Statement( sub, predicate, Node() ) );
+    QVERIFY( it.next() );
+    QCOMPARE( it.current().object().literal(), literal );
+    it.close();
 }
 
 

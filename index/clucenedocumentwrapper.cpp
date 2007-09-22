@@ -55,11 +55,15 @@ using lucene::document::Field;
 
 void Soprano::Index::CLuceneDocumentWrapper::addProperty( const WString& field, const WString& text )
 {
+    // FIXME: I think we should only index (and never store) the following:
+    //        1. The predicate/literal combination itself
+    //        2. Everything in the "text" or "content" or some other special field
+
     // FIXME: Do we really need to store the values? after all we have them in the RDF store anyway!
     // store this predicate (YES, the CLucene API is that bad. We actually put in Fields allocated on the heap here!)
     d->document->add( *new Field( field.data(), text.data(),
 #ifdef CL_VERSION_19_OR_GREATER
-                                  Field::STORE_YES|Field::INDEX_NO|Field::TERMVECTOR_NO
+                                  Field::STORE_YES|Field::INDEX_TOKENIZED|Field::TERMVECTOR_NO
 #else
                                   true, false, false
 #endif

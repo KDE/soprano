@@ -39,8 +39,8 @@ public:
     SopranoModelTest();
 
 private Q_SLOTS:
-  void init();
-  void cleanup();
+  virtual void init();
+  virtual void cleanup();
 
   void testAddListOfStatement(); 
   void testAddStatements();
@@ -66,10 +66,14 @@ private Q_SLOTS:
 
   void testContexts();
 
+  void testLiteralTypes_data();
+  void testLiteralTypes();
+  
   void testPerformance();
 
 protected:
   virtual Soprano::Model* createModel() = 0;
+  virtual void deleteModel( Soprano::Model* );
 
    Soprano::Statement m_st1;
    Soprano::Statement m_st2;

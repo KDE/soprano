@@ -66,97 +66,97 @@ public:
 Q_GLOBAL_STATIC( Rdf, rdf );
 
 
-QUrl Soprano::Vocabulary::RDF::NAMESPACE()
+QUrl Soprano::Vocabulary::RDF::rdfNamespace()
 {
     return rdf()->rdfNamespace;
 }
 
 
-QUrl Soprano::Vocabulary::RDF::TYPE()
+QUrl Soprano::Vocabulary::RDF::type()
 {
     return rdf()->rdfType;
 }
 
 
-QUrl Soprano::Vocabulary::RDF::PROPERTY()
+QUrl Soprano::Vocabulary::RDF::Property()
 {
     return rdf()->rdfProperty;
 }
 
 
-QUrl Soprano::Vocabulary::RDF::STATEMENT()
+QUrl Soprano::Vocabulary::RDF::Statement()
 {
     return rdf()->rdfStatement;
 }
 
 
-QUrl Soprano::Vocabulary::RDF::SUBJECT()
+QUrl Soprano::Vocabulary::RDF::subject()
 {
     return rdf()->rdfSubject;
 }
 
 
-QUrl Soprano::Vocabulary::RDF::PREDICATE()
+QUrl Soprano::Vocabulary::RDF::predicate()
 {
     return rdf()->rdfPredicate;
 }
 
 
-QUrl Soprano::Vocabulary::RDF::OBJECT()
+QUrl Soprano::Vocabulary::RDF::object()
 {
     return rdf()->rdfObject;
 }
 
 
-QUrl Soprano::Vocabulary::RDF::BAG()
+QUrl Soprano::Vocabulary::RDF::Bag()
 {
     return rdf()->rdfBag;
 }
 
 
-QUrl Soprano::Vocabulary::RDF::SEQ()
+QUrl Soprano::Vocabulary::RDF::Seq()
 {
     return rdf()->rdfSeq;
 }
 
 
-QUrl Soprano::Vocabulary::RDF::ALT()
+QUrl Soprano::Vocabulary::RDF::Alt()
 {
     return rdf()->rdfAlt;
 }
 
 
-QUrl Soprano::Vocabulary::RDF::VALUE()
+QUrl Soprano::Vocabulary::RDF::value()
 {
     return rdf()->rdfValue;
 }
 
 
-QUrl Soprano::Vocabulary::RDF::LIST()
+QUrl Soprano::Vocabulary::RDF::List()
 {
     return rdf()->rdfList;
 }
 
 
-QUrl Soprano::Vocabulary::RDF::NIL()
+QUrl Soprano::Vocabulary::RDF::nil()
 {
     return rdf()->rdfNil;
 }
 
 
-QUrl Soprano::Vocabulary::RDF::FIRST()
+QUrl Soprano::Vocabulary::RDF::first()
 {
     return rdf()->rdfFirst;
 }
 
 
-QUrl Soprano::Vocabulary::RDF::REST()
+QUrl Soprano::Vocabulary::RDF::rest()
 {
     return rdf()->rdfRest;
 }
 
 
-QUrl Soprano::Vocabulary::RDF::XMLLITERAL()
+QUrl Soprano::Vocabulary::RDF::XMLLiteral()
 {
     return rdf()->rdfXMLLiteral;
 }

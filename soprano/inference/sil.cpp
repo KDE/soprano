@@ -44,31 +44,31 @@ public:
 
 Q_GLOBAL_STATIC( SILGlobals, silGlobals );
 
-QUrl Soprano::Vocabulary::SIL::NAMESPACE()
+QUrl Soprano::Vocabulary::SIL::silNamespace()
 {
     return silGlobals()->silNamespace;
 }
 
 
-QUrl Soprano::Vocabulary::SIL::INFERENCE_METADATA()
+QUrl Soprano::Vocabulary::SIL::InferenceMetaData()
 {
     return silGlobals()->silInferenceMetaData;
 }
 
 
-QUrl Soprano::Vocabulary::SIL::INFERENCE_GRAPH()
+QUrl Soprano::Vocabulary::SIL::InferenceGraph()
 {
     return silGlobals()->silInferenceGraph;
 }
 
 
-QUrl Soprano::Vocabulary::SIL::SOURCE_STATEMENT()
+QUrl Soprano::Vocabulary::SIL::sourceStatement()
 {
     return silGlobals()->silSourceStatement;
 }
 
 
-QUrl Soprano::Vocabulary::SIL::CONTEXT()
+QUrl Soprano::Vocabulary::SIL::context()
 {
     return silGlobals()->silContext;
 }

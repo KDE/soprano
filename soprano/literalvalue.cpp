@@ -146,7 +146,7 @@ Soprano::LiteralValue::LiteralValue( const QTime& time )
 
 
 Soprano::LiteralValue::LiteralValue( const QDateTime& datetime )
-    : d( new Private( datetime ) )
+    : d( new Private( datetime.toUTC() ) )
 {
 }
 
@@ -250,7 +250,7 @@ Soprano::LiteralValue& Soprano::LiteralValue::operator=( const QTime& time )
 
 Soprano::LiteralValue& Soprano::LiteralValue::operator=( const QDateTime& datetime )
 {
-    d->value.setValue( datetime );
+    d->value.setValue( datetime.toUTC() );
     d->dataTypeUri = QUrl();
     return *this;
 }
@@ -421,7 +421,8 @@ QUrl Soprano::LiteralValue::dataTypeUri() const
 
 bool Soprano::LiteralValue::operator==( const LiteralValue& other ) const
 {
-    return d->value == other.d->value;
+    return( d->value == other.d->value &&
+            dataTypeUri() == other.dataTypeUri() );
 }
 
 
@@ -474,21 +475,21 @@ QVariant::Type Soprano::LiteralValue::typeFromDataTypeUri( const QUrl& dataTypeU
 {
     static QHash<QUrl, QVariant::Type> s_xmlSchemaTypes;
     if( s_xmlSchemaTypes.isEmpty() ) {
-        s_xmlSchemaTypes.insert( Vocabulary::XMLSchema::INT(), QVariant::Int );
-        s_xmlSchemaTypes.insert( Vocabulary::XMLSchema::INTEGER(), QVariant::Int );
-        s_xmlSchemaTypes.insert( Vocabulary::XMLSchema::NEGATIVEINTEGER(), QVariant::Int );
-        s_xmlSchemaTypes.insert( Vocabulary::XMLSchema::DECIMAL(), QVariant::Int );
-        s_xmlSchemaTypes.insert( Vocabulary::XMLSchema::SHORT(), QVariant::Int );
-        s_xmlSchemaTypes.insert( Vocabulary::XMLSchema::LONG(), QVariant::LongLong );
-        s_xmlSchemaTypes.insert( Vocabulary::XMLSchema::UNSIGNEDINT(), QVariant::UInt );
-        s_xmlSchemaTypes.insert( Vocabulary::XMLSchema::UNSIGNEDSHORT(), QVariant::UInt );
-        s_xmlSchemaTypes.insert( Vocabulary::XMLSchema::UNSIGNEDLONG(), QVariant::ULongLong );
-        s_xmlSchemaTypes.insert( Vocabulary::XMLSchema::BOOLEAN(), QVariant::Bool );
-        s_xmlSchemaTypes.insert( Vocabulary::XMLSchema::DOUBLE(), QVariant::Double );
-        s_xmlSchemaTypes.insert( Vocabulary::XMLSchema::STRING(), QVariant::String );
-        s_xmlSchemaTypes.insert( Vocabulary::XMLSchema::DATE(), QVariant::Date );
-        s_xmlSchemaTypes.insert( Vocabulary::XMLSchema::TIME(), QVariant::Time );
-        s_xmlSchemaTypes.insert( Vocabulary::XMLSchema::DATETIME(), QVariant::DateTime );
+        s_xmlSchemaTypes.insert( Vocabulary::XMLSchema::xmlsInt(), QVariant::Int );
+        s_xmlSchemaTypes.insert( Vocabulary::XMLSchema::integer(), QVariant::Int );
+        s_xmlSchemaTypes.insert( Vocabulary::XMLSchema::negativeInteger(), QVariant::Int );
+        s_xmlSchemaTypes.insert( Vocabulary::XMLSchema::decimal(), QVariant::Int );
+        s_xmlSchemaTypes.insert( Vocabulary::XMLSchema::xmlsShort(), QVariant::Int );
+        s_xmlSchemaTypes.insert( Vocabulary::XMLSchema::xmlsLong(), QVariant::LongLong );
+        s_xmlSchemaTypes.insert( Vocabulary::XMLSchema::unsignedInt(), QVariant::UInt );
+        s_xmlSchemaTypes.insert( Vocabulary::XMLSchema::unsignedShort(), QVariant::UInt );
+        s_xmlSchemaTypes.insert( Vocabulary::XMLSchema::unsignedLong(), QVariant::ULongLong );
+        s_xmlSchemaTypes.insert( Vocabulary::XMLSchema::boolean(), QVariant::Bool );
+        s_xmlSchemaTypes.insert( Vocabulary::XMLSchema::xmlsDouble(), QVariant::Double );
+        s_xmlSchemaTypes.insert( Vocabulary::XMLSchema::string(), QVariant::String );
+        s_xmlSchemaTypes.insert( Vocabulary::XMLSchema::date(), QVariant::Date );
+        s_xmlSchemaTypes.insert( Vocabulary::XMLSchema::time(), QVariant::Time );
+        s_xmlSchemaTypes.insert( Vocabulary::XMLSchema::dateTime(), QVariant::DateTime );
     }
 
     QHash<QUrl, QVariant::Type>::const_iterator it = s_xmlSchemaTypes.find( dataTypeUri );
@@ -505,16 +506,16 @@ QUrl Soprano::LiteralValue::dataTypeUriFromType( QVariant::Type type )
 {
     static QHash<int, QUrl> s_variantSchemaTypeHash;
     if( s_variantSchemaTypeHash.isEmpty() ) {
-        s_variantSchemaTypeHash.insert( QVariant::Int, Vocabulary::XMLSchema::INT() );
-        s_variantSchemaTypeHash.insert( QVariant::LongLong, Vocabulary::XMLSchema::LONG() );
-        s_variantSchemaTypeHash.insert( QVariant::UInt, Vocabulary::XMLSchema::UNSIGNEDINT() );
-        s_variantSchemaTypeHash.insert( QVariant::ULongLong, Vocabulary::XMLSchema::UNSIGNEDLONG() );
-        s_variantSchemaTypeHash.insert( QVariant::Bool, Vocabulary::XMLSchema::BOOLEAN() );
-        s_variantSchemaTypeHash.insert( QVariant::Double, Vocabulary::XMLSchema::DOUBLE() );
-        s_variantSchemaTypeHash.insert( QVariant::String, Vocabulary::XMLSchema::STRING() );
-        s_variantSchemaTypeHash.insert( QVariant::Date, Vocabulary::XMLSchema::DATE() );
-        s_variantSchemaTypeHash.insert( QVariant::Time, Vocabulary::XMLSchema::TIME() );
-        s_variantSchemaTypeHash.insert( QVariant::DateTime, Vocabulary::XMLSchema::DATETIME() );
+        s_variantSchemaTypeHash.insert( QVariant::Int, Vocabulary::XMLSchema::xmlsInt() );
+        s_variantSchemaTypeHash.insert( QVariant::LongLong, Vocabulary::XMLSchema::xmlsLong() );
+        s_variantSchemaTypeHash.insert( QVariant::UInt, Vocabulary::XMLSchema::unsignedInt() );
+        s_variantSchemaTypeHash.insert( QVariant::ULongLong, Vocabulary::XMLSchema::unsignedLong() );
+        s_variantSchemaTypeHash.insert( QVariant::Bool, Vocabulary::XMLSchema::boolean() );
+        s_variantSchemaTypeHash.insert( QVariant::Double, Vocabulary::XMLSchema::xmlsDouble() );
+        s_variantSchemaTypeHash.insert( QVariant::String, Vocabulary::XMLSchema::string() );
+        s_variantSchemaTypeHash.insert( QVariant::Date, Vocabulary::XMLSchema::date() );
+        s_variantSchemaTypeHash.insert( QVariant::Time, Vocabulary::XMLSchema::time() );
+        s_variantSchemaTypeHash.insert( QVariant::DateTime, Vocabulary::XMLSchema::dateTime() );
     }
 
     return s_variantSchemaTypeHash[type];

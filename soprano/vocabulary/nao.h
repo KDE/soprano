@@ -1,7 +1,7 @@
-/* 
+/*
  * This file is part of Soprano Project.
  *
- * Copyright (C) 2007 Daniele Galdi <daniele.galdi@gmail.com>
+ * Copyright (C) 2007 Sebastian Trueg <trueg@kde.org>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -19,28 +19,26 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef QUERY_API_TEST_H
-#define QUERY_API_TEST_H
+#ifndef _SOPRANO_NAO_H_
+#define _SOPRANO_NAO_H_
 
-#include <QObject>
-#include <QString>
+#include <QtCore/QUrl>
 
-class Soprano::Error::Locator;
+namespace Soprano {
+    namespace Vocabulary {
+	/**
+	 * The Nepomuk Annotation Ontology
+	 *
+	 * \warning incomplete, namespace might change!
+	 */
+	namespace NAO {
+	    /**
+	     * The NAO namespace
+	     */
+	    QUrl naoNamespace();
+	    QUrl created();
+	}
+    }
+}
 
-class QueryAPITest: public QObject
-{
-Q_OBJECT
-private slots:
-    void initTestCase();
-    void cleanupTestCase();
-
-    void testQuery_1();    
-    void testSyntaxError();
-    void testQueryCreation();
-
-private:
-    Soprano::PluginManager *m_manager;
-};
-
-#endif // QUERY_API_TEST_H
-
+#endif

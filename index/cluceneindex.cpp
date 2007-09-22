@@ -32,6 +32,7 @@
 #include <QtCore/QFile>
 #include <QtCore/QDebug>
 #include <QtCore/QMutex>
+#include <QtCore/QThread>
 #include <QtCore/QMutexLocker>
 
 
@@ -271,6 +272,7 @@ Soprano::Index::CLuceneIndex::~CLuceneIndex()
 
 bool Soprano::Index::CLuceneIndex::open( const QString& folder, bool force )
 {
+    qDebug() << "CLuceneIndex::open in thread " << QThread::currentThreadId();
     close();
 
     clearError();
@@ -305,19 +307,23 @@ bool Soprano::Index::CLuceneIndex::open( const QString& folder, bool force )
         }
     }
 
+    qDebug() << "CLuceneIndex::open done in thread " << QThread::currentThreadId();
+
     return true;
 }
 
 
 void Soprano::Index::CLuceneIndex::close()
 {
-    QMutexLocker lock( &d->mutex );
+    qDebug() << "CLuceneIndex::close in thread " << QThread::currentThreadId();
     clearError();
     if ( d->transactionID ) {
         closeTransaction( d->transactionID );
     }
+    QMutexLocker lock( &d->mutex );
     d->closeReader();
     d->closeWriter();
+    qDebug() << "CLuceneIndex::close done in thread " << QThread::currentThreadId();
 }
 
 
@@ -330,26 +336,31 @@ bool Soprano::Index::CLuceneIndex::isOpen() const
 
 lucene::document::Document* Soprano::Index::CLuceneIndex::documentForResource( const Node& resource )
 {
+    qDebug() << "CLuceneIndex::documentForResource in thread " << QThread::currentThreadId();
     QMutexLocker lock( &d->mutex );
 
     clearError();
 
     if ( d->transactionID == 0 ) {
         setError( "No transaction started." );
+        qDebug() << "CLuceneIndex::documentForResource done in thread " << QThread::currentThreadId();
         return 0;
     }
     try {
+        qDebug() << "CLuceneIndex::documentForResource done in thread " << QThread::currentThreadId();
         return d->getDocument( resource );
     }
     catch( CLuceneError& err ) {
         qDebug() << "(Soprano::Index::CLuceneIndex) Exception occured: " << err.what();
         setError( exceptionToError( err ) );
+        qDebug() << "CLuceneIndex::documentForResource done in thread " << QThread::currentThreadId();
         return 0;
     }
 }
 
 int Soprano::Index::CLuceneIndex::startTransaction()
 {
+    qDebug() << "CLuceneIndex::startTransaction in thread " << QThread::currentThreadId();
     QMutexLocker lock( &d->mutex );
 
     clearError();
@@ -357,10 +368,12 @@ int Soprano::Index::CLuceneIndex::startTransaction()
     if ( d->transactionID == 0 ) {
         // FIXME: use a random number
         d->transactionID = 1;
+        qDebug() << "CLuceneIndex::startTransaction done in thread " << QThread::currentThreadId();
         return d->transactionID;
     }
     else {
         setError( "Previous transaction still open." );
+        qDebug() << "CLuceneIndex::startTransaction done in thread " << QThread::currentThreadId();
         return 0;
     }
 }
@@ -368,6 +381,7 @@ int Soprano::Index::CLuceneIndex::startTransaction()
 
 bool Soprano::Index::CLuceneIndex::closeTransaction( int id )
 {
+    qDebug() << "CLuceneIndex::closeTransaction in thread " << QThread::currentThreadId();
     QMutexLocker lock( &d->mutex );
 
     if ( id == d->transactionID && id > 0 ) {
@@ -377,14 +391,17 @@ bool Soprano::Index::CLuceneIndex::closeTransaction( int id )
         }
         catch( CLuceneError& err ) {
             setError( exceptionToError( err ) );
+            qDebug() << "CLuceneIndex::closeTransaction done in thread " << QThread::currentThreadId();
             return false;
         }
 
         d->transactionID = 0;
+        qDebug() << "CLuceneIndex::closeTransaction done in thread " << QThread::currentThreadId();
         return true;
     }
     else {
         setError( QString( "Invalid transaction ID: %1" ).arg( id ) );
+        qDebug() << "CLuceneIndex::closeTransaction done in thread " << QThread::currentThreadId();
         return false;
     }
 }
@@ -392,11 +409,13 @@ bool Soprano::Index::CLuceneIndex::closeTransaction( int id )
 
 Soprano::Error::ErrorCode Soprano::Index::CLuceneIndex::addStatement( const Soprano::Statement& statement )
 {
+    qDebug() << "CLuceneIndex::addStatement in thread " << QThread::currentThreadId();
     QMutexLocker lock( &d->mutex );
 
     if ( !statement.object().isLiteral() ) {
         qDebug() << "(Soprano::Index::CLuceneIndex::addStatement) only adding statements with literal object type.";
         setError( "Only indexing of literal objects supported." );
+        qDebug() << "CLuceneIndex::addStatement done in thread " << QThread::currentThreadId();
         return Error::ERROR_UNKNOWN;
     }
 
@@ -427,17 +446,20 @@ Soprano::Error::ErrorCode Soprano::Index::CLuceneIndex::addStatement( const Sopr
         success = false;
     }
 
+    qDebug() << "CLuceneIndex::addStatement done in thread " << QThread::currentThreadId();
     return success ? Error::ERROR_NONE : Error::ERROR_UNKNOWN;
 }
 
 
 Soprano::Error::ErrorCode Soprano::Index::CLuceneIndex::removeStatement( const Soprano::Statement& statement )
 {
+    qDebug() << "CLuceneIndex::removeStatement in thread " << QThread::currentThreadId();
     QMutexLocker lock( &d->mutex );
 
     if ( !statement.object().isLiteral() ) {
         qDebug() << "(Soprano::Index::CLuceneIndex::removeStatement) only adding statements with literal object type.";
         setError( Error::Error( "Only indexing of literal objects supported." ) );
+        qDebug() << "CLuceneIndex::removeStatement done in thread " << QThread::currentThreadId();
         return Error::ERROR_UNKNOWN;
     }
 
@@ -445,6 +467,7 @@ Soprano::Error::ErrorCode Soprano::Index::CLuceneIndex::removeStatement( const S
 
     // just for speed
     if ( !d->indexPresent() ) {
+        qDebug() << "CLuceneIndex::removeStatement done in thread " << QThread::currentThreadId();
         return Error::ERROR_NONE;
     }
 
@@ -467,17 +490,21 @@ Soprano::Error::ErrorCode Soprano::Index::CLuceneIndex::removeStatement( const S
         success = false;
     }
 
+    qDebug() << "CLuceneIndex::removeStatement done in thread " << QThread::currentThreadId();
     return success ? Error::ERROR_NONE : Error::ERROR_UNKNOWN;
 }
 
 
 Soprano::Node Soprano::Index::CLuceneIndex::getResource( lucene::document::Document* document )
 {
+    qDebug() << "CLuceneIndex::getResource in thread " << QThread::currentThreadId();
     QString id = WString( document->get( idFieldName().data() ) );
     if ( id.startsWith( bnodeIdPrefix() ) ) {
+        qDebug() << "CLuceneIndex::getResource done in thread " << QThread::currentThreadId();
         return Soprano::Node( id.mid( bnodeIdPrefix().length() ) );
     }
     else {
+        qDebug() << "CLuceneIndex::getResource done in thread " << QThread::currentThreadId();
         return Soprano::Node( QUrl( id ) );
     }
 }
@@ -593,6 +620,7 @@ double Soprano::Index::CLuceneIndex::getScore( const Soprano::Node& resource, lu
 
 void Soprano::Index::CLuceneIndex::dump( QTextStream& s ) const
 {
+    qDebug() << "CLuceneIndex::dump in thread " << QThread::currentThreadId();
     QMutexLocker lock( &d->mutex );
 
     clearError();
@@ -618,5 +646,11 @@ void Soprano::Index::CLuceneIndex::dump( QTextStream& s ) const
         qDebug() << "(Soprano::Index::CLuceneIndex) failed to dump index.";
         setError( exceptionToError( err ) );
     }
+    qDebug() << "CLuceneIndex::dump done in thread " << QThread::currentThreadId();
 }
 
+
+QString Soprano::Index::CLuceneIndex::defaultSearchField()
+{
+    return textFieldName().toQString();
+}

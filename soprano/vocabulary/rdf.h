@@ -30,22 +30,22 @@ namespace Soprano {
 	    /**
 	     * The RDF namespace (http://www.w3.org/1999/02/22-rdf-syntax-ns#)
 	     */
-	    QUrl NAMESPACE();
-	    QUrl TYPE();
-	    QUrl PROPERTY();
-	    QUrl STATEMENT();
-	    QUrl SUBJECT();
-	    QUrl PREDICATE();
-	    QUrl OBJECT();
-	    QUrl BAG();
-	    QUrl SEQ();
-	    QUrl ALT();
-	    QUrl VALUE();
-	    QUrl LIST();
-	    QUrl NIL();
-	    QUrl FIRST();
-	    QUrl REST();
-	    QUrl XMLLITERAL();
+	    QUrl rdfNamespace();
+	    QUrl type();
+	    QUrl Property();
+	    QUrl Statement();
+	    QUrl subject();
+	    QUrl predicate();
+	    QUrl object();
+	    QUrl Bag();
+	    QUrl Seq();
+	    QUrl Alt();
+	    QUrl value();
+	    QUrl List();
+	    QUrl nil();
+	    QUrl first();
+	    QUrl rest();
+	    QUrl XMLLiteral();
 	}
     }
 }

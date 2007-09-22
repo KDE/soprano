@@ -3,5 +3,7 @@ install(FILES
   RDFS
   XMLSchema
   SIL
+  NRL
+  NAO
   DESTINATION
   include/soprano/Vocabulary)

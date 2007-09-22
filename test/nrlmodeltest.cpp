@@ -70,8 +70,8 @@ void NRLModelTest::testAddStatement()
     m_nrlModel->addStatement( s1 );
 
     // create a restriction
-    m_model->addStatement( Statement( s1.predicate(), Vocabulary::NRL::MINCARDINALITY(), LiteralValue( 1 ) ) );
-    m_model->addStatement( Statement( s1.predicate(), Vocabulary::NRL::MAXCARDINALITY(), LiteralValue( 2 ) ) );
+    m_model->addStatement( Statement( s1.predicate(), Vocabulary::NRL::minCardinality(), LiteralValue( 1 ) ) );
+    m_model->addStatement( Statement( s1.predicate(), Vocabulary::NRL::maxCardinality(), LiteralValue( 2 ) ) );
 
     m_nrlModel->addStatement( s1 );
     m_nrlModel->addStatement( s2 );

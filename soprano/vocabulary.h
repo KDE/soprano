@@ -23,3 +23,4 @@
 #include "rdfs.h"
 #include "xmls.h"
 #include "nrl.h"
+#include "nao.h"

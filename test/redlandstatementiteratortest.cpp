@@ -1,4 +1,4 @@
-/* 
+/*
  * This file is part of Soprano Project.
  *
  * Copyright (C) 2006 Daniele Galdi <daniele.galdi@gmail.com>
@@ -19,18 +19,25 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#include "StatementIteratorTest.h"
+#include "redlandstatementiteratortest.h"
 
-#ifndef REDLAND_STATEMENT_ITERATOR_TEST_H
-#define REDLAND_STATEMENT_ITERATOR_TEST_H
+#include <soprano/soprano.h>
 
-class RedlandStatementIteratorTest: public StatementIteratorTest
+using namespace Soprano;
+
+
+Soprano::Model* RedlandStatementIteratorTest::createModel()
 {
-Q_OBJECT
+    const Backend* b = Soprano::discoverBackendByName( "redland" );
+    if ( !b ) {
+        return 0;
+    }
 
-private Q_SLOTS:
-  void initTestCase();
-  void cleanupTestCase(); 
-};
+    // redland default is to create a mem model
+    return b->createModel();
+}
 
-#endif // REDLAND_STATEMENT_ITERATOR_TEST_H
+QTEST_MAIN(RedlandStatementIteratorTest)
+
+#include "redlandstatementiteratortest.moc"
+

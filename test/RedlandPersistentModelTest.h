@@ -20,6 +20,7 @@
  */
 
 #include <QtTest>
+#include <QtCore/QHash>
 
 #include "SopranoModelTest.h"
 
@@ -36,6 +37,10 @@ Q_OBJECT
 
 protected:
   virtual Soprano::Model* createModel();
+  void deleteModel( Soprano::Model* );
+
+private:
+  QHash<Soprano::Model*, QString> m_nameMap;
 };
 
 #endif // REDLAND_PERSISTENT_MODEL_TEST_H

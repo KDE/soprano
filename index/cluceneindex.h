@@ -208,6 +208,18 @@ namespace Soprano {
 	     */
 	    static Soprano::Node getResource( lucene::document::Document* document );
 
+	    /**
+	     * This is a temporary method which supports the advanced query interface based on
+	     * CLucene classes.
+	     *
+	     * The %Soprano index creates one special field for each indexed resource which contains
+	     * all data to allow simple queries without property names or URIs.
+	     *
+	     * \return The name of the default CLucene search field to be queried when no properties
+	     * are known.
+	     */
+	    static QString defaultSearchField();
+
 	    //@{
 	    /**
 	     * Dump the index contents to the stream

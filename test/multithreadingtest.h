@@ -23,10 +23,15 @@
 #define SOPRANO_MULTITHREADING_TEST_H
 
 #include <QtCore/QObject>
+#include <QtCore/QList>
+
+#include "../soprano/statement.h"
 
 namespace Soprano {
     class Model;
 }
+
+using namespace Soprano;
 
 class MultiThreadingTest : public QObject
 {
@@ -36,6 +41,7 @@ private Q_SLOTS:
     void initTestCase();
     void testNodeIterator_data();
     void testNodeIterator();
+    void testAllInParallel();
     void cleanupTestCase();
 
 protected:
@@ -46,6 +52,9 @@ private:
     void verifyAllTests();
 
     QList<QThread*> m_testThreads;
+    QList<Statement> m_testStatements;
+    QUrl m_testContext1;
+    QUrl m_testContext2;
 };
 
 #endif

@@ -66,6 +66,9 @@ namespace Soprano {
      * This can either be achieved by deleting the iterator, finishing it (next() does return \p false),
      * or calling close(). Before that other operations on the Model may block.
      *
+     * Iterators are not thread-safe. Two threads using the same iterator at the same time may result
+     * in undefined behaviour and even crashes.
+     *
      * \warning Be aware that iterators in Soprano are shared objects which means
      * that copies of one iterator object work on the same data.
      * 

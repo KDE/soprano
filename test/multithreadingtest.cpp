@@ -35,7 +35,7 @@ static QUrl createRandomUri()
     // FIXME: check if the uri already exists
     QString uid = QUuid::createUuid().toString();
     uid = uid.mid( 1, uid.length()-2 );
-    return QUrl( "inference://localhost#" + uid );
+    return QUrl( "http://soprano.org/test#" + uid );
 }
 
 
@@ -108,13 +108,9 @@ public:
 
     bool performTest() {
         QList<Statement> data = createTestData( Statement(), 5 );
-        if ( model()->addStatements( data ) != Error::ERROR_NONE )
+        if ( model()->addStatements( data ) != Error::ERROR_NONE ) {
+            qDebug() << "Adding statements failed:" << model()->lastError();
             return false;
-
-        // check if the statements have really been added
-        Q_FOREACH( Statement s, data ) {
-            if( !model()->containsStatement( s ) )
-                return false;
         }
 
         return true;
@@ -157,6 +153,38 @@ private:
 };
 
 
+class ListStatementsTest : public TestingThread
+{
+public:
+    ListStatementsTest( const QList<Statement>& sl )
+        : TestingThread( "listStatements" ),
+          m_statements( sl ) {
+    }
+
+    bool performTest() {
+        StatementIterator it = model()->listStatements();
+        int cnt = 0;
+        while ( it.next() ) {
+            ++cnt;
+            if ( !m_statements.contains( *it ) ) {
+                qDebug() << "invalid statement: " << *it;
+                return false;
+            }
+        }
+        if ( cnt == m_statements.count() ) {
+            return true;
+        }
+        else {
+            qDebug() << "Invalid count:" << cnt << "Expecting:" << m_statements.count();
+            return false;
+        }
+    }
+
+private:
+    QList<Statement> m_statements;
+};
+
+
 void MultiThreadingTest::startAllTests( Model* m )
 {
     Q_FOREACH( QThread* t, m_testThreads ) {
@@ -168,6 +196,9 @@ void MultiThreadingTest::startAllTests( Model* m )
 void MultiThreadingTest::verifyAllTests()
 {
     Q_FOREACH( QThread* t, m_testThreads ) {
+        if ( !dynamic_cast<TestingThread*>( t )->verifyResult() ) {
+            qDebug() << dynamic_cast<TestingThread*>( t )->name() << "failed.";
+        }
         QVERIFY( dynamic_cast<TestingThread*>( t )->verifyResult() );
     }
 }
@@ -175,9 +206,16 @@ void MultiThreadingTest::verifyAllTests()
 
 void MultiThreadingTest::initTestCase()
 {
+    m_testContext1 = createRandomUri();
+    m_testContext2 = createRandomUri();
+    m_testStatements += createTestData( Statement( Node(), Node(), Node(), m_testContext1 ), 5 );
+    m_testStatements += createTestData( Statement( Node(), Node(), Node(), m_testContext2 ), 5 );
+
+    m_testThreads.append( new ListStatementsTest( m_testStatements ) );
+    m_testThreads.append( new QueryTest( "select * where { ?s ?p ?o . }" ) );
+    m_testThreads.append( new QueryTest( "select * where { ?s ?p ?o . }" ) );
     m_testThreads.append( new AddStatementTest() );
     m_testThreads.append( new RemoveStatementTest() );
-    m_testThreads.append( new QueryTest( "select * where { ?s ?p ?o . }" ) );
 }
 
 
@@ -210,10 +248,7 @@ void MultiThreadingTest::testNodeIterator()
     QVERIFY( model != 0 );
 
     // add some testdata with the same context
-    QUrl context1 = createRandomUri();
-    QUrl context2 = createRandomUri();
-    model->addStatements( createTestData( Statement( Node(), Node(), Node(), context1 ), 5 ) );
-    model->addStatements( createTestData( Statement( Node(), Node(), Node(), context2 ), 5 ) );
+    QVERIFY( model->addStatements( m_testStatements ) == Error::ERROR_NONE );
 
     NodeIterator it = model->listContexts();
 
@@ -225,17 +260,34 @@ void MultiThreadingTest::testNodeIterator()
     t.start();
     while ( t.elapsed() < 200 );
 
-    // now check the iterator, it should contain exactly those contexts that were in the
+    // now check the iterators, it should contain exactly those contexts that were in the
     // model when we called listContexts
     QList<Node> allContexts = it.allNodes();
     it.close();
-    StatementIterator it2 = model->listStatements();
-    it2.close();
     QCOMPARE( allContexts.count(), 2 );
-    QVERIFY( allContexts.contains( context1 ) );
-    QVERIFY( allContexts.contains( context2 ) );
+    QVERIFY( allContexts.contains( m_testContext1 ) );
+    QVERIFY( allContexts.contains( m_testContext2 ) );
 
+    StatementIterator it2 = model->listStatements();
+    while ( it2.next() ) {
+        QCOMPARE( *it2, it2.current() );
+    }
     QVERIFY( thread->verifyResult() );
+
+    delete model;
+}
+
+
+void MultiThreadingTest::testAllInParallel()
+{
+    Model* model = createModel();
+    QVERIFY( model != 0 );
+
+    // add some testdata with the same context
+    QVERIFY( model->addStatements( m_testStatements ) == Error::ERROR_NONE );
+
+    startAllTests( model );
+    verifyAllTests();
 
     delete model;
 }

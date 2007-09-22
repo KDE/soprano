@@ -27,7 +27,6 @@
 
 namespace Soprano {
   class Model;
-  class ModelFactory;
   class Statement;
 }
 
@@ -38,15 +37,18 @@ Q_OBJECT
 private Q_SLOTS:
   void testIterator();
   void testSharedStuffs();
+  void testConsistency();
 
+  void initTestCase();
   void init();
   void cleanup();
 
 protected:
-   Soprano::Model* m_model;
-   Soprano::ModelFactory *m_factory;
+  virtual Soprano::Model* createModel() = 0;
 
+private:
    QList<Soprano::Statement> m_statements;
+   Soprano::Model* m_model;
 };
 
 #endif // STATEMENT_ITERATOR_TEST_H

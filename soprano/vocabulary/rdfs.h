@@ -28,22 +28,22 @@
 namespace Soprano {
     namespace Vocabulary {
 	namespace RDFS {
-	    QUrl NAMESPACE();
-	    QUrl CLASS();
-	    QUrl COMMENT();
-	    QUrl DATATYPE();
-	    QUrl DOMAIN();
-	    QUrl RANGE();
-	    QUrl LABEL();
-	    QUrl SUBCLASSOF();
-	    QUrl SUBPROPERTYOF();
-	    QUrl SEEALSO();
-	    QUrl RESOURCE();
-	    QUrl MEMBER();
-	    QUrl LITERAL();
-	    QUrl ISDEFINEDBY();
-	    QUrl CONTAINER();
-	    QUrl CONTAINERMEMBERSHIPPROPERTY();
+	    QUrl rdfsNamespace();
+	    QUrl Class();
+	    QUrl comment();
+	    QUrl Datatype();
+	    QUrl domain();
+	    QUrl range();
+	    QUrl label();
+	    QUrl subClassOf();
+	    QUrl subPropertyOf();
+	    QUrl seeAlso();
+	    QUrl Resource();
+	    QUrl member();
+	    QUrl Literal();
+	    QUrl isDefinedBy();
+	    QUrl Container();
+	    QUrl ContainerMembershipProperty();
 	}
     }
 }

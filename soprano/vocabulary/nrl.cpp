@@ -117,247 +117,247 @@ public:
 Q_GLOBAL_STATIC( Nrl, nrl );
 
 
-QUrl Soprano::Vocabulary::NRL::NAMESPACE()
+QUrl Soprano::Vocabulary::NRL::nrlNamespace()
 {
     return nrl()->nrlNamespace;
 }
 
 
-QUrl Soprano::Vocabulary::NRL::MINCARDINALITY()
+QUrl Soprano::Vocabulary::NRL::minCardinality()
 {
     return nrl()->MINCARDINALITY;
 }
 
 
-QUrl Soprano::Vocabulary::NRL::MAXCARDINALITY()
+QUrl Soprano::Vocabulary::NRL::maxCardinality()
 {
     return nrl()->MAXCARDINALITY;
 }
 
 
-QUrl Soprano::Vocabulary::NRL::CARDINALITY()
+QUrl Soprano::Vocabulary::NRL::cardinality()
 {
     return nrl()->CARDINALITY;
 }
 
 
-QUrl Soprano::Vocabulary::NRL::IMPORTS()
+QUrl Soprano::Vocabulary::NRL::imports()
 {
     return nrl()->IMPORTS;
 }
 
 
-QUrl Soprano::Vocabulary::NRL::RULELANGUAGE()
+QUrl Soprano::Vocabulary::NRL::ruleLanguage()
 {
     return nrl()->RULELANGUAGE;
 }
 
 
-QUrl Soprano::Vocabulary::NRL::INVERSEFUNCTIONALPROPERTY()
+QUrl Soprano::Vocabulary::NRL::InverseFunctionalProperty()
 {
     return nrl()->INVERSEFUNCTIONALPROPERTY;
 }
 
 
-QUrl Soprano::Vocabulary::NRL::GRAPH()
+QUrl Soprano::Vocabulary::NRL::Graph()
 {
     return nrl()->GRAPH;
 }
 
 
-QUrl Soprano::Vocabulary::NRL::HASSPECIFICATION()
+QUrl Soprano::Vocabulary::NRL::hasSpecification()
 {
     return nrl()->HASSPECIFICATION;
 }
 
 
-QUrl Soprano::Vocabulary::NRL::DOCUMENTGRAPH()
+QUrl Soprano::Vocabulary::NRL::DocumentGraph()
 {
     return nrl()->DOCUMENTGRAPH;
 }
 
 
-QUrl Soprano::Vocabulary::NRL::COREGRAPHMETADATAFOR()
+QUrl Soprano::Vocabulary::NRL::coreGraphMetadataFor()
 {
     return nrl()->COREGRAPHMETADATAFOR;
 }
 
 
-QUrl Soprano::Vocabulary::NRL::TRANSITIVEPROPERTY()
+QUrl Soprano::Vocabulary::NRL::TransitiveProperty()
 {
     return nrl()->TRANSITIVEPROPERTY;
 }
 
 
-QUrl Soprano::Vocabulary::NRL::FUNCTIONALPROPERTY()
+QUrl Soprano::Vocabulary::NRL::FunctionalProperty()
 {
     return nrl()->FUNCTIONALPROPERTY;
 }
 
 
-QUrl Soprano::Vocabulary::NRL::KNOWLEDGEBASE()
+QUrl Soprano::Vocabulary::NRL::KnowledgeBase()
 {
     return nrl()->KNOWLEDGEBASE;
 }
 
 
-QUrl Soprano::Vocabulary::NRL::EXTERNALREALIZER()
+QUrl Soprano::Vocabulary::NRL::externalRealizer()
 {
     return nrl()->EXTERNALREALIZER;
 }
 
 
-QUrl Soprano::Vocabulary::NRL::SUBGRAPHOF()
+QUrl Soprano::Vocabulary::NRL::subGraphOf()
 {
     return nrl()->SUBGRAPHOF;
 }
 
 
-QUrl Soprano::Vocabulary::NRL::CONFIGURATION()
+QUrl Soprano::Vocabulary::NRL::Configuration()
 {
     return nrl()->CONFIGURATION;
 }
 
 
-QUrl Soprano::Vocabulary::NRL::VIEWSPECIFICATION()
+QUrl Soprano::Vocabulary::NRL::ViewSpecification()
 {
     return nrl()->VIEWSPECIFICATION;
 }
 
 
-QUrl Soprano::Vocabulary::NRL::HASSEMANTICS()
+QUrl Soprano::Vocabulary::NRL::hasSemantics()
 {
     return nrl()->HASSEMANTICS;
 }
 
 
-QUrl Soprano::Vocabulary::NRL::EXTERNALVIEWSPECIFICATION()
+QUrl Soprano::Vocabulary::NRL::ExternalViewSpecification()
 {
     return nrl()->EXTERNALVIEWSPECIFICATION;
 }
 
 
-QUrl Soprano::Vocabulary::NRL::DEFAULTGRAPH()
+QUrl Soprano::Vocabulary::NRL::DefaultGraph()
 {
     return nrl()->DEFAULTGRAPH;
 }
 
 
-QUrl Soprano::Vocabulary::NRL::UPDATABLE()
+QUrl Soprano::Vocabulary::NRL::updatable()
 {
     return nrl()->UPDATABLE;
 }
 
 
-QUrl Soprano::Vocabulary::NRL::SEMANTICS()
+QUrl Soprano::Vocabulary::NRL::Semantics()
 {
     return nrl()->SEMANTICS;
 }
 
 
-QUrl Soprano::Vocabulary::NRL::EQUIVALENTGRAPH()
+QUrl Soprano::Vocabulary::NRL::equivalentGraph()
 {
     return nrl()->EQUIVALENTGRAPH;
 }
 
 
-QUrl Soprano::Vocabulary::NRL::REFLEXIVEPROPERTY()
+QUrl Soprano::Vocabulary::NRL::ReflexiveProperty()
 {
     return nrl()->REFLEXIVEPROPERTY;
 }
 
 
-QUrl Soprano::Vocabulary::NRL::ASYMMETRICPROPERTY()
+QUrl Soprano::Vocabulary::NRL::AsymmetricProperty()
 {
     return nrl()->ASYMMETRICPROPERTY;
 }
 
 
-QUrl Soprano::Vocabulary::NRL::VIEWON()
+QUrl Soprano::Vocabulary::NRL::viewOn()
 {
     return nrl()->VIEWON;
 }
 
 
-QUrl Soprano::Vocabulary::NRL::SYMMETRICPROPERTY()
+QUrl Soprano::Vocabulary::NRL::SymmetricProperty()
 {
     return nrl()->SYMMETRICPROPERTY;
 }
 
 
-QUrl Soprano::Vocabulary::NRL::SUPERGRAPHOF()
+QUrl Soprano::Vocabulary::NRL::superGraphOf()
 {
     return nrl()->SUPERGRAPHOF;
 }
 
 
-QUrl Soprano::Vocabulary::NRL::ONTOLOGY()
+QUrl Soprano::Vocabulary::NRL::Ontology()
 {
     return nrl()->ONTOLOGY;
 }
 
 
-QUrl Soprano::Vocabulary::NRL::REALIZES()
+QUrl Soprano::Vocabulary::NRL::realizes()
 {
     return nrl()->REALIZES;
 }
 
 
-QUrl Soprano::Vocabulary::NRL::RULE()
+QUrl Soprano::Vocabulary::NRL::rule()
 {
     return nrl()->RULE;
 }
 
 
-QUrl Soprano::Vocabulary::NRL::INSTANCEBASE()
+QUrl Soprano::Vocabulary::NRL::InstanceBase()
 {
     return nrl()->INSTANCEBASE;
 }
 
 
-QUrl Soprano::Vocabulary::NRL::RULEVIEWSPECIFICATION()
+QUrl Soprano::Vocabulary::NRL::RuleViewSpecification()
 {
     return nrl()->RULEVIEWSPECIFICATION;
 }
 
 
-QUrl Soprano::Vocabulary::NRL::SEMANTICSDEFINEDBY()
+QUrl Soprano::Vocabulary::NRL::semanticsDefinedBy()
 {
     return nrl()->SEMANTICSDEFINEDBY;
 }
 
 
-QUrl Soprano::Vocabulary::NRL::GRAPHMETADATA()
+QUrl Soprano::Vocabulary::NRL::GraphMetadata()
 {
     return nrl()->GRAPHMETADATA;
 }
 
 
-QUrl Soprano::Vocabulary::NRL::GRAPHMETADATAFOR()
+QUrl Soprano::Vocabulary::NRL::graphMetadataFor()
 {
     return nrl()->GRAPHMETADATAFOR;
 }
 
 
-QUrl Soprano::Vocabulary::NRL::GRAPHVIEW()
+QUrl Soprano::Vocabulary::NRL::GraphView()
 {
     return nrl()->GRAPHVIEW;
 }
 
 
-QUrl Soprano::Vocabulary::NRL::DATA()
+QUrl Soprano::Vocabulary::NRL::Data()
 {
     return nrl()->DATA;
 }
 
 
-QUrl Soprano::Vocabulary::NRL::INVERSEPROPERTY()
+QUrl Soprano::Vocabulary::NRL::inverseProperty()
 {
     return nrl()->INVERSEPROPERTY;
 }
 
 
-QUrl Soprano::Vocabulary::NRL::SCHEMA()
+QUrl Soprano::Vocabulary::NRL::Schema()
 {
     return nrl()->SCHEMA;
 }

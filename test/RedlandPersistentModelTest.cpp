@@ -23,8 +23,11 @@
 
 #include <soprano/soprano.h>
 
+#include <QtCore/QFile>
+
 using namespace Soprano;
 
+static int modelCnt = 0;
 
 Soprano::Model* RedlandPersistentModelTest::createModel()
 {
@@ -33,14 +36,28 @@ Soprano::Model* RedlandPersistentModelTest::createModel()
         return 0;
     }
 
+
     QList<BackendSetting> settings;
     settings.append( BackendSetting( "hash-type", "bdb" ) );
+    settings.append( BackendSetting( "name", QString( "test%1" ).arg( ++modelCnt ) ) );
+
     Model* m = b->createModel( settings );
-    if ( m )
-        m->removeAllStatements();
+    if ( m ) {
+        m_nameMap[m] = QString( "test%1" ).arg( modelCnt );
+    }
     return m;
 }
 
+
+void RedlandPersistentModelTest::deleteModel( Soprano::Model* m )
+{
+    QString name = m_nameMap[m];
+    delete m;
+    QFile::remove( QString( "%1-po2s.db" ).arg( name ) );
+    QFile::remove( QString( "%1-so2p.db" ).arg( name ) );
+    QFile::remove( QString( "%1-sp2o.db" ).arg( name ) );
+    QFile::remove( QString( "%1-contexts.db" ).arg( name ) );
+}
 
 QTEST_MAIN(RedlandPersistentModelTest)
 

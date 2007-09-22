@@ -68,6 +68,7 @@ SET(soprano_SRCS
   vocabulary/rdfs.cpp
   vocabulary/xmls.cpp
   vocabulary/nrl.cpp
+  vocabulary/nao.cpp
   query/query.cpp
   query/queryparser.cpp
   query/queryserializer.cpp
@@ -131,6 +132,7 @@ INSTALL(FILES
   vocabulary/rdfs.h
   vocabulary/xmls.h
   vocabulary/nrl.h
+  vocabulary/nao.h
   inference/inferencemodel.h
   inference/inferencerule.h
   inference/inferenceruleset.h

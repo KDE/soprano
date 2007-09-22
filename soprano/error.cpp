@@ -201,7 +201,7 @@ Soprano::Error::Error Soprano::Error::ErrorCache::lastError() const
 void Soprano::Error::ErrorCache::setError( const Error& error ) const
 {
     if ( error ) {
-        qDebug() << "(Soprano) Error occured: " << error;
+        qDebug() << "(Soprano) Error occured in thread" << QThread::currentThreadId() << ":" << error;
     }
 
     d->errorMap[QThread::currentThreadId()] = error;

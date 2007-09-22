@@ -35,7 +35,7 @@ namespace Soprano {
 	    /**
 	     * The SIL namespace (http://soprano.org/sil#)
 	     */
-	    QUrl NAMESPACE();
+	    QUrl silNamespace();
 
 	    /**
 	     * URI of the named graph that contains all metadata about the inference graphs
@@ -43,7 +43,7 @@ namespace Soprano {
 	     *
 	     * (http://soprano.org/sil#InferenceMetaData)
 	     */
-	    QUrl INFERENCE_METADATA();
+	    QUrl InferenceMetaData();
 
 	    /**
 	     * inferenceGraph is a rdfs:Class that represents named graphs containing
@@ -51,7 +51,7 @@ namespace Soprano {
 	     *
 	     * (http://soprano.org/sil#InferenceGraph)
 	     */
-	    QUrl INFERENCE_GRAPH();
+	    QUrl InferenceGraph();
 
 	    /**
 	     * Property that states which statement was used to infer the triples in one
@@ -59,13 +59,13 @@ namespace Soprano {
 	     *
 	     * (http://soprano.org/sil#sourceStatement)
 	     */
-	    QUrl SOURCE_STATEMENT();
+	    QUrl sourceStatement();
 
 	    /**
 	     * Property as addition to rdf:subject, rdf:predicate, and rdf:object
 	     * to state the context of a statement.
 	     */
-	    QUrl CONTEXT();
+	    QUrl context();
 	}
     }
 }

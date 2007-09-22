@@ -1,7 +1,7 @@
-/* 
+/*
  * This file is part of Soprano Project.
  *
- * Copyright (C) 2007 Daniele Galdi <daniele.galdi@gmail.com>
+ * Copyright (C) 2007 Sebastian Trueg <trueg@kde.org>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -19,28 +19,33 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef QUERY_API_TEST_H
-#define QUERY_API_TEST_H
+#include "nao.h"
 
-#include <QObject>
-#include <QString>
+#define NAO_NS "http://semanticdesktop.org/ontologies/2007/03/31/nao#"
 
-class Soprano::Error::Locator;
-
-class QueryAPITest: public QObject
+class Nao
 {
-Q_OBJECT
-private slots:
-    void initTestCase();
-    void cleanupTestCase();
+public:
+    Nao()
+        : naoNamespace( NAO_NS ),
+          created( NAO_NS"created" ) {
+    }
 
-    void testQuery_1();    
-    void testSyntaxError();
-    void testQueryCreation();
-
-private:
-    Soprano::PluginManager *m_manager;
+    QUrl naoNamespace;
+    QUrl created;
 };
 
-#endif // QUERY_API_TEST_H
 
+Q_GLOBAL_STATIC( Nao, nao );
+
+
+QUrl Soprano::Vocabulary::NAO::naoNamespace()
+{
+    return nao()->naoNamespace;
+}
+
+
+QUrl Soprano::Vocabulary::NAO::created()
+{
+    return nao()->created;
+}

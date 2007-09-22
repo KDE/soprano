@@ -66,97 +66,97 @@ public:
 Q_GLOBAL_STATIC( XMLSchema, xmls );
 
 
-QUrl Soprano::Vocabulary::XMLSchema::NAMESPACE()
+QUrl Soprano::Vocabulary::XMLSchema::xmlsNamespace()
 {
     return xmls()->xmlsNamespace;
 }
 
 
-QUrl Soprano::Vocabulary::XMLSchema::INT()
+QUrl Soprano::Vocabulary::XMLSchema::xmlsInt()
 {
     return xmls()->xmlsInt;
 }
 
 
-QUrl Soprano::Vocabulary::XMLSchema::INTEGER()
+QUrl Soprano::Vocabulary::XMLSchema::integer()
 {
     return xmls()->xmlsInteger;
 }
 
 
-QUrl Soprano::Vocabulary::XMLSchema::NEGATIVEINTEGER()
+QUrl Soprano::Vocabulary::XMLSchema::negativeInteger()
 {
     return xmls()->xmlsNegativeInteger;
 }
 
 
-QUrl Soprano::Vocabulary::XMLSchema::DECIMAL()
+QUrl Soprano::Vocabulary::XMLSchema::decimal()
 {
     return xmls()->xmlsDecimal;
 }
 
 
-QUrl Soprano::Vocabulary::XMLSchema::SHORT()
+QUrl Soprano::Vocabulary::XMLSchema::xmlsShort()
 {
     return xmls()->xmlsShort;
 }
 
 
-QUrl Soprano::Vocabulary::XMLSchema::LONG()
+QUrl Soprano::Vocabulary::XMLSchema::xmlsLong()
 {
     return xmls()->xmlsLong;
 }
 
 
-QUrl Soprano::Vocabulary::XMLSchema::UNSIGNEDINT()
+QUrl Soprano::Vocabulary::XMLSchema::unsignedInt()
 {
     return xmls()->xmlsUnsignedInt;
 }
 
 
-QUrl Soprano::Vocabulary::XMLSchema::UNSIGNEDSHORT()
+QUrl Soprano::Vocabulary::XMLSchema::unsignedShort()
 {
     return xmls()->xmlsUnsignedShort;
 }
 
 
-QUrl Soprano::Vocabulary::XMLSchema::UNSIGNEDLONG()
+QUrl Soprano::Vocabulary::XMLSchema::unsignedLong()
 {
     return xmls()->xmlsUnsignedLong;
 }
 
 
-QUrl Soprano::Vocabulary::XMLSchema::STRING()
+QUrl Soprano::Vocabulary::XMLSchema::string()
 {
     return xmls()->xmlsString;
 }
 
 
-QUrl Soprano::Vocabulary::XMLSchema::DOUBLE()
+QUrl Soprano::Vocabulary::XMLSchema::xmlsDouble()
 {
     return xmls()->xmlsDouble;
 }
 
 
-QUrl Soprano::Vocabulary::XMLSchema::BOOLEAN()
+QUrl Soprano::Vocabulary::XMLSchema::boolean()
 {
     return xmls()->xmlsBoolean;
 }
 
 
-QUrl Soprano::Vocabulary::XMLSchema::DATE()
+QUrl Soprano::Vocabulary::XMLSchema::date()
 {
     return xmls()->xmlsDate;
 }
 
 
-QUrl Soprano::Vocabulary::XMLSchema::TIME()
+QUrl Soprano::Vocabulary::XMLSchema::time()
 {
     return xmls()->xmlsTime;
 }
 
 
-QUrl Soprano::Vocabulary::XMLSchema::DATETIME()
+QUrl Soprano::Vocabulary::XMLSchema::dateTime()
 {
     return xmls()->xmlsDateTime;
 }

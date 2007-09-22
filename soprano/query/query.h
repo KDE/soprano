@@ -36,7 +36,9 @@
 //          then one for strings and one or numericals and so on
 //        - String operations such as concat
 //        - We have no way of representing OFFSET or LIMIT yet
-
+//        - There is no way to convert a numerical into string for comparision
+//        - Numerical is completely useless ATM as there is no way to compare it
+//          to anything but other numericals, i.e. const expressions.
 
 namespace Soprano
 {
@@ -50,7 +52,10 @@ namespace Soprano
         public:
             virtual ~Expression();
         
-            virtual void accept( ExpressionVisitor *visitor ) = 0;
+	    // FIXME: if we want to keep the visitor pattern stuff we need two methods:
+	    // one const and one non-const, the const one should call a visitor method
+	    // with a const parameter. It is ugly but I see no other way to keep this stuff.
+            virtual void accept( ExpressionVisitor *visitor ) const = 0;
 
             virtual Expression* clone() const = 0;
             
@@ -128,6 +133,8 @@ namespace Soprano
             BooleanExpression();
         };
 
+	class Numerical;
+
         // An expression that return a xsd:integer, xsd:decimal, xsd:float, and xsd:double
         class SOPRANO_EXPORT NumericalExpression: public Expression {
         public:
@@ -141,7 +148,11 @@ namespace Soprano
 
         /**
          * A numerical constant.
-        */
+	 */
+	// FIXME: we also need a DateTime expression. Could we also use a generic LiteralExpression
+	//        instead? After all Numerical already forces a switch statement. Why not adding some
+	//        more? But then what is the difference between Query::Node with a LiteralValue node
+	//        and a Query::LiteralValue?
         class SOPRANO_EXPORT Numerical : public NumericalExpression {
         public:
             Numerical();
@@ -155,7 +166,7 @@ namespace Soprano
 
             Numerical* clone() const;
 
-            void accept( ExpressionVisitor *visitor );
+            void accept( ExpressionVisitor *visitor ) const;
         
             bool isDecimal();
 
@@ -198,7 +209,7 @@ namespace Soprano
             QString value() const;
             void setValue( const QString &value );
     
-            void accept( ExpressionVisitor *visitor );
+            void accept( ExpressionVisitor *visitor ) const;
 
         private:
             class Private;
@@ -221,9 +232,9 @@ namespace Soprano
             QSharedDataPointer<Private> d;
         };
 
-        class SOPRANO_EXPORT UnaryRTermBooleanExpression: public BooleanExpression {
+	class SOPRANO_EXPORT UnaryRTermExpressionBase {
         public:
-            UnaryRTermBooleanExpression( RTerm *rterm );
+            UnaryRTermExpressionBase( RTerm *rterm );
         
             void setRTerm( RTerm *expression );
             const RTerm *rterm() const;
@@ -233,16 +244,19 @@ namespace Soprano
             QSharedDataPointer<Private> d;
         };
 
-        class SOPRANO_EXPORT UnaryRTermStringExpression: public StringExpression {
+        class SOPRANO_EXPORT UnaryRTermBooleanExpression: public BooleanExpression, UnaryRTermExpressionBase {
+        public:
+            UnaryRTermBooleanExpression( RTerm *rterm );
+        };
+
+        class SOPRANO_EXPORT UnaryRTermStringExpression: public StringExpression, UnaryRTermExpressionBase {
         public:
             UnaryRTermStringExpression( RTerm *rterm );
-        
-            void setRTerm( RTerm *expression );
-            const RTerm *rterm() const;
+        };
 
-        private:
-            class Private;
-            QSharedDataPointer<Private> d;
+        class SOPRANO_EXPORT UnaryRTermNumericalExpression: public NumericalExpression, UnaryRTermExpressionBase {
+        public:
+            UnaryRTermNumericalExpression( RTerm *rterm );
         };
 
         class SOPRANO_EXPORT UnaryNumericalExpression: public NumericalExpression {
@@ -267,7 +281,7 @@ namespace Soprano
         
             Not* clone() const;
         
-            void accept( ExpressionVisitor *visitor );
+            void accept( ExpressionVisitor *visitor ) const;
         };
 
         class Negate: public UnaryNumericalExpression  {
@@ -278,7 +292,7 @@ namespace Soprano
 
             Negate* clone() const;
         
-            void accept( ExpressionVisitor *visitor );
+            void accept( ExpressionVisitor *visitor ) const;
         };
 
         /* 
@@ -300,7 +314,7 @@ namespace Soprano
 
             IsBound* clone() const;
             
-            void accept( ExpressionVisitor *visitor );
+            void accept( ExpressionVisitor *visitor ) const;
             
         private:
             class Private;
@@ -314,7 +328,7 @@ namespace Soprano
 
             IsIRI* clone() const;
 
-            void accept( ExpressionVisitor *visitor );
+            void accept( ExpressionVisitor *visitor ) const;
         };
 
         class SOPRANO_EXPORT IsBlank: public UnaryRTermBooleanExpression {
@@ -324,7 +338,7 @@ namespace Soprano
 
             IsBlank* clone() const;
 
-            void accept( ExpressionVisitor *visitor );
+            void accept( ExpressionVisitor *visitor ) const;
         };
 
         class SOPRANO_EXPORT IsLiteral: public UnaryRTermBooleanExpression {
@@ -334,7 +348,7 @@ namespace Soprano
 
             IsLiteral* clone() const;
 
-            void accept( ExpressionVisitor *visitor );
+            void accept( ExpressionVisitor *visitor ) const;
         };
 
         /*
@@ -347,7 +361,16 @@ namespace Soprano
 
             StringValue *clone() const;
 
-            void accept( ExpressionVisitor *visitor );
+            void accept( ExpressionVisitor *visitor ) const;
+        };
+
+        class SOPRANO_EXPORT NumericalValue: public UnaryRTermNumericalExpression {
+        public:
+            NumericalValue( RTerm *rterm );
+
+            NumericalValue *clone() const;
+
+            void accept( ExpressionVisitor *visitor ) const;
         };
 
         class SOPRANO_EXPORT LangValue: public UnaryRTermStringExpression {
@@ -357,7 +380,7 @@ namespace Soprano
 
             LangValue* clone() const;
 
-            void accept( ExpressionVisitor *visitor );
+            void accept( ExpressionVisitor *visitor ) const;
         };
 
         class SOPRANO_EXPORT DataTypeValue: public UnaryRTermStringExpression {
@@ -367,22 +390,21 @@ namespace Soprano
 
             DataTypeValue* clone() const;
 
-            void accept( ExpressionVisitor *visitor );
+            void accept( ExpressionVisitor *visitor ) const;
         };
 
         ////////////////////////////////////////////////////////////////////////
         // Binary Expression                                                  //
         ////////////////////////////////////////////////////////////////////////
 
-        class SOPRANO_EXPORT BinaryBooleanExpression: public BooleanExpression {
+        class SOPRANO_EXPORT BooleanSetExpression: public BooleanExpression {
         public:
-            BinaryBooleanExpression( BooleanExpression *first, BooleanExpression *second );
+            BooleanSetExpression();
 
-            void setFirst( BooleanExpression *first );
-            void setSecond( BooleanExpression *second );    
-
-            const BooleanExpression *first() const;
-            const BooleanExpression *second() const;
+            void addConditon( BooleanExpression *first );
+	    int count() const;
+	    const BooleanExpression* condition( int i ) const;
+	    const BooleanExpression* operator[]( int i ) const;
     
         private:
             class Private;
@@ -464,22 +486,22 @@ namespace Soprano
             QSharedDataPointer<Private> d;
         };
 
-        class SOPRANO_EXPORT LogicOr: public BinaryBooleanExpression {
+        class SOPRANO_EXPORT LogicOr: public BooleanSetExpression {
         public:
-            LogicOr( BooleanExpression *first, BooleanExpression *second );
+            LogicOr();
 
             LogicOr* clone() const;
         
-            void accept( ExpressionVisitor *visitor );
+            void accept( ExpressionVisitor *visitor ) const;
         };
 
-        class SOPRANO_EXPORT LogicAnd: public BinaryBooleanExpression {
+        class SOPRANO_EXPORT LogicAnd: public BooleanSetExpression {
         public:
-            LogicAnd( BooleanExpression *first, BooleanExpression *second );
+            LogicAnd();
             
             LogicAnd* clone() const;
 
-            void accept( ExpressionVisitor *visitor );
+            void accept( ExpressionVisitor *visitor ) const;
         };
 
         class SOPRANO_EXPORT NumericalEqual: public BinaryNumericalBooleanExpression {
@@ -488,7 +510,7 @@ namespace Soprano
 
             NumericalEqual* clone() const;
 
-            void accept( ExpressionVisitor *visitor );
+            void accept( ExpressionVisitor *visitor ) const;
         };
 
         // trueg: I think the NotEqual expressions are superfluous since they can be done via Not(Equal(expr, expr))
@@ -498,7 +520,7 @@ namespace Soprano
 
             NumericalNotEqual* clone() const;
 
-            void accept( ExpressionVisitor *visitor );
+            void accept( ExpressionVisitor *visitor ) const;
         };
 
         class SOPRANO_EXPORT StringEqual: public BinaryStringBooleanExpression {
@@ -507,7 +529,7 @@ namespace Soprano
 
             StringEqual* clone() const;
 
-            void accept( ExpressionVisitor *visitor );
+            void accept( ExpressionVisitor *visitor ) const;
         };
 
         class SOPRANO_EXPORT StringNotEqual: public BinaryStringBooleanExpression {
@@ -516,7 +538,7 @@ namespace Soprano
 
             StringNotEqual* clone() const;
 
-            void accept( ExpressionVisitor *visitor );
+            void accept( ExpressionVisitor *visitor ) const;
         };
 
         class SOPRANO_EXPORT DateTimeEqual: public BinaryDateTimeBooleanExpression {
@@ -525,7 +547,7 @@ namespace Soprano
 
             DateTimeEqual* clone() const;
 
-            void accept( ExpressionVisitor *visitor );
+            void accept( ExpressionVisitor *visitor ) const;
         }; 
 
         class SOPRANO_EXPORT DateTimeNotEqual: public BinaryDateTimeBooleanExpression {
@@ -534,7 +556,7 @@ namespace Soprano
 
             DateTimeNotEqual* clone() const;
 
-            void accept( ExpressionVisitor *visitor );
+            void accept( ExpressionVisitor *visitor ) const;
         };
 
         class SOPRANO_EXPORT NumericalLessThan: public BinaryNumericalBooleanExpression {
@@ -543,7 +565,7 @@ namespace Soprano
 
             NumericalLessThan* clone() const;
 
-            void accept( ExpressionVisitor *visitor );
+            void accept( ExpressionVisitor *visitor ) const;
         };
 
         class SOPRANO_EXPORT NumericalGreaterThan: public BinaryNumericalBooleanExpression {
@@ -552,7 +574,7 @@ namespace Soprano
 
             NumericalGreaterThan* clone() const;
 
-            void accept( ExpressionVisitor *visitor );
+            void accept( ExpressionVisitor *visitor ) const;
         };
 
         class SOPRANO_EXPORT NumericalLessThanEqual: public BinaryNumericalBooleanExpression {
@@ -561,7 +583,7 @@ namespace Soprano
 
             NumericalLessThanEqual* clone() const;
 
-            void accept( ExpressionVisitor *visitor );
+            void accept( ExpressionVisitor *visitor ) const;
         };
 
         class SOPRANO_EXPORT NumericalGreaterThanEqual: public BinaryNumericalBooleanExpression {
@@ -570,7 +592,7 @@ namespace Soprano
 
             NumericalGreaterThanEqual* clone() const;
         
-            void accept( ExpressionVisitor *visitor );
+            void accept( ExpressionVisitor *visitor ) const;
         };
 
         class SOPRANO_EXPORT StringLessThan: public BinaryStringBooleanExpression {
@@ -579,7 +601,7 @@ namespace Soprano
 
             StringLessThan* clone() const;
 
-            void accept( ExpressionVisitor *visitor );
+            void accept( ExpressionVisitor *visitor ) const;
         };
 
         class SOPRANO_EXPORT StringGreaterThan: public BinaryStringBooleanExpression {
@@ -588,7 +610,7 @@ namespace Soprano
 
             StringGreaterThan* clone() const;
         
-            void accept( ExpressionVisitor *visitor );
+            void accept( ExpressionVisitor *visitor ) const;
         };
 
         class SOPRANO_EXPORT StringLessThanEqual: public BinaryStringBooleanExpression {
@@ -597,7 +619,7 @@ namespace Soprano
 
             StringLessThanEqual* clone() const;
 
-            void accept( ExpressionVisitor *visitor );
+            void accept( ExpressionVisitor *visitor ) const;
         };
 
         class SOPRANO_EXPORT StringGreaterThanEqual: public BinaryStringBooleanExpression {
@@ -606,7 +628,7 @@ namespace Soprano
 
             StringGreaterThanEqual* clone() const;
 
-            void accept( ExpressionVisitor *visitor );
+            void accept( ExpressionVisitor *visitor ) const;
         };
 
         class SOPRANO_EXPORT DateTimeLessThan: public BinaryDateTimeBooleanExpression {
@@ -615,7 +637,7 @@ namespace Soprano
 
             DateTimeLessThan* clone() const;
         
-            void accept( ExpressionVisitor *visitor );
+            void accept( ExpressionVisitor *visitor ) const;
         };
 
         class SOPRANO_EXPORT DateTimeGreaterThan: public BinaryDateTimeBooleanExpression {
@@ -624,7 +646,7 @@ namespace Soprano
 
             DateTimeGreaterThan* clone() const;
 
-            void accept( ExpressionVisitor *visitor );
+            void accept( ExpressionVisitor *visitor ) const;
         };
 
         class SOPRANO_EXPORT DateTimeLessThanEqual: public BinaryDateTimeBooleanExpression {
@@ -633,7 +655,7 @@ namespace Soprano
 
             DateTimeLessThanEqual* clone() const;
 
-            void accept( ExpressionVisitor *visitor );
+            void accept( ExpressionVisitor *visitor ) const;
         };
 
         class SOPRANO_EXPORT DateTimeGreaterThanEqual: public BinaryDateTimeBooleanExpression {
@@ -642,7 +664,7 @@ namespace Soprano
 
             DateTimeGreaterThanEqual* clone() const;
 
-            void accept( ExpressionVisitor *visitor );
+            void accept( ExpressionVisitor *visitor ) const;
         };
 
         class SOPRANO_EXPORT NumericalMultiply: public BinaryNumericalExpression {
@@ -651,7 +673,7 @@ namespace Soprano
 
             NumericalMultiply* clone() const;
 
-            void accept( ExpressionVisitor *visitor ); 
+            void accept( ExpressionVisitor *visitor ) const; 
         };
 
         class SOPRANO_EXPORT NumericalDivide: public BinaryNumericalExpression {
@@ -660,7 +682,7 @@ namespace Soprano
 
             NumericalDivide* clone() const;
 
-            void accept( ExpressionVisitor *visitor );
+            void accept( ExpressionVisitor *visitor ) const;
         };
 
         class SOPRANO_EXPORT NumericalAdd: public BinaryNumericalExpression {
@@ -669,7 +691,7 @@ namespace Soprano
 
             NumericalAdd* clone() const;
 
-            void accept( ExpressionVisitor *visitor );
+            void accept( ExpressionVisitor *visitor ) const;
         };
 
         class SOPRANO_EXPORT NumericalSubtract: public BinaryNumericalExpression {
@@ -678,7 +700,7 @@ namespace Soprano
 
             NumericalSubtract* clone() const;
 
-            void accept( ExpressionVisitor *visitor );
+            void accept( ExpressionVisitor *visitor ) const;
         };
 
         /*          
@@ -692,7 +714,7 @@ namespace Soprano
 
             RTermEqual* clone() const;
 
-            void accept( ExpressionVisitor *visitor );
+            void accept( ExpressionVisitor *visitor ) const;
         };
 
         class SOPRANO_EXPORT RTermNotEqual: public BinaryRTermBooleanExpression {
@@ -701,7 +723,7 @@ namespace Soprano
 
             RTermNotEqual* clone() const;
 
-            void accept( ExpressionVisitor *visitor );
+            void accept( ExpressionVisitor *visitor ) const;
         };
 
         class SOPRANO_EXPORT LangMatches: public BinaryStringBooleanExpression {
@@ -710,7 +732,7 @@ namespace Soprano
 
             LangMatches* clone() const;
 
-            void accept( ExpressionVisitor *visitor );
+            void accept( ExpressionVisitor *visitor ) const;
         }; 
 
         class SOPRANO_EXPORT Regexp: public BooleanExpression {
@@ -734,7 +756,7 @@ namespace Soprano
 
             Regexp* clone() const;
             
-            void accept( ExpressionVisitor *visitor );
+            void accept( ExpressionVisitor *visitor ) const;
 
         private:
             class Private;
@@ -789,34 +811,7 @@ namespace Soprano
 
             TriplePattern* clone() const;
 
-            void accept( ExpressionVisitor* visitor );
-
-        private:
-            class Private;
-            QSharedDataPointer<Private> d;
-        };
-
-        class SOPRANO_EXPORT GraphPattern : public BooleanExpression {
-        public:
-            GraphPattern();
-            GraphPattern( bool optional );
-            GraphPattern( const GraphPattern &other );
-            ~GraphPattern();
-        
-            GraphPattern& operator=( const GraphPattern &other );
-
-            void setOptional(bool optional);
-            bool optional() const;
-
-            void addTriplePattern( const TriplePattern& triplePattern );
-            QList<TriplePattern> triplePatterns() const;
-       
-            void addSubGraphPattern( const GraphPattern& graphPattern );
-            QList<GraphPattern> subGraphPatterns() const;
- 
-            GraphPattern* clone() const;
-                
-            void accept( ExpressionVisitor *visitor );
+            void accept( ExpressionVisitor* visitor ) const;
 
         private:
             class Private;
@@ -885,9 +880,6 @@ namespace Soprano
             void setQueryTerms( const QueryTerms &queryTerms );
             const QueryTerms queryTerms() const;
 
-            void setGraphPattern( const GraphPattern& graphPattern );
-            const GraphPattern graphPattern() const;
-        
         private:
             class Private;
             QSharedDataPointer<Private> d;
@@ -896,92 +888,93 @@ namespace Soprano
         ////////////////////////////////////////////////////////////////////////
         // ExpressionVisitor                                                  //
         ////////////////////////////////////////////////////////////////////////
-
+	
+	// FIXME: why is there no visit( const Query* ) method?
         class SOPRANO_EXPORT ExpressionVisitor {
         public:
         virtual ~ExpressionVisitor() {}
 
-            virtual void visit( Not *expression ) = 0;
+            virtual void visit( const Not *expression ) = 0;
 
-            virtual void visit( Negate *expression ) = 0;
+            virtual void visit( const Negate *expression ) = 0;
 
-            virtual void visit( IsBound *expression ) = 0;
+            virtual void visit( const IsBound *expression ) = 0;
 
-            virtual void visit( IsIRI *expression ) = 0;
+            virtual void visit( const IsIRI *expression ) = 0;
 
-            virtual void visit( IsBlank *expression ) = 0;
+            virtual void visit( const IsBlank *expression ) = 0;
 
-            virtual void visit( IsLiteral *expression ) = 0;
+            virtual void visit( const IsLiteral *expression ) = 0;
 
-            virtual void visit( StringValue *expression ) = 0;
+            virtual void visit( const StringValue *expression ) = 0;
 
-            virtual void visit( LangValue *expression ) = 0;
+            virtual void visit( const NumericalValue *expression ) = 0;
 
-            virtual void visit( DataTypeValue *expression ) = 0;
+            virtual void visit( const LangValue *expression ) = 0;
 
-            virtual void visit( LogicAnd *expression ) = 0;
+            virtual void visit( const DataTypeValue *expression ) = 0;
 
-            virtual void visit( LogicOr *expression ) = 0;
+            virtual void visit( const LogicAnd *expression ) = 0;
 
-            virtual void visit( NumericalEqual *expression ) = 0;
+            virtual void visit( const LogicOr *expression ) = 0;
 
-            virtual void visit( NumericalNotEqual *expression ) = 0;
+            virtual void visit( const NumericalEqual *expression ) = 0;
+
+            virtual void visit( const NumericalNotEqual *expression ) = 0;
    
-            virtual void visit( StringEqual *expression ) = 0;
+            virtual void visit( const StringEqual *expression ) = 0;
    
-            virtual void visit( StringNotEqual *expression ) = 0;
+            virtual void visit( const StringNotEqual *expression ) = 0;
 
-            virtual void visit( DateTimeEqual *expression ) = 0;
+            virtual void visit( const DateTimeEqual *expression ) = 0;
 
-            virtual void visit( DateTimeNotEqual *expression ) = 0;
+            virtual void visit( const DateTimeNotEqual *expression ) = 0;
 
-            virtual void visit( Numerical *expression ) = 0;
+            virtual void visit( const Numerical *expression ) = 0;
 
-            virtual void visit( NumericalLessThan *expression ) = 0;
+            virtual void visit( const NumericalLessThan *expression ) = 0;
 
-            virtual void visit( NumericalGreaterThan *expression ) = 0;
+            virtual void visit( const NumericalGreaterThan *expression ) = 0;
 
-            virtual void visit( NumericalLessThanEqual *expression ) = 0;
+            virtual void visit( const NumericalLessThanEqual *expression ) = 0;
 
-            virtual void visit( NumericalGreaterThanEqual *expression ) = 0;
+            virtual void visit( const NumericalGreaterThanEqual *expression ) = 0;
 
-            virtual void visit( String *expression ) = 0;
+            virtual void visit( const String *expression ) = 0;
 
-            virtual void visit( StringLessThan *expression ) = 0;
+            virtual void visit( const StringLessThan *expression ) = 0;
 
-            virtual void visit( StringGreaterThan *expression ) = 0;
+            virtual void visit( const StringGreaterThan *expression ) = 0;
 
-            virtual void visit( StringLessThanEqual *expression ) = 0;
+            virtual void visit( const StringLessThanEqual *expression ) = 0;
 
-            virtual void visit( StringGreaterThanEqual *expression ) = 0;
+            virtual void visit( const StringGreaterThanEqual *expression ) = 0;
 
-            virtual void visit( DateTimeLessThan *expression ) = 0;
+            virtual void visit( const DateTimeLessThan *expression ) = 0;
 
-            virtual void visit( DateTimeGreaterThan *expression ) = 0;
+            virtual void visit( const DateTimeGreaterThan *expression ) = 0;
 
-            virtual void visit( DateTimeLessThanEqual *expression ) = 0;
+            virtual void visit( const DateTimeLessThanEqual *expression ) = 0;
 
-            virtual void visit( DateTimeGreaterThanEqual *expression ) = 0;
+            virtual void visit( const DateTimeGreaterThanEqual *expression ) = 0;
 
-            virtual void visit( NumericalMultiply *expression ) = 0;
+            virtual void visit( const NumericalMultiply *expression ) = 0;
 
-            virtual void visit( NumericalDivide *expression ) = 0;
+            virtual void visit( const NumericalDivide *expression ) = 0;
 
-            virtual void visit( NumericalAdd *expression ) = 0;
+            virtual void visit( const NumericalAdd *expression ) = 0;
 
-            virtual void visit( NumericalSubtract *expression ) = 0;
+            virtual void visit( const NumericalSubtract *expression ) = 0;
 
-            virtual void visit( RTermEqual *expression ) = 0;
+            virtual void visit( const RTermEqual *expression ) = 0;
 
-            virtual void visit( RTermNotEqual *expression ) = 0;
+            virtual void visit( const RTermNotEqual *expression ) = 0;
 
-            virtual void visit( LangMatches *expression ) = 0;
+            virtual void visit( const LangMatches *expression ) = 0;
 
-            virtual void visit( Regexp *expression ) = 0;
+            virtual void visit( const Regexp *expression ) = 0;
 
-            virtual void visit( TriplePattern *expression ) = 0;
-            
-            virtual void visit( GraphPattern *expression ) = 0;
+            virtual void visit( const TriplePattern *expression ) = 0;
         };
     };
 };

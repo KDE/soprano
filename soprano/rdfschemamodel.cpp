@@ -48,43 +48,43 @@ Soprano::RdfSchemaWrapper::~RdfSchemaWrapper()
 
 Soprano::StatementIterator Soprano::RdfSchemaWrapper::classes() const
 {
-    return d->model->listStatements( Statement( Node(), Vocabulary::RDF::TYPE(), Vocabulary::RDFS::CLASS() ) );
+    return d->model->listStatements( Statement( Node(), Vocabulary::RDF::type(), Vocabulary::RDFS::Class() ) );
 }
 
 
 Soprano::StatementIterator Soprano::RdfSchemaWrapper::directSubClassOf( const Node& subClass, const Node& superClass ) const
 {
-    return d->model->listStatements( Statement( subClass, Vocabulary::RDFS::SUBCLASSOF(), superClass ) );
+    return d->model->listStatements( Statement( subClass, Vocabulary::RDFS::subClassOf(), superClass ) );
 }
 
 
 Soprano::StatementIterator Soprano::RdfSchemaWrapper::directSubPropertyOf( const Node& subProperty, const Node& superProperty ) const
 {
-    return d->model->listStatements( Statement( subProperty, Vocabulary::RDFS::SUBPROPERTYOF(), superProperty ) );
+    return d->model->listStatements( Statement( subProperty, Vocabulary::RDFS::subPropertyOf(), superProperty ) );
 }
 
 
 Soprano::StatementIterator Soprano::RdfSchemaWrapper::directType( const Node& someClass, const Node& someType ) const
 {
-    return d->model->listStatements( Statement( someClass, Vocabulary::RDF::TYPE(), someType ) );
+    return d->model->listStatements( Statement( someClass, Vocabulary::RDF::type(), someType ) );
 }
 
 
 Soprano::StatementIterator Soprano::RdfSchemaWrapper::domain( const Node& prop, const Node& domain ) const
 {
-    return d->model->listStatements( Statement( prop, Vocabulary::RDFS::DOMAIN(), domain ) );
+    return d->model->listStatements( Statement( prop, Vocabulary::RDFS::domain(), domain ) );
 }
 
 
 Soprano::StatementIterator Soprano::RdfSchemaWrapper::properties() const
 {
-    return d->model->listStatements( Statement( Node(), Vocabulary::RDF::TYPE(), Vocabulary::RDF::PROPERTY() ) );
+    return d->model->listStatements( Statement( Node(), Vocabulary::RDF::type(), Vocabulary::RDF::Property() ) );
 }
 
 
 Soprano::StatementIterator Soprano::RdfSchemaWrapper::range( const Node& prop, const Node& range ) const
 {
-    return d->model->listStatements( Statement( prop, Vocabulary::RDFS::RANGE(), range ) );
+    return d->model->listStatements( Statement( prop, Vocabulary::RDFS::range(), range ) );
 }
 
 
@@ -112,23 +112,23 @@ Soprano::StatementIterator Soprano::RdfSchemaWrapper::type( const Node& someClas
 bool Soprano::RdfSchemaWrapper::isClass( const Node& resource ) const
 {
     return d->model->containsAnyStatement( Statement( resource,
-                                                      Vocabulary::RDF::TYPE(),
-                                                      Vocabulary::RDFS::CLASS() ) );
+                                                      Vocabulary::RDF::type(),
+                                                      Vocabulary::RDFS::Class() ) );
 }
 
 
 bool Soprano::RdfSchemaWrapper::isProperty( const Node& resource ) const
 {
     return d->model->containsAnyStatement( Statement( resource,
-                                                      Vocabulary::RDF::TYPE(),
-                                                      Vocabulary::RDF::PROPERTY() ) );
+                                                      Vocabulary::RDF::type(),
+                                                      Vocabulary::RDF::Property() ) );
 }
 
 
 bool Soprano::RdfSchemaWrapper::isDirectSubClassOf( const Node& subClass, const Node& superClass ) const
 {
     return d->model->containsAnyStatement( Statement( subClass,
-                                                      Vocabulary::RDFS::SUBCLASSOF(),
+                                                      Vocabulary::RDFS::subClassOf(),
                                                       superClass ) );
 }
 
@@ -136,7 +136,7 @@ bool Soprano::RdfSchemaWrapper::isDirectSubClassOf( const Node& subClass, const 
 bool Soprano::RdfSchemaWrapper::isDirectSubPropertyOf( const Node& subProperty, const Node& superProperty ) const
 {
     return d->model->containsAnyStatement( Statement( subProperty,
-                                                      Vocabulary::RDFS::SUBPROPERTYOF(),
+                                                      Vocabulary::RDFS::subPropertyOf(),
                                                       superProperty ) );
 }
 
@@ -144,7 +144,7 @@ bool Soprano::RdfSchemaWrapper::isDirectSubPropertyOf( const Node& subProperty, 
 bool Soprano::RdfSchemaWrapper::isDirectType( const Node& someClass, const Node& someType ) const
 {
     return d->model->containsAnyStatement( Statement( someClass,
-                                                      Vocabulary::RDF::TYPE(),
+                                                      Vocabulary::RDF::type(),
                                                     someType ) );
 }
 

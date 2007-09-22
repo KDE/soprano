@@ -91,39 +91,35 @@ static Soprano::Query::RTerm* convert_rasqal_literal( rasqal_literal* rl )
         }
     }
 
-    return 0L;
+    return 0;
 }
 
 
-static Soprano::Query::TriplePattern convert_rasqal_triple_pattern( rasqal_triple* rtp )
+static Soprano::Query::TriplePattern* convert_rasqal_triple_pattern( rasqal_triple* rtp )
 {
-    Soprano::Query::TriplePattern triple;
-
-    triple.setSubject( convert_rasqal_literal( rtp->subject ) );
-    triple.setPredicate( convert_rasqal_literal( rtp->predicate ) );
-    triple.setObject( convert_rasqal_literal( rtp->object ) );
-
-    return triple;
+    return new Soprano::Query::TriplePattern( convert_rasqal_literal( rtp->subject ),
+                                              convert_rasqal_literal( rtp->predicate ),
+                                              convert_rasqal_literal( rtp->object ) );
 }
 
-static Soprano::Query::GraphPattern convert_rasqal_graph_pattern( rasqal_graph_pattern* rgp )
+static Soprano::Query::BooleanExpression* convert_rasqal_graph_pattern( rasqal_graph_pattern* rgp )
 {
-    qDebug() << "Soprano::Query::GraphPattern";
+    qDebug() << "Soprano::Query::TriplePattern";
 
-    Soprano::Query::GraphPattern graphPattern(false);
+    Soprano::Query::LogicAnd* andExpr = new Soprano::Query::LogicAnd();
 
     // FIXME: Use rasqal_graph_pattern_get_triple_sequence when rasqal 0.9.15 will be released.
     rasqal_triple* triple;
     int i = 0;
     while ( triple = rasqal_graph_pattern_get_triple( rgp, i ) )
     {
-        graphPattern.addTriplePattern( convert_rasqal_triple_pattern( triple ) );
+        andExpr->addConditon( convert_rasqal_triple_pattern( triple ) );
         i++;
     }
 
     // TODO: SubGraphs...
 
-    return graphPattern;
+    return andExpr;
 }
 
 static Soprano::Query::QueryTerms get_query_terms( rasqal_query *rq )
@@ -194,7 +190,7 @@ Soprano::Query::Query Soprano::Rasqal::QueryParser::parseQuery( const QString &q
     // Top level GraphPattern
 
     rasqal_graph_pattern* graph_pattern = (rasqal_graph_pattern*)rasqal_query_get_query_graph_pattern( rq );
-    queryobj.setGraphPattern( convert_rasqal_graph_pattern(graph_pattern) );
+    queryobj.setCondition( convert_rasqal_graph_pattern(graph_pattern) );
 
     //rasqal_query_print( rq, stdout );
     rasqal_free_query( rq );

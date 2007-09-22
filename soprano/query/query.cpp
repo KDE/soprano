@@ -150,7 +150,7 @@ Soprano::Query::Numerical& Soprano::Query::Numerical::operator=( const Numerical
     return *this;
 }
 
-void Soprano::Query::Numerical::accept( ExpressionVisitor *visitor )
+void Soprano::Query::Numerical::accept( ExpressionVisitor *visitor ) const
 {
     visitor->visit( this );
 }
@@ -325,7 +325,7 @@ void Soprano::Query::String::setValue( const QString& s )
     d->value = s;
 }
 
-void Soprano::Query::String::accept( ExpressionVisitor* visitor )
+void Soprano::Query::String::accept( ExpressionVisitor* visitor ) const
 {
     visitor->visit( this );
 }
@@ -361,7 +361,10 @@ Soprano::Query::UnaryBooleanExpression::UnaryBooleanExpression( BooleanExpressio
 
 void Soprano::Query::UnaryBooleanExpression::setExpression( BooleanExpression *expression )
 {
-    d->expression = expression;
+    if ( expression != d->expression ) {
+        delete d->expression;
+        d->expression = expression;
+    }
 }
 
 const Soprano::Query::BooleanExpression *Soprano::Query::UnaryBooleanExpression::expression() const
@@ -370,10 +373,10 @@ const Soprano::Query::BooleanExpression *Soprano::Query::UnaryBooleanExpression:
 }
 
 //
-// Soprano::Query::UnaryRTermBooleanExpression
+// Soprano::Query::UnaryRTermExpressionBase
 //
 
-class Soprano::Query::UnaryRTermBooleanExpression::Private : public QSharedData
+class Soprano::Query::UnaryRTermExpressionBase::Private : public QSharedData
 {
 public:
     Private( RTerm* e = 0 )
@@ -392,57 +395,46 @@ public:
     RTerm* term;
 };
 
-Soprano::Query::UnaryRTermBooleanExpression::UnaryRTermBooleanExpression( RTerm *rterm )
+Soprano::Query::UnaryRTermExpressionBase::UnaryRTermExpressionBase( RTerm *rterm )
     : d ( new Private( rterm ) )
 {
 }
 
-void Soprano::Query::UnaryRTermBooleanExpression::setRTerm( RTerm *rterm )
+void Soprano::Query::UnaryRTermExpressionBase::setRTerm( RTerm *rterm )
 {
     d->term = rterm;
 }
 
-const Soprano::Query::RTerm *Soprano::Query::UnaryRTermBooleanExpression::rterm() const
+const Soprano::Query::RTerm *Soprano::Query::UnaryRTermExpressionBase::rterm() const
 {
     return d->term;
+}
+
+//
+// Soprano::Query::UnaryRTermBooleanExpression
+//
+
+Soprano::Query::UnaryRTermBooleanExpression::UnaryRTermBooleanExpression( RTerm *rterm )
+    : UnaryRTermExpressionBase( rterm )
+{
 }
 
 //
 // Soprano::Query::UnaryRTermStringExpression
 //
 
-class Soprano::Query::UnaryRTermStringExpression::Private : public QSharedData
-{
-public:
-    Private( RTerm* e = 0 )
-        : term( e ) {
-    }
-    Private( const Private& other )
-        : term( 0 ) {
-        if ( other.term ) {
-            term = other.term->clone();
-        }
-    }
-    ~Private() {
-        delete term;
-    }
-
-    RTerm* term;
-};
-
 Soprano::Query::UnaryRTermStringExpression::UnaryRTermStringExpression( RTerm *rterm )
-    : d ( new Private( rterm ) )
+    : UnaryRTermExpressionBase( rterm )
 {
 }
 
-void Soprano::Query::UnaryRTermStringExpression::setRTerm( RTerm *rterm )
-{
-    d->term = rterm;
-}
+//
+// Soprano::Query::UnaryRTermNumericalExpression
+//
 
-const Soprano::Query::RTerm *Soprano::Query::UnaryRTermStringExpression::rterm() const
+Soprano::Query::UnaryRTermNumericalExpression::UnaryRTermNumericalExpression( RTerm *rterm )
+    : UnaryRTermExpressionBase( rterm )
 {
-    return d->term;
 }
 
 //
@@ -475,7 +467,10 @@ Soprano::Query::UnaryNumericalExpression::UnaryNumericalExpression( NumericalExp
 
 void Soprano::Query::UnaryNumericalExpression::setExpression( NumericalExpression *expression )
 {
-    d->expression = expression;
+    if ( expression != d->expression ) {
+        delete d->expression;
+        d->expression = expression;
+    }
 }
 
 const Soprano::Query::NumericalExpression *Soprano::Query::UnaryNumericalExpression::expression() const
@@ -496,7 +491,7 @@ Soprano::Query::Not::~Not()
 {
 }
 
-void Soprano::Query::Not::accept( ExpressionVisitor *visitor )
+void Soprano::Query::Not::accept( ExpressionVisitor *visitor ) const
 {
     visitor->visit( this );
 }
@@ -519,7 +514,8 @@ Soprano::Query::Negate::~Negate()
 {
 }
 
-void Soprano::Query::Negate::accept( ExpressionVisitor *visitor )
+
+void Soprano::Query::Negate::accept( ExpressionVisitor *visitor ) const
 {
     visitor->visit( this );
 }
@@ -588,7 +584,7 @@ const Soprano::Query::Variable *Soprano::Query::IsBound::variable() const
     return d->variable;
 }
 
-void Soprano::Query::IsBound::accept( ExpressionVisitor *visitor )
+void Soprano::Query::IsBound::accept( ExpressionVisitor *visitor ) const
 {
     visitor->visit( this );
 }
@@ -612,7 +608,7 @@ Soprano::Query::IsIRI::~IsIRI()
 {
 }
 
-void Soprano::Query::IsIRI::accept( ExpressionVisitor *visitor )
+void Soprano::Query::IsIRI::accept( ExpressionVisitor *visitor ) const
 {
     visitor->visit( this );
 }
@@ -635,7 +631,7 @@ Soprano::Query::IsBlank::~IsBlank()
 {
 }
 
-void Soprano::Query::IsBlank::accept( ExpressionVisitor *visitor )
+void Soprano::Query::IsBlank::accept( ExpressionVisitor *visitor ) const
 {
     visitor->visit( this );
 }
@@ -658,7 +654,7 @@ Soprano::Query::IsLiteral::~IsLiteral()
 {
 }
 
-void Soprano::Query::IsLiteral::accept( ExpressionVisitor *visitor )
+void Soprano::Query::IsLiteral::accept( ExpressionVisitor *visitor ) const
 {
     visitor->visit( this );
 }
@@ -677,7 +673,7 @@ Soprano::Query::StringValue::StringValue( RTerm *rterm )
 {
 }
 
-void Soprano::Query::StringValue::accept( ExpressionVisitor *visitor )
+void Soprano::Query::StringValue::accept( ExpressionVisitor *visitor ) const
 {
     visitor->visit( this );
 }
@@ -685,6 +681,26 @@ void Soprano::Query::StringValue::accept( ExpressionVisitor *visitor )
 Soprano::Query::StringValue* Soprano::Query::StringValue::clone() const
 {
     return new StringValue( *this );
+}
+
+
+//
+// Soprano::Query::NumericalValue
+//
+
+Soprano::Query::NumericalValue::NumericalValue( RTerm *rterm )
+    : UnaryRTermNumericalExpression( rterm )
+{
+}
+
+void Soprano::Query::NumericalValue::accept( ExpressionVisitor *visitor ) const
+{
+    visitor->visit( this );
+}
+
+Soprano::Query::NumericalValue* Soprano::Query::NumericalValue::clone() const
+{
+    return new NumericalValue( *this );
 }
 
 
@@ -697,7 +713,7 @@ Soprano::Query::LangValue::LangValue( RTerm *rterm )
 {
 }
 
-void Soprano::Query::LangValue::accept( ExpressionVisitor *visitor )
+void Soprano::Query::LangValue::accept( ExpressionVisitor *visitor ) const
 {
     visitor->visit( this );
 }
@@ -716,7 +732,7 @@ Soprano::Query::DataTypeValue::DataTypeValue( RTerm *rterm )
 {
 }
 
-void Soprano::Query::DataTypeValue::accept( ExpressionVisitor *visitor )
+void Soprano::Query::DataTypeValue::accept( ExpressionVisitor *visitor ) const
 {
     visitor->visit( this );
 }
@@ -727,58 +743,52 @@ Soprano::Query::DataTypeValue* Soprano::Query::DataTypeValue::clone() const
 }
 
 //
-// Soprano::Query::BinaryBooleanExpression
+// Soprano::Query::BooleanSetExpression
 //
 
-class Soprano::Query::BinaryBooleanExpression::Private : public QSharedData
+class Soprano::Query::BooleanSetExpression::Private : public QSharedData
 {
 public:
-    Private( BooleanExpression *first_ = 0, BooleanExpression *second_ = 0 )
-        : first( first_ ),
-          second( second_ ) {
+    Private() {
     }
-    Private( const Private& other )
-        : first( 0 ),
-          second( 0 ) {
-        if ( other.first ) {
-            first = other.first->clone();
-        }
-        if ( other.second ) {
-            second = other.second->clone();
+
+    Private( const Private& other ) {
+        Q_FOREACH( BooleanExpression* condition, other.conditions ) {
+            conditions.append( condition->clone() );
         }
     }
     ~Private() {
-        delete first;
-        delete second;
+        Q_FOREACH( BooleanExpression* condition, conditions ) {
+            delete condition;
+        }
     }
 
-    BooleanExpression* first;
-    BooleanExpression* second;
+    QList<BooleanExpression*> conditions;
 };
 
-Soprano::Query::BinaryBooleanExpression::BinaryBooleanExpression( BooleanExpression *first, BooleanExpression *second )
-    : d( new Private( first, second ) )
+Soprano::Query::BooleanSetExpression::BooleanSetExpression()
+    : d( new Private() )
 {
 }
 
-void Soprano::Query::BinaryBooleanExpression::setFirst( BooleanExpression *first )
+void Soprano::Query::BooleanSetExpression::addConditon( BooleanExpression *first )
 {
-    d->first = first;
+    d->conditions.append( first );
 }
 
-void Soprano::Query::BinaryBooleanExpression::setSecond( BooleanExpression *second )
+int Soprano::Query::BooleanSetExpression::count() const
 {
-    d->second = second;
+    return d->conditions.count();
 }
 
-const Soprano::Query::BooleanExpression *Soprano::Query::BinaryBooleanExpression::first() const
+const Soprano::Query::BooleanExpression* Soprano::Query::BooleanSetExpression::condition( int i ) const
 {
-   return d->first;
+    return d->conditions[i];
 }
 
-const Soprano::Query::BooleanExpression *Soprano::Query::BinaryBooleanExpression::second() const
+const Soprano::Query::BooleanExpression* Soprano::Query::BooleanSetExpression::operator[]( int i ) const
 {
-   return d->second;
+    return d->conditions[i];
 }
 
 //
@@ -1046,12 +1056,12 @@ const Soprano::Query::NumericalExpression *Soprano::Query::BinaryNumericalExpres
 // Soprano::Query::LogicOr
 //
 
-Soprano::Query::LogicOr::LogicOr( BooleanExpression *first, BooleanExpression *second )
-    :BinaryBooleanExpression( first, second )
+Soprano::Query::LogicOr::LogicOr()
+    : BooleanSetExpression()
 {
 }
 
-void Soprano::Query::LogicOr::accept( ExpressionVisitor *visitor )
+void Soprano::Query::LogicOr::accept( ExpressionVisitor *visitor ) const
 {
     visitor->visit( this );
 }
@@ -1065,12 +1075,12 @@ Soprano::Query::LogicOr* Soprano::Query::LogicOr::clone() const
 // Soprano::Query::LogicAnd
 //
 
-Soprano::Query::LogicAnd::LogicAnd( BooleanExpression *first, BooleanExpression *second )
-    :BinaryBooleanExpression( first, second )
+Soprano::Query::LogicAnd::LogicAnd()
+    :BooleanSetExpression()
 {
 }
 
-void Soprano::Query::LogicAnd::accept( ExpressionVisitor *visitor )
+void Soprano::Query::LogicAnd::accept( ExpressionVisitor *visitor ) const
 {
     visitor->visit( this );
 }
@@ -1089,7 +1099,7 @@ Soprano::Query::NumericalEqual::NumericalEqual( NumericalExpression *first, Nume
 {
 }
 
-void Soprano::Query::NumericalEqual::accept( ExpressionVisitor *visitor )
+void Soprano::Query::NumericalEqual::accept( ExpressionVisitor *visitor ) const
 {
     visitor->visit( this );
 }
@@ -1108,7 +1118,7 @@ Soprano::Query::NumericalNotEqual::NumericalNotEqual( NumericalExpression *first
 {
 }
 
-void Soprano::Query::NumericalNotEqual::accept( ExpressionVisitor *visitor )
+void Soprano::Query::NumericalNotEqual::accept( ExpressionVisitor *visitor ) const
 {
     visitor->visit( this );
 }
@@ -1127,7 +1137,7 @@ Soprano::Query::StringEqual::StringEqual( StringExpression *first, StringExpress
 {
 }
 
-void Soprano::Query::StringEqual::accept( ExpressionVisitor *visitor )
+void Soprano::Query::StringEqual::accept( ExpressionVisitor *visitor ) const
 {
     visitor->visit( this );
 }
@@ -1147,7 +1157,7 @@ Soprano::Query::StringNotEqual::StringNotEqual( StringExpression *first, StringE
 {
 }
 
-void Soprano::Query::StringNotEqual::accept( ExpressionVisitor *visitor )
+void Soprano::Query::StringNotEqual::accept( ExpressionVisitor *visitor ) const
 {
     visitor->visit( this );
 }
@@ -1167,7 +1177,7 @@ Soprano::Query::DateTimeEqual::DateTimeEqual( const QDateTime& first, const QDat
 {
 }
 
-void Soprano::Query::DateTimeEqual::accept( ExpressionVisitor *visitor )
+void Soprano::Query::DateTimeEqual::accept( ExpressionVisitor *visitor ) const
 {
     visitor->visit( this );
 }
@@ -1187,7 +1197,7 @@ Soprano::Query::DateTimeNotEqual::DateTimeNotEqual( const QDateTime& first, cons
 {
 }
 
-void Soprano::Query::DateTimeNotEqual::accept( ExpressionVisitor *visitor )
+void Soprano::Query::DateTimeNotEqual::accept( ExpressionVisitor *visitor ) const
 {
     visitor->visit( this );
 }
@@ -1207,7 +1217,7 @@ Soprano::Query::NumericalLessThan::NumericalLessThan( NumericalExpression *first
 {
 }
 
-void Soprano::Query::NumericalLessThan::accept( ExpressionVisitor *visitor )
+void Soprano::Query::NumericalLessThan::accept( ExpressionVisitor *visitor ) const
 {
     visitor->visit( this );
 }
@@ -1227,7 +1237,7 @@ Soprano::Query::NumericalGreaterThan::NumericalGreaterThan( NumericalExpression 
 {
 }
 
-void Soprano::Query::NumericalGreaterThan::accept( ExpressionVisitor *visitor )
+void Soprano::Query::NumericalGreaterThan::accept( ExpressionVisitor *visitor ) const
 {
     visitor->visit( this );
 }
@@ -1247,7 +1257,7 @@ Soprano::Query::NumericalLessThanEqual::NumericalLessThanEqual( NumericalExpress
 {
 }
 
-void Soprano::Query::NumericalLessThanEqual::accept( ExpressionVisitor *visitor )
+void Soprano::Query::NumericalLessThanEqual::accept( ExpressionVisitor *visitor ) const
 {
     visitor->visit( this );
 }
@@ -1267,7 +1277,7 @@ Soprano::Query::NumericalGreaterThanEqual::NumericalGreaterThanEqual( NumericalE
 {
 }
 
-void Soprano::Query::NumericalGreaterThanEqual::accept( ExpressionVisitor *visitor )
+void Soprano::Query::NumericalGreaterThanEqual::accept( ExpressionVisitor *visitor ) const
 {
     visitor->visit( this );
 }
@@ -1287,7 +1297,7 @@ Soprano::Query::StringLessThan::StringLessThan( StringExpression *first, StringE
 {
 }
 
-void Soprano::Query::StringLessThan::accept( ExpressionVisitor *visitor )
+void Soprano::Query::StringLessThan::accept( ExpressionVisitor *visitor ) const
 {
     visitor->visit( this );
 }
@@ -1307,7 +1317,7 @@ Soprano::Query::StringGreaterThan::StringGreaterThan( StringExpression *first, S
 {
 }
 
-void Soprano::Query::StringGreaterThan::accept( ExpressionVisitor *visitor )
+void Soprano::Query::StringGreaterThan::accept( ExpressionVisitor *visitor ) const
 {
     visitor->visit( this );
 }
@@ -1327,7 +1337,7 @@ Soprano::Query::StringLessThanEqual::StringLessThanEqual( StringExpression *firs
 {
 }
 
-void Soprano::Query::StringLessThanEqual::accept( ExpressionVisitor *visitor )
+void Soprano::Query::StringLessThanEqual::accept( ExpressionVisitor *visitor ) const
 {
     visitor->visit( this );
 }
@@ -1346,7 +1356,7 @@ Soprano::Query::StringGreaterThanEqual::StringGreaterThanEqual( StringExpression
 {
 }
 
-void Soprano::Query::StringGreaterThanEqual::accept( ExpressionVisitor *visitor )
+void Soprano::Query::StringGreaterThanEqual::accept( ExpressionVisitor *visitor ) const
 {
     visitor->visit( this );
 }
@@ -1365,7 +1375,7 @@ Soprano::Query::DateTimeLessThan::DateTimeLessThan( const QDateTime& first, cons
 {
 }
 
-void Soprano::Query::DateTimeLessThan::accept( ExpressionVisitor *visitor )
+void Soprano::Query::DateTimeLessThan::accept( ExpressionVisitor *visitor ) const
 {
     visitor->visit( this );
 }
@@ -1384,7 +1394,7 @@ Soprano::Query::DateTimeGreaterThan::DateTimeGreaterThan( const QDateTime& first
 {
 }
 
-void Soprano::Query::DateTimeGreaterThan::accept( ExpressionVisitor *visitor )
+void Soprano::Query::DateTimeGreaterThan::accept( ExpressionVisitor *visitor ) const
 {
     visitor->visit( this );
 }
@@ -1403,7 +1413,7 @@ Soprano::Query::DateTimeLessThanEqual::DateTimeLessThanEqual( const QDateTime& f
 {
 }
 
-void Soprano::Query::DateTimeLessThanEqual::accept( ExpressionVisitor *visitor )
+void Soprano::Query::DateTimeLessThanEqual::accept( ExpressionVisitor *visitor ) const
 {
     visitor->visit( this );
 }
@@ -1422,7 +1432,7 @@ Soprano::Query::DateTimeGreaterThanEqual::DateTimeGreaterThanEqual( const QDateT
 {
 }
 
-void Soprano::Query::DateTimeGreaterThanEqual::accept( ExpressionVisitor *visitor )
+void Soprano::Query::DateTimeGreaterThanEqual::accept( ExpressionVisitor *visitor ) const
 {
     visitor->visit( this );
 }
@@ -1441,7 +1451,7 @@ Soprano::Query::NumericalMultiply::NumericalMultiply( NumericalExpression *first
 {
 }
 
-void Soprano::Query::NumericalMultiply::accept( ExpressionVisitor *visitor )
+void Soprano::Query::NumericalMultiply::accept( ExpressionVisitor *visitor ) const
 {
     visitor->visit( this );
 }
@@ -1460,7 +1470,7 @@ Soprano::Query::NumericalDivide::NumericalDivide( NumericalExpression *first, Nu
 {
 }
 
-void Soprano::Query::NumericalDivide::accept( ExpressionVisitor *visitor )
+void Soprano::Query::NumericalDivide::accept( ExpressionVisitor *visitor ) const
 {
     visitor->visit( this );
 }
@@ -1479,7 +1489,7 @@ Soprano::Query::NumericalAdd::NumericalAdd( NumericalExpression *first, Numerica
 {
 }
 
-void Soprano::Query::NumericalAdd::accept( ExpressionVisitor *visitor )
+void Soprano::Query::NumericalAdd::accept( ExpressionVisitor *visitor ) const
 {
     visitor->visit( this );
 }
@@ -1498,7 +1508,7 @@ Soprano::Query::NumericalSubtract::NumericalSubtract( NumericalExpression *first
 {
 }
 
-void Soprano::Query::NumericalSubtract::accept( ExpressionVisitor *visitor )
+void Soprano::Query::NumericalSubtract::accept( ExpressionVisitor *visitor ) const
 {
     visitor->visit( this );
 }
@@ -1517,7 +1527,7 @@ Soprano::Query::RTermEqual::RTermEqual( RTerm *first, RTerm *second )
 {
 }
 
-void Soprano::Query::RTermEqual::accept( ExpressionVisitor *visitor )
+void Soprano::Query::RTermEqual::accept( ExpressionVisitor *visitor ) const
 {
     visitor->visit( this );
 }
@@ -1536,7 +1546,7 @@ Soprano::Query::RTermNotEqual::RTermNotEqual( RTerm *first, RTerm *second )
 {
 }
 
-void Soprano::Query::RTermNotEqual::accept( ExpressionVisitor *visitor )
+void Soprano::Query::RTermNotEqual::accept( ExpressionVisitor *visitor ) const
 {
     visitor->visit( this );
 }
@@ -1555,7 +1565,7 @@ Soprano::Query::LangMatches::LangMatches( StringExpression *first, StringExpress
 {
 }
 
-void Soprano::Query::LangMatches::accept( ExpressionVisitor *visitor )
+void Soprano::Query::LangMatches::accept( ExpressionVisitor *visitor ) const
 {
     visitor->visit( this );
 }
@@ -1631,7 +1641,10 @@ Soprano::Query::Regexp& Soprano::Query::Regexp::operator=( const Regexp& other )
 
 void Soprano::Query::Regexp::setExpression( StringExpression *expression )
 {
-    d->expression = expression;
+    if ( expression != d->expression ) {
+        delete d->expression;
+        d->expression = expression;
+    }
 }
 
 const Soprano::Query::StringExpression *Soprano::Query::Regexp::expression() const
@@ -1664,7 +1677,7 @@ Soprano::Query::Regexp* Soprano::Query::Regexp::clone() const
     return new Regexp( *this );
 }
 
-void Soprano::Query::Regexp::accept( ExpressionVisitor *visitor )
+void Soprano::Query::Regexp::accept( ExpressionVisitor *visitor ) const
 {
     visitor->visit( this );
 }
@@ -1762,7 +1775,7 @@ public:
 Soprano::Query::TriplePattern::TriplePattern()
 {
     d = new Private();
-}   
+}
 
 Soprano::Query::TriplePattern::TriplePattern( RTerm* subject, RTerm* predicate, RTerm* object )
 {
@@ -1776,10 +1789,10 @@ Soprano::Query::TriplePattern::TriplePattern( const TriplePattern &other )
 {
     d = other.d;
 }
-            
+
 Soprano::Query::TriplePattern::~TriplePattern()
 {
-}   
+}
 
 Soprano::Query::TriplePattern& Soprano::Query::TriplePattern::operator=( const TriplePattern& other )
 {
@@ -1825,92 +1838,11 @@ Soprano::Query::TriplePattern* Soprano::Query::TriplePattern::clone() const
     return new TriplePattern( *this );
 }
 
-void Soprano::Query::TriplePattern::accept( ExpressionVisitor *visitor)
+void Soprano::Query::TriplePattern::accept( ExpressionVisitor *visitor) const
 {
     visitor->visit( this );
 }
 
-//
-// Soprano::Query::GraphPattern
-//
-
-class Soprano::Query::GraphPattern::Private: public QSharedData
-{
-public:
-    Private()
-        : optional( false )
-    {};
-
-    bool optional;  
-    QList<TriplePattern> triplePatterns;
-    QList<GraphPattern> subGraphs;
-};
-
-Soprano::Query::GraphPattern::GraphPattern()
-{
-   d = new Private;
-}
-
-Soprano::Query::GraphPattern::GraphPattern( bool optional )
-{
-    d = new Private;
-    d->optional = optional;
-}
-
-Soprano::Query::GraphPattern::GraphPattern( const GraphPattern &other )
-{
-    d = other.d;
-}
-
-Soprano::Query::GraphPattern::~GraphPattern()
-{
-}
-
-Soprano::Query::GraphPattern& Soprano::Query::GraphPattern::operator=( const GraphPattern& other )
-{
-    d = other.d;
-    return *this;
-}
-            
-void Soprano::Query::GraphPattern::setOptional(bool optional)
-{
-    d->optional = optional;
-}
-
-bool Soprano::Query::GraphPattern::optional() const
-{
-    return d->optional;
-}
-
-void Soprano::Query::GraphPattern::addTriplePattern( const TriplePattern& triplePattern )
-{
-    d->triplePatterns.append( triplePattern );
-}
-
-QList<Soprano::Query::TriplePattern> Soprano::Query::GraphPattern::triplePatterns() const
-{
-    return d->triplePatterns;
-}
-
-void Soprano::Query::GraphPattern::addSubGraphPattern( const GraphPattern& graphPattern )
-{
-    d->subGraphs.append( graphPattern );
-}
-
-QList<Soprano::Query::GraphPattern> Soprano::Query::GraphPattern::subGraphPatterns() const
-{
-    return d->subGraphs;
-}
-
-Soprano::Query::GraphPattern* Soprano::Query::GraphPattern::clone() const
-{
-    return new GraphPattern( *this );
-}
-
-void Soprano::Query::GraphPattern::accept( ExpressionVisitor *visitor )
-{
-    visitor->visit( this );
-}
 
 //
 // Soprano::Query::Query
@@ -1925,8 +1857,7 @@ public:
     Private( const Private& other )
         : condition(0),
           queryTerms( other.queryTerms ),
-          type( other.type ),
-          graphPattern( other.graphPattern ) 
+          type( other.type )
     {
         if ( other.condition ) {
             condition = other.condition->clone();
@@ -1942,7 +1873,6 @@ public:
     QList<Prefix> prefixes;
     QueryTerms queryTerms;
     QueryType type;
-    GraphPattern graphPattern;
 };
 
 Soprano::Query::Query::Query()
@@ -2010,16 +1940,6 @@ void Soprano::Query::Query::setQueryTerms( const QueryTerms &queryTerms )
 const Soprano::Query::QueryTerms Soprano::Query::Query::queryTerms() const
 {
     return d->queryTerms;
-}
-
-void Soprano::Query::Query::setGraphPattern( const GraphPattern &graphPattern )
-{
-    d->graphPattern = graphPattern;
-}
-
-const Soprano::Query::GraphPattern Soprano::Query::Query::graphPattern() const
-{
-    return d->graphPattern;
 }
 
 bool Soprano::Query::Query::isValid() const

@@ -65,97 +65,97 @@ public:
 Q_GLOBAL_STATIC( Rdfs, rdfs );
 
 
-QUrl Soprano::Vocabulary::RDFS::NAMESPACE()
+QUrl Soprano::Vocabulary::RDFS::rdfsNamespace()
 {
     return rdfs()->NAMESPACE;
 }
 
 
-QUrl Soprano::Vocabulary::RDFS::CLASS()
+QUrl Soprano::Vocabulary::RDFS::Class()
 {
     return rdfs()->CLASS;
 }
 
 
-QUrl Soprano::Vocabulary::RDFS::COMMENT()
+QUrl Soprano::Vocabulary::RDFS::comment()
 {
     return rdfs()->COMMENT;
 }
 
 
-QUrl Soprano::Vocabulary::RDFS::DATATYPE()
+QUrl Soprano::Vocabulary::RDFS::Datatype()
 {
     return rdfs()->DATATYPE;
 }
 
 
-QUrl Soprano::Vocabulary::RDFS::DOMAIN()
+QUrl Soprano::Vocabulary::RDFS::domain()
 {
     return rdfs()->DOMAIN;
 }
 
 
-QUrl Soprano::Vocabulary::RDFS::RANGE()
+QUrl Soprano::Vocabulary::RDFS::range()
 {
     return rdfs()->RANGE;
 }
 
 
-QUrl Soprano::Vocabulary::RDFS::LABEL()
+QUrl Soprano::Vocabulary::RDFS::label()
 {
     return rdfs()->LABEL;
 }
 
 
-QUrl Soprano::Vocabulary::RDFS::SUBCLASSOF()
+QUrl Soprano::Vocabulary::RDFS::subClassOf()
 {
     return rdfs()->SUBCLASSOF;
 }
 
 
-QUrl Soprano::Vocabulary::RDFS::SUBPROPERTYOF()
+QUrl Soprano::Vocabulary::RDFS::subPropertyOf()
 {
     return rdfs()->SUBPROPERTYOF;
 }
 
 
-QUrl Soprano::Vocabulary::RDFS::SEEALSO()
+QUrl Soprano::Vocabulary::RDFS::seeAlso()
 {
     return rdfs()->SEEALSO;
 }
 
 
-QUrl Soprano::Vocabulary::RDFS::RESOURCE()
+QUrl Soprano::Vocabulary::RDFS::Resource()
 {
     return rdfs()->RESOURCE;
 }
 
 
-QUrl Soprano::Vocabulary::RDFS::MEMBER()
+QUrl Soprano::Vocabulary::RDFS::member()
 {
     return rdfs()->MEMBER;
 }
 
 
-QUrl Soprano::Vocabulary::RDFS::LITERAL()
+QUrl Soprano::Vocabulary::RDFS::Literal()
 {
     return rdfs()->LITERAL;
 }
 
 
-QUrl Soprano::Vocabulary::RDFS::ISDEFINEDBY()
+QUrl Soprano::Vocabulary::RDFS::isDefinedBy()
 {
     return rdfs()->ISDEFINEDBY;
 }
 
 
-QUrl Soprano::Vocabulary::RDFS::CONTAINER()
+QUrl Soprano::Vocabulary::RDFS::Container()
 {
     return rdfs()->CONTAINER;
 }
 
 
-QUrl Soprano::Vocabulary::RDFS::CONTAINERMEMBERSHIPPROPERTY()
+QUrl Soprano::Vocabulary::RDFS::ContainerMembershipProperty()
 {
     return rdfs()->CONTAINERMEMBERSHIPPROPERTY;
 }

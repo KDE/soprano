@@ -80,9 +80,9 @@ Soprano::Error::ErrorCode Soprano::NRLModel::addStatement( const Statement& stat
 
     QString query = QString( "select ?min ?max ?c where { { <%1> <%2> ?min } UNION { <%1> <%3> ?max } UNION { <%1> <%4> ?c } }" )
                     .arg( statement.predicate().toString() )
-                    .arg( Vocabulary::NRL::MINCARDINALITY().toString() )
-                    .arg( Vocabulary::NRL::MAXCARDINALITY().toString() )
-                    .arg( Vocabulary::NRL::CARDINALITY().toString() );
+                    .arg( Vocabulary::NRL::minCardinality().toString() )
+                    .arg( Vocabulary::NRL::maxCardinality().toString() )
+                    .arg( Vocabulary::NRL::cardinality().toString() );
 
     QueryResultIterator it = FilterModel::executeQuery( query, Query::QUERY_LANGUAGE_SPARQL );
     if ( !it.isValid() ) {

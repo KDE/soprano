@@ -26,6 +26,8 @@
 
 #include <CLucene.h>
 
+#include <QtCore/QThread>
+#include <QtCore/QDebug>
 
 class Soprano::Index::IndexFilterModel::Private
 {
@@ -70,6 +72,7 @@ Soprano::Index::CLuceneIndex* Soprano::Index::IndexFilterModel::index() const
 
 Soprano::Error::ErrorCode Soprano::Index::IndexFilterModel::addStatement( const Soprano::Statement &statement )
 {
+    qDebug() << "IndexFilterModel::addStatement in thread " << QThread::currentThreadId();
     if ( !FilterModel::containsStatement( statement ) ) {
         Error::ErrorCode c = FilterModel::addStatement( statement );
         if ( c == Error::ERROR_NONE && statement.object().isLiteral() ) {
@@ -78,10 +81,13 @@ Soprano::Error::ErrorCode Soprano::Index::IndexFilterModel::addStatement( const 
                 setError( d->index->lastError() );
             }
         }
+        qDebug() << "IndexFilterModel::addStatement done in thread " << QThread::currentThreadId();
         return c;
     }
-    else
+    else {
+        qDebug() << "IndexFilterModel::addStatement done in thread " << QThread::currentThreadId();
         return Error::ERROR_NONE;
+    }
 }
 
 
