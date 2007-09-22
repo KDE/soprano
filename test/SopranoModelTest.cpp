@@ -848,6 +848,46 @@ void SopranoModelTest::testLiteralTypes()
 }
 
 
+void SopranoModelTest::testUriEncoding_data()
+{
+    QTest::addColumn<QUrl>( "uri" );
+    QTest::addColumn<QUrl>( "predicate" );
+
+    QString ns = "http://soprano.org/uriEncodinglTest#";
+
+    // a simple URI
+    QTest::newRow("plain") << QUrl(ns + "simple") << QUrl(ns + "plain");
+
+    // with some white space
+    QTest::newRow("withSpace") << QUrl(ns + "URI with space") << QUrl(ns + "withSpace");
+
+    // unicode
+    QTest::newRow("germanUmlauts") << QUrl( ns + QString::fromUtf8("ö ä ü Ö Ä Ü ß") ) << QUrl(ns + "germanUmlauts");
+    QTest::newRow("frenchAccents") << QUrl( ns + QString::fromUtf8("é è â É È Â") ) << QUrl(ns + "frenchAccents");
+    QTest::newRow("russianChars") << QUrl( ns + QString::fromUtf8("Я Б Г Д Ж Й") ) << QUrl(ns + "russianChars");
+}
+
+
+void SopranoModelTest::testUriEncoding()
+{
+    QVERIFY( m_model != 0 );
+
+    QFETCH( QUrl, uri );
+    QFETCH( QUrl, predicate );
+
+//    qDebug() << "testing literal: " << literal;
+
+    QUrl sub( "http://soprano.org/literalTest#X" );
+
+    QVERIFY( m_model->addStatement( Statement( sub, predicate, uri ) ) == Error::ERROR_NONE );
+
+    StatementIterator it = m_model->listStatements( Statement( sub, predicate, Node() ) );
+    QVERIFY( it.next() );
+    QCOMPARE( it.current().object().uri(), uri );
+    it.close();
+}
+
+
 void SopranoModelTest::testPerformance()
 {
     QVERIFY( m_model );

@@ -68,6 +68,9 @@ private Q_SLOTS:
 
   void testLiteralTypes_data();
   void testLiteralTypes();
+
+  void testUriEncoding_data();
+  void testUriEncoding();
   
   void testPerformance();
 
