@@ -26,6 +26,7 @@
 #include "statement.h"
 #include "redlandworld.h"
 
+// Hint: all strings in redland are Utf8, except for the literal language tags.
 
 Soprano::Node Soprano::Redland::Util::createNode( librdf_node *node )
 {
@@ -44,7 +45,7 @@ Soprano::Node Soprano::Redland::Util::createNode( librdf_node *node )
         return Soprano::Node( Soprano::LiteralValue::fromString( QString::fromUtf8( (const char *)librdf_node_get_literal_value( node ) ),
                                                                  QUrl::fromEncoded( (const char *)librdf_uri_as_string( datatype ),
                                                                                     QUrl::StrictMode ) ),
-                              QString::fromUtf8( librdf_node_get_literal_value_language( node ) ) );
+                              QString::fromAscii( librdf_node_get_literal_value_language( node ) ) );
     }
 
     return Soprano::Node();
