@@ -48,7 +48,7 @@ public:
     JClassRef classLiteral;
 };
 
-Q_GLOBAL_STATIC( ClassCache, classCache );
+Q_GLOBAL_STATIC( ClassCache, classCache )
 
 
 

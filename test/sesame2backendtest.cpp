@@ -55,6 +55,6 @@ void Sesame2BackendTest::testIteratorClose()
     QVERIFY( m_model->removeStatement( m_st2 ) == Error::ERROR_NONE );
 }
 
-QTEST_MAIN( Sesame2BackendTest );
+QTEST_MAIN( Sesame2BackendTest )
 
 #include "sesame2backendtest.moc"
