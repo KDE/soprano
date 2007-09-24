@@ -31,7 +31,7 @@ namespace Soprano {
 	 */
 	namespace NRL {
 	    /**
-	     * The NRL namespace (http://www.semanticdesktop.org/ontologies/2007/08/15/nrl)
+	     * The NRL namespace (http://www.semanticdesktop.org/ontologies/2007/08/15/nrl/)
 	     */
 	    QUrl nrlNamespace();
 
