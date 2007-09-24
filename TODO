@@ -5,3 +5,4 @@ Add here what you want to add in Soprano
 * threaded async inference: run inference in a different thread to make add and remove calls return quickly (as an option which can be configured)
 * some reference counting in the inference model to properly handle removal of statements
 
+* Allow multiple open iterators in the same thread in the redland backend.

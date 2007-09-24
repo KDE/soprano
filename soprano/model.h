@@ -299,5 +299,4 @@ namespace Soprano
     };
 }
 
-#endif // SOPRANO_MODEL_H
-
+#endif

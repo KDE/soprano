@@ -58,6 +58,7 @@ SET(soprano_SRCS
   version.cpp
   filtermodel.h
   filtermodel.cpp
+  dummymodel.cpp
   storagemodel.h
   storagemodel.cpp
   rdfschemawrapper.cpp
@@ -145,4 +146,5 @@ INSTALL(FILES
   query/queryserializer.h
   soprano.h
   vocabulary.h
+  dummymodel.h
   DESTINATION include/soprano)

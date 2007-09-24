@@ -56,7 +56,7 @@ endif(CLucene_FOUND)
 find_package(Doxygen)
 
 if(DOXYGEN_EXECUTABLE)
-  configure_file(Doxyfile.cmake Doxyfile)
+  configure_file(${soprano_SOURCE_DIR}/Doxyfile.cmake ${soprano_BINARY_DIR}/Doxyfile)
 
   if(EXISTS ${QT_DOC_DIR}/html)
     set(QTDOCS "${QT_DOC_DIR}/html")

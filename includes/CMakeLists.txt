@@ -25,6 +25,7 @@ install(FILES
   SimpleStatementIterator
   RdfSchemaWrapper
   StorageModel
+  DummyModel
   DESTINATION
   include/soprano)
 
