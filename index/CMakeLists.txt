@@ -3,7 +3,7 @@ project(sopranoindex)
 include_directories(
   ${soprano_core_SOURCE_DIR}
   ${QT_INCLUDES}
-  ${CMAKE_SOURCE_DIR}
+  ${soprano_SOURCE_DIR}
   ${CLUCENE_INCLUDE_DIR}
   ${CLUCENE_LIBRARY_DIR}
   ${CMAKE_CURRENT_BINARY_DIR}

@@ -4,7 +4,7 @@ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${soprano_SOURCE_DIR}/cmake/modules)
 
 include_directories(
   ${QT_QTCORE_INCLUDE_DIR}
-  ${CMAKE_SOURCE_DIR}
+  ${soprano_SOURCE_DIR}
   ${QT_INCLUDE_DIR}
   ${soprano_core_SOURCE_DIR}
   ${soprano_redland_BINARY_DIR}

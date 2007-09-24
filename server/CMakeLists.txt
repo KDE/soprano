@@ -6,7 +6,7 @@ include_directories(
   ${soprano_core_BINARY_DIR}
   ${soprano_core_SOURCE_DIR}/query
   ${QT_INCLUDES}
-  ${CMAKE_SOURCE_DIR}
+  ${soprano_SOURCE_DIR}
 )
 
 set(soprano_server_SRC

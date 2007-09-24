@@ -2,7 +2,7 @@ project(soprano_raptor_serializer)
 
 include_directories(
   ${QT_QTCORE_INCLUDE_DIR}
-  ${CMAKE_SOURCE_DIR}
+  ${soprano_SOURCE_DIR}
   ${QT_INCLUDE_DIR}
   ${soprano_core_SOURCE_DIR}
   ${soprano_raptor_serializer_BINARY_DIR}

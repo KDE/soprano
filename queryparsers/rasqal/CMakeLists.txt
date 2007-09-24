@@ -2,7 +2,7 @@ project(soprano_rasqalqueryparser)
 
 include_directories(
   ${QT_QTCORE_INCLUDE_DIR}
-  ${CMAKE_SOURCE_DIR}
+  ${soprano_SOURCE_DIR}
   ${QT_INCLUDE_DIR}
   ${REDLAND_INCLUDE_DIR}
   ${RASQAL_INCLUDE_DIR}

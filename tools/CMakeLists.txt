@@ -6,7 +6,7 @@ include_directories(
   ${soprano_core_SOURCE_DIR}/vocabulary
   ${soprano_core_BINARY_DIR}
   ${QT_INCLUDES}
-  ${CMAKE_SOURCE_DIR}
+  ${soprano_SOURCE_DIR}
 )
 
 set(sopranocmd_SRC
