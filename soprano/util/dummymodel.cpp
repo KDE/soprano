@@ -31,7 +31,7 @@ class Soprano::DummyModel::Private
 {
 public:
     Private()
-        : defaultError( "Invalid model", Error::ERROR_NOT_SUPPORTED ) {
+        : defaultError( "Invalid model", Error::ErrorNotSupported ) {
     }
     Error::Error defaultError;
 };
@@ -52,7 +52,7 @@ Soprano::DummyModel::~DummyModel()
 Soprano::Error::ErrorCode Soprano::DummyModel::addStatement( const Statement& )
 {
     setError( d->defaultError );
-    return Error::ERROR_NOT_SUPPORTED;
+    return Error::ErrorNotSupported;
 }
 
 
@@ -108,14 +108,14 @@ Soprano::StatementIterator Soprano::DummyModel::listStatements( const Statement&
 Soprano::Error::ErrorCode Soprano::DummyModel::removeStatement( const Statement& )
 {
     setError( d->defaultError );
-    return Error::ERROR_NOT_SUPPORTED;
+    return Error::ErrorNotSupported;
 }
 
 
 Soprano::Error::ErrorCode Soprano::DummyModel::removeAllStatements( const Statement& )
 {
     setError( d->defaultError );
-    return Error::ERROR_NOT_SUPPORTED;
+    return Error::ErrorNotSupported;
 }
 
 
@@ -136,7 +136,7 @@ Soprano::Node Soprano::DummyModel::createBlankNode()
 Soprano::Error::ErrorCode Soprano::DummyModel::write( QTextStream& ) const
 {
     setError( d->defaultError );
-    return Error::ERROR_NOT_SUPPORTED;
+    return Error::ErrorNotSupported;
 }
 
 #include "dummymodel.moc"

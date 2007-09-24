@@ -72,7 +72,7 @@ namespace Soprano
 	 * Find a backend plugin by its features.
 	 *
 	 * \param features The features that are requested.
-	 * \param userFeatures If features contain Backend::BACKEND_FEATURE_USER this paramter states the additionally requested user features.
+	 * \param userFeatures If features contain Backend::BackendFeatureUser this paramter states the additionally requested user features.
 	 *
 	 * \return a backend that supports the features defined in \a features.
 	 */
@@ -95,7 +95,7 @@ namespace Soprano
 	 * serialization.
 	 *
 	 * \param serialization The requested serialization.
-	 * \param userSerialization If serialization is set to Soprano::SERIALIZATION_USER this parameter specifies the
+	 * \param userSerialization If serialization is set to Soprano::SerializationUser this parameter specifies the
 	 *       serialization to use. It allows the extension of the %Soprano Parser interface with new
 	 *       RDF serializations that are not officially supported by %Soprano.
 	 *
@@ -121,7 +121,7 @@ namespace Soprano
 	 * serialization.
 	 *
 	 * \param serialization The requested serialization.
-	 * \param userSerialization If serialization is set to Soprano::SERIALIZATION_USER this parameter specifies the
+	 * \param userSerialization If serialization is set to Soprano::SerializationUser this parameter specifies the
 	 *       serialization to use. It allows the extension of the %Soprano Serializer interface with new
 	 *       RDF serializations that are not officially supported by %Soprano.
 	 *

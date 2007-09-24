@@ -27,15 +27,15 @@
 QString Soprano::serializationMimeType( RdfSerialization serialization )
 {
     switch( serialization ) {
-    case SERIALIZATION_RDF_XML:
+    case SerializationRdfXml:
         return QString::fromLatin1( "application/rdf+xml" );
-    case SERIALIZATION_N3:
+    case SerializationN3:
         return QString::fromLatin1( "text/rdf+n3" );
-    case SERIALIZATION_N_TRIPLES:
+    case SerializationNTriples:
         return QString::fromLatin1( "text/plain" ); // FIXME: is this correct?
-    case SERIALIZATION_TURTLE:
+    case SerializationTurtle:
         return QString::fromLatin1( "application/x-turtle" );
-    case SERIALIZATION_TRIG:
+    case SerializationTrig:
         return QString::fromLatin1( "application/x-trig" );
     default:
         return QString();
@@ -47,26 +47,26 @@ Soprano::RdfSerialization Soprano::mimeTypeToSerialization( const QString& mimet
 {
     if ( mimetype == "application/rdf+xml" ||
          mimetype == "text/rdf" ) {
-        return SERIALIZATION_RDF_XML;
+        return SerializationRdfXml;
     }
     else if ( mimetype == "application/rdf+n3" ||
               mimetype == "text/rdf+n3" ||
               mimetype == "text/n3" ) {
-        return SERIALIZATION_N3;
+        return SerializationN3;
     }
     // FIXME: what about text/plain?
     else if ( mimetype == "application/n-triples" ) {
-        return SERIALIZATION_N_TRIPLES;
+        return SerializationNTriples;
     }
     else if ( mimetype == "application/x-turtle" ||
               mimetype == "application/turtle") {
-        return SERIALIZATION_TURTLE;
+        return SerializationTurtle;
     }
     else if ( mimetype == "application/x-trig" ||
               mimetype == "application/trig") {
-        return SERIALIZATION_TRIG;
+        return SerializationTrig;
     }
-    return SERIALIZATION_UNKNOWN;
+    return SerializationUnknown;
 }
 
 

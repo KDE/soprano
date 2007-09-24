@@ -38,12 +38,12 @@ namespace Soprano {
 	 * \sa Error::code()
 	 */
 	enum ErrorCode {
-	    ERROR_NONE = 0x0,              /**< No error occured, i.e. success. */
-	    ERROR_INVALID_ARGUMENT = 0x1,  /**< Error indicating that a method argument was invalid. For example an invalid Statement in Model::addStatement(). */
-	    ERROR_INVALID_STATEMENT = ERROR_INVALID_ARGUMENT, /**< \deprecated: use ERROR_INVALID_ARGUMENT */
-	    ERROR_NOT_SUPPORTED = 0x2,     /**< Error indicating that a certain functionality is not supported. */
-	    ERROR_PARSING_FAILED = 0x3,    /**< Parsing a query or an RDF serialization failed. */
-	    ERROR_UNKNOWN = 0x1000         /**< An unknown error occured. */
+	    ErrorNone = 0x0,              /**< No error occured, i.e. success. */
+	    ErrorInvalidArgument = 0x1,  /**< Error indicating that a method argument was invalid. For example an invalid Statement in Model::addStatement(). */
+	    ErrorInvalidStatement = ErrorInvalidArgument, /**< \deprecated: use ErrorInvalidArgument */
+	    ErrorNotSupported = 0x2,     /**< Error indicating that a certain functionality is not supported. */
+	    ErrorParsingFailed = 0x3,    /**< Parsing a query or an RDF serialization failed. */
+	    ErrorUnknown = 0x1000         /**< An unknown error occured. */
 	};
 
 	/**
@@ -56,7 +56,7 @@ namespace Soprano {
 	 * into an ErrorCode value.
 	 *
 	 * \return \p code converted to ErrorCode. If it is an unknown value,
-	 * ERROR_UNKNOWN will be returned.
+	 * ErrorUnknown will be returned.
 	 */
 	SOPRANO_EXPORT ErrorCode convertErrorCode( int code );
 
@@ -85,10 +85,10 @@ namespace Soprano {
 	     *
 	     * \param message A human-readable error message.
 	     * \param code An optional machine-readable error code. Can be one of Soprano::ErrorCode
-	     * or a user defined value which has to be bigger than ERROR_UNKNOWN. The redland backend
-	     * for example uses error codes <i>ERROR_UNKNOWN + redlandCode</i>.
+	     * or a user defined value which has to be bigger than ErrorUnknown. The redland backend
+	     * for example uses error codes <i>ErrorUnknown + redlandCode</i>.
 	     */
-	    Error( const QString& message, int code = ERROR_UNKNOWN );
+	    Error( const QString& message, int code = ErrorUnknown );
 
 	    /**
 	     * Copy constructor
@@ -105,7 +105,7 @@ namespace Soprano {
 	    /**
 	     * An %Error evalutes to a boolean, indicating if an %Error is "set".
 	     *
-	     * \return \p false if code() == #ERROR_NONE, \p true otherwise.
+	     * \return \p false if code() == #ErrorNone, \p true otherwise.
 	     *
 	     * Thus, an Error object can easily be checked as follows:
 	     *
@@ -116,7 +116,7 @@ namespace Soprano {
 	     * }
 	     * \endcode
 	     */
-	    operator bool() const { return code() != ERROR_NONE; }
+	    operator bool() const { return code() != ErrorNone; }
 
 	    /**
 	     * A string explaining the error in detail.
@@ -129,15 +129,15 @@ namespace Soprano {
 	    QString message() const;
 
 	    /**
-	     * An error code. If the error code is #ERROR_NONE the
+	     * An error code. If the error code is #ErrorNone the
 	     * Error instance represents success.
 	     * The code can either be one of the values of ErrorCode
-	     * or a value above #ERROR_UNKNOWN.
+	     * or a value above #ErrorUnknown.
 	     *
 	     * Example: The redland backend defines the error code
 	     * as:
 	     * \code
-	     * ERROR_UNKNOWN + librdf_log_message_code()
+	     * ErrorUnknown + librdf_log_message_code()
 	     * \endcode
 	     *
 	     * \sa ErrorCode
@@ -203,7 +203,7 @@ namespace Soprano {
 	     */
 	    ParserError();
 
-	    ParserError( const Locator&, const QString& message = QString(), int code = ERROR_PARSING_FAILED );
+	    ParserError( const Locator&, const QString& message = QString(), int code = ErrorParsingFailed );
 
 	    ParserError( const Error& );
 
@@ -254,9 +254,9 @@ namespace Soprano {
 
 	    /**
 	     * Convenience method to set simple string error messages with a default
-	     * error code ERROR_UNKNOWN.
+	     * error code ErrorUnknown.
 	     */
-	    void setError( const QString& errorMessage, int code = ERROR_UNKNOWN ) const;
+	    void setError( const QString& errorMessage, int code = ErrorUnknown ) const;
 
 	private:
 	    class Private;

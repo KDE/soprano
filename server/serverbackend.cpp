@@ -90,12 +90,12 @@ Soprano::StorageModel* Soprano::Client::ServerBackend::createModel( const QList<
     while ( it != settings.end() ) {
         BackendSetting& setting = *it;
 
-        if ( setting.option() == BACKEND_OPTION_USER &&
+        if ( setting.option() == BackendOptionUser &&
              setting.userOptionName() == "port" ) {
             bool ok = true;
             port = setting.value().toString().toInt( &ok );
             if ( !ok ) {
-                setError( QString( "Invalid value for option 'port': %1" ).arg( setting.value().toString() ), Error::ERROR_INVALID_ARGUMENT );
+                setError( QString( "Invalid value for option 'port': %1" ).arg( setting.value().toString() ), Error::ErrorInvalidArgument );
                 return 0;
             }
 
@@ -103,7 +103,7 @@ Soprano::StorageModel* Soprano::Client::ServerBackend::createModel( const QList<
             settings.erase( it );
         }
 
-        else if ( setting.option() == BACKEND_OPTION_USER &&
+        else if ( setting.option() == BackendOptionUser &&
                   setting.userOptionName() == "name" ) {
             name = setting.value().toString();
             settings.erase( it );
@@ -147,7 +147,7 @@ void Soprano::Client::ServerBackend::modelDeleted()
 Soprano::BackendFeatures Soprano::Client::ServerBackend::supportedFeatures() const
 {
     // as we may have multiple connections, which one to choose?
-    return BACKEND_FEATURE_NONE;
+    return BackendFeatureNone;
 }
 
 #include "serverbackend.moc"

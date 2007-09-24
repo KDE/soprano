@@ -65,7 +65,7 @@ void ErrorTest::testParserErrorCopy()
     ParserError p2( p1 );
 
     QCOMPARE( p1.message(), QString( "p1" ) );
-    QCOMPARE( p1.code(), ( int )Soprano::Error::ERROR_PARSING_FAILED );
+    QCOMPARE( p1.code(), ( int )Soprano::Error::ErrorParsingFailed );
     QCOMPARE( p1.locator().line(), line );
     QCOMPARE( p1.locator().column(), col );
 
@@ -81,7 +81,7 @@ void ErrorTest::testParserErrorOperator()
     ParserError p2 = p1;
 
     QCOMPARE( p1.message(), QString( "p1" ) );
-    QCOMPARE( p1.code(), ( int )Soprano::Error::ERROR_PARSING_FAILED );
+    QCOMPARE( p1.code(), ( int )Soprano::Error::ErrorParsingFailed );
     QCOMPARE( p1.locator().line(), line );
     QCOMPARE( p1.locator().column(), col );
 

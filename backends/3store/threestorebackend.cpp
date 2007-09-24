@@ -41,7 +41,7 @@ Soprano::StorageModel* Soprano::ThreeStore::BackendPlugin::createModel( const QL
     // we use the name as 3Store/SQL database name and parse the options for mysql connection data
     QString db, host,  user,  passwd;
     Q_FOREACH( BackendSetting s, settings ) {
-        if ( s.option() == BACKEND_OPTION_USER ) {
+        if ( s.option() == BackendOptionUser ) {
             if ( s.userOptionName() == "db" )
                 db = s.value().toString();
             else if ( s.userOptionName() == "host" )
@@ -51,18 +51,18 @@ Soprano::StorageModel* Soprano::ThreeStore::BackendPlugin::createModel( const QL
             else if ( s.userOptionName() == "passwd" )
                 passwd = s.value().toString();
             else {
-                setError( QString( "Unsupported option: %1" ).arg( s.userOptionName() ), Error::ERROR_INVALID_ARGUMENT );
+                setError( QString( "Unsupported option: %1" ).arg( s.userOptionName() ), Error::ErrorInvalidArgument );
                 return 0;
             }
         }
         else {
-            setError( QString( "Unsupported option: %1" ).arg( s.option() ), Error::ERROR_INVALID_ARGUMENT );
+            setError( QString( "Unsupported option: %1" ).arg( s.option() ), Error::ErrorInvalidArgument );
             return 0;
         }
     }
 
     if ( db.isEmpty() ) {
-        setError( QString( "No MySQL Datebase name specified." ), Error::ERROR_INVALID_ARGUMENT );
+        setError( QString( "No MySQL Datebase name specified." ), Error::ErrorInvalidArgument );
         return 0;
     }
 
@@ -76,10 +76,10 @@ Soprano::StorageModel* Soprano::ThreeStore::BackendPlugin::createModel( const QL
 
 Soprano::BackendFeatures Soprano::ThreeStore::BackendPlugin::supportedFeatures() const
 {
-    return(  BACKEND_FEATURE_ADD_STATEMENT|
-             BACKEND_FEATURE_LIST_STATEMENTS|
-             BACKEND_FEATURE_QUERY|
-             BACKEND_FEATURE_CONTEXTS );
+    return(  BackendFeatureAddStatement|
+             BackendFeatureListStatements|
+             BackendFeatureQuery|
+             BackendFeatureContext );
 }
 
 #include "threestorebackend.moc"

@@ -27,7 +27,7 @@
 class Soprano::BackendSetting::Private : public QSharedData
 {
 public:
-    Private( BackendOption option_ = BACKEND_OPTION_NONE,
+    Private( BackendOption option_ = BackendOptionNone,
              const QString& userOptionName_ = QString(),
              const QVariant& value_ = QVariant() )
         : option( option_ ),
@@ -60,7 +60,7 @@ Soprano::BackendSetting::BackendSetting( BackendOption s, const QVariant& value 
 
 
 Soprano::BackendSetting::BackendSetting( const QString& userOption, const QVariant& value )
-    : d( new Private( BACKEND_OPTION_USER, userOption, value ) )
+    : d( new Private( BackendOptionUser, userOption, value ) )
 {
 }
 
@@ -138,7 +138,7 @@ bool Soprano::Backend::supportsFeatures( BackendFeatures features, const QString
         return false;
     }
 
-    if ( features & BACKEND_FEATURE_USER ) {
+    if ( features & BackendFeatureUser ) {
         for( QStringList::const_iterator it = userFeatureList.begin(); it != userFeatureList.end(); ++it ) {
             if( !supportedUserFeatures().contains( *it ) ) {
                 return false;

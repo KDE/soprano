@@ -416,7 +416,7 @@ Soprano::Error::ErrorCode Soprano::Index::CLuceneIndex::addStatement( const Sopr
         qDebug() << "(Soprano::Index::CLuceneIndex::addStatement) only adding statements with literal object type.";
         setError( "Only indexing of literal objects supported." );
         qDebug() << "CLuceneIndex::addStatement done in thread " << QThread::currentThreadId();
-        return Error::ERROR_UNKNOWN;
+        return Error::ErrorUnknown;
     }
 
     clearError();
@@ -447,7 +447,7 @@ Soprano::Error::ErrorCode Soprano::Index::CLuceneIndex::addStatement( const Sopr
     }
 
     qDebug() << "CLuceneIndex::addStatement done in thread " << QThread::currentThreadId();
-    return success ? Error::ERROR_NONE : Error::ERROR_UNKNOWN;
+    return success ? Error::ErrorNone : Error::ErrorUnknown;
 }
 
 
@@ -460,7 +460,7 @@ Soprano::Error::ErrorCode Soprano::Index::CLuceneIndex::removeStatement( const S
         qDebug() << "(Soprano::Index::CLuceneIndex::removeStatement) only adding statements with literal object type.";
         setError( Error::Error( "Only indexing of literal objects supported." ) );
         qDebug() << "CLuceneIndex::removeStatement done in thread " << QThread::currentThreadId();
-        return Error::ERROR_UNKNOWN;
+        return Error::ErrorUnknown;
     }
 
     clearError();
@@ -468,7 +468,7 @@ Soprano::Error::ErrorCode Soprano::Index::CLuceneIndex::removeStatement( const S
     // just for speed
     if ( !d->indexPresent() ) {
         qDebug() << "CLuceneIndex::removeStatement done in thread " << QThread::currentThreadId();
-        return Error::ERROR_NONE;
+        return Error::ErrorNone;
     }
 
     bool success = false;
@@ -491,7 +491,7 @@ Soprano::Error::ErrorCode Soprano::Index::CLuceneIndex::removeStatement( const S
     }
 
     qDebug() << "CLuceneIndex::removeStatement done in thread " << QThread::currentThreadId();
-    return success ? Error::ERROR_NONE : Error::ERROR_UNKNOWN;
+    return success ? Error::ErrorNone : Error::ErrorUnknown;
 }
 
 

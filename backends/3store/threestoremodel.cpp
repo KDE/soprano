@@ -128,7 +128,7 @@ Soprano::Error::ErrorCode Soprano::ThreeStore::Model::addStatement( const Statem
                                ( statement.object().isLiteral() ? ObjLiteral : ObjURI ),
                                ( statement.object().isLiteral() ? ts_ensure_datatype( d->connection, statement.object().literal().dataTypeUri().toString().toUtf8().data() ) : 0 ),
                                ( statement.object().isLiteral() ? ts_ensure_language( d->connection, statement.object().language().toUtf8().data() ) : 0 ) ) == 0
-             ? Error::ERROR_NONE : Error::ERROR_UNKNOWN );
+             ? Error::ErrorNone : Error::ErrorUnknown );
 }
 
 
@@ -204,7 +204,7 @@ Soprano::StatementIterator Soprano::ThreeStore::Model::listStatements( const Sta
 Soprano::Error::ErrorCode Soprano::ThreeStore::Model::removeStatement( const Statement &statement )
 {
     // FIXME
-    return Error::ERROR_UNKNOWN;
+    return Error::ErrorUnknown;
 }
 
 

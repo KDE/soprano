@@ -54,7 +54,7 @@ namespace Soprano
 	/**
 	 * The serialiazation types supported by this serializer.
 	 * \return A combination of Soprano::RdfSerialization types. If
-	 * the list contains Soprano::SERIALIZATION_USER the serializer 
+	 * the list contains Soprano::SerializationUser the serializer 
 	 * supports additional RDF serialiazations not
 	 * officially supported by %Soprano.
 	 */
@@ -62,7 +62,7 @@ namespace Soprano
 
 	/**
 	 * A serializer can support additional RDF serializations that are not defined in Soprano::RdfSerialization.
-	 * In that case supportedSerializations() has to include Soprano::SERIALIZATION_USER.
+	 * In that case supportedSerializations() has to include Soprano::SerializationUser.
 	 *
 	 * The default implementation returns an empty list.
 	 *
@@ -74,7 +74,7 @@ namespace Soprano
 	 * Check if a plugin supports a specific serialization.
 	 *
 	 * \param s The requested serialization.
-	 * \param userSerialization If serialization is set to Soprano::SERIALIZATION_USER this parameter specifies the
+	 * \param userSerialization If serialization is set to Soprano::SerializationUser this parameter specifies the
 	 *       requested serialization. It allows the extension of the %Soprano Serializer interface with new
 	 *       RDF serializations that are not officially supported by %Soprano.
 	 *
@@ -89,7 +89,7 @@ namespace Soprano
 	 * \param it An iterator containing the statements to be serialized.
 	 * \param stream The stream the serialized data should be written to.
 	 * \param serialization The encoding to be used.
-	 * \param userSerialization If serialization is set to Soprano::SERIALIZATION_USER this parameter specifies the
+	 * \param userSerialization If serialization is set to Soprano::SerializationUser this parameter specifies the
 	 *       serialization to use. It allows the extension of the %Soprano Serializer interface with new
 	 *       RDF serializations that are not officially supported by %Soprano.
 	 *

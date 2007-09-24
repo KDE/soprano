@@ -32,7 +32,7 @@ namespace Soprano {
         class ErrorData : public QSharedData
         {
         public:
-            ErrorData( const QString& m = QString(), int c = ERROR_NONE )
+            ErrorData( const QString& m = QString(), int c = ErrorNone )
                 : message( m ),
                   code( c ) {
             }
@@ -62,7 +62,7 @@ Soprano::Error::Error::Error( ErrorData* data )
 Soprano::Error::Error::Error( const QString& message, int code )
     : d( new ErrorData( message,  code ) )
 {
-    if ( d->message.isEmpty() && code < ERROR_UNKNOWN ) {
+    if ( d->message.isEmpty() && code < ErrorUnknown ) {
         d->message = errorMessage( ( ErrorCode )code );
     }
 }
@@ -103,7 +103,7 @@ namespace Soprano {
         class ParserErrorData : public Soprano::Error::ErrorData
         {
         public:
-            ParserErrorData( const Locator& loc = Locator(), const QString& message = QString(), int code = ERROR_NONE )
+            ParserErrorData( const Locator& loc = Locator(), const QString& message = QString(), int code = ErrorNone )
                 : ErrorData( message, code ),
                   locator( loc ) {
             }
@@ -249,14 +249,14 @@ Soprano::Error::ErrorCode Soprano::Error::convertErrorCode( int code )
         return ( ErrorCode )code;
     }
     else {
-        return ERROR_UNKNOWN;
+        return ErrorUnknown;
     }
 }
 
 
 QDebug operator<<( QDebug s, const Soprano::Error::Error& error )
 {
-    if ( error.code() < Soprano::Error::ERROR_UNKNOWN ) {
+    if ( error.code() < Soprano::Error::ErrorUnknown ) {
         s.nospace() << errorMessage( ( Soprano::Error::ErrorCode )error.code() ) << ": ";
     }
     s.nospace() << error.message();
@@ -272,7 +272,7 @@ QDebug operator<<( QDebug s, const Soprano::Error::Error& error )
 
 QTextStream& operator<<( QTextStream& s, const Soprano::Error::Error& error )
 {
-    if ( error.code() < Soprano::Error::ERROR_UNKNOWN ) {
+    if ( error.code() < Soprano::Error::ErrorUnknown ) {
         s << errorMessage( ( Soprano::Error::ErrorCode )error.code() ) << ": ";
     }
     s << error.message();

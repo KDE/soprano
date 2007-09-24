@@ -134,11 +134,11 @@ QDataStream& operator>>( QDataStream& stream, Soprano::Error::ErrorCode& error )
 {
     quint16 code;
     stream >> code;
-    if ( code < Soprano::Error::ERROR_UNKNOWN ) {
+    if ( code < Soprano::Error::ErrorUnknown ) {
         error = ( Soprano::Error::ErrorCode )code;
     }
     else {
-        error = Soprano::Error::ERROR_UNKNOWN;
+        error = Soprano::Error::ErrorUnknown;
     }
     return stream;
 }
@@ -150,7 +150,7 @@ QDataStream& operator>>( QDataStream& stream, Soprano::BackendSetting& setting )
     QString userOption;
     QVariant value;
     stream >> option >> userOption >> value;
-    if ( option == Soprano::BACKEND_OPTION_USER ) {
+    if ( option == Soprano::BackendOptionUser ) {
         setting = Soprano::BackendSetting( userOption, value );
     }
     else {

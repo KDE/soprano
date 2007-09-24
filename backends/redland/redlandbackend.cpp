@@ -72,10 +72,10 @@ Soprano::StorageModel* Soprano::Redland::BackendPlugin::createModel( const QList
     redlandOptions["name"] = "soprano";
 
     Q_FOREACH( BackendSetting s, settings ) {
-        if ( s.option() == BACKEND_OPTION_USER ) {
+        if ( s.option() == BackendOptionUser ) {
             redlandOptions[s.userOptionName()] = s.value().toString();
         }
-        else if ( s.option() == BACKEND_OPTION_STORAGE_MEMORY ) {
+        else if ( s.option() == BackendOptionStorageMemory ) {
             if ( s.value().toBool() ) {
                 redlandOptions["hash-type"] = "memory";
             }
@@ -83,7 +83,7 @@ Soprano::StorageModel* Soprano::Redland::BackendPlugin::createModel( const QList
                 redlandOptions["hash-type"] = "bdb";
             }
         }
-        else if ( s.option() == BACKEND_OPTION_STORAGE_DIR ) {
+        else if ( s.option() == BackendOptionStorageDir ) {
             redlandOptions["dir"] = s.value().toString();
             redlandOptions["hash-type"] = "bdb";
         }
@@ -123,12 +123,12 @@ Soprano::StorageModel* Soprano::Redland::BackendPlugin::createModel( const QList
 
 Soprano::BackendFeatures Soprano::Redland::BackendPlugin::supportedFeatures() const
 {
-    return(  BACKEND_FEATURE_MEMORY_STORAGE|
-             BACKEND_FEATURE_ADD_STATEMENT|
-             BACKEND_FEATURE_REMOVE_STATEMENTS|
-             BACKEND_FEATURE_LIST_STATEMENTS|
-             BACKEND_FEATURE_QUERY|
-             BACKEND_FEATURE_CONTEXTS );
+    return(  BackendFeatureStorageMemory|
+             BackendFeatureAddStatement|
+             BackendFeatureRemoveStatementS|
+             BackendFeatureListStatements|
+             BackendFeatureQuery|
+             BackendFeatureContext );
 }
 
 #include "redlandbackend.moc"

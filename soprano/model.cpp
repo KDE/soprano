@@ -84,11 +84,11 @@ Soprano::Error::ErrorCode Soprano::Model::removeStatements( const QList<Statemen
     for ( QList<Statement>::const_iterator it = statements.constBegin();
           it != statements.constEnd(); ++it ) {
         Error::ErrorCode c = removeStatement( *it );
-        if ( c != Error::ERROR_NONE ) {
+        if ( c != Error::ErrorNone ) {
             return c;
         }
     }
-    return Error::ERROR_NONE;
+    return Error::ErrorNone;
 }
 
 
@@ -109,12 +109,12 @@ Soprano::Error::ErrorCode Soprano::Model::addStatements( const QList<Statement> 
     QListIterator<Statement> iter(statements);
     while ( iter.hasNext() ) {
         Error::ErrorCode c = addStatement( iter.next() );
-        if ( Error::ERROR_NONE != c ) {
+        if ( Error::ErrorNone != c ) {
             return c;
         }
     }
 
-    return Error::ERROR_NONE;
+    return Error::ErrorNone;
 }
 
 
@@ -124,7 +124,7 @@ Soprano::Error::ErrorCode Soprano::Model::write( QTextStream &os ) const
     while ( it.next() ) {
         os << *it << endl;
     }
-    return Error::ERROR_NONE;
+    return Error::ErrorNone;
 }
 
 #include "model.moc"

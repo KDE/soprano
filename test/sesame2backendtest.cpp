@@ -52,7 +52,7 @@ void Sesame2BackendTest::testIteratorClose()
     QVERIFY( m_model->listStatements( m_st2 ).next() );
 
     // try other stuff (actually the fear is that this will hang)
-    QVERIFY( m_model->removeStatement( m_st2 ) == Error::ERROR_NONE );
+    QVERIFY( m_model->removeStatement( m_st2 ) == Error::ErrorNone );
 }
 
 QTEST_MAIN( Sesame2BackendTest )

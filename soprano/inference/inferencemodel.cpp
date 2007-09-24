@@ -124,7 +124,7 @@ void Soprano::Inference::InferenceModel::setRules( const QList<Rule>& rules )
 Soprano::Error::ErrorCode Soprano::Inference::InferenceModel::addStatement( const Statement& statement )
 {
     Error::ErrorCode error = FilterModel::addStatement( statement );
-    if ( error == Error::ERROR_NONE ) {
+    if ( error == Error::ErrorNone ) {
         // FIXME: error handling for the inference itself
         if( inferStatement( statement, true ) ) {
             emit statementsAdded();
@@ -146,20 +146,20 @@ Soprano::Error::ErrorCode Soprano::Inference::InferenceModel::removeAllStatement
         for ( QList<Statement>::const_iterator it2 = removedStatements.constBegin();
               it2 != removedStatements.constEnd(); ++it2 ) {
             Error::ErrorCode c = removeStatement( *it2 );
-            if ( c != Error::ERROR_NONE ) {
+            if ( c != Error::ErrorNone ) {
                 return c;
             }
         }
     }
 
-    return Error::ERROR_NONE;
+    return Error::ErrorNone;
 }
 
 
 Soprano::Error::ErrorCode Soprano::Inference::InferenceModel::removeStatement( const Statement& statement )
 {
     Error::ErrorCode c = FilterModel::removeStatement( statement );
-    if ( c != Error::ERROR_NONE ) {
+    if ( c != Error::ErrorNone ) {
         return c;
     }
 
@@ -176,7 +176,7 @@ Soprano::Error::ErrorCode Soprano::Inference::InferenceModel::removeStatement( c
             for( QList<Node>::const_iterator it = graphSources.constBegin();
                  it != graphSources.constEnd(); ++it ) {
                 c = FilterModel::removeAllStatements( Statement( *it, Node(), Node(), Vocabulary::SIL::InferenceMetaData() ) );
-                if ( c != Error::ERROR_NONE ) {
+                if ( c != Error::ErrorNone ) {
                     return c;
                 }
             }
@@ -185,18 +185,18 @@ Soprano::Error::ErrorCode Soprano::Inference::InferenceModel::removeStatement( c
 
         // Step 2: remove the graph metadata
         c = FilterModel::removeAllStatements( Statement( graph, Node(), Node(), Vocabulary::SIL::InferenceMetaData() ) );
-        if ( c != Error::ERROR_NONE ) {
+        if ( c != Error::ErrorNone ) {
             return c;
         }
 
         // Step 3 remove the infered metadata (and trigger recursive removal) - can be slow
         c = removeContext( graph );
-        if ( c != Error::ERROR_NONE ) {
+        if ( c != Error::ErrorNone ) {
             return c;
         }
     }
 
-    return Error::ERROR_NONE;
+    return Error::ErrorNone;
 }
 
 

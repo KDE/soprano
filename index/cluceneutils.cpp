@@ -64,5 +64,5 @@ QString Soprano::Index::bnodeIdPrefix()
 
 Soprano::Error::Error Soprano::Index::exceptionToError( CLuceneError& err )
 {
-    return Error::Error( err.what(), Error::ERROR_UNKNOWN + err.number() );
+    return Error::Error( err.what(), Error::ErrorUnknown + err.number() );
 }

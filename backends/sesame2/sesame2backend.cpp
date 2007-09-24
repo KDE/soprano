@@ -67,28 +67,28 @@ Soprano::StorageModel* Soprano::Sesame2::BackendPlugin::createModel( const QList
     // FIXME: support inferecen option
 
     Q_FOREACH( BackendSetting s, settings ) {
-        if ( s.option() == BACKEND_OPTION_USER ) {
+        if ( s.option() == BackendOptionUser ) {
             // no user options ATM
             qDebug() << "(Soprano::Sesame2::BackendPlugin) no user options supported.";
-            setError( "No user options supported.", Error::ERROR_INVALID_ARGUMENT );
+            setError( "No user options supported.", Error::ErrorInvalidArgument );
             return 0;
         }
-        else if ( s.option() == BACKEND_OPTION_STORAGE_MEMORY ) {
+        else if ( s.option() == BackendOptionStorageMemory ) {
             memory = s.value().toBool();
         }
-        else if ( s.option() == BACKEND_OPTION_STORAGE_DIR ) {
+        else if ( s.option() == BackendOptionStorageDir ) {
             path = s.value().toString();
         }
         else {
             qDebug() << "(Soprano::Sesame2::BackendPlugin) unsupported option: " << s.option();
-            setError( QString( "Unsupported option: %1" ).arg( s.option() ), Error::ERROR_INVALID_ARGUMENT );
+            setError( QString( "Unsupported option: %1" ).arg( s.option() ), Error::ErrorInvalidArgument );
             return 0;
         }
     }
 
     if ( !path.isEmpty() && memory ) {
         qDebug() << "(Soprano::Sesame2::BackendPlugin) Path specified for memory model. Settings mismatch.";
-        setError( "Cannot set storage path for a memory repository.", Error::ERROR_INVALID_ARGUMENT );
+        setError( "Cannot set storage path for a memory repository.", Error::ErrorInvalidArgument );
         return 0;
     }
 
@@ -119,12 +119,12 @@ Soprano::StorageModel* Soprano::Sesame2::BackendPlugin::createModel( const QList
 
 Soprano::BackendFeatures Soprano::Sesame2::BackendPlugin::supportedFeatures() const
 {
-    return(  BACKEND_FEATURE_MEMORY_STORAGE|
-             BACKEND_FEATURE_ADD_STATEMENT|
-             BACKEND_FEATURE_REMOVE_STATEMENTS|
-             BACKEND_FEATURE_LIST_STATEMENTS|
-             BACKEND_FEATURE_QUERY|
-             BACKEND_FEATURE_CONTEXTS );
+    return(  BackendFeatureStorageMemory|
+             BackendFeatureAddStatement|
+             BackendFeatureRemoveStatementS|
+             BackendFeatureListStatements|
+             BackendFeatureQuery|
+             BackendFeatureContext );
 }
 
 #include "sesame2backend.moc"

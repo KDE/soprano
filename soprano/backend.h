@@ -43,7 +43,7 @@ namespace Soprano
      *
      * A BackendSetting consists of an option type and an option value. The option type can either be a predefined
      * value from Soprano::BackendOption or a user defined string value that depends on the Backend implementation. In the 
-     * latter case option has to be set to Soprano::BACKEND_OPTION_USER.
+     * latter case option has to be set to Soprano::BackendOptionUser.
      *
      * \sa Backend::createModel()
      *
@@ -54,7 +54,7 @@ namespace Soprano
     public:
 	/**
 	 * Create an empty setting.
-	 * \sa Soprano::BACKEND_OPTION_NONE
+	 * \sa Soprano::BackendOptionNone
 	 */
 	BackendSetting();
 
@@ -89,13 +89,13 @@ namespace Soprano
 	BackendSetting& operator=( const BackendSetting& other );
 
 	/**
-	 * The option that this setting sets. If Soprano::BACKEND_OPTION_USER 
+	 * The option that this setting sets. If Soprano::BackendOptionUser 
 	 * the option is identified by userOptionName().
 	 */
 	BackendOption option() const;
 
 	/**
-	 * The name of the user option if option() is Soprano::BACKEND_OPTION_USER.
+	 * The name of the user option if option() is Soprano::BackendOptionUser.
 	 */
 	QString userOptionName() const;
 
@@ -142,7 +142,7 @@ namespace Soprano
 	 * \param settings The settings that should be used to create the Model. Backend implementations
 	 * should never ignore settings but rather return 0 if an option is not supported. Backends can,
 	 * however, define their own default settings. Invalid settings should result in an Error with value
-	 * Error::ERROR_INVALID_ARGUMENT.
+	 * Error::ErrorInvalidArgument.
 	 *
 	 * \sa BackendSetting
 	 */
@@ -150,7 +150,7 @@ namespace Soprano
 
 	/**
 	 * Each backend can support a set of features. Backends without any features do not make much sense.
-	 * If the features include Soprano::BACKEND_FEATURE_USER additional user features not defined in 
+	 * If the features include Soprano::BackendFeatureUser additional user features not defined in 
 	 * Backend::BackendFeature can be supported via supportedUserFeatures().
 	 *
 	 * \return A combination of Soprano::BackendFeature values.
@@ -160,7 +160,7 @@ namespace Soprano
 	/**
 	 * A Backend can support additional features that are not defined in Backend::BackendFeature.
 	 * These user defined features have string identifiers. If a backend supports additional features
-	 * it has to include Soprano::BACKEND_FEATURE_USER in supportedFeatures().
+	 * it has to include Soprano::BackendFeatureUser in supportedFeatures().
 	 *
 	 * The default implementation returns an empty list.
 	 *
@@ -169,7 +169,7 @@ namespace Soprano
 	virtual QStringList supportedUserFeatures() const;
 
 	/**
-	 * Check if a backend supports certain features. If feature includes Soprano::BACKEND_FEATURE_USER
+	 * Check if a backend supports certain features. If feature includes Soprano::BackendFeatureUser
 	 * the list if userFeatures is also compared.
 	 *
 	 * \return \p true if the backend does support the requested features, \p false otherwise.

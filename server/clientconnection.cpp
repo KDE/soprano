@@ -131,7 +131,7 @@ Soprano::Error::ErrorCode Soprano::Client::ClientConnection::addStatement( int m
 
     if ( !d->socket->waitForReadyRead(s_defaultTimeout) ) {
         setError( "Command timed out." );
-        return Error::ERROR_UNKNOWN;
+        return Error::ErrorUnknown;
     }
 
     Error::ErrorCode ec;
@@ -154,7 +154,7 @@ int Soprano::Client::ClientConnection::listContexts( int modelId )
 
     if ( !d->socket->waitForReadyRead(s_defaultTimeout) ) {
         setError( "Command timed out." );
-        return Error::ERROR_UNKNOWN;
+        return Error::ErrorUnknown;
     }
 
     quint32 itId;
@@ -177,7 +177,7 @@ int Soprano::Client::ClientConnection::executeQuery( int modelId, const QString 
 
     if ( !d->socket->waitForReadyRead(s_defaultTimeout) ) {
         setError( "Command timed out." );
-        return Error::ERROR_UNKNOWN;
+        return Error::ErrorUnknown;
     }
 
     quint32 itId;
@@ -200,7 +200,7 @@ int Soprano::Client::ClientConnection::listStatements( int modelId, const Statem
 
     if ( !d->socket->waitForReadyRead(s_defaultTimeout) ) {
         setError( "Command timed out." );
-        return Error::ERROR_UNKNOWN;
+        return Error::ErrorUnknown;
     }
 
     quint32 itId;
@@ -223,7 +223,7 @@ Soprano::Error::ErrorCode Soprano::Client::ClientConnection::removeAllStatements
 
     if ( !d->socket->waitForReadyRead(s_defaultTimeout) ) {
         setError( "Command timed out." );
-        return Error::ERROR_UNKNOWN;
+        return Error::ErrorUnknown;
     }
 
     Error::ErrorCode ec;
@@ -246,7 +246,7 @@ Soprano::Error::ErrorCode Soprano::Client::ClientConnection::removeStatement( in
 
     if ( !d->socket->waitForReadyRead(s_defaultTimeout) ) {
         setError( "Command timed out." );
-        return Error::ERROR_UNKNOWN;
+        return Error::ErrorUnknown;
     }
 
     Error::ErrorCode ec;
@@ -269,7 +269,7 @@ int Soprano::Client::ClientConnection::statementCount( int modelId )
 
     if ( !d->socket->waitForReadyRead(s_defaultTimeout) ) {
         setError( "Command timed out." );
-        return Error::ERROR_UNKNOWN;
+        return Error::ErrorUnknown;
     }
 
     qint32 count;

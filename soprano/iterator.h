@@ -26,7 +26,6 @@
 #include <QtCore/QSharedDataPointer>
 #include <QtCore/QList>
 
-#include "soprano_export.h"
 #include "iteratorbackend.h"
 #include "error.h"
 
@@ -74,7 +73,7 @@ namespace Soprano {
      * 
      * \author Daniele Galdi <daniele.galdi@gmail.com><br>Sebastian Trueg <trueg@kde.org>
      */
-    template<typename T> class SOPRANO_EXPORT Iterator : public Error::ErrorCache
+    template<typename T> class Iterator : public Error::ErrorCache
     {
     public:
 	/**

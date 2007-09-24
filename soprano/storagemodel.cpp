@@ -61,7 +61,7 @@ bool Soprano::StorageModel::isEmpty() const
 bool Soprano::StorageModel::containsStatement( const Statement &statement ) const
 {
     if ( !statement.isValid() ) {
-        setError( "Cannot check for invalid statement", Error::ERROR_INVALID_ARGUMENT );
+        setError( "Cannot check for invalid statement", Error::ErrorInvalidArgument );
         return false;
     }
 
@@ -84,12 +84,12 @@ Soprano::Error::ErrorCode Soprano::StorageModel::removeAllStatements( const Stat
     QList<Statement> sl = listStatements( statement ).allStatements();
     for ( QList<Statement>::const_iterator it = sl.constBegin(); it != sl.constEnd(); ++it ) {
         Error::ErrorCode r = removeStatement( *it );
-        if ( r != Error::ERROR_NONE ) {
+        if ( r != Error::ErrorNone ) {
             return r;
         }
     }
 
-    return Error::ERROR_NONE;
+    return Error::ErrorNone;
 }
 
 

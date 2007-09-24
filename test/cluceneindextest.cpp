@@ -41,7 +41,7 @@ void IndexTest::init()
 {
     // create any memory model
     QList<BackendSetting> settings;
-    settings.append( BackendSetting( BACKEND_OPTION_STORAGE_MEMORY ) );
+    settings.append( BackendSetting( BackendOptionStorageMemory ) );
     m_model = createModel( settings );
 
     QVERIFY( m_model != 0 );
@@ -70,7 +70,7 @@ void IndexTest::testAddStatement()
                   QUrl( "http://soprano.sf.net/test#valueY" ),
                   LiteralValue( "Wurst" ) );
 
-    QVERIFY( m_indexModel->addStatement( s1 ) == Error::ERROR_NONE );
+    QVERIFY( m_indexModel->addStatement( s1 ) == Error::ErrorNone );
     QVERIFY( m_indexModel->containsAnyStatement( s1 ) );
 
     // now check if the statement was properly indexed
@@ -80,7 +80,7 @@ void IndexTest::testAddStatement()
     QVERIFY( !hits.next() );
     hits.close();
 
-    QVERIFY( m_indexModel->addStatement( s2 ) == Error::ERROR_NONE );
+    QVERIFY( m_indexModel->addStatement( s2 ) == Error::ErrorNone );
     QVERIFY( m_indexModel->containsAnyStatement( s2 ) );
 
     // check the previous one again to make sure the index is not borked
@@ -111,16 +111,16 @@ void IndexTest::testRemoveStatement()
                   QUrl( "http://soprano.sf.net/test#valueY" ),
                   LiteralValue( "Wurst" ) );
 
-    QVERIFY( m_indexModel->addStatement( s1 ) == Error::ERROR_NONE );
+    QVERIFY( m_indexModel->addStatement( s1 ) == Error::ErrorNone );
     QVERIFY( m_indexModel->containsAnyStatement( s1 ) );
     m_indexModel->index()->dump( s );
-    QVERIFY( m_indexModel->addStatement( s2 ) == Error::ERROR_NONE );
+    QVERIFY( m_indexModel->addStatement( s2 ) == Error::ErrorNone );
     QVERIFY( m_indexModel->containsAnyStatement( s2 ) );
 
     m_indexModel->index()->dump( s );
 
     // now remove one of them
-    QVERIFY( m_indexModel->removeStatement( s1 ) == Error::ERROR_NONE );
+    QVERIFY( m_indexModel->removeStatement( s1 ) == Error::ErrorNone );
 
     m_indexModel->index()->dump( s );
 

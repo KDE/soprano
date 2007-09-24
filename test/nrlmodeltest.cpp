@@ -34,7 +34,7 @@ void NRLModelTest::init()
 {
     // create any memory model
     QList<BackendSetting> settings;
-    settings.append( BackendSetting( BACKEND_OPTION_STORAGE_MEMORY ) );
+    settings.append( BackendSetting( BackendOptionStorageMemory ) );
 
     // redland does not support SPARQL UNION
     const Backend* b = PluginManager::instance()->discoverBackendByName( "sesame2" );

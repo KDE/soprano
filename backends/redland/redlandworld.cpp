@@ -107,7 +107,7 @@ int redlandLogHandler( void* user, librdf_log_message* msg )
 
     // this is a "real" error, everything else is just debugging (FIXME: should we report those, too?)
     if ( level > LIBRDF_LOG_WARN ) {
-        int code = Soprano::Error::ERROR_UNKNOWN + librdf_log_message_code( msg );
+        int code = Soprano::Error::ErrorUnknown + librdf_log_message_code( msg );
         raptor_locator* locator = librdf_log_message_locator( msg );
         if ( locator ) {
             w->setError( Soprano::Error::ParserError( Soprano::Error::Locator( locator->line, locator->column, locator->byte ), message, code ) );

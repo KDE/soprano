@@ -338,7 +338,7 @@ void Soprano::Server::ServerConnection::Private::addStatement( QDataStream& stre
         stream << model->lastError();
     }
     else {
-        stream << Error::ERROR_INVALID_ARGUMENT << Error::Error( "Invalid model id" );
+        stream << Error::ErrorInvalidArgument << Error::Error( "Invalid model id" );
     }
     //qDebug() << "(ServerConnection::addStatement) done";
 }
@@ -356,7 +356,7 @@ void Soprano::Server::ServerConnection::Private::removeStatement( QDataStream& s
         stream << model->lastError();
     }
     else {
-        stream << Error::ERROR_INVALID_ARGUMENT << Error::Error( "Invalid model id" );
+        stream << Error::ErrorInvalidArgument << Error::Error( "Invalid model id" );
     }
     //qDebug() << "(ServerConnection::removeStatement) done";
 }
@@ -374,7 +374,7 @@ void Soprano::Server::ServerConnection::Private::removeAllStatements( QDataStrea
         stream << model->lastError();
     }
     else {
-        stream << Error::ERROR_INVALID_ARGUMENT << Error::Error( "Invalid model id" );
+        stream << Error::ErrorInvalidArgument << Error::Error( "Invalid model id" );
     }
     //qDebug() << "(ServerConnection::removeAllStatements) done";
 }
@@ -392,7 +392,7 @@ void Soprano::Server::ServerConnection::Private::listStatements( QDataStream& st
         stream << mapIterator( it ) << model->lastError();
     }
     else {
-        stream << Error::ERROR_INVALID_ARGUMENT << Error::Error( "Invalid model id" );
+        stream << Error::ErrorInvalidArgument << Error::Error( "Invalid model id" );
     }
     //qDebug() << "(ServerConnection::listStatements) done";
 }
@@ -410,7 +410,7 @@ void Soprano::Server::ServerConnection::Private::containsStatement( QDataStream&
         stream << model->lastError();
     }
     else {
-        stream << Error::ERROR_INVALID_ARGUMENT << Error::Error( "Invalid model id" );
+        stream << Error::ErrorInvalidArgument << Error::Error( "Invalid model id" );
     }
     //qDebug() << "(ServerConnection::containsStatement) done";
 }
@@ -428,7 +428,7 @@ void Soprano::Server::ServerConnection::Private::containsAnyStatement( QDataStre
         stream << model->lastError();
     }
     else {
-        stream << Error::ERROR_INVALID_ARGUMENT << Error::Error( "Invalid model id" );
+        stream << Error::ErrorInvalidArgument << Error::Error( "Invalid model id" );
     }
     //qDebug() << "(ServerConnection::containsAnyStatement) done";
 }
@@ -442,7 +442,7 @@ void Soprano::Server::ServerConnection::Private::listContexts( QDataStream& stre
         stream << mapIterator( it ) << model->lastError();
     }
     else {
-        stream << Error::ERROR_INVALID_ARGUMENT << Error::Error( "Invalid model id" );
+        stream << Error::ErrorInvalidArgument << Error::Error( "Invalid model id" );
     }
 }
 
@@ -459,7 +459,7 @@ void Soprano::Server::ServerConnection::Private::query( QDataStream& stream )
         stream << mapIterator( it ) << model->lastError();
     }
     else {
-        stream << Error::ERROR_INVALID_ARGUMENT << Error::Error( "Invalid model id" );
+        stream << Error::ErrorInvalidArgument << Error::Error( "Invalid model id" );
     }
 }
 
@@ -472,7 +472,7 @@ void Soprano::Server::ServerConnection::Private::statementCount( QDataStream& st
         stream << count << model->lastError();
     }
     else {
-        stream << Error::ERROR_INVALID_ARGUMENT << Error::Error( "Invalid model id" );
+        stream << Error::ErrorInvalidArgument << Error::Error( "Invalid model id" );
     }
 }
 
@@ -485,7 +485,7 @@ void Soprano::Server::ServerConnection::Private::isEmpty( QDataStream& stream )
         stream << model->lastError();
     }
     else {
-        stream << Error::ERROR_INVALID_ARGUMENT << Error::Error( "Invalid model id" );
+        stream << Error::ErrorInvalidArgument << Error::Error( "Invalid model id" );
     }
 }
 
@@ -498,7 +498,7 @@ void Soprano::Server::ServerConnection::Private::createBlankNode( QDataStream& s
         stream << model->lastError();
     }
     else {
-        stream << Error::ERROR_INVALID_ARGUMENT << Error::Error( "Invalid model id" );
+        stream << Error::ErrorInvalidArgument << Error::Error( "Invalid model id" );
     }
 }
 

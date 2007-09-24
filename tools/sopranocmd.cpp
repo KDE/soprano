@@ -327,7 +327,7 @@ int main( int argc, char *argv[] )
             dir = QDir::currentPath();
         }
         QList<BackendSetting> settings;
-        settings.append( BackendSetting( BACKEND_OPTION_STORAGE_DIR, dir ) );
+        settings.append( BackendSetting( BackendOptionStorageDir, dir ) );
         model = backend->createModel( settings );
     }
 

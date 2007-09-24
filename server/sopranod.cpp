@@ -71,7 +71,7 @@ int main( int argc, char** argv )
         if ( args[i] == "--storagedir" ) {
             ++i;
             if ( i < args.count() ) {
-                settings.append( Soprano::BackendSetting( Soprano::BACKEND_OPTION_STORAGE_DIR, args[i] ) );
+                settings.append( Soprano::BackendSetting( Soprano::BackendOptionStorageDir, args[i] ) );
             }
             else {
                 return usage();

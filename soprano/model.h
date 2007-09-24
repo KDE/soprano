@@ -76,7 +76,7 @@ namespace Soprano
      * \code
      * Soprano::Model* model = Soprano::createModel();
      * Soprano::Statement invalidStatement;
-     * if( model->addStatement( invalidStatement ) != Error::ERROR_NONE ) {
+     * if( model->addStatement( invalidStatement ) != Error::ErrorNone ) {
      *    showErrorMessage( model->lastError().message() );
      * }
      * \endcode
@@ -118,7 +118,7 @@ namespace Soprano
 	 *
 	 * \param statement The statement that should be removed. This has to be a valid statement.
 	 *
-	 * \return Error::ERROR_NONE on success and an error code if statement was invalid or an error
+	 * \return Error::ErrorNone on success and an error code if statement was invalid or an error
 	 * occured.
 	 */
 	virtual Error::ErrorCode removeStatement( const Statement &statement ) = 0;

@@ -80,20 +80,20 @@ Soprano::Error::ErrorCode Soprano::Sesame2::Model::addStatement( const Statement
     if ( JObjectRef sesameStatement = d->repository->valueFactory()->convertStatement( statement ) ) {
         if ( JNIWrapper::instance()->exceptionOccured() ) {
             setError( JNIWrapper::instance()->convertAndClearException() );
-            return Error::ERROR_UNKNOWN;
+            return Error::ErrorUnknown;
         }
         d->repository->repositoryConnection()->addStatement( sesameStatement );
         if ( JNIWrapper::instance()->exceptionOccured() ) {
             qDebug() << "(Soprano::Sesame2::Model::addStatements) failed.";
             setError( JNIWrapper::instance()->convertAndClearException() );
-            return Error::ERROR_UNKNOWN;
+            return Error::ErrorUnknown;
         }
         else {
-            return Error::ERROR_NONE;
+            return Error::ErrorNone;
         }
     }
     else {
-        return Error::ERROR_UNKNOWN;
+        return Error::ErrorUnknown;
     }
 }
 
@@ -204,8 +204,8 @@ Soprano::StatementIterator Soprano::Sesame2::Model::listStatements( const Statem
 Soprano::Error::ErrorCode Soprano::Sesame2::Model::removeStatement( const Statement &statement )
 {
     if ( !statement.isValid() ) {
-        setError( "Invalid statement", Error::ERROR_INVALID_ARGUMENT );
-        return Error::ERROR_INVALID_ARGUMENT;
+        setError( "Invalid statement", Error::ErrorInvalidArgument );
+        return Error::ErrorInvalidArgument;
     }
 
     // Sesame does not seems to support the "default context", i.e. no context, it is always used
@@ -233,7 +233,7 @@ Soprano::Error::ErrorCode Soprano::Sesame2::Model::removeStatement( const Statem
     }
 
     // make gcc shut up
-    return Error::ERROR_NONE;
+    return Error::ErrorNone;
 }
 
 
@@ -247,32 +247,32 @@ Soprano::Error::ErrorCode Soprano::Sesame2::Model::removeAllStatements( const St
     JObjectRef subject = d->repository->valueFactory()->convertNode( statement.subject() );
     if ( JNIWrapper::instance()->exceptionOccured() ) {
         setError( JNIWrapper::instance()->convertAndClearException() );
-        return Error::ERROR_UNKNOWN;
+        return Error::ErrorUnknown;
     }
     JObjectRef predicate = d->repository->valueFactory()->convertNode( statement.predicate() );
     if ( JNIWrapper::instance()->exceptionOccured() ) {
         setError( JNIWrapper::instance()->convertAndClearException() );
-        return Error::ERROR_UNKNOWN;
+        return Error::ErrorUnknown;
     }
     JObjectRef object = d->repository->valueFactory()->convertNode( statement.object() );
     if ( JNIWrapper::instance()->exceptionOccured() ) {
         setError( JNIWrapper::instance()->convertAndClearException() );
-        return Error::ERROR_UNKNOWN;
+        return Error::ErrorUnknown;
     }
     JObjectRef context = d->repository->valueFactory()->convertNode( statement.context() );
     if ( JNIWrapper::instance()->exceptionOccured() ) {
         setError( JNIWrapper::instance()->convertAndClearException() );
-        return Error::ERROR_UNKNOWN;
+        return Error::ErrorUnknown;
     }
 
     d->repository->repositoryConnection()->remove( subject, predicate, object, context );
     if ( JNIWrapper::instance()->exceptionOccured() ) {
         qDebug() << "(Soprano::Sesame2::Model::removeAllStatements) failed.";
         setError( JNIWrapper::instance()->convertAndClearException() );
-        return Error::ERROR_UNKNOWN;
+        return Error::ErrorUnknown;
     }
 
-    return Error::ERROR_NONE;
+    return Error::ErrorNone;
 }
 
 

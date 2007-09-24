@@ -84,7 +84,7 @@ namespace Soprano {
 	* cardinality bigger than 1 which has already been reached 
 	* fails with an error.
 	*
-	* \return Error::ERROR_NONE on success.
+	* \return Error::ErrorNone on success.
 	*/
 	Error::ErrorCode addStatement( const Statement& s );
 

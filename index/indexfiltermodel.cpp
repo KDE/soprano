@@ -75,9 +75,9 @@ Soprano::Error::ErrorCode Soprano::Index::IndexFilterModel::addStatement( const 
     qDebug() << "IndexFilterModel::addStatement in thread " << QThread::currentThreadId();
     if ( !FilterModel::containsStatement( statement ) ) {
         Error::ErrorCode c = FilterModel::addStatement( statement );
-        if ( c == Error::ERROR_NONE && statement.object().isLiteral() ) {
+        if ( c == Error::ErrorNone && statement.object().isLiteral() ) {
             c = d->index->addStatement( statement );
-            if ( c != Error::ERROR_NONE ) {
+            if ( c != Error::ErrorNone ) {
                 setError( d->index->lastError() );
             }
         }
@@ -86,7 +86,7 @@ Soprano::Error::ErrorCode Soprano::Index::IndexFilterModel::addStatement( const 
     }
     else {
         qDebug() << "IndexFilterModel::addStatement done in thread " << QThread::currentThreadId();
-        return Error::ERROR_NONE;
+        return Error::ErrorNone;
     }
 }
 
@@ -94,9 +94,9 @@ Soprano::Error::ErrorCode Soprano::Index::IndexFilterModel::addStatement( const 
 Soprano::Error::ErrorCode Soprano::Index::IndexFilterModel::removeStatement( const Soprano::Statement &statement )
 {
     Error::ErrorCode c = FilterModel::removeStatement( statement );
-    if ( c == Error::ERROR_NONE ) {
+    if ( c == Error::ErrorNone ) {
         c = d->index->removeStatement( statement );
-        if ( c != Error::ERROR_NONE ) {
+        if ( c != Error::ErrorNone ) {
             setError( d->index->lastError() );
         }
     }
@@ -115,7 +115,7 @@ Soprano::Error::ErrorCode Soprano::Index::IndexFilterModel::removeAllStatements(
         Statement s = *it;
         if ( s.object().isLiteral() ) {
             Error::ErrorCode c = d->index->removeStatement( *it );
-            if ( c != Error::ERROR_NONE ) {
+            if ( c != Error::ErrorNone ) {
                 setError( d->index->lastError() );
                 return c;
             }

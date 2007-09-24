@@ -92,7 +92,7 @@
  * \code
  * Soprano::Model* model = Soprano::createModel();
  * Soprano::Statement invalidStatement;
- * if( model->addStatement( invalidStatement ) != Error::ERROR_NONE ) {
+ * if( model->addStatement( invalidStatement ) != Error::ErrorNone ) {
  *    showErrorMessage( model->lastError().message() );
  * }
  * \endcode
@@ -110,7 +110,7 @@
  * }
  * \endcode
  *
- * This has the same effect as checking for Soprano::Error::ERROR_NONE.
+ * This has the same effect as checking for Soprano::Error::ErrorNone.
  *
  * This error handling is thread-safe. Thus, two threads can for example call methods of one Model at the same time
  * and still get proper Soprano::Error::Error instances back.

@@ -108,7 +108,7 @@ public:
 
     bool performTest() {
         QList<Statement> data = createTestData( Statement(), 5 );
-        if ( model()->addStatements( data ) != Error::ERROR_NONE ) {
+        if ( model()->addStatements( data ) != Error::ErrorNone ) {
             qDebug() << "Adding statements failed:" << model()->lastError();
             return false;
         }
@@ -126,7 +126,7 @@ public:
     }
 
     bool performTest() {
-        if ( model()->removeAllStatements() != Error::ERROR_NONE )
+        if ( model()->removeAllStatements() != Error::ErrorNone )
             return false;
 
         return !model()->listStatements().next();
@@ -248,7 +248,7 @@ void MultiThreadingTest::testNodeIterator()
     QVERIFY( model != 0 );
 
     // add some testdata with the same context
-    QVERIFY( model->addStatements( m_testStatements ) == Error::ERROR_NONE );
+    QVERIFY( model->addStatements( m_testStatements ) == Error::ErrorNone );
 
     NodeIterator it = model->listContexts();
 
@@ -284,7 +284,7 @@ void MultiThreadingTest::testAllInParallel()
     QVERIFY( model != 0 );
 
     // add some testdata with the same context
-    QVERIFY( model->addStatements( m_testStatements ) == Error::ERROR_NONE );
+    QVERIFY( model->addStatements( m_testStatements ) == Error::ErrorNone );
 
     startAllTests( model );
     verifyAllTests();

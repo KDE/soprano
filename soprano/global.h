@@ -46,7 +46,7 @@ namespace Soprano {
      * Find a backend plugin by its features.
      *
      * \param features The features that are requested.
-     * \param userFeatures If features contain Soprano::BACKEND_FEATURE_USER this paramter states the additionally requested user features.
+     * \param userFeatures If features contain Soprano::BackendFeatureUser this paramter states the additionally requested user features.
      *
      * \return a backend that supports the features defined in \a features.
      *

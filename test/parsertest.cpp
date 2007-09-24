@@ -41,8 +41,8 @@ void ParserTest::testParser_data()
     QTest::addColumn<Soprano::RdfSerialization>( "serialization" );
     QTest::addColumn<QString>( "filename" );
 
-    QTest::newRow("rdf_xml") << SERIALIZATION_RDF_XML << SOPRANO_TEST_DATA_DIR"/rdf_xml-testdata.rdf";
-    QTest::newRow("turtle") << SERIALIZATION_TURTLE << SOPRANO_TEST_DATA_DIR"/turtle-testdata.ttl";
+    QTest::newRow("rdf_xml") << SerializationRdfXml << SOPRANO_TEST_DATA_DIR"/rdf_xml-testdata.rdf";
+    QTest::newRow("turtle") << SerializationTurtle << SOPRANO_TEST_DATA_DIR"/turtle-testdata.ttl";
 }
 
 

@@ -112,7 +112,7 @@ Soprano::Model* Soprano::Server::ServerCore::model( const QString& name )
         for ( QList<BackendSetting>::iterator it = settings.begin();
               it != settings.end(); ++it ) {
             BackendSetting& setting = *it;
-            if ( setting.option() == BACKEND_OPTION_STORAGE_DIR ) {
+            if ( setting.option() == BackendOptionStorageDir ) {
                 setting.setValue( setting.value().toString() + '/' + name );
             }
         }

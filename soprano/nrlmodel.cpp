@@ -87,7 +87,7 @@ Soprano::Error::ErrorCode Soprano::NRLModel::addStatement( const Statement& stat
     QueryResultIterator it = FilterModel::executeQuery( query, Query::QUERY_LANGUAGE_SPARQL );
     if ( !it.isValid() ) {
         setError( QString( "Query failed: '%1'" ).arg( query ) );
-        return Error::ERROR_UNKNOWN;
+        return Error::ErrorUnknown;
     }
 
     int min = -1;
@@ -151,7 +151,7 @@ Soprano::Error::ErrorCode Soprano::NRLModel::addStatement( const Statement& stat
                 else {
                     qDebug() << "FIXME: which statements to remove? Random? Best would be to remove the oldest...";
                     setError( "Max cardinality for predicate reached" );
-                    return Error::ERROR_UNKNOWN;
+                    return Error::ErrorUnknown;
                 }
             }
 
@@ -168,5 +168,5 @@ Soprano::Error::ErrorCode Soprano::NRLModel::addStatement( const Statement& stat
     }
 
     // make gcc shut up
-    return Error::ERROR_NONE;
+    return Error::ErrorNone;
 }

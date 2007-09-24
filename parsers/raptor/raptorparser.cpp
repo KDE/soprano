@@ -41,7 +41,7 @@ Q_EXPORT_PLUGIN2(soprano_raptorparser, Soprano::Raptor::Parser)
 // for some strange reason librdf can only handle application/turtle when parsing and application/x-turtle when serializing, but not the other way around
 static QString mimeTypeString( Soprano::RdfSerialization s )
 {
-    if ( s == Soprano::SERIALIZATION_TURTLE ) {
+    if ( s == Soprano::SerializationTurtle ) {
         return "application/turtle"; // x-turtle does not work....
     }
     else {
@@ -64,7 +64,7 @@ Soprano::Raptor::Parser::~Parser()
 
 Soprano::RdfSerializations Soprano::Raptor::Parser::supportedSerializations() const
 {
-    return SERIALIZATION_RDF_XML|SERIALIZATION_N_TRIPLES|SERIALIZATION_TURTLE;
+    return SerializationRdfXml|SerializationNTriples|SerializationTurtle;
 }
 
 

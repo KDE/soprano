@@ -57,7 +57,7 @@ Soprano::Error::ErrorCode Soprano::Client::ClientModel::addStatement( const Stat
     }
     else {
         setError( "Not connected to server." );
-        return Error::ERROR_UNKNOWN;
+        return Error::ErrorUnknown;
     }
 }
 
@@ -137,7 +137,7 @@ Soprano::Error::ErrorCode Soprano::Client::ClientModel::removeStatement( const S
     }
     else {
         setError( "Not connected to server." );
-        return Error::ERROR_UNKNOWN;
+        return Error::ErrorUnknown;
     }
 }
 
@@ -151,7 +151,7 @@ Soprano::Error::ErrorCode Soprano::Client::ClientModel::removeAllStatements( con
     }
     else {
         setError( "Not connected to server." );
-        return Error::ERROR_UNKNOWN;
+        return Error::ErrorUnknown;
     }
 }
 

@@ -106,8 +106,8 @@ librdf_model *Soprano::Redland::RedlandModel::redlandModel() const
 Soprano::Error::ErrorCode Soprano::Redland::RedlandModel::addStatement( const Statement &statement )
 {
     if ( !statement.isValid() ) {
-        setError( "Cannot add invalid statement", Error::ERROR_INVALID_ARGUMENT );
-        return Error::ERROR_INVALID_ARGUMENT;
+        setError( "Cannot add invalid statement", Error::ErrorInvalidArgument );
+        return Error::ErrorInvalidArgument;
     }
 
     clearError();
@@ -117,14 +117,14 @@ Soprano::Error::ErrorCode Soprano::Redland::RedlandModel::addStatement( const St
     librdf_statement* redlandStatement = Util::createStatement( statement );
     if ( !redlandStatement ) {
         setError( Redland::World::self()->lastError() );
-        return Error::ERROR_INVALID_ARGUMENT;
+        return Error::ErrorInvalidArgument;
     }
 
     if ( statement.context().isEmpty() ) {
         if ( librdf_model_add_statement( d->model, redlandStatement ) ) {
             Util::freeStatement( redlandStatement );
             setError( Redland::World::self()->lastError() );
-            return Error::ERROR_UNKNOWN;
+            return Error::ErrorUnknown;
         }
     }
     else {
@@ -133,18 +133,18 @@ Soprano::Error::ErrorCode Soprano::Redland::RedlandModel::addStatement( const St
             Util::freeStatement( redlandStatement );
             Util::freeNode( redlandContext );
             setError( Redland::World::self()->lastError() );
-            return Error::ERROR_UNKNOWN;
+            return Error::ErrorUnknown;
         }
     }
 
     //if ( librdf_model_sync( d->model ) )
     //{
-    //  return Error::ERROR_UNKNOWN;
+    //  return Error::ErrorUnknown;
     //}
 
     emit statementsAdded();
 
-    return Error::ERROR_NONE;
+    return Error::ErrorNone;
 }
 
 
@@ -295,7 +295,7 @@ Soprano::Error::ErrorCode Soprano::Redland::RedlandModel::removeStatement( const
 
     Error::ErrorCode r = removeOneStatement( statement );
     d->mutex.unlock();
-    if ( r == Error::ERROR_NONE ) {
+    if ( r == Error::ErrorNone ) {
         emit statementsRemoved();
     }
     return r;
@@ -307,21 +307,21 @@ Soprano::Error::ErrorCode Soprano::Redland::RedlandModel::removeOneStatement( co
     clearError();
 
     if ( !statement.isValid() ) {
-        setError( "Cannot remove invalid statement", Error::ERROR_INVALID_ARGUMENT );
-        return Error::ERROR_INVALID_ARGUMENT;
+        setError( "Cannot remove invalid statement", Error::ErrorInvalidArgument );
+        return Error::ErrorInvalidArgument;
     }
 
     librdf_statement* redlandStatement = Util::createStatement( statement );
     if ( !redlandStatement ) {
         setError( Redland::World::self()->lastError() );
-        return Error::ERROR_INVALID_ARGUMENT;
+        return Error::ErrorInvalidArgument;
     }
 
     if ( statement.context().isEmpty() ) {
         if ( librdf_model_remove_statement( d->model, redlandStatement ) ) {
             Util::freeStatement( redlandStatement );
             setError( Redland::World::self()->lastError() );
-            return Error::ERROR_UNKNOWN;
+            return Error::ErrorUnknown;
         }
     }
     else {
@@ -330,14 +330,14 @@ Soprano::Error::ErrorCode Soprano::Redland::RedlandModel::removeOneStatement( co
             Util::freeNode( redlandContext );
             Util::freeStatement( redlandStatement );
             setError( Redland::World::self()->lastError() );
-            return Error::ERROR_UNKNOWN;
+            return Error::ErrorUnknown;
         }
         Util::freeNode( redlandContext );
     }
 
     Util::freeStatement( redlandStatement );
 
-    return Error::ERROR_NONE;
+    return Error::ErrorNone;
 }
 
 
@@ -354,7 +354,7 @@ Soprano::Error::ErrorCode Soprano::Redland::RedlandModel::removeAllStatements( c
             Util::freeNode( ctx );
             setError( Redland::World::self()->lastError() );
             d->mutex.unlock();
-            return Error::ERROR_UNKNOWN;
+            return Error::ErrorUnknown;
         }
 
         Util::freeNode( ctx );
@@ -363,7 +363,7 @@ Soprano::Error::ErrorCode Soprano::Redland::RedlandModel::removeAllStatements( c
 
         emit statementsRemoved();
 
-        return Error::ERROR_NONE;
+        return Error::ErrorNone;
     }
 
     else if ( !statement.isValid() ||
@@ -378,7 +378,7 @@ Soprano::Error::ErrorCode Soprano::Redland::RedlandModel::removeAllStatements( c
               it != statementsToRemove.constEnd(); ++it ) {
             ++cnt;
             Error::ErrorCode error = removeOneStatement( *it );
-            if ( error != Error::ERROR_NONE ) {
+            if ( error != Error::ErrorNone ) {
                 d->mutex.unlock();
                 return error;
             }
@@ -389,7 +389,7 @@ Soprano::Error::ErrorCode Soprano::Redland::RedlandModel::removeAllStatements( c
         if ( cnt ) {
             emit statementsRemoved();
         }
-        return Error::ERROR_NONE;
+        return Error::ErrorNone;
     }
 
     else {
@@ -418,11 +418,11 @@ Soprano::Error::ErrorCode Soprano::Redland::RedlandModel::write( QTextStream &os
     if ( unsigned char *serialized = librdf_model_to_string( d->model, 0, 0, 0, 0  ) ) {
         os << ( const char* )serialized;
         free( serialized );
-        return Error::ERROR_NONE;
+        return Error::ErrorNone;
     }
     else {
         setError( Redland::World::self()->lastError() );
-        return Error::ERROR_UNKNOWN;
+        return Error::ErrorUnknown;
     }
 }
 

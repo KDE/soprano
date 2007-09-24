@@ -159,7 +159,7 @@ Soprano::Error::Error JNIWrapper::convertAndClearException()
         jmethodID id = exWr.getMethodID( "getMessage", "()L"JAVA_LANG_STRING";" );
         QString message = JStringRef( exWr.callObjectMethod( id ) ).toQString();
         env()->ExceptionClear();
-        return Soprano::Error::Error( message, Soprano::Error::ERROR_UNKNOWN );
+        return Soprano::Error::Error( message, Soprano::Error::ErrorUnknown );
     }
     else {
         return Soprano::Error::Error();

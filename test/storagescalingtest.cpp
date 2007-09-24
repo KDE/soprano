@@ -37,7 +37,7 @@ using namespace Soprano;
 void StorageScalingTest::initTestCase()
 {
     QList<BackendSetting> settings;
-    settings.append( BackendSetting( BACKEND_OPTION_STORAGE_DIR, "/tmp/scalingtest" ) );
+    settings.append( BackendSetting( BackendOptionStorageDir, "/tmp/scalingtest" ) );
 
     QDir( "/tmp" ).mkdir( "scalingtest" );
 

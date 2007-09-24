@@ -87,7 +87,7 @@ namespace Soprano {
 
 	    /**
 	     * Set the settings that are to be used by createModel() to create new Model
-	     * instances. Be aware that Soprano::BACKEND_OPTION_STORAGE_DIR will be changed
+	     * instances. Be aware that Soprano::BackendOptionStorageDir will be changed
 	     * to include a subdir which is the Model's name.
 	     *
 	     * \param settings The settings to use for new Models.
