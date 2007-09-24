@@ -68,7 +68,7 @@ Soprano::StorageModel* Soprano::Redland::BackendPlugin::createModel( const QList
     redlandOptions["hash-type"] = "memory";
     redlandOptions["new"] = "no";
 
-    // for persistant stores we need an indentifier
+    // for persistent stores we need an indentifier
     redlandOptions["name"] = "soprano";
 
     Q_FOREACH( BackendSetting s, settings ) {

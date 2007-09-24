@@ -38,12 +38,16 @@ add_library(soprano_redlandcore STATIC ${redland_core_SRC})
 
 add_library(soprano_redlandbackend SHARED ${redland_backend_SRC})
 
+ADD_DEFINITIONS(${REDLAND_CFLAGS})
+
+# static libs do not get compiled with -fPIC which is needed on amd64
+# when we link to a shared lib
+# FIXME: do an amd64 check
+ADD_DEFINITIONS(-fPIC)
+
 TARGET_LINK_LIBRARIES(soprano_redlandcore soprano ${REDLAND_LIBRARIES})
 
 TARGET_LINK_LIBRARIES(soprano_redlandbackend soprano_redlandcore)
-
-# Won't link here on amd64 without -fPIC
-ADD_DEFINITIONS(${REDLAND_CFLAGS} -fPIC)
 
 set_target_properties(soprano_redlandbackend PROPERTIES
   DEFINE_SYMBOL MAKE_REDLANDBACKEND_LIB

@@ -129,22 +129,22 @@ Q_GLOBAL_STATIC( Soprano::Redland::World, worldInstance )
 
 Soprano::Redland::World* Soprano::Redland::World::self()
 {
-  return worldInstance();
+    return worldInstance();
 }
 
 Soprano::Redland::World::World()
 {
-  m_world = librdf_new_world();
-  librdf_world_open( m_world );
-  librdf_world_set_logger( m_world, this, redlandLogHandler );
+    m_world = librdf_new_world();
+    librdf_world_open( m_world );
+    librdf_world_set_logger( m_world, this, redlandLogHandler );
 }
 
 Soprano::Redland::World::~World()
 {
-  librdf_free_world( m_world );
+    librdf_free_world( m_world );
 }
 
 librdf_world* Soprano::Redland::World::worldPtr() const
 {
-  return m_world;
+    return m_world;
 }
