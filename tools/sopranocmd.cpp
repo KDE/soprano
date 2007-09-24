@@ -174,7 +174,7 @@ public:
     }
 
     int count() const {
-        m_args.count();
+        return m_args.count();
     }
 
     QString operator[]( int i ) const {

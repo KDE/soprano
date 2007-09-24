@@ -81,6 +81,8 @@ public:
             return m_it.current().object();
         case CONTEXT:
             return m_it.current().context();
+        default:
+            return Soprano::Node();
         }
     }
 

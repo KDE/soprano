@@ -71,6 +71,7 @@ Soprano::SimpleStatementIteratorBackend& Soprano::SimpleStatementIteratorBackend
     m_statements = s;
     m_iterator = m_statements.constBegin();
     m_first = true;
+    return *this;
 }
 
 
@@ -134,10 +135,12 @@ Soprano::SimpleStatementIterator::~SimpleStatementIterator()
 Soprano::SimpleStatementIterator& Soprano::SimpleStatementIterator::operator=( const QList<Statement>& sl )
 {
     setBackend( new SimpleStatementIteratorBackend( sl ) );
+    return *this;
 }
 
 
 Soprano::SimpleStatementIterator& Soprano::SimpleStatementIterator::operator=( const SimpleStatementIterator& it )
 {
     StatementIterator::operator=( it );
+    return *this;
 }

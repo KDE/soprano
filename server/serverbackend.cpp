@@ -58,6 +58,7 @@ public:
 //         }
 
 //         return client;
+#warning FIXME
     }
 
 private:

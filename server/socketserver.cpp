@@ -78,7 +78,7 @@ bool SocketServer::listen( const QString& socketName )
     /* set the address */
     struct sockaddr_un sock;
     QByteArray s = QFile::encodeName( socketName );
-    if ( s.length() > sizeof(sock.sun_path) + 1 ) {
+    if ( s.length() > ( int )sizeof(sock.sun_path) + 1 ) {
         setError( "Not enough space to store socket path." );
         ::close( d->serverSocket );
         d->serverSocket = -1;

@@ -86,7 +86,7 @@ bool SocketDevice::open( const QString& socketName, OpenMode mode )
     memset( &servAddr, 0, sizeof(servAddr) );
     servAddr.sun_family = AF_UNIX;
     QByteArray s = QFile::encodeName( socketName );
-    if ( s.length() > sizeof(servAddr.sun_path) + 1 ) {
+    if ( s.length() > ( int )sizeof(servAddr.sun_path) + 1 ) {
         setErrorString( "Not enough space to store socket path." );
         ::close( d->sd );
         d->sd = -1;

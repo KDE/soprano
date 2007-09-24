@@ -178,18 +178,22 @@ public:
 
 
 template<typename T> Soprano::Iterator<T>::Iterator()
-    : d( new Private() )
+    : Error::ErrorCache(),
+      d( new Private() )
+    
 {
 }
 
 template<typename T> Soprano::Iterator<T>::Iterator( IteratorBackend<T> *sti )
-    : d( new Private() )
+    : Error::ErrorCache(),
+      d( new Private() )
 {
     d->backend = sti;
 }
 
 template<typename T> Soprano::Iterator<T>::Iterator( const Iterator<T> &other )
-    : d( other.d )
+    : Error::ErrorCache(),
+      d( other.d )
 {
 }
 

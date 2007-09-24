@@ -317,14 +317,16 @@ void Soprano::Inference::InferenceModel::clearInference()
 
 int Soprano::Inference::InferenceModel::inferStatement( const Statement& statement, bool recurse )
 {
+    int cnt = 0;
     for ( QList<Rule>::iterator it = d->rules.begin();
           it != d->rules.end(); ++it ) {
         Rule& rule = *it;
         if( rule.match( statement) ) {
             rule.bindToStatement( statement );
-            inferRule( rule, recurse );
+            cnt += inferRule( rule, recurse );
         }
     }
+    return cnt;
 }
 
 

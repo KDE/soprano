@@ -96,7 +96,7 @@ void SimpleStatementIteratorTest::testAssignment()
     QVERIFY( !it2.next() );
 
     // the new one however...
-    for ( uint i = 0; i < sl.count(); ++i ) {
+    for ( int i = 0; i < sl.count(); ++i ) {
         QVERIFY( it3.next() );
     }
 }

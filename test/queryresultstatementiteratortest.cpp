@@ -38,9 +38,9 @@ class DummyQueryResult : public Soprano::QueryResultIteratorBackend
 public:
     DummyQueryResult( const QList<Statement>& sl )
         : QueryResultIteratorBackend(),
+          m_first( true ),
           m_statements( sl ),
-          m_iterator( sl.constBegin() ),
-          m_first( true ) {
+          m_iterator( sl.constBegin() ) {
     }
 
     bool next() {

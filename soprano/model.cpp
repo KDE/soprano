@@ -36,6 +36,7 @@ public:
 
 Soprano::Model::Model()
     : QObject( 0 ),
+      Error::ErrorCache(),
       d( new Private() )
 {
 }
@@ -47,7 +48,9 @@ Soprano::Model::~Model()
 
 // private no-op constructor not meant to be used
 Soprano::Model::Model( const Model& )
-    : d( 0 )
+    : QObject(),
+      Error::ErrorCache(),
+      d( 0 )
 {
 }
 
@@ -121,6 +124,7 @@ Soprano::Error::ErrorCode Soprano::Model::write( QTextStream &os ) const
     while ( it.next() ) {
         os << *it << endl;
     }
+    return Error::ERROR_NONE;
 }
 
 #include "model.moc"

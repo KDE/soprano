@@ -225,15 +225,12 @@ void Soprano::Sesame2::RepositoryConnection::remove( const JObjectRef& statement
 
 long Soprano::Sesame2::RepositoryConnection::size()
 {
-    // sesame wants an empty array for the contexts
-    static const jobjectArray contexts = JNIWrapper::instance()->env()->NewObjectArray( 0, d->classResource(), 0 );
     return callLongMethod( d->IDsize() );
 }
 
 
 bool Soprano::Sesame2::RepositoryConnection::isEmpty()
 {
-    // sesame wants an empty array for the contexts
     return callBooleanMethod( d->IDisEmpty() );
 }
 
