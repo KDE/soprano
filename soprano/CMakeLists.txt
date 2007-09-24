@@ -87,7 +87,7 @@ qt4_automoc(${soprano_SRCS})
 
 ADD_LIBRARY(soprano SHARED ${soprano_SRCS})
 
-TARGET_LINK_LIBRARIES(soprano ${QT_QTCORE_LIBRARY} rasqal raptor)
+TARGET_LINK_LIBRARIES(soprano ${QT_QTCORE_LIBRARY})
 
 set_target_properties(soprano PROPERTIES
   VERSION 4.0.0
