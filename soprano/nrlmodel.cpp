@@ -166,4 +166,7 @@ Soprano::Error::ErrorCode Soprano::NRLModel::addStatement( const Statement& stat
         qDebug() << "Predicate " << statement.predicate() << " has no cardinality restrictions";
         return FilterModel::addStatement( statement );
     }
+
+    // make gcc shut up
+    return Error::ERROR_NONE;
 }

@@ -231,6 +231,9 @@ Soprano::Error::ErrorCode Soprano::Sesame2::Model::removeStatement( const Statem
     else {
         return removeAllStatements( statement );
     }
+
+    // make gcc shut up
+    return Error::ERROR_NONE;
 }
 
 
