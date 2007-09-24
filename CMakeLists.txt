@@ -9,7 +9,11 @@ enable_testing()
  
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_SOURCE_DIR}/cmake/modules) 
 
-find_package(GNUWIN32) 
+if(WIN32)
+  set(CMAKE_DEBUG_POSTFIX "d")
+  find_package(GNUWIN32) 
+endif(WIN32)
+
 find_package(Qt4 REQUIRED) 
 
 find_package(Redland)
