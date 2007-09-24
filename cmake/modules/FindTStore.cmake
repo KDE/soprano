@@ -29,17 +29,11 @@ else (TSTORE_LIBRARIES AND TSTORE_INCLUDE_DIR AND TSTORE_CFLAGS)
 
   find_path(TSTORE_INCLUDE_DIR 3store3/tstore.h
     PATHS
-    /usr/include
-    /usr/local/include
     ${INCLUDE_INSTALL_DIR}
     )
 
   find_library(TSTORE_LIBRARIES NAMES 3store
     PATHS
-    /usr/lib
-    /usr/lib64
-    /usr/local/lib
-    /usr/local/lib64
     ${LIB_INSTALL_DIR}
     )
 
