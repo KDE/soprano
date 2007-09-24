@@ -50,7 +50,7 @@ namespace Soprano {
             void emitSyntaxError( const Soprano::Error::Locator& locator, const QString& message );
         };
         
-    };
-};
+    }
+}
 
 #endif // SOPRANO_QUERY_PARSER_RASQALQUERYPARSER_H

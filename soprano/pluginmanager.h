@@ -54,7 +54,7 @@ namespace Soprano
      */
     class SOPRANO_EXPORT PluginManager : public QObject
     {
-	Q_OBJECT;
+	Q_OBJECT
 
     public:
 	~PluginManager();

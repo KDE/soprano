@@ -47,6 +47,6 @@ void WStringTest::testConversion()
     }
 }
 
-QTEST_MAIN( WStringTest );
+QTEST_MAIN( WStringTest )
 
 #include "wstringtest.moc"

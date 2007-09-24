@@ -33,7 +33,7 @@
 
 #include <soprano/backend.h>
 
-Q_DECLARE_METATYPE(Soprano::BackendSettings);
+Q_DECLARE_METATYPE(Soprano::BackendSettings)
 
 namespace Soprano {
     namespace Client {

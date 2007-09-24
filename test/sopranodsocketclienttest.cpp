@@ -51,6 +51,6 @@ Soprano::Model* SopranodSocketClientTest::createModel()
     return m_client->createModel( QString( "Testmodel%1" ).arg( m_modelCnt++ ) );
 }
 
-QTEST_MAIN( SopranodSocketClientTest );
+QTEST_MAIN( SopranodSocketClientTest )
 
 #include "sopranodsocketclienttest.moc"

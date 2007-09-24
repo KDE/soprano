@@ -62,7 +62,7 @@ public:
 };
 
 
-Q_GLOBAL_STATIC( Rdfs, rdfs );
+Q_GLOBAL_STATIC( Rdfs, rdfs )
 
 
 QUrl Soprano::Vocabulary::RDFS::rdfsNamespace()

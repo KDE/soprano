@@ -976,7 +976,7 @@ namespace Soprano
 
             virtual void visit( const TriplePattern *expression ) = 0;
         };
-    };
-};
+    }
+}
 
 #endif // SOPRANO_QUERY_API_H

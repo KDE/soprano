@@ -802,7 +802,7 @@ void SopranoModelTest::testListContexts()
 }
 
 
-Q_DECLARE_METATYPE( Soprano::LiteralValue );
+Q_DECLARE_METATYPE( Soprano::LiteralValue )
 
 void SopranoModelTest::testLiteralTypes_data()
 {

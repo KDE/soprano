@@ -88,6 +88,6 @@ void ParserTest::testParser()
     }
 }
 
-QTEST_MAIN( ParserTest );
+QTEST_MAIN( ParserTest )
 
 #include "parsertest.moc"

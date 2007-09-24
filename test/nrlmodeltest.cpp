@@ -78,6 +78,6 @@ void NRLModelTest::testAddStatement()
     m_nrlModel->addStatement( s3 );
 }
 
-QTEST_MAIN( NRLModelTest );
+QTEST_MAIN( NRLModelTest )
 
 #include "nrlmodeltest.moc"

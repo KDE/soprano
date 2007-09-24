@@ -45,7 +45,7 @@ namespace Soprano {
 	 */
 	class SOPRANO_EXPORT UnixSocketClient : public QObject, public Error::ErrorCache
 	{
-	    Q_OBJECT;
+	    Q_OBJECT
 
 	public:
 	    /**

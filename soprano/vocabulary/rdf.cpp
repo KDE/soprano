@@ -63,7 +63,7 @@ public:
     QUrl rdfXMLLiteral;
 };
 
-Q_GLOBAL_STATIC( Rdf, rdf );
+Q_GLOBAL_STATIC( Rdf, rdf )
 
 
 QUrl Soprano::Vocabulary::RDF::rdfNamespace()

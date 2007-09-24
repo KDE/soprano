@@ -107,6 +107,6 @@ void ErrorTest::testParserErrorConversion()
     QCOMPARE( p1.locator().column(), pep1.locator().column() );
 }
 
-QTEST_MAIN( ErrorTest );
+QTEST_MAIN( ErrorTest )
 
 #include "errortest.moc"

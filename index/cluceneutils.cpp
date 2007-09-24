@@ -41,7 +41,7 @@ namespace Soprano {
     }
 }
 
-Q_GLOBAL_STATIC( Soprano::Index::IndexStatics, cluceneIndexStatics );
+Q_GLOBAL_STATIC( Soprano::Index::IndexStatics, cluceneIndexStatics )
 
 
 WString Soprano::Index::idFieldName()

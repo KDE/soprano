@@ -50,7 +50,7 @@ namespace Soprano {
 	 */
 	class SOPRANO_EXPORT TcpClient : public QObject, public Error::ErrorCache
 	{
-	    Q_OBJECT;
+	    Q_OBJECT
 
 	public:
 	    /**

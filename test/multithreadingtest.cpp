@@ -227,7 +227,7 @@ void MultiThreadingTest::cleanupTestCase()
 }
 
 
-Q_DECLARE_METATYPE( TestingThread* );
+Q_DECLARE_METATYPE( TestingThread* )
 
 void MultiThreadingTest::testNodeIterator_data()
 {

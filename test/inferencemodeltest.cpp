@@ -326,6 +326,6 @@ void InferenceModelTest::testClearInference()
     QVERIFY( !it.next() );
 }
 
-QTEST_MAIN( InferenceModelTest );
+QTEST_MAIN( InferenceModelTest )
 
 #include "inferencemodeltest.moc"

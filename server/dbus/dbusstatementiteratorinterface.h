@@ -27,7 +27,7 @@
 
 #include <soprano/statement.h>
 
-Q_DECLARE_METATYPE(Soprano::Statement);
+Q_DECLARE_METATYPE(Soprano::Statement)
 
 namespace Soprano {
 

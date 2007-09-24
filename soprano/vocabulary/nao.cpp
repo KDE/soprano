@@ -36,7 +36,7 @@ public:
 };
 
 
-Q_GLOBAL_STATIC( Nao, nao );
+Q_GLOBAL_STATIC( Nao, nao )
 
 
 QUrl Soprano::Vocabulary::NAO::naoNamespace()

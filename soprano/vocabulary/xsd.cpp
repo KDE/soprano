@@ -63,7 +63,7 @@ public:
 };
 
 
-Q_GLOBAL_STATIC( XMLSchema, xmls );
+Q_GLOBAL_STATIC( XMLSchema, xmls )
 
 
 QUrl Soprano::Vocabulary::XMLSchema::xmlsNamespace()

@@ -114,7 +114,7 @@ public:
 };
 
 
-Q_GLOBAL_STATIC( Nrl, nrl );
+Q_GLOBAL_STATIC( Nrl, nrl )
 
 
 QUrl Soprano::Vocabulary::NRL::nrlNamespace()

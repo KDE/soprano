@@ -29,9 +29,9 @@
 
 #include <QtDBus/QDBusArgument>
 
-Q_DECLARE_METATYPE(Soprano::Statement);
-Q_DECLARE_METATYPE(Soprano::Node);
-Q_DECLARE_METATYPE(Soprano::BindingSet);
+Q_DECLARE_METATYPE(Soprano::Statement)
+Q_DECLARE_METATYPE(Soprano::Node)
+Q_DECLARE_METATYPE(Soprano::BindingSet)
 
 
 QDBusArgument& operator<<( QDBusArgument& arg, const Soprano::Node& );

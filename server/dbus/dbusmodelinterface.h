@@ -33,8 +33,8 @@
 
 #include <soprano/statement.h>
 
-Q_DECLARE_METATYPE(Soprano::Statement);
-Q_DECLARE_METATYPE(Soprano::Node);
+Q_DECLARE_METATYPE(Soprano::Statement)
+Q_DECLARE_METATYPE(Soprano::Node)
 
 
 namespace Soprano {

@@ -130,6 +130,6 @@ void IndexTest::testRemoveStatement()
 }
 
 
-QTEST_MAIN( IndexTest );
+QTEST_MAIN( IndexTest )
 
 #include "cluceneindextest.moc"

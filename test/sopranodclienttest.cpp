@@ -58,6 +58,6 @@ Soprano::Model* SopranodClientTest::createModel()
     return m_client->createModel( QString( "Testmodel%1" ).arg( m_modelCnt++ ) );
 }
 
-QTEST_MAIN( SopranodClientTest );
+QTEST_MAIN( SopranodClientTest )
 
 #include "sopranodclienttest.moc"

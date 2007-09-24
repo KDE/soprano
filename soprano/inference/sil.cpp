@@ -42,7 +42,7 @@ public:
 };
 
 
-Q_GLOBAL_STATIC( SILGlobals, silGlobals );
+Q_GLOBAL_STATIC( SILGlobals, silGlobals )
 
 QUrl Soprano::Vocabulary::SIL::silNamespace()
 {
