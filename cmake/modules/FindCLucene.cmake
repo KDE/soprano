@@ -5,9 +5,11 @@
 # CLUCENE_INCLUDE_DIR  = where CLucene/StdHeader.h can be found
 # CLUCENE_LIBRARY_DIR  = where CLucene/clucene-config.h can be found
 # CLUCENE_LIBRARY      = the library to link against CLucene
+# CLUCENE_VERSION      = The CLucene version string
 # CLucene_FOUND        = set to 1 if clucene is found
 #
- INCLUDE(CheckSymbolExists)
+
+INCLUDE(CheckSymbolExists)
 
 IF(EXISTS ${PROJECT_CMAKE}/CLuceneConfig.cmake)
   INCLUDE(${PROJECT_CMAKE}/CLuceneConfig.cmake)
@@ -16,14 +18,18 @@ ENDIF(EXISTS ${PROJECT_CMAKE}/CLuceneConfig.cmake)
   SET(TRIAL_LIBRARY_PATHS
     $ENV{CLUCENE_HOME}/lib${LIB_SUFFIX}
     ${CMAKE_INSTALL_PREFIX}/lib${LIB_SUFFIX}
-    /usr/lib${LIB_SUFFIX}
     /usr/local/lib${LIB_SUFFIX}
+    /usr/lib${LIB_SUFFIX}
     /sw/lib${LIB_SUFFIX}
+    NO_DEFAULT_PATH
   ) 
   SET(TRIAL_INCLUDE_PATHS
     $ENV{CLUCENE_HOME}/include
     ${CMAKE_INSTALL_PREFIX}/include
+    /usr/local/include
+    /usr/include
     /sw/include
+    NO_DEFAULT_PATH
   ) 
 
   FIND_LIBRARY(CLUCENE_LIBRARY clucene
@@ -48,14 +54,8 @@ ENDIF(EXISTS ${PROJECT_CMAKE}/CLuceneConfig.cmake)
       FILE(READ ${CLUCENE_LIBRARY_DIR}/CLucene/clucene-config.h CLCONTENT)
       STRING(REGEX MATCH "_CL_VERSION +\".*\"" CLMATCH ${CLCONTENT})
       IF (CLMATCH)
-        STRING(REGEX REPLACE "_CL_VERSION +\"(.*)\"" "\\1" CLVERSION ${CLMATCH})
+        STRING(REGEX REPLACE "_CL_VERSION +\"(.*)\"" "\\1" CLUCENE_VERSION ${CLMATCH})
       ENDIF (CLMATCH)
-      IF (CLVERSION STRLESS "0.9.16")
-        MESSAGE(FATAL_ERROR "CLucene version is less than 0.9.16")
-      ENDIF (CLVERSION STRLESS "0.9.16")
-      IF (CLVERSION STREQUAL "0.9.17")
-        MESSAGE(FATAL_ERROR "CLucene version 0.9.17 is not supported.")
-      ENDIF (CLVERSION STREQUAL "0.9.17")
     ENDIF (CLUCENE_LIBRARY_DIR)
   ELSE(NOT MSVC)
     #msvc doesnt use a config file
@@ -71,7 +71,7 @@ IF(CLUCENE_INCLUDE_DIR AND CLUCENE_LIBRARY AND CLUCENE_LIBRARY_DIR)
 ELSE(CLUCENE_INCLUDE_DIR AND CLUCENE_LIBRARY AND CLUCENE_LIBRARY_DIR)
   SET(CLucene_FOUND 0)
   IF(CLucene_FIND_REQUIRED)
-    MESSAGE(FATAL_ERROR "Could not find CLucene. Please install CLucene = 0.9.16a (http://clucene.sf.net)")
+    MESSAGE(FATAL_ERROR "Could not find CLucene.")
   ENDIF(CLucene_FIND_REQUIRED)
 ENDIF(CLUCENE_INCLUDE_DIR AND CLUCENE_LIBRARY AND CLUCENE_LIBRARY_DIR)
 
