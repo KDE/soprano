@@ -50,11 +50,11 @@ add_subdirectory(test)
 add_subdirectory(rules)
 add_subdirectory(includes)
 
-find_package(CLucene)
-if(CLucene_FOUND)
+find_package(CLucene REQUIRED)
+#if(CLucene_FOUND)
   set(SOPRANO_BUILD_INDEX_LIB 1 CACHE INTERNAL "Soprano Index is built" FORCE)
   add_subdirectory(index)
-endif(CLucene_FOUND)
+#endif(CLucene_FOUND)
 
 # apidox
 find_package(Doxygen)
