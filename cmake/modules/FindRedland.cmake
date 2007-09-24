@@ -4,6 +4,7 @@
 #  REDLAND_FOUND       - system has Redland
 #  REDLAND_LIBRARIES   - Link these to use REDLAND
 #  REDLAND_DEFINITIONS - Compiler switches required for using REDLAND
+#  REDLAND_VERSION     - The redland version string
 
 # (c) 2007 Sebastian Trueg <trueg@kde.org>
 #
@@ -13,19 +14,24 @@
 # For details see the accompanying COPYING-CMAKE-SCRIPTS file.
 
 
-if (REDLAND_LIBRARIES AND REDLAND_INCLUDE_DIR AND RASQAL_INCLUDE_DIR)
+#if (REDLAND_LIBRARIES AND REDLAND_INCLUDE_DIR AND RASQAL_INCLUDE_DIR)
 
   # in cache already
-  set(REDLAND_FOUND TRUE)
+ # set(REDLAND_FOUND TRUE)
 
-else (REDLAND_LIBRARIES AND REDLAND_INCLUDE_DIR and RASQUAL_INCLUDE_DIR)
+#else (REDLAND_LIBRARIES AND REDLAND_INCLUDE_DIR and RASQUAL_INCLUDE_DIR)
 
-  if (NOT WIN32)
-    # use pkg-config to get the directories and then use these values
-    # in the FIND_PATH() and FIND_LIBRARY() calls
-    find_package(PkgConfig)
-    pkg_check_modules(redland redland)
-  endif (NOT WIN32)
+  FIND_PROGRAM(
+    REDLAND_CONFIG
+    NAMES redland-config
+    )
+
+  if(REDLAND_CONFIG)
+    EXECUTE_PROCESS(
+      COMMAND redland-config --version
+      OUTPUT_VARIABLE redland_VERSION
+      )
+  endif(REDLAND_CONFIG)
 
   # now a hack for win32 (only?)
   # soprano only includes <redland.h> instead <redland/redland.h>
@@ -66,15 +72,12 @@ else (REDLAND_LIBRARIES AND REDLAND_INCLUDE_DIR and RASQUAL_INCLUDE_DIR)
   )
 
   if (REDLAND_LIBRARIES AND REDLAND_INCLUDE_DIR AND RASQAL_INCLUDE_DIR)
-    # FIXME: do a version check without pkgconfig which also works on Win32
-    if(NOT redland_VERSION OR redland_VERSION STRGREATER "1.0.5" )
-      set(REDLAND_FOUND TRUE)
-    else(NOT redland_VERSION OR redland_VERSION STRGREATER "1.0.5" )
-      message(STATUS "Redland version less than 1.0.6: ${redland_VERSION}")
-    endif(NOT redland_VERSION OR redland_VERSION STRGREATER "1.0.5" )
+    set(REDLAND_FOUND TRUE)
   endif (REDLAND_LIBRARIES AND REDLAND_INCLUDE_DIR AND RASQAL_INCLUDE_DIR)
 
   if (REDLAND_FOUND)
+    set(REDLAND_DEFINITIONS ${redland_CFLAGS})
+    set(REDLAND_VERSION ${redland_VERSION})
     if (NOT Redland_FIND_QUIETLY)
       message(STATUS "Found Redland: ${REDLAND_LIBRARIES}")
     endif (NOT Redland_FIND_QUIETLY)
@@ -86,4 +89,4 @@ else (REDLAND_LIBRARIES AND REDLAND_INCLUDE_DIR and RASQUAL_INCLUDE_DIR)
 
 #  mark_as_advanced(REDLAND_LIBRARIES)
 
-endif (REDLAND_LIBRARIES AND REDLAND_INCLUDE_DIR AND RASQAL_INCLUDE_DIR)
+#endif (REDLAND_LIBRARIES AND REDLAND_INCLUDE_DIR AND RASQAL_INCLUDE_DIR)

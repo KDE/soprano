@@ -1,5 +1,10 @@
 project(soprano_parsers)
 
-if(REDLAND_FOUND)
+if(REDLAND_FOUND AND REDLAND_VERSION STRGREATER "1.0.5")
   add_subdirectory(raptor)
-endif(REDLAND_FOUND)
+else(REDLAND_FOUND AND REDLAND_VERSION STRGREATER "1.0.5")
+  if(REDLAND_FOUND)
+    message(STATUS "Redland version less than 1.0.6: ${redland_VERSION}")
+    message(STATUS "The redland serializer plugin will not be built!")
+  endif(REDLAND_FOUND)
+endif(REDLAND_FOUND AND REDLAND_VERSION STRGREATER "1.0.5")

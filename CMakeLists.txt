@@ -1,7 +1,7 @@
 project(soprano) 
 
 set(CMAKE_SOPRANO_VERSION_MAJOR 1 CACHE INT "Major Soprano version number" FORCE)
-set(CMAKE_SOPRANO_VERSION_MINOR 91 CACHE INT "Minor Soprano version number" FORCE)
+set(CMAKE_SOPRANO_VERSION_MINOR 92 CACHE INT "Minor Soprano version number" FORCE)
 set(CMAKE_SOPRANO_VERSION_RELEASE 0 CACHE INT "Release Soprano version number" FORCE)
 set(CMAKE_SOPRANO_VERSION_STRING "${CMAKE_SOPRANO_VERSION_MAJOR}.${CMAKE_SOPRANO_VERSION_MINOR}.${CMAKE_SOPRANO_VERSION_RELEASE}" CACHE STRING "Soprano version string" FORCE)
 
@@ -116,9 +116,9 @@ if(NOT REDLAND_FOUND)
   message("   * Raptor RDF parser")
 endif(NOT REDLAND_FOUND)
 
-if(NOT REDLAND_FOUND)
+if(NOT REDLAND_FOUND OR REDLAND_VERSION STRLESS "1.0.6")
   message("   * Raptor RDF serializer")
-endif(NOT REDLAND_FOUND)
+endif(NOT REDLAND_FOUND OR REDLAND_VERSION STRLESS "1.0.6")
 
 if(NOT CLucene_FOUND)
   message("   * The CLucene-based full-text search index library")
