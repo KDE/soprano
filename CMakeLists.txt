@@ -91,9 +91,9 @@ if(REDLAND_FOUND)
   message("   * Raptor RDF parser")
 endif(REDLAND_FOUND)
 
-if(REDLAND_FOUND)
+if(REDLAND_FOUND AND REDLAND_VERSION STRGREATER "1.0.5")
   message("   * Raptor RDF serializer")
-endif(REDLAND_FOUND)
+endif(REDLAND_FOUND AND REDLAND_VERSION STRGREATER "1.0.5")
 
 if(CLucene_FOUND)
   message("   * The CLucene-based full-text search index library")
