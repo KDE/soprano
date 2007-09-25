@@ -115,6 +115,7 @@ public:
     static bool parseCmdLine( CmdLineArgs& a, const QStringList& args, const QHash<QString, bool>& allowed ) {
         int i = 1;
         bool optionParsing = true;
+        QTextStream errStream(stderr);
         while ( i < args.count() ) {
             if ( args[i].startsWith( "--" ) ) {
                 if ( !optionParsing ) {
@@ -135,17 +136,17 @@ public:
                             a.m_settings[name] = args[++i];
                         }
                         else {
-                            QTextStream( stderr ) << "Missing parameter: " << name << endl << endl;
+                            errStream << "Missing parameter: " << name << endl << endl;
                             return false;
                         }
                     }
                     else {
-                        QTextStream( stderr ) << "Missing parameter: " << name << endl << endl;
+                        errStream << "Missing parameter: " << name << endl << endl;
                         return false;
                     }
                 }
                 else {
-                    QTextStream( stderr ) << "Invalid option: " << name << endl << endl;
+                    errStream << "Invalid option: " << name << endl << endl;
                     return false;
                 }
             }
@@ -299,6 +300,7 @@ int main( int argc, char *argv[] )
         return usage( "No model name specified." );
     }
 
+    QTextStream errStream(stderr);
     Soprano::Client::TcpClient client;
     Soprano::Model* model = 0;
     if ( backendName.isEmpty() ) {
@@ -312,7 +314,7 @@ int main( int argc, char *argv[] )
         }
 
         if ( !client.connect( host, port ) ) {
-            QTextStream( stderr ) << "Failed to connect to server on port " << port << endl;
+            errStream << "Failed to connect to server on port " << port << endl;
             return 3;
         }
         model = client.createModel( modelName );
@@ -320,7 +322,7 @@ int main( int argc, char *argv[] )
     else {
         const Backend* backend = Soprano::PluginManager::instance()->discoverBackendByName( backendName );
         if ( !backend ) {
-            QTextStream( stderr ) << "Failed to load backend " << backendName << endl;
+            errStream << "Failed to load backend " << backendName << endl;
             return 1;
         }
         if ( dir.isEmpty() ) {
@@ -332,7 +334,7 @@ int main( int argc, char *argv[] )
     }
 
     if ( !model ) {
-        QTextStream( stderr ) << "Failed to create Model: " << client.lastError() << endl;
+        errStream << "Failed to create Model: " << client.lastError() << endl;
         return 2;
     }
 
@@ -384,12 +386,12 @@ int main( int argc, char *argv[] )
         }
 
         if ( !n1.isResource() && !n1.isEmpty() ) {
-            QTextStream( stderr ) << "Subject needs to be a resource node." << endl;
+            errStream << "Subject needs to be a resource node." << endl;
             delete model;
             return 1;
         }
         if ( !n2.isResource() && !n2.isEmpty() ) {
-            QTextStream( stderr ) << "Predicate needs to be a resource node." << endl;
+            errStream << "Predicate needs to be a resource node." << endl;
             delete model;
             return 1;
         }
@@ -404,7 +406,7 @@ int main( int argc, char *argv[] )
         }
         else if ( command == "add" ) {
             if ( n1.isEmpty() || n2.isEmpty() || n3.isEmpty() ) {
-                QTextStream( stderr ) << "At least subject, predicate, and object have to be defined." << endl;
+                errStream << "At least subject, predicate, and object have to be defined." << endl;
                 delete model;
                 return 1;
             }
@@ -416,19 +418,19 @@ int main( int argc, char *argv[] )
             queryTime = time.elapsed();
         }
         else {
-            QTextStream( stderr ) << "Unsupported command: " << command << endl;
+            errStream << "Unsupported command: " << command << endl;
             delete model;
             return 1;
         }
     }
 
     if ( !model->lastError() ) {
-        QTextStream( stderr ) << "Query time: " << QTime().addMSecs( queryTime ).toString( "hh:mm:ss.z" ) << endl;
+        errStream << "Query time: " << QTime().addMSecs( queryTime ).toString( "hh:mm:ss.z" ) << endl;
         delete model;
         return 0;
     }
     else {
-        QTextStream( stderr ) << "Query failed: " << model->lastError() << endl;
+        errStream << "Query failed: " << model->lastError() << endl;
         delete model;
         return 2;
     }
