@@ -176,7 +176,7 @@ Soprano::Error::Locator Soprano::Error::ParserError::locator() const
 class Soprano::Error::ErrorCache::Private
 {
 public:
-    QHash<Qt::HANDLE, Error> errorMap;
+    QHash<QThread*, Error> errorMap;
 };
 
 
@@ -194,7 +194,7 @@ Soprano::Error::ErrorCache::~ErrorCache()
 
 Soprano::Error::Error Soprano::Error::ErrorCache::lastError() const
 {
-    return d->errorMap[QThread::currentThreadId()];
+    return d->errorMap[QThread::currentThread()];
 }
 
 
@@ -204,7 +204,7 @@ void Soprano::Error::ErrorCache::setError( const Error& error ) const
         qDebug() << "(Soprano) Error occured in thread" << QThread::currentThreadId() << ":" << error;
     }
 
-    d->errorMap[QThread::currentThreadId()] = error;
+    d->errorMap[QThread::currentThread()] = error;
 }
 
 
@@ -216,7 +216,7 @@ void Soprano::Error::ErrorCache::setError( const QString& errorMessage, int code
 
 void Soprano::Error::ErrorCache::clearError() const
 {
-    d->errorMap[QThread::currentThreadId()] = Error();
+    d->errorMap[QThread::currentThread()] = Error();
 }
 
 
