@@ -27,6 +27,7 @@
 #include <errno.h>
 #include <string.h>
 #include <poll.h>
+#include <unistd.h>
 
 #include <QtCore/QFile>
 #include <QtCore/QDebug>
