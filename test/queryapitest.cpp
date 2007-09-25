@@ -20,7 +20,7 @@
  */
 
 #include <QString>
-#include <QtTest>
+#include <QtTest/QtTest>
 #include <QDebug>
 
 #include "soprano/soprano.h"

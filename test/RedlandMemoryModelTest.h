@@ -22,7 +22,7 @@
 #ifndef REDLAND_MEMORY_MODEL_TEST_H
 #define REDLAND_MEMORY_MODEL_TEST_H
 
-#include <QtTest>
+#include <QtTest/QtTest>
 
 #include "SopranoModelTest.h"
 

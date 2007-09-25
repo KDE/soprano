@@ -23,7 +23,7 @@
 #include "../server/dbus/dbusclient.h"
 #include "../soprano/storagemodel.h"
 
-#include <QtTest>
+#include <QtTest/QtTest>
 
 
 using namespace Soprano;

@@ -23,7 +23,7 @@
 #include "../server/tcpclient.h"
 #include "../soprano/storagemodel.h"
 
-#include <QtTest>
+#include <QtTest/QtTest>
 #include <QtCore/QTime>
 #include <QtCore/QList>
 

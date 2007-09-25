@@ -22,7 +22,7 @@
 #ifndef REDLAND_STATEMENT_IT_TEST_H
 #define REDLAND_STATEMENT_IT_TEST_H
 
-#include <QtTest>
+#include <QtTest/QtTest>
 
 #include "StatementIteratorTest.h"
 

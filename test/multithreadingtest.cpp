@@ -22,7 +22,7 @@
 #include "multithreadingtest.h"
 #include "../soprano/soprano.h"
 
-#include <QtTest>
+#include <QtTest/QtTest>
 #include <QtCore/QUuid>
 #include <QThread>
 
