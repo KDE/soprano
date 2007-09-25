@@ -114,7 +114,7 @@ int main( int argc, char** argv )
     if ( !backendName.isEmpty() ) {
         const Soprano::Backend* backend = Soprano::PluginManager::instance()->discoverBackendByName( backendName );
         if ( !backend ) {
-            QTextStream( stderr ) << "Could not find backend: " << backendName << endl;
+            qWarning("Could not find backend: %s", qPrintable(backendName));
             return 2;
         }
         core.setBackend( backend );

@@ -88,7 +88,7 @@ target_link_libraries(
   sopranoserver
   ${QT_QTCORE_LIBRARY}
   ${QT_QTNETWORK_LIBRARY}
-  QtDBus
+  ${QT_QTDBUS_LIBRARY}
   soprano
 )
 
@@ -96,7 +96,7 @@ target_link_libraries(
   sopranoclient
   ${QT_QTCORE_LIBRARY}
   ${QT_QTNETWORK_LIBRARY}
-  QtDBus
+  ${QT_QTDBUS_LIBRARY}
   soprano
 )
 
