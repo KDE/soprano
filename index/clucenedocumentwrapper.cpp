@@ -21,7 +21,7 @@
 
 #include "clucenedocumentwrapper.h"
 #include "cluceneutils.h"
-#include "wstring.h"
+#include "tstring.h"
 
 #include "clucene-config.h"
 
@@ -53,7 +53,7 @@ Soprano::Index::CLuceneDocumentWrapper::~CLuceneDocumentWrapper()
 
 using lucene::document::Field;
 
-void Soprano::Index::CLuceneDocumentWrapper::addProperty( const WString& field, const WString& text )
+void Soprano::Index::CLuceneDocumentWrapper::addProperty( const TString& field, const TString& text )
 {
     // FIXME: I think we should only index (and never store) the following:
     //        1. The predicate/literal combination itself
@@ -87,7 +87,7 @@ void Soprano::Index::CLuceneDocumentWrapper::addProperty( const WString& field, 
 }
 
 
-void Soprano::Index::CLuceneDocumentWrapper::removeProperty( const WString& field, const WString& text )
+void Soprano::Index::CLuceneDocumentWrapper::removeProperty( const TString& field, const TString& text )
 {
     // clucene does not allow to remove a specific field/value combination. Thus,
     // we have to do a little hackling and re-add everything except our property (could we maybe just get these from the RDF model?)
@@ -99,7 +99,7 @@ void Soprano::Index::CLuceneDocumentWrapper::removeProperty( const WString& fiel
 
         // now copy the ones that we want to preserve back
         for ( int i = 0; values[i]; ++i ) {
-            WString value( values[i], true );
+            TString value( values[i], true );
             if ( value != text ) {
                 addProperty( field, values[i] );
             }
@@ -125,10 +125,10 @@ void Soprano::Index::CLuceneDocumentWrapper::removeProperty( const WString& fiel
 
 bool Soprano::Index::CLuceneDocumentWrapper::hasProperty( const QString& field, const QString& text ) const
 {
-    WString wText( text );
-    TCHAR** values = d->document->getValues( WString( field ).data() );
+    TString wText( text );
+    TCHAR** values = d->document->getValues( TString( field ).data() );
     while ( values ) {
-        if ( WString( *values, true ) == wText ) {
+        if ( TString( *values, true ) == wText ) {
             return true;
         }
         ++values;
@@ -157,7 +157,7 @@ int Soprano::Index::CLuceneDocumentWrapper::numberOfPropertyFields() const
 void Soprano::Index::CLuceneDocumentWrapper::addID( const QString& id )
 {
     // (YES, the CLucene API is that bad. We actually put in Fields allocated on the heap here!)
-    d->document->add( *new lucene::document::Field( idFieldName().data(), WString( id ).data(),
+    d->document->add( *new lucene::document::Field( idFieldName().data(), TString( id ).data(),
 #ifdef CL_VERSION_19_OR_GREATER
                                                     Field::STORE_YES|Field::INDEX_UNTOKENIZED|Field::TERMVECTOR_NO
 #else

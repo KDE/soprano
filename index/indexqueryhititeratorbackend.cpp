@@ -20,7 +20,7 @@
  */
 
 #include "indexqueryhititeratorbackend.h"
-#include "wstring.h"
+#include "tstring.h"
 #include "../soprano/node.h"
 #include "cluceneutils.h"
 
@@ -58,7 +58,7 @@ bool Soprano::Index::QueryHitIteratorBackend::next()
 namespace {
     Soprano::Node getResource( lucene::document::Document* document )
     {
-        QString id = WString( document->get( Soprano::Index::idFieldName().data() ) );
+        QString id = TString( document->get( Soprano::Index::idFieldName().data() ) );
         if ( id.startsWith( Soprano::Index::bnodeIdPrefix() ) ) {
             return Soprano::Node( id.mid( Soprano::Index::bnodeIdPrefix().length() ) );
         }

@@ -22,7 +22,7 @@
 #include "cluceneindex.h"
 #include "cluceneutils.h"
 #include "clucenedocumentwrapper.h"
-#include "wstring.h"
+#include "tstring.h"
 #include "indexqueryhititeratorbackend.h"
 
 #include "clucene-config.h"
@@ -176,7 +176,7 @@ public:
         return 0;
     }
 
-    static bool isPropertyField( const WString& fieldName ) {
+    static bool isPropertyField( const TString& fieldName ) {
         return ( idFieldName() != fieldName &&
                  textFieldName() != fieldName );
     }
@@ -196,7 +196,7 @@ public:
             docWrapper.addID( id );
 
             // step 2: check if the resource already exists
-            lucene::index::Term idTerm( idFieldName().data(), WString( id ).data() );
+            lucene::index::Term idTerm( idFieldName().data(), TString( id ).data() );
             lucene::document::Document* oldDoc = 0;
             if ( indexPresent() ) {
                 oldDoc = getDocument( &idTerm );
@@ -208,7 +208,7 @@ public:
                 lucene::document::DocumentFieldEnumeration* fields = oldDoc->fields();
                 while ( fields->hasMoreElements() ) {
                     lucene::document::Field* field = fields->nextElement();
-                    if ( Private::isPropertyField( WString( field->name(), true ) ) ) {
+                    if ( Private::isPropertyField( TString( field->name(), true ) ) ) {
                         docWrapper.addProperty( field->name(), field->stringValue() );
                     }
                 }
@@ -498,7 +498,7 @@ Soprano::Error::ErrorCode Soprano::Index::CLuceneIndex::removeStatement( const S
 Soprano::Node Soprano::Index::CLuceneIndex::getResource( lucene::document::Document* document )
 {
     qDebug() << "CLuceneIndex::getResource in thread " << QThread::currentThreadId();
-    QString id = WString( document->get( idFieldName().data() ) );
+    QString id = TString( document->get( idFieldName().data() ) );
     if ( id.startsWith( bnodeIdPrefix() ) ) {
         qDebug() << "CLuceneIndex::getResource done in thread " << QThread::currentThreadId();
         return Soprano::Node( id.mid( bnodeIdPrefix().length() ) );
@@ -514,7 +514,7 @@ Soprano::Iterator<Soprano::Index::QueryHit> Soprano::Index::CLuceneIndex::search
 {
     clearError();
     try {
-        lucene::search::Query* q = lucene::queryParser::QueryParser::parse( WString( query ).data(), textFieldName().data(), d->analyzer );
+        lucene::search::Query* q = lucene::queryParser::QueryParser::parse( TString( query ).data(), textFieldName().data(), d->analyzer );
         Iterator<QueryHit> hits = search( q );
         _CLDELETE( q );
         return hits;
@@ -570,7 +570,7 @@ double Soprano::Index::CLuceneIndex::getScore( const Soprano::Node& resource, co
 {
     clearError();
     try {
-        lucene::search::Query* q = lucene::queryParser::QueryParser::parse( WString( query ).data(), textFieldName().data(), d->analyzer );
+        lucene::search::Query* q = lucene::queryParser::QueryParser::parse( TString( query ).data(), textFieldName().data(), d->analyzer );
         double score = getScore( resource, q );
         _CLDELETE( q );
         return score;
@@ -590,7 +590,7 @@ double Soprano::Index::CLuceneIndex::getScore( const Soprano::Node& resource, lu
     clearError();
     try {
         // rewrite the query
-        lucene::index::Term queryTerm( idFieldName().data(), WString( d->getId( resource ) ).data() );
+        lucene::index::Term queryTerm( idFieldName().data(), TString( d->getId( resource ) ).data() );
         lucene::search::TermQuery idQuery( &queryTerm );
         lucene::search::BooleanQuery combinedQuery;
         combinedQuery.add( &idQuery, true, false );
@@ -635,7 +635,7 @@ void Soprano::Index::CLuceneIndex::dump( QTextStream& s ) const
             while ( e->hasMoreElements() ) {
                 lucene::document::Field* field = e->nextElement();
 
-                s << WString( field->name(), true ).toQString() << ": " << WString( field->stringValue(), true ).toQString() << endl;
+                s << TString( field->name(), true ).toQString() << ": " << TString( field->stringValue(), true ).toQString() << endl;
             }
             s << endl;
         }

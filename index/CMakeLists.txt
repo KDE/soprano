@@ -14,7 +14,7 @@ set( SOPRANO_INDEX_SRCS
   clucenedocumentwrapper.cpp
   cluceneutils.cpp
   indexfiltermodel.cpp
-  wstring.cpp
+  tstring.cpp
   indexqueryhit.cpp
   indexqueryhititeratorbackend.cpp
 )

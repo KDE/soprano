@@ -25,7 +25,7 @@
 #include <QtCore/QString>
 #include <CLucene.h>
 
-#include "wstring.h"
+#include "tstring.h"
 
 namespace Soprano {
     namespace Error {
@@ -37,13 +37,13 @@ namespace Soprano {
 	 * The name of the Document field holding the Resource identifier. The value
 	 * stored in this field is either a URI or a BNode ID.
 	 */
-	WString idFieldName();
+	TString idFieldName();
 
         /**
          * The name of the Document field that holds the concatenated text of a
          * Resource.
          */
-	WString textFieldName();
+	TString textFieldName();
 
         /**
          * String used to prefix BNode IDs with so that we can distinguish BNode

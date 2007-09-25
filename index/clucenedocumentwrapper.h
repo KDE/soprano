@@ -34,7 +34,7 @@ namespace lucene {
     }
 }
 
-class WString;
+class TString;
 
 namespace Soprano {
     namespace Index {
@@ -48,8 +48,8 @@ namespace Soprano {
 	    CLuceneDocumentWrapper( lucene::document::Document* );
 	    ~CLuceneDocumentWrapper();
 
-	    void addProperty( const WString& field, const WString& text );
-	    void removeProperty( const WString& field, const WString& text );
+	    void addProperty( const TString& field, const TString& text );
+	    void removeProperty( const TString& field, const TString& text );
 	
 	    /**
 	     * Checks whether a field occurs with a specified value in a Document.

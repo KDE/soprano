@@ -17,7 +17,7 @@
 
 #include <QtCore/QObject>
 
-class WStringTest : public QObject
+class TStringTest : public QObject
 {
     Q_OBJECT
 

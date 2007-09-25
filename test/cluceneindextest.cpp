@@ -29,7 +29,7 @@
 #include "../soprano/soprano.h"
 #include "../index/indexfiltermodel.h"
 #include "../index/cluceneindex.h"
-#include "../index/wstring.h"
+#include "../index/tstring.h"
 
 #include <CLucene.h>
 

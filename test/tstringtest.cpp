@@ -12,21 +12,23 @@
  * See the file "COPYING" for the exact licensing terms.
  */
 
-#include "wstringtest.h"
-#include "../index/wstring.h"
-
-#include <wchar.h>
+#include "tstringtest.h"
+#include "../index/tstring.h"
 
 #include <QtTest/QTest>
 #include <QtCore/QDebug>
 
 
 
-void WStringTest::testConversion()
+void TStringTest::testConversion()
 {
     QString qs1( "Hello World" );
-    WString ws1( L"Hello World" );
-    WString ws2( qs1 );
+#ifdef _UCS2
+    TString ws1( L"Hello World" );
+#else
+    TString ws1( "Hello World" );
+#endif
+    TString ws2( qs1 );
 
     qDebug() << "qs1: " << qs1;
     qDebug() << "ws1( L\"Hello World\" ).toQString(): " << ws1.toQString() << " (length: " << ws1.length() << ")";
@@ -34,19 +36,19 @@ void WStringTest::testConversion()
 
     QCOMPARE( ws1.toQString(), qs1 );
     QCOMPARE( ws2.toQString(), qs1 );
-    QVERIFY( !wcscmp( ws1.data(), ws2.data() ) );
+    QVERIFY( !_tcscmp( ws1.data(), ws2.data() ) );
     QCOMPARE( ws1.length(), qs1.length() );
     QCOMPARE( ws2.length(), qs1.length() );
 
     for ( int i = 0; i < 100; ++i ) {
         QString s = QString::number( i ).rightJustified( 10, 'x' );
-        if ( s != WString( s ).toQString() ) {
-            qDebug() << "strings differ: " << s << "(QString length" << s.length() << "WString length" << WString( s ).length() << ")";
+        if ( s != TString( s ).toQString() ) {
+            qDebug() << "strings differ: " << s << "(QString length" << s.length() << "TString length" << TString( s ).length() << ")";
         }
-        QCOMPARE( s, WString( s ).toQString() );
+        QCOMPARE( s, TString( s ).toQString() );
     }
 }
 
-QTEST_MAIN( WStringTest )
+QTEST_MAIN( TStringTest )
 
-#include "wstringtest.moc"
+#include "tstringtest.moc"

@@ -20,7 +20,7 @@
  */
 
 #include "cluceneutils.h"
-#include "wstring.h"
+#include "tstring.h"
 #include "error.h"
 
 namespace Soprano {
@@ -29,13 +29,13 @@ namespace Soprano {
         {
         public:
             IndexStatics()
-                : idFieldName( L"id" ),
-                  textFieldName( L"text" ),
+                : idFieldName( QString( "id" ) ),
+                  textFieldName( QString( "text" ) ),
                   bnodeIdPrefix( "!" ) {
             }
 
-            WString idFieldName;
-            WString textFieldName;
+            TString idFieldName;
+            TString textFieldName;
             QString bnodeIdPrefix;
         };
     }
@@ -44,13 +44,13 @@ namespace Soprano {
 Q_GLOBAL_STATIC( Soprano::Index::IndexStatics, cluceneIndexStatics )
 
 
-WString Soprano::Index::idFieldName()
+TString Soprano::Index::idFieldName()
 {
     return cluceneIndexStatics()->idFieldName;
 }
 
 
-WString Soprano::Index::textFieldName()
+TString Soprano::Index::textFieldName()
 {
     return cluceneIndexStatics()->textFieldName;
 }
