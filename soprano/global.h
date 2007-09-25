@@ -27,6 +27,7 @@
 
 #include "soprano_export.h"
 #include "sopranotypes.h"
+#include "backend.h" // for QList<BackendSetting>
 
 namespace Soprano {
 

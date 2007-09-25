@@ -24,6 +24,7 @@
 #define SOPRANO_NODE_ITERATOR_H
 
 #include "iterator.h"
+#include "node.h" // class Node; isn't enough for gcc-3.3
 #include "soprano_export.h"
 
 #include <QtCore/QList>
@@ -31,7 +32,6 @@
 
 namespace Soprano {
 
-    class Node;
     class NodeIteratorBackend;
 
     /**

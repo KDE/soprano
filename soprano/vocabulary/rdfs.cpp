@@ -20,6 +20,7 @@
  */
 
 #include "rdfs.h"
+#undef DOMAIN
 
 class Rdfs
 {
