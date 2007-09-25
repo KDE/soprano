@@ -49,7 +49,7 @@ namespace Soprano
      *
      * \author Sebastian Trueg <trueg@kde.org>
      */
-    class BackendSetting
+    class SOPRANO_EXPORT BackendSetting
     {
     public:
 	/**

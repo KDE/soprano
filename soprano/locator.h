@@ -22,6 +22,8 @@
 #ifndef SOPRANO_LOCATOR_H
 #define SOPRANO_LOCATOR_H
 
+#include "soprano_export.h"
+
 #include <QString>
 #include <QtCore/QSharedData>
 
@@ -34,7 +36,7 @@ namespace Soprano
 	 * A Locator object provides additional information about
 	 * parsing errors.
 	 */
-	class Locator {
+	class SOPRANO_EXPORT Locator {
 	public:
 	    //@{
 	    Locator();
