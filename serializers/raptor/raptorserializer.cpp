@@ -38,17 +38,6 @@
 
 Q_EXPORT_PLUGIN2(soprano_raptorserializer, Soprano::Raptor::Serializer)
 
-// for some strange reason librdf can only handle application/turtle when parsing and application/x-turtle when serializing, but not the other way around
-static QString mimeTypeString( Soprano::RdfSerialization s )
-{
-    if ( s == Soprano::SerializationTurtle ) {
-        return "application/turtle"; // x-turtle does not work....
-    }
-    else {
-        return serializationMimeType( s );
-    }
-}
-
 
 Soprano::Raptor::Serializer::Serializer()
     : QObject(),
@@ -86,7 +75,7 @@ int raptorIOStreamWriteBytes( void* data, const void* ptr, size_t size, size_t n
     switch( size ) {
     case 1: {
         const char* p = reinterpret_cast<const char*>( ptr );
-        for ( int i = 0; i < nmemb; ++i ) {
+        for ( unsigned int i = 0; i < nmemb; ++i ) {
             ( *s ) << p[i];
         }
         break;
@@ -155,10 +144,10 @@ bool Soprano::Raptor::Serializer::serialize( StatementIterator it,
 
     librdf_serializer* serializer = librdf_new_serializer( Redland::World::self()->worldPtr(),
                                                            0, // all factories
-                                                           serializationMimeType( serialization ).toLatin1().data(),
+                                                           serializationMimeType( serialization, userSerialization ).toLatin1().data(),
                                                            0 );
     if ( !serializer ) {
-        qDebug() << "(Soprano::Raptor::Serializer) no serializer for mimetype " << mimeTypeString( serialization );
+        qDebug() << "(Soprano::Raptor::Serializer) no serializer for mimetype " << serializationMimeType( serialization, userSerialization );
         setError( Redland::World::self()->lastError() );
         return false;
     }

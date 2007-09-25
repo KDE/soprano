@@ -24,7 +24,7 @@
 #include <QtCore/QString>
 
 
-QString Soprano::serializationMimeType( RdfSerialization serialization )
+QString Soprano::serializationMimeType( RdfSerialization serialization, const QString& userSerialization )
 {
     switch( serialization ) {
     case SerializationRdfXml:
@@ -37,6 +37,8 @@ QString Soprano::serializationMimeType( RdfSerialization serialization )
         return QString::fromLatin1( "application/x-turtle" );
     case SerializationTrig:
         return QString::fromLatin1( "application/x-trig" );
+    case SerializationUser:
+        return userSerialization;
     default:
         return QString();
     }

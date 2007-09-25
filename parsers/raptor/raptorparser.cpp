@@ -38,14 +38,17 @@
 
 Q_EXPORT_PLUGIN2(soprano_raptorparser, Soprano::Raptor::Parser)
 
-// for some strange reason librdf can only handle application/turtle when parsing and application/x-turtle when serializing, but not the other way around
-static QString mimeTypeString( Soprano::RdfSerialization s )
-{
-    if ( s == Soprano::SerializationTurtle ) {
-        return "application/turtle"; // x-turtle does not work....
-    }
-    else {
-        return serializationMimeType( s );
+namespace {
+    // for some strange reason librdf can only handle application/turtle when parsing
+    // and application/x-turtle when serializing, but not the other way around
+    QString mimeTypeString( Soprano::RdfSerialization s, const QString& userSerialization )
+    {
+        if ( s == Soprano::SerializationTurtle ) {
+            return "application/turtle"; // x-turtle does not work....
+        }
+        else {
+            return serializationMimeType( s, userSerialization );
+        }
     }
 }
 
@@ -89,10 +92,10 @@ Soprano::StatementIterator Soprano::Raptor::Parser::parseFile( const QString& fi
 
     librdf_parser *parser = librdf_new_parser( Redland::World::self()->worldPtr(),
                                                0, // use all factories
-                                               mimeTypeString( serialization ).toLatin1().data(),
+                                               mimeTypeString( serialization, userSerialization ).toLatin1().data(),
                                                0 ); // what is the URI of the syntax used for?
     if ( !parser ) {
-        qDebug() << "(Soprano::Raptor::Parser) no parser for serialization " << serializationMimeType( serialization );
+        qDebug() << "(Soprano::Raptor::Parser) no parser for serialization " << serializationMimeType( serialization, userSerialization );
         librdf_free_uri( redlandUri );
         setError( Redland::World::self()->lastError() );
         return StatementIterator();
@@ -129,7 +132,7 @@ Soprano::StatementIterator Soprano::Raptor::Parser::parseString( const QString& 
 
     librdf_parser* parser = librdf_new_parser( Redland::World::self()->worldPtr(),
                                                0, // use all factories
-                                               mimeTypeString( serialization ).toLatin1().data(),
+                                               mimeTypeString( serialization, userSerialization ).toLatin1().data(),
                                                0 ); // what is the URI of the syntax used for?
     if ( !parser ) {
         return StatementIterator();
@@ -164,7 +167,7 @@ Soprano::Raptor::Parser::parseStream( QTextStream& stream,
                                       RdfSerialization serialization,
                                       const QString& userSerialization ) const
 {
-    return parseString( stream.readAll(), baseUri, serialization );
+    return parseString( stream.readAll(), baseUri, serialization, userSerialization );
 }
 
 #include "raptorparser.moc"

@@ -45,9 +45,16 @@ namespace Soprano
     Q_DECLARE_FLAGS(RdfSerializations, RdfSerialization)
 
     /**
-     * \return The mimetype of serialization or an empty string is serialization is SerializationUnknown
+     * Get the mimetype string of a serialization.
+     *
+     * \param serialization The serialization the mimetype is wanted for.
+     * \param userSerialization If \p serialization is SerializationUser then this is the user defined serialization.
+     *        (this parameter is added for convinience to avoid having an additional check before using this method.)
+     *
+     * \return The mimetype of serialization, an empty string is serialization is SerializationUnknown, or 
+     * \p userSerialization if \p serialization is SerializationUser.
      */
-    SOPRANO_EXPORT QString serializationMimeType( RdfSerialization serialization );
+    SOPRANO_EXPORT QString serializationMimeType( RdfSerialization serialization, const QString& userSerialization = QString() );
 
     /**
      * Parse a mimetype and match it to the Soprano::RdfSerialization enum.
