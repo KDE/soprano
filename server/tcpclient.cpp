@@ -24,6 +24,7 @@
 #include "clientmodel.h"
 
 #include <QtNetwork/QTcpSocket>
+#include <QDebug>
 
 
 const quint16 Soprano::Client::TcpClient::DEFAULT_PORT = 5000;
