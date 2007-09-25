@@ -20,46 +20,45 @@
  */
 
 #include "rdfs.h"
-#undef DOMAIN
 
 class Rdfs
 {
 public:
     Rdfs()
-        : NAMESPACE( "http://www.w3.org/2000/01/rdf-schema#" ),
-          CLASS( "http://www.w3.org/2000/01/rdf-schema#Class" ),
-          COMMENT( "http://www.w3.org/2000/01/rdf-schema#comment" ),
-          DATATYPE( "http://www.w3.org/2000/01/rdf-schema#Datatype" ),
-          DOMAIN( "http://www.w3.org/2000/01/rdf-schema#domain" ),
-          RANGE( "http://www.w3.org/2000/01/rdf-schema#range" ),
-          LABEL( "http://www.w3.org/2000/01/rdf-schema#label" ),
-          SUBCLASSOF( "http://www.w3.org/2000/01/rdf-schema#subClassOf" ),
-          SUBPROPERTYOF( "http://www.w3.org/2000/01/rdf-schema#subPropertyOf" ),
-          SEEALSO( "http://www.w3.org/2000/01/rdf-schema#seeAlso" ),
-          RESOURCE( "http://www.w3.org/2000/01/rdf-schema#Resource" ),
-          MEMBER( "http://www.w3.org/2000/01/rdf-schema#member" ),
-          LITERAL( "http://www.w3.org/2000/01/rdf-schema#Literal" ),
-          ISDEFINEDBY( "http://www.w3.org/2000/01/rdf-schema#isDefinedBy" ),
-          CONTAINER( "http://www.w3.org/2000/01/rdf-schema#Container" ),
-          CONTAINERMEMBERSHIPPROPERTY( "http://www.w3.org/2000/01/rdf-schema#ContainerMembershipProperty" ) {
+        : rdfsNs( "http://www.w3.org/2000/01/rdf-schema#" ),
+          rdfsClass( "http://www.w3.org/2000/01/rdf-schema#Class" ),
+          rdfsComment( "http://www.w3.org/2000/01/rdf-schema#comment" ),
+          rdfsDatatype( "http://www.w3.org/2000/01/rdf-schema#Datatype" ),
+          rdfsDomain( "http://www.w3.org/2000/01/rdf-schema#domain" ),
+          rdfsRange( "http://www.w3.org/2000/01/rdf-schema#range" ),
+          rdfsLabel( "http://www.w3.org/2000/01/rdf-schema#label" ),
+          rdfsSubClassOf( "http://www.w3.org/2000/01/rdf-schema#subClassOf" ),
+          rdfsSubPropertyOf( "http://www.w3.org/2000/01/rdf-schema#subPropertyOf" ),
+          rdfsSeeAlso( "http://www.w3.org/2000/01/rdf-schema#seeAlso" ),
+          rdfsResource( "http://www.w3.org/2000/01/rdf-schema#Resource" ),
+          rdfsMember( "http://www.w3.org/2000/01/rdf-schema#member" ),
+          rdfsLiteral( "http://www.w3.org/2000/01/rdf-schema#Literal" ),
+          rdfsIsDefinedBy( "http://www.w3.org/2000/01/rdf-schema#isDefinedBy" ),
+          rdfsContainer( "http://www.w3.org/2000/01/rdf-schema#Container" ),
+          rdfsContainerMembershipProperty( "http://www.w3.org/2000/01/rdf-schema#ContainerMembershipProperty" ) {
     }
 
-    QUrl NAMESPACE;
-    QUrl CLASS;
-    QUrl COMMENT;
-    QUrl DATATYPE;
-    QUrl DOMAIN;
-    QUrl RANGE;
-    QUrl LABEL;
-    QUrl SUBCLASSOF;
-    QUrl SUBPROPERTYOF;
-    QUrl SEEALSO;
-    QUrl RESOURCE;
-    QUrl MEMBER;
-    QUrl LITERAL;
-    QUrl ISDEFINEDBY;
-    QUrl CONTAINER;
-    QUrl CONTAINERMEMBERSHIPPROPERTY;
+    QUrl rdfsNs;
+    QUrl rdfsClass;
+    QUrl rdfsComment;
+    QUrl rdfsDatatype;
+    QUrl rdfsDomain;
+    QUrl rdfsRange;
+    QUrl rdfsLabel;
+    QUrl rdfsSubClassOf;
+    QUrl rdfsSubPropertyOf;
+    QUrl rdfsSeeAlso;
+    QUrl rdfsResource;
+    QUrl rdfsMember;
+    QUrl rdfsLiteral;
+    QUrl rdfsIsDefinedBy;
+    QUrl rdfsContainer;
+    QUrl rdfsContainerMembershipProperty;
 };
 
 
@@ -68,95 +67,95 @@ Q_GLOBAL_STATIC( Rdfs, rdfs )
 
 QUrl Soprano::Vocabulary::RDFS::rdfsNamespace()
 {
-    return rdfs()->NAMESPACE;
+    return rdfs()->rdfsNs;
 }
 
 
 QUrl Soprano::Vocabulary::RDFS::Class()
 {
-    return rdfs()->CLASS;
+    return rdfs()->rdfsClass;
 }
 
 
 QUrl Soprano::Vocabulary::RDFS::comment()
 {
-    return rdfs()->COMMENT;
+    return rdfs()->rdfsComment;
 }
 
 
 QUrl Soprano::Vocabulary::RDFS::Datatype()
 {
-    return rdfs()->DATATYPE;
+    return rdfs()->rdfsDatatype;
 }
 
 
 QUrl Soprano::Vocabulary::RDFS::domain()
 {
-    return rdfs()->DOMAIN;
+    return rdfs()->rdfsDomain;
 }
 
 
 QUrl Soprano::Vocabulary::RDFS::range()
 {
-    return rdfs()->RANGE;
+    return rdfs()->rdfsRange;
 }
 
 
 QUrl Soprano::Vocabulary::RDFS::label()
 {
-    return rdfs()->LABEL;
+    return rdfs()->rdfsLabel;
 }
 
 
 QUrl Soprano::Vocabulary::RDFS::subClassOf()
 {
-    return rdfs()->SUBCLASSOF;
+    return rdfs()->rdfsSubClassOf;
 }
 
 
 QUrl Soprano::Vocabulary::RDFS::subPropertyOf()
 {
-    return rdfs()->SUBPROPERTYOF;
+    return rdfs()->rdfsSubPropertyOf;
 }
 
 
 QUrl Soprano::Vocabulary::RDFS::seeAlso()
 {
-    return rdfs()->SEEALSO;
+    return rdfs()->rdfsSeeAlso;
 }
 
 
 QUrl Soprano::Vocabulary::RDFS::Resource()
 {
-    return rdfs()->RESOURCE;
+    return rdfs()->rdfsResource;
 }
 
 
 QUrl Soprano::Vocabulary::RDFS::member()
 {
-    return rdfs()->MEMBER;
+    return rdfs()->rdfsMember;
 }
 
 
 QUrl Soprano::Vocabulary::RDFS::Literal()
 {
-    return rdfs()->LITERAL;
+    return rdfs()->rdfsLiteral;
 }
 
 
 QUrl Soprano::Vocabulary::RDFS::isDefinedBy()
 {
-    return rdfs()->ISDEFINEDBY;
+    return rdfs()->rdfsIsDefinedBy;
 }
 
 
 QUrl Soprano::Vocabulary::RDFS::Container()
 {
-    return rdfs()->CONTAINER;
+    return rdfs()->rdfsContainer;
 }
 
 
 QUrl Soprano::Vocabulary::RDFS::ContainerMembershipProperty()
 {
-    return rdfs()->CONTAINERMEMBERSHIPPROPERTY;
+    return rdfs()->rdfsContainerMembershipProperty;
 }

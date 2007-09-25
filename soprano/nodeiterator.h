@@ -24,7 +24,7 @@
 #define SOPRANO_NODE_ITERATOR_H
 
 #include "iterator.h"
-#include "node.h" // class Node; isn't enough for gcc-3.3
+#include "node.h"
 #include "soprano_export.h"
 
 #include <QtCore/QList>
