@@ -9,10 +9,13 @@ include_directories(
   ${soprano_core_SOURCE_DIR}/vocabulary
   ${soprano_core_BINARY_DIR}
   ${QT_INCLUDES}
-  ${CLUCENE_INCLUDE_DIR}
-  ${CLUCENE_LIBRARY_DIR}
   ${CMAKE_CURRENT_BINARY_DIR}
 )
+
+if(CLucene_FOUND)
+include_directories( ${CLUCENE_INCLUDE_DIR} ${CLUCENE_LIBRARY_DIR}
+)
+endif(CLucene_FOUND)
 
 configure_file(config-testdata.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/config-testdata.h)
 
