@@ -23,6 +23,8 @@
 
 #define NRL_NS "http://www.semanticdesktop.org/ontologies/2007/08/15/nrl/"
 
+// FIXME: (trueg) do not use all-caps variables
+
 class Nrl
 {
 public:

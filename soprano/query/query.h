@@ -27,8 +27,10 @@
 #include <QList>
 #include <QString>
 #include <QDateTime>
+#include <QVariant>
 #include <QtCore/QSharedData>
 
+#include "node.h"
 #include "soprano_export.h"
 
 // FIXME: - set operations such as intersect
@@ -42,8 +44,6 @@
 
 namespace Soprano
 {
-    class Node;
-
     namespace Query {
 
         class ExpressionVisitor;
@@ -82,6 +82,7 @@ namespace Soprano
             Variable();
             Variable( const QString &name );
             Variable( const Variable &other );
+	    ~Variable();
 
             Variable& operator=( const Variable& );
 
@@ -95,7 +96,6 @@ namespace Soprano
             class Private;
             QSharedDataPointer<Private> d;
         };
-
 
         class SOPRANO_EXPORT Node : public RTerm {
         public:
@@ -112,7 +112,11 @@ namespace Soprano
             Soprano::Node node() const;
         
         private:
-            class Private;
+            class Private : public QSharedData {
+            public:
+                Private();
+                Soprano::Node node;
+            };
             QSharedDataPointer<Private> d;
         };
         
@@ -180,7 +184,12 @@ namespace Soprano
             int integerValue();
             
         private:
-            class Private;
+            class Private : public QSharedData
+            {
+            public:
+               Private( const QVariant& v = QVariant() );
+               QVariant value;
+            };
             QSharedDataPointer<Private> d;
         };
    
@@ -212,7 +221,12 @@ namespace Soprano
             void accept( ExpressionVisitor *visitor ) const;
 
         private:
-            class Private;
+            class Private : public QSharedData
+            {
+            public:
+                Private( const QString& s = QString() );
+                QString value;
+            };
             QSharedDataPointer<Private> d;
         };
 
@@ -228,7 +242,14 @@ namespace Soprano
             const BooleanExpression *expression() const;
 
         private:
-            class Private;
+            class Private : public QSharedData
+            {
+            public:
+                Private( BooleanExpression* e = 0 );
+                Private( const Private& other );
+                ~Private();
+                BooleanExpression* expression;
+            };
             QSharedDataPointer<Private> d;
         };
 
@@ -240,7 +261,14 @@ namespace Soprano
             const RTerm *rterm() const;
 
         private:
-            class Private;
+            class Private : public QSharedData
+            {
+            public:
+                Private( RTerm* e = 0 );
+                Private( const Private& other );
+                ~Private();
+                RTerm* term;
+            };
             QSharedDataPointer<Private> d;
         };
 
@@ -267,7 +295,14 @@ namespace Soprano
             const NumericalExpression *expression() const;
 
         private:
-            class Private;
+            class Private : public QSharedData
+            {
+            public:
+                Private( NumericalExpression* e = 0 );
+                Private( const Private& other );
+                ~Private();
+                NumericalExpression* expression;
+            };
             QSharedDataPointer<Private> d;
         };
 
@@ -317,7 +352,14 @@ namespace Soprano
             void accept( ExpressionVisitor *visitor ) const;
             
         private:
-            class Private;
+            class Private : public QSharedData
+            {
+            public:
+                Private( Variable* v = 0 );
+                Private( const Private& other );
+                ~Private();
+                Variable* variable;
+            };
             QSharedDataPointer<Private> d;
         };
 
@@ -402,12 +444,19 @@ namespace Soprano
             BooleanSetExpression();
 
             void addConditon( BooleanExpression *first );
-	    int count() const;
-	    const BooleanExpression* condition( int i ) const;
-	    const BooleanExpression* operator[]( int i ) const;
+        int count() const;
+        const BooleanExpression* condition( int i ) const;
+        const BooleanExpression* operator[]( int i ) const;
     
         private:
-            class Private;
+            class Private : public QSharedData
+            {
+            public:
+                Private();
+                Private( const Private& other );
+                ~Private();
+                QList<BooleanExpression*> conditions;
+            };
             QSharedDataPointer<Private> d;
         };
 
@@ -422,7 +471,15 @@ namespace Soprano
             const NumericalExpression *second() const;
    
         private:
-            class Private;
+            class Private : public QSharedData
+            {
+            public:
+                Private( NumericalExpression *first_ = 0, NumericalExpression *second_ = 0 );
+                Private( const Private& other );
+                ~Private();
+                NumericalExpression* first;
+                NumericalExpression* second;
+            };
             QSharedDataPointer<Private> d;
         };
 
@@ -437,7 +494,15 @@ namespace Soprano
             const StringExpression *second() const;
   
         private:
-            class Private;
+            class Private : public QSharedData
+            {
+            public:
+                Private( StringExpression *first_ = 0, StringExpression *second_ = 0 );
+                Private( const Private& other );
+                ~Private();
+                StringExpression* first;
+                StringExpression* second;
+            };
             QSharedDataPointer<Private> d;
         };
 
@@ -452,7 +517,13 @@ namespace Soprano
             QDateTime second() const;
   
         private:
-            class Private;
+            class Private : public QSharedData
+            {
+            public:
+                Private( const QDateTime first_ = QDateTime(), const QDateTime& second_ = QDateTime() );
+                QDateTime first;
+                QDateTime second;
+            };
             QSharedDataPointer<Private> d;
         };
 
@@ -467,7 +538,15 @@ namespace Soprano
             const RTerm *second() const;
 
         private:
-            class Private;
+            class Private : public QSharedData
+            {
+            public:
+                Private( RTerm *first_ = 0, RTerm *second_ = 0 );
+                Private( const Private& other );
+                ~Private();
+                RTerm* first;
+                RTerm* second;
+            };
             QSharedDataPointer<Private> d;
         };
 
@@ -482,7 +561,15 @@ namespace Soprano
             const NumericalExpression *second() const;
     
         private:
-            class Private;
+            class Private : public QSharedData
+            {
+            public:
+                Private( NumericalExpression *first_ = 0, NumericalExpression *second_ = 0 );
+                Private( const Private& other );
+                ~Private();
+                NumericalExpression* first;
+                NumericalExpression* second;
+            };
             QSharedDataPointer<Private> d;
         };
 
@@ -759,7 +846,17 @@ namespace Soprano
             void accept( ExpressionVisitor *visitor ) const;
 
         private:
-            class Private;
+            class Private : public QSharedData
+            {
+            public:
+                Private();
+                Private( StringExpression *ex, const QString &p, const QString& f = QString() );
+                Private( const Private& other);
+                ~Private();
+                StringExpression *expression;
+                QString pattern;
+                QString flags;
+            };
             QSharedDataPointer<Private> d;
         }; 
 
@@ -780,7 +877,12 @@ namespace Soprano
             const QUrl uri() const;
 
         private:
-            class Private;
+            class Private : public QSharedData {
+            public:
+                Private();
+                QString prefix;
+                QUrl uri;
+            };
             QSharedDataPointer<Private> d;
         };
 
@@ -814,7 +916,16 @@ namespace Soprano
             void accept( ExpressionVisitor* visitor ) const;
 
         private:
-            class Private;
+            class Private: public QSharedData
+            {
+            public:
+                Private();
+                Private( const Private& other );
+                ~Private();
+                RTerm *subject;
+                RTerm *predicate;
+                RTerm *object;
+            };
             QSharedDataPointer<Private> d;
         };
         
@@ -836,7 +947,14 @@ namespace Soprano
             bool selectAll() const;
             
         private:
-            class Private;
+            class Private : public QSharedData
+            {
+            public:
+                Private();
+                Private( const Private& other);
+                ~Private();
+                QList<Variable *> variables;
+            };
             QSharedDataPointer<Private> d;
         };
         
@@ -881,7 +999,16 @@ namespace Soprano
             const QueryTerms queryTerms() const;
 
         private:
-            class Private;
+            class Private : public QSharedData {
+            public:
+                Private();
+                Private( const Private& other );
+                ~Private();
+                BooleanExpression *condition;
+                QList<Prefix> prefixes;
+                QueryTerms queryTerms;
+                QueryType type;
+            };
             QSharedDataPointer<Private> d;
         };
 
