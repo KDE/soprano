@@ -25,6 +25,7 @@ set(redland_core_SRC
   redlandmodel.cpp
   redlandmodel.h
   redlandnodeiteratorbackend.cpp
+  multimutex.cpp
   )
 
 set(redland_backend_SRC
