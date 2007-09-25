@@ -55,18 +55,18 @@ set(soprano_client_SRC
   dbus/dbusoperators.cpp
 )
 
-set(soprano_serverbackend_SRC
-  serverbackend.h
-  serverbackend.cpp
-)
+#set(soprano_serverbackend_SRC
+#  serverbackend.h
+#  serverbackend.cpp
+#)
   
 qt4_automoc(${soprano_server_SRC})
 qt4_automoc(${soprano_client_SRC})
-qt4_automoc(${soprano_serverbackend_SRC})
+#qt4_automoc(${soprano_serverbackend_SRC})
 
 add_library(sopranoserver SHARED ${soprano_server_SRC})
 add_library(sopranoclient SHARED ${soprano_client_SRC})
-add_library(soprano_serverclientbackend SHARED ${soprano_serverbackend_SRC})
+#add_library(soprano_serverclientbackend SHARED ${soprano_serverbackend_SRC})
 
 add_executable(sopranod sopranod.cpp)
 
@@ -100,10 +100,10 @@ target_link_libraries(
   soprano
 )
 
-target_link_libraries(
-  soprano_serverclientbackend
-  sopranoclient
-)
+#target_link_libraries(
+#  soprano_serverclientbackend
+#  sopranoclient
+#)
 
 target_link_libraries(
   sopranod
@@ -117,11 +117,11 @@ INSTALL(TARGETS sopranoserver sopranoclient sopranod
 	ARCHIVE DESTINATION lib
 )
 
-INSTALL(TARGETS soprano_serverclientbackend
-	LIBRARY DESTINATION ${LIB_DESTINATION}/soprano
-	RUNTIME DESTINATION bin/soprano
-	ARCHIVE DESTINATION lib/soprano
-)
+#INSTALL(TARGETS soprano_serverclientbackend
+#	LIBRARY DESTINATION ${LIB_DESTINATION}/soprano
+#	RUNTIME DESTINATION bin/soprano
+#	ARCHIVE DESTINATION lib/soprano
+#)
 
 install(
   FILES 
