@@ -24,6 +24,7 @@
 #define SOPRANO_RESULT_SET_H
 
 #include "iterator.h"
+#include "bindingset.h"
 #include "soprano_export.h"
 
 #include <QtCore/QString>
