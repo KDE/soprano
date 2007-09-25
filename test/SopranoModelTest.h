@@ -71,6 +71,8 @@ private Q_SLOTS:
 
   void testUriEncoding_data();
   void testUriEncoding();
+
+  void testIteratorNesting();
   
   void testPerformance();
 
@@ -78,12 +80,12 @@ protected:
   virtual Soprano::Model* createModel() = 0;
   virtual void deleteModel( Soprano::Model* );
 
-   Soprano::Statement m_st1;
-   Soprano::Statement m_st2;
-   Soprano::Statement m_st3;
-   Soprano::Statement m_st4;
-
-   Soprano::Model* m_model;
+  Soprano::Statement m_st1;
+  Soprano::Statement m_st2;
+  Soprano::Statement m_st3;
+  Soprano::Statement m_st4;
+  
+  Soprano::Model* m_model;
 };
 
 #endif

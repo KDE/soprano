@@ -41,7 +41,6 @@ private Q_SLOTS:
     void initTestCase();
     void testNodeIterator_data();
     void testNodeIterator();
-    void testAllInParallel();
     void cleanupTestCase();
 
 protected:

@@ -29,11 +29,35 @@
 #include <QtCore/QTextStream>
 #include <QtCore/QTime>
 #include <QtCore/QUrl>
+#include <QtCore/QUuid>
 
 
 // FIXME: Use the QTest framework to create data tables
 
 using namespace Soprano;
+
+
+static QUrl createRandomUri()
+{
+    // FIXME: check if the uri already exists
+    QString uid = QUuid::createUuid().toString();
+    uid = uid.mid( 1, uid.length()-2 );
+    return QUrl( "http://soprano.org/test#" + uid );
+}
+
+
+static QList<Statement> createTestData( const Statement& s, int num )
+{
+    QList<Statement> sl;
+    for( int i = 0; i < num; ++i ) {
+        sl.append( Statement( s.subject().isEmpty() ? Node( createRandomUri() ) : s.subject(),
+                              s.predicate().isEmpty() ? Node( createRandomUri() ) : s.predicate(),
+                              s.object().isEmpty() ? Node( createRandomUri() ) : s.object(),
+                              s.context() ) );
+    }
+    return sl;
+}
+
 
 SopranoModelTest::SopranoModelTest()
     : m_model( 0 )
@@ -885,6 +909,66 @@ void SopranoModelTest::testUriEncoding()
     QVERIFY( it.next() );
     QCOMPARE( it.current().object().uri(), uri );
     it.close();
+}
+
+
+void SopranoModelTest::testIteratorNesting()
+{
+    QVERIFY( m_model );
+
+    Node c1 = createRandomUri();
+    Node c2 = createRandomUri();
+    Node c3 = createRandomUri();
+    Node c4 = createRandomUri();
+    QList<Statement> sl1 = createTestData( Statement( Node(), Node(), Node(), c1 ), 5 );
+    QList<Statement> sl2 = createTestData( Statement( Node(), Node(), Node(), c2 ), 5 );
+    QList<Statement> sl3 = createTestData( Statement( Node(), Node(), Node(), c3 ), 5 );
+    QList<Statement> sl4 = createTestData( Statement( Node(), Node(), Node(), c4 ), 5 );
+
+    QVERIFY( m_model->addStatements( sl1 ) == Error::ErrorNone );
+    QVERIFY( m_model->addStatements( sl2 ) == Error::ErrorNone );
+    QVERIFY( m_model->addStatements( sl3 ) == Error::ErrorNone );
+    QVERIFY( m_model->addStatements( sl4 ) == Error::ErrorNone );
+
+    // test context + statement listing
+    NodeIterator it1 = m_model->listContexts();
+    int cnt1 = 0, cnt2 = 0, cnt3 = 0, cnt4 = 0;
+    while ( it1.next() ) {
+        StatementIterator it2 = m_model->listStatementsInContext( *it1 );
+        while ( it2.next() ) {
+            if ( ( *it2 ).context() == c1 ) {
+                ++cnt1;
+            }
+            if ( ( *it2 ).context() == c2 ) {
+                ++cnt2;
+            }
+            if ( ( *it2 ).context() == c3 ) {
+                ++cnt3;
+            }
+            if ( ( *it2 ).context() == c4 ) {
+                ++cnt4;
+            }
+        }
+    }
+
+    QCOMPARE( cnt1, sl1.count() );
+    QCOMPARE( cnt2, sl2.count() );
+    QCOMPARE( cnt3, sl3.count() );
+    QCOMPARE( cnt4, sl4.count() );
+
+    // test statement iterator nesting
+    StatementIterator it3 = m_model->listStatements();
+    while ( it3.next() ) {
+        cnt1 = 0;
+        if ( !it3.current().context().isEmpty() ) {
+            StatementIterator it4 = m_model->listStatementsInContext( it3.current().context() );
+            while ( it4.next() ) {
+                ++cnt1;
+            }
+
+            QCOMPARE( cnt1, 5 );
+        }
+    }
 }
 
 

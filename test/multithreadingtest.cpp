@@ -277,19 +277,4 @@ void MultiThreadingTest::testNodeIterator()
     delete model;
 }
 
-
-void MultiThreadingTest::testAllInParallel()
-{
-    Model* model = createModel();
-    QVERIFY( model != 0 );
-
-    // add some testdata with the same context
-    QVERIFY( model->addStatements( m_testStatements ) == Error::ErrorNone );
-
-    startAllTests( model );
-    verifyAllTests();
-
-    delete model;
-}
-
 #include "multithreadingtest.moc"
