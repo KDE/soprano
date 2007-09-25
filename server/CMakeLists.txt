@@ -1,10 +1,5 @@
 project(soprano_server)
 
-# not always defined. FIXME: find out how and when
-if(NOT ${QT_QTDBUS_LIBRARY})
-  set(QT_QTDBUS_LIBRARY "QtDBus")
-endif(NOT ${QT_QTDBUS_LIBRARY})
-
 include_directories(
   ${soprano_server_BINARY_DIR}
   ${soprano_core_SOURCE_DIR}
