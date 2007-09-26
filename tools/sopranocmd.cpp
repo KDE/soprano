@@ -23,6 +23,7 @@
 #include "../soprano/soprano.h"
 
 #include "../server/tcpclient.h"
+#include "../server/dbus/dbusclient.h"
 
 using namespace Soprano;
 
@@ -233,6 +234,7 @@ int usage( const QString& error = QString() )
       << "                      " << backendNames().join( ", " ) << endl << endl
       << "   --dir              The storage directory. This only applies when specifying the backend. Defaults" << endl
       << "                      to current directory." << endl << endl
+      << "   --dbus <service>   Contact the soprano server running on the specified service." << endl << endl
       << "   --port <port>      Specify the port the Soprano server is running on." << endl
       << "                      (only applicable when querying against the Soprano server.)" << endl << endl
       << "   --host <host>      Specify the host the Soprano server is running on (defaults to localhost)." << endl
@@ -278,6 +280,7 @@ int main( int argc, char *argv[] )
     allowedCmdLineArgs.insert( "dir", true );
     allowedCmdLineArgs.insert( "port", true );
     allowedCmdLineArgs.insert( "host", true );
+    allowedCmdLineArgs.insert( "dbus", true );
 
     CmdLineArgs args;
     if ( !CmdLineArgs::parseCmdLine( args, app.arguments(), allowedCmdLineArgs ) ) {
@@ -301,23 +304,50 @@ int main( int argc, char *argv[] )
     }
 
     QTextStream errStream(stderr);
-    Soprano::Client::TcpClient client;
+    Soprano::Client::TcpClient* tcpClient = 0;
+    Soprano::Client::DBusClient* dbusClient = 0;
     Soprano::Model* model = 0;
     if ( backendName.isEmpty() ) {
-        QHostAddress host = QHostAddress::LocalHost;
-        quint16 port = Soprano::Client::TcpClient::DEFAULT_PORT;
         if ( args.hasSetting( "port" ) ) {
+            QHostAddress host = QHostAddress::LocalHost;
+            quint16 port = Soprano::Client::TcpClient::DEFAULT_PORT;
             port = args.getSetting( "port" ).toInt();
-        }
-        if ( args.hasSetting( "host" ) ) {
-            host = args.getSetting( "host" );
-        }
+            if ( args.hasSetting( "host" ) ) {
+                host = args.getSetting( "host" );
+            }
 
-        if ( !client.connect( host, port ) ) {
-            errStream << "Failed to connect to server on port " << port << endl;
-            return 3;
+            tcpClient = new Soprano::Client::TcpClient();
+
+            if ( !tcpClient->connect( host, port ) ) {
+                errStream << "Failed to connect to server on port " << port << endl;
+                delete tcpClient;
+                return 3;
+            }
+            if ( !( model = tcpClient->createModel( modelName ) ) ) {
+                errStream << "Failed to create Model: " << tcpClient->lastError() << endl;
+                delete tcpClient;
+                return 2;
+            }
         }
-        model = client.createModel( modelName );
+        else if ( args.hasSetting( "dbus" ) ) {
+            QString dbusService = args.getSetting( "dbus" );
+            dbusClient = new Soprano::Client::DBusClient( dbusService );
+            if ( !dbusClient->isValid() ) {
+                errStream << "Failed to contact Soprano dbus service at " << dbusService << endl;
+                delete dbusClient;
+                return 3;
+            }
+            if ( !( model = dbusClient->createModel( modelName ) ) ) {
+                errStream << "Failed to create Model: " << dbusClient->lastError() << endl;
+                delete dbusClient;
+                return 2;
+            }
+        }
+        else {
+            errStream << "Please specify a backend to be used or details on how to contact" << endl
+                      << "a soprano server." << endl;
+            return 4;
+        }
     }
     else {
         const Backend* backend = Soprano::PluginManager::instance()->discoverBackendByName( backendName );
@@ -330,12 +360,10 @@ int main( int argc, char *argv[] )
         }
         QList<BackendSetting> settings;
         settings.append( BackendSetting( BackendOptionStorageDir, dir ) );
-        model = backend->createModel( settings );
-    }
-
-    if ( !model ) {
-        errStream << "Failed to create Model: " << client.lastError() << endl;
-        return 2;
+        if ( !( model = backend->createModel( settings ) ) ) {
+            errStream << "Failed to create Model: " << backend->lastError() << endl;
+            return 2;
+        }
     }
 
     int firstArg = 0;
