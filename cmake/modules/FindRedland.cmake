@@ -8,18 +8,18 @@
 
 # (c) 2007 Sebastian Trueg <trueg@kde.org>
 #
-# Based on FindFontconfig Copyright (c) 2006, Laurent Montel, <montel@kde.org>
+# Based on FindFontconfig Copyright (c) 2006,2007 Laurent Montel, <montel@kde.org>
 #
 # Redistribution and use is allowed according to the terms of the BSD license.
 # For details see the accompanying COPYING-CMAKE-SCRIPTS file.
 
 
-#if (REDLAND_LIBRARIES AND REDLAND_INCLUDE_DIR AND RASQAL_INCLUDE_DIR)
+#if (REDLAND_LIBRARIES AND REDLAND_INCLUDE_DIR AND RASQAL_INCLUDE_DIR AND RASQAL_LIBRARIES AND RAPTOR_LIBRARIES)
 
   # in cache already
  # set(REDLAND_FOUND TRUE)
 
-#else (REDLAND_LIBRARIES AND REDLAND_INCLUDE_DIR and RASQUAL_INCLUDE_DIR)
+#else (REDLAND_LIBRARIES AND REDLAND_INCLUDE_DIR and RASQUAL_INCLUDE_DIR AND RASQAL_LIBRARIES AND RAPTOR_LIBRARIES)
 
   FIND_PROGRAM(
     REDLAND_CONFIG
@@ -57,6 +57,39 @@
     ENDFOREACH(_ARG)
   endif(REDLAND_CONFIG)
 
+  # raptor is not redland, look for it separately
+  FIND_PROGRAM(
+    RAPTOR_CONFIG
+    NAMES raptor-config
+    )
+  if(RAPTOR_CONFIG)
+    # extract include paths from raptor-config
+    EXECUTE_PROCESS(
+      COMMAND raptor-config --cflags
+      OUTPUT_VARIABLE raptor_CFLAGS_ARGS)
+    STRING( REPLACE " " ";" raptor_CFLAGS_ARGS ${raptor_CFLAGS_ARGS} )
+    FOREACH( _ARG ${raptor_CFLAGS_ARGS} )
+      IF(${_ARG} MATCHES "^-I")
+        STRING(REGEX REPLACE "^-I" "" _ARG ${_ARG})
+        LIST(APPEND raptor_INCLUDE_DIRS ${_ARG})
+      ENDIF(${_ARG} MATCHES "^-I")
+    ENDFOREACH(_ARG)
+
+    # extract lib paths from raptor-config
+    EXECUTE_PROCESS(
+      COMMAND raptor-config --libs
+      OUTPUT_VARIABLE raptor_CFLAGS_ARGS)
+    STRING( REPLACE " " ";" raptor_CFLAGS_ARGS ${raptor_CFLAGS_ARGS} )
+    FOREACH( _ARG ${raptor_CFLAGS_ARGS} )
+      IF(${_ARG} MATCHES "^-L")
+        STRING(REGEX REPLACE "^-L" "" _ARG ${_ARG})
+        LIST(APPEND raptor_LIBRARY_DIRS ${_ARG})
+      ENDIF(${_ARG} MATCHES "^-L")
+    ENDFOREACH(_ARG)
+
+  endif(RAPTOR_CONFIG)
+
+
   # rasqal is not redland, look for it separately
   FIND_PROGRAM(
     RASQAL_CONFIG
@@ -74,6 +107,18 @@
         STRING(REGEX REPLACE "^-I" "" _ARG ${_ARG})
         LIST(APPEND rasqal_INCLUDE_DIRS ${_ARG})
       ENDIF(${_ARG} MATCHES "^-I")
+    ENDFOREACH(_ARG)
+
+    # extract lib paths from rasqal-config
+    EXECUTE_PROCESS(
+      COMMAND rasqal-config --libs
+      OUTPUT_VARIABLE rasqal_CFLAGS_ARGS)
+    STRING( REPLACE " " ";" rasqal_CFLAGS_ARGS ${rasqal_CFLAGS_ARGS} )
+    FOREACH( _ARG ${rasqal_CFLAGS_ARGS} )
+      IF(${_ARG} MATCHES "^-L")
+        STRING(REGEX REPLACE "^-L" "" _ARG ${_ARG})
+        LIST(APPEND rasqal_LIBRARY_DIRS ${_ARG})
+      ENDIF(${_ARG} MATCHES "^-L")
     ENDFOREACH(_ARG)
   endif(RASQAL_CONFIG)
 
@@ -113,13 +158,26 @@
     PATHS
     ${redland_LIBRARY_DIRS}
   )
+ 
+  find_library(RASQAL_LIBRARIES NAMES rasqal librasqal
+    PATHS
+    ${rasqal_LIBRARY_DIRS}
+  )
+ 
+  find_library(RAPTOR_LIBRARIES NAMES raptor libraptor
+    PATHS
+    ${raptor_LIBRARY_DIRS}
+  )
+
   MESSAGE(STATUS "redland libs: ${REDLAND_LIBRARIES}")
   MESSAGE(STATUS "redland includes: ${REDLAND_INCLUDE_DIR}")
   MESSAGE(STATUS "rasqal includes: ${RASQAL_INCLUDE_DIR}")
+  MESSAGE(STATUS "rasqal libs: ${RASQAL_LIBRARIES}")
+  MESSAGE(STATUS "raptor libs: ${RAPTOR_LIBRARIES}")
 
-  if (REDLAND_LIBRARIES AND REDLAND_INCLUDE_DIR AND RASQAL_INCLUDE_DIR)
+  if (REDLAND_LIBRARIES AND REDLAND_INCLUDE_DIR AND RASQAL_INCLUDE_DIR AND RASQAL_LIBRARIES AND RAPTOR_LIBRARIES)
     set(REDLAND_FOUND TRUE)
-  endif (REDLAND_LIBRARIES AND REDLAND_INCLUDE_DIR AND RASQAL_INCLUDE_DIR)
+  endif (REDLAND_LIBRARIES AND REDLAND_INCLUDE_DIR AND RASQAL_INCLUDE_DIR AND RASQAL_LIBRARIES AND RAPTOR_LIBRARIES)
 
   if (REDLAND_FOUND)
     set(REDLAND_DEFINITIONS ${redland_CFLAGS})
@@ -135,4 +193,4 @@
 
 #  mark_as_advanced(REDLAND_LIBRARIES)
 
-#endif (REDLAND_LIBRARIES AND REDLAND_INCLUDE_DIR AND RASQAL_INCLUDE_DIR)
+#endif (REDLAND_LIBRARIES AND REDLAND_INCLUDE_DIR AND RASQAL_INCLUDE_DIR AND RASQAL_LIBRARIES AND RAPTOR_LIBRARIES)
