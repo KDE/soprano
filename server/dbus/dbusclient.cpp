@@ -53,6 +53,12 @@ Soprano::Client::DBusClient::~DBusClient()
 }
 
 
+bool Soprano::Client::DBusClient::isValid() const
+{
+    return d->interface->isValid();
+}
+
+
 QStringList Soprano::Client::DBusClient::allModels() const
 {
     QDBusReply<QStringList> reply = d->interface->allModels();

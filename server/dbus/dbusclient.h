@@ -63,7 +63,13 @@ namespace Soprano {
 	     */
 	    ~DBusClient();
 
-	    // FIXME: add method to check if the server can be found
+	    /**
+	     * Check if the service is valid and available.
+	     *
+	     * \return \p true if the Soprano server service could be found and used.
+	     * Otherwise returns \p false.
+	     */
+	    bool isValid() const;
 
 	    /**
 	     * Retrive a list of all models that are available.
