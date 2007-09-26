@@ -22,7 +22,7 @@ qt4_automoc(${rasqalqueryparser_SRC})
 
 add_library(soprano_rasqalqueryparser SHARED ${rasqalqueryparser_SRC})
 
-TARGET_LINK_LIBRARIES(soprano_rasqalqueryparser soprano ${REDLAND_LIBRARIES})
+TARGET_LINK_LIBRARIES(soprano_rasqalqueryparser soprano ${RAPTOR_LIBRARIES} ${RASQAL_LIBRARIES} ${REDLAND_LIBRARIES})
 
 ADD_DEFINITIONS(${REDLAND_CFLAGS})
 
