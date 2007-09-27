@@ -228,7 +228,7 @@ template<typename T> void Soprano::Iterator<T>::close()
 	setError( cd->backend->lastError() );
     }
     else {
-	setError( "Invalid iterator." );
+	setError( QString::fromLatin1( "Invalid iterator." ) );
     }
 }
 
@@ -245,7 +245,7 @@ template<typename T> bool Soprano::Iterator<T>::next()
 	return hasNext;
     }
     else {
-	setError( "Invalid iterator." );
+	setError( QString::fromLatin1( "Invalid iterator." ) );
 	return false;
     }
 }
@@ -258,7 +258,7 @@ template<typename T> T Soprano::Iterator<T>::current() const
 	return c;
     }
     else {
-	setError( "Invalid iterator." );
+	setError( QString::fromLatin1( "Invalid iterator." ) );
 	return T();
     }
 }
