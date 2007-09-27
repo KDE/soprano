@@ -24,7 +24,11 @@ configure_file(clucene-config.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/clucene-config
 # CLucene requires exception support and has no support for visibility=hidden
 # so we must use the default (i.e. public) value for -fvisibility
 IF(NOT WIN32)
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fexceptions -fvisibility=default")
+    include(CheckCXXCompilerFlag)
+    check_cxx_compiler_flag(-fvisibility=hidden __SOPRANO_HAVE_GCC_VISIBILITY)
+    if(__SOPRANO_HAVE_GCC_VISIBILITY)
+        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fexceptions -fvisibility=default")
+    endif(__SOPRANO_HAVE_GCC_VISIBILITY)
 ENDIF(NOT WIN32)
 
 # FIXME: make sure that CLUcene is compiled with UCS2 support
