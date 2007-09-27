@@ -26,8 +26,7 @@
 #include "iteratorbackend.h"
 #include "bindingset.h"
 
-#include <QString>
-#include <QStringList>
+#include <QtCore/QStringList>
 
 
 namespace Soprano {

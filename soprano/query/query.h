@@ -23,11 +23,11 @@
 #ifndef SOPRANO_QUERY_API_H
 #define SOPRANO_QUERY_API_H
 
-#include <QUrl>
-#include <QList>
-#include <QString>
-#include <QDateTime>
-#include <QVariant>
+#include <QtCore/QUrl>
+#include <QtCore/QList>
+#include <QtCore/QString>
+#include <QtCore/QDateTime>
+#include <QtCore/QVariant>
 #include <QtCore/QSharedData>
 
 #include "node.h"
