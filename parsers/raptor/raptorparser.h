@@ -27,11 +27,11 @@
 #include <QtCore/QObject>
 
 #include <soprano/parser.h>
-#include <soprano/soprano_export.h>
+
 
 namespace Soprano {
     namespace Raptor {
-	class SOPRANO_EXPORT Parser : public QObject, public Soprano::Parser
+	class Parser : public QObject, public Soprano::Parser
 	{
 	    Q_OBJECT
 	    Q_INTERFACES(Soprano::Parser)

@@ -27,11 +27,11 @@
 #include <QtCore/QObject>
 
 #include <soprano/serializer.h>
-#include <soprano/soprano_export.h>
+
 
 namespace Soprano {
     namespace Raptor {
-	class SOPRANO_EXPORT Serializer : public QObject, public Soprano::Serializer
+	class Serializer : public QObject, public Soprano::Serializer
 	{
 	    Q_OBJECT
 	    Q_INTERFACES(Soprano::Serializer)

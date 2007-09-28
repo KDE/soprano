@@ -23,7 +23,6 @@
 #define _REDLAND_BACKEND_H_
 
 #include <soprano/backend.h>
-#include <soprano/soprano_export.h>
 
 #include <QObject>
 
@@ -31,7 +30,7 @@ namespace Soprano
 {
   namespace Redland
     {
-      class REDLANDBACKEND_EXPORT BackendPlugin : public QObject, public Soprano::Backend
+      class BackendPlugin : public QObject, public Soprano::Backend
 	{
 	  Q_OBJECT
 	  Q_INTERFACES(Soprano::Backend)

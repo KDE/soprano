@@ -24,14 +24,13 @@
 
 #include <QtCore/QObject>
 
-#include <soprano/soprano_export.h>
 #include <soprano/query/queryparser.h>
 
 namespace Soprano {
 
     namespace Rasqal {
 
-        class SOPRANO_EXPORT QueryParser : public QObject, public Soprano::Query::Parser
+        class QueryParser : public QObject, public Soprano::Query::Parser
 	{
 	    Q_OBJECT
 	    Q_INTERFACES(Soprano::Query::Parser)

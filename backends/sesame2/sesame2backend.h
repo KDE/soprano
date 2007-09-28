@@ -23,7 +23,6 @@
 #define _SESAME2_STORE_BACKEND_H_
 
 #include <soprano/backend.h>
-#include <soprano/soprano_export.h>
 
 #include <QtCore/QObject>
 #include <QtCore/QMutex>
@@ -33,7 +32,7 @@ class JNIWrapper;
 
 namespace Soprano {
     namespace Sesame2 {
-	class SOPRANO_EXPORT BackendPlugin : public QObject, public Soprano::Backend
+	class BackendPlugin : public QObject, public Soprano::Backend
 	{
 	    Q_OBJECT
 	    Q_INTERFACES(Soprano::Backend)
