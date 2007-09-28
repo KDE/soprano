@@ -12,6 +12,7 @@ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/cmake/mod
 if(WIN32)
   set(CMAKE_DEBUG_POSTFIX "d")
   find_package(GNUWIN32) 
+  find_package(KDEWIN32)
 endif(WIN32)
 
 find_package(Qt4 REQUIRED) 
