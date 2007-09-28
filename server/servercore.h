@@ -119,6 +119,7 @@ namespace Soprano {
 
 	    /**
 	     * Start the core on a unix socket.
+	     * This method does nothing on Windows systems.
 	     */
 	    bool start( const QString& socketPath = QString() );
 

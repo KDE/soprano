@@ -7,7 +7,6 @@ include_directories(
   ${soprano_core_SOURCE_DIR}/query
   ${QT_INCLUDES}
   ${soprano_SOURCE_DIR}
-  ${KDEWIN32_INCLUDES}
 )
 
 set(soprano_server_SRC
@@ -17,8 +16,6 @@ set(soprano_server_SRC
   serverconnection.cpp
   randomgenerator.cpp
   operators.cpp
-  socketserver.cpp
-  socketdevice.cpp
   dbus/dbusutil.cpp
   dbus/dbusmodeladaptor.cpp
   dbus/iteratorwrapper.cpp
@@ -33,7 +30,6 @@ set(soprano_server_SRC
 set(soprano_client_SRC
   tcpclient.h
   tcpclient.cpp
-  unixsocketclient.cpp
   clientconnection.h
   clientconnection.cpp
   clientmodel.cpp
@@ -41,7 +37,6 @@ set(soprano_client_SRC
   clientnodeiteratorbackend.cpp
   clientqueryresultiteratorbackend.cpp
   operators.cpp
-  socketdevice.cpp
   dbus/dbusutil.cpp
   dbus/dbusmodelinterface.cpp
   dbus/dbusstatementiteratorinterface.cpp
@@ -56,6 +51,23 @@ set(soprano_client_SRC
   dbus/dbusoperators.cpp
 )
 
+# no unix sockets on windows
+if(NOT WIN32)
+  set(HAVE_UNIX_SOCKETS "yes")
+  set(soprano_server_SRC
+    ${soprano_server_SRC}
+    socketserver.cpp
+    socketdevice.cpp
+  )
+  set(soprano_client_SRC
+    ${soprano_client_SRC}
+    unixsocketclient.cpp
+    socketdevice.cpp
+  )
+endif(NOT WIN32)
+
+configure_file(soprano-server-config.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/soprano-server-config.h)
+
 #set(soprano_serverbackend_SRC
 #  serverbackend.h
 #  serverbackend.cpp
@@ -63,6 +75,7 @@ set(soprano_client_SRC
   
 qt4_automoc(${soprano_server_SRC})
 qt4_automoc(${soprano_client_SRC})
+
 #qt4_automoc(${soprano_serverbackend_SRC})
 
 add_library(sopranoserver SHARED ${soprano_server_SRC})
@@ -90,7 +103,6 @@ target_link_libraries(
   ${QT_QTCORE_LIBRARY}
   ${QT_QTNETWORK_LIBRARY}
   ${QT_QTDBUS_LIBRARY}
-  ${KDEWIN32_LIBRARIES}
   soprano
 )
 
@@ -99,7 +111,6 @@ target_link_libraries(
   ${QT_QTCORE_LIBRARY}
   ${QT_QTNETWORK_LIBRARY}
   ${QT_QTDBUS_LIBRARY}
-  ${KDEWIN32_LIBRARIES}
   soprano
 )
 
@@ -132,5 +143,13 @@ install(
   tcpclient.h
   DESTINATION include/soprano
 )
+
+if(NOT WIN32)
+  install(
+    FILES 
+    unixsocketclient.h
+    DESTINATION include/soprano
+    )
+endif(NOT WIN32)
 
 add_subdirectory(dbus)

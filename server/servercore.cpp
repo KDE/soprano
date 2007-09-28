@@ -25,6 +25,8 @@
 #include "socketdevice.h"
 #include "dbus/dbusserveradaptor.h"
 
+#include "soprano-server-config.h"
+
 #include <soprano/backend.h>
 #include <soprano/storagemodel.h>
 #include <soprano/global.h>
@@ -57,7 +59,9 @@ public:
     DBusServerAdaptor* dbusAdaptor;
 
     QTcpServer* tcpServer;
+#ifdef HAVE_UNIX_SOCKETS
     SocketServer* socketServer;
+#endif
 };
 
 
@@ -149,6 +153,7 @@ bool Soprano::Server::ServerCore::listen( quint16 port )
 
 bool Soprano::Server::ServerCore::start( const QString& name )
 {
+#ifdef HAVE_UNIX_SOCKETS
     clearError();
     if ( !d->socketServer ) {
         d->socketServer = new SocketServer( this );
@@ -168,6 +173,10 @@ bool Soprano::Server::ServerCore::start( const QString& name )
     else {
         return true;
     }
+#else
+    setError( QLatin1String( "Unix socket communication not supported." ) );
+    return false;
+#endif
 }
 
 
@@ -227,11 +236,13 @@ void Soprano::Server::ServerCore::slotNewTcpConnection()
 
 void Soprano::Server::ServerCore::slotNewSocketConnection()
 {
+#ifdef HAVE_UNIX_SOCKETS
     qDebug() << "(ServerCore) new socket connection.";
     ServerConnection* conn = new ServerConnection( this );
     d->connections.append( conn );
     connect( conn, SIGNAL(finished()), this, SLOT(serverConnectionFinished()));
     conn->start( d->socketServer->nextPendingConnection() );
+#endif
 }
 
 #include "servercore.moc"
