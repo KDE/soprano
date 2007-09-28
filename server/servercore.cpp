@@ -46,9 +46,11 @@ class Soprano::Server::ServerCore::Private
 public:
     Private()
         : dbusAdaptor( 0 ),
-          tcpServer( 0 ),
-          socketServer( 0 ) {
-    }
+          tcpServer( 0 )
+#ifdef HAVE_UNIX_SOCKETS
+          , socketServer( 0 ) 
+#endif
+    {}
 
     const Backend* backend;
     QList<BackendSetting> settings;
