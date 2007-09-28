@@ -28,10 +28,10 @@ IF(NOT WIN32)
     check_cxx_compiler_flag(-fvisibility=hidden __SOPRANO_HAVE_GCC_VISIBILITY)
     if(__SOPRANO_HAVE_GCC_VISIBILITY)
         set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fexceptions -fvisibility=default")
+    else(__SOPRANO_HAVE_GCC_VISIBILITY)
+        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fexceptions")
     endif(__SOPRANO_HAVE_GCC_VISIBILITY)
 ENDIF(NOT WIN32)
-
-# FIXME: make sure that CLUcene is compiled with UCS2 support
 
 qt4_automoc(${SOPRANO_INDEX_SRCS})
 
