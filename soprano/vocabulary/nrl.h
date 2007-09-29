@@ -23,6 +23,7 @@
 #define _SOPRANO_NRL_H_
 
 #include <QtCore/QUrl>
+#include <soprano_export.h>
 
 namespace Soprano {
     namespace Vocabulary {
@@ -33,48 +34,48 @@ namespace Soprano {
 	    /**
 	     * The NRL namespace (http://www.semanticdesktop.org/ontologies/2007/08/15/nrl/)
 	     */
-	    QUrl nrlNamespace();
+	    SOPRANO_EXPORT QUrl nrlNamespace();
 
-	    QUrl minCardinality();
-	    QUrl maxCardinality();
-	    QUrl cardinality();
-	    QUrl imports();
-	    QUrl ruleLanguage();
-	    QUrl InverseFunctionalProperty();
-	    QUrl Graph();
-	    QUrl hasSpecification();
-	    QUrl DocumentGraph();
-	    QUrl coreGraphMetadataFor();
-	    QUrl TransitiveProperty();
-	    QUrl FunctionalProperty();
-	    QUrl KnowledgeBase();
-	    QUrl externalRealizer();
-	    QUrl subGraphOf();
-	    QUrl Configuration();
-	    QUrl ViewSpecification();
-	    QUrl hasSemantics();
-	    QUrl ExternalViewSpecification();
-	    QUrl DefaultGraph();
-	    QUrl updatable();
-	    QUrl Semantics();
-	    QUrl equivalentGraph();
-	    QUrl ReflexiveProperty();
-	    QUrl AsymmetricProperty();
-	    QUrl viewOn();
-	    QUrl SymmetricProperty();
-	    QUrl superGraphOf();
-	    QUrl Ontology();
-	    QUrl realizes();
-	    QUrl rule();
-	    QUrl InstanceBase();
-	    QUrl RuleViewSpecification();
-	    QUrl semanticsDefinedBy();
-	    QUrl GraphMetadata();
-	    QUrl graphMetadataFor();
-	    QUrl GraphView();
-	    QUrl Data();
-	    QUrl inverseProperty();
-	    QUrl Schema();
+	    SOPRANO_EXPORT QUrl minCardinality();
+	    SOPRANO_EXPORT QUrl maxCardinality();
+	    SOPRANO_EXPORT QUrl cardinality();
+	    SOPRANO_EXPORT QUrl imports();
+	    SOPRANO_EXPORT QUrl ruleLanguage();
+	    SOPRANO_EXPORT QUrl InverseFunctionalProperty();
+	    SOPRANO_EXPORT QUrl Graph();
+	    SOPRANO_EXPORT QUrl hasSpecification();
+	    SOPRANO_EXPORT QUrl DocumentGraph();
+	    SOPRANO_EXPORT QUrl coreGraphMetadataFor();
+	    SOPRANO_EXPORT QUrl TransitiveProperty();
+	    SOPRANO_EXPORT QUrl FunctionalProperty();
+	    SOPRANO_EXPORT QUrl KnowledgeBase();
+	    SOPRANO_EXPORT QUrl externalRealizer();
+	    SOPRANO_EXPORT QUrl subGraphOf();
+	    SOPRANO_EXPORT QUrl Configuration();
+	    SOPRANO_EXPORT QUrl ViewSpecification();
+	    SOPRANO_EXPORT QUrl hasSemantics();
+	    SOPRANO_EXPORT QUrl ExternalViewSpecification();
+	    SOPRANO_EXPORT QUrl DefaultGraph();
+	    SOPRANO_EXPORT QUrl updatable();
+	    SOPRANO_EXPORT QUrl Semantics();
+	    SOPRANO_EXPORT QUrl equivalentGraph();
+	    SOPRANO_EXPORT QUrl ReflexiveProperty();
+	    SOPRANO_EXPORT QUrl AsymmetricProperty();
+	    SOPRANO_EXPORT QUrl viewOn();
+	    SOPRANO_EXPORT QUrl SymmetricProperty();
+	    SOPRANO_EXPORT QUrl superGraphOf();
+	    SOPRANO_EXPORT QUrl Ontology();
+	    SOPRANO_EXPORT QUrl realizes();
+	    SOPRANO_EXPORT QUrl rule();
+	    SOPRANO_EXPORT QUrl InstanceBase();
+	    SOPRANO_EXPORT QUrl RuleViewSpecification();
+	    SOPRANO_EXPORT QUrl semanticsDefinedBy();
+	    SOPRANO_EXPORT QUrl GraphMetadata();
+	    SOPRANO_EXPORT QUrl graphMetadataFor();
+	    SOPRANO_EXPORT QUrl GraphView();
+	    SOPRANO_EXPORT QUrl Data();
+	    SOPRANO_EXPORT QUrl inverseProperty();
+	    SOPRANO_EXPORT QUrl Schema();
 	}
     }
 }

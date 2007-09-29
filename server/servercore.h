@@ -65,7 +65,7 @@ namespace Soprano {
 	 *
 	 * \warning <b>The API of this class is subject to change. It is likely that it will be split into several classes.</b>
 	 */
-	class SOPRANO_EXPORT ServerCore : public QObject, public Error::ErrorCache
+	class SOPRANO_SERVER_EXPORT ServerCore : public QObject, public Error::ErrorCache
 	{
 	    Q_OBJECT
 

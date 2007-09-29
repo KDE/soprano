@@ -23,6 +23,7 @@
 #define _SOPRANO_RDF_H_
 
 #include <QtCore/QUrl>
+#include <soprano_export.h>
 
 namespace Soprano {
     namespace Vocabulary {
@@ -30,22 +31,22 @@ namespace Soprano {
 	    /**
 	     * The RDF namespace (http://www.w3.org/1999/02/22-rdf-syntax-ns#)
 	     */
-	    QUrl rdfNamespace();
-	    QUrl type();
-	    QUrl Property();
-	    QUrl Statement();
-	    QUrl subject();
-	    QUrl predicate();
-	    QUrl object();
-	    QUrl Bag();
-	    QUrl Seq();
-	    QUrl Alt();
-	    QUrl value();
-	    QUrl List();
-	    QUrl nil();
-	    QUrl first();
-	    QUrl rest();
-	    QUrl XMLLiteral();
+	    SOPRANO_EXPORT QUrl rdfNamespace();
+	    SOPRANO_EXPORT QUrl type();
+	    SOPRANO_EXPORT QUrl Property();
+	    SOPRANO_EXPORT QUrl Statement();
+	    SOPRANO_EXPORT QUrl subject();
+	    SOPRANO_EXPORT QUrl predicate();
+	    SOPRANO_EXPORT QUrl object();
+	    SOPRANO_EXPORT QUrl Bag();
+	    SOPRANO_EXPORT QUrl Seq();
+	    SOPRANO_EXPORT QUrl Alt();
+	    SOPRANO_EXPORT QUrl value();
+	    SOPRANO_EXPORT QUrl List();
+	    SOPRANO_EXPORT QUrl nil();
+	    SOPRANO_EXPORT QUrl first();
+	    SOPRANO_EXPORT QUrl rest();
+	    SOPRANO_EXPORT QUrl XMLLiteral();
 	}
     }
 }

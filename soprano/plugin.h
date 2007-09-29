@@ -23,6 +23,7 @@
 #define _SOPRANO_PLUGIN_H_
 
 #include <QtCore/QString>
+#include <soprano_export.h>
 
 namespace Soprano {
     /**
@@ -37,7 +38,7 @@ namespace Soprano {
      *
      * \author Sebastian Trueg <trueg@kde.org>
      */
-    class Plugin
+    class SOPRANO_EXPORT Plugin
     {
     public:
 	~Plugin();

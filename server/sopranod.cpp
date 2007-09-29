@@ -27,15 +27,17 @@
 #define VERSION "1.6"
 
 namespace {
+#ifndef Q_OS_WIN
     void signalHandler( int signal )
     {
         switch( signal ) {
         case SIGHUP:
-        case SIGINT:
         case SIGQUIT:
+        case SIGINT:
             QCoreApplication::exit( 1 );
         }
     }
+#endif
 }
 
 int usage()
@@ -55,12 +57,14 @@ int main( int argc, char** argv )
 {
     QCoreApplication app( argc, argv );
 
+#ifndef Q_OS_WIN
     struct sigaction sa;
     ::memset( &sa, 0, sizeof( sa ) );
     sa.sa_handler = signalHandler;
     sigaction( SIGHUP, &sa, 0 );
     sigaction( SIGINT, &sa, 0 );
     sigaction( SIGQUIT, &sa, 0 );
+#endif
 
     QStringList args = app.arguments();
     QString backendName;

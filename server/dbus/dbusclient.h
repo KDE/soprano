@@ -44,7 +44,7 @@ namespace Soprano {
 	 *
 	 * \author Sebastian Trueg <trueg@kde.org>
 	 */
-	class SOPRANO_EXPORT DBusClient : public QObject, public Error::ErrorCache
+	class SOPRANO_CLIENT_EXPORT DBusClient : public QObject, public Error::ErrorCache
 	{
 	    Q_OBJECT
 

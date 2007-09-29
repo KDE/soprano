@@ -71,7 +71,7 @@ namespace Soprano {
 	 *
 	 * \author Sebastian Trueg <trueg@kde.org>
 	 */
-	class SOPRANO_EXPORT CLuceneIndex : public Error::ErrorCache
+	class SOPRANO_INDEX_EXPORT CLuceneIndex : public Error::ErrorCache
 	{
 	public:
 	    //@{

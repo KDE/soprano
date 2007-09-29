@@ -25,8 +25,6 @@
 /* needed for KDE_EXPORT and KDE_IMPORT macros */
 #include <QtCore/QtGlobal>
 
-#if defined Q_OS_WIN
-
 #ifndef SOPRANO_EXPORT
 # if defined(MAKE_SOPRANO_LIB)
    /* We are building this library */ 
@@ -37,10 +35,34 @@
 # endif
 #endif
 
-#else /* UNIX */
+#ifndef SOPRANO_SERVER_EXPORT
+# if defined(MAKE_SOPRANO_SERVER_LIB)
+   /* We are building this library */ 
+#  define SOPRANO_SERVER_EXPORT Q_DECL_EXPORT
+# else
+   /* We are using this library */ 
+#  define SOPRANO_SERVER_EXPORT Q_DECL_IMPORT
+# endif
+#endif
 
-#define SOPRANO_EXPORT Q_DECL_EXPORT
+#ifndef SOPRANO_CLIENT_EXPORT
+# if defined(MAKE_SOPRANO_CLIENT_LIB)
+   /* We are building this library */ 
+#  define SOPRANO_CLIENT_EXPORT Q_DECL_EXPORT
+# else
+   /* We are using this library */ 
+#  define SOPRANO_CLIENT_EXPORT Q_DECL_IMPORT
+# endif
+#endif
 
+#ifndef SOPRANO_INDEX_EXPORT
+# if defined(MAKE_SOPRANO_INDEX_LIB)
+   /* We are building this library */ 
+#  define SOPRANO_INDEX_EXPORT Q_DECL_EXPORT
+# else
+   /* We are using this library */ 
+#  define SOPRANO_INDEX_EXPORT Q_DECL_IMPORT
+# endif
 #endif
 
 #endif

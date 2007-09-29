@@ -23,27 +23,27 @@
 #define _SOPRANO_RDFS_H_
 
 #include <QtCore/QUrl>
-
+#include <soprano_export.h>
 
 namespace Soprano {
     namespace Vocabulary {
 	namespace RDFS {
-	    QUrl rdfsNamespace();
-	    QUrl Class();
-	    QUrl comment();
-	    QUrl Datatype();
-	    QUrl domain();
-	    QUrl range();
-	    QUrl label();
-	    QUrl subClassOf();
-	    QUrl subPropertyOf();
-	    QUrl seeAlso();
-	    QUrl Resource();
-	    QUrl member();
-	    QUrl Literal();
-	    QUrl isDefinedBy();
-	    QUrl Container();
-	    QUrl ContainerMembershipProperty();
+	    SOPRANO_EXPORT QUrl rdfsNamespace();
+	    SOPRANO_EXPORT QUrl Class();
+	    SOPRANO_EXPORT QUrl comment();
+	    SOPRANO_EXPORT QUrl Datatype();
+	    SOPRANO_EXPORT QUrl domain();
+	    SOPRANO_EXPORT QUrl range();
+	    SOPRANO_EXPORT QUrl label();
+	    SOPRANO_EXPORT QUrl subClassOf();
+	    SOPRANO_EXPORT QUrl subPropertyOf();
+	    SOPRANO_EXPORT QUrl seeAlso();
+	    SOPRANO_EXPORT QUrl Resource();
+	    SOPRANO_EXPORT QUrl member();
+	    SOPRANO_EXPORT QUrl Literal();
+	    SOPRANO_EXPORT QUrl isDefinedBy();
+	    SOPRANO_EXPORT QUrl Container();
+	    SOPRANO_EXPORT QUrl ContainerMembershipProperty();
 	}
     }
 }

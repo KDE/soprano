@@ -231,7 +231,7 @@ public:
             if ( indexPresent() ) {
                 lucene::index::Term* idTerm = _CLNEW lucene::index::Term( idFieldName().data(), doc->get( idFieldName().data() ) );
                 getIndexReader()->deleteDocuments( idTerm );
-                _CLDELETE( idTerm );
+                _CLDECDELETE( idTerm );
             }
         }
 

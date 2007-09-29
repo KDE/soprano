@@ -37,7 +37,7 @@ namespace Soprano {
 	 * \brief QueryHit represents a hit from an IndexFilterModel query. 
 	 * It basically is an RDF resource combined with a hit score.
 	 */
-	class SOPRANO_EXPORT QueryHit
+	class SOPRANO_INDEX_EXPORT QueryHit
 	{
 	public:
 	    /**

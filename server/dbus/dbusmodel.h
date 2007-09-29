@@ -44,7 +44,7 @@ namespace Soprano {
 	 *
 	 * \author Sebastian Trueg <trueg@kde.org>
 	 */
-	class SOPRANO_EXPORT DBusModel : public Soprano::StorageModel
+	class DBusModel : public Soprano::StorageModel
 	{
 	    Q_OBJECT
 

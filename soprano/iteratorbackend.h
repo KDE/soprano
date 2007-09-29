@@ -36,7 +36,7 @@ namespace Soprano {
      *
      * \author Daniele Galdi <daniele.galdi@gmail.com><br>Sebastian Trueg <trueg@kde.org>
      */
-    template<class T> class SOPRANO_EXPORT IteratorBackend : public Error::ErrorCache
+    template<class T> class IteratorBackend : public Error::ErrorCache
     {
     public:
 	virtual ~IteratorBackend() {}

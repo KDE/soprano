@@ -45,7 +45,7 @@ namespace Soprano {
 	 *
 	 * \author Sebastian Trueg <trueg@kde.org>
 	 */
-	class SOPRANO_EXPORT IndexFilterModel : public Soprano::FilterModel
+	class SOPRANO_INDEX_EXPORT IndexFilterModel : public Soprano::FilterModel
 	{
 	public:
 	    /**

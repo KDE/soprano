@@ -23,6 +23,7 @@
 #define _SOPRANO_INFERENCE_MODEL_H_
 
 #include "filtermodel.h"
+#include <soprano_export.h>
 
 class QUrl;
 
@@ -67,7 +68,7 @@ namespace Soprano {
 	 *
 	 * \author Sebastian Trueg <trueg@kde.org>
 	 */
-	class InferenceModel : public FilterModel
+	class SOPRANO_EXPORT InferenceModel : public FilterModel
 	{
 	    Q_OBJECT
 
