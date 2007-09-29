@@ -23,7 +23,7 @@
 #define _SOPRANO_PLUGIN_H_
 
 #include <QtCore/QString>
-#include <soprano_export.h>
+#include "soprano_export.h"
 
 namespace Soprano {
     /**
