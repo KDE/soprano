@@ -1,9 +1,5 @@
 project(soprano_core)
 
-if (WIN32)
- set(CMAKE_DEBUG_POSTFIX "d")
-endif (WIN32)
- 
 if (APPLE)
  set(CMAKE_INSTALL_NAME_DIR ${LIB_INSTALL_DIR})
  set(CMAKE_BUILD_WITH_INSTALL_RPATH TRUE)

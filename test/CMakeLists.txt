@@ -157,10 +157,13 @@ add_executable(sopranodclienttest sopranodclienttest.cpp)
 target_link_libraries(sopranodclienttest sopranomodeltest sopranoclient ${QT_QTCORE_LIBRARY} ${QT_QTTEST_LIBRARY} ${QT_QTNETWORK_LIBRARY})
 add_test(sopranodclienttest ${EXECUTABLE_OUTPUT_PATH}/sopranodclienttest)
 
-qt4_automoc(sopranodsocketclienttest sopranodsocketclienttest.cpp)
-add_executable(sopranodsocketclienttest sopranodsocketclienttest.cpp)
-target_link_libraries(sopranodsocketclienttest sopranomodeltest sopranoclient ${QT_QTCORE_LIBRARY} ${QT_QTTEST_LIBRARY} ${QT_QTNETWORK_LIBRARY})
-add_test(sopranodsocketclienttest ${EXECUTABLE_OUTPUT_PATH}/sopranodclienttest)
+# no unix sockets on windows
+if(NOT WIN32)
+  qt4_automoc(sopranodsocketclienttest sopranodsocketclienttest.cpp)
+  add_executable(sopranodsocketclienttest sopranodsocketclienttest.cpp)
+  target_link_libraries(sopranodsocketclienttest sopranomodeltest sopranoclient ${QT_QTCORE_LIBRARY} ${QT_QTTEST_LIBRARY} ${QT_QTNETWORK_LIBRARY})
+  add_test(sopranodsocketclienttest ${EXECUTABLE_OUTPUT_PATH}/sopranodclienttest)
+endif(NOT WIN32)
 
 qt4_automoc(sopranodbusclienttest sopranodbusclienttest.cpp)
 add_executable(sopranodbusclienttest sopranodbusclienttest.cpp)
