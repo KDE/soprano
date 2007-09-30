@@ -1,5 +1,10 @@
 project(soprano_parsers)
 
+if(WIN32)
+  set(REDLAND_VERSION "1.0.3")
+  message(STATUS "Windows currently oly has Redland version 1.0.3")
+endif(WIN32)
+
 if(REDLAND_FOUND AND REDLAND_VERSION STRGREATER "1.0.5")
   add_subdirectory(raptor)
 else(REDLAND_FOUND AND REDLAND_VERSION STRGREATER "1.0.5")
