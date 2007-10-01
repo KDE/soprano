@@ -93,7 +93,8 @@
         LIST(APPEND raptor_LIBRARY_DIRS ${_ARG})
       ENDIF(${_ARG} MATCHES "^-L")
     ENDFOREACH(_ARG)
-
+  else(RAPTOR_CONFIG)
+    SET(RAPTOR_VERSION "1.0.0")
   endif(RAPTOR_CONFIG)
 
 
