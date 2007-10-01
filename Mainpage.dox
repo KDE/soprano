@@ -122,7 +122,7 @@
  * %Soprano has five kinds of plugins: Soprano::Backend, Soprano::Parser, Soprano::Serializer,
  * Soprano::Query::Parser, and Soprano::Query::Serializer.
  *
- * Creating a new plugin for %Soprano is pretty easy. Image, for example, we want to write a new Backend plugin.
+ * Creating a new plugin for %Soprano is pretty easy. Imagine, for example, we want to write a new Backend plugin.
  * We simply create a class that inherits from QObject and the Soprano::Backend interface and
  * use the Q_INTERFACES macro to tell Qt's meta-object system about the new plugin. We then
  * export the plugin via the Q_EXPORT_PLUGIN2 macro in the source file.
@@ -151,11 +151,80 @@
  * The plugin then needs to be linked as a library and installed into the lib/soprano
  * target folder.
  *
+ * Finally we need to create a desktop file describing the plugin. The minimal desktop file
+ * looks as follows (for details see \ref soprano_plugin_desktop_file):
+ *
+ * \code
+ * [Desktop Entry]
+ * Encoding=UTF-8
+ * X-Soprano-Library=libsoprano_mybackend
+ * X-Soprano-Version=2.0
+ * Type=Service
+ * ServiceTypes=Soprano/Backend
+ * Name=MyBackend
+ * Comment=My very cool and fast Soprano backend
+ * \endcode
+ *
+ * The desktop file should be installed into share/soprano/plugins so the Soprano::PluginManager
+ * will find it.
+ *
  * All plugin interfaces inherit from Soprano::Error::ErrorCache for error handling and
  * subclasses should use Soprano::Error::ErrorCache::clearError()
  * and Soprano::Error::ErrorCache::setError() to report the status.
  */
 
+/**
+ * \page soprano_plugin_desktop_file Soprano Plugin Desktop Files
+ *
+ * Generic Desktop entries:
+ * \code
+ * [Desktop Entry]
+ * Encoding=UTF-8
+ * \endcode
+ *
+ * The name of the lib to load. This is the filename of the library without the extension.
+ * \code
+ * X-Soprano-Library=
+ * \endcode
+ *
+ * Optional information about the plugin:
+ *
+ * \code
+ * X-Soprano-Plugin-Author=
+ * X-Soprano-Plugin-EMail=
+ * X-Soprano-Plugin-Website=
+ * X-Soprano-Plugin-License=
+ * X-Soprano-Plugin-Version=
+ * \endcode
+ *
+ * The soprano version this plugin has been written for.
+ * The major version is the one that is important.
+ * \code
+ * X-Soprano-Version=
+ * \endcode
+ *
+ * The type always needs to be set to "Service". ServiceTypes can be one of the following:
+ * \li Soprano/Backend
+ * \li Soprano/Parser
+ * \li Soprano/Serializer
+ * \li Soprano/QueryParser
+ * \li Soprano/QuerySerializer
+ *
+ * \code
+ * ServiceTypes=
+ * Type=Service
+ * \endcode
+ *
+ * The name of the plugin (human readable):
+ * \code
+ * Name=
+ * \endcode
+ *
+ * An optional comment to further describe the plugin:
+ * \code
+ * Comment=
+ * \endcode
+ */
 
 // DOXYGEN_VERSION=4.0
 // DOXYGEN_NAME=soprano

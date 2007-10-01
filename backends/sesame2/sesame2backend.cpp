@@ -45,11 +45,21 @@ Soprano::Sesame2::BackendPlugin::~BackendPlugin()
 }
 
 
+bool Soprano::Sesame2::BackendPlugin::isAvailable() const
+{
+    if ( JNIWrapper::instance() ) {
+        delete JNIWrapper::instance();
+        return true;
+    }
+    return false;
+}
+
+
 Soprano::StorageModel* Soprano::Sesame2::BackendPlugin::createModel( const QList<BackendSetting>& settings ) const
 {
     m_mutex.lock();
     if ( !m_jniWrapper ) {
-        m_jniWrapper = new JNIWrapper();
+        m_jniWrapper = JNIWrapper::instance();
 
         // stupid java threading! Looks as if the query parsers need to be initialized in the main thread! Well, even this does not
         // guarantee that but at least it covers most cases.... :(

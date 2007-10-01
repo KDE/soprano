@@ -26,6 +26,9 @@
 #include "soprano_export.h"
 
 namespace Soprano {
+
+    class SopranoPluginFile;
+
     /**
      * \class Plugin plugin.h Soprano/Plugin
      *
@@ -41,9 +44,19 @@ namespace Soprano {
     class SOPRANO_EXPORT Plugin
     {
     public:
-	~Plugin();
+	virtual ~Plugin();
 
 	QString pluginName() const;
+
+	/**
+	 * This method can be reimplemented by plugins that need
+	 * to do additional run-time checks before they can be used.
+	 *
+	 * The default implementation returns \p true.
+	 *
+	 * \return \p true if the plugin can be used.
+	 */
+	virtual bool isAvailable() const;
 
     protected:
 	Plugin( const QString& name );

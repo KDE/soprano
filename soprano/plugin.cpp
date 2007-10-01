@@ -25,6 +25,7 @@ class Soprano::Plugin::Private
 {
 public:
     QString name;
+
 };
 
 
@@ -44,4 +45,10 @@ Soprano::Plugin::~Plugin()
 QString Soprano::Plugin::pluginName() const
 {
     return d->name;
+}
+
+
+bool Soprano::Plugin::isAvailable() const
+{
+    return true;
 }

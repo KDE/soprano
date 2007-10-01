@@ -19,39 +19,38 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef _THREESTORE_CORE_H_
-#define _THREESTORE_CORE_H_
+#ifndef _SOPRANO_SOPRANOPLUGIN_FILE_H_
+#define _SOPRANO_SOPRANOPLUGIN_FILE_H_
 
-#include <QtCore/QObject>
-
+#include "desktopfile.h"
 
 namespace Soprano {
+    /**
+     * Wraps around a .sopranoplugin file.
+     *
+     * Very simple read-only class.
+     */
+    class SopranoPluginFile : public DesktopFile
+    {
+    public:
+	SopranoPluginFile();
+	SopranoPluginFile( const QString& path );
+	~SopranoPluginFile();
 
-    class Backend;
+	bool open( const QString& path );
 
-    namespace ThreeStore {
+	QString library() const;
+	QString pluginAuthor() const;
+	QString pluginEmail() const;
+	QString pluginWebsite() const;
+	QString pluginLicense() const;
+	QString pluginVersion() const;
+	QString sopranoVersion() const;
 
-	class Model;
-
-	class Core : public QObject
-	{
-	public:
-	    Core();
-	    ~Core();
-
-	    static Core* instance();
-
-	    Model* createModel( const Backend* b,
-				const QString& host,
-				const QString& db,
-				const QString& user,
-				const QString& passwd );
-
-	private:
-	    class Private;
-	    Private* d;
-	};
-    }
+    private:
+	class Private;
+	Private* const d;
+    };
 }
 
 #endif

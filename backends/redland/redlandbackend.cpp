@@ -97,7 +97,7 @@ Soprano::StorageModel* Soprano::Redland::BackendPlugin::createModel( const QList
 
     QString os = createRedlandOptionString( redlandOptions );
 
-    qDebug() << "(Soprano::Redland::BackendPlugin) creating model of type " << storageType << " with options " << os << endl;
+    qDebug() << "(Soprano::Redland::BackendPlugin) creating model of type " << storageType << " with options " << os;
 
     // create a new storage
     librdf_storage* storage = librdf_new_storage( World::self()->worldPtr(),
@@ -105,7 +105,7 @@ Soprano::StorageModel* Soprano::Redland::BackendPlugin::createModel( const QList
                                                   storageName.toUtf8().data(),
                                                   os.toUtf8().data() );
     if( !storage ) {
-        qDebug() << "(Soprano::Redland) storage creation failed!" << endl;
+        qDebug() << "(Soprano::Redland) storage creation failed!";
         setError( Redland::World::self()->lastError() );
         return 0;
     }

@@ -32,3 +32,10 @@ INSTALL(TARGETS soprano_raptorserializer
 	RUNTIME DESTINATION bin/soprano
 	ARCHIVE DESTINATION lib/soprano
 )
+
+configure_file(raptorserializer.desktop.cmake ${CMAKE_CURRENT_BINARY_DIR}/raptorserializer.desktop)
+
+INSTALL(FILES
+  ${CMAKE_CURRENT_BINARY_DIR}/raptorserializer.desktop
+  DESTINATION share/soprano/plugins
+  )

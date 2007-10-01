@@ -45,6 +45,8 @@ namespace Soprano {
 
 	    BackendFeatures supportedFeatures() const;
 
+	    bool isAvailable() const;
+
 	private:
 	    mutable JNIWrapper* m_jniWrapper;
 	    mutable QMutex m_mutex;

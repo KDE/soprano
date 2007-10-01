@@ -35,3 +35,10 @@ INSTALL(TARGETS soprano_rasqalqueryparser
 	RUNTIME DESTINATION bin/soprano
 	ARCHIVE DESTINATION lib/soprano
 )
+
+configure_file(rasqalqueryparser.desktop.cmake ${CMAKE_CURRENT_BINARY_DIR}/rasqalqueryparser.desktop)
+
+INSTALL(FILES
+  ${CMAKE_CURRENT_BINARY_DIR}/rasqalqueryparser.desktop
+  DESTINATION share/soprano/plugins
+  )

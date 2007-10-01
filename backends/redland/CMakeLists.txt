@@ -61,3 +61,10 @@ INSTALL(TARGETS soprano_redlandbackend
   RUNTIME DESTINATION bin/soprano
   ARCHIVE DESTINATION lib/soprano
   )
+
+configure_file(redlandbackend.desktop.cmake ${CMAKE_CURRENT_BINARY_DIR}/redlandbackend.desktop)
+
+INSTALL(FILES
+  ${CMAKE_CURRENT_BINARY_DIR}/redlandbackend.desktop
+  DESTINATION share/soprano/plugins
+  )

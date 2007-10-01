@@ -51,23 +51,6 @@ JNIWrapper::JNIWrapper()
     : d( new Private() )
 {
     s_instance = this;
-
-    // prepare the VM options
-    JavaVMInitArgs vmArgs;
-    JavaVMOption vmOptions[2];
-    vmOptions[0].optionString = ( char* )"-Djava.class.path="SESAME2_CLASSPATH;
-    vmOptions[1].optionString = ( char* )"-verbose:jni,gc,class";
-    vmArgs.version = JNI_VERSION_1_6;
-    vmArgs.options = vmOptions;
-    vmArgs.nOptions = 2;
-
-    // create the VM
-    Q_ASSERT( JNI_CreateJavaVM( &d->jvm, reinterpret_cast<void**>( &d->jniEnv ), &vmArgs ) >= 0 );
-
-    Q_ASSERT( d->jvm );
-    Q_ASSERT( d->jniEnv );
-
-    d->jniEnvMap[QThread::currentThreadId()] = d->jniEnv;
 }
 
 
@@ -81,6 +64,28 @@ JNIWrapper::~JNIWrapper()
 
 JNIWrapper* JNIWrapper::instance()
 {
+    if ( !s_instance ) {
+        // prepare the VM options
+        JavaVMInitArgs vmArgs;
+        JavaVMOption vmOptions[2];
+        vmOptions[0].optionString = ( char* )"-Djava.class.path="SESAME2_CLASSPATH;
+        vmOptions[1].optionString = ( char* )"-verbose:jni,gc,class";
+        vmArgs.version = JNI_VERSION_1_6;
+        vmArgs.options = vmOptions;
+        vmArgs.nOptions = 2;
+
+        // create the VM
+        JavaVM* jvm = 0;
+        JNIEnv* jniEnv = 0;
+        if ( JNI_CreateJavaVM( &jvm, reinterpret_cast<void**>( &jniEnv ), &vmArgs ) >= 0 ) {
+            Q_ASSERT( jvm );
+            Q_ASSERT( jniEnv );
+            s_instance = new JNIWrapper();
+            s_instance->d->jvm = jvm;
+            s_instance->d->jniEnv = jniEnv;
+            s_instance->d->jniEnvMap[QThread::currentThreadId()] = jniEnv;
+        }
+    }
     return s_instance;
 }
 

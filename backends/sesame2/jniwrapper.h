@@ -37,7 +37,6 @@
 class JNIWrapper
 {
 public:
-    JNIWrapper();
     ~JNIWrapper();
 
     JNIEnv* env() const;
@@ -60,6 +59,8 @@ public:
     static JNIWrapper* instance();
 
 private:
+    JNIWrapper();
+
     static JNIWrapper* s_instance;
 
     class Private;

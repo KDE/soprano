@@ -79,6 +79,9 @@ SET(soprano_SRCS
   inference/inferencemodel.cpp
   inference/inferenceruleparser.cpp
   nrlmodel.cpp
+  inifile.cpp
+  desktopfile.cpp
+  sopranopluginfile.cpp
   )
 
 qt4_automoc(${soprano_SRCS})

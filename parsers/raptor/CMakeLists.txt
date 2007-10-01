@@ -32,3 +32,10 @@ INSTALL(TARGETS soprano_raptorparser
 	RUNTIME DESTINATION bin/soprano
 	ARCHIVE DESTINATION lib/soprano
 )
+
+configure_file(raptorparser.desktop.cmake ${CMAKE_CURRENT_BINARY_DIR}/raptorparser.desktop)
+
+INSTALL(FILES
+  ${CMAKE_CURRENT_BINARY_DIR}/raptorparser.desktop
+  DESTINATION share/soprano/plugins
+  )

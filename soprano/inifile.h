@@ -19,60 +19,37 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef THREE_STORE_QUERY_RESULT_H
-#define THREE_STORE_QUERY_RESULT_H
+#ifndef _SOPRANO_INI_FILE_H_
+#define _SOPRANO_INI_FILE_H_
 
-#include "queryresultiteratorbackend.h"
-
-extern "C" {
-#include <rasqal.h>
-#include <3store3/datatypes.h>
-}
-
+#include <QtCore/QStringList>
 
 namespace Soprano {
+    /**
+     * Wraps around a Windows INI style config file.
+     *
+     * Very simple read-only class.
+     */
+    class IniFile
+    {
+    public:
+	IniFile();
+	IniFile( const QString& path );
+	virtual ~IniFile();
 
-    class Model;
-    class Node;
-    class Statement;
+	virtual bool open( const QString& path );
+	virtual void close();
 
-    namespace ThreeStore {
+	QString fileName() const;
 
-	class QueryResult : public Soprano::QueryResultIteratorBackend
-	{
-	public:
-	    QueryResult( ts_result* );
-	    ~QueryResult();
+	QStringList groups() const;
 
-	    bool next();
+	QString readEntry( const QString& group, const QString& entry ) const;
 
-	    Statement currentStatement() const;
-
-	    Node binding( const QString &name ) const;
-
-	    Node binding( int offset ) const;
-
-	    int bindingCount() const;
-
-	    QStringList bindingNames() const;
-
-	    bool isGraph() const;
-
-	    bool isBinding() const;
-
-	    bool isBool() const;
-
-	    bool boolValue() const;
-
-	    void close();
-
-	private:
-	    class Private;
-	    Private* d;
-	};
-
-    }
+    private:
+	class Private;
+	Private* const d;
+    };
 }
 
 #endif
-

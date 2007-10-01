@@ -49,3 +49,10 @@ INSTALL(FILES
   slf4j-simple-1.4.2.jar
   DESTINATION share/soprano/sesame2
   )
+
+configure_file(sesame2backend.desktop.cmake ${CMAKE_CURRENT_BINARY_DIR}/sesame2backend.desktop)
+
+INSTALL(FILES
+  ${CMAKE_CURRENT_BINARY_DIR}/sesame2backend.desktop
+  DESTINATION share/soprano/plugins
+  )

@@ -1,4 +1,4 @@
-/* 
+/*
  * This file is part of Soprano Project.
  *
  * Copyright (C) 2007 Sebastian Trueg <trueg@kde.org>
@@ -19,30 +19,37 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef _THREE_STORE_BACKEND_H_
-#define _THREE_STORE_BACKEND_H_
+#ifndef _SOPRANO_DESKTOP_FILE_H_
+#define _SOPRANO_DESKTOP_FILE_H_
 
-#include <soprano/backend.h>
+#include "inifile.h"
 
-#include <QObject>
-
-namespace Soprano
-{
-  namespace ThreeStore
+namespace Soprano {
+    /**
+     * Wraps around a .desktop file.
+     *
+     * Very simple read-only class.
+     */
+    class DesktopFile : public IniFile
     {
-      class BackendPlugin : public QObject, public Soprano::Backend
-	{
-	  Q_OBJECT
-	  Q_INTERFACES(Soprano::Backend)
+    public:
+	DesktopFile();
+	DesktopFile( const QString& path );
+	~DesktopFile();
 
-	public:
-	  BackendPlugin();
+	bool open( const QString& path );
 
-	  StorageModel* createModel( const QList<BackendSetting>& settings = QList<BackendSetting>() ) const;
+	QString name() const;
+	QString comment() const;
+	QString type() const;
+	QString serviceTypes() const;
 
-	  BackendFeatures supportedFeatures() const;
-	};
-    }
+	static QString desktopEntryGroup();
+
+    private:
+	class Private;
+	Private* const d;
+    };
 }
 
 #endif

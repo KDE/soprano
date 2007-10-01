@@ -1,0 +1,32 @@
+[Desktop Entry]
+Encoding=UTF-8
+
+# The name of the lib to load
+X-Soprano-Library=
+
+# Information about the plugin (all optional)
+X-Soprano-Plugin-Author=
+X-Soprano-Plugin-EMail=
+X-Soprano-Plugin-Website=
+X-Soprano-Plugin-License=
+X-Soprano-Plugin-Version=
+
+# The soprano version this plugin has been written for
+# The major version is the one that is important
+X-Soprano-Version=
+
+Type=Service
+
+# Once of:
+# - Soprano/Backend
+# - Soprano/Parser
+# - Soprano/Serializer
+# - Soprano/QueryParser
+# - Soprano/QuerySerializer
+ServiceTypes=Soprano/
+
+# Name of the plugin (human readable)
+Name=
+
+# Comment to further describe the plugin (optional)
+Comment=

@@ -186,9 +186,8 @@ namespace Soprano
     private:
 	PluginManager( QObject* parent = 0 );
 	void loadAllPlugins();
+	void loadPlugin( const QString& path );
 	void loadPlugins( const QString& path );
-
-	const QStringList libraryPath();
 
 	class Private;
 	Private* const d;
