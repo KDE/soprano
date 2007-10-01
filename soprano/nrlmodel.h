@@ -27,7 +27,7 @@
 
 namespace Soprano {
     /**
-     * \class NRLModel nrlmodel.h soprano/NRLModel
+     * \class NRLModel nrlmodel.h Soprano/NRLModel
      *
      * \brief Model filter that enforces NRL cardinality rules.
      *

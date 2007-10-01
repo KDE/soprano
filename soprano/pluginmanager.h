@@ -41,7 +41,7 @@ namespace Soprano
     }
 
     /**
-     * \class PluginManager pluginmanager.h soprano/PluginManager
+     * \class PluginManager pluginmanager.h Soprano/PluginManager
      *
      * \brief The PluginManager loads and maintains all %Soprano plugins.
      *

@@ -41,7 +41,7 @@ namespace Soprano {
     class BindingSet;
 
     /**
-     * \class QueryResultIterator queryresultiterator.h soprano/QueryResultIterator
+     * \class QueryResultIterator queryresultiterator.h Soprano/QueryResultIterator
      *
      * \brief An iterator for query results.
      *

@@ -22,7 +22,7 @@
 #ifndef _SOPRANO_ERROR_H_
 #define _SOPRANO_ERROR_H_
 
-#include <soprano/soprano_export.h>
+#include "soprano_export.h"
 
 #include <QtCore/QString>
 #include <QtCore/QSharedDataPointer>
@@ -38,12 +38,12 @@ namespace Soprano {
 	 * \sa Error::code()
 	 */
 	enum ErrorCode {
-	    ErrorNone = 0x0,              /**< No error occured, i.e. success. */
+	    ErrorNone = 0x0,             /**< No error occured, i.e. success. */
 	    ErrorInvalidArgument = 0x1,  /**< Error indicating that a method argument was invalid. For example an invalid Statement in Model::addStatement(). */
 	    ErrorInvalidStatement = ErrorInvalidArgument, /**< \deprecated: use ErrorInvalidArgument */
 	    ErrorNotSupported = 0x2,     /**< Error indicating that a certain functionality is not supported. */
 	    ErrorParsingFailed = 0x3,    /**< Parsing a query or an RDF serialization failed. */
-	    ErrorUnknown = 0x1000         /**< An unknown error occured. */
+	    ErrorUnknown = 0x1000        /**< An unknown error occured. */
 	};
 
 	/**
@@ -64,7 +64,7 @@ namespace Soprano {
 	class ParserError;
 
 	/**
-	 * \class Error error.h soprano/Error/Error
+	 * \class Error error.h Soprano/Error/Error
 	 *
 	 * \brief Represents an error in %Soprano.
 	 *
@@ -174,7 +174,7 @@ namespace Soprano {
 	class Locator;
 
 	/**
-	 * \class ParserError error.h soprano/Error/ParserError
+	 * \class ParserError error.h Soprano/Error/ParserError
 	 *
 	 * \brief Represents a parser error in %Soprano.
 	 *
@@ -215,7 +215,7 @@ namespace Soprano {
 	};
 
 	/**
-	 * \class ErrorCache error.h soprano/Error/ErrorCache
+	 * \class ErrorCache error.h Soprano/Error/ErrorCache
 	 *
 	 * The ErrorCache caches Error instances for different threads.
 	 * Each thread has its own last error. This mechanism tries to

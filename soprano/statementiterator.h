@@ -38,7 +38,7 @@ namespace Soprano {
     class StatementIteratorBackend;
 
     /**
-     * \class StatementIterator statementiterator.h soprano/StatementIterator
+     * \class StatementIterator statementiterator.h Soprano/StatementIterator
      *
      * \brief An iterator that provides a stream of Statements.
      *

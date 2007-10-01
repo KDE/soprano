@@ -32,7 +32,7 @@
 namespace Soprano {
 
     /**
-     * \class Iterator iterator.h soprano/Iterator
+     * \class Iterator iterator.h Soprano/Iterator
      *
      * \brief The basic %Soprano iterator class.
      *

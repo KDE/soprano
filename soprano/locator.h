@@ -31,7 +31,7 @@ namespace Soprano
 {
     namespace Error {
 	/**
-	 * \class Locator locator.h soprano/Error/Locator
+	 * \class Locator locator.h Soprano/Error/Locator
 	 *
 	 * A Locator object provides additional information about
 	 * parsing errors.

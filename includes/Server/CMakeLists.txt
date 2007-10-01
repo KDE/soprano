@@ -1,4 +1,4 @@
 install(FILES
   ServerCore
   DESTINATION
-  include/soprano/Server)
+  include/Soprano/Server)

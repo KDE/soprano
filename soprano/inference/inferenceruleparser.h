@@ -32,7 +32,7 @@ namespace Soprano {
 	class RuleSet;
 
 	/**
-	 * \class RuleParser inferenceruleparser.h soprano/Inference/RuleParser
+	 * \class RuleParser inferenceruleparser.h Soprano/Inference/RuleParser
 	 *
 	 * \brief The RuleParser can be used to parse %Soprano rule files.
 	 *

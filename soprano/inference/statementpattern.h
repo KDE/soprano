@@ -38,7 +38,7 @@ namespace Soprano {
 	class NodePattern;
 
 	/**
-	 * \class StatementPattern statementpattern.h soprano/Inference/StatementPattern
+	 * \class StatementPattern statementpattern.h Soprano/Inference/StatementPattern
 	 *
 	 * \brief Building block of an inference Rule.
 	 *

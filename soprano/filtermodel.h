@@ -28,7 +28,7 @@
 
 namespace Soprano {
     /**
-     * \class FilterModel filtermodel.h soprano/FilterModel
+     * \class FilterModel filtermodel.h Soprano/FilterModel
      *
      * \brief A FilterModel is a virtual model that wraps another Model.
      * 

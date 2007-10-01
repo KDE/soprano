@@ -22,13 +22,13 @@
 #ifndef SOPRANO_STATEMENT_H
 #define SOPRANO_STATEMENT_H
 
-#include <soprano/node.h>
-#include <soprano/soprano_export.h>
+#include "node.h"
+#include "soprano_export.h"
 
 namespace Soprano
 {
     /**
-     * \class Statement statement.h soprano/Statement
+     * \class Statement statement.h Soprano/Statement
      *
      * \brief A Statement instance represents one RDF quadruple.
      *

@@ -31,7 +31,7 @@
 namespace Soprano
 {
     /**
-     * \class LiteralValue literalvalue.h soprano/LiteralValue
+     * \class LiteralValue literalvalue.h Soprano/LiteralValue
      *
      * \brief Represents a literal value of an RDF node.
      *

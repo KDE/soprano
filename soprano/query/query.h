@@ -959,7 +959,7 @@ namespace Soprano
         };
         
 	/**
-	 * \class Query query.h soprano/Query/Query
+	 * \class Query query.h Soprano/Query/Query
 	 *
 	 * \warning <b>The API is subject to change and far from being stable.</b>
 	 */

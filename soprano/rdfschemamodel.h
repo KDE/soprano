@@ -31,7 +31,7 @@ namespace Soprano {
     class StatementIterator;
 
     /**
-     * \class RdfSchemaWrapper rdfschemawrapper.h soprano/RdfSchemaWrapper
+     * \class RdfSchemaWrapper rdfschemawrapper.h Soprano/RdfSchemaWrapper
      *
      * \brief Provides convenience methods to handle RDFS data.
      *

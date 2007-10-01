@@ -34,7 +34,7 @@ namespace Soprano {
     class Node;
 
     /**
-     * \class BindingSet bindingset.h soprano/BindingSet
+     * \class BindingSet bindingset.h Soprano/BindingSet
      *
      * \brief Represents one set of bindings in the result of a select query.
      *

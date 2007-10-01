@@ -38,7 +38,7 @@ namespace Soprano
     class StatementIterator;
 
     /**
-     * \class Parser parser.h soprano/Parser
+     * \class Parser parser.h Soprano/Parser
      *
      * \brief Soprano::Parser defines the interface for a Soprano RDF parser plugin.
      *

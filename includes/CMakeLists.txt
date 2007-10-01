@@ -1,6 +1,8 @@
+
 project(soprano_includes)
 
 install(FILES
+  Soprano
   Model
   Statement
   Node
@@ -26,13 +28,9 @@ install(FILES
   RdfSchemaWrapper
   StorageModel
   DummyModel
+  Global
   DESTINATION
-  include/soprano)
-
-install(FILES
-  Soprano
-  DESTINATION
-  include)
+  include/Soprano)
 
 add_subdirectory(Error)
 add_subdirectory(Server)

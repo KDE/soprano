@@ -42,7 +42,7 @@ namespace Soprano {
 	class Rule;
 
 	/**
-	 * \class RuleSet inferenceruleset.h soprano/Inference/RuleSet
+	 * \class RuleSet inferenceruleset.h Soprano/Inference/RuleSet
 	 *
 	 * \brief A set of inference rules.
 	 *

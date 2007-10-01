@@ -35,7 +35,7 @@ namespace Soprano {
     class NodeIteratorBackend;
 
     /**
-     * \class NodeIterator nodeiterator.h soprano/NodeIterator
+     * \class NodeIterator nodeiterator.h Soprano/NodeIterator
      *
      * \brief An iterator that provides a stream of Nodes.
      *

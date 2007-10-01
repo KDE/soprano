@@ -36,7 +36,7 @@ namespace Soprano {
 	class Query;
 
 	/**
-	 * \class Serializer queryserializer.h soprano/Query/Serializer
+	 * \class Serializer queryserializer.h Soprano/Query/Serializer
 	 *
 	 * \brief Soprano::Query::Serializer defines the interface for a Soprano query serializer plugin.
 	 *

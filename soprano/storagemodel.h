@@ -30,7 +30,7 @@ namespace Soprano {
     class Backend;
 
     /**
-     * \class StorageModel storagemodel.h soprano/StorageModel
+     * \class StorageModel storagemodel.h Soprano/StorageModel
      *
      * \brief Base class for all Model implementations that store data (as compared to FilterModel).
      *

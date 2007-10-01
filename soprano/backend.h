@@ -37,7 +37,7 @@ namespace Soprano
     class StorageModel;
 
     /**
-     * \class BackendSetting backend.h soprano/BackendSetting
+     * \class BackendSetting backend.h Soprano/BackendSetting
      *
      * \brief Wraps one setting for Model creation.
      *
@@ -117,7 +117,7 @@ namespace Soprano
     typedef QList<BackendSetting> BackendSettings;
 
     /**
-     * \class Backend backend.h soprano/Backend
+     * \class Backend backend.h Soprano/Backend
      *
      * \brief Soprano::Backend defines the interface for a Soprano backend plugin.
      *

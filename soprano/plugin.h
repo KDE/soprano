@@ -27,7 +27,7 @@
 
 namespace Soprano {
     /**
-     * \class Plugin plugin.h soprano/Plugin
+     * \class Plugin plugin.h Soprano/Plugin
      *
      * \brief Base class for all plugins in %Soprano.
      *

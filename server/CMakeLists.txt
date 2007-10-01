@@ -144,12 +144,12 @@ install(
   DESTINATION include/soprano
 )
 
-if(NOT WIN32)
+if(HAVE_UNIX_SOCKETS)
   install(
     FILES 
     unixsocketclient.h
     DESTINATION include/soprano
     )
-endif(NOT WIN32)
+endif(HAVE_UNIX_SOCKETS)
 
 add_subdirectory(dbus)

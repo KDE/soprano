@@ -29,7 +29,7 @@
 namespace Soprano
 {
     /**
-     * \class DummyModel dummymodel.h soprano/DummyModel
+     * \class DummyModel dummymodel.h Soprano/DummyModel
      *
      * \brief A dummy model. All its methods do nothing and always
      * fail with a default error.

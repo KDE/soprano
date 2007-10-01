@@ -45,7 +45,7 @@ namespace Soprano
     }
 
     /**
-     * \class Model model.h soprano/Model
+     * \class Model model.h Soprano/Model
      *
      * \brief A Model is the central class in %Soprano. It is a queryable
      * collection of RDF quadruples, i.e statements.

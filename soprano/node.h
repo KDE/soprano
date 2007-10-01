@@ -33,7 +33,7 @@
 namespace Soprano
 {
     /**
-     * \class Node node.h soprano/Node
+     * \class Node node.h Soprano/Node
      *
      * \brief A Node represents one RDF resource.
      *

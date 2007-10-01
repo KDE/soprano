@@ -3,4 +3,4 @@ install(FILES
   DBusClient
   DBusModel
   DESTINATION
-  include/soprano/Client)
+  include/Soprano/Client)

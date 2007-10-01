@@ -36,7 +36,7 @@ namespace Soprano {
 	class Rule;
 
 	/**
-	 * \class InferenceModel inferencemodel.h soprano/Inference/InferenceModel
+	 * \class InferenceModel inferencemodel.h Soprano/Inference/InferenceModel
 	 *
 	 * \brief The Soprano Inference Model provides a simple forward chaining inference engine
 	 * which uses the underlying parent model itself to store status information.
