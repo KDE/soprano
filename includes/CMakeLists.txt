@@ -25,6 +25,7 @@ install(FILES
   Plugin
   Serializer
   SimpleStatementIterator
+  SimpleNodeIterator
   RdfSchemaWrapper
   StorageModel
   DummyModel
