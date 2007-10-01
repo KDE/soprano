@@ -27,12 +27,11 @@
 #include <QtCore/QList>
 #include <QtCore/QPointer>
 
+#include "clientconnection.h"
+
 
 namespace Soprano {
     namespace Client {
-
-	class ClientConnection;
-
 	class ClientModel : public StorageModel
 	{
 	    Q_OBJECT
