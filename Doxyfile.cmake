@@ -102,7 +102,10 @@ INPUT                  = ${soprano_SOURCE_DIR}/soprano \
 INPUT_ENCODING         = UTF-8
 FILE_PATTERNS          = *.h
 RECURSIVE              = NO
-EXCLUDE                = ${soprano_SOURCE_DIR}/soprano/datetime.h
+EXCLUDE                = ${soprano_SOURCE_DIR}/soprano/datetime.h \
+                         ${soprano_SOURCE_DIR}/soprano/inifile.h \
+                         ${soprano_SOURCE_DIR}/soprano/desktopfile.h \
+                         ${soprano_SOURCE_DIR}/soprano/sopranopluginfile.h
 EXCLUDE_SYMLINKS       = NO
 EXCLUDE_PATTERNS       = 
 EXCLUDE_SYMBOLS        = 
