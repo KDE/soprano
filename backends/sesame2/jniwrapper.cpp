@@ -43,7 +43,7 @@ public:
     JavaVM* jvm;
     JNIEnv* jniEnv;
 
-    QHash<Qt::HANDLE, JNIEnv*> jniEnvMap;
+    QHash<QThread*, JNIEnv*> jniEnvMap;
 };
 
 
@@ -83,7 +83,10 @@ JNIWrapper* JNIWrapper::instance()
             s_instance = new JNIWrapper();
             s_instance->d->jvm = jvm;
             s_instance->d->jniEnv = jniEnv;
-            s_instance->d->jniEnvMap[QThread::currentThreadId()] = jniEnv;
+            s_instance->d->jniEnvMap[QThread::currentThread()] = jniEnv;
+        }
+        else {
+            qDebug() << "Failed to create Java VM.";
         }
     }
     return s_instance;
@@ -92,11 +95,11 @@ JNIWrapper* JNIWrapper::instance()
 
 JNIEnv* JNIWrapper::env() const
 {
-    QHash<Qt::HANDLE, JNIEnv*>::const_iterator it = d->jniEnvMap.find( QThread::currentThreadId() );
+    QHash<QThread*, JNIEnv*>::const_iterator it = d->jniEnvMap.find( QThread::currentThread() );
     if ( it == d->jniEnvMap.constEnd() ) {
         JNIEnv* env = 0;
         Q_ASSERT( d->jvm->AttachCurrentThreadAsDaemon( ( void** )&env, 0 ) == 0 );
-        d->jniEnvMap[QThread::currentThreadId()] = env;
+        d->jniEnvMap[QThread::currentThread()] = env;
         return env;
     }
     else {

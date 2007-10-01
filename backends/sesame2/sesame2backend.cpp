@@ -47,10 +47,17 @@ Soprano::Sesame2::BackendPlugin::~BackendPlugin()
 
 bool Soprano::Sesame2::BackendPlugin::isAvailable() const
 {
-    if ( JNIWrapper::instance() ) {
-        delete JNIWrapper::instance();
+    if ( m_jniWrapper ) {
         return true;
     }
+
+    // FIXME: there is some problem with JNI. If I delete it
+    // nothing works.
+    if ( JNIWrapper::instance() ) {
+        //   delete JNIWrapper::instance();
+        return true;
+    }
+
     return false;
 }
 
