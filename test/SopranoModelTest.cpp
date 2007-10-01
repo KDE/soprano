@@ -295,20 +295,9 @@ void SopranoModelTest::testListStatementsWithContext()
 
     QVERIFY( m_model->addStatements( statements ) == Error::ErrorNone );
 
-    // list all of them
-    StatementIterator it = m_model->listStatements( Statement() );
-    int cnt = 0;
-    while( it.next() ) {
-        ++cnt;
-        Statement st = *it;
-        QVERIFY( st.context().isValid() );
-    }
-
-    QCOMPARE( cnt, 30 );
-
     // with context as wildcard
-    it = m_model->listStatements( Statement( Node(), Node(), Node(), context1 ) );
-    cnt = 0;
+    StatementIterator it = m_model->listStatements( Statement( Node(), Node(), Node(), context1 ) );
+    int cnt = 0;
     while( it.next() ) {
         ++cnt;
         Statement st = *it;

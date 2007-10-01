@@ -17,7 +17,7 @@
 #if (REDLAND_LIBRARIES AND REDLAND_INCLUDE_DIR AND RASQAL_INCLUDE_DIR AND RASQAL_LIBRARIES AND RAPTOR_LIBRARIES)
 
   # in cache already
- # set(REDLAND_FOUND TRUE)
+#  set(REDLAND_FOUND TRUE)
 
 #else (REDLAND_LIBRARIES AND REDLAND_INCLUDE_DIR and RASQUAL_INCLUDE_DIR AND RASQAL_LIBRARIES AND RAPTOR_LIBRARIES)
 
@@ -29,8 +29,9 @@
   if(REDLAND_CONFIG)
     EXECUTE_PROCESS(
       COMMAND redland-config --version
-      OUTPUT_VARIABLE redland_VERSION
+      OUTPUT_VARIABLE REDLAND_VERSION
       )
+    STRING(REPLACE "\n" "" REDLAND_VERSION ${REDLAND_VERSION})
 
     # extract include paths from redland-config
     EXECUTE_PROCESS(
@@ -63,6 +64,12 @@
     NAMES raptor-config
     )
   if(RAPTOR_CONFIG)
+    EXECUTE_PROCESS(
+      COMMAND raptor-config --version
+      OUTPUT_VARIABLE RAPTOR_VERSION
+      )
+    STRING(REPLACE "\n" "" RAPTOR_VERSION ${RAPTOR_VERSION})
+
     # extract include paths from raptor-config
     EXECUTE_PROCESS(
       COMMAND raptor-config --cflags
@@ -97,6 +104,12 @@
     )
 
   if(RASQAL_CONFIG)
+    EXECUTE_PROCESS(
+      COMMAND rasqal-config --version
+      OUTPUT_VARIABLE RASQAL_VERSION
+      )
+    STRING(REPLACE "\n" "" RASQAL_VERSION ${RASQAL_VERSION})
+
     # extract include paths from rasqal-config
     EXECUTE_PROCESS(
       COMMAND rasqal-config --cflags
@@ -140,6 +153,14 @@
     if(RASQAL_INCLUDE_DIR_TMP)
       set(RASQAL_INCLUDE_DIR ${RASQAL_INCLUDE_DIR_TMP}/redland CACHE PATH "Path to a file.")
     endif(RASQAL_INCLUDE_DIR_TMP)
+
+    find_path(RAPTOR_INCLUDE_DIR_TMP redland/raptor.h
+      PATHS
+      ${redland_INCLUDE_DIRS}
+    )
+    if(RAPTOR_INCLUDE_DIR_TMP)
+      set(RAPTOR_INCLUDE_DIR ${RAPTOR_INCLUDE_DIR_TMP}/redland CACHE PATH "Path to a file.")
+    endif(RAPTOR_INCLUDE_DIR_TMP)
   else(WIN32)
     find_path(REDLAND_INCLUDE_DIR redland.h
       PATHS
@@ -150,6 +171,12 @@
       PATHS
       ${redland_INCLUDE_DIRS}
       ${rasqal_INCLUDE_DIRS}
+      /usr/X11/include
+    )
+    find_path(RAPTOR_INCLUDE_DIR raptor.h
+      PATHS
+      ${redland_INCLUDE_DIRS}
+      ${raptor_INCLUDE_DIRS}
       /usr/X11/include
     )
   endif(WIN32)
@@ -169,21 +196,16 @@
     ${raptor_LIBRARY_DIRS}
   )
 
-  MESSAGE(STATUS "redland libs: ${REDLAND_LIBRARIES}")
-  MESSAGE(STATUS "redland includes: ${REDLAND_INCLUDE_DIR}")
-  MESSAGE(STATUS "rasqal includes: ${RASQAL_INCLUDE_DIR}")
-  MESSAGE(STATUS "rasqal libs: ${RASQAL_LIBRARIES}")
-  MESSAGE(STATUS "raptor libs: ${RAPTOR_LIBRARIES}")
-
   if (REDLAND_LIBRARIES AND REDLAND_INCLUDE_DIR AND RASQAL_INCLUDE_DIR AND RASQAL_LIBRARIES AND RAPTOR_LIBRARIES)
     set(REDLAND_FOUND TRUE)
   endif (REDLAND_LIBRARIES AND REDLAND_INCLUDE_DIR AND RASQAL_INCLUDE_DIR AND RASQAL_LIBRARIES AND RAPTOR_LIBRARIES)
 
   if (REDLAND_FOUND)
     set(REDLAND_DEFINITIONS ${redland_CFLAGS})
-    set(REDLAND_VERSION ${redland_VERSION})
     if (NOT Redland_FIND_QUIETLY)
-      message(STATUS "Found Redland: ${REDLAND_LIBRARIES}")
+      message(STATUS "Found Redland ${REDLAND_VERSION}: libs - ${REDLAND_LIBRARIES}; includes - ${REDLAND_INCLUDE_DIR}")
+      message(STATUS "Found Raptor ${RAPTOR_VERSION}: libs - ${RAPTOR_LIBRARIES}; includes - ${RAPTOR_INCLUDE_DIR}")
+      message(STATUS "Found Rasqal ${RASQAL_VERSION}: libs - ${RASQAL_LIBRARIES}; includes - ${RASQAL_INCLUDE_DIR}")
     endif (NOT Redland_FIND_QUIETLY)
   else (REDLAND_FOUND)
     if (Redland_FIND_REQUIRED)

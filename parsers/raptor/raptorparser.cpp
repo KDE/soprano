@@ -21,6 +21,7 @@
  */
 
 #include "raptorparser.h"
+#include "raptor-config.h"
 #include "../../backends/redland/redlandworld.h"
 #include "../../backends/redland/redlandstatementiterator.h"
 #include "../../backends/redland/redlandutil.h"
@@ -67,7 +68,13 @@ Soprano::Raptor::Parser::~Parser()
 
 Soprano::RdfSerializations Soprano::Raptor::Parser::supportedSerializations() const
 {
-    return SerializationRdfXml|SerializationNTriples|SerializationTurtle;
+    return(  SerializationRdfXml
+             |SerializationNTriples
+             |SerializationTurtle
+#ifdef RAPTOR_HAVE_TRIG
+             |SerializationTrig
+#endif
+        );
 }
 
 

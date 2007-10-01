@@ -15,6 +15,12 @@ set(raptor_parser_SRC
   raptorparser.cpp
 )
 
+if(${RAPTOR_VERSION} STRGREATER "1.4.15")
+  set(RAPTOR_HAVE_TRIG "yes")
+endif(${RAPTOR_VERSION} STRGREATER "1.4.15")
+
+configure_file(raptor-config.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/raptor-config.h)
+
 qt4_automoc(${raptor_parser_SRC})
 
 add_library(soprano_raptorparser SHARED ${raptor_parser_SRC})
