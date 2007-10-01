@@ -31,7 +31,7 @@ install(FILES
   DummyModel
   Global
   DESTINATION
-  include/soprano)
+  include/Soprano)
 
 add_subdirectory(Error)
 add_subdirectory(Server)
