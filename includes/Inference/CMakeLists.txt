@@ -7,4 +7,4 @@ install(FILES
   RuleParser
   StandardRuleSet
   DESTINATION
-  include/Soprano/Inference)
+  include/soprano/Inference)

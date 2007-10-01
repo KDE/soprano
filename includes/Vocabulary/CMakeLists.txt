@@ -6,4 +6,4 @@ install(FILES
   NRL
   NAO
   DESTINATION
-  include/Soprano/Vocabulary)
+  include/soprano/Vocabulary)
