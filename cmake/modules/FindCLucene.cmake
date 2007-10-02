@@ -34,7 +34,7 @@ ENDIF(EXISTS ${PROJECT_CMAKE}/CLuceneConfig.cmake)
   )
   FIND_LIBRARY_WITH_DEBUG(CLUCENE_LIBRARY
       WIN32_DEBUG_POSTFIX d
-      NAMES clucene-core
+      NAMES clucene clucene-core
       PATHS ${TRIAL_LIBRARY_PATHS})
   IF (CLUCENE_LIBRARY)
     MESSAGE(STATUS "Found CLucene library: ${CLUCENE_LIBRARY}")
