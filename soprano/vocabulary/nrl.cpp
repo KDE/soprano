@@ -23,96 +23,94 @@
 
 #define NRL_NS "http://www.semanticdesktop.org/ontologies/2007/08/15/nrl/"
 
-// FIXME: (trueg) do not use all-caps variables
-
 class Nrl
 {
 public:
     Nrl()
         : nrlNamespace( NRL_NS ),
-          MINCARDINALITY( NRL_NS"minCardinality" ),
-          MAXCARDINALITY( NRL_NS"maxCardinality" ),
-          CARDINALITY( NRL_NS"cardinality" ),
-          IMPORTS( NRL_NS"imports" ),
-          RULELANGUAGE( NRL_NS"ruleLanguage" ),
-          INVERSEFUNCTIONALPROPERTY( NRL_NS"InverseFunctionalProperty" ),
-          GRAPH( NRL_NS"Graph" ),
-          HASSPECIFICATION( NRL_NS"hasSpecification" ),
-          DOCUMENTGRAPH( NRL_NS"DocumentGraph" ),
-          COREGRAPHMETADATAFOR( NRL_NS"coreGraphMetadataFor" ),
-          TRANSITIVEPROPERTY( NRL_NS"TransitiveProperty" ),
-          FUNCTIONALPROPERTY( NRL_NS"FunctionalProperty" ),
-          KNOWLEDGEBASE( NRL_NS"KnowledgeBase" ),
-          EXTERNALREALIZER( NRL_NS"externalRealizer" ),
-          SUBGRAPHOF( NRL_NS"subGraphOf" ),
-          CONFIGURATION( NRL_NS"Configuration" ),
-          VIEWSPECIFICATION( NRL_NS"ViewSpecification" ),
-          HASSEMANTICS( NRL_NS"hasSemantics" ),
-          EXTERNALVIEWSPECIFICATION( NRL_NS"ExternalViewSpecification" ),
-          DEFAULTGRAPH( NRL_NS"DefaultGraph" ),
-          UPDATABLE( NRL_NS"updatable" ),
-          SEMANTICS( NRL_NS"Semantics" ),
-          EQUIVALENTGRAPH( NRL_NS"equivalentGraph" ),
-          REFLEXIVEPROPERTY( NRL_NS"ReflexiveProperty" ),
-          ASYMMETRICPROPERTY( NRL_NS"AsymmetricProperty" ),
-          VIEWON( NRL_NS"viewOn" ),
-          SYMMETRICPROPERTY( NRL_NS"SymmetricProperty" ),
-          SUPERGRAPHOF( NRL_NS"superGraphOf" ),
-          ONTOLOGY( NRL_NS"Ontology" ),
-          REALIZES( NRL_NS"realizes" ),
-          RULE( NRL_NS"rule" ),
-          INSTANCEBASE( NRL_NS"InstanceBase" ),
-          RULEVIEWSPECIFICATION( NRL_NS"RuleViewSpecification" ),
-          SEMANTICSDEFINEDBY( NRL_NS"semanticsDefinedBy" ),
-          GRAPHMETADATA( NRL_NS"GraphMetadata" ),
-          GRAPHMETADATAFOR( NRL_NS"graphMetadataFor" ),
-          GRAPHVIEW( NRL_NS"GraphView" ),
-          DATA( NRL_NS"Data" ),
-          INVERSEPROPERTY( NRL_NS"inverseProperty" ),
-          SCHEMA( NRL_NS"Schema" ) {
+          minCardinality( NRL_NS"minCardinality" ),
+          maxCardinality( NRL_NS"maxCardinality" ),
+          cardinality( NRL_NS"cardinality" ),
+          imports( NRL_NS"imports" ),
+          ruleLanguage( NRL_NS"ruleLanguage" ),
+          InverseFunctionalProperty( NRL_NS"InverseFunctionalProperty" ),
+          Graph( NRL_NS"Graph" ),
+          hasSpecification( NRL_NS"hasSpecification" ),
+          DocumentGraph( NRL_NS"DocumentGraph" ),
+          coreGraphMetadataFor( NRL_NS"coreGraphMetadataFor" ),
+          TransitiveProperty( NRL_NS"TransitiveProperty" ),
+          FunctionalProperty( NRL_NS"FunctionalProperty" ),
+          KnowledgeBase( NRL_NS"KnowledgeBase" ),
+          externalRealizer( NRL_NS"externalRealizer" ),
+          subGraphOf( NRL_NS"subGraphOf" ),
+          Configuration( NRL_NS"Configuration" ),
+          ViewSpecification( NRL_NS"ViewSpecification" ),
+          hasSemantics( NRL_NS"hasSemantics" ),
+          ExternalViewSpecification( NRL_NS"ExternalViewSpecification" ),
+          DefaultGraph( NRL_NS"DefaultGraph" ),
+          updatable( NRL_NS"updatable" ),
+          Semantics( NRL_NS"Semantics" ),
+          equivalentGraph( NRL_NS"equivalentGraph" ),
+          ReflexiveProperty( NRL_NS"ReflexiveProperty" ),
+          AsymmetricProperty( NRL_NS"AsymmetricProperty" ),
+          viewOn( NRL_NS"viewOn" ),
+          SymmetricProperty( NRL_NS"SymmetricProperty" ),
+          superGraphOf( NRL_NS"superGraphOf" ),
+          Ontology( NRL_NS"Ontology" ),
+          realizes( NRL_NS"realizes" ),
+          rule( NRL_NS"rule" ),
+          InstanceBase( NRL_NS"InstanceBase" ),
+          RuleViewSpecification( NRL_NS"RuleViewSpecification" ),
+          semanticsDefinedBy( NRL_NS"semanticsDefinedBy" ),
+          GraphMetadata( NRL_NS"GraphMetadata" ),
+          graphMetadataFor( NRL_NS"graphMetadataFor" ),
+          GraphView( NRL_NS"GraphView" ),
+          Data( NRL_NS"Data" ),
+          inverseProperty( NRL_NS"inverseProperty" ),
+          Schema( NRL_NS"Schema" ) {
     }
 
     QUrl nrlNamespace;
-    QUrl MINCARDINALITY;
-    QUrl MAXCARDINALITY;
-    QUrl CARDINALITY;
-    QUrl IMPORTS;
-    QUrl RULELANGUAGE;
-    QUrl INVERSEFUNCTIONALPROPERTY;
-    QUrl GRAPH;
-    QUrl HASSPECIFICATION;
-    QUrl DOCUMENTGRAPH;
-    QUrl COREGRAPHMETADATAFOR;
-    QUrl TRANSITIVEPROPERTY;
-    QUrl FUNCTIONALPROPERTY;
-    QUrl KNOWLEDGEBASE;
-    QUrl EXTERNALREALIZER;
-    QUrl SUBGRAPHOF;
-    QUrl CONFIGURATION;
-    QUrl VIEWSPECIFICATION;
-    QUrl HASSEMANTICS;
-    QUrl EXTERNALVIEWSPECIFICATION;
-    QUrl DEFAULTGRAPH;
-    QUrl UPDATABLE;
-    QUrl SEMANTICS;
-    QUrl EQUIVALENTGRAPH;
-    QUrl REFLEXIVEPROPERTY;
-    QUrl ASYMMETRICPROPERTY;
-    QUrl VIEWON;
-    QUrl SYMMETRICPROPERTY;
-    QUrl SUPERGRAPHOF;
-    QUrl ONTOLOGY;
-    QUrl REALIZES;
-    QUrl RULE;
-    QUrl INSTANCEBASE;
-    QUrl RULEVIEWSPECIFICATION;
-    QUrl SEMANTICSDEFINEDBY;
-    QUrl GRAPHMETADATA;
-    QUrl GRAPHMETADATAFOR;
-    QUrl GRAPHVIEW;
-    QUrl DATA;
-    QUrl INVERSEPROPERTY;
-    QUrl SCHEMA;
+    QUrl minCardinality;
+    QUrl maxCardinality;
+    QUrl cardinality;
+    QUrl imports;
+    QUrl ruleLanguage;
+    QUrl InverseFunctionalProperty;
+    QUrl Graph;
+    QUrl hasSpecification;
+    QUrl DocumentGraph;
+    QUrl coreGraphMetadataFor;
+    QUrl TransitiveProperty;
+    QUrl FunctionalProperty;
+    QUrl KnowledgeBase;
+    QUrl externalRealizer;
+    QUrl subGraphOf;
+    QUrl Configuration;
+    QUrl ViewSpecification;
+    QUrl hasSemantics;
+    QUrl ExternalViewSpecification;
+    QUrl DefaultGraph;
+    QUrl updatable;
+    QUrl Semantics;
+    QUrl equivalentGraph;
+    QUrl ReflexiveProperty;
+    QUrl AsymmetricProperty;
+    QUrl viewOn;
+    QUrl SymmetricProperty;
+    QUrl superGraphOf;
+    QUrl Ontology;
+    QUrl realizes;
+    QUrl rule;
+    QUrl InstanceBase;
+    QUrl RuleViewSpecification;
+    QUrl semanticsDefinedBy;
+    QUrl GraphMetadata;
+    QUrl graphMetadataFor;
+    QUrl GraphView;
+    QUrl Data;
+    QUrl inverseProperty;
+    QUrl Schema;
 };
 
 
@@ -127,239 +125,239 @@ QUrl Soprano::Vocabulary::NRL::nrlNamespace()
 
 QUrl Soprano::Vocabulary::NRL::minCardinality()
 {
-    return nrl()->MINCARDINALITY;
+    return nrl()->minCardinality;
 }
 
 
 QUrl Soprano::Vocabulary::NRL::maxCardinality()
 {
-    return nrl()->MAXCARDINALITY;
+    return nrl()->maxCardinality;
 }
 
 
 QUrl Soprano::Vocabulary::NRL::cardinality()
 {
-    return nrl()->CARDINALITY;
+    return nrl()->cardinality;
 }
 
 
 QUrl Soprano::Vocabulary::NRL::imports()
 {
-    return nrl()->IMPORTS;
+    return nrl()->imports;
 }
 
 
 QUrl Soprano::Vocabulary::NRL::ruleLanguage()
 {
-    return nrl()->RULELANGUAGE;
+    return nrl()->ruleLanguage;
 }
 
 
 QUrl Soprano::Vocabulary::NRL::InverseFunctionalProperty()
 {
-    return nrl()->INVERSEFUNCTIONALPROPERTY;
+    return nrl()->InverseFunctionalProperty;
 }
 
 
 QUrl Soprano::Vocabulary::NRL::Graph()
 {
-    return nrl()->GRAPH;
+    return nrl()->Graph;
 }
 
 
 QUrl Soprano::Vocabulary::NRL::hasSpecification()
 {
-    return nrl()->HASSPECIFICATION;
+    return nrl()->hasSpecification;
 }
 
 
 QUrl Soprano::Vocabulary::NRL::DocumentGraph()
 {
-    return nrl()->DOCUMENTGRAPH;
+    return nrl()->DocumentGraph;
 }
 
 
 QUrl Soprano::Vocabulary::NRL::coreGraphMetadataFor()
 {
-    return nrl()->COREGRAPHMETADATAFOR;
+    return nrl()->coreGraphMetadataFor;
 }
 
 
 QUrl Soprano::Vocabulary::NRL::TransitiveProperty()
 {
-    return nrl()->TRANSITIVEPROPERTY;
+    return nrl()->TransitiveProperty;
 }
 
 
 QUrl Soprano::Vocabulary::NRL::FunctionalProperty()
 {
-    return nrl()->FUNCTIONALPROPERTY;
+    return nrl()->FunctionalProperty;
 }
 
 
 QUrl Soprano::Vocabulary::NRL::KnowledgeBase()
 {
-    return nrl()->KNOWLEDGEBASE;
+    return nrl()->KnowledgeBase;
 }
 
 
 QUrl Soprano::Vocabulary::NRL::externalRealizer()
 {
-    return nrl()->EXTERNALREALIZER;
+    return nrl()->externalRealizer;
 }
 
 
 QUrl Soprano::Vocabulary::NRL::subGraphOf()
 {
-    return nrl()->SUBGRAPHOF;
+    return nrl()->subGraphOf;
 }
 
 
 QUrl Soprano::Vocabulary::NRL::Configuration()
 {
-    return nrl()->CONFIGURATION;
+    return nrl()->Configuration;
 }
 
 
 QUrl Soprano::Vocabulary::NRL::ViewSpecification()
 {
-    return nrl()->VIEWSPECIFICATION;
+    return nrl()->ViewSpecification;
 }
 
 
 QUrl Soprano::Vocabulary::NRL::hasSemantics()
 {
-    return nrl()->HASSEMANTICS;
+    return nrl()->hasSemantics;
 }
 
 
 QUrl Soprano::Vocabulary::NRL::ExternalViewSpecification()
 {
-    return nrl()->EXTERNALVIEWSPECIFICATION;
+    return nrl()->ExternalViewSpecification;
 }
 
 
 QUrl Soprano::Vocabulary::NRL::DefaultGraph()
 {
-    return nrl()->DEFAULTGRAPH;
+    return nrl()->DefaultGraph;
 }
 
 
 QUrl Soprano::Vocabulary::NRL::updatable()
 {
-    return nrl()->UPDATABLE;
+    return nrl()->updatable;
 }
 
 
 QUrl Soprano::Vocabulary::NRL::Semantics()
 {
-    return nrl()->SEMANTICS;
+    return nrl()->Semantics;
 }
 
 
 QUrl Soprano::Vocabulary::NRL::equivalentGraph()
 {
-    return nrl()->EQUIVALENTGRAPH;
+    return nrl()->equivalentGraph;
 }
 
 
 QUrl Soprano::Vocabulary::NRL::ReflexiveProperty()
 {
-    return nrl()->REFLEXIVEPROPERTY;
+    return nrl()->ReflexiveProperty;
 }
 
 
 QUrl Soprano::Vocabulary::NRL::AsymmetricProperty()
 {
-    return nrl()->ASYMMETRICPROPERTY;
+    return nrl()->AsymmetricProperty;
 }
 
 
 QUrl Soprano::Vocabulary::NRL::viewOn()
 {
-    return nrl()->VIEWON;
+    return nrl()->viewOn;
 }
 
 
 QUrl Soprano::Vocabulary::NRL::SymmetricProperty()
 {
-    return nrl()->SYMMETRICPROPERTY;
+    return nrl()->SymmetricProperty;
 }
 
 
 QUrl Soprano::Vocabulary::NRL::superGraphOf()
 {
-    return nrl()->SUPERGRAPHOF;
+    return nrl()->superGraphOf;
 }
 
 
 QUrl Soprano::Vocabulary::NRL::Ontology()
 {
-    return nrl()->ONTOLOGY;
+    return nrl()->Ontology;
 }
 
 
 QUrl Soprano::Vocabulary::NRL::realizes()
 {
-    return nrl()->REALIZES;
+    return nrl()->realizes;
 }
 
 
 QUrl Soprano::Vocabulary::NRL::rule()
 {
-    return nrl()->RULE;
+    return nrl()->rule;
 }
 
 
 QUrl Soprano::Vocabulary::NRL::InstanceBase()
 {
-    return nrl()->INSTANCEBASE;
+    return nrl()->InstanceBase;
 }
 
 
 QUrl Soprano::Vocabulary::NRL::RuleViewSpecification()
 {
-    return nrl()->RULEVIEWSPECIFICATION;
+    return nrl()->RuleViewSpecification;
 }
 
 
 QUrl Soprano::Vocabulary::NRL::semanticsDefinedBy()
 {
-    return nrl()->SEMANTICSDEFINEDBY;
+    return nrl()->semanticsDefinedBy;
 }
 
 
 QUrl Soprano::Vocabulary::NRL::GraphMetadata()
 {
-    return nrl()->GRAPHMETADATA;
+    return nrl()->GraphMetadata;
 }
 
 
 QUrl Soprano::Vocabulary::NRL::graphMetadataFor()
 {
-    return nrl()->GRAPHMETADATAFOR;
+    return nrl()->graphMetadataFor;
 }
 
 
 QUrl Soprano::Vocabulary::NRL::GraphView()
 {
-    return nrl()->GRAPHVIEW;
+    return nrl()->GraphView;
 }
 
 
 QUrl Soprano::Vocabulary::NRL::Data()
 {
-    return nrl()->DATA;
+    return nrl()->Data;
 }
 
 
 QUrl Soprano::Vocabulary::NRL::inverseProperty()
 {
-    return nrl()->INVERSEPROPERTY;
+    return nrl()->inverseProperty;
 }
 
 
 QUrl Soprano::Vocabulary::NRL::Schema()
 {
-    return nrl()->SCHEMA;
+    return nrl()->Schema;
 }
