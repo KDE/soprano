@@ -56,7 +56,7 @@ QUrl Soprano::Sesame2::convertURI( const JObjectRef& uri )
 {
     JNIObjectWrapper uriWrapper( uri );
     JStringRef uriString = uriWrapper.callObjectMethod( uriWrapper.getMethodID( "toString", "()L"JAVA_LANG_STRING";" ) );
-    return QUrl( uriString.toQString() );
+    return QUrl::fromEncoded( uriString.toAscii() );
 }
 
 

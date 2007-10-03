@@ -64,11 +64,13 @@ public:
     JStringRef( jstring );
     JStringRef( const JObjectRef& );
     JStringRef( const QString& );
+    JStringRef( const QByteArray& );
 
     jstring data() const;
     operator jstring() const;
 
     QString toQString() const;
+    QByteArray toAscii() const;
 };
 
 

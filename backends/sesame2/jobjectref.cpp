@@ -193,6 +193,19 @@ JStringRef::JStringRef( const QString& s )
 }
 
 
+JStringRef::JStringRef( const QByteArray& data )
+    : JObjectRef()
+{
+    jstring js = JNIWrapper::instance()->env()->NewStringUTF( data.data() );
+    if ( js ) {
+        JObjectRef::operator=( js );
+    }
+    else {
+        JNIWrapper::instance()->debugException();
+    }
+}
+
+
 jstring JStringRef::data() const
 {
     return reinterpret_cast<jstring>( JObjectRef::data() );
@@ -216,6 +229,24 @@ QString JStringRef::toQString() const
     else {
         return QString();
     }
+}
+
+
+QByteArray JStringRef::toAscii() const
+{
+    QByteArray a;
+    if ( data() ) {
+        const jchar* chars = JNIWrapper::instance()->env()->GetStringChars( JStringRef::data(), 0 );
+        int len = JNIWrapper::instance()->env()->GetStringLength( JStringRef::data() );
+
+        a.resize( len );
+        // java strings are always big endian
+        for ( int i = 0; i < len; ++i ) {
+            Q_ASSERT( chars[i]>>8 == 0 );
+            a[i] = ( char )chars[i];
+        }
+    }
+    return a;
 }
 
 
