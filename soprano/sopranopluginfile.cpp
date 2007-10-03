@@ -48,8 +48,7 @@ Soprano::SopranoPluginFile::~SopranoPluginFile()
 bool Soprano::SopranoPluginFile::open( const QString& path )
 {
     if ( DesktopFile::open( path ) ) {
-        // FIXME: check for lib and version
-        return true;
+        return !library().isEmpty() && !sopranoVersion().isEmpty();
     }
     else {
         return false;
