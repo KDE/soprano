@@ -101,6 +101,32 @@ namespace Soprano {
 	    Soprano::Error::ErrorCode removeAllStatements( const Soprano::Statement &statement );
 
 	    /**
+	     * The IndexFilterModel is currently based on CLucene. While the index itself is available
+	     * via index() and allows querying via CLucene queries it is not available over the 
+	     * Soprano::Client interface.
+	     * Thus, CLucene queries are supported through this method and will return QueryHit objects
+	     * wrapped in a QueryResultIterator.
+	     *
+	     * Future versions of %Soprano will support querying the index through the Soprano::Query API
+	     * (still unfinished and unstable).
+	     *
+	     * \param query The query string. This can be a CLucene query in which case the query will
+	     *              be passed to CLuceneIndex.
+	     * \param language The query language. Set to Soprano::Query::QUERY_LANGUAGE_USER for
+	     *                 CLucene queries.
+	     * \param userQueryLanguage If \p language equals Query::QUERY_LANGUAGE_USER
+	     *                          userQueryLanguage defines the language to use. Use <b>"lucene"</b>
+	     *                          to perform CLucene queries.
+	     *
+	     * \return An iterator over all results matching the query, 
+	     * on error an invalid iterator is returned. In case of a CLucene query the iterator will
+	     * wrap a set of QueryHit objects through the bindings <b>"resource"</b> and <b>"score"</b>.
+	     *
+	     * \sa CLuceneIndex::search()
+	     */
+	    QueryResultIterator executeQuery( const QString& query, Query::QueryLanguage language, const QString& userQueryLanguage = QString() ) const;
+
+	    /**
 	     * Extract full text matching parts of a %query and replace them with
 	     * results from an index %query.
 	     *

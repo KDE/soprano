@@ -21,7 +21,8 @@
 
 #include "indexfiltermodel.h"
 #include "cluceneindex.h"
-
+#include "queryhitwrapperresultiteratorbackend.h"
+#include <soprano/queryresultiterator.h>
 #include <soprano/statementiterator.h>
 
 #include <CLucene.h>
@@ -124,4 +125,20 @@ Soprano::Error::ErrorCode Soprano::Index::IndexFilterModel::removeAllStatements(
     it.close();
 
     return FilterModel::removeAllStatements( statement );
+}
+
+
+Soprano::QueryResultIterator Soprano::Index::IndexFilterModel::executeQuery( const QString& query, Query::QueryLanguage language, const QString& userQueryLanguage ) const
+{
+    if ( language == Query::QUERY_LANGUAGE_USER && userQueryLanguage.toLower() == "lucene" ) {
+        clearError();
+        Iterator<QueryHit> res = index()->search( query );
+        if ( !res.isValid() ) {
+            setError( index()->lastError() );
+        }
+        return new QueryHitWrapperResultIteratorBackend( res );
+    }
+    else {
+        return FilterModel::executeQuery( query, language, userQueryLanguage );
+    }
 }

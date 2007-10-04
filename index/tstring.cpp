@@ -21,43 +21,6 @@
 
 #include "tstring.h"
 
-#include <QDebug>
-
-
-
-namespace {
-    // looks as if QT has a bug in toWCharArray, so we use the method from strigi
-    void utf8toucs2( const char* p, const char* e, wchar_t* buf )
-    {
-        int i = 0;
-        char nb = 0;
-        while (p < e) {
-            wchar_t w = 0;
-            char c = *p;
-            if (nb--) {
-                w = (w<<6) + (c & 0x3f);
-            } else if ((0xE0 & c) == 0xC0) {
-                w = c & 0x1F;
-                nb = 0;
-            } else if ((0xF0 & c) == 0xE0) {
-                w = c & 0x0F;
-                nb = 1;
-            } else if ((0xF8 & c) == 0xF0) {
-                w = c & 0x07;
-                nb = 2;
-            } else {
-                w = (w<<6) + (c&0x7F);
-                buf[i++] = w;
-                w = 0;
-                nb = 0;
-            }
-            p++;
-        }
-        buf[i] = L'\0';
-    }
-}
-
-
 class TString::Private : public QSharedData
 {
 public:
@@ -68,7 +31,7 @@ public:
 
     ~Private() {
         if ( !wrap ) {
-            delete [] data;
+            free( data );
         }
     }
 
@@ -97,8 +60,7 @@ TString::TString( const TCHAR* s, bool wrap )
         d->data = const_cast<TCHAR*>( s );
     }
     else {
-        d->data = new TCHAR[_tcslen(s) + 1];
-        _tcscpy( d->data, s );
+        operator=( s );
     }
 }
 
@@ -124,24 +86,25 @@ TString& TString::operator=( const TString& s )
 
 TString& TString::operator=( const TCHAR* s )
 {
-    d->data = new TCHAR[ _tcslen(s) + 1 ];
-    _tcscpy( d->data, s );
+#ifdef _UCS2
+    d->data = wcsdup( s );
+#else
+    d->data = strdup( s );
+#endif
+    d->wrap = false;
     return *this;
 }
 
 
 TString& TString::operator=( const QString& s )
 {
-    // looks as if QT has a bug in toWCharArray, so we use the method from strigi
-    QByteArray utf8 = s.toUtf8();
-
 #ifdef _UCS2
-    d->data = new TCHAR[s.length()+1];
-    utf8toucs2( utf8.data(), utf8.data()+utf8.length(), d->data );
-//    s.toWCharArray( d->data );
+    d->data = ( TCHAR* )calloc( s.length()+1, sizeof( TCHAR ) );
+    s.toWCharArray( d->data );
 #else
-    d->data = strdup( utf8.data() );
+    d->data = strdup( s.toUtf8().data() );
 #endif
+    d->wrap = false;
     return *this;
 }
 
@@ -172,11 +135,16 @@ TString::operator QString() const
 
 QString TString::toQString() const
 {
+    if ( d->data ) {
 #ifdef _UCS2
-    return QString::fromWCharArray( d->data );
+        return QString::fromWCharArray( d->data );
 #else
-    return QString::fromUtf8( d->data );
+        return QString::fromUtf8( d->data );
 #endif
+    }
+    else {
+        return QString();
+    }
 }
 
 
@@ -208,8 +176,8 @@ TString TString::fromUtf8( const char* data )
 {
     TString s;
 #ifdef _UCS2
-    s.d->data = new TCHAR[ strlen( data ) + 1 ]; // like this we are on the safe side
-    utf8toucs2( data, data + strlen( data ), s.d->data );
+    s.d->data = ( TCHAR* )calloc( strlen( data )+1, sizeof( TCHAR ) ); // like this we are on the safe side
+    QString::fromUtf8( data ).toWCharArray( s.d->data );
 #else
     s.d->data = strdup( data );
 #endif

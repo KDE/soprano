@@ -17,6 +17,7 @@ set( SOPRANO_INDEX_SRCS
   tstring.cpp
   indexqueryhit.cpp
   indexqueryhititeratorbackend.cpp
+  queryhitwrapperresultiteratorbackend.cpp
 )
 
 configure_file(clucene-config.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/clucene-config.h)

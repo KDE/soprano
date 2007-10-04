@@ -531,19 +531,25 @@ Soprano::Iterator<Soprano::Index::QueryHit> Soprano::Index::CLuceneIndex::search
 {
     QMutexLocker lock( &d->mutex );
 
-    clearError();
-    try {
-        lucene::search::Hits* hits = d->getIndexSearcher()->search( query );
-        if ( hits ) {
-            return new QueryHitIteratorBackend( hits );
+    if ( query ) {
+        clearError();
+        try {
+            lucene::search::Hits* hits = d->getIndexSearcher()->search( query );
+            if ( hits ) {
+                return new QueryHitIteratorBackend( hits );
+            }
+            else {
+                return Iterator<QueryHit>();
+            }
         }
-        else {
+        catch( CLuceneError& err ) {
+            qDebug() << "search failed: " << err.what();
+            setError( exceptionToError( err ) );
             return Iterator<QueryHit>();
         }
     }
-    catch( CLuceneError& err ) {
-        qDebug() << "search failed: " << err.what();
-        setError( exceptionToError( err ) );
+    else {
+        setError( "Query object is null" );
         return Iterator<QueryHit>();
     }
 }
