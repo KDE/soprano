@@ -5,4 +5,4 @@ install(FILES
   Locator
   ErrorCache
   DESTINATION
-  include/soprano/Error)
+  include/Soprano/Error)

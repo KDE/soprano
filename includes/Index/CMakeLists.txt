@@ -3,4 +3,4 @@ install(FILES
   IndexFilterModel
   QueryHit
   DESTINATION
-  include/soprano/Index)
+  include/Soprano/Index)
