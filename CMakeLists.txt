@@ -62,6 +62,7 @@ endif(CLucene_FOUND)
 
 #PkgConfig
 if(NOT WIN32)
+  set(PKGCONFIG_INSTALL_PREFIX "${CMAKE_INSTALL_PREFIX}/lib${LIB_SUFFIX}/pkgconfig/" CACHE STRING "Base directory for pkgconfig files")
   configure_file(${CMAKE_CURRENT_SOURCE_DIR}/soprano.pc.cmake ${CMAKE_CURRENT_BINARY_DIR}/soprano.pc )
   install(FILES ${CMAKE_CURRENT_BINARY_DIR}/soprano.pc DESTINATION ${PKGCONFIG_INSTALL_PREFIX})
 endif(NOT WIN32)
