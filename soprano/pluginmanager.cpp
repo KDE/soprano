@@ -38,6 +38,12 @@
 
 #include <stdlib.h>
 
+#if defined _WIN32 || defined _WIN64
+#define PATH_SEPARATOR ';'
+#else
+#define PATH_SEPARATOR ':'
+#endif
+
 
 class Soprano::PluginManager::Private
 {
@@ -74,20 +80,26 @@ namespace {
 #endif
     }
 
+    QStringList envDirList( const char* var )
+    {
+        QStringList dirs;
+        QByteArray varData = qgetenv( var );
+        if ( !varData.isEmpty() ) {
+            QStringList d = QString::fromLocal8Bit( varData ).split( PATH_SEPARATOR );
+            Q_FOREACH( QString dir, d ) {
+                dirs += QDir::fromNativeSeparators( dir );
+            }
+        }
+        return dirs;
+    }
+
     QStringList dataDirs()
     {
         QStringList paths;
 
         paths += QLatin1String(SOPRANO_PREFIX"/share");
-
-        QByteArray sopranoDirs = qgetenv( "SOPRANO_DIRS" );
-        if( !sopranoDirs.isEmpty() ) {
-            paths += QString::fromLocal8Bit( sopranoDirs ).split(":");
-        }
-        QByteArray xdgDirs = qgetenv( "XDG_DATA_DIRS" );
-        if( !xdgDirs.isEmpty() ) {
-            paths += QString::fromLocal8Bit( xdgDirs ).split(":");
-        }
+        paths += envDirList( "SOPRANO_DIRS" );
+        paths += envDirList( "XDG_DATA_DIRS" );
 
         return paths;
     }
@@ -95,7 +107,7 @@ namespace {
     QString findPluginLib( const Soprano::SopranoPluginFile& file )
     {
         QString lib = makeLibName( file.library() );
-        if ( lib.startsWith( QDir::separator() ) ) {
+        if ( lib.startsWith( "/" ) ) {
             return lib;
         }
         else {
@@ -285,16 +297,11 @@ Soprano::PluginManager::PluginManager( QObject* parent )
 Soprano::PluginManager::~PluginManager()
 {
     // delete all plugins (is this necessary?)
-    for( QHash<QString, Backend*>::const_iterator it = d->backends.begin(); it != d->backends.end(); ++it )
-        delete it.value();
-    for( QHash<QString, Parser*>::const_iterator it = d->parsers.begin(); it != d->parsers.end(); ++it )
-        delete it.value();
-    for( QHash<QString, Serializer*>::const_iterator it = d->serializers.begin(); it != d->serializers.end(); ++it )
-        delete it.value();
-    for( QHash<QString, Query::Parser*>::const_iterator it = d->queryParsers.begin(); it != d->queryParsers.end(); ++it )
-        delete it.value();
-    for( QHash<QString, Query::Serializer*>::const_iterator it = d->querySerializers.begin(); it != d->querySerializers.end(); ++it )
-        delete it.value();
+    qDeleteAll( d->backends );
+    qDeleteAll( d->parsers );
+    qDeleteAll( d->serializers );
+    qDeleteAll( d->queryParsers );
+    qDeleteAll( d->querySerializers );
     delete d;
 }
 
