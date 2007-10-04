@@ -4,4 +4,4 @@ install(FILES
   Serializer
   QueryLanguage
   DESTINATION
-  include/Soprano/Query)
+  include/soprano/Query)
