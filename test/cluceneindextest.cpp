@@ -20,6 +20,7 @@
  */
 
 #include "cluceneindextest.h"
+#include "stringpool.h"
 
 #include <QtTest/QTest>
 #include <QtCore/QDebug>
@@ -129,6 +130,43 @@ void IndexTest::testRemoveStatement()
     QVERIFY( !hits.next() );
 }
 
+
+void IndexTest::testUriEncoding_data()
+{
+    QTest::addColumn<QUrl>( "uri" );
+    QTest::addColumn<QUrl>( "predicate" );
+    QTest::addColumn<QString>( "value" );
+
+    QString ns = "http://soprano.org/uriEncodinglTest#";
+
+    // a simple URI
+    QTest::newRow("plain") << QUrl(ns + "simple") << QUrl(ns + "plain") << QString( QLatin1String( "plain" ) );
+
+    // with some white space
+    QTest::newRow("withSpace") << QUrl(ns + "URI with space") << QUrl(ns + "withSpace") << QString( QLatin1String( "withSpace" ) );
+
+    // unicode
+    QTest::newRow("germanUmlauts") << QUrl( ns + StringPool::germanUmlauts() ) << QUrl(ns + "germanUmlauts") << StringPool::germanUmlauts();
+    QTest::newRow("frenchAccents") << QUrl( ns + StringPool::frenchAccents() ) << QUrl(ns + "frenchAccents") << StringPool::frenchAccents();
+    QTest::newRow("russianChars") << QUrl( ns + StringPool::russianChars() ) << QUrl(ns + "russianChars") << StringPool::russianChars();
+}
+
+void IndexTest::testUriEncoding()
+{
+    QFETCH( QUrl, uri );
+    QFETCH( QUrl, predicate );
+    QFETCH( QString, value );
+
+    Statement s( uri, predicate, LiteralValue( value ) );
+
+    QVERIFY( m_indexModel->index()->addStatement( s ) == Error::ErrorNone );
+
+    // check if a search gets the proper URI back
+    Iterator<QueryHit> it = m_indexModel->index()->search( value );
+    QVERIFY( it.next() );
+    QCOMPARE( uri, it.current().resource().uri() );
+    QVERIFY( !it.next() );
+}
 
 QTEST_MAIN( IndexTest )
 

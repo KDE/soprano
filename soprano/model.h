@@ -181,6 +181,7 @@ namespace Soprano
 	 */
 	virtual NodeIterator listContexts() const = 0;
 
+	// FIXME: in light of future extensions as SPARQL insert and update would it make sense to make executeQuery non-const?
 	/**
 	 * Execute the given query over the Model.
 	 *

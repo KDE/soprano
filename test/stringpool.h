@@ -1,7 +1,7 @@
 /*
  * This file is part of Soprano Project.
  *
- * Copyright (C) 2007 Sebastian Trueg <trueg@kde.org>
+ * Copyright (C) 2006 Sebastian Trueg <strueg@mandriva.com>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -19,21 +19,15 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#include "3storemodeltest.h"
+#ifndef _SOPRANO_TEST_STRING_POOL_H_
+#define _SOPRANO_TEST_STRING_POOL_H_
 
-#include <soprano/soprano.h>
+#include <QtCore/QString>
 
-using namespace Soprano;
-
-
-Soprano::Model* TStoreModelTest::createModel()
-{
-    const Soprano::Backend* b = Soprano::discoverBackendByName( "3store" );
-    Q_ASSERT( b != 0 );
-    return b->createModel();
+namespace StringPool {
+    QString germanUmlauts();
+    QString frenchAccents();
+    QString russianChars();
 }
 
-QTEST_MAIN(TStoreModelTest)
-
-#include "3storemodeltest.moc"
-
+#endif

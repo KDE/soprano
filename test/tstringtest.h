@@ -22,7 +22,9 @@ class TStringTest : public QObject
     Q_OBJECT
 
 private Q_SLOTS:
+    void testConversion_data();
     void testConversion();
+    void testLength();
 };
 
 #endif

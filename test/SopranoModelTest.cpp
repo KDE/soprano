@@ -20,6 +20,8 @@
  */
 
 #include "SopranoModelTest.h"
+#include "stringpool.h"
+
 #include <soprano/soprano.h>
 
 #include <QtTest/QTest>
@@ -835,9 +837,9 @@ void SopranoModelTest::testLiteralTypes_data()
     QTest::newRow("stringValue") << LiteralValue( "Hello World" ) << QUrl(ns + "stringValue");
 
     // and now some utf8 encoding tests
-    QTest::newRow("stringValueWithGermanUmlauts") << LiteralValue( QString::fromUtf8("ö ä ü Ö Ä Ü ß") ) << QUrl(ns + "stringValueWithGermanUmlauts");
-    QTest::newRow("stringValueWithFrenchAccents") << LiteralValue( QString::fromUtf8("é è â É È Â") ) << QUrl(ns + "stringValueWithFrenchAccents");
-    QTest::newRow("stringValueWithRussianChars") << LiteralValue( QString::fromUtf8("Я Б Г Д Ж Й") ) << QUrl(ns + "stringValueWithRussianChars");
+    QTest::newRow("stringValueWithGermanUmlauts") << LiteralValue( StringPool::germanUmlauts() ) << QUrl(ns + "stringValueWithGermanUmlauts");
+    QTest::newRow("stringValueWithFrenchAccents") << LiteralValue( StringPool::frenchAccents() ) << QUrl(ns + "stringValueWithFrenchAccents");
+    QTest::newRow("stringValueWithRussianChars") << LiteralValue( StringPool::russianChars() ) << QUrl(ns + "stringValueWithRussianChars");
 }
 
 
@@ -875,9 +877,9 @@ void SopranoModelTest::testUriEncoding_data()
     QTest::newRow("withSpace") << QUrl(ns + "URI with space") << QUrl(ns + "withSpace");
 
     // unicode
-    QTest::newRow("germanUmlauts") << QUrl( ns + QString::fromUtf8("ö ä ü Ö Ä Ü ß") ) << QUrl(ns + "germanUmlauts");
-    QTest::newRow("frenchAccents") << QUrl( ns + QString::fromUtf8("é è â É È Â") ) << QUrl(ns + "frenchAccents");
-    QTest::newRow("russianChars") << QUrl( ns + QString::fromUtf8("Я Б Г Д Ж Й") ) << QUrl(ns + "russianChars");
+    QTest::newRow("germanUmlauts") << QUrl( ns + StringPool::germanUmlauts() ) << QUrl(ns + "germanUmlauts");
+    QTest::newRow("frenchAccents") << QUrl( ns + StringPool::frenchAccents() ) << QUrl(ns + "frenchAccents");
+    QTest::newRow("russianChars") << QUrl( ns + StringPool::russianChars() ) << QUrl(ns + "russianChars");
 }
 
 
@@ -897,6 +899,11 @@ void SopranoModelTest::testUriEncoding()
     StatementIterator it = m_model->listStatements( Statement( sub, predicate, Node() ) );
     QVERIFY( it.next() );
     QCOMPARE( it.current().object().uri(), uri );
+    it.close();
+
+    it = m_model->listStatements( Statement( Node(), predicate, uri ) );
+    QVERIFY( it.next() );
+    QCOMPARE( it.current().subject().uri(), sub );
     it.close();
 }
 

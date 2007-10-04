@@ -60,6 +60,12 @@ if(CLucene_FOUND)
   add_subdirectory(index)
 endif(CLucene_FOUND)
 
+#PkgConfig
+if(NOT WIN32)
+  configure_file(${CMAKE_CURRENT_SOURCE_DIR}/soprano.pc.cmake ${CMAKE_CURRENT_BINARY_DIR}/soprano.pc )
+  install(FILES ${CMAKE_CURRENT_BINARY_DIR}/soprano.pc DESTINATION ${PKGCONFIG_INSTALL_PREFIX})
+endif(NOT WIN32)
+
 # apidox
 find_package(Doxygen)
 
@@ -80,10 +86,10 @@ endif(DOXYGEN_EXECUTABLE)
 
 message("---------------------------------------------------------------------------------------")
 message("-- Soprano Components that will be built:")
-if(NOT REDLAND_FOUND AND JNI_1_6_FOUND AND TSTORE_FOUND)
+if(NOT REDLAND_FOUND AND JNI_1_6_FOUND)
   message("   WARNING: No Soprano backends will be compiled due to missing dependancies!")
   message("   WARNING: Soprano will not be very useful without storage backends!")
-endif(NOT REDLAND_FOUND AND JNI_1_6_FOUND AND TSTORE_FOUND)
+endif(NOT REDLAND_FOUND AND JNI_1_6_FOUND)
 if(REDLAND_FOUND)
   message("   * Redland storage backend")
 endif(REDLAND_FOUND)

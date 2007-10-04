@@ -39,6 +39,8 @@ private Q_SLOTS:
     void init();
     void testAddStatement();
     void testRemoveStatement();
+    void testUriEncoding_data();
+    void testUriEncoding();
     void cleanup();
 
 private:

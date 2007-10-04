@@ -14,32 +14,91 @@
 
 #include "tstringtest.h"
 #include "../index/tstring.h"
+#include "stringpool.h"
 
 #include <QtTest/QTest>
 #include <QtCore/QDebug>
 
 
+static void printWChars( const wchar_t* data, int len = -1 )
+{
+    if ( len < 0 )
+        len = wcslen( data );
+    for ( int i = 0; i < len; ++i ) {
+        printf( "%.2x%.2x%.2x%.2x ", ( char )( data[i]>>24 )&0xff, ( char )( data[i]>>16 )&0xff, ( char )( data[i]>>8 )&0xff, ( char )data[i]&0xff );
+    }
+    printf( "\n" );
+}
+
+static void printUtf16( const unsigned short* data, int len = -1 )
+{
+    for ( int i = 0; ( len > 0 && i < len ) || data[i]; ++i ) {
+        printf( "%.2x%.2x ", ( char )( data[i]>>8 )&0xff, ( char )data[i]&0xff );
+    }
+    printf( "\n" );
+}
+
+
+Q_DECLARE_METATYPE( TString )
+
+void TStringTest::testConversion_data()
+{
+    QTest::addColumn<QString>( "qstring" );
+//    QTest::addColumn<TString>( "tstring" );
+
+    QTest::newRow( "plain" ) << QString( QLatin1String( "Hello World" ) );
+// #ifdef _UCS2
+//                              << TString( L"Hello World" );
+// #else
+//                              << TString( "Hello World" );
+// #endif
+
+#ifdef _UCS2
+        QTest::newRow( "germanUmlauts" ) << StringPool::germanUmlauts();// << TString( ( const wchar_t* )StringPool::germanUmlauts().utf16() );
+    QTest::newRow( "frenchAccents" ) << StringPool::frenchAccents();// << TString( ( const wchar_t* )StringPool::frenchAccents().utf16() );
+    QTest::newRow( "russianChars" ) << StringPool::russianChars();// << TString( ( const wchar_t* )StringPool::russianChars().utf16() );
+#endif
+}
+
 
 void TStringTest::testConversion()
 {
-    QString qs1( "Hello World" );
-#ifdef _UCS2
-    TString ws1( L"Hello World" );
-#else
-    TString ws1( "Hello World" );
-#endif
-    TString ws2( qs1 );
+    QFETCH( QString, qstring );
+//    QFETCH( TString, tstring );
 
-    qDebug() << "qs1: " << qs1;
-    qDebug() << "ws1( L\"Hello World\" ).toQString(): " << ws1.toQString() << " (length: " << ws1.length() << ")";
-    qDebug() << "ws2( qs1 ).toQString(): " << ws2.toQString() << " (length: " << ws2.length() << ")";
+    printf( "Testing string: %s\n", qstring.toUtf8().data() );
+    printf( "  -> utf16 data: " );
+    printUtf16( qstring.utf16(), qstring.length() );
+    printf( "Converted string: %ls\n", TString( qstring ).data() );
+    printf( "  -> ucs4 data: " );
+    printWChars( TString( qstring ).data() );
 
-    QCOMPARE( ws1.toQString(), qs1 );
-    QCOMPARE( ws2.toQString(), qs1 );
-    QVERIFY( !_tcscmp( ws1.data(), ws2.data() ) );
-    QCOMPARE( ws1.length(), qs1.length() );
-    QCOMPARE( ws2.length(), qs1.length() );
+    QString ttoq = TString( qstring ).toQString();
 
+    printf( "Re-converted string: %s\n", TString( qstring ).toQString().toUtf8().data() );
+    printf( "  -> utf16 data: " );
+    printUtf16( TString( qstring ).toQString().utf16(), TString( qstring ).toQString().length() );
+
+    TString tfromq( qstring );
+    TString qtot = qstring;
+    QString qfromqtoq = tfromq.toQString();
+    TString tfromttoq( ttoq );
+    TString ttoqtot = ttoq;
+
+    QCOMPARE( TString( qstring ).toQString(), qstring );
+    QCOMPARE( TString::fromUtf8( qstring.toUtf8().data() ).toQString(), qstring );
+
+    QCOMPARE( ttoq, qstring );
+    QCOMPARE( qfromqtoq, qstring );
+
+    QCOMPARE( tfromq, qtot );
+    QCOMPARE( qtot, tfromttoq );
+    QCOMPARE( tfromttoq, tfromq );
+}
+
+
+void TStringTest::testLength()
+{
     for ( int i = 0; i < 100; ++i ) {
         QString s = QString::number( i ).rightJustified( 10, 'x' );
         if ( s != TString( s ).toQString() ) {

@@ -1,7 +1,7 @@
-/* 
+/*
  * This file is part of Soprano Project.
  *
- * Copyright (C) 2007 Sebastian Trueg <trueg@kde.org>
+ * Copyright (C) 2006 Sebastian Trueg <strueg@mandriva.com>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -19,23 +19,24 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#include <QtTest/QtTest>
+#include "stringpool.h"
 
-#include "SopranoModelTest.h"
-
-#ifndef _3STORE_MODEL_TEST_H_
-#define _3STORE_MODEL_TEST_H_
-
-namespace Soprano {
-  class Model;
+QString StringPool::germanUmlauts()
+{
+    static QString s = QString::fromUtf8("ö ä ü Ö Ä Ü ß");
+    return s;
 }
 
-class TStoreModelTest: public SopranoModelTest
+
+QString StringPool::frenchAccents()
 {
-    Q_OBJECT
+    static QString s = QString::fromUtf8("é è â É È Â");
+    return s;
+}
 
-protected:
-  virtual Soprano::Model* createModel();
-};
 
-#endif
+QString StringPool::russianChars()
+{
+    static QString s = QString::fromUtf8("Я Б Г Д Ж Й");
+    return s;
+}

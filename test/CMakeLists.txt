@@ -39,7 +39,7 @@ target_link_libraries(statementiteratortest soprano ${QT_QTCORE_LIBRARY} ${QT_QT
 
 # general model tests
 qt4_automoc(SopranoModelTest.cpp)
-add_library(sopranomodeltest STATIC SopranoModelTest.cpp)
+add_library(sopranomodeltest STATIC SopranoModelTest.cpp stringpool.cpp)
 target_link_libraries(sopranomodeltest soprano ${QT_QTCORE_LIBRARY} ${QT_QTTEST_LIBRARY})
 
 qt4_automoc(multithreadingtest multithreadingtest.cpp)
@@ -69,14 +69,6 @@ if(REDLAND_FOUND)
   target_link_libraries(redlandmultithreadtest soprano multithreadingtest ${QT_QTCORE_LIBRARY} ${QT_QTTEST_LIBRARY})
   add_test(redlandmultithreadtest ${EXECUTABLE_OUTPUT_PATH}/redlandmultithreadtest)
 endif(REDLAND_FOUND)
-
-if(TSTORE_FOUND)
-  # 3Store model test
-  qt4_automoc(tstoremodeltest 3storemodeltest.cpp)
-  add_executable(tstoremodeltest 3storemodeltest.cpp)
-  target_link_libraries(tstoremodeltest sopranomodeltest)
-  add_test(tstoremodeltest ${EXECUTABLE_OUTPUT_PATH}/tstoremodeltest)
-endif(TSTORE_FOUND)
 
 # scaling
 qt4_automoc(storagescalingtest storagescalingtest.cpp)
@@ -141,12 +133,12 @@ if(SOPRANO_BUILD_INDEX_LIB)
 
   # TString test
   qt4_automoc(tstringtest tstringtest.cpp)
-  add_executable(tstringtest tstringtest.cpp ../index/tstring.cpp)
+  add_executable(tstringtest tstringtest.cpp stringpool.cpp ../index/tstring.cpp)
   target_link_libraries(tstringtest ${QT_QTCORE_LIBRARY} ${QT_QTTEST_LIBRARY})
   add_test(tstringtest ${EXECUTABLE_OUTPUT_PATH}/tstringtest)
 
   qt4_automoc(cluceneindextest cluceneindextest.cpp)
-  add_executable(cluceneindextest cluceneindextest.cpp)
+  add_executable(cluceneindextest cluceneindextest.cpp stringpool.cpp)
   target_link_libraries(cluceneindextest soprano sopranoindex ${QT_QTCORE_LIBRARY} ${QT_QTTEST_LIBRARY} ${CLUCENE_LIBRARY})
   add_test(cluceneindextest ${EXECUTABLE_OUTPUT_PATH}/cluceneindextest)
 endif(SOPRANO_BUILD_INDEX_LIB)
