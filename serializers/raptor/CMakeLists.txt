@@ -19,7 +19,7 @@ qt4_automoc(${raptor_serializer_SRC})
 
 add_library(soprano_raptorserializer SHARED ${raptor_serializer_SRC})
 
-TARGET_LINK_LIBRARIES(soprano_raptorserializer soprano soprano_redlandcore)
+TARGET_LINK_LIBRARIES(soprano_raptorserializer soprano soprano_redlandcore ${RAPTOR_LIBRARIES})
 
 ADD_DEFINITIONS(${REDLAND_FLAGS})
 
