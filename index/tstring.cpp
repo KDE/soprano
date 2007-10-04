@@ -87,7 +87,11 @@ TString& TString::operator=( const TString& s )
 TString& TString::operator=( const TCHAR* s )
 {
 #ifdef _UCS2
-    d->data = wcsdup( s );
+    size_t len = wcslen( s );
+    d->data = ( TCHAR* )calloc( len+1, sizeof( TCHAR ) );
+    if ( d->data ) {
+        wcscpy( d->data, s );
+    }
 #else
     d->data = strdup( s );
 #endif
