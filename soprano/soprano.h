@@ -21,7 +21,7 @@
  */
 
 #include "global.h"
-#include "query.h"
+//#include "query.h"
 #include "queryresultiterator.h"
 #include "node.h"
 #include "nodeiterator.h"
