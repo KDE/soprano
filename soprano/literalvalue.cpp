@@ -151,6 +151,12 @@ Soprano::LiteralValue::LiteralValue( const QDateTime& datetime )
 }
 
 
+Soprano::LiteralValue::LiteralValue( const QByteArray& data )
+    : d( new Private( data ) )
+{
+}
+
+
 bool Soprano::LiteralValue::isValid() const
 {
     return d->value.isValid();
@@ -256,6 +262,14 @@ Soprano::LiteralValue& Soprano::LiteralValue::operator=( const QDateTime& dateti
 }
 
 
+Soprano::LiteralValue& Soprano::LiteralValue::operator=( const QByteArray& data )
+{
+    d->value.setValue( data );
+    d->dataTypeUri = QUrl();
+    return *this;
+}
+
+
 bool Soprano::LiteralValue::isInt() const
 {
     return( d->value.type() == QVariant::Int );
@@ -313,6 +327,12 @@ bool Soprano::LiteralValue::isTime() const
 bool Soprano::LiteralValue::isDateTime() const
 {
     return( d->value.type() == QVariant::DateTime );
+}
+
+
+bool Soprano::LiteralValue::isByteArray() const
+{
+    return( d->value.type() == QVariant::ByteArray );
 }
 
 
@@ -375,6 +395,8 @@ QString Soprano::LiteralValue::toString() const
         return DateTime::toString( toTime() );
     else if( isDateTime() )
         return DateTime::toString( toDateTime() );
+    else if ( isByteArray() )
+        return QString::fromAscii( toByteArray().toBase64() );
     else
         return d->value.value<QString>();
 }
@@ -395,6 +417,12 @@ QTime Soprano::LiteralValue::toTime() const
 QDateTime Soprano::LiteralValue::toDateTime() const
 {
     return d->value.value<QDateTime>();
+}
+
+
+QByteArray Soprano::LiteralValue::toByteArray() const
+{
+    return d->value.value<QByteArray>();
 }
 
 
@@ -455,6 +483,8 @@ Soprano::LiteralValue Soprano::LiteralValue::fromString( const QString& value, Q
         return LiteralValue( DateTime::fromTimeString( value ) );
     case QVariant::DateTime:
         return LiteralValue( DateTime::fromDateTimeString( value ) );
+    case QVariant::ByteArray:
+        return LiteralValue( QByteArray::fromBase64( value.toAscii() ) );
     default:
         qDebug() << "(Soprano::LiteralValue) unknown type: " << type << endl;
         return LiteralValue( value );
@@ -490,6 +520,7 @@ QVariant::Type Soprano::LiteralValue::typeFromDataTypeUri( const QUrl& dataTypeU
         s_xmlSchemaTypes.insert( Vocabulary::XMLSchema::date(), QVariant::Date );
         s_xmlSchemaTypes.insert( Vocabulary::XMLSchema::time(), QVariant::Time );
         s_xmlSchemaTypes.insert( Vocabulary::XMLSchema::dateTime(), QVariant::DateTime );
+        s_xmlSchemaTypes.insert( Vocabulary::XMLSchema::base64Binary(), QVariant::ByteArray );
     }
 
     QHash<QUrl, QVariant::Type>::const_iterator it = s_xmlSchemaTypes.find( dataTypeUri );
@@ -516,6 +547,7 @@ QUrl Soprano::LiteralValue::dataTypeUriFromType( QVariant::Type type )
         s_variantSchemaTypeHash.insert( QVariant::Date, Vocabulary::XMLSchema::date() );
         s_variantSchemaTypeHash.insert( QVariant::Time, Vocabulary::XMLSchema::time() );
         s_variantSchemaTypeHash.insert( QVariant::DateTime, Vocabulary::XMLSchema::dateTime() );
+        s_variantSchemaTypeHash.insert( QVariant::ByteArray, Vocabulary::XMLSchema::base64Binary() );
     }
 
     return s_variantSchemaTypeHash[type];

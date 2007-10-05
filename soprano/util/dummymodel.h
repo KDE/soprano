@@ -72,7 +72,7 @@ namespace Soprano
 	StatementIterator listStatements() const;
 	StatementIterator listStatementsInContext( const Node &context ) const;
 	NodeIterator listContexts() const;
-	QueryResultIterator executeQuery( const Query::Query& query ) const;
+//	QueryResultIterator executeQuery( const Query::Query& query ) const;
 	QueryResultIterator executeQuery( const QString& query, Query::QueryLanguage language, const QString& userQueryLanguage = QString() ) const;
 	//@}
 

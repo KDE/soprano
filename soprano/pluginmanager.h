@@ -140,7 +140,7 @@ namespace Soprano
 	 * \return the query parser specified by \a name or null if could not
 	 * be found.
 	 */
-	const Query::Parser* discoverQueryParserByName( const QString& name );
+//	const Query::Parser* discoverQueryParserByName( const QString& name );
 
 	/**
 	 * Find a Query::Parser instance that is able to parse the specified query language.
@@ -152,9 +152,9 @@ namespace Soprano
 	 *
 	 * \return A Query::Parser plugin that can parse query language lang or 0 if no such plugin could be found.
 	 */
-	const Query::Parser* discoverQueryParserForQueryLanguage( Query::QueryLanguage lang, const QString& userQueryLanguage = QString() );
+//	const Query::Parser* discoverQueryParserForQueryLanguage( Query::QueryLanguage lang, const QString& userQueryLanguage = QString() );
 
-	QList<const Query::Parser*> allQueryParsers();
+//	QList<const Query::Parser*> allQueryParsers();
 	//@}
 
 	//@{
@@ -164,7 +164,7 @@ namespace Soprano
 	 * \return the query serializer specified by \a name or null if could not
 	 * be found.
 	 */
-	const Query::Serializer* discoverQuerySerializerByName( const QString& name );
+//	const Query::Serializer* discoverQuerySerializerByName( const QString& name );
 
 	/**
 	 * Find a Query::Serializer instance that is able to serialize the specified query language.
@@ -176,9 +176,9 @@ namespace Soprano
 	 *
 	 * \return A Query::Serializer plugin that can parse query language lang or 0 if no such plugin could be found.
 	 */
-	const Query::Serializer* discoverQuerySerializerForQueryLanguage( Query::QueryLanguage lang, const QString& userQueryLanguage = QString() );
+//	const Query::Serializer* discoverQuerySerializerForQueryLanguage( Query::QueryLanguage lang, const QString& userQueryLanguage = QString() );
 
-	QList<const Query::Serializer*> allQuerySerializers();
+//	QList<const Query::Serializer*> allQuerySerializers();
 	//@}
 
 	static PluginManager* instance();

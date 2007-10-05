@@ -1,4 +1,3 @@
-
 project(soprano_includes)
 
 install(FILES
@@ -37,7 +36,7 @@ add_subdirectory(Error)
 add_subdirectory(Server)
 add_subdirectory(Client)
 add_subdirectory(Inference)
-add_subdirectory(Query)
+#add_subdirectory(Query)
 add_subdirectory(Vocabulary)
 if(SOPRANO_BUILD_INDEX_LIB)
   add_subdirectory(Index)

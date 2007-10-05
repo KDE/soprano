@@ -23,26 +23,31 @@
 #define _SOPRANO_XMLS_H_
 
 #include <QtCore/QUrl>
+#include "soprano_export.h"
 
 namespace Soprano {
     namespace Vocabulary {
 	namespace XMLSchema {
-            QUrl xmlsNamespace();
-            QUrl xmlsInt();
-            QUrl integer();
-	    QUrl negativeInteger();
-	    QUrl decimal();
-	    QUrl xmlsShort();
-            QUrl xmlsLong();
-	    QUrl unsignedInt();
-	    QUrl unsignedShort();
-	    QUrl unsignedLong();
-            QUrl string();
-            QUrl xmlsDouble();
-            QUrl boolean();
-            QUrl date();
-            QUrl dateTime();
-	    QUrl time();
+	    /**
+	     * http://www.w3.org/2001/XMLSchema#
+	     */
+            SOPRANO_EXPORT QUrl xmlsNamespace();
+            SOPRANO_EXPORT QUrl xmlsInt();
+            SOPRANO_EXPORT QUrl integer();
+	    SOPRANO_EXPORT QUrl negativeInteger();
+	    SOPRANO_EXPORT QUrl decimal();
+	    SOPRANO_EXPORT QUrl xmlsShort();
+            SOPRANO_EXPORT QUrl xmlsLong();
+	    SOPRANO_EXPORT QUrl unsignedInt();
+	    SOPRANO_EXPORT QUrl unsignedShort();
+	    SOPRANO_EXPORT QUrl unsignedLong();
+            SOPRANO_EXPORT QUrl string();
+            SOPRANO_EXPORT QUrl xmlsDouble();
+            SOPRANO_EXPORT QUrl boolean();
+            SOPRANO_EXPORT QUrl date();
+            SOPRANO_EXPORT QUrl dateTime();
+	    SOPRANO_EXPORT QUrl time();
+	    SOPRANO_EXPORT QUrl base64Binary();
         }
     }
 }

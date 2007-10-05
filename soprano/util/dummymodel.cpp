@@ -84,11 +84,11 @@ bool Soprano::DummyModel::containsAnyStatement( const Statement& ) const
 }
 
 
-Soprano::QueryResultIterator Soprano::DummyModel::executeQuery( const Query::Query& ) const
-{
-    setError( d->defaultError );
-    return QueryResultIterator();
-}
+// Soprano::QueryResultIterator Soprano::DummyModel::executeQuery( const Query::Query& ) const
+// {
+//     setError( d->defaultError );
+//     return QueryResultIterator();
+// }
 
 
 Soprano::QueryResultIterator Soprano::DummyModel::executeQuery( const QString&, Query::QueryLanguage, const QString& ) const

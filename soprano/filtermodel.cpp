@@ -129,13 +129,13 @@ bool Soprano::FilterModel::containsAnyStatement( const Statement &statement ) co
 }
 
 
-Soprano::QueryResultIterator Soprano::FilterModel::executeQuery( const Query::Query& query ) const
-{
-    Q_ASSERT( d->parent );
-    QueryResultIterator it = d->parent->executeQuery( query );
-    setError( d->parent->lastError() );
-    return it;
-}
+// Soprano::QueryResultIterator Soprano::FilterModel::executeQuery( const Query::Query& query ) const
+// {
+//     Q_ASSERT( d->parent );
+//     QueryResultIterator it = d->parent->executeQuery( query );
+//     setError( d->parent->lastError() );
+//     return it;
+// }
 
 
 Soprano::QueryResultIterator Soprano::FilterModel::executeQuery( const QString& query, Query::QueryLanguage language, const QString& userQueryLanguage ) const

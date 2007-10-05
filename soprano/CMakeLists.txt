@@ -142,9 +142,9 @@ INSTALL(FILES
   inference/statementpattern.h
   inference/sil.h
   inference/inferenceruleparser.h
-  query/query.h
-  query/queryparser.h
-  query/queryserializer.h
+#  query/query.h
+#  query/queryparser.h
+#  query/queryserializer.h
   soprano.h
   vocabulary.h
   dummymodel.h

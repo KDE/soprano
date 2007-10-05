@@ -181,7 +181,6 @@ namespace Soprano
 	 */
 	virtual NodeIterator listContexts() const = 0;
 
-	// FIXME: in light of future extensions as SPARQL insert and update would it make sense to make executeQuery non-const?
 	/**
 	 * Execute the given query over the Model.
 	 *
@@ -192,10 +191,15 @@ namespace Soprano
 	 *
 	 * \sa Query::QueryParser
 	 */
-	virtual QueryResultIterator executeQuery( const Query::Query& query ) const = 0;
+//	virtual QueryResultIterator executeQuery( const Query::Query& query ) const = 0;
 
 	/**
 	 * Execute the given query over the Model.
+	 *
+	 * This is a const read-only method. As such Model implementations should not
+	 * support SPARQL extensions such as INSERT or UPDATE through this method.
+	 * A future version of %Soprano will provide an additional API for queries
+	 * that change the Model.
 	 *
 	 * \param query The query to evaluate.
 	 * \param language The %query language used to encode \p query.

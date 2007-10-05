@@ -33,7 +33,7 @@ namespace Soprano
     /**
      * \class LiteralValue literalvalue.h Soprano/LiteralValue
      *
-     * \brief Represents a literal value of an RDF node.
+     * \brief Represents a literal value of an RDF Node.
      *
      * LiteralValue is based on QVariant to support
      * a subset of the XML Schema types that are compatible
@@ -43,16 +43,17 @@ namespace Soprano
      * automatic type conversion. Other types are represented
      * as strings.
      *
-     * \li int
-     * \li qlonglong
-     * \li unsigned int
-     * \li qulonglong
-     * \li bool
-     * \li double
-     * \li QString
-     * \li QDate
-     * \li QTime
-     * \li QDateTime
+     * \li int (Vocabulary::XMLSchema::xmlsInt)
+     * \li qlonglong (Vocabulary::XMLSchema::xmlsLong)
+     * \li unsigned int (Vocabulary::XMLSchema::unsignedInt)
+     * \li qulonglong (Vocabulary::XMLSchema::unsignedLong)
+     * \li bool (Vocabulary::XMLSchema::boolean)
+     * \li double (Vocabulary::XMLSchema::xmlsDouble)
+     * \li QString (Vocabulary::XMLSchema::string)
+     * \li QDate (Vocabulary::XMLSchema::date)
+     * \li QTime (Vocabulary::XMLSchema::time)
+     * \li QDateTime (Vocabulary::XMLSchema::dateTime)
+     * \li QByteArry (Vocabulary::XMLSchema::base64Binary)
      *
      * Literal values can be converted from strings via fromString().
      *
@@ -159,6 +160,12 @@ namespace Soprano
 	     * http://www.w3.org/2001/XMLSchema#dateTime)
 	     */
 	    LiteralValue( const QDateTime& datetime );
+
+	    /**
+	     * Creates a literal value of type QByteArray (i.e.
+	     * http://www.w3.org/2001/XMLSchema#base64Binary)
+	     */
+	    LiteralValue( const QByteArray& data );
 	    //@}
 
 	    //@{
@@ -247,6 +254,12 @@ namespace Soprano
 	     * be set to dateTime (http://www.w3.org/2001/XMLSchema#dateTime).
 	     */
 	    LiteralValue& operator=( const QDateTime& datetime );
+
+	    /**
+	     * Assigns \a datetime to this literal value. The type will
+	     * be set to ByteArray (http://www.w3.org/2001/XMLSchema#base64Binary).
+	     */
+	    LiteralValue& operator=( const QByteArray& data );
 	    //@}
 
 	    //@{
@@ -275,6 +288,7 @@ namespace Soprano
 	    bool isDate() const;
 	    bool isTime() const;
 	    bool isDateTime() const;
+	    bool isByteArray() const;
 	    //@}
 
 	    //@{
@@ -294,6 +308,7 @@ namespace Soprano
 	    QDate toDate() const;
 	    QTime toTime() const;
 	    QDateTime toDateTime() const;
+	    QByteArray toByteArray() const;
 	    //@}
 
 	    //@{

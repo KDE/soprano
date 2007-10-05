@@ -188,48 +188,48 @@ const Soprano::Serializer* Soprano::PluginManager::discoverSerializerForSerializ
 }
 
 
-const Soprano::Query::Parser* Soprano::PluginManager::discoverQueryParserByName( const QString& name )
-{
-    QHash<QString, Query::Parser*>::iterator it = d->queryParsers.find( name );
-    if( it != d->queryParsers.end() )
-        return *it;
-    else
-        return 0;
-}
+// const Soprano::Query::Parser* Soprano::PluginManager::discoverQueryParserByName( const QString& name )
+// {
+//     QHash<QString, Query::Parser*>::iterator it = d->queryParsers.find( name );
+//     if( it != d->queryParsers.end() )
+//         return *it;
+//     else
+//         return 0;
+// }
 
 
-const Soprano::Query::Parser* Soprano::PluginManager::discoverQueryParserForQueryLanguage( Query::QueryLanguage lang, const QString& userQueryLanguage )
-{
-    for( QHash<QString, Query::Parser*>::const_iterator it = d->queryParsers.begin(); it != d->queryParsers.end(); ++it ) {
-        const Query::Parser* p = *it;
-        if( p->supportsQueryLanguage( lang, userQueryLanguage ) ) {
-            return p;
-        }
-    }
-    return 0;
-}
+// const Soprano::Query::Parser* Soprano::PluginManager::discoverQueryParserForQueryLanguage( Query::QueryLanguage lang, const QString& userQueryLanguage )
+// {
+//     for( QHash<QString, Query::Parser*>::const_iterator it = d->queryParsers.begin(); it != d->queryParsers.end(); ++it ) {
+//         const Query::Parser* p = *it;
+//         if( p->supportsQueryLanguage( lang, userQueryLanguage ) ) {
+//             return p;
+//         }
+//     }
+//     return 0;
+// }
 
 
-const Soprano::Query::Serializer* Soprano::PluginManager::discoverQuerySerializerByName( const QString& name )
-{
-    QHash<QString, Query::Serializer*>::iterator it = d->querySerializers.find( name );
-    if( it != d->querySerializers.end() )
-        return *it;
-    else
-        return 0;
-}
+// const Soprano::Query::Serializer* Soprano::PluginManager::discoverQuerySerializerByName( const QString& name )
+// {
+//     QHash<QString, Query::Serializer*>::iterator it = d->querySerializers.find( name );
+//     if( it != d->querySerializers.end() )
+//         return *it;
+//     else
+//         return 0;
+// }
 
 
-const Soprano::Query::Serializer* Soprano::PluginManager::discoverQuerySerializerForQueryLanguage( Query::QueryLanguage lang, const QString& userQueryLanguage )
-{
-    for( QHash<QString, Query::Serializer*>::const_iterator it = d->querySerializers.begin(); it != d->querySerializers.end(); ++it ) {
-        const Query::Serializer* p = *it;
-        if( p->supportsQueryLanguage( lang, userQueryLanguage ) ) {
-            return p;
-        }
-    }
-    return 0;
-}
+// const Soprano::Query::Serializer* Soprano::PluginManager::discoverQuerySerializerForQueryLanguage( Query::QueryLanguage lang, const QString& userQueryLanguage )
+// {
+//     for( QHash<QString, Query::Serializer*>::const_iterator it = d->querySerializers.begin(); it != d->querySerializers.end(); ++it ) {
+//         const Query::Serializer* p = *it;
+//         if( p->supportsQueryLanguage( lang, userQueryLanguage ) ) {
+//             return p;
+//         }
+//     }
+//     return 0;
+// }
 
 
 QList<const Soprano::Backend*> Soprano::PluginManager::allBackends()
@@ -265,26 +265,26 @@ QList<const Soprano::Serializer*> Soprano::PluginManager::allSerializers()
 }
 
 
-QList<const Soprano::Query::Parser*> Soprano::PluginManager::allQueryParsers()
-{
-    QList<const Query::Parser*> pl;
-    for ( QHash<QString, Query::Parser*>::const_iterator it = d->queryParsers.constBegin();
-          it != d->queryParsers.constEnd(); ++it ) {
-        pl.append( it.value() );
-    }
-    return pl;
-}
+// QList<const Soprano::Query::Parser*> Soprano::PluginManager::allQueryParsers()
+// {
+//     QList<const Query::Parser*> pl;
+//     for ( QHash<QString, Query::Parser*>::const_iterator it = d->queryParsers.constBegin();
+//           it != d->queryParsers.constEnd(); ++it ) {
+//         pl.append( it.value() );
+//     }
+//     return pl;
+// }
 
 
-QList<const Soprano::Query::Serializer*> Soprano::PluginManager::allQuerySerializers()
-{
-    QList<const Query::Serializer*> pl;
-    for ( QHash<QString, Query::Serializer*>::const_iterator it = d->querySerializers.constBegin();
-          it != d->querySerializers.constEnd(); ++it ) {
-        pl.append( it.value() );
-    }
-    return pl;
-}
+// QList<const Soprano::Query::Serializer*> Soprano::PluginManager::allQuerySerializers()
+// {
+//     QList<const Query::Serializer*> pl;
+//     for ( QHash<QString, Query::Serializer*>::const_iterator it = d->querySerializers.constBegin();
+//           it != d->querySerializers.constEnd(); ++it ) {
+//         pl.append( it.value() );
+//     }
+//     return pl;
+// }
 
 
 Soprano::PluginManager::PluginManager( QObject* parent )

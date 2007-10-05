@@ -835,6 +835,7 @@ void SopranoModelTest::testLiteralTypes_data()
     QTest::newRow("timeValue") << LiteralValue( QTime::currentTime() ) << QUrl(ns + "timeValue");
     QTest::newRow("dateTimeValue") << LiteralValue( QDateTime::currentDateTime() ) << QUrl(ns + "dateTimeValue");
     QTest::newRow("stringValue") << LiteralValue( "Hello World" ) << QUrl(ns + "stringValue");
+    QTest::newRow("binaryValue") << LiteralValue( QByteArray( "Hello World" ) ) << QUrl( ns + "binaryValue" );
 
     // and now some utf8 encoding tests
     QTest::newRow("stringValueWithGermanUmlauts") << LiteralValue( StringPool::germanUmlauts() ) << QUrl(ns + "stringValueWithGermanUmlauts");

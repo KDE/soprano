@@ -23,6 +23,7 @@
 #define _SOPRANO_NAO_H_
 
 #include <QtCore/QUrl>
+#include "soprano_export.h"
 
 namespace Soprano {
     namespace Vocabulary {
@@ -35,8 +36,8 @@ namespace Soprano {
 	    /**
 	     * The NAO namespace
 	     */
-	    QUrl naoNamespace();
-	    QUrl created();
+	    SOPRANO_EXPORT QUrl naoNamespace();
+	    SOPRANO_EXPORT QUrl created();
 	}
     }
 }

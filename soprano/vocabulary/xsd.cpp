@@ -41,7 +41,8 @@ public:
           xmlsString( "http://www.w3.org/2001/XMLSchema#string" ),
           xmlsDate( "http://www.w3.org/2001/XMLSchema#date" ),
           xmlsTime( "http://www.w3.org/2001/XMLSchema#time" ),
-          xmlsDateTime( "http://www.w3.org/2001/XMLSchema#dateTime" ) {
+          xmlsDateTime( "http://www.w3.org/2001/XMLSchema#dateTime" ),
+          xmlsBase64Binary( "http://www.w3.org/2001/XMLSchema#base64Binary" ) {
     }
 
     QUrl xmlsNamespace;
@@ -60,6 +61,7 @@ public:
     QUrl xmlsDate;
     QUrl xmlsTime;
     QUrl xmlsDateTime;
+    QUrl xmlsBase64Binary;
 };
 
 
@@ -159,4 +161,10 @@ QUrl Soprano::Vocabulary::XMLSchema::time()
 QUrl Soprano::Vocabulary::XMLSchema::dateTime()
 {
     return xmls()->xmlsDateTime;
+}
+
+
+QUrl Soprano::Vocabulary::XMLSchema::base64Binary()
+{
+    return xmls()->xmlsBase64Binary;
 }

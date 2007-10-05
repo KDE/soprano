@@ -61,6 +61,7 @@ void SopranoLiteralTest::testDataTypes_data()
   QTest::newRow( "dateTime" ) << "dateTime" << LiteralValue( QDateTime::currentDateTime() );
   QTest::newRow( "boolean-false" ) << "boolean" << LiteralValue( false );
   QTest::newRow( "boolean-true" ) << "boolean" << LiteralValue( true );
+  QTest::newRow( "binaryData" ) << "base64Binary" << LiteralValue( QByteArray( "Hello World" ) );
 }
 
 

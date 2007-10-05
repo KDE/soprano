@@ -95,10 +95,10 @@ target_link_libraries(inferencemodeltest soprano ${QT_QTCORE_LIBRARY} ${QT_QTTES
 add_test(inferencemodeltest ${EXECUTABLE_OUTPUT_PATH}/inferencemodeltest)
 
 # QueryAPITest
-qt4_automoc(queryapitest queryapitest.cpp)
-add_executable(queryapitest queryapitest.cpp)
-target_link_libraries(queryapitest soprano ${QT_QTCORE_LIBRARY} ${QT_QTTEST_LIBRARY})
-add_test(queryapitest ${EXECUTABLE_OUTPUT_PATH}/queryapitest)
+#qt4_automoc(queryapitest queryapitest.cpp)
+#add_executable(queryapitest queryapitest.cpp)
+#target_link_libraries(queryapitest soprano ${QT_QTCORE_LIBRARY} ${QT_QTTEST_LIBRARY})
+#add_test(queryapitest ${EXECUTABLE_OUTPUT_PATH}/queryapitest)
 
 if(JNI_1_6_FOUND)
   # Sesame2 model tests

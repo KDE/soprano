@@ -9,3 +9,6 @@
 	* Added "apidox" build target for building the Soprano API documentation.
 	* Added simple inferencing model based on rule files including a rule file parser.
 	* Added an index filter model which creates a CLucene index of all literal statements.
+	* Support for binary data in RDF literals encoded as base64 in LiteralValue
+	* Added Vocabulary namespace containing basic ontology URIs such as RDF, RDFS, XML Schema, and NRL
+	

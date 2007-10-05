@@ -93,40 +93,40 @@ Soprano::Error::ErrorCode Soprano::StorageModel::removeAllStatements( const Stat
 }
 
 
-Soprano::QueryResultIterator Soprano::StorageModel::executeQuery( const Query::Query& query ) const
-{
-    const Query::Serializer* serializer = PluginManager::instance()->discoverQuerySerializerForQueryLanguage( Query::QUERY_LANGUAGE_SPARQL );
-    if ( !serializer ) {
-        setError( "No SPARQL query serializer plugin found." );
-        return QueryResultIterator();
-    }
-    QString queryString;
-    QTextStream s( &queryString );
-    if ( serializer->serializeQuery( query, s, Query::QUERY_LANGUAGE_SPARQL ) ) {
-        return executeQuery( queryString, Query::QUERY_LANGUAGE_SPARQL );
-    }
-    else {
-        setError( serializer->lastError() );
-        return QueryResultIterator();
-    }
-}
+// Soprano::QueryResultIterator Soprano::StorageModel::executeQuery( const Query::Query& query ) const
+// {
+//     const Query::Serializer* serializer = PluginManager::instance()->discoverQuerySerializerForQueryLanguage( Query::QUERY_LANGUAGE_SPARQL );
+//     if ( !serializer ) {
+//         setError( "No SPARQL query serializer plugin found." );
+//         return QueryResultIterator();
+//     }
+//     QString queryString;
+//     QTextStream s( &queryString );
+//     if ( serializer->serializeQuery( query, s, Query::QUERY_LANGUAGE_SPARQL ) ) {
+//         return executeQuery( queryString, Query::QUERY_LANGUAGE_SPARQL );
+//     }
+//     else {
+//         setError( serializer->lastError() );
+//         return QueryResultIterator();
+//     }
+// }
 
 
-Soprano::QueryResultIterator Soprano::StorageModel::executeQuery( const QString& query, Query::QueryLanguage language, const QString& userQueryLanguage ) const
-{
-    const Query::Parser* parser = PluginManager::instance()->discoverQueryParserForQueryLanguage( language, userQueryLanguage );
-    if ( !parser ) {
-        setError( QString( "No query parser plugin for language %1 found." ).arg( Query::queryLanguageToString( language, userQueryLanguage ) ) );
-        return QueryResultIterator();
-    }
-    Query::Query queryObject = parser->parseQuery( query, language, userQueryLanguage );
-    if ( queryObject.isValid() ) {
-        return executeQuery( queryObject );
-    }
-    else {
-        setError( parser->lastError() );
-        return QueryResultIterator();
-    }
-}
+// Soprano::QueryResultIterator Soprano::StorageModel::executeQuery( const QString& query, Query::QueryLanguage language, const QString& userQueryLanguage ) const
+// {
+//     const Query::Parser* parser = PluginManager::instance()->discoverQueryParserForQueryLanguage( language, userQueryLanguage );
+//     if ( !parser ) {
+//         setError( QString( "No query parser plugin for language %1 found." ).arg( Query::queryLanguageToString( language, userQueryLanguage ) ) );
+//         return QueryResultIterator();
+//     }
+//     Query::Query queryObject = parser->parseQuery( query, language, userQueryLanguage );
+//     if ( queryObject.isValid() ) {
+//         return executeQuery( queryObject );
+//     }
+//     else {
+//         setError( parser->lastError() );
+//         return QueryResultIterator();
+//     }
+// }
 
 #include "storagemodel.moc"

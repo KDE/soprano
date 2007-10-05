@@ -88,7 +88,6 @@ WARN_LOGFILE           =
 INPUT                  = ${soprano_SOURCE_DIR}/soprano \
                          ${soprano_SOURCE_DIR}/Mainpage.dox \
                          ${soprano_SOURCE_DIR}/soprano/vocabulary \
-                         ${soprano_SOURCE_DIR}/soprano/query \
                          ${soprano_SOURCE_DIR}/soprano/inference \
                          ${soprano_SOURCE_DIR}/index/indexfiltermodel.h \
                          ${soprano_SOURCE_DIR}/index/cluceneindex.h \
@@ -99,6 +98,7 @@ INPUT                  = ${soprano_SOURCE_DIR}/soprano \
                          ${soprano_SOURCE_DIR}/server/unixsocketclient.h \
                          ${soprano_SOURCE_DIR}/server/dbus/dbusclient.h \
                          ${soprano_SOURCE_DIR}/server/dbus/dbusmodel.h
+#                         ${soprano_SOURCE_DIR}/soprano/query
 INPUT_ENCODING         = UTF-8
 FILE_PATTERNS          = *.h
 RECURSIVE              = NO

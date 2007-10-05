@@ -75,7 +75,7 @@ namespace Soprano {
 	 * Be aware that one of the two query methods has to be re-implemented.
 	 * Otherwise calling one of them results in an endless loop.
 	 */
-	virtual QueryResultIterator executeQuery( const Query::Query& query ) const;
+//	virtual QueryResultIterator executeQuery( const Query::Query& query ) const;
 
 	/**
 	 * Default implementation uses Query::Parser and 
@@ -84,7 +84,7 @@ namespace Soprano {
 	 * Be aware that one of the two query methods has to be re-implemented.
 	 * Otherwise calling one of them results in an endless loop.
 	 */
-	virtual QueryResultIterator executeQuery( const QString& query, Query::QueryLanguage language, const QString& userQueryLanguage = QString() ) const;
+//	virtual QueryResultIterator executeQuery( const QString& query, Query::QueryLanguage language, const QString& userQueryLanguage = QString() ) const;
 
 	/**
 	 * \return The backend that was used to create this model.
