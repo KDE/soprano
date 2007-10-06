@@ -8,7 +8,6 @@ include_directories(
   ${soprano_raptor_serializer_BINARY_DIR}
   ${REDLAND_INCLUDE_DIR}
   ${RASQAL_INCLUDE_DIR}
-  ${CMAKE_INSTALL_PREFIX}/include
 )
 
 set(raptor_serializer_SRC

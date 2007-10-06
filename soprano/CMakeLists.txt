@@ -13,7 +13,6 @@ include_directories(
   ${soprano_core_SOURCE_DIR}/query
   ${soprano_core_SOURCE_DIR}/vocabulary
   ${QT_INCLUDE_DIR}
-  ${CMAKE_INSTALL_PREFIX}/include
   )
 
 configure_file(config.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/config.h)
@@ -103,7 +102,7 @@ INSTALL(TARGETS soprano
   ARCHIVE DESTINATION lib
   )
 
-INSTALL(FILES 
+INSTALL(FILES
   parser.h
   queryresultiterator.h
   queryresultiteratorbackend.h

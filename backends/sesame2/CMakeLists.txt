@@ -7,7 +7,6 @@ include_directories(
   ${soprano_core_SOURCE_DIR}
   ${soprano_core_BINARY_DIR}
   ${soprano_sesame2_BINARY_DIR}
-  ${CMAKE_INSTALL_PREFIX}/include
   ${JAVA_INCLUDE_PATH}
   ${JAVA_INCLUDE_PATH2}
   )
@@ -43,7 +42,7 @@ INSTALL(TARGETS soprano_sesame2backend
   ARCHIVE DESTINATION lib/soprano
   )
 
-INSTALL(FILES 
+INSTALL(FILES
   openrdf-sesame-2.0-beta5-onejar.jar
   slf4j-api-1.4.2.jar
   slf4j-simple-1.4.2.jar
