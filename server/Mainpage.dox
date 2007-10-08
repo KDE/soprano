@@ -70,17 +70,18 @@
  * \li No signals are emitted (Model::statementsAdded() and Model::statementsRemoved())
  * \li No permission handling, i.e. each process running on the machine can access a running %Soprano server,
  *     indifferent of the user id of the server process.
- * \li Queries are always transmitted as strings and thus, might be serialized on the client side and parsed
- *     again on the server side when using Model::executeQuery( const Query& ) const.
+ * <!--\li Queries are always transmitted as strings and thus, might be serialized on the client side and parsed
+ *     again on the server side when using Model::executeQuery( const Query& ) const.-->
  *
  * <b>Unix Socket %Client:</b>
  * \li No signals are emitted (Model::statementsAdded() and Model::statementsRemoved())
- * \li Queries are always transmitted as strings and thus, might be serialized on the client side and parsed
- *     again on the server side when using Model::executeQuery( const Query& ) const.
+ * <!--\li Queries are always transmitted as strings and thus, might be serialized on the client side and parsed
+ *     again on the server side when using Model::executeQuery( const Query& ) const.-->
  *
  * <b>DBus %Client:</b>
- * \li Queries are always transmitted as strings and thus, might be serialized on the client side and parsed
- *     again on the server side when using Model::executeQuery( const Query& ) const.
+ * \li No restrictions
+ * <!--\li Queries are always transmitted as strings and thus, might be serialized on the client side and parsed
+ *     again on the server side when using Model::executeQuery( const Query& ) const.-->
  *
  * While the TCP comunication is the fastest due to its missing permission handling it is not recommended to use
  * it yet. The best solution at the moment is the DBus client. Although being the slowest (slightly slower than

@@ -133,6 +133,8 @@ namespace Soprano
 	QList<const Serializer*> allSerializers();
 	//@}
 
+        /** \cond query_api_disabled */
+
 	//@{
 	/**
 	 * Find a query parser plugin by its name.
@@ -181,6 +183,11 @@ namespace Soprano
 //	QList<const Query::Serializer*> allQuerySerializers();
 	//@}
 
+        /** \endcond query_api_disabled */
+
+	/**
+	 * Get the singleton instance of the PluginManager
+	 */
 	static PluginManager* instance();
 
     private:

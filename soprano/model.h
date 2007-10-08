@@ -181,6 +181,8 @@ namespace Soprano
 	 */
 	virtual NodeIterator listContexts() const = 0;
 
+        /** \cond query_api_disabled */
+
 	/**
 	 * Execute the given query over the Model.
 	 *
@@ -192,6 +194,8 @@ namespace Soprano
 	 * \sa Query::QueryParser
 	 */
 //	virtual QueryResultIterator executeQuery( const Query::Query& query ) const = 0;
+
+        /** \endcond query_api_disabled */
 
 	/**
 	 * Execute the given query over the Model.
