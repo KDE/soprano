@@ -38,7 +38,7 @@ namespace Soprano {
 
     namespace Client {
 	/**
-	 * \class TcpClient tcpclient.h soprano/Client/TcpClient
+	 * \class TcpClient tcpclient.h Soprano/Client/TcpClient
 	 *
 	 * \brief Creates a connection to the %Soprano server.
 	 *

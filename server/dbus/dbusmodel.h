@@ -29,7 +29,7 @@ namespace Soprano {
     namespace Client {
 
 	/**
-	 * \class DBusModel dbusmodel.h soprano/Client/DBusModel
+	 * \class DBusModel dbusmodel.h Soprano/Client/DBusModel
 	 *
 	 * \brief Interface to a DBus server model.
 	 *

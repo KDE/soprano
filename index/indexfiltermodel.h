@@ -37,7 +37,7 @@ namespace Soprano {
 	class QueryResult;
 
 	/**
-	 * \class IndexFilterModel indexfiltermodel.h soprano/Index/IndexFilterModel
+	 * \class IndexFilterModel indexfiltermodel.h Soprano/Index/IndexFilterModel
 	 *
 	 * \brief The IndexFilterModel provides a full text index around any Soprano Model.
 	 *
