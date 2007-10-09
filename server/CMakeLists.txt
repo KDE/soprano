@@ -82,7 +82,7 @@ add_library(sopranoserver SHARED ${soprano_server_SRC})
 add_library(sopranoclient SHARED ${soprano_client_SRC})
 #add_library(soprano_serverclientbackend SHARED ${soprano_serverbackend_SRC})
 
-add_executable(sopranod sopranod.cpp)
+add_executable(sopranod sopranod.cpp lockfile.cpp)
 
 set_target_properties(sopranoserver PROPERTIES
   VERSION 1.0.0

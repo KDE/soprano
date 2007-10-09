@@ -52,21 +52,21 @@ namespace Soprano {
 	    {
 		QList<QVariant> argumentList;
 		argumentList << qVariantFromValue(statement);
-		return callWithArgumentList(QDBus::Block, QLatin1String("addStatement"), argumentList);
+		return callWithArgumentListAndBigTimeout(QDBus::Block, QLatin1String("addStatement"), argumentList);
 	    }
 
 	    inline QDBusReply<bool> containsAnyStatement( const Soprano::Statement& statement )
 	    {
 		QList<QVariant> argumentList;
 		argumentList << qVariantFromValue(statement);
-		return callWithArgumentList(QDBus::Block, QLatin1String("containsAnyStatement"), argumentList);
+		return callWithArgumentListAndBigTimeout(QDBus::Block, QLatin1String("containsAnyStatement"), argumentList);
 	    }
 
 	    inline QDBusReply<bool> containsStatement( const Soprano::Statement& statement )
 	    {
 		QList<QVariant> argumentList;
 		argumentList << qVariantFromValue(statement);
-		return callWithArgumentList(QDBus::Block, QLatin1String("containsStatement"), argumentList);
+		return callWithArgumentListAndBigTimeout(QDBus::Block, QLatin1String("containsStatement"), argumentList);
 	    }
 
 	    inline QDBusReply<Soprano::Node> createBlankNode()
@@ -79,51 +79,56 @@ namespace Soprano {
 	    {
 		QList<QVariant> argumentList;
 		argumentList << qVariantFromValue(query) << qVariantFromValue(queryLang) << qVariantFromValue(userQueryLanguage);
-		return callWithArgumentList(QDBus::Block, QLatin1String("executeQuery"), argumentList);
+		return callWithArgumentListAndBigTimeout(QDBus::Block, QLatin1String("executeQuery"), argumentList);
 	    }
 
 	    inline QDBusReply<bool> isEmpty()
 	    {
 		QList<QVariant> argumentList;
-		return callWithArgumentList(QDBus::Block, QLatin1String("isEmpty"), argumentList);
+		return callWithArgumentListAndBigTimeout(QDBus::Block, QLatin1String("isEmpty"), argumentList);
 	    }
 
 	    inline QDBusReply<QString> listContexts()
 	    {
 		QList<QVariant> argumentList;
-		return callWithArgumentList(QDBus::Block, QLatin1String("listContexts"), argumentList);
+		return callWithArgumentListAndBigTimeout(QDBus::Block, QLatin1String("listContexts"), argumentList);
 	    }
 
 	    inline QDBusReply<QString> listStatements( const Soprano::Statement& statement )
 	    {
 		QList<QVariant> argumentList;
 		argumentList << qVariantFromValue(statement);
-		return callWithArgumentList(QDBus::Block, QLatin1String("listStatements"), argumentList);
+		return callWithArgumentListAndBigTimeout(QDBus::Block, QLatin1String("listStatements"), argumentList);
 	    }
 
 	    inline QDBusReply<int> removeAllStatements( const Soprano::Statement& statement )
 	    {
 		QList<QVariant> argumentList;
 		argumentList << qVariantFromValue(statement);
-		return callWithArgumentList(QDBus::Block, QLatin1String("removeAllStatements"), argumentList);
+		return callWithArgumentListAndBigTimeout(QDBus::Block, QLatin1String("removeAllStatements"), argumentList);
 	    }
 
 	    inline QDBusReply<int> removeStatement( const Soprano::Statement& statement )
 	    {
 		QList<QVariant> argumentList;
 		argumentList << qVariantFromValue(statement);
-		return callWithArgumentList(QDBus::Block, QLatin1String("removeStatement"), argumentList);
+		return callWithArgumentListAndBigTimeout(QDBus::Block, QLatin1String("removeStatement"), argumentList);
 	    }
 
 	    inline QDBusReply<int> statementCount()
 	    {
 		QList<QVariant> argumentList;
-		return callWithArgumentList(QDBus::Block, QLatin1String("statementCount"), argumentList);
+		return callWithArgumentListAndBigTimeout(QDBus::Block, QLatin1String("statementCount"), argumentList);
 	    }
 
 	Q_SIGNALS:
 	    void statementsAdded();
 	    void statementsRemoved();
+
+	private:
+	    QDBusMessage callWithArgumentListAndBigTimeout( QDBus::CallMode mode,
+							    const QString& method,
+							    const QList<QVariant>& args );
 	};
     }
 }

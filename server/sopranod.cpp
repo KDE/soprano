@@ -21,6 +21,7 @@
 #include "pluginmanager.h"
 #include "version.h"
 #include "dbus/dbusserveradaptor.h"
+#include "lockfile.h"
 
 #include <signal.h>
 
@@ -110,6 +111,14 @@ int main( int argc, char** argv )
         ++i;
     }
 
+    // let's start by aquiring a lock
+    LockFile lock( QDir::homePath() + "/.soprano/lock" );
+    if ( !lock.aquireLock() ) {
+        QTextStream s( stderr );
+        s << "Unable to create lock. Sopranod is probably already running." << endl;
+        return 5;
+    }
+
     Soprano::Server::ServerCore core( &app );
 
     QDBusConnection::sessionBus().registerService( "org.soprano.Server" );
@@ -125,8 +134,13 @@ int main( int argc, char** argv )
     }
 
     // make sure we have a soprano dir
-    if ( !QFile::exists( QDir::homePath() + "/.soprano" ) ) {
+    if ( !QFile::exists( QDir::homePath() + QLatin1String( "/.soprano" ) ) ) {
         QDir::home().mkdir( ".soprano" );
+    }
+
+    QString socketPath = QDir::homePath() + QLatin1String( "/.soprano/socket" );
+    if ( QFile::exists( socketPath ) ) {
+        QFile::remove( socketPath );
     }
 
     if ( core.start() && core.listen( port ) ) {

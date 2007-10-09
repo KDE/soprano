@@ -1,0 +1,99 @@
+/*
+ * This file is part of Soprano Project.
+ *
+ * Copyright (C) 2007 Sebastian Trueg <trueg@kde.org>
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ * See the file "COPYING" for the exact licensing terms.
+ */
+
+#include "lockfile.h"
+
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <fcntl.h>
+#include <unistd.h>
+
+#include <QtCore/QFile>
+#include <QtCore/QDebug>
+
+
+class LockFile::Private
+{
+public:
+    Private()
+        : fd( -1 ) {
+    }
+
+    QString path;
+    int fd;
+};
+
+
+LockFile::LockFile()
+    : d( new Private() )
+{
+}
+
+
+LockFile::LockFile( const QString& path )
+    : d( new Private() )
+{
+    d->path = path;
+}
+
+
+LockFile::~LockFile()
+{
+    releaseLock();
+    delete d;
+}
+
+
+void LockFile::setFileName( const QString& path )
+{
+    releaseLock();
+    d->path = path;
+}
+
+
+QString LockFile::fileName() const
+{
+    return d->path;
+}
+
+
+bool LockFile::aquireLock()
+{
+    releaseLock();
+
+    d->fd = open( QFile::encodeName( d->path ).data(), O_WRONLY|O_CREAT );
+    if ( d->fd == -1 ) {
+        qDebug() << "(LockFile) could not open" << d->path;
+        return false;
+    }
+    struct flock lock;
+    lock.l_type = F_WRLCK;
+    lock.l_whence = SEEK_SET;
+    lock.l_start = 0;
+    lock.l_len = 0;
+    int r = fcntl( d->fd, F_SETLK, &lock );
+    if ( r == -1 ) {
+        qDebug() << "(LockFile) could not set lock for" << d->path;
+        close( d->fd );
+        return false;
+    }
+    return true;
+}
+
+
+void LockFile::releaseLock()
+{
+    if ( d->fd > 0 ) {
+        close( d->fd );
+    }
+    d->fd = -1;
+}
