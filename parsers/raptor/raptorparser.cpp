@@ -275,7 +275,9 @@ Soprano::Raptor::Parser::parseStream( QTextStream& stream,
     // prepare the container for the parsed data
     ParserData data;
     raptor_set_statement_handler( parser, &data, raptorTriplesHandler );
+#ifdef RAPTOR_HAVE_TRIG
     raptor_set_graph_handler( parser, &data, raptorGraphHandler );
+#endif
 
     // start the atual parsing
     raptor_uri* raptorBaseUri = 0;
