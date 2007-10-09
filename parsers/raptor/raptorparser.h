@@ -28,6 +28,8 @@
 
 #include <soprano/parser.h>
 
+#include <raptor.h>
+
 
 namespace Soprano {
     namespace Raptor {
@@ -54,6 +56,12 @@ namespace Soprano {
 					   const QUrl& baseUri, 
 					   RdfSerialization serialization,
 					   const QString& userSerialization = QString() ) const;
+
+	    void setError( const Soprano::Error::Error& error ) const;
+
+	private:
+	    raptor_parser* createParser( RdfSerialization serialization,
+					 const QString& userSerialization = QString() ) const;
 	};
     }
 }

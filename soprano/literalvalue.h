@@ -49,7 +49,7 @@ namespace Soprano
      * \li qulonglong (Vocabulary::XMLSchema::unsignedLong)
      * \li bool (Vocabulary::XMLSchema::boolean)
      * \li double (Vocabulary::XMLSchema::xmlsDouble)
-     * \li QString (Vocabulary::XMLSchema::string)
+     * \li QString (Vocabulary::XMLSchema::string or Vocabulary::RDF::XMLLiteral)
      * \li QDate (Vocabulary::XMLSchema::date)
      * \li QTime (Vocabulary::XMLSchema::time)
      * \li QDateTime (Vocabulary::XMLSchema::dateTime)

@@ -22,6 +22,7 @@
 #include "literalvalue.h"
 #include "datetime.h"
 #include "xmls.h"
+#include "rdf.h"
 
 #include <QtCore/QUrl>
 #include <QtCore/QString>
@@ -521,6 +522,7 @@ QVariant::Type Soprano::LiteralValue::typeFromDataTypeUri( const QUrl& dataTypeU
         s_xmlSchemaTypes.insert( Vocabulary::XMLSchema::time(), QVariant::Time );
         s_xmlSchemaTypes.insert( Vocabulary::XMLSchema::dateTime(), QVariant::DateTime );
         s_xmlSchemaTypes.insert( Vocabulary::XMLSchema::base64Binary(), QVariant::ByteArray );
+        s_xmlSchemaTypes.insert( Vocabulary::RDF::XMLLiteral(), QVariant::String );
     }
 
     QHash<QUrl, QVariant::Type>::const_iterator it = s_xmlSchemaTypes.find( dataTypeUri );
@@ -528,6 +530,7 @@ QVariant::Type Soprano::LiteralValue::typeFromDataTypeUri( const QUrl& dataTypeU
         return it.value();
     }
     else {
+        qDebug() << "(Soprano::LiteralValue) unknown literal type uri:" << dataTypeUri;
         return QVariant::Invalid;
     }
 }

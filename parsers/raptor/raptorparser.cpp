@@ -23,25 +23,26 @@
 
 #include "raptorparser.h"
 #include "raptor-config.h"
-#include "../../backends/redland/redlandworld.h"
-#include "../../backends/redland/redlandstatementiterator.h"
-#include "../../backends/redland/redlandutil.h"
 
-#include <soprano/statementiterator.h>
+#include <soprano/simplestatementiterator.h>
 #include <soprano/statement.h>
+#include <soprano/locator.h>
+#include <soprano/error.h>
 
-#include <redland.h>
+#include <raptor.h>
 
 #include <QtCore/QUrl>
+#include <QtCore/QFile>
 #include <QtCore/QtPlugin>
 #include <QtCore/QTextStream>
 #include <QtCore/QDebug>
+#include <QtCore/QLatin1String>
 
 
 Q_EXPORT_PLUGIN2(soprano_raptorparser, Soprano::Raptor::Parser)
 
 namespace {
-    // for some strange reason librdf can only handle application/turtle when parsing
+    // for some strange reason raptor <= 1.4.15 can only handle application/turtle when parsing
     // and application/x-turtle when serializing, but not the other way around
     QString mimeTypeString( Soprano::RdfSerialization s, const QString& userSerialization )
     {
@@ -54,6 +55,86 @@ namespace {
         {
             return serializationMimeType( s, userSerialization );
         }
+    }
+
+
+    void raptorMessageHandler( void* userData, raptor_locator* locator, const char* message )
+    {
+        Soprano::Raptor::Parser* p = static_cast<Soprano::Raptor::Parser*>( userData );
+        if ( locator ) {
+            p->setError( Soprano::Error::ParserError( Soprano::Error::Locator( locator->line, locator->column, locator->byte ),
+                                                      QString::fromUtf8( message ),
+                                                      Soprano::Error::ErrorParsingFailed ) );
+        }
+        else {
+            p->setError( Soprano::Error::Error( QString::fromUtf8( message ), Soprano::Error::ErrorUnknown ) );
+        }
+    }
+
+
+    Soprano::Node convertNode( const void* data, raptor_identifier_type type,
+                               raptor_uri* objectLiteralDatatype = 0, const unsigned char* objectLiteralLanguage = 0 )
+    {
+        switch( type ) {
+        case RAPTOR_IDENTIFIER_TYPE_RESOURCE:
+        case RAPTOR_IDENTIFIER_TYPE_PREDICATE:
+        case RAPTOR_IDENTIFIER_TYPE_ORDINAL:
+            return Soprano::Node::createResourceNode( QString::fromUtf8( ( char* )raptor_uri_as_string( ( raptor_uri* )data ) ) );
+
+        case RAPTOR_IDENTIFIER_TYPE_ANONYMOUS:
+            return Soprano::Node::createBlankNode( QString::fromUtf8( ( const char* )data ) );
+
+        case RAPTOR_IDENTIFIER_TYPE_LITERAL:
+        case RAPTOR_IDENTIFIER_TYPE_XML_LITERAL:
+            if ( objectLiteralDatatype ) {
+                return Soprano::Node::createLiteralNode( Soprano::LiteralValue::fromString( QString::fromUtf8( ( const char* )data ),
+                                                                                            QString::fromUtf8( ( char* )raptor_uri_as_string( objectLiteralDatatype ) ) ),
+                                                         QString::fromUtf8( ( const char* )objectLiteralLanguage ) );
+            }
+            else {
+                return Soprano::Node::createLiteralNode( Soprano::LiteralValue( QString::fromUtf8( ( const char* )data ) ),
+                                                         QString::fromUtf8( ( const char* )objectLiteralLanguage ) );
+            }
+
+        default:
+            return Soprano::Node();
+        }
+    }
+
+
+    Soprano::Statement convertTriple( const raptor_statement* triple )
+    {
+        return Soprano::Statement( convertNode( triple->subject, triple->subject_type ),
+                                   convertNode( triple->predicate, triple->predicate_type ),
+                                   convertNode( triple->object, triple->object_type,
+                                                triple->object_literal_datatype,
+                                                triple->object_literal_language ) );
+    }
+
+
+    class ParserData {
+    public:
+        QList<Soprano::Statement> statements;
+        Soprano::Node currentContext;
+    };
+
+
+    void raptorTriplesHandler( void* userData, const raptor_statement* triple )
+    {
+        ParserData* pd = static_cast<ParserData*>( userData );
+        Soprano::Statement s = convertTriple( triple );
+        qDebug() << "got triple: " << s;
+        s.setContext( pd->currentContext );
+        pd->statements.append( s );
+    }
+
+
+    void raptorGraphHandler( void* userData, raptor_uri* graph )
+    {
+        Soprano::Node context = Soprano::Node::createResourceNode( QString::fromUtf8( ( char* )raptor_uri_as_string( graph ) ) );
+        ParserData* pd = static_cast<ParserData*>( userData );
+        pd->currentContext = context;
+        qDebug() << "got graph: " << context;
     }
 }
 
@@ -82,55 +163,88 @@ Soprano::RdfSerializations Soprano::Raptor::Parser::supportedSerializations() co
 }
 
 
+raptor_parser* Soprano::Raptor::Parser::createParser( RdfSerialization serialization,
+                                                      const QString& userSerialization ) const
+{
+    // create the parser
+    raptor_parser* parser = raptor_new_parser_for_content( NULL,
+                                                           mimeTypeString( serialization, userSerialization ).toLatin1().data(),
+                                                           NULL,
+                                                           0,
+                                                           NULL );
+
+    if ( !parser ) {
+        qDebug() << "(Soprano::Raptor::Parser) no parser for serialization " << mimeTypeString( serialization, userSerialization );
+        setError( QString( "Failed to create parser for serialization %1" ).arg( mimeTypeString( serialization, userSerialization ) ) );
+        return 0;
+    }
+
+    // set the erro handling method
+    Parser* that = const_cast<Parser*>( this );
+    raptor_set_fatal_error_handler( parser, that, raptorMessageHandler );
+    raptor_set_error_handler( parser, that, raptorMessageHandler );
+    raptor_set_warning_handler( parser, that, raptorMessageHandler );
+
+    return parser;
+}
+
+
 Soprano::StatementIterator Soprano::Raptor::Parser::parseFile( const QString& filename,
                                                                const QUrl& baseUri,
                                                                RdfSerialization serialization,
                                                                const QString& userSerialization ) const
 {
-    clearError();
-
-    QUrl uri( QUrl::fromLocalFile( filename ) );
-    if ( uri.scheme().isEmpty() ) {
-        // we need to help the stupid librdf file url handling
-        uri.setScheme("file");
-    }
-
-    librdf_uri* redlandUri = librdf_new_uri( Redland::World::self()->worldPtr(),
-                                             (unsigned char *) uri.toString().toLatin1().data() );
-    if ( !redlandUri ) {
-        return StatementIterator();
-    }
-
-    librdf_parser *parser = librdf_new_parser( Redland::World::self()->worldPtr(),
-                                               0, // use all factories
-                                               mimeTypeString( serialization, userSerialization ).toLatin1().data(),
-                                               0 ); // what is the URI of the syntax used for?
-    if ( !parser ) {
-        qDebug() << "(Soprano::Raptor::Parser) no parser for serialization " << serializationMimeType( serialization, userSerialization );
-        librdf_free_uri( redlandUri );
-        setError( Redland::World::self()->lastError() );
-        return StatementIterator();
-    }
-
-    librdf_uri* redlandBaseUri = 0;
-    if ( !baseUri.toString().isEmpty() ) {
-        redlandBaseUri = librdf_new_uri( Redland::World::self()->worldPtr(),
-                                         (unsigned char *) baseUri.toString().toLatin1().data() );
-    }
-
-    librdf_stream* stream = librdf_parser_parse_as_stream( parser, redlandUri, redlandBaseUri );
-
-    librdf_free_uri( redlandUri );
-
-    if ( !stream ) {
-        librdf_free_parser( parser );
-        setError( Redland::World::self()->lastError() );
-        return StatementIterator();
+    QFile f( filename );
+    if ( f.open( QIODevice::ReadOnly ) ) {
+        QTextStream s( &f );
+        return parseStream( s, baseUri, serialization, userSerialization );
     }
     else {
-        // FIXME: delete the parser once the stream is done.
-        return new Redland::RedlandStatementIterator( 0, stream, Node() );
+        setError( QString( "Could not open file %1 for reading." ).arg( filename ) );
+        return StatementIterator();
     }
+
+//     clearError();
+
+//     raptor_parser* parser = createParser( serialization, userSerialization );
+//     if ( !parser ) {
+//         return StatementIterator();
+//     }
+
+//     // prepare the container for the parsed data
+//     QList<Statement> statements;
+//     raptor_set_statement_handler( parser, &statements, raptorTriplesHandler );
+
+//     // start the atual parsing
+//     QUrl uri( QUrl::fromLocalFile( filename ) );
+//     if ( uri.scheme().isEmpty() ) {
+//         // we need to help the stupid librdf file url handling
+//         uri.setScheme("file");
+//     }
+//     raptor_uri* raptorBaseUri = 0;
+//     if ( !baseUri.toString().isEmpty() ) {
+//         raptorBaseUri = raptor_new_uri( (unsigned char *) baseUri.toString().toUtf8().data() );
+//     }
+//     raptor_uri* raptorUri = raptor_new_uri( (unsigned char *) uri.toString().toUtf8().data() );
+//     if ( !raptorUri ) {
+//         setError( QLatin1String( "Internal: Failed to create raptor_uri instance for '%1'" ).arg( uri ) );
+//         return StatementIterator();
+//     }
+
+//     int r = raptor_parse_uri( parser, raptorUri, raptorBaseUri );
+
+//     raptor_free_parser( parser );
+//     raptor_free_uri( raptorUri );
+//     if ( raptorBaseUri ) {
+//         raptor_free_uri( raptorBaseUri );
+//     }
+
+//     if ( r == 0 ) {
+//         return SimpleStatementIterator( statements );
+//     }
+//     else {
+//         return StatementIterator();
+//     }
 }
 
 
@@ -139,36 +253,9 @@ Soprano::StatementIterator Soprano::Raptor::Parser::parseString( const QString& 
                                                                  RdfSerialization serialization,
                                                                  const QString& userSerialization ) const
 {
-    clearError();
-
-    librdf_parser* parser = librdf_new_parser( Redland::World::self()->worldPtr(),
-                                               0, // use all factories
-                                               mimeTypeString( serialization, userSerialization ).toLatin1().data(),
-                                               0 ); // what is the URI of the syntax used for?
-    if ( !parser ) {
-        return StatementIterator();
-    }
-
-    librdf_uri* redlandBaseUri = 0;
-    if ( !baseUri.toString().isEmpty() ) {
-        redlandBaseUri = librdf_new_uri( Redland::World::self()->worldPtr(),
-                                         (unsigned char *) baseUri.toString().toLatin1().data() );
-    }
-
-    // FIXME: do we need to convert the string data into something else than UTF8 with some serialization
-    librdf_stream* stream = librdf_parser_parse_string_as_stream( parser,
-                                                                  ( const unsigned char* )data.toUtf8().data(),
-                                                                  redlandBaseUri );
-
-    if ( !stream ) {
-        librdf_free_parser( parser );
-        setError( Redland::World::self()->lastError() );
-        return StatementIterator();
-    }
-    else {
-        // FIXME: delete the parser once the stream is done.
-        return new Redland::RedlandStatementIterator( 0, stream, Node() );
-    }
+    QString buf( data );
+    QTextStream s( &buf );
+    return parseStream( s, baseUri, serialization, userSerialization );
 }
 
 
@@ -178,7 +265,57 @@ Soprano::Raptor::Parser::parseStream( QTextStream& stream,
                                       RdfSerialization serialization,
                                       const QString& userSerialization ) const
 {
-    return parseString( stream.readAll(), baseUri, serialization, userSerialization );
+    clearError();
+
+    raptor_parser* parser = createParser( serialization, userSerialization );
+    if ( !parser ) {
+        return StatementIterator();
+    }
+
+    // prepare the container for the parsed data
+    ParserData data;
+    raptor_set_statement_handler( parser, &data, raptorTriplesHandler );
+    raptor_set_graph_handler( parser, &data, raptorGraphHandler );
+
+    // start the atual parsing
+    raptor_uri* raptorBaseUri = 0;
+    if ( !baseUri.toString().isEmpty() ) {
+        raptorBaseUri = raptor_new_uri( (unsigned char *) baseUri.toString().toUtf8().data() );
+    }
+
+    clearError();
+    if ( raptor_start_parse( parser, raptorBaseUri ) ) {
+        if ( !lastError() ) {
+            ErrorCache::setError( QLatin1String( "Failed to start parsing." ) );
+        }
+        raptor_free_parser( parser );
+        if ( raptorBaseUri ) {
+            raptor_free_uri( raptorBaseUri );
+        }
+        return StatementIterator();
+    }
+
+    static const int bufSize = 100;
+    while ( !stream.atEnd() ) {
+        QString buf = stream.read( bufSize );
+        QByteArray utf8Data = buf.toUtf8();
+        if ( raptor_parse_chunk( parser, ( const unsigned char* )utf8Data.data(), utf8Data.length(), 0 ) ) {
+            raptor_free_parser( parser );
+            if ( raptorBaseUri ) {
+                raptor_free_uri( raptorBaseUri );
+            }
+            return StatementIterator();
+        }
+    }
+    raptor_parse_chunk( parser, 0, 0, 1 );
+
+    return SimpleStatementIterator( data.statements );
+}
+
+
+void Soprano::Raptor::Parser::setError( const Soprano::Error::Error& error ) const
+{
+    ErrorCache::setError( error );
 }
 
 #include "raptorparser.moc"
