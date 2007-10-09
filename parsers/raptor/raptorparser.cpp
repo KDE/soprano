@@ -45,10 +45,13 @@ namespace {
     // and application/x-turtle when serializing, but not the other way around
     QString mimeTypeString( Soprano::RdfSerialization s, const QString& userSerialization )
     {
+#ifndef RAPTOR_HAVE_TRIG
         if ( s == Soprano::SerializationTurtle ) {
             return "application/turtle"; // x-turtle does not work....
         }
-        else {
+        else
+#endif
+        {
             return serializationMimeType( s, userSerialization );
         }
     }

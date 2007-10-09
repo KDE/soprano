@@ -100,6 +100,9 @@ endif(JNI_1_6_FOUND)
 
 if(REDLAND_FOUND)
   message("   * Raptor RDF parser")
+  if(${RAPTOR_VERSION} STRGREATER "1.4.15")
+    message("     (including TriG parser)")
+  endif(${RAPTOR_VERSION} STRGREATER "1.4.15")
 endif(REDLAND_FOUND)
 
 if(REDLAND_FOUND AND REDLAND_VERSION STRGREATER "1.0.5")
