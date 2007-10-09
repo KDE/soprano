@@ -70,7 +70,7 @@ JNIWrapper* JNIWrapper::instance()
         JavaVMOption vmOptions[2];
         vmOptions[0].optionString = ( char* )"-Djava.class.path="SESAME2_CLASSPATH;
         vmOptions[1].optionString = ( char* )"-verbose:jni,gc,class";
-        vmArgs.version = JNI_VERSION_1_6;
+        vmArgs.version = JNI_VERSION_1_4;
         vmArgs.options = vmOptions;
         vmArgs.nOptions = 2;
 
