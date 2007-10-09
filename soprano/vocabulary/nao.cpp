@@ -21,7 +21,7 @@
 
 #include "nao.h"
 
-#define NAO_NS "http://semanticdesktop.org/ontologies/2007/03/31/nao#"
+#define NAO_NS "http://semanticdesktop.org/ontologies/2007/08/15/nao#"
 
 class Nao
 {

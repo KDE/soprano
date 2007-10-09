@@ -30,7 +30,7 @@ namespace Soprano {
 	/**
 	 * The Nepomuk Annotation Ontology
 	 *
-	 * \warning incomplete, namespace might change!
+	 * \warning incomplete
 	 */
 	namespace NAO {
 	    /**
