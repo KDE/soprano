@@ -15,7 +15,10 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>
+
+#ifndef _WIN32
 #include <unistd.h>
+#endif
 
 #include <QtCore/QFile>
 #include <QtCore/QDebug>
@@ -75,17 +78,20 @@ bool LockFile::aquireLock()
         qDebug() << "(LockFile) could not open" << d->path;
         return false;
     }
-    struct flock lock;
-    lock.l_type = F_WRLCK;
-    lock.l_whence = SEEK_SET;
-    lock.l_start = 0;
-    lock.l_len = 0;
-    int r = fcntl( d->fd, F_SETLK, &lock );
+#ifndef _WIN32
+// flock isn't defined under windows
+    struct flock mlock;
+    mlock.l_type = F_WRLCK;
+    mlock.l_whence = SEEK_SET;
+    mlock.l_start = 0;
+    mlock.l_len = 0;
+    int r = fcntl( d->fd, F_SETLK, &mlock );
     if ( r == -1 ) {
         qDebug() << "(LockFile) could not set lock for" << d->path;
         close( d->fd );
         return false;
     }
+#endif /* _WIN32 */
     return true;
 }
 
