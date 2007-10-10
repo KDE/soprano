@@ -28,14 +28,14 @@
 
   if(REDLAND_CONFIG)
     EXECUTE_PROCESS(
-      COMMAND redland-config --version
+      COMMAND ${REDLAND_CONFIG} --version
       OUTPUT_VARIABLE REDLAND_VERSION
       )
     STRING(REPLACE "\n" "" REDLAND_VERSION ${REDLAND_VERSION})
 
     # extract include paths from redland-config
     EXECUTE_PROCESS(
-      COMMAND redland-config --cflags
+      COMMAND ${REDLAND_CONFIG} --cflags
       OUTPUT_VARIABLE redland_LIBS_ARGS)
     STRING( REPLACE " " ";" redland_LIBS_ARGS ${redland_LIBS_ARGS} )
     FOREACH( _ARG ${redland_LIBS_ARGS} )
@@ -47,7 +47,7 @@
 
     # extract lib paths from redland-config
     EXECUTE_PROCESS(
-      COMMAND redland-config --libs
+      COMMAND ${REDLAND_CONFIG} --libs
       OUTPUT_VARIABLE redland_CFLAGS_ARGS)
     STRING( REPLACE " " ";" redland_CFLAGS_ARGS ${redland_CFLAGS_ARGS} )
     FOREACH( _ARG ${redland_CFLAGS_ARGS} )
@@ -65,14 +65,14 @@
     )
   if(RAPTOR_CONFIG)
     EXECUTE_PROCESS(
-      COMMAND raptor-config --version
+      COMMAND ${RAPTOR_CONFIG} --version
       OUTPUT_VARIABLE RAPTOR_VERSION
       )
     STRING(REPLACE "\n" "" RAPTOR_VERSION ${RAPTOR_VERSION})
 
     # extract include paths from raptor-config
     EXECUTE_PROCESS(
-      COMMAND raptor-config --cflags
+      COMMAND ${RAPTOR_CONFIG} --cflags
       OUTPUT_VARIABLE raptor_CFLAGS_ARGS)
     STRING( REPLACE " " ";" raptor_CFLAGS_ARGS ${raptor_CFLAGS_ARGS} )
     FOREACH( _ARG ${raptor_CFLAGS_ARGS} )
@@ -84,7 +84,7 @@
 
     # extract lib paths from raptor-config
     EXECUTE_PROCESS(
-      COMMAND raptor-config --libs
+      COMMAND ${RAPTOR_CONFIG} --libs
       OUTPUT_VARIABLE raptor_CFLAGS_ARGS)
     STRING( REPLACE " " ";" raptor_CFLAGS_ARGS ${raptor_CFLAGS_ARGS} )
     FOREACH( _ARG ${raptor_CFLAGS_ARGS} )
@@ -106,14 +106,14 @@
 
   if(RASQAL_CONFIG)
     EXECUTE_PROCESS(
-      COMMAND rasqal-config --version
+      COMMAND ${RASQAL_CONFIG} --version
       OUTPUT_VARIABLE RASQAL_VERSION
       )
     STRING(REPLACE "\n" "" RASQAL_VERSION ${RASQAL_VERSION})
 
     # extract include paths from rasqal-config
     EXECUTE_PROCESS(
-      COMMAND rasqal-config --cflags
+      COMMAND ${RASQAL_CONFIG} --cflags
       OUTPUT_VARIABLE rasqal_CFLAGS_ARGS)
     STRING( REPLACE " " ";" rasqal_CFLAGS_ARGS ${rasqal_CFLAGS_ARGS} )
     FOREACH( _ARG ${rasqal_CFLAGS_ARGS} )
@@ -125,7 +125,7 @@
 
     # extract lib paths from rasqal-config
     EXECUTE_PROCESS(
-      COMMAND rasqal-config --libs
+      COMMAND ${RASQAL_CONFIG} --libs
       OUTPUT_VARIABLE rasqal_CFLAGS_ARGS)
     STRING( REPLACE " " ";" rasqal_CFLAGS_ARGS ${rasqal_CFLAGS_ARGS} )
     FOREACH( _ARG ${rasqal_CFLAGS_ARGS} )
