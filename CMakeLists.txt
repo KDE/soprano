@@ -76,7 +76,7 @@ if(DOXYGEN_EXECUTABLE)
   if(EXISTS ${QT_DOC_DIR}/html)
     set(QTDOCS "${QT_DOC_DIR}/html")
   else(EXISTS ${QT_DOC_DIR}/html)
-    set(QTDOCS "http://doc.trolltech.com/4.2/")
+    set(QTDOCS "http://doc.trolltech.com/4.3/")
   endif(EXISTS ${QT_DOC_DIR}/html)
 
   add_custom_target(
