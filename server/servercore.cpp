@@ -48,7 +48,7 @@ public:
         : dbusAdaptor( 0 ),
           tcpServer( 0 )
 #ifdef HAVE_UNIX_SOCKETS
-          , socketServer( 0 ) 
+          , socketServer( 0 )
 #endif
     {}
 
@@ -190,7 +190,7 @@ void Soprano::Server::ServerCore::registerAsDBusObject( const QString& objectPat
             path = "/org/soprano/Server";
         }
 
-        d->dbusAdaptor = new Soprano::Server::DBusServerAdaptor( this );
+        d->dbusAdaptor = new Soprano::Server::DBusServerAdaptor( this, path );
         QDBusConnection::sessionBus().registerObject( path, this );
     }
 }

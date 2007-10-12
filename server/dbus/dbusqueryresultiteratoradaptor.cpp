@@ -155,6 +155,9 @@ void Soprano::Server::DBusQueryResultIteratorAdaptor::close( const QDBusMessage&
     if ( m_iteratorWrapper->queryResultIterator().lastError() ) {
         DBus::sendErrorReply( m, m_iteratorWrapper->queryResultIterator().lastError() );
     }
+
+    // some housekeeping
+    m_iteratorWrapper->deleteLater();
 }
 
 #include "dbusqueryresultiteratoradaptor.moc"

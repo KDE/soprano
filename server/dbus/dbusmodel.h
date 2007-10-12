@@ -42,6 +42,12 @@ namespace Soprano {
 	 * Normally there is no need to use this class directly as 
 	 * DBusClient does create instances of it on request.
 	 *
+	 * \warning DBusModel is not thread-safe by default
+	 * and has to be protected if is is to be used from different
+	 * threads (This can be done via Util::MultiCallProtectionModel
+	 * in Util::MultiCallProtectionModel::ReadWriteMultiThreading mode
+	 * or via setting the model to async mode via setAsyncCalls).
+	 *
 	 * \author Sebastian Trueg <trueg@kde.org>
 	 */
 	class SOPRANO_CLIENT_EXPORT DBusModel : public Soprano::StorageModel
@@ -58,6 +64,29 @@ namespace Soprano {
 	     */
 	    DBusModel( const QString& serviceName, const QString& dbusObject, const Backend* backend = 0 );
 	    ~DBusModel();
+
+	    /**
+	     * Configure DBusModel to use asyncronous calls over DBus.
+	     * With asyncronous calls DBusModel will enter local event
+	     * loops while waiting for the reply. This way multiple calls
+	     * can be performed interweaved. However, the application does 
+	     * not block, i.e. events are handled which might not be wanted.
+	     * If that is the case it is better to use Util::MultiCallProtectionModel
+	     * instead.
+	     *
+	     * \param b If true asyncronous calls are enabled.
+	     *
+	     * Per default asyncronous calls are disabled.
+	     *
+	     * \warning Asyncronous calls only work in combination with a QCoreApplication
+	     * instance.
+	     */
+	    void setAsyncCalls( bool b );
+
+	    /**
+	     * \return \p true if asyncronous calls are enabled.
+	     */
+	    bool asyncCalls() const;
 
 	    Error::ErrorCode addStatement( const Statement &statement );
 	    NodeIterator listContexts() const;

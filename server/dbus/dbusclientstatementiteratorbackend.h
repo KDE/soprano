@@ -44,6 +44,7 @@ namespace Soprano {
 
 	private:
 	    DBusStatementIteratorInterface* m_interface;
+	    bool m_done;
 	};
     }
 }

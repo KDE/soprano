@@ -60,6 +60,9 @@ void Soprano::Server::DBusStatementIteratorAdaptor::close( const QDBusMessage& m
     if ( m_iteratorWrapper->statementIterator().lastError() ) {
         DBus::sendErrorReply( m, m_iteratorWrapper->statementIterator().lastError() );
     }
+
+    // some housekeeping
+    m_iteratorWrapper->deleteLater();
 }
 
 #include "dbusstatementiteratoradaptor.moc"

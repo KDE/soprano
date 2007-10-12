@@ -27,6 +27,7 @@
 
 
 Soprano::Client::DBusClientStatementIteratorBackend::DBusClientStatementIteratorBackend( const QString& serviceName, const QString& objectPath )
+    : m_done( false )
 {
     m_interface = new DBusStatementIteratorInterface( serviceName, objectPath, QDBusConnection::sessionBus(), 0 );
 }
@@ -61,6 +62,11 @@ Soprano::Statement Soprano::Client::DBusClientStatementIteratorBackend::current(
 
 void Soprano::Client::DBusClientStatementIteratorBackend::close()
 {
-    QDBusReply<void> reply = m_interface->close();
-    setError( DBus::convertError( reply.error() ) );
+    // the DBus adaptor closes and removes the iterator once done. So
+    // we supress error messages here
+    if ( !m_done ) {
+        m_done = true;
+        QDBusReply<void> reply = m_interface->close();
+        setError( DBus::convertError( reply.error() ) );
+    }
 }

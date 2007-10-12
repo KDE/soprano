@@ -42,9 +42,6 @@ namespace Soprano {
 	 * Converts a DBus error as encoded by sendErrorReply() to a Soprano::Error.
 	 */
 	Soprano::Error::Error convertError( const QDBusError& e );
-
-	QString createUniqueModelPath();
-	QString createUniqueIteratorPath();
     }
 }
 

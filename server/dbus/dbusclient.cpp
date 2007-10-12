@@ -67,7 +67,7 @@ QStringList Soprano::Client::DBusClient::allModels() const
 }
 
 
-Soprano::Model* Soprano::Client::DBusClient::createModel( const QString& name, const BackendSettings& settings )
+Soprano::Client::DBusModel* Soprano::Client::DBusClient::createModel( const QString& name, const BackendSettings& settings )
 {
     Q_UNUSED( settings );
     QDBusReply<QString> reply = d->interface->createModel( name );

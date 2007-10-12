@@ -50,7 +50,7 @@ namespace Soprano {
 			"  </interface>\n")
 
 	public:
-	    DBusServerAdaptor( ServerCore* core );
+	    DBusServerAdaptor( ServerCore* core, const QString& dbusObjectPath );
 	    virtual ~DBusServerAdaptor();
 
 	public Q_SLOTS:

@@ -33,6 +33,9 @@ namespace Soprano {
     class Model;
 
     namespace Client {
+
+	class DBusModel;
+
 	/**
 	 * \class DBusClient dbusclient.h Soprano/Server/DBusClient
 	 *
@@ -41,6 +44,8 @@ namespace Soprano {
 	 *
 	 * DBusClient creates a connection to a running Soprano Server via its DBus
 	 * interface. All DBus communication is handled internally.
+	 *
+	 * See DBusModel for details about thread-safety.
 	 *
 	 * \author Sebastian Trueg <trueg@kde.org>
 	 */
@@ -87,7 +92,7 @@ namespace Soprano {
 	     * \return A new Model instance wrapping the requested server
 	     * model or 0 on error (check lastError() for details.)
 	     */
-	    Model* createModel( const QString& name, const BackendSettings& settings = BackendSettings() );
+	    DBusModel* createModel( const QString& name, const BackendSettings& settings = BackendSettings() );
 
 	private:
 	    class Private;

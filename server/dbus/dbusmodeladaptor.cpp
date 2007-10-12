@@ -41,17 +41,32 @@
 #include "soprano/model.h"
 #include "soprano/node.h"
 
+#include "multicallprotectionmodel.h"
+
 
 class Soprano::Server::DBusModelAdaptor::Private
 {
 public:
-    Model* model;
+    Private()
+        : m_iteratorCount( 0 ) {
+    }
+
+    Model* origModel;
+    Util::MultiCallProtectionModel* model;
     QMultiHash<QString, QPointer<IteratorWrapper> > openIterators;
-    QMutex iteratorMaintenanceMutex;
+
+    QString dbusObjectPath;
+
+    QString createUniqueIteratorDBusObjectPath() {
+        return QString( "%1/iterator%2" ).arg( dbusObjectPath ).arg( ++m_iteratorCount );
+    }
+
+private:
+    int m_iteratorCount;
 };
 
 
-Soprano::Server::DBusModelAdaptor::DBusModelAdaptor( Model* model, QObject* parent )
+Soprano::Server::DBusModelAdaptor::DBusModelAdaptor( Model* model, QObject* parent, const QString& dbusObjectPath )
     : QDBusAbstractAdaptor( parent ),
       d( new Private() )
 {
@@ -59,7 +74,9 @@ Soprano::Server::DBusModelAdaptor::DBusModelAdaptor( Model* model, QObject* pare
     qDBusRegisterMetaType<Soprano::Statement>();
     qDBusRegisterMetaType<Soprano::BindingSet>();
 
-    d->model = model;
+    d->dbusObjectPath = dbusObjectPath;
+    d->origModel = model;
+    d->model = new Util::MultiCallProtectionModel( Util::MultiCallProtectionModel::ReadWriteSingleThreading, model );
 
     // we cannot use setAutoRelaySignals here since that would connect (non-existing)
     // signals from parent instead of model
@@ -74,6 +91,7 @@ Soprano::Server::DBusModelAdaptor::DBusModelAdaptor( Model* model, QObject* pare
 
 Soprano::Server::DBusModelAdaptor::~DBusModelAdaptor()
 {
+    delete d->model;
     delete d;
 }
 
@@ -125,7 +143,7 @@ QString Soprano::Server::DBusModelAdaptor::executeQuery( const QString &query, i
         IteratorWrapper* itW = new IteratorWrapper( it, this );
         d->openIterators.insert( m.service(), itW );
         ( void )new DBusQueryResultIteratorAdaptor( itW );
-        QString objectPath = DBus::createUniqueIteratorPath();
+        QString objectPath = d->createUniqueIteratorDBusObjectPath();
         QDBusConnection::sessionBus().registerObject( objectPath, itW );
         return objectPath;
     }
@@ -154,7 +172,7 @@ QString Soprano::Server::DBusModelAdaptor::listContexts( const QDBusMessage& m )
         IteratorWrapper* itW = new IteratorWrapper( it, this );
         d->openIterators.insert( m.service(), itW );
         ( void )new DBusNodeIteratorAdaptor( itW );
-        QString objectPath = DBus::createUniqueIteratorPath();
+        QString objectPath = d->createUniqueIteratorDBusObjectPath();
         QDBusConnection::sessionBus().registerObject( objectPath, itW );
         return objectPath;
     }
@@ -172,7 +190,7 @@ QString Soprano::Server::DBusModelAdaptor::listStatements( const Soprano::Statem
         IteratorWrapper* itW = new IteratorWrapper( it, this );
         d->openIterators.insert( m.service(), itW );
         ( void )new DBusStatementIteratorAdaptor( itW );
-        QString objectPath = DBus::createUniqueIteratorPath();
+        QString objectPath = d->createUniqueIteratorDBusObjectPath();
         QDBusConnection::sessionBus().registerObject( objectPath, itW );
         return objectPath;
     }

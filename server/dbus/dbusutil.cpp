@@ -80,29 +80,3 @@ Soprano::Error::Error Soprano::DBus::convertError( const QDBusError& e )
         return Error::Error();
     }
 }
-
-
-namespace {
-
-    int uniqueID() {
-        static int s_cnt = 0;
-        static QMutex s_mutex;
-        s_mutex.lock();
-        int c = ++s_cnt;
-        s_mutex.unlock();
-        return c;
-    }
-}
-
-QString Soprano::DBus::createUniqueModelPath()
-{
-    int id = uniqueID();
-    return QString( "/Model%1" ).arg( id );
-}
-
-
-QString Soprano::DBus::createUniqueIteratorPath()
-{
-    int id = uniqueID();
-    return QString( "/Iterator%1" ).arg( id );
-}

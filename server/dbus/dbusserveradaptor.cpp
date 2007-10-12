@@ -28,20 +28,25 @@
 #include <soprano/model.h>
 
 #include <QtCore/QHash>
+#include <QtCore/QRegExp>
+
 
 class Soprano::Server::DBusServerAdaptor::Private
 {
 public:
     ServerCore* core;
     QHash<Model*, QString> modelDBusObjectPaths;
+
+    QString dbusObjectPath;
 };
 
 
-Soprano::Server::DBusServerAdaptor::DBusServerAdaptor( ServerCore* parent )
+Soprano::Server::DBusServerAdaptor::DBusServerAdaptor( ServerCore* parent, const QString& dbusObjectPath )
     : QDBusAbstractAdaptor( parent ),
       d( new Private() )
 {
     d->core = parent;
+    d->dbusObjectPath = dbusObjectPath;
 }
 
 Soprano::Server::DBusServerAdaptor::~DBusServerAdaptor()
@@ -59,6 +64,16 @@ QStringList Soprano::Server::DBusServerAdaptor::allModels( const QDBusMessage& m
     return names;
 }
 
+
+namespace {
+    QString normalizeModelName( const QString& name )
+    {
+        QString n( name );
+        n.replace( QRegExp( "[^\\d\\w]" ), "_" );
+        return n;
+    }
+}
+
 QString Soprano::Server::DBusServerAdaptor::createModel( const QString& name, const QDBusMessage& m )
 {
     // handle method call org.soprano.Server.createModel
@@ -71,8 +86,8 @@ QString Soprano::Server::DBusServerAdaptor::createModel( const QString& name, co
         else {
             // FIXME: memory leak!
             ModelWrapper* mw = new ModelWrapper( model );
-            ( void )new DBusModelAdaptor( model, mw );
-            QString objectPath = "/Model_" + name;
+            QString objectPath = d->dbusObjectPath + "/models/" + normalizeModelName( name );
+            ( void )new DBusModelAdaptor( model, mw, objectPath );
             QDBusConnection::sessionBus().registerObject( objectPath, mw );
             d->modelDBusObjectPaths.insert( model, objectPath );
             return objectPath;

@@ -90,7 +90,7 @@ namespace Soprano {
 			"  </interface>\n")
 
 	public:
-	    DBusModelAdaptor( Model* model, QObject* parent );
+	    DBusModelAdaptor( Model* model, QObject* parent, const QString& dbusObjectPath );
 	    virtual ~DBusModelAdaptor();
 
 	public Q_SLOTS:

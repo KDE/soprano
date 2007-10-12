@@ -55,6 +55,7 @@ namespace Soprano {
 
 	private:
 	    DBusQueryResultIteratorInterface* m_interface;
+	    bool m_done;
 	};
     }
 }

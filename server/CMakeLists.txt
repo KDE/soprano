@@ -4,6 +4,7 @@ include_directories(
   ${soprano_server_BINARY_DIR}
   ${soprano_core_SOURCE_DIR}
   ${soprano_core_BINARY_DIR}
+  ${soprano_core_SOURCE_DIR}/util
   ${soprano_core_SOURCE_DIR}/query
   ${QT_INCLUDES}
   ${soprano_SOURCE_DIR}
