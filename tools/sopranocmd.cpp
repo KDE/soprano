@@ -24,6 +24,7 @@
 
 #include "../server/tcpclient.h"
 #include "../server/dbus/dbusclient.h"
+#include "../server/dbus/dbusmodel.h"
 
 using namespace Soprano;
 
