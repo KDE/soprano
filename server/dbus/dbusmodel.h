@@ -70,7 +70,8 @@ namespace Soprano {
 	     * With asyncronous calls DBusModel will enter local event
 	     * loops while waiting for the reply. This way multiple calls
 	     * can be performed interweaved. However, the application does 
-	     * not block, i.e. events are handled which might not be wanted.
+	     * not block, i.e. events (such as signals and slots) are handled
+	     * which might not be wanted.
 	     * If that is the case it is better to use Util::MultiCallProtectionModel
 	     * instead.
 	     *
@@ -80,6 +81,8 @@ namespace Soprano {
 	     *
 	     * \warning Asyncronous calls only work in combination with a QCoreApplication
 	     * instance.
+	     *
+	     * \sa QDBus::BlockWithGui
 	     */
 	    void setAsyncCalls( bool b );
 
