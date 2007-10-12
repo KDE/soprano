@@ -162,6 +162,11 @@ add_executable(sopranodbusclienttest sopranodbusclienttest.cpp)
 target_link_libraries(sopranodbusclienttest sopranomodeltest sopranoclient ${QT_QTCORE_LIBRARY} ${QT_QTTEST_LIBRARY} ${QT_QTNETWORK_LIBRARY})
 add_test(sopranodbusclienttest ${EXECUTABLE_OUTPUT_PATH}/sopranodclienttest)
 
+qt4_automoc(sopranodbusmultithreadtest sopranodbusmultithreadtest.cpp)
+add_executable(sopranodbusmultithreadtest sopranodbusmultithreadtest.cpp)
+target_link_libraries(sopranodbusmultithreadtest soprano sopranoclient multithreadingtest ${QT_QTCORE_LIBRARY} ${QT_QTTEST_LIBRARY})
+add_test(sopranodbusmultithreadtest ${EXECUTABLE_OUTPUT_PATH}/sopranodbusmultithreadtest)
+
 # NRL Model test
 qt4_automoc(nrlmodeltest nrlmodeltest.cpp)
 add_executable(nrlmodeltest nrlmodeltest.cpp)
