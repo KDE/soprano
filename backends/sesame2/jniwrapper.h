@@ -22,6 +22,7 @@
 #ifndef _JNI_WRAPPER_H_H
 #define _JNI_WRAPPER_H_H
 
+#include <QtCore/QObject>
 #include <QtCore/QString>
 
 #include <jni.h>
@@ -34,8 +35,10 @@
  * The JNI wrapper takes care of creating, initializing, and deleting the Java VM.
  * It also properly attaches new threads to the VM
  */
-class JNIWrapper
+class JNIWrapper : public QObject
 {
+    Q_OBJECT
+
 public:
     ~JNIWrapper();
 
@@ -57,6 +60,9 @@ public:
     void debugException();
 
     static JNIWrapper* instance();
+
+private Q_SLOTS:
+    void slotThreadFinished();
 
 private:
     JNIWrapper();

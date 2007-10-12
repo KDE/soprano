@@ -98,12 +98,28 @@ JNIEnv* JNIWrapper::env() const
     QHash<QThread*, JNIEnv*>::const_iterator it = d->jniEnvMap.find( QThread::currentThread() );
     if ( it == d->jniEnvMap.constEnd() ) {
         JNIEnv* env = 0;
-        Q_ASSERT( d->jvm->AttachCurrentThreadAsDaemon( ( void** )&env, 0 ) == 0 );
+        Q_ASSERT( d->jvm->AttachCurrentThread( ( void** )&env, 0 ) == 0 );
         d->jniEnvMap[QThread::currentThread()] = env;
+
+        connect( QThread::currentThread(), SIGNAL( finished() ),
+                 this, SLOT( slotThreadFinished() ),
+                 Qt::DirectConnection );
+
         return env;
     }
     else {
         return *it;
+    }
+}
+
+
+void JNIWrapper::slotThreadFinished()
+{
+    QObject* o = sender();
+    if ( o == QThread::currentThread() ) {
+        qDebug() << "Detaching thread" << QThread::currentThread();
+//        d->jvm->DetachCurrentThread();
+        d->jniEnvMap.remove( QThread::currentThread() );
     }
 }
 
@@ -173,3 +189,5 @@ Soprano::Error::Error JNIWrapper::convertAndClearException()
         return Soprano::Error::Error();
     }
 }
+
+#include "jniwrapper.moc"

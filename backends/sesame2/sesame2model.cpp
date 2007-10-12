@@ -73,9 +73,9 @@ Soprano::Sesame2::Model::~Model()
 
 Soprano::Error::ErrorCode Soprano::Sesame2::Model::addStatement( const Statement &statement )
 {
-    clearError();
-
     QWriteLocker lock( &d->readWriteLock );
+
+    clearError();
 
     if ( JObjectRef sesameStatement = d->repository->valueFactory()->convertStatement( statement ) ) {
         if ( JNIWrapper::instance()->exceptionOccured() ) {
@@ -100,9 +100,9 @@ Soprano::Error::ErrorCode Soprano::Sesame2::Model::addStatement( const Statement
 
 Soprano::NodeIterator Soprano::Sesame2::Model::listContexts() const
 {
-    clearError();
-
     d->readWriteLock.lockForRead();
+
+    clearError();
 
     QList<Soprano::Node> contexts;
 
@@ -129,7 +129,8 @@ Soprano::QueryResultIterator Soprano::Sesame2::Model::executeQuery( const QStrin
     clearError();
 
     if ( language != Soprano::Query::QUERY_LANGUAGE_SPARQL ) {
-        setError( Error::Error( QString( "Unsupported query language." ).arg( Query::queryLanguageToString( language, userQueryLanguage ) ) ) );
+        setError( Error::Error( QString( "Unsupported query language %1." ).arg( Query::queryLanguageToString( language, userQueryLanguage ) ) ) );
+        d->readWriteLock.unlock();
         return QueryResultIterator();
     }
 

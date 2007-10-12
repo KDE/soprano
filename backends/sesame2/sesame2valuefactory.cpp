@@ -142,8 +142,10 @@ JObjectRef Soprano::Sesame2::ValueFactory::createBNode()
 JObjectRef Soprano::Sesame2::ValueFactory::convertNode( const Node& node )
 {
     switch( node.type() ) {
-    case Node::ResourceNode:
-        return callObjectMethod( d->IDcreateURI(), JStringRef( node.uri().toEncoded() ).data() );
+    case Node::ResourceNode: {
+        JStringRef s( node.uri().toEncoded() );
+        return callObjectMethod( d->IDcreateURI(), s.data() );
+    }
 
     case Node::BlankNode:
         return callObjectMethod( d->IDcreateBNodeFromString(), JStringRef( node.identifier() ).data() );
@@ -156,9 +158,11 @@ JObjectRef Soprano::Sesame2::ValueFactory::convertNode( const Node& node )
                                      JStringRef( node.language() ).data() );
         }
         else{
-            jobject dataTypeUri = callObjectMethod( d->IDcreateURI(), JStringRef( node.dataType().toEncoded() ).data() );
+            JStringRef ns( node.toString() );
+            JStringRef dtus( node.dataType().toEncoded() );
+            jobject dataTypeUri = callObjectMethod( d->IDcreateURI(), dtus.data() );
             return callObjectMethod( d->IDcreateLiteralWithDataType(),
-                                     JStringRef( node.toString() ).data(),
+                                     ns.data(),
                                      dataTypeUri );
         }
 
