@@ -89,6 +89,7 @@ INPUT                  = ${soprano_SOURCE_DIR}/soprano \
                          ${soprano_SOURCE_DIR}/Mainpage.dox \
                          ${soprano_SOURCE_DIR}/soprano/vocabulary \
                          ${soprano_SOURCE_DIR}/soprano/inference \
+                         ${soprano_SOURCE_DIR}/soprano/util/multicallprotectionmodel.h \
                          ${soprano_SOURCE_DIR}/index/indexfiltermodel.h \
                          ${soprano_SOURCE_DIR}/index/cluceneindex.h \
                          ${soprano_SOURCE_DIR}/index/indexqueryhit.h \

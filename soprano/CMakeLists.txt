@@ -81,6 +81,11 @@ SET(soprano_SRCS
   inifile.cpp
   desktopfile.cpp
   sopranopluginfile.cpp
+  util/looplock.cpp
+  util/multicallprotectionmodel.cpp
+  util/multicallprotectionstatementiteratorbackend.cpp
+  util/multicallprotectionnodeiteratorbackend.cpp
+  util/multicallprotectionqueryresultiteratorbackend.cpp
   )
 
 qt4_automoc(${soprano_SRCS})
@@ -147,4 +152,5 @@ INSTALL(FILES
   soprano.h
   vocabulary.h
   dummymodel.h
+  util/multicallprotectionmodel.h
   DESTINATION include/soprano)
