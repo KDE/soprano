@@ -21,6 +21,7 @@
 
 #include "sopranodbusmultithreadtest.h"
 #include "../server/dbus/dbusclient.h"
+#include "../server/dbus/dbusmodel.h"
 #include "../soprano/storagemodel.h"
 
 #include <QtTest/QtTest>
