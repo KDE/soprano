@@ -19,27 +19,27 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#include "multicallprotectionstatementiteratorbackend.h"
-#include "multicallprotectionmodel.h"
+#include "mutexstatementiteratorbackend.h"
+#include "mutexmodel.h"
 
 #include "statement.h"
 #include "error.h"
 
 
-Soprano::Util::MultiCallProtectionStatementIteratorBackend::MultiCallProtectionStatementIteratorBackend( const StatementIterator& it, MultiCallProtectionModel* model )
+Soprano::Util::MutexStatementIteratorBackend::MutexStatementIteratorBackend( const StatementIterator& it, MutexModel* model )
     : IteratorBackend<Statement>(),
-      MultiCallProtectionIteratorBase( model ),
+      MutexIteratorBase( model ),
       m_iterator( it )
 {
 }
 
 
-Soprano::Util::MultiCallProtectionStatementIteratorBackend::~MultiCallProtectionStatementIteratorBackend()
+Soprano::Util::MutexStatementIteratorBackend::~MutexStatementIteratorBackend()
 {
 }
 
 
-bool Soprano::Util::MultiCallProtectionStatementIteratorBackend::next()
+bool Soprano::Util::MutexStatementIteratorBackend::next()
 {
     bool haveNext = m_iterator.next();
     setError( m_iterator.lastError() );
@@ -47,7 +47,7 @@ bool Soprano::Util::MultiCallProtectionStatementIteratorBackend::next()
 }
 
 
-Soprano::Statement Soprano::Util::MultiCallProtectionStatementIteratorBackend::current() const
+Soprano::Statement Soprano::Util::MutexStatementIteratorBackend::current() const
 {
     Statement s = m_iterator.current();
     setError( m_iterator.lastError() );
@@ -55,7 +55,7 @@ Soprano::Statement Soprano::Util::MultiCallProtectionStatementIteratorBackend::c
 }
 
 
-void Soprano::Util::MultiCallProtectionStatementIteratorBackend::close()
+void Soprano::Util::MutexStatementIteratorBackend::close()
 {
     m_iterator.close();
     setError( m_iterator.lastError() );

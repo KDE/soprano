@@ -1,1 +1,1 @@
-#include "../soprano/simplestatementiterator.h"
+#include "../../soprano/simplestatementiterator.h"

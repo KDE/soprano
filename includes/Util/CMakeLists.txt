@@ -1,4 +1,7 @@
 install(FILES
-  MultiCallProtectionModel
+  MutexModel
+  SimpleStatementIterator
+  SimpleNodeIterator
+  DummyModel
   DESTINATION
   include/Soprano/Util)

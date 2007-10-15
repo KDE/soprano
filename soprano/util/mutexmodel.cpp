@@ -19,12 +19,12 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#include "multicallprotectionmodel.h"
-#include "multicallprotectioniteratorbase.h"
+#include "mutexmodel.h"
+#include "mutexiteratorbase.h"
 #include "looplock.h"
-#include "multicallprotectionstatementiteratorbackend.h"
-#include "multicallprotectionnodeiteratorbackend.h"
-#include "multicallprotectionqueryresultiteratorbackend.h"
+#include "mutexstatementiteratorbackend.h"
+#include "mutexnodeiteratorbackend.h"
+#include "mutexqueryresultiteratorbackend.h"
 
 #include <soprano/statementiterator.h>
 #include <soprano/nodeiterator.h>
@@ -34,14 +34,14 @@
 #include <QtCore/QMutex>
 
 
-class Soprano::Util::MultiCallProtectionModel::Private
+class Soprano::Util::MutexModel::Private
 {
 public:
-    Private( MultiCallProtectionModel::ProtectionMode mode )
+    Private( MutexModel::ProtectionMode mode )
         : m_protectionMode( mode ) {
     }
 
-    QList<MultiCallProtectionIteratorBase*> openIterators;
+    QList<MutexIteratorBase*> openIterators;
 
     void lockForWrite() {
         switch( m_protectionMode ) {
@@ -94,16 +94,16 @@ private:
 };
 
 
-Soprano::Util::MultiCallProtectionModel::MultiCallProtectionModel( ProtectionMode mode, Model* parent )
+Soprano::Util::MutexModel::MutexModel( ProtectionMode mode, Model* parent )
     : FilterModel( parent ),
       d( new Private( mode ) )
 {
 }
 
 
-Soprano::Util::MultiCallProtectionModel::~MultiCallProtectionModel()
+Soprano::Util::MutexModel::~MutexModel()
 {
-    Q_FOREACH( MultiCallProtectionIteratorBase* it, d->openIterators ) {
+    Q_FOREACH( MutexIteratorBase* it, d->openIterators ) {
         it->close();
     }
 
@@ -111,7 +111,7 @@ Soprano::Util::MultiCallProtectionModel::~MultiCallProtectionModel()
 }
 
 
-Soprano::Error::ErrorCode Soprano::Util::MultiCallProtectionModel::addStatement( const Statement &statement )
+Soprano::Error::ErrorCode Soprano::Util::MutexModel::addStatement( const Statement &statement )
 {
     d->lockForWrite();
     Error::ErrorCode c = FilterModel::addStatement( statement );
@@ -120,7 +120,7 @@ Soprano::Error::ErrorCode Soprano::Util::MultiCallProtectionModel::addStatement(
 }
 
 
-Soprano::Error::ErrorCode Soprano::Util::MultiCallProtectionModel::removeStatement( const Statement &statement )
+Soprano::Error::ErrorCode Soprano::Util::MutexModel::removeStatement( const Statement &statement )
 {
     d->lockForWrite();
     Error::ErrorCode c = FilterModel::removeStatement( statement );
@@ -129,7 +129,7 @@ Soprano::Error::ErrorCode Soprano::Util::MultiCallProtectionModel::removeStateme
 }
 
 
-Soprano::Error::ErrorCode Soprano::Util::MultiCallProtectionModel::removeAllStatements( const Statement &statement )
+Soprano::Error::ErrorCode Soprano::Util::MutexModel::removeAllStatements( const Statement &statement )
 {
     d->lockForWrite();
     Error::ErrorCode c = FilterModel::removeAllStatements( statement );
@@ -138,12 +138,12 @@ Soprano::Error::ErrorCode Soprano::Util::MultiCallProtectionModel::removeAllStat
 }
 
 
-Soprano::StatementIterator Soprano::Util::MultiCallProtectionModel::listStatements( const Statement &partial ) const
+Soprano::StatementIterator Soprano::Util::MutexModel::listStatements( const Statement &partial ) const
 {
     d->lockForRead();
     StatementIterator it = FilterModel::listStatements( partial );
     if ( it.isValid() ) {
-        MultiCallProtectionStatementIteratorBackend* b = new MultiCallProtectionStatementIteratorBackend( it, const_cast<MultiCallProtectionModel*>( this ) );
+        MutexStatementIteratorBackend* b = new MutexStatementIteratorBackend( it, const_cast<MutexModel*>( this ) );
         d->openIterators.append( b );
         return b;
     }
@@ -154,12 +154,12 @@ Soprano::StatementIterator Soprano::Util::MultiCallProtectionModel::listStatemen
 }
 
 
-Soprano::NodeIterator Soprano::Util::MultiCallProtectionModel::listContexts() const
+Soprano::NodeIterator Soprano::Util::MutexModel::listContexts() const
 {
     d->lockForRead();
     NodeIterator it = FilterModel::listContexts();
     if ( it.isValid() ) {
-        MultiCallProtectionNodeIteratorBackend* b = new MultiCallProtectionNodeIteratorBackend( it, const_cast<MultiCallProtectionModel*>( this ) );
+        MutexNodeIteratorBackend* b = new MutexNodeIteratorBackend( it, const_cast<MutexModel*>( this ) );
         d->openIterators.append( b );
         return b;
     }
@@ -170,14 +170,14 @@ Soprano::NodeIterator Soprano::Util::MultiCallProtectionModel::listContexts() co
 }
 
 
-Soprano::QueryResultIterator Soprano::Util::MultiCallProtectionModel::executeQuery( const QString& query,
+Soprano::QueryResultIterator Soprano::Util::MutexModel::executeQuery( const QString& query,
                                                                       Query::QueryLanguage language,
                                                                       const QString& userQueryLanguage ) const
 {
     d->lockForRead();
     QueryResultIterator it = FilterModel::executeQuery( query, language, userQueryLanguage );
     if ( it.isValid() ) {
-        MultiCallProtectionQueryResultIteratorBackend* b = new MultiCallProtectionQueryResultIteratorBackend( it, const_cast<MultiCallProtectionModel*>( this ) );
+        MutexQueryResultIteratorBackend* b = new MutexQueryResultIteratorBackend( it, const_cast<MutexModel*>( this ) );
         d->openIterators.append( b );
         return b;
     }
@@ -188,7 +188,7 @@ Soprano::QueryResultIterator Soprano::Util::MultiCallProtectionModel::executeQue
 }
 
 
-bool Soprano::Util::MultiCallProtectionModel::containsStatement( const Statement &statement ) const
+bool Soprano::Util::MutexModel::containsStatement( const Statement &statement ) const
 {
     d->lockForRead();
     bool b = FilterModel::containsStatement( statement );
@@ -197,7 +197,7 @@ bool Soprano::Util::MultiCallProtectionModel::containsStatement( const Statement
 }
 
 
-bool Soprano::Util::MultiCallProtectionModel::containsAnyStatement( const Statement &statement ) const
+bool Soprano::Util::MutexModel::containsAnyStatement( const Statement &statement ) const
 {
     d->lockForRead();
     bool b = FilterModel::containsAnyStatement( statement );
@@ -206,7 +206,7 @@ bool Soprano::Util::MultiCallProtectionModel::containsAnyStatement( const Statem
 }
 
 
-bool Soprano::Util::MultiCallProtectionModel::isEmpty() const
+bool Soprano::Util::MutexModel::isEmpty() const
 {
     d->lockForRead();
     bool b = FilterModel::isEmpty();
@@ -215,7 +215,7 @@ bool Soprano::Util::MultiCallProtectionModel::isEmpty() const
 }
 
 
-int Soprano::Util::MultiCallProtectionModel::statementCount() const
+int Soprano::Util::MutexModel::statementCount() const
 {
     d->lockForRead();
     int cnt = FilterModel::statementCount();
@@ -224,10 +224,10 @@ int Soprano::Util::MultiCallProtectionModel::statementCount() const
 }
 
 
-void Soprano::Util::MultiCallProtectionModel::removeIterator( MultiCallProtectionIteratorBase* it ) const
+void Soprano::Util::MutexModel::removeIterator( MutexIteratorBase* it ) const
 {
     d->openIterators.removeAll( it );
     d->unlock();
 }
 
-#include "multicallprotectionmodel.moc"
+#include "mutexmodel.moc"

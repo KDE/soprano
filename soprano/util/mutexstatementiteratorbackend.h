@@ -19,38 +19,30 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef _SOPRANO_NONBLOCKING_QUERY_ITERATOR_BACKEND_H_
-#define _SOPRANO_NONBLOCKING_QUERY_ITERATOR_BACKEND_H_
+#ifndef _SOPRANO_NONBLOCKING_STATEMENT_ITERATOR_BACKEND_H_
+#define _SOPRANO_NONBLOCKING_STATEMENT_ITERATOR_BACKEND_H_
 
-#include "queryresultiteratorbackend.h"
-#include "queryresultiterator.h"
-#include "multicallprotectioniteratorbase.h"
+#include "iteratorbackend.h"
+#include "statementiterator.h"
+#include "mutexiteratorbase.h"
+#include "statement.h"
 
 namespace Soprano {
     namespace Util {
-	class MultiCallProtectionModel;
+	class MutexModel;
 
-	class MultiCallProtectionQueryResultIteratorBackend : public QueryResultIteratorBackend, public MultiCallProtectionIteratorBase
+	class MutexStatementIteratorBackend : public IteratorBackend<Statement>, public MutexIteratorBase
 	{
 	public:
-	    MultiCallProtectionQueryResultIteratorBackend( const QueryResultIterator& it, MultiCallProtectionModel* model );
-	    ~MultiCallProtectionQueryResultIteratorBackend();
+	    MutexStatementIteratorBackend( const StatementIterator& it, MutexModel* model );
+	    ~MutexStatementIteratorBackend();
 
 	    bool next();
-	    BindingSet current() const;
+	    Soprano::Statement current() const;
 	    void close();
-	    Statement currentStatement() const;
-	    Node binding( const QString &name ) const;
-	    Node binding( int offset ) const;
-	    int bindingCount() const;
-	    QStringList bindingNames() const;
-	    bool isGraph() const;
-	    bool isBinding() const;
-	    bool isBool() const;
-	    bool boolValue() const;
 
 	private:
-	    QueryResultIterator m_iterator;
+	    StatementIterator m_iterator;
 	};
     }
 }

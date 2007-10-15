@@ -19,7 +19,7 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#include "rdfschemawrapper.h"
+#include "rdfschemamodel.h"
 #include "model.h"
 #include "statementiterator.h"
 #include "rdf.h"
@@ -27,147 +27,141 @@
 #include "statement.h"
 
 
-class Soprano::RdfSchemaWrapper::Private
+class Soprano::RdfSchemaModel::Private
 {
 public:
-    Model* model;
 };
 
 
-Soprano::RdfSchemaWrapper::RdfSchemaWrapper( Model* model )
-    : d( new Private() )
+Soprano::RdfSchemaModel::RdfSchemaModel( Model* model )
+    : FilterModel( model ),
+      d( new Private() )
 {
-    d->model = model;
 }
 
 
-Soprano::RdfSchemaWrapper::~RdfSchemaWrapper()
+Soprano::RdfSchemaModel::~RdfSchemaModel()
 {
     delete d;
 }
 
-Soprano::StatementIterator Soprano::RdfSchemaWrapper::classes() const
+
+Soprano::StatementIterator Soprano::RdfSchemaModel::classes() const
 {
-    return d->model->listStatements( Statement( Node(), Vocabulary::RDF::type(), Vocabulary::RDFS::Class() ) );
+    return parentModel()->listStatements( Statement( Node(), Vocabulary::RDF::type(), Vocabulary::RDFS::Class() ) );
 }
 
 
-Soprano::StatementIterator Soprano::RdfSchemaWrapper::directSubClassOf( const Node& subClass, const Node& superClass ) const
+Soprano::StatementIterator Soprano::RdfSchemaModel::directSubClassOf( const Node& subClass, const Node& superClass ) const
 {
-    return d->model->listStatements( Statement( subClass, Vocabulary::RDFS::subClassOf(), superClass ) );
+    return parentModel()->listStatements( Statement( subClass, Vocabulary::RDFS::subClassOf(), superClass ) );
 }
 
 
-Soprano::StatementIterator Soprano::RdfSchemaWrapper::directSubPropertyOf( const Node& subProperty, const Node& superProperty ) const
+Soprano::StatementIterator Soprano::RdfSchemaModel::directSubPropertyOf( const Node& subProperty, const Node& superProperty ) const
 {
-    return d->model->listStatements( Statement( subProperty, Vocabulary::RDFS::subPropertyOf(), superProperty ) );
+    return parentModel()->listStatements( Statement( subProperty, Vocabulary::RDFS::subPropertyOf(), superProperty ) );
 }
 
 
-Soprano::StatementIterator Soprano::RdfSchemaWrapper::directType( const Node& someClass, const Node& someType ) const
+Soprano::StatementIterator Soprano::RdfSchemaModel::directType( const Node& someClass, const Node& someType ) const
 {
-    return d->model->listStatements( Statement( someClass, Vocabulary::RDF::type(), someType ) );
+    return parentModel()->listStatements( Statement( someClass, Vocabulary::RDF::type(), someType ) );
 }
 
 
-Soprano::StatementIterator Soprano::RdfSchemaWrapper::domain( const Node& prop, const Node& domain ) const
+Soprano::StatementIterator Soprano::RdfSchemaModel::domain( const Node& prop, const Node& domain ) const
 {
-    return d->model->listStatements( Statement( prop, Vocabulary::RDFS::domain(), domain ) );
+    return parentModel()->listStatements( Statement( prop, Vocabulary::RDFS::domain(), domain ) );
 }
 
 
-Soprano::StatementIterator Soprano::RdfSchemaWrapper::properties() const
+Soprano::StatementIterator Soprano::RdfSchemaModel::properties() const
 {
-    return d->model->listStatements( Statement( Node(), Vocabulary::RDF::type(), Vocabulary::RDF::Property() ) );
+    return parentModel()->listStatements( Statement( Node(), Vocabulary::RDF::type(), Vocabulary::RDF::Property() ) );
 }
 
 
-Soprano::StatementIterator Soprano::RdfSchemaWrapper::range( const Node& prop, const Node& range ) const
+Soprano::StatementIterator Soprano::RdfSchemaModel::range( const Node& prop, const Node& range ) const
 {
-    return d->model->listStatements( Statement( prop, Vocabulary::RDFS::range(), range ) );
+    return parentModel()->listStatements( Statement( prop, Vocabulary::RDFS::range(), range ) );
 }
 
 
-Soprano::StatementIterator Soprano::RdfSchemaWrapper::subClassOf( const Node& subClass, const Node& superClass ) const
+Soprano::StatementIterator Soprano::RdfSchemaModel::subClassOf( const Node& subClass, const Node& superClass ) const
 {
     // FIXME: do a recursive search for all subclasses. Problem: We cannot wrap multiple results in one iterator yet
     return directSubClassOf( subClass, superClass );
 }
 
 
-Soprano::StatementIterator Soprano::RdfSchemaWrapper::subPropertyOf( const Node& subProperty, const Node& superProperty ) const
+Soprano::StatementIterator Soprano::RdfSchemaModel::subPropertyOf( const Node& subProperty, const Node& superProperty ) const
 {
     // FIXME: do a recursive search for all subproperties. Problem: We cannot wrap multiple results in one iterator yet
     return directSubPropertyOf( subProperty, superProperty );
 }
 
 
-Soprano::StatementIterator Soprano::RdfSchemaWrapper::type( const Node& someClass, const Node& someType ) const
+Soprano::StatementIterator Soprano::RdfSchemaModel::type( const Node& someClass, const Node& someType ) const
 {
     // FIXME: do a recursive search for all subtypes. Problem: We cannot wrap multiple results in one iterator yet
     return directType( someClass, someType );
 }
 
 
-bool Soprano::RdfSchemaWrapper::isClass( const Node& resource ) const
+bool Soprano::RdfSchemaModel::isClass( const Node& resource ) const
 {
-    return d->model->containsAnyStatement( Statement( resource,
+    return parentModel()->containsAnyStatement( Statement( resource,
                                                       Vocabulary::RDF::type(),
                                                       Vocabulary::RDFS::Class() ) );
 }
 
 
-bool Soprano::RdfSchemaWrapper::isProperty( const Node& resource ) const
+bool Soprano::RdfSchemaModel::isProperty( const Node& resource ) const
 {
-    return d->model->containsAnyStatement( Statement( resource,
+    return parentModel()->containsAnyStatement( Statement( resource,
                                                       Vocabulary::RDF::type(),
                                                       Vocabulary::RDF::Property() ) );
 }
 
 
-bool Soprano::RdfSchemaWrapper::isDirectSubClassOf( const Node& subClass, const Node& superClass ) const
+bool Soprano::RdfSchemaModel::isDirectSubClassOf( const Node& subClass, const Node& superClass ) const
 {
-    return d->model->containsAnyStatement( Statement( subClass,
+    return parentModel()->containsAnyStatement( Statement( subClass,
                                                       Vocabulary::RDFS::subClassOf(),
                                                       superClass ) );
 }
 
 
-bool Soprano::RdfSchemaWrapper::isDirectSubPropertyOf( const Node& subProperty, const Node& superProperty ) const
+bool Soprano::RdfSchemaModel::isDirectSubPropertyOf( const Node& subProperty, const Node& superProperty ) const
 {
-    return d->model->containsAnyStatement( Statement( subProperty,
+    return parentModel()->containsAnyStatement( Statement( subProperty,
                                                       Vocabulary::RDFS::subPropertyOf(),
                                                       superProperty ) );
 }
 
 
-bool Soprano::RdfSchemaWrapper::isDirectType( const Node& someClass, const Node& someType ) const
+bool Soprano::RdfSchemaModel::isDirectType( const Node& someClass, const Node& someType ) const
 {
-    return d->model->containsAnyStatement( Statement( someClass,
+    return parentModel()->containsAnyStatement( Statement( someClass,
                                                       Vocabulary::RDF::type(),
                                                     someType ) );
 }
 
 
-bool Soprano::RdfSchemaWrapper::isSubClassOf( const Node& subClass, const Node& superClass ) const
+bool Soprano::RdfSchemaModel::isSubClassOf( const Node& subClass, const Node& superClass ) const
 {
     return subClassOf( subClass, superClass ).next();
 }
 
 
-bool Soprano::RdfSchemaWrapper::isSubPropertyOf( const Node& subProperty, const Node& superProperty ) const
+bool Soprano::RdfSchemaModel::isSubPropertyOf( const Node& subProperty, const Node& superProperty ) const
 {
     return subPropertyOf( subProperty, superProperty ).next();
 }
 
 
-bool Soprano::RdfSchemaWrapper::isType( const Node& someClass, const Node& someType ) const
+bool Soprano::RdfSchemaModel::isType( const Node& someClass, const Node& someType ) const
 {
     return type( someClass, someType ).next();
-}
-
-
-Soprano::Error::Error Soprano::RdfSchemaWrapper::lastError() const
-{
-    return d->model->lastError();
 }

@@ -1,4 +1,4 @@
-/* 
+/*
  * This file is part of Soprano Project.
  *
  * Copyright (C) 2007 Sebastian Trueg <trueg@kde.org>
@@ -19,43 +19,38 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef _SOPRANO_MULTI_CALL_PROTECTION_ITERATOR_BASE_H_
-#define _SOPRANO_MULTI_CALL_PROTECTION_ITERATOR_BASE_H_
+#ifndef _SOPRANO_NONBLOCKING_QUERY_ITERATOR_BACKEND_H_
+#define _SOPRANO_NONBLOCKING_QUERY_ITERATOR_BACKEND_H_
 
-#include "multicallprotectionmodel.h"
+#include "queryresultiteratorbackend.h"
+#include "queryresultiterator.h"
+#include "mutexiteratorbase.h"
 
 namespace Soprano {
     namespace Util {
-	/**
-	 * Does nothing. Only used as interface for 
-	 * MultiCallProtectionModel::removeIterator
-	 */
-	class MultiCallProtectionIteratorBase
+	class MutexModel;
+
+	class MutexQueryResultIteratorBackend : public QueryResultIteratorBackend, public MutexIteratorBase
 	{
 	public:
-	    MultiCallProtectionIteratorBase( MultiCallProtectionModel* model )
-		: m_model( model ) {}
-		virtual ~MultiCallProtectionIteratorBase() {
-		    remove();
-		}
+	    MutexQueryResultIteratorBackend( const QueryResultIterator& it, MutexModel* model );
+	    ~MutexQueryResultIteratorBackend();
 
-		void close() {
-		    // no need to really close, that is done by
-		    // the real Model. We only need to make sure
-		    // that we do not try to unlock a deleted model
-		    m_model = 0;
-		}
-
-	protected:
-		void remove() { 
-		    if( m_model ) {
-			m_model->removeIterator( this );
-			m_model = 0;
-		    }
-		}
+	    bool next();
+	    BindingSet current() const;
+	    void close();
+	    Statement currentStatement() const;
+	    Node binding( const QString &name ) const;
+	    Node binding( int offset ) const;
+	    int bindingCount() const;
+	    QStringList bindingNames() const;
+	    bool isGraph() const;
+	    bool isBinding() const;
+	    bool isBool() const;
+	    bool boolValue() const;
 
 	private:
-		MultiCallProtectionModel* m_model;
+	    QueryResultIterator m_iterator;
 	};
     }
 }

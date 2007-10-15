@@ -26,47 +26,49 @@
 
 
 namespace Soprano {
-    class SimpleStatementIteratorBackend : public IteratorBackend<Statement>
-    {
-    public:
-        SimpleStatementIteratorBackend();
-        SimpleStatementIteratorBackend( const QList<Statement>& );
-        ~SimpleStatementIteratorBackend();
+    namespace Util {
+        class SimpleStatementIteratorBackend : public IteratorBackend<Statement>
+        {
+        public:
+            SimpleStatementIteratorBackend();
+            SimpleStatementIteratorBackend( const QList<Statement>& );
+            ~SimpleStatementIteratorBackend();
 
-        SimpleStatementIteratorBackend& operator=( const QList<Statement>& );
+            SimpleStatementIteratorBackend& operator=( const QList<Statement>& );
 
-        bool next();
+            bool next();
 
-        Statement current() const;
+            Statement current() const;
 
-        void close() {}
+            void close() {}
 
-    private:
-        QList<Statement> m_statements;
-        QList<Statement>::const_iterator m_iterator;
-        bool m_first;
-    };
+        private:
+            QList<Statement> m_statements;
+            QList<Statement>::const_iterator m_iterator;
+            bool m_first;
+        };
+    }
 }
 
-Soprano::SimpleStatementIteratorBackend::SimpleStatementIteratorBackend()
+Soprano::Util::SimpleStatementIteratorBackend::SimpleStatementIteratorBackend()
 {
     // make sure we are properly initialized
     operator=( m_statements );
 }
 
 
-Soprano::SimpleStatementIteratorBackend::SimpleStatementIteratorBackend( const QList<Statement>& s )
+Soprano::Util::SimpleStatementIteratorBackend::SimpleStatementIteratorBackend( const QList<Statement>& s )
 {
     operator=( s );
 }
 
 
-Soprano::SimpleStatementIteratorBackend::~SimpleStatementIteratorBackend()
+Soprano::Util::SimpleStatementIteratorBackend::~SimpleStatementIteratorBackend()
 {
 }
 
 
-Soprano::SimpleStatementIteratorBackend& Soprano::SimpleStatementIteratorBackend::operator=( const QList<Statement>& s )
+Soprano::Util::SimpleStatementIteratorBackend& Soprano::Util::SimpleStatementIteratorBackend::operator=( const QList<Statement>& s )
 {
     m_statements = s;
     m_iterator = m_statements.constBegin();
@@ -75,7 +77,7 @@ Soprano::SimpleStatementIteratorBackend& Soprano::SimpleStatementIteratorBackend
 }
 
 
-bool Soprano::SimpleStatementIteratorBackend::next()
+bool Soprano::Util::SimpleStatementIteratorBackend::next()
 {
     if ( !m_first &&
          m_iterator != m_statements.constEnd() ) {
@@ -87,7 +89,7 @@ bool Soprano::SimpleStatementIteratorBackend::next()
 }
 
 
-Soprano::Statement Soprano::SimpleStatementIteratorBackend::current() const
+Soprano::Statement Soprano::Util::SimpleStatementIteratorBackend::current() const
 {
     if ( m_iterator != m_statements.constEnd() ) {
         return *m_iterator;
@@ -99,47 +101,47 @@ Soprano::Statement Soprano::SimpleStatementIteratorBackend::current() const
 
 
 
-class Soprano::SimpleStatementIterator::Private
+class Soprano::Util::SimpleStatementIterator::Private
 {
 public:
 };
 
 
-Soprano::SimpleStatementIterator::SimpleStatementIterator()
+Soprano::Util::SimpleStatementIterator::SimpleStatementIterator()
     : d( new Private() )
 {
 }
 
 
-Soprano::SimpleStatementIterator::SimpleStatementIterator( const QList<Statement>& sl )
+Soprano::Util::SimpleStatementIterator::SimpleStatementIterator( const QList<Statement>& sl )
     : StatementIterator( new SimpleStatementIteratorBackend( sl ) ),
       d( new Private() )
 {
 }
 
 
-Soprano::SimpleStatementIterator::SimpleStatementIterator( const SimpleStatementIterator& st )
+Soprano::Util::SimpleStatementIterator::SimpleStatementIterator( const SimpleStatementIterator& st )
     : StatementIterator( st ),
       d( new Private() )
 {
 }
 
 
-Soprano::SimpleStatementIterator::~SimpleStatementIterator()
+Soprano::Util::SimpleStatementIterator::~SimpleStatementIterator()
 {
     delete d;
 }
 
 
 
-Soprano::SimpleStatementIterator& Soprano::SimpleStatementIterator::operator=( const QList<Statement>& sl )
+Soprano::Util::SimpleStatementIterator& Soprano::Util::SimpleStatementIterator::operator=( const QList<Statement>& sl )
 {
     setBackend( new SimpleStatementIteratorBackend( sl ) );
     return *this;
 }
 
 
-Soprano::SimpleStatementIterator& Soprano::SimpleStatementIterator::operator=( const SimpleStatementIterator& it )
+Soprano::Util::SimpleStatementIterator& Soprano::Util::SimpleStatementIterator::operator=( const SimpleStatementIterator& it )
 {
     StatementIterator::operator=( it );
     return *this;

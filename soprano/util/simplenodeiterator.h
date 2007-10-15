@@ -28,42 +28,43 @@
 #include <QtCore/QList>
 
 namespace Soprano {
+    namespace Util {
+	/**
+	 * \class SimpleNodeIterator simplenodeiterator.h Soprano/Util/SimpleNodeIterator
+	 *
+	 * \brief The most simple version of a NodeIterator simply iterates over
+	 * a list of Nodes.
+	 *
+	 * The SimpleNodeIterator has been designed as a trivial extension
+	 * to NodeIterator and can be used as a drop-in-replacement as shown
+	 * below:
+	 *
+	 * \code
+	 * QList<Node> list;
+	 * SimpleNodeIterator it( list );
+	 *
+	 * // it and it2 iterate over the exact same data
+	 * NodeIterator it2 = it;
+	 * \endcode
+	 *
+	 * \author Sebastian Trueg <trueg@kde.org>
+	 */
+	class SOPRANO_EXPORT SimpleNodeIterator : public NodeIterator
+	{
+	public:
+	    SimpleNodeIterator();
+	    SimpleNodeIterator( const QList<Node>& );
+	    SimpleNodeIterator( const SimpleNodeIterator& );
+	    virtual ~SimpleNodeIterator();
 
-    /**
-     * \class SimpleNodeIterator simplenodeiterator.h Soprano/SimpleNodeIterator
-     *
-     * \brief The most simple version of a NodeIterator simply iterates over
-     * a list of Nodes.
-     *
-     * The SimpleNodeIterator has been designed as a trivial extension
-     * to NodeIterator and can be used as a drop-in-replacement as shown
-     * below:
-     *
-     * \code
-     * QList<Node> list;
-     * SimpleNodeIterator it( list );
-     *
-     * // it and it2 iterate over the exact same data
-     * NodeIterator it2 = it;
-     * \endcode
-     *
-     * \author Sebastian Trueg <trueg@kde.org>
-     */
-    class SOPRANO_EXPORT SimpleNodeIterator : public NodeIterator
-    {
-    public:
-	SimpleNodeIterator();
-	SimpleNodeIterator( const QList<Node>& );
-	SimpleNodeIterator( const SimpleNodeIterator& );
-	virtual ~SimpleNodeIterator();
+	    SimpleNodeIterator& operator=( const QList<Node>& );
+	    SimpleNodeIterator& operator=( const SimpleNodeIterator& );
 
-	SimpleNodeIterator& operator=( const QList<Node>& );
-	SimpleNodeIterator& operator=( const SimpleNodeIterator& );
-
-    private:
-	class Private;
-	Private* const d;
-    };
+	private:
+	    class Private;
+	    Private* const d;
+	};
+    }
 }
 
 #endif

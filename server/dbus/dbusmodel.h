@@ -44,8 +44,8 @@ namespace Soprano {
 	 *
 	 * \warning DBusModel is not thread-safe by default
 	 * and has to be protected if is is to be used from different
-	 * threads (This can be done via Util::MultiCallProtectionModel
-	 * in Util::MultiCallProtectionModel::ReadWriteMultiThreading mode
+	 * threads (This can be done via Util::MutexModel
+	 * in Util::MutexModel::ReadWriteMultiThreading mode
 	 * or via setting the model to async mode via setAsyncCalls).
 	 *
 	 * \author Sebastian Trueg <trueg@kde.org>
@@ -72,7 +72,7 @@ namespace Soprano {
 	     * can be performed interweaved. However, the application does 
 	     * not block, i.e. events (such as signals and slots) are handled
 	     * which might not be wanted.
-	     * If that is the case it is better to use Util::MultiCallProtectionModel
+	     * If that is the case it is better to use Util::MutexModel
 	     * instead.
 	     *
 	     * \param b If true asyncronous calls are enabled.

@@ -89,7 +89,7 @@ INPUT                  = ${soprano_SOURCE_DIR}/soprano \
                          ${soprano_SOURCE_DIR}/Mainpage.dox \
                          ${soprano_SOURCE_DIR}/soprano/vocabulary \
                          ${soprano_SOURCE_DIR}/soprano/inference \
-                         ${soprano_SOURCE_DIR}/soprano/util/multicallprotectionmodel.h \
+                         ${soprano_SOURCE_DIR}/soprano/util/ \
                          ${soprano_SOURCE_DIR}/index/indexfiltermodel.h \
                          ${soprano_SOURCE_DIR}/index/cluceneindex.h \
                          ${soprano_SOURCE_DIR}/index/indexqueryhit.h \
@@ -106,7 +106,12 @@ RECURSIVE              = NO
 EXCLUDE                = ${soprano_SOURCE_DIR}/soprano/datetime.h \
                          ${soprano_SOURCE_DIR}/soprano/inifile.h \
                          ${soprano_SOURCE_DIR}/soprano/desktopfile.h \
-                         ${soprano_SOURCE_DIR}/soprano/sopranopluginfile.h
+                         ${soprano_SOURCE_DIR}/soprano/sopranopluginfile.h \
+                         ${soprano_SOURCE_DIR}/soprano/util/mutexiteratorbase.h \
+                         ${soprano_SOURCE_DIR}/soprano/util/mutexnodeiteratorbackend.h \
+                         ${soprano_SOURCE_DIR}/soprano/util/mutexstatementiteratorbackend.h \
+                         ${soprano_SOURCE_DIR}/soprano/util/mutexqueryresultiteratorbackend.h \
+                         ${soprano_SOURCE_DIR}/soprano/util/looplock.h
 EXCLUDE_SYMLINKS       = NO
 EXCLUDE_PATTERNS       = 
 EXCLUDE_SYMBOLS        = 

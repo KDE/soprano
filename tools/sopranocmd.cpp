@@ -19,8 +19,10 @@
 #include <QtCore/QList>
 #include <QtCore/QDir>
 
-// FIXME: do not include the global header
-#include "../soprano/soprano.h"
+#include "../soprano/statementiterator.h"
+#include "../soprano/queryresultiterator.h"
+#include "../soprano/version.h"
+#include "../soprano/pluginmanager.h"
 
 #include "../server/tcpclient.h"
 #include "../server/dbus/dbusclient.h"

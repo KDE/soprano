@@ -23,11 +23,8 @@ install(FILES
   PluginManager
   Plugin
   Serializer
-  SimpleStatementIterator
-  SimpleNodeIterator
   RdfSchemaWrapper
   StorageModel
-  DummyModel
   Global
   DESTINATION
   include/Soprano)

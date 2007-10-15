@@ -5,6 +5,7 @@ include_directories(
   ${soprano_BINARY_DIR}
   ${soprano_SOURCE_DIR}/data
   ${soprano_core_SOURCE_DIR}
+  ${soprano_core_SOURCE_DIR}/util
   ${soprano_core_SOURCE_DIR}/query
   ${soprano_core_SOURCE_DIR}/vocabulary
   ${soprano_core_BINARY_DIR}

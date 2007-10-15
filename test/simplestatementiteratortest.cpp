@@ -21,14 +21,15 @@
 
 #include "simplestatementiteratortest.h"
 
-#include "soprano/simplestatementiterator.h"
-#include "soprano/statement.h"
+#include "simplestatementiterator.h"
+#include "statement.h"
 
 #include <QtCore/QList>
 #include <QtCore/QUrl>
 #include <QtTest/QTest>
 
 using namespace Soprano;
+using namespace Soprano::Util;
 
 
 static QList<Statement> createStatements( int cnt )

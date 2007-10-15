@@ -40,3 +40,5 @@
 #include "version.h"
 #include "sopranotypes.h"
 #include "vocabulary.h"
+#include "dummymodel.h"
+#include "mutexmodel.h"

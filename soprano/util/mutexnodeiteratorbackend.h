@@ -19,30 +19,30 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef _SOPRANO_NONBLOCKING_STATEMENT_ITERATOR_BACKEND_H_
-#define _SOPRANO_NONBLOCKING_STATEMENT_ITERATOR_BACKEND_H_
+#ifndef _SOPRANO_NONBLOCKING_NODE_ITERATOR_BACKEND_H_
+#define _SOPRANO_NONBLOCKING_NODE_ITERATOR_BACKEND_H_
 
 #include "iteratorbackend.h"
-#include "statementiterator.h"
-#include "multicallprotectioniteratorbase.h"
-#include "statement.h"
+#include "nodeiterator.h"
+#include "mutexiteratorbase.h"
+#include "node.h"
 
 namespace Soprano {
     namespace Util {
-	class MultiCallProtectionModel;
+	class MutexModel;
 
-	class MultiCallProtectionStatementIteratorBackend : public IteratorBackend<Statement>, public MultiCallProtectionIteratorBase
+	class MutexNodeIteratorBackend : public IteratorBackend<Node>, public MutexIteratorBase
 	{
 	public:
-	    MultiCallProtectionStatementIteratorBackend( const StatementIterator& it, MultiCallProtectionModel* model );
-	    ~MultiCallProtectionStatementIteratorBackend();
+	    MutexNodeIteratorBackend( const NodeIterator& it, MutexModel* model );
+	    ~MutexNodeIteratorBackend();
 
 	    bool next();
-	    Soprano::Statement current() const;
+	    Soprano::Node current() const;
 	    void close();
 
 	private:
-	    StatementIterator m_iterator;
+	    NodeIterator m_iterator;
 	};
     }
 }

@@ -27,7 +27,7 @@
 #include "query/query.h"
 
 
-class Soprano::DummyModel::Private
+class Soprano::Util::DummyModel::Private
 {
 public:
     Private()
@@ -36,104 +36,104 @@ public:
     Error::Error defaultError;
 };
 
-Soprano::DummyModel::DummyModel()
+Soprano::Util::DummyModel::DummyModel()
     : Model(),
       d( new Private() )
 {
 }
 
 
-Soprano::DummyModel::~DummyModel()
+Soprano::Util::DummyModel::~DummyModel()
 {
     delete d;
 }
 
 
-Soprano::Error::ErrorCode Soprano::DummyModel::addStatement( const Statement& )
+Soprano::Error::ErrorCode Soprano::Util::DummyModel::addStatement( const Statement& )
 {
     setError( d->defaultError );
     return Error::ErrorNotSupported;
 }
 
 
-bool Soprano::DummyModel::isEmpty() const
+bool Soprano::Util::DummyModel::isEmpty() const
 {
     setError( d->defaultError );
     return true;
 }
 
 
-Soprano::NodeIterator Soprano::DummyModel::listContexts() const
+Soprano::NodeIterator Soprano::Util::DummyModel::listContexts() const
 {
     setError( d->defaultError );
     return NodeIterator();
 }
 
 
-bool Soprano::DummyModel::containsStatement( const Statement& ) const
+bool Soprano::Util::DummyModel::containsStatement( const Statement& ) const
 {
     setError( d->defaultError );
     return false;
 }
 
 
-bool Soprano::DummyModel::containsAnyStatement( const Statement& ) const
+bool Soprano::Util::DummyModel::containsAnyStatement( const Statement& ) const
 {
     setError( d->defaultError );
     return false;
 }
 
 
-// Soprano::QueryResultIterator Soprano::DummyModel::executeQuery( const Query::Query& ) const
+// Soprano::QueryResultIterator Soprano::Util::DummyModel::executeQuery( const Query::Query& ) const
 // {
 //     setError( d->defaultError );
 //     return QueryResultIterator();
 // }
 
 
-Soprano::QueryResultIterator Soprano::DummyModel::executeQuery( const QString&, Query::QueryLanguage, const QString& ) const
+Soprano::QueryResultIterator Soprano::Util::DummyModel::executeQuery( const QString&, Query::QueryLanguage, const QString& ) const
 {
     setError( d->defaultError );
     return QueryResultIterator();
 }
 
 
-Soprano::StatementIterator Soprano::DummyModel::listStatements( const Statement& ) const
+Soprano::StatementIterator Soprano::Util::DummyModel::listStatements( const Statement& ) const
 {
     setError( d->defaultError );
     return StatementIterator();
 }
 
 
-Soprano::Error::ErrorCode Soprano::DummyModel::removeStatement( const Statement& )
+Soprano::Error::ErrorCode Soprano::Util::DummyModel::removeStatement( const Statement& )
 {
     setError( d->defaultError );
     return Error::ErrorNotSupported;
 }
 
 
-Soprano::Error::ErrorCode Soprano::DummyModel::removeAllStatements( const Statement& )
+Soprano::Error::ErrorCode Soprano::Util::DummyModel::removeAllStatements( const Statement& )
 {
     setError( d->defaultError );
     return Error::ErrorNotSupported;
 }
 
 
-int Soprano::DummyModel::statementCount() const
+int Soprano::Util::DummyModel::statementCount() const
 {
     setError( d->defaultError );
     return 0;
 }
 
 
-Soprano::Node Soprano::DummyModel::createBlankNode()
+Soprano::Node Soprano::Util::DummyModel::createBlankNode()
 {
     setError( d->defaultError );
     return Node();
 }
 
 
-Soprano::Error::ErrorCode Soprano::DummyModel::write( QTextStream& ) const
+Soprano::Error::ErrorCode Soprano::Util::DummyModel::write( QTextStream& ) const
 {
     setError( d->defaultError );
     return Error::ErrorNotSupported;

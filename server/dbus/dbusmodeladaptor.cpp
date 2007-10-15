@@ -41,7 +41,7 @@
 #include "soprano/model.h"
 #include "soprano/node.h"
 
-#include "multicallprotectionmodel.h"
+#include "mutexmodel.h"
 
 
 class Soprano::Server::DBusModelAdaptor::Private
@@ -52,7 +52,7 @@ public:
     }
 
     Model* origModel;
-    Util::MultiCallProtectionModel* model;
+    Util::MutexModel* model;
     QMultiHash<QString, QPointer<IteratorWrapper> > openIterators;
 
     QString dbusObjectPath;
@@ -76,7 +76,7 @@ Soprano::Server::DBusModelAdaptor::DBusModelAdaptor( Model* model, QObject* pare
 
     d->dbusObjectPath = dbusObjectPath;
     d->origModel = model;
-    d->model = new Util::MultiCallProtectionModel( Util::MultiCallProtectionModel::ReadWriteSingleThreading, model );
+    d->model = new Util::MutexModel( Util::MutexModel::ReadWriteSingleThreading, model );
 
     // we cannot use setAutoRelaySignals here since that would connect (non-existing)
     // signals from parent instead of model

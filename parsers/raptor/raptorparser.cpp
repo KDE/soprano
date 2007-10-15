@@ -24,10 +24,10 @@
 #include "raptorparser.h"
 #include "raptor-config.h"
 
-#include <soprano/simplestatementiterator.h>
-#include <soprano/statement.h>
-#include <soprano/locator.h>
-#include <soprano/error.h>
+#include "util/simplestatementiterator.h"
+#include "statement.h"
+#include "locator.h"
+#include "error.h"
 
 #include <raptor.h>
 
@@ -311,7 +311,7 @@ Soprano::Raptor::Parser::parseStream( QTextStream& stream,
     }
     raptor_parse_chunk( parser, 0, 0, 1 );
 
-    return SimpleStatementIterator( data.statements );
+    return Util::SimpleStatementIterator( data.statements );
 }
 
 

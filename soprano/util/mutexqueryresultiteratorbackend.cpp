@@ -19,27 +19,27 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#include "multicallprotectionqueryresultiteratorbackend.h"
-#include "multicallprotectionmodel.h"
+#include "mutexqueryresultiteratorbackend.h"
+#include "mutexmodel.h"
 
 #include "error.h"
 #include "statement.h"
 
 
-Soprano::Util::MultiCallProtectionQueryResultIteratorBackend::MultiCallProtectionQueryResultIteratorBackend( const QueryResultIterator& it, MultiCallProtectionModel* model )
+Soprano::Util::MutexQueryResultIteratorBackend::MutexQueryResultIteratorBackend( const QueryResultIterator& it, MutexModel* model )
     : QueryResultIteratorBackend(),
-      MultiCallProtectionIteratorBase( model ),
+      MutexIteratorBase( model ),
       m_iterator( it )
 {
 }
 
 
-Soprano::Util::MultiCallProtectionQueryResultIteratorBackend::~MultiCallProtectionQueryResultIteratorBackend()
+Soprano::Util::MutexQueryResultIteratorBackend::~MutexQueryResultIteratorBackend()
 {
 }
 
 
-bool Soprano::Util::MultiCallProtectionQueryResultIteratorBackend::next()
+bool Soprano::Util::MutexQueryResultIteratorBackend::next()
 {
     bool haveNext = m_iterator.next();
     setError( m_iterator.lastError() );
@@ -47,7 +47,7 @@ bool Soprano::Util::MultiCallProtectionQueryResultIteratorBackend::next()
 }
 
 
-Soprano::BindingSet Soprano::Util::MultiCallProtectionQueryResultIteratorBackend::current() const
+Soprano::BindingSet Soprano::Util::MutexQueryResultIteratorBackend::current() const
 {
     BindingSet s = m_iterator.current();
     setError( m_iterator.lastError() );
@@ -55,7 +55,7 @@ Soprano::BindingSet Soprano::Util::MultiCallProtectionQueryResultIteratorBackend
 }
 
 
-void Soprano::Util::MultiCallProtectionQueryResultIteratorBackend::close()
+void Soprano::Util::MutexQueryResultIteratorBackend::close()
 {
     m_iterator.close();
     setError( m_iterator.lastError() );
@@ -63,7 +63,7 @@ void Soprano::Util::MultiCallProtectionQueryResultIteratorBackend::close()
 }
 
 
-Soprano::Statement Soprano::Util::MultiCallProtectionQueryResultIteratorBackend::currentStatement() const
+Soprano::Statement Soprano::Util::MutexQueryResultIteratorBackend::currentStatement() const
 {
     Statement s = m_iterator.currentStatement();
     setError( m_iterator.lastError() );
@@ -71,7 +71,7 @@ Soprano::Statement Soprano::Util::MultiCallProtectionQueryResultIteratorBackend:
 }
 
 
-Soprano::Node Soprano::Util::MultiCallProtectionQueryResultIteratorBackend::binding( const QString &name ) const
+Soprano::Node Soprano::Util::MutexQueryResultIteratorBackend::binding( const QString &name ) const
 {
     Node n = m_iterator.binding( name );
     setError( m_iterator.lastError() );
@@ -79,7 +79,7 @@ Soprano::Node Soprano::Util::MultiCallProtectionQueryResultIteratorBackend::bind
 }
 
 
-Soprano::Node Soprano::Util::MultiCallProtectionQueryResultIteratorBackend::binding( int offset ) const
+Soprano::Node Soprano::Util::MutexQueryResultIteratorBackend::binding( int offset ) const
 {
     Node n = m_iterator.binding( offset );
     setError( m_iterator.lastError() );
@@ -87,7 +87,7 @@ Soprano::Node Soprano::Util::MultiCallProtectionQueryResultIteratorBackend::bind
 }
 
 
-int Soprano::Util::MultiCallProtectionQueryResultIteratorBackend::bindingCount() const
+int Soprano::Util::MutexQueryResultIteratorBackend::bindingCount() const
 {
     int cnt = m_iterator.bindingCount();
     setError( m_iterator.lastError() );
@@ -95,7 +95,7 @@ int Soprano::Util::MultiCallProtectionQueryResultIteratorBackend::bindingCount()
 }
 
 
-QStringList Soprano::Util::MultiCallProtectionQueryResultIteratorBackend::bindingNames() const
+QStringList Soprano::Util::MutexQueryResultIteratorBackend::bindingNames() const
 {
     QStringList names = m_iterator.bindingNames();
     setError( m_iterator.lastError() );
@@ -103,7 +103,7 @@ QStringList Soprano::Util::MultiCallProtectionQueryResultIteratorBackend::bindin
 }
 
 
-bool Soprano::Util::MultiCallProtectionQueryResultIteratorBackend::isGraph() const
+bool Soprano::Util::MutexQueryResultIteratorBackend::isGraph() const
 {
     bool b = m_iterator.isGraph();
     setError( m_iterator.lastError() );
@@ -111,7 +111,7 @@ bool Soprano::Util::MultiCallProtectionQueryResultIteratorBackend::isGraph() con
 }
 
 
-bool Soprano::Util::MultiCallProtectionQueryResultIteratorBackend::isBinding() const
+bool Soprano::Util::MutexQueryResultIteratorBackend::isBinding() const
 {
     bool b = m_iterator.isBinding();
     setError( m_iterator.lastError() );
@@ -119,7 +119,7 @@ bool Soprano::Util::MultiCallProtectionQueryResultIteratorBackend::isBinding() c
 }
 
 
-bool Soprano::Util::MultiCallProtectionQueryResultIteratorBackend::isBool() const
+bool Soprano::Util::MutexQueryResultIteratorBackend::isBool() const
 {
     bool b = m_iterator.isBool();
     setError( m_iterator.lastError() );
@@ -127,7 +127,7 @@ bool Soprano::Util::MultiCallProtectionQueryResultIteratorBackend::isBool() cons
 }
 
 
-bool Soprano::Util::MultiCallProtectionQueryResultIteratorBackend::boolValue() const
+bool Soprano::Util::MutexQueryResultIteratorBackend::boolValue() const
 {
     bool b = m_iterator.boolValue();
     setError( m_iterator.lastError() );

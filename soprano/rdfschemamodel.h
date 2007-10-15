@@ -19,11 +19,11 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef _SOPRANO_RDF_SCHEMA_WRAPPER_H_
-#define _SOPRANO_RDF_SCHEMA_WRAPPER_H_
+#ifndef _SOPRANO_RDF_SCHEMA_MODEL_H_
+#define _SOPRANO_RDF_SCHEMA_MODEL_H_
 
+#include "filtermodel.h"
 #include "node.h"
-#include "error.h"
 
 namespace Soprano {
 
@@ -31,7 +31,7 @@ namespace Soprano {
     class StatementIterator;
 
     /**
-     * \class RdfSchemaWrapper rdfschemawrapper.h Soprano/RdfSchemaWrapper
+     * \class RdfSchemaModel rdfschemamodel.h Soprano/RdfSchemaModel
      *
      * \brief Provides convenience methods to handle RDFS data.
      *
@@ -42,11 +42,19 @@ namespace Soprano {
      *
      * \author Sebastian Trueg <trueg@kde.org>
      */
-    class RdfSchemaWrapper : public Error::ErrorCache
+    class RdfSchemaModel : public FilterModel
     {
     public:
-	RdfSchemaWrapper( Model* );
-	~RdfSchemaWrapper();
+	/**
+	 * Create a new RDF Schema wrapper model that performs actions
+	 * on \p model
+	 */
+	RdfSchemaModel( Model* parentModel );
+
+	/**
+	 * Destructor.
+	 */
+	~RdfSchemaModel();
 
 	/**
 	 * Get all defined RDF/S classes.
@@ -273,11 +281,6 @@ namespace Soprano {
 	 * \return true if someClass is an instance of someType, false otherwise.
 	 */
 	bool isType( const Node& someClass, const Node& someType ) const;
-
-	/**
-	 * Reimplemented from ErrorCache. The API is not effected.
-	 */
-	Error::Error lastError() const;
 
     private:
 	class Private;

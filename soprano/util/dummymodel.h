@@ -26,76 +26,77 @@
 #include "model.h"
 
 
-namespace Soprano
-{
-    /**
-     * \class DummyModel dummymodel.h Soprano/DummyModel
-     *
-     * \brief A dummy model. All its methods do nothing and always
-     * fail with a default error.
-     *
-     * A dummy model might be useful in situations where a null pointer
-     * could lead to crashes if creating a real model fails.
-     *
-     * \author Sebastian Trueg <trueg@kde.org>
-     */
-    class SOPRANO_EXPORT DummyModel : public Model
-    {
-	Q_OBJECT
-
-    public:
+namespace Soprano {
+    namespace Util {
 	/**
-	 * Create a new dummy model.
+	 * \class DummyModel dummymodel.h Soprano/Util/DummyModel
+	 *
+	 * \brief A dummy model. All its methods do nothing and always
+	 * fail with a default error.
+	 *
+	 * A dummy model might be useful in situations where a null pointer
+	 * could lead to crashes if creating a real model fails.
+	 *
+	 * \author Sebastian Trueg <trueg@kde.org>
 	 */
-	DummyModel();
+	class SOPRANO_EXPORT DummyModel : public Model
+	{
+	    Q_OBJECT
 
-	/**
-	 * destructor
-	 */
-	~DummyModel();
+	public:
+	    /**
+	     * Create a new dummy model.
+	     */
+	    DummyModel();
 
-	//@{
-	Error::ErrorCode addStatement( const Statement &statement );
-	Error::ErrorCode addStatements( const QList<Statement> &statements );
-        //@}
+	    /**
+	     * destructor
+	     */
+	    ~DummyModel();
 
-	//@{
-	Error::ErrorCode removeStatement( const Statement &statement );
-	Error::ErrorCode removeAllStatements( const Statement &statement );
-	Error::ErrorCode removeStatements( const QList<Statement> &statements );
-	Error::ErrorCode removeContext( const Node& );
-	Error::ErrorCode removeAllStatements();
-	//@}
+	    //@{
+	    Error::ErrorCode addStatement( const Statement &statement );
+	    Error::ErrorCode addStatements( const QList<Statement> &statements );
+	    //@}
 
-	//@{
-	StatementIterator listStatements( const Statement &partial ) const;
-	StatementIterator listStatements() const;
-	StatementIterator listStatementsInContext( const Node &context ) const;
-	NodeIterator listContexts() const;
+	    //@{
+	    Error::ErrorCode removeStatement( const Statement &statement );
+	    Error::ErrorCode removeAllStatements( const Statement &statement );
+	    Error::ErrorCode removeStatements( const QList<Statement> &statements );
+	    Error::ErrorCode removeContext( const Node& );
+	    Error::ErrorCode removeAllStatements();
+	    //@}
+
+	    //@{
+	    StatementIterator listStatements( const Statement &partial ) const;
+	    StatementIterator listStatements() const;
+	    StatementIterator listStatementsInContext( const Node &context ) const;
+	    NodeIterator listContexts() const;
 //	QueryResultIterator executeQuery( const Query::Query& query ) const;
-	QueryResultIterator executeQuery( const QString& query, Query::QueryLanguage language, const QString& userQueryLanguage = QString() ) const;
-	//@}
+	    QueryResultIterator executeQuery( const QString& query, Query::QueryLanguage language, const QString& userQueryLanguage = QString() ) const;
+	    //@}
 
-	//@{
-	bool containsAnyStatement( const Statement &statement ) const;
-	bool containsStatement( const Statement &statement ) const;
-	bool containsContext( const Node &context ) const;
-	bool isEmpty() const;
-	int statementCount() const;
-	//@}
+	    //@{
+	    bool containsAnyStatement( const Statement &statement ) const;
+	    bool containsStatement( const Statement &statement ) const;
+	    bool containsContext( const Node &context ) const;
+	    bool isEmpty() const;
+	    int statementCount() const;
+	    //@}
 
-	//@{
-	Error::ErrorCode write( QTextStream &os ) const;
-	//@}
+	    //@{
+	    Error::ErrorCode write( QTextStream &os ) const;
+	    //@}
 
-	//@{
-	Node createBlankNode();
-	//@}
+	    //@{
+	    Node createBlankNode();
+	    //@}
 
-    private:
-	class Private;
-	Private* const d;
-    };
+	private:
+	    class Private;
+	    Private* const d;
+	};
+    }
 }
 
 #endif

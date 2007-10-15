@@ -19,27 +19,27 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#include "multicallprotectionnodeiteratorbackend.h"
-#include "multicallprotectionmodel.h"
+#include "mutexnodeiteratorbackend.h"
+#include "mutexmodel.h"
 
 #include "node.h"
 #include "error.h"
 
 
-Soprano::Util::MultiCallProtectionNodeIteratorBackend::MultiCallProtectionNodeIteratorBackend( const NodeIterator& it, MultiCallProtectionModel* model )
+Soprano::Util::MutexNodeIteratorBackend::MutexNodeIteratorBackend( const NodeIterator& it, MutexModel* model )
     : IteratorBackend<Node>(),
-      MultiCallProtectionIteratorBase( model ),
+      MutexIteratorBase( model ),
       m_iterator( it )
 {
 }
 
 
-Soprano::Util::MultiCallProtectionNodeIteratorBackend::~MultiCallProtectionNodeIteratorBackend()
+Soprano::Util::MutexNodeIteratorBackend::~MutexNodeIteratorBackend()
 {
 }
 
 
-bool Soprano::Util::MultiCallProtectionNodeIteratorBackend::next()
+bool Soprano::Util::MutexNodeIteratorBackend::next()
 {
     bool haveNext = m_iterator.next();
     setError( m_iterator.lastError() );
@@ -47,7 +47,7 @@ bool Soprano::Util::MultiCallProtectionNodeIteratorBackend::next()
 }
 
 
-Soprano::Node Soprano::Util::MultiCallProtectionNodeIteratorBackend::current() const
+Soprano::Node Soprano::Util::MutexNodeIteratorBackend::current() const
 {
     Node s = m_iterator.current();
     setError( m_iterator.lastError() );
@@ -55,7 +55,7 @@ Soprano::Node Soprano::Util::MultiCallProtectionNodeIteratorBackend::current() c
 }
 
 
-void Soprano::Util::MultiCallProtectionNodeIteratorBackend::close()
+void Soprano::Util::MutexNodeIteratorBackend::close()
 {
     m_iterator.close();
     setError( m_iterator.lastError() );

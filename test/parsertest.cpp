@@ -15,12 +15,12 @@
 #include "parsertest.h"
 #include "config-testdata.h"
 
-#include <soprano/parser.h>
-#include <soprano/pluginmanager.h>
-#include <soprano/statementiterator.h>
-#include <soprano/simplestatementiterator.h>
-#include <soprano/statement.h>
-#include <soprano/vocabulary.h>
+#include "parser.h"
+#include "pluginmanager.h"
+#include "statementiterator.h"
+#include "simplestatementiterator.h"
+#include "statement.h"
+#include "vocabulary.h"
 
 #include <QtTest/QTest>
 #include <QtCore/QFile>

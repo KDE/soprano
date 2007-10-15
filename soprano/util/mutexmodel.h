@@ -19,18 +19,18 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef _SOPRANO_MULTI_CALL_PROTECTION_MODEL_H_
-#define _SOPRANO_MULTI_CALL_PROTECTION_MODEL_H_
+#ifndef _SOPRANO_MUTEX_MODEL_H_
+#define _SOPRANO_MUTEX_MODEL_H_
 
 #include "filtermodel.h"
 #include "soprano_export.h"
 
 namespace Soprano {
     namespace Util {
-	class MultiCallProtectionIteratorBase;
+	class MutexIteratorBase;
 
 	/**
-	 * \class MultiCallProtectionModel multicallprotectionmodel.h Soprano/Util/MultiCallProtectionModel
+	 * \class MutexModel mutexmodel.h Soprano/Util/MutexModel
 	 *
 	 * \brief Protect a Model for multiple calls in multi- or single-thread
 	 * applications.
@@ -41,7 +41,7 @@ namespace Soprano {
 	 *
 	 * \author Sebastian Trueg <trueg@kde.org>
 	 */
-	class SOPRANO_EXPORT MultiCallProtectionModel : public FilterModel
+	class SOPRANO_EXPORT MutexModel : public FilterModel
 	{
 	    Q_OBJECT
 
@@ -73,27 +73,27 @@ namespace Soprano {
 		 * This mode is mainly useful for server applications that need to
 		 * handle multiple clients at the same time in the same thread.
 		 * Actually the Soprano::Server implementation does make use of
-		 * MultiCallProtectionModel with this mode.
+		 * MutexModel with this mode.
 		 *
-		 * \warning In ReadWriteSingleThreading mode MultiCallProtectionModel
+		 * \warning In ReadWriteSingleThreading mode MutexModel
 		 * is not thread-safe.
 		 */
 		ReadWriteSingleThreading
 	    };
 
 	    /**
-	     * Create a new MultiCallProtectionModel.
+	     * Create a new MutexModel.
 	     *
 	     * \param mode The mode to use.
 	     * \param parent The parent Model to forward
 	     *        the actual calls to.
 	     */
-	    MultiCallProtectionModel( ProtectionMode mode, Model* parent = 0 );
+	    MutexModel( ProtectionMode mode, Model* parent = 0 );
 
 	    /**
 	     * Destructor.
 	     */
-	    ~MultiCallProtectionModel();
+	    ~MutexModel();
 
 	    Error::ErrorCode addStatement( const Statement &statement );
 	    Error::ErrorCode removeStatement( const Statement &statement );
@@ -109,12 +109,12 @@ namespace Soprano {
 	    int statementCount() const;
 
 	private:
-	    void removeIterator( MultiCallProtectionIteratorBase* it ) const;
+	    void removeIterator( MutexIteratorBase* it ) const;
 
 	    class Private;
 	    Private* const d;
 
-	    friend class MultiCallProtectionIteratorBase;
+	    friend class MutexIteratorBase;
 	};
     }
 }

@@ -1,4 +1,4 @@
-/*
+/* 
  * This file is part of Soprano Project.
  *
  * Copyright (C) 2007 Sebastian Trueg <trueg@kde.org>
@@ -19,30 +19,43 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef _SOPRANO_NONBLOCKING_NODE_ITERATOR_BACKEND_H_
-#define _SOPRANO_NONBLOCKING_NODE_ITERATOR_BACKEND_H_
+#ifndef _SOPRANO_MUTEX_ITERATOR_BASE_H_
+#define _SOPRANO_MUTEX_ITERATOR_BASE_H_
 
-#include "iteratorbackend.h"
-#include "nodeiterator.h"
-#include "multicallprotectioniteratorbase.h"
-#include "node.h"
+#include "mutexmodel.h"
 
 namespace Soprano {
     namespace Util {
-	class MultiCallProtectionModel;
-
-	class MultiCallProtectionNodeIteratorBackend : public IteratorBackend<Node>, public MultiCallProtectionIteratorBase
+	/**
+	 * Does nothing. Only used as interface for 
+	 * MutexModel::removeIterator
+	 */
+	class MutexIteratorBase
 	{
 	public:
-	    MultiCallProtectionNodeIteratorBackend( const NodeIterator& it, MultiCallProtectionModel* model );
-	    ~MultiCallProtectionNodeIteratorBackend();
+	    MutexIteratorBase( MutexModel* model )
+		: m_model( model ) {}
+		virtual ~MutexIteratorBase() {
+		    remove();
+		}
 
-	    bool next();
-	    Soprano::Node current() const;
-	    void close();
+		void close() {
+		    // no need to really close, that is done by
+		    // the real Model. We only need to make sure
+		    // that we do not try to unlock a deleted model
+		    m_model = 0;
+		}
+
+	protected:
+		void remove() { 
+		    if( m_model ) {
+			m_model->removeIterator( this );
+			m_model = 0;
+		    }
+		}
 
 	private:
-	    NodeIterator m_iterator;
+		MutexModel* m_model;
 	};
     }
 }

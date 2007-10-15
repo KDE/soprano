@@ -26,47 +26,49 @@
 
 
 namespace Soprano {
-    class SimpleNodeIteratorBackend : public IteratorBackend<Node>
-    {
-    public:
-        SimpleNodeIteratorBackend();
-        SimpleNodeIteratorBackend( const QList<Node>& );
-        ~SimpleNodeIteratorBackend();
+    namespace Util {
+        class SimpleNodeIteratorBackend : public IteratorBackend<Node>
+        {
+        public:
+            SimpleNodeIteratorBackend();
+            SimpleNodeIteratorBackend( const QList<Node>& );
+            ~SimpleNodeIteratorBackend();
 
-        SimpleNodeIteratorBackend& operator=( const QList<Node>& );
+            SimpleNodeIteratorBackend& operator=( const QList<Node>& );
 
-        bool next();
+            bool next();
 
-        Node current() const;
+            Node current() const;
 
-        void close() {}
+            void close() {}
 
-    private:
-        QList<Node> m_nodes;
-        QList<Node>::const_iterator m_iterator;
-        bool m_first;
-    };
+        private:
+            QList<Node> m_nodes;
+            QList<Node>::const_iterator m_iterator;
+            bool m_first;
+        };
+    }
 }
 
-Soprano::SimpleNodeIteratorBackend::SimpleNodeIteratorBackend()
+Soprano::Util::SimpleNodeIteratorBackend::SimpleNodeIteratorBackend()
 {
     // make sure we are properly initialized
     operator=( m_nodes );
 }
 
 
-Soprano::SimpleNodeIteratorBackend::SimpleNodeIteratorBackend( const QList<Node>& s )
+Soprano::Util::SimpleNodeIteratorBackend::SimpleNodeIteratorBackend( const QList<Node>& s )
 {
     operator=( s );
 }
 
 
-Soprano::SimpleNodeIteratorBackend::~SimpleNodeIteratorBackend()
+Soprano::Util::SimpleNodeIteratorBackend::~SimpleNodeIteratorBackend()
 {
 }
 
 
-Soprano::SimpleNodeIteratorBackend& Soprano::SimpleNodeIteratorBackend::operator=( const QList<Node>& s )
+Soprano::Util::SimpleNodeIteratorBackend& Soprano::Util::SimpleNodeIteratorBackend::operator=( const QList<Node>& s )
 {
     m_nodes = s;
     m_iterator = m_nodes.constBegin();
@@ -75,7 +77,7 @@ Soprano::SimpleNodeIteratorBackend& Soprano::SimpleNodeIteratorBackend::operator
 }
 
 
-bool Soprano::SimpleNodeIteratorBackend::next()
+bool Soprano::Util::SimpleNodeIteratorBackend::next()
 {
     if ( !m_first &&
          m_iterator != m_nodes.constEnd() ) {
@@ -87,7 +89,7 @@ bool Soprano::SimpleNodeIteratorBackend::next()
 }
 
 
-Soprano::Node Soprano::SimpleNodeIteratorBackend::current() const
+Soprano::Node Soprano::Util::SimpleNodeIteratorBackend::current() const
 {
     if ( m_iterator != m_nodes.constEnd() ) {
         return *m_iterator;
@@ -99,47 +101,47 @@ Soprano::Node Soprano::SimpleNodeIteratorBackend::current() const
 
 
 
-class Soprano::SimpleNodeIterator::Private
+class Soprano::Util::SimpleNodeIterator::Private
 {
 public:
 };
 
 
-Soprano::SimpleNodeIterator::SimpleNodeIterator()
+Soprano::Util::SimpleNodeIterator::SimpleNodeIterator()
     : d( new Private() )
 {
 }
 
 
-Soprano::SimpleNodeIterator::SimpleNodeIterator( const QList<Node>& sl )
+Soprano::Util::SimpleNodeIterator::SimpleNodeIterator( const QList<Node>& sl )
     : NodeIterator( new SimpleNodeIteratorBackend( sl ) ),
       d( new Private() )
 {
 }
 
 
-Soprano::SimpleNodeIterator::SimpleNodeIterator( const SimpleNodeIterator& st )
+Soprano::Util::SimpleNodeIterator::SimpleNodeIterator( const SimpleNodeIterator& st )
     : NodeIterator( st ),
       d( new Private() )
 {
 }
 
 
-Soprano::SimpleNodeIterator::~SimpleNodeIterator()
+Soprano::Util::SimpleNodeIterator::~SimpleNodeIterator()
 {
     delete d;
 }
 
 
 
-Soprano::SimpleNodeIterator& Soprano::SimpleNodeIterator::operator=( const QList<Node>& sl )
+Soprano::Util::SimpleNodeIterator& Soprano::Util::SimpleNodeIterator::operator=( const QList<Node>& sl )
 {
     setBackend( new SimpleNodeIteratorBackend( sl ) );
     return *this;
 }
 
 
-Soprano::SimpleNodeIterator& Soprano::SimpleNodeIterator::operator=( const SimpleNodeIterator& it )
+Soprano::Util::SimpleNodeIterator& Soprano::Util::SimpleNodeIterator::operator=( const SimpleNodeIterator& it )
 {
     NodeIterator::operator=( it );
     return *this;

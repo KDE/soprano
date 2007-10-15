@@ -10,6 +10,7 @@ include_directories(
   ${soprano_SOURCE_DIR}
   ${soprano_core_BINARY_DIR}
   ${soprano_core_SOURCE_DIR}
+  ${soprano_core_SOURCE_DIR}/util
   ${soprano_core_SOURCE_DIR}/query
   ${soprano_core_SOURCE_DIR}/vocabulary
   ${QT_INCLUDE_DIR}
@@ -30,8 +31,6 @@ SET(soprano_SRCS
   statementiterator.cpp
   statementiterator.h
   nodeiterator.cpp
-  simplestatementiterator.cpp
-  simplenodeiterator.cpp
   model.cpp
   model.h
   parser.cpp
@@ -54,11 +53,9 @@ SET(soprano_SRCS
   version.cpp
   filtermodel.h
   filtermodel.cpp
-  dummymodel.cpp
   storagemodel.h
   storagemodel.cpp
-  rdfschemawrapper.cpp
-  simplestatementiterator.h
+  rdfschemamodel.cpp
   bindingset.cpp
   sopranotypes.cpp
   vocabulary/rdf.cpp
@@ -82,10 +79,13 @@ SET(soprano_SRCS
   desktopfile.cpp
   sopranopluginfile.cpp
   util/looplock.cpp
-  util/multicallprotectionmodel.cpp
-  util/multicallprotectionstatementiteratorbackend.cpp
-  util/multicallprotectionnodeiteratorbackend.cpp
-  util/multicallprotectionqueryresultiteratorbackend.cpp
+  util/mutexmodel.cpp
+  util/mutexstatementiteratorbackend.cpp
+  util/mutexnodeiteratorbackend.cpp
+  util/mutexqueryresultiteratorbackend.cpp
+  util/simplestatementiterator.cpp
+  util/simplenodeiterator.cpp
+  util/dummymodel.cpp
   )
 
 qt4_automoc(${soprano_SRCS})
@@ -114,8 +114,6 @@ INSTALL(FILES
   node.h
   statement.h
   statementiterator.h
-  simplestatementiterator.h
-  simplenodeiterator.h
   nodeiterator.h
   model.h
   filtermodel.h
@@ -128,7 +126,7 @@ INSTALL(FILES
   error.h
   literalvalue.h
   ${CMAKE_CURRENT_BINARY_DIR}/version.h
-  rdfschemawrapper.h
+  rdfschemamodel.h
   bindingset.h
   serializer.h
   sopranotypes.h
@@ -151,6 +149,8 @@ INSTALL(FILES
 #  query/queryserializer.h
   soprano.h
   vocabulary.h
-  dummymodel.h
-  util/multicallprotectionmodel.h
+  util/dummymodel.h
+  util/mutexmodel.h
+  util/simplestatementiterator.h
+  util/simplenodeiterator.h
   DESTINATION include/soprano)
