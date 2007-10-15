@@ -14,6 +14,9 @@
 # For details see the accompanying COPYING-CMAKE-SCRIPTS file.
 
 
+INCLUDE(MacroEnsureVersion)
+
+
 #if (REDLAND_LIBRARIES AND REDLAND_INCLUDE_DIR AND RASQAL_INCLUDE_DIR AND RASQAL_LIBRARIES AND RAPTOR_LIBRARIES)
 
   # in cache already
@@ -69,6 +72,8 @@
       OUTPUT_VARIABLE RAPTOR_VERSION
       )
     STRING(REPLACE "\n" "" RAPTOR_VERSION ${RAPTOR_VERSION})
+
+    MACRO_ENSURE_VERSION("1.4.15" ${RAPTOR_VERSION} RAPTOR_HAVE_TRIG)
 
     # extract include paths from raptor-config
     EXECUTE_PROCESS(
