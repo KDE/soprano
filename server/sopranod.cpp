@@ -111,6 +111,11 @@ int main( int argc, char** argv )
         ++i;
     }
 
+    // make sure we have a soprano dir
+    if ( !QFile::exists( QDir::homePath() + QLatin1String( "/.soprano" ) ) ) {
+        QDir::home().mkdir( ".soprano" );
+    }
+
     // let's start by aquiring a lock
     LockFile lock( QDir::homePath() + "/.soprano/lock" );
     if ( !lock.aquireLock() ) {
@@ -131,11 +136,6 @@ int main( int argc, char** argv )
             return 2;
         }
         core.setBackend( backend );
-    }
-
-    // make sure we have a soprano dir
-    if ( !QFile::exists( QDir::homePath() + QLatin1String( "/.soprano" ) ) ) {
-        QDir::home().mkdir( ".soprano" );
     }
 
     QString socketPath = QDir::homePath() + QLatin1String( "/.soprano/socket" );
