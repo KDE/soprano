@@ -17,7 +17,7 @@ X-Soprano-Version=
 
 Type=Service
 
-# Once of:
+# One of:
 # - Soprano/Backend
 # - Soprano/Parser
 # - Soprano/Serializer
