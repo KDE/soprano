@@ -34,31 +34,33 @@ INCLUDE(MacroEnsureVersion)
       COMMAND ${REDLAND_CONFIG} --version
       OUTPUT_VARIABLE REDLAND_VERSION
       )
-    STRING(REPLACE "\n" "" REDLAND_VERSION ${REDLAND_VERSION})
-
-    # extract include paths from redland-config
-    EXECUTE_PROCESS(
-      COMMAND ${REDLAND_CONFIG} --cflags
-      OUTPUT_VARIABLE redland_LIBS_ARGS)
-    STRING( REPLACE " " ";" redland_LIBS_ARGS ${redland_LIBS_ARGS} )
-    FOREACH( _ARG ${redland_LIBS_ARGS} )
-      IF(${_ARG} MATCHES "^-I")
-        STRING(REGEX REPLACE "^-I" "" _ARG ${_ARG})
-        LIST(APPEND redland_INCLUDE_DIRS ${_ARG})
-      ENDIF(${_ARG} MATCHES "^-I")
-    ENDFOREACH(_ARG)
-
-    # extract lib paths from redland-config
-    EXECUTE_PROCESS(
-      COMMAND ${REDLAND_CONFIG} --libs
-      OUTPUT_VARIABLE redland_CFLAGS_ARGS)
-    STRING( REPLACE " " ";" redland_CFLAGS_ARGS ${redland_CFLAGS_ARGS} )
-    FOREACH( _ARG ${redland_CFLAGS_ARGS} )
-      IF(${_ARG} MATCHES "^-L")
-        STRING(REGEX REPLACE "^-L" "" _ARG ${_ARG})
-        LIST(APPEND redland_LIBRARY_DIRS ${_ARG})
-      ENDIF(${_ARG} MATCHES "^-L")
-    ENDFOREACH(_ARG)
+    if(REDLAND_VERSION)
+      STRING(REPLACE "\n" "" REDLAND_VERSION ${REDLAND_VERSION})
+  
+      # extract include paths from redland-config
+      EXECUTE_PROCESS(
+        COMMAND ${REDLAND_CONFIG} --cflags
+        OUTPUT_VARIABLE redland_LIBS_ARGS)
+      STRING( REPLACE " " ";" redland_LIBS_ARGS ${redland_LIBS_ARGS} )
+      FOREACH( _ARG ${redland_LIBS_ARGS} )
+        IF(${_ARG} MATCHES "^-I")
+          STRING(REGEX REPLACE "^-I" "" _ARG ${_ARG})
+          LIST(APPEND redland_INCLUDE_DIRS ${_ARG})
+        ENDIF(${_ARG} MATCHES "^-I")
+      ENDFOREACH(_ARG)
+  
+      # extract lib paths from redland-config
+      EXECUTE_PROCESS(
+        COMMAND ${REDLAND_CONFIG} --libs
+        OUTPUT_VARIABLE redland_CFLAGS_ARGS)
+      STRING( REPLACE " " ";" redland_CFLAGS_ARGS ${redland_CFLAGS_ARGS} )
+      FOREACH( _ARG ${redland_CFLAGS_ARGS} )
+        IF(${_ARG} MATCHES "^-L")
+          STRING(REGEX REPLACE "^-L" "" _ARG ${_ARG})
+          LIST(APPEND redland_LIBRARY_DIRS ${_ARG})
+        ENDIF(${_ARG} MATCHES "^-L")
+      ENDFOREACH(_ARG)
+    endif(REDLAND_VERSION)
   endif(REDLAND_CONFIG)
 
   # raptor is not redland, look for it separately
@@ -71,33 +73,35 @@ INCLUDE(MacroEnsureVersion)
       COMMAND ${RAPTOR_CONFIG} --version
       OUTPUT_VARIABLE RAPTOR_VERSION
       )
-    STRING(REPLACE "\n" "" RAPTOR_VERSION ${RAPTOR_VERSION})
-
-    MACRO_ENSURE_VERSION("1.4.16" ${RAPTOR_VERSION} RAPTOR_HAVE_TRIG)
-
-    # extract include paths from raptor-config
-    EXECUTE_PROCESS(
-      COMMAND ${RAPTOR_CONFIG} --cflags
-      OUTPUT_VARIABLE raptor_CFLAGS_ARGS)
-    STRING( REPLACE " " ";" raptor_CFLAGS_ARGS ${raptor_CFLAGS_ARGS} )
-    FOREACH( _ARG ${raptor_CFLAGS_ARGS} )
-      IF(${_ARG} MATCHES "^-I")
-        STRING(REGEX REPLACE "^-I" "" _ARG ${_ARG})
-        LIST(APPEND raptor_INCLUDE_DIRS ${_ARG})
-      ENDIF(${_ARG} MATCHES "^-I")
-    ENDFOREACH(_ARG)
-
-    # extract lib paths from raptor-config
-    EXECUTE_PROCESS(
-      COMMAND ${RAPTOR_CONFIG} --libs
-      OUTPUT_VARIABLE raptor_CFLAGS_ARGS)
-    STRING( REPLACE " " ";" raptor_CFLAGS_ARGS ${raptor_CFLAGS_ARGS} )
-    FOREACH( _ARG ${raptor_CFLAGS_ARGS} )
-      IF(${_ARG} MATCHES "^-L")
-        STRING(REGEX REPLACE "^-L" "" _ARG ${_ARG})
-        LIST(APPEND raptor_LIBRARY_DIRS ${_ARG})
-      ENDIF(${_ARG} MATCHES "^-L")
-    ENDFOREACH(_ARG)
+    if(RAPTOR_VERSION)
+      STRING(REPLACE "\n" "" RAPTOR_VERSION ${RAPTOR_VERSION})
+  
+      MACRO_ENSURE_VERSION("1.4.16" ${RAPTOR_VERSION} RAPTOR_HAVE_TRIG)
+  
+      # extract include paths from raptor-config
+      EXECUTE_PROCESS(
+        COMMAND ${RAPTOR_CONFIG} --cflags
+        OUTPUT_VARIABLE raptor_CFLAGS_ARGS)
+      STRING( REPLACE " " ";" raptor_CFLAGS_ARGS ${raptor_CFLAGS_ARGS} )
+      FOREACH( _ARG ${raptor_CFLAGS_ARGS} )
+        IF(${_ARG} MATCHES "^-I")
+          STRING(REGEX REPLACE "^-I" "" _ARG ${_ARG})
+          LIST(APPEND raptor_INCLUDE_DIRS ${_ARG})
+        ENDIF(${_ARG} MATCHES "^-I")
+      ENDFOREACH(_ARG)
+  
+      # extract lib paths from raptor-config
+      EXECUTE_PROCESS(
+        COMMAND ${RAPTOR_CONFIG} --libs
+        OUTPUT_VARIABLE raptor_CFLAGS_ARGS)
+      STRING( REPLACE " " ";" raptor_CFLAGS_ARGS ${raptor_CFLAGS_ARGS} )
+      FOREACH( _ARG ${raptor_CFLAGS_ARGS} )
+        IF(${_ARG} MATCHES "^-L")
+          STRING(REGEX REPLACE "^-L" "" _ARG ${_ARG})
+          LIST(APPEND raptor_LIBRARY_DIRS ${_ARG})
+        ENDIF(${_ARG} MATCHES "^-L")
+      ENDFOREACH(_ARG)
+    endif(RAPTOR_VERSION)
   else(RAPTOR_CONFIG)
     SET(RAPTOR_VERSION "1.0.0")
   endif(RAPTOR_CONFIG)
@@ -114,31 +118,33 @@ INCLUDE(MacroEnsureVersion)
       COMMAND ${RASQAL_CONFIG} --version
       OUTPUT_VARIABLE RASQAL_VERSION
       )
-    STRING(REPLACE "\n" "" RASQAL_VERSION ${RASQAL_VERSION})
-
-    # extract include paths from rasqal-config
-    EXECUTE_PROCESS(
-      COMMAND ${RASQAL_CONFIG} --cflags
-      OUTPUT_VARIABLE rasqal_CFLAGS_ARGS)
-    STRING( REPLACE " " ";" rasqal_CFLAGS_ARGS ${rasqal_CFLAGS_ARGS} )
-    FOREACH( _ARG ${rasqal_CFLAGS_ARGS} )
-      IF(${_ARG} MATCHES "^-I")
-        STRING(REGEX REPLACE "^-I" "" _ARG ${_ARG})
-        LIST(APPEND rasqal_INCLUDE_DIRS ${_ARG})
-      ENDIF(${_ARG} MATCHES "^-I")
-    ENDFOREACH(_ARG)
-
-    # extract lib paths from rasqal-config
-    EXECUTE_PROCESS(
-      COMMAND ${RASQAL_CONFIG} --libs
-      OUTPUT_VARIABLE rasqal_CFLAGS_ARGS)
-    STRING( REPLACE " " ";" rasqal_CFLAGS_ARGS ${rasqal_CFLAGS_ARGS} )
-    FOREACH( _ARG ${rasqal_CFLAGS_ARGS} )
-      IF(${_ARG} MATCHES "^-L")
-        STRING(REGEX REPLACE "^-L" "" _ARG ${_ARG})
-        LIST(APPEND rasqal_LIBRARY_DIRS ${_ARG})
-      ENDIF(${_ARG} MATCHES "^-L")
-    ENDFOREACH(_ARG)
+    if(RASQAL_VERSION)
+      STRING(REPLACE "\n" "" RASQAL_VERSION ${RASQAL_VERSION})
+  
+      # extract include paths from rasqal-config
+      EXECUTE_PROCESS(
+        COMMAND ${RASQAL_CONFIG} --cflags
+        OUTPUT_VARIABLE rasqal_CFLAGS_ARGS)
+      STRING( REPLACE " " ";" rasqal_CFLAGS_ARGS ${rasqal_CFLAGS_ARGS} )
+      FOREACH( _ARG ${rasqal_CFLAGS_ARGS} )
+        IF(${_ARG} MATCHES "^-I")
+          STRING(REGEX REPLACE "^-I" "" _ARG ${_ARG})
+          LIST(APPEND rasqal_INCLUDE_DIRS ${_ARG})
+        ENDIF(${_ARG} MATCHES "^-I")
+      ENDFOREACH(_ARG)
+  
+      # extract lib paths from rasqal-config
+      EXECUTE_PROCESS(
+        COMMAND ${RASQAL_CONFIG} --libs
+        OUTPUT_VARIABLE rasqal_CFLAGS_ARGS)
+      STRING( REPLACE " " ";" rasqal_CFLAGS_ARGS ${rasqal_CFLAGS_ARGS} )
+      FOREACH( _ARG ${rasqal_CFLAGS_ARGS} )
+        IF(${_ARG} MATCHES "^-L")
+          STRING(REGEX REPLACE "^-L" "" _ARG ${_ARG})
+          LIST(APPEND rasqal_LIBRARY_DIRS ${_ARG})
+        ENDIF(${_ARG} MATCHES "^-L")
+      ENDFOREACH(_ARG)
+    endif(RASQAL_VERSION)
   endif(RASQAL_CONFIG)
 
   # now a hack for win32 (only?)
