@@ -84,8 +84,8 @@ void MultiMutex::unlock()
 {
     d->lockMutex.lock();
     if ( d->lockedForWrite ) {
-        d->mainMutex.unlock();
         d->lockedForWrite = false;
+        d->mainMutex.unlock();
     }
 
     else if ( d->lockingThread == QThread::currentThread() ) {
