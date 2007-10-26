@@ -73,26 +73,31 @@ Soprano::Sesame2::Model::~Model()
 
 Soprano::Error::ErrorCode Soprano::Sesame2::Model::addStatement( const Statement &statement )
 {
-    QWriteLocker lock( &d->readWriteLock );
+    d->readWriteLock.lockForWrite();
 
     clearError();
 
     if ( JObjectRef sesameStatement = d->repository->valueFactory()->convertStatement( statement ) ) {
         if ( JNIWrapper::instance()->exceptionOccured() ) {
             setError( JNIWrapper::instance()->convertAndClearException() );
+            d->readWriteLock.unlock();
             return Error::ErrorUnknown;
         }
         d->repository->repositoryConnection()->addStatement( sesameStatement );
         if ( JNIWrapper::instance()->exceptionOccured() ) {
             qDebug() << "(Soprano::Sesame2::Model::addStatements) failed.";
             setError( JNIWrapper::instance()->convertAndClearException() );
+            d->readWriteLock.unlock();
             return Error::ErrorUnknown;
         }
         else {
+            d->readWriteLock.unlock();
+            emit statementsAdded();
             return Error::ErrorNone;
         }
     }
     else {
+        d->readWriteLock.unlock();
         return Error::ErrorUnknown;
     }
 }
@@ -240,7 +245,7 @@ Soprano::Error::ErrorCode Soprano::Sesame2::Model::removeStatement( const Statem
 
 Soprano::Error::ErrorCode Soprano::Sesame2::Model::removeAllStatements( const Statement &statement )
 {
-    QWriteLocker lock( &d->readWriteLock );
+    d->readWriteLock.lockForWrite();
 
     clearError();
 
@@ -248,21 +253,25 @@ Soprano::Error::ErrorCode Soprano::Sesame2::Model::removeAllStatements( const St
     JObjectRef subject = d->repository->valueFactory()->convertNode( statement.subject() );
     if ( JNIWrapper::instance()->exceptionOccured() ) {
         setError( JNIWrapper::instance()->convertAndClearException() );
+        d->readWriteLock.unlock();
         return Error::ErrorUnknown;
     }
     JObjectRef predicate = d->repository->valueFactory()->convertNode( statement.predicate() );
     if ( JNIWrapper::instance()->exceptionOccured() ) {
         setError( JNIWrapper::instance()->convertAndClearException() );
+        d->readWriteLock.unlock();
         return Error::ErrorUnknown;
     }
     JObjectRef object = d->repository->valueFactory()->convertNode( statement.object() );
     if ( JNIWrapper::instance()->exceptionOccured() ) {
         setError( JNIWrapper::instance()->convertAndClearException() );
+        d->readWriteLock.unlock();
         return Error::ErrorUnknown;
     }
     JObjectRef context = d->repository->valueFactory()->convertNode( statement.context() );
     if ( JNIWrapper::instance()->exceptionOccured() ) {
         setError( JNIWrapper::instance()->convertAndClearException() );
+        d->readWriteLock.unlock();
         return Error::ErrorUnknown;
     }
 
@@ -270,8 +279,13 @@ Soprano::Error::ErrorCode Soprano::Sesame2::Model::removeAllStatements( const St
     if ( JNIWrapper::instance()->exceptionOccured() ) {
         qDebug() << "(Soprano::Sesame2::Model::removeAllStatements) failed.";
         setError( JNIWrapper::instance()->convertAndClearException() );
+        d->readWriteLock.unlock();
         return Error::ErrorUnknown;
     }
+
+    d->readWriteLock.unlock();
+
+    emit statementsRemoved();
 
     return Error::ErrorNone;
 }

@@ -112,11 +112,12 @@ Soprano::Error::ErrorCode Soprano::Redland::RedlandModel::addStatement( const St
 
     clearError();
 
-    MultiMutexWriteLocker lock( &d->readWriteLock );
+    d->readWriteLock.lockForWrite();
 
     librdf_statement* redlandStatement = Util::createStatement( statement );
     if ( !redlandStatement ) {
         setError( Redland::World::self()->lastError() );
+        d->readWriteLock.unlock();
         return Error::ErrorInvalidArgument;
     }
 
@@ -124,6 +125,7 @@ Soprano::Error::ErrorCode Soprano::Redland::RedlandModel::addStatement( const St
         if ( librdf_model_add_statement( d->model, redlandStatement ) ) {
             Util::freeStatement( redlandStatement );
             setError( Redland::World::self()->lastError() );
+            d->readWriteLock.unlock();
             return Error::ErrorUnknown;
         }
     }
@@ -133,14 +135,12 @@ Soprano::Error::ErrorCode Soprano::Redland::RedlandModel::addStatement( const St
             Util::freeStatement( redlandStatement );
             Util::freeNode( redlandContext );
             setError( Redland::World::self()->lastError() );
+            d->readWriteLock.unlock();
             return Error::ErrorUnknown;
         }
     }
 
-    //if ( librdf_model_sync( d->model ) )
-    //{
-    //  return Error::ErrorUnknown;
-    //}
+    d->readWriteLock.unlock();
 
     emit statementsAdded();
 
