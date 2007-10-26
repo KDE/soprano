@@ -138,7 +138,11 @@ Soprano::Error::ErrorCode Soprano::Redland::RedlandModel::addStatement( const St
             d->readWriteLock.unlock();
             return Error::ErrorUnknown;
         }
+
+        Util::freeNode( redlandContext );
     }
+
+    Util::freeStatement( redlandStatement );
 
     d->readWriteLock.unlock();
 
@@ -237,12 +241,12 @@ Soprano::StatementIterator Soprano::Redland::RedlandModel::listStatements( const
         librdf_node *ctx = Util::createNode( partial.context() );
 
         librdf_stream *stream = librdf_model_context_as_stream( d->model, ctx );
+        Util::freeNode( ctx );
         if ( !stream ) {
             setError( Redland::World::self()->lastError() );
             d->readWriteLock.unlock();
             return StatementIterator();
         }
-        Util::freeNode( ctx );
 
         // see listStatements( Statement ) for details on the context hack
         // second lock for the iterator itself
@@ -271,15 +275,14 @@ Soprano::StatementIterator Soprano::Redland::RedlandModel::listStatements( const
             stream = librdf_model_find_statements_in_context( d->model, st, ctx );
         }
 
+        Util::freeNode( ctx );
+        Util::freeStatement( st );
+
         if ( !stream ) {
-            Util::freeNode( ctx );
-            Util::freeStatement( st );
             setError( Redland::World::self()->lastError() );
             d->readWriteLock.unlock();
             return StatementIterator();
         }
-        Util::freeNode( ctx );
-        Util::freeStatement( st );
 
         // we do not unlock d->readWriteLock here. That is done once the iterator closes
         RedlandStatementIterator* it = new RedlandStatementIterator( this, stream, partial.context() );
