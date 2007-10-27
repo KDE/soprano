@@ -49,6 +49,8 @@ Soprano::DesktopFile::DesktopFile( const QString& path )
 
 Soprano::DesktopFile::~DesktopFile()
 {
+  //For the future
+  //delete d;
 }
 
 

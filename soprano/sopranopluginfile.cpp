@@ -42,6 +42,8 @@ Soprano::SopranoPluginFile::SopranoPluginFile( const QString& path )
 
 Soprano::SopranoPluginFile::~SopranoPluginFile()
 {
+   //For the future
+   //delete d;
 }
 
 

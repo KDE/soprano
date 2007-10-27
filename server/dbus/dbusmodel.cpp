@@ -57,6 +57,7 @@ Soprano::Client::DBusModel::DBusModel( const QString& serviceName, const QString
 
 Soprano::Client::DBusModel::~DBusModel()
 {
+   delete d;
 }
 
 
