@@ -89,7 +89,9 @@ namespace Soprano
 
 	    //@{
 	    /**
-	     * A Statement is valid if subject, predicate and object are valid.
+	     * A Statement is valid if the subject is a resource or blank 
+	     * node, the predicate is a resource node,
+	     * and the object is a valid node.
 	     *
 	     * \return @p true if the Statement is valid, @p false otherwise
 	     */

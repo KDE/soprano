@@ -127,12 +127,14 @@ Node Statement::context() const
 
 bool Statement::isValid() const
 {
-    bool valid = d->subject.isValid() && d->predicate.isValid() && d->object.isValid();
+    bool valid = ( ( d->subject.isResource() || d->subject.isBlank() ) &&
+                   d->predicate.isResource() &&
+                   d->object.isValid() );
 
-    if ( d->context.isValid() )
-    {
+    if ( d->context.isValid() ) {
         return valid && d->context.isResource();
     }
+
     return valid;
 }
 
