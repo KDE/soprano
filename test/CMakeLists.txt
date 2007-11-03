@@ -143,10 +143,11 @@ if(SOPRANO_BUILD_INDEX_LIB)
   target_link_libraries(cluceneindextest soprano sopranoindex ${QT_QTCORE_LIBRARY} ${QT_QTTEST_LIBRARY} ${CLUCENE_LIBRARY})
   add_test(cluceneindextest ${EXECUTABLE_OUTPUT_PATH}/cluceneindextest)
 
-  qt4_automoc(indexmodelmultithreadingtest indexmodelmultithreadingtest.cpp)
-  add_executable(indexmodelmultithreadingtest indexmodelmultithreadingtest.cpp)
-  target_link_libraries(indexmodelmultithreadingtest soprano sopranoindex multithreadingtest ${QT_QTCORE_LIBRARY} ${QT_QTTEST_LIBRARY})
-  add_test(indexmodelmultithreadingtest ${EXECUTABLE_OUTPUT_PATH}/indexmodelmultithreadingtest)
+  #  Please Uncomment these lines when the Devel Commits the files 
+  #  qt4_automoc(indexmodelmultithreadingtest indexmodelmultithreadingtest.cpp)
+  #  add_executable(indexmodelmultithreadingtest indexmodelmultithreadingtest.cpp)
+  #  target_link_libraries(indexmodelmultithreadingtest soprano sopranoindex multithreadingtest ${QT_QTCORE_LIBRARY} ${QT_QTTEST_LIBRARY})
+  #  add_test(indexmodelmultithreadingtest ${EXECUTABLE_OUTPUT_PATH}/indexmodelmultithreadingtest)
 endif(SOPRANO_BUILD_INDEX_LIB)
 
 # Server test
