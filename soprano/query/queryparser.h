@@ -54,7 +54,7 @@ namespace Soprano {
 	     *
 	     * \param query The %query string to parse.
 	     * \param lang The language the %query is written in.
-	     * \param userQueryLanguage If lang is set to Query::QUERY_LANGUAGE_USER this parameter specifies the
+	     * \param userQueryLanguage If lang is set to Query::QueryLanguageUser this parameter specifies the
 	     *       query language to use. It allows the extension of the %Soprano Query interface with new
 	     *       query languages that are not officially supported by %Soprano.
 	     *
@@ -66,7 +66,7 @@ namespace Soprano {
 	     * A query parser can support different query languages.
 	     *
 	     * \return A combination of Query::QueryLanguage values representing the supported query languages. If
-	     * the list contains Query::QUERY_LANGUAGE_USER the query parser supports additional query languages not
+	     * the list contains Query::QueryLanguageUser the query parser supports additional query languages not
 	     * officially supported by %Soprano.
 	     *
 	     * \sa supportedUserQueryLanguages()
@@ -77,7 +77,7 @@ namespace Soprano {
 	     * Check if the parser supports a specific query language.
 	     *
 	     * \param lang The query language to support.
-	     * \param userQueryLanguage If lang is set to Query::QUERY_LANGUAGE_USER this parameter specifies the
+	     * \param userQueryLanguage If lang is set to Query::QueryLanguageUser this parameter specifies the
 	     *       requested query language. It allows the extension of the %Soprano Query interface with new
 	     *       query languages that are not officially supported by %Soprano.
 	     *
@@ -87,7 +87,7 @@ namespace Soprano {
 	    
 	    /**
 	     * A query parser can support additional query languages that are not defined in Query::QueryLanguage.
-	     * In that case supportedQueryLanguages() has to include Query::QUERY_LANGUAGE_USER.
+	     * In that case supportedQueryLanguages() has to include Query::QueryLanguageUser.
 	     *
 	     * The default implementation returns an empty list.
 	     *

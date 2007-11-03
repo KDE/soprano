@@ -33,8 +33,37 @@
 class Soprano::Index::IndexFilterModel::Private
 {
 public:
+    Private()
+        : deleteIndex( false ),
+          index( 0 ),
+          transactionCacheSize( 1 ),
+          transactionCacheId( 0 ),
+          transactionCacheCount( 0 ) {
+    }
+
     bool deleteIndex;
     CLuceneIndex* index;
+
+    int transactionCacheSize;
+    int transactionCacheId;
+    int transactionCacheCount;
+
+    void startTransaction() {
+        if ( transactionCacheSize > 1 && !transactionCacheId ) {
+            transactionCacheId = index->startTransaction();
+            transactionCacheCount = 0;
+        }
+
+        ++transactionCacheCount;
+    }
+
+    void closeTransaction() {
+        if ( transactionCacheCount >= transactionCacheSize && transactionCacheId ) {
+            index->closeTransaction( transactionCacheId );
+            transactionCacheCount = 0;
+            transactionCacheId = 0;
+        }
+    }
 };
 
 
@@ -73,20 +102,22 @@ Soprano::Index::CLuceneIndex* Soprano::Index::IndexFilterModel::index() const
 
 Soprano::Error::ErrorCode Soprano::Index::IndexFilterModel::addStatement( const Soprano::Statement &statement )
 {
-    qDebug() << "IndexFilterModel::addStatement in thread " << QThread::currentThreadId();
+//    qDebug() << "IndexFilterModel::addStatement in thread " << QThread::currentThreadId();
     if ( !FilterModel::containsStatement( statement ) ) {
         Error::ErrorCode c = FilterModel::addStatement( statement );
         if ( c == Error::ErrorNone && statement.object().isLiteral() ) {
+            d->startTransaction();
             c = d->index->addStatement( statement );
+            d->closeTransaction();
             if ( c != Error::ErrorNone ) {
                 setError( d->index->lastError() );
             }
         }
-        qDebug() << "IndexFilterModel::addStatement done in thread " << QThread::currentThreadId();
+//        qDebug() << "IndexFilterModel::addStatement done in thread " << QThread::currentThreadId();
         return c;
     }
     else {
-        qDebug() << "IndexFilterModel::addStatement done in thread " << QThread::currentThreadId();
+//        qDebug() << "IndexFilterModel::addStatement done in thread " << QThread::currentThreadId();
         return Error::ErrorNone;
     }
 }
@@ -96,7 +127,9 @@ Soprano::Error::ErrorCode Soprano::Index::IndexFilterModel::removeStatement( con
 {
     Error::ErrorCode c = FilterModel::removeStatement( statement );
     if ( c == Error::ErrorNone ) {
+        d->startTransaction();
         c = d->index->removeStatement( statement );
+        d->closeTransaction();
         if ( c != Error::ErrorNone ) {
             setError( d->index->lastError() );
         }
@@ -115,7 +148,9 @@ Soprano::Error::ErrorCode Soprano::Index::IndexFilterModel::removeAllStatements(
     while ( it.next() ) {
         Statement s = *it;
         if ( s.object().isLiteral() ) {
+            d->startTransaction();
             Error::ErrorCode c = d->index->removeStatement( *it );
+            d->closeTransaction();
             if ( c != Error::ErrorNone ) {
                 setError( d->index->lastError() );
                 return c;
@@ -130,7 +165,12 @@ Soprano::Error::ErrorCode Soprano::Index::IndexFilterModel::removeAllStatements(
 
 Soprano::QueryResultIterator Soprano::Index::IndexFilterModel::executeQuery( const QString& query, Query::QueryLanguage language, const QString& userQueryLanguage ) const
 {
-    if ( language == Query::QUERY_LANGUAGE_USER && userQueryLanguage.toLower() == "lucene" ) {
+    if ( language == Query::QueryLanguageUser && userQueryLanguage.toLower() == "lucene" ) {
+
+        // commit any changes in the index
+        d->transactionCacheCount = d->transactionCacheSize;
+        d->closeTransaction();
+
         clearError();
         Iterator<QueryHit> res = index()->search( query );
         if ( !res.isValid() ) {
@@ -141,4 +181,17 @@ Soprano::QueryResultIterator Soprano::Index::IndexFilterModel::executeQuery( con
     else {
         return FilterModel::executeQuery( query, language, userQueryLanguage );
     }
+}
+
+
+void Soprano::Index::IndexFilterModel::setTransactionCacheSize( int size )
+{
+    d->transactionCacheSize = qMax( 1, size );
+    d->closeTransaction();
+}
+
+
+int Soprano::Index::IndexFilterModel::transactionCacheSize() const
+{
+    return d->transactionCacheSize;
 }

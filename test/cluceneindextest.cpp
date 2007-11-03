@@ -26,6 +26,7 @@
 #include <QtCore/QDebug>
 #include <QtCore/QProcess>
 #include <QtCore/QDir>
+#include <QtCore/QUuid>
 
 #include "../soprano/soprano.h"
 #include "../index/indexfiltermodel.h"
@@ -36,6 +37,28 @@
 
 using namespace Soprano;
 using namespace Soprano::Index;
+
+
+static QUrl createRandomUri()
+{
+    // FIXME: check if the uri already exists
+    QString uid = QUuid::createUuid().toString();
+    uid = uid.mid( 1, uid.length()-2 );
+    return QUrl( "http://soprano.org/test#" + uid );
+}
+
+
+static QList<Statement> createTestData( const Statement& s, int num )
+{
+    QList<Statement> sl;
+    for( int i = 0; i < num; ++i ) {
+        sl.append( Statement( s.subject().isEmpty() ? Node( createRandomUri() ) : s.subject(),
+                              s.predicate().isEmpty() ? Node( createRandomUri() ) : s.predicate(),
+                              s.object().isEmpty() ? Node( createRandomUri() ) : s.object(),
+                              s.context() ) );
+    }
+    return sl;
+}
 
 
 void IndexTest::init()
@@ -167,6 +190,18 @@ void IndexTest::testUriEncoding()
     QCOMPARE( uri, it.current().resource().uri() );
     QVERIFY( !it.next() );
 }
+
+void IndexTest::testMassAddStatement()
+{
+    QList<Statement> sl = createTestData( Statement( createRandomUri(), Node(), Node() ), 100 );
+    sl += createTestData( Statement( createRandomUri(), Node(), Node() ), 100 );
+    sl += createTestData( Statement( createRandomUri(), Node(), Node() ), 100 );
+
+    Q_FOREACH( Statement s, sl ) {
+        QVERIFY( m_indexModel->addStatement( s ) == Error::ErrorNone );
+    }
+}
+
 
 QTEST_MAIN( IndexTest )
 

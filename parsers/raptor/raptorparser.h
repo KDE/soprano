@@ -62,6 +62,8 @@ namespace Soprano {
 	private:
 	    raptor_parser* createParser( RdfSerialization serialization,
 					 const QString& userSerialization = QString() ) const;
+
+	    mutable bool m_initialized;
 	};
     }
 }

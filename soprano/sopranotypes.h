@@ -110,11 +110,16 @@ namespace Soprano
 	 * \sa Query::Parser, Query::Serializer
 	 */
 	enum QueryLanguage {
-	    QUERY_LANGUAGE_NONE = 0x0,   /**< No query language */
-	    QUERY_LANGUAGE_SPARQL = 0x1, /**< The SPARQL query language: http://www.w3.org/TR/rdf-sparql-query/ */
-	    QUERY_LANGUAGE_RDQL = 0x2,   /**< The RDQL RDF query language: http://www.w3.org/Submission/2004/SUBM-RDQL-20040109/ */
-	    QUERY_LANGUAGE_SERQL = 0x4,  /**< Sesame RDF %Query Language: http://openrdf.org/doc/sesame2/users/ch05.html */
-	    QUERY_LANGUAGE_USER = 0x1000 /**< The user type can be used to introduce unknown query lanaguages by name */
+	    QueryLanguageNone = 0x0,    /**< No query language */
+	    QueryLanguageSparql = 0x1,  /**< The SPARQL query language: http://www.w3.org/TR/rdf-sparql-query/ */
+	    QueryLanguageRdql = 0x2,    /**< The RDQL RDF query language: http://www.w3.org/Submission/2004/SUBM-RDQL-20040109/ */
+	    QueryLanguageSerql = 0x4,   /**< Sesame RDF %Query Language: http://openrdf.org/doc/sesame2/users/ch05.html */
+	    QueryLanguageUser = 0x1000, /**< The user type can be used to introduce unknown query lanaguages by name */
+	    QUERY_LANGUAGE_NONE = QueryLanguageNone,   /**< \deprecated use QueryLanguageNone */
+	    QUERY_LANGUAGE_SPARQL = QueryLanguageSparql, /**< \deprecated use QueryLanguageSparql */
+	    QUERY_LANGUAGE_RDQL = QueryLanguageRdql,   /**< \deprecated use QueryLanguageRdql */
+	    QUERY_LANGUAGE_SERQL = QueryLanguageSerql,  /**< \deprecated use QueryLanguageSerql */
+	    QUERY_LANGUAGE_USER = QueryLanguageUser /**< \deprecated use QueryLanguageUser */
 	};
 	Q_DECLARE_FLAGS( QueryLanguages, QueryLanguage )
 

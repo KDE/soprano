@@ -148,7 +148,7 @@ namespace Soprano
 	 * Find a Query::Parser instance that is able to parse the specified query language.
 	 *
 	 * \param lang The language the plugin is supposed to support.
-	 * \param userQueryLanguage If lang is set to Query::QUERY_LANGUAGE_USER this parameter specifies the
+	 * \param userQueryLanguage If lang is set to Query::QueryLanguageUser this parameter specifies the
 	 *       query language to use. It allows the extension of the %Soprano Query interface with new
 	 *       query languages that are not officially supported by %Soprano.
 	 *
@@ -172,7 +172,7 @@ namespace Soprano
 	 * Find a Query::Serializer instance that is able to serialize the specified query language.
 	 *
 	 * \param lang The language the plugin is supposed to support.
-	 * \param userQueryLanguage If lang is set to Query::QUERY_LANGUAGE_USER this parameter specifies the
+	 * \param userQueryLanguage If lang is set to Query::QueryLanguageUser this parameter specifies the
 	 *       query language to use. It allows the extension of the %Soprano Query interface with new
 	 *       query languages that are not officially supported by %Soprano.
 	 *

@@ -390,7 +390,7 @@ int main( int argc, char *argv[] )
         QTime time;
         time.start();
 
-        Soprano::QueryResultIterator it = model->executeQuery( query, Soprano::Query::QUERY_LANGUAGE_SPARQL );
+        Soprano::QueryResultIterator it = model->executeQuery( query, Soprano::Query::QueryLanguageSparql );
         queryTime = time.elapsed();
         printQueryResult( it );
     }

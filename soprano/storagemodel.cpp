@@ -95,15 +95,15 @@ Soprano::Error::ErrorCode Soprano::StorageModel::removeAllStatements( const Stat
 
 // Soprano::QueryResultIterator Soprano::StorageModel::executeQuery( const Query::Query& query ) const
 // {
-//     const Query::Serializer* serializer = PluginManager::instance()->discoverQuerySerializerForQueryLanguage( Query::QUERY_LANGUAGE_SPARQL );
+//     const Query::Serializer* serializer = PluginManager::instance()->discoverQuerySerializerForQueryLanguage( Query::QueryLanguageSparql );
 //     if ( !serializer ) {
 //         setError( "No SPARQL query serializer plugin found." );
 //         return QueryResultIterator();
 //     }
 //     QString queryString;
 //     QTextStream s( &queryString );
-//     if ( serializer->serializeQuery( query, s, Query::QUERY_LANGUAGE_SPARQL ) ) {
-//         return executeQuery( queryString, Query::QUERY_LANGUAGE_SPARQL );
+//     if ( serializer->serializeQuery( query, s, Query::QueryLanguageSparql ) ) {
+//         return executeQuery( queryString, Query::QueryLanguageSparql );
 //     }
 //     else {
 //         setError( serializer->lastError() );

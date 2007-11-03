@@ -84,7 +84,7 @@ Soprano::Error::ErrorCode Soprano::NRLModel::addStatement( const Statement& stat
                     .arg( Vocabulary::NRL::maxCardinality().toString() )
                     .arg( Vocabulary::NRL::cardinality().toString() );
 
-    QueryResultIterator it = FilterModel::executeQuery( query, Query::QUERY_LANGUAGE_SPARQL );
+    QueryResultIterator it = FilterModel::executeQuery( query, Query::QueryLanguageSparql );
     if ( !it.isValid() ) {
         setError( QString( "Query failed: '%1'" ).arg( query ) );
         return Error::ErrorUnknown;

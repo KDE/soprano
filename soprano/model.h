@@ -207,7 +207,7 @@ namespace Soprano
 	 *
 	 * \param query The query to evaluate.
 	 * \param language The %query language used to encode \p query.
-	 * \param userQueryLanguage If \p language equals Query::QUERY_LANGUAGE_USER
+	 * \param userQueryLanguage If \p language equals Query::QueryLanguageUser
 	 * userQueryLanguage defines the language to use.
 	 * 
 	 * \return An iterator over all results matching the query, 

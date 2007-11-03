@@ -141,13 +141,17 @@ namespace {
 
 Soprano::Raptor::Parser::Parser()
     : QObject(),
-      Soprano::Parser( "raptor" )
+      Soprano::Parser( "raptor" ),
+      m_initialized( false )
 {
 }
 
 
 Soprano::Raptor::Parser::~Parser()
 {
+    if ( m_initialized ) {
+        raptor_finish();
+    }
 }
 
 
@@ -166,12 +170,18 @@ Soprano::RdfSerializations Soprano::Raptor::Parser::supportedSerializations() co
 raptor_parser* Soprano::Raptor::Parser::createParser( RdfSerialization serialization,
                                                       const QString& userSerialization ) const
 {
+    if ( !m_initialized ) {
+        raptor_init();
+        m_initialized = true;
+    }
+
     // create the parser
-    raptor_parser* parser = raptor_new_parser_for_content( NULL,
-                                                           mimeTypeString( serialization, userSerialization ).toLatin1().data(),
-                                                           NULL,
+    QString mimeType = mimeTypeString( serialization, userSerialization );
+    raptor_parser* parser = raptor_new_parser_for_content( 0,
+                                                           mimeType.toLatin1().data(),
                                                            0,
-                                                           NULL );
+                                                           0,
+                                                           0 );
 
     if ( !parser ) {
         qDebug() << "(Soprano::Raptor::Parser) no parser for serialization " << mimeTypeString( serialization, userSerialization );
@@ -310,6 +320,11 @@ Soprano::Raptor::Parser::parseStream( QTextStream& stream,
         }
     }
     raptor_parse_chunk( parser, 0, 0, 1 );
+
+    raptor_free_parser( parser );
+    if ( raptorBaseUri ) {
+        raptor_free_uri( raptorBaseUri );
+    }
 
     return Util::SimpleStatementIterator( data.statements );
 }

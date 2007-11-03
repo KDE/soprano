@@ -41,11 +41,13 @@ private Q_SLOTS:
     void initTestCase();
     void testNodeIterator_data();
     void testNodeIterator();
+    void testAddStatement();
     void cleanupTestCase();
 
 protected:
     virtual Soprano::Model* createModel() = 0;
-
+    virtual void deleteModel( Soprano::Model* );
+  
 private:
     void startAllTests( Soprano::Model* );
     void verifyAllTests();

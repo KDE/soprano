@@ -102,12 +102,14 @@ private:
 class AddStatementTest : public TestingThread
 {
 public:
-    AddStatementTest()
-        : TestingThread( "addStatement" ) {
+    AddStatementTest( const Statement& partial = Statement(), int cnt = 5 )
+        : TestingThread( "addStatement" ),
+          m_partial( partial ),
+          m_cnt( cnt ) {
     }
 
     bool performTest() {
-        QList<Statement> data = createTestData( Statement(), 5 );
+        QList<Statement> data = createTestData( m_partial, m_cnt );
         if ( model()->addStatements( data ) != Error::ErrorNone ) {
             qDebug() << "Adding statements failed:" << model()->lastError();
             return false;
@@ -115,6 +117,10 @@ public:
 
         return true;
     }
+
+private:
+    Statement m_partial;
+    int m_cnt;
 };
 
 
@@ -143,7 +149,7 @@ public:
     }
 
     bool performTest() {
-        QueryResultIterator it = model()->executeQuery( m_query, Query::QUERY_LANGUAGE_SPARQL );
+        QueryResultIterator it = model()->executeQuery( m_query, Query::QueryLanguageSparql );
 
         return !it.lastError() && it.isValid() && it.next();
     }
@@ -274,7 +280,47 @@ void MultiThreadingTest::testNodeIterator()
     }
     QVERIFY( thread->verifyResult() );
 
-    delete model;
+    deleteModel( model );
+}
+
+
+void MultiThreadingTest::testAddStatement()
+{
+    Model* model = createModel();
+    QVERIFY( model != 0 );
+
+    AddStatementTest* t1 = new AddStatementTest( Statement( createRandomUri(), Node(), Node() ), 100 );
+    AddStatementTest* t2 = new AddStatementTest( Statement( createRandomUri(), Node(), Node() ), 100 );
+    AddStatementTest* t3 = new AddStatementTest( Statement( createRandomUri(), Node(), Node() ), 100 );
+    AddStatementTest* t4 = new AddStatementTest( Statement( createRandomUri(), Node(), Node() ), 100 );
+
+    t1->start( model );
+    t2->start( model );
+    t3->start( model );
+    t4->start( model );
+
+    t1->wait();
+    t2->wait();
+    t3->wait();
+    t4->wait();
+
+    QVERIFY( t1->verifyResult() );
+    QVERIFY( t2->verifyResult() );
+    QVERIFY( t3->verifyResult() );
+    QVERIFY( t4->verifyResult() );
+
+    delete t1;
+    delete t2;
+    delete t3;
+    delete t4;
+
+    deleteModel( model );
+}
+
+
+void MultiThreadingTest::deleteModel( Model* m )
+{
+    delete m;
 }
 
 #include "multithreadingtest.moc"

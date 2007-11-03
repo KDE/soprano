@@ -298,7 +298,7 @@ void QueryAPITest::testQuery_1()
             ?x foaf:name ?name .\
             ?x foaf:desc ?anon\
         }"
-        , Soprano::Query::QUERY_LANGUAGE_SPARQL
+        , Soprano::Query::QueryLanguageSparql
     );
 
     QVERIFY( !parser->lastError() );
@@ -310,7 +310,7 @@ void QueryAPITest::testSyntaxError()
 {
     const Soprano::Query::Parser *parser = m_manager->discoverQueryParserByName( "rasqal" );
 
-    parser->parseQuery( " select ?a where ; broken query ", Soprano::Query::QUERY_LANGUAGE_SPARQL );
+    parser->parseQuery( " select ?a where ; broken query ", Soprano::Query::QueryLanguageSparql );
     QVERIFY( parser->lastError() );
     qDebug() << parser->lastError();
 }

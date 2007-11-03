@@ -200,7 +200,7 @@ Soprano::Query::Query Soprano::Rasqal::QueryParser::parseQuery( const QString &q
 
 Soprano::Query::QueryLanguages Soprano::Rasqal::QueryParser::supportedQueryLanguages() const
 {
-    return Soprano::Query::QUERY_LANGUAGE_SPARQL;
+    return Soprano::Query::QueryLanguageSparql;
 }
 
 void Soprano::Rasqal::QueryParser::raptor_message_handler( void *query_parser, raptor_locator *rl, const char *msg )

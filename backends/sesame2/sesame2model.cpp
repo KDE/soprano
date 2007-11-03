@@ -133,7 +133,7 @@ Soprano::QueryResultIterator Soprano::Sesame2::Model::executeQuery( const QStrin
 
     clearError();
 
-    if ( language != Soprano::Query::QUERY_LANGUAGE_SPARQL ) {
+    if ( language != Soprano::Query::QueryLanguageSparql ) {
         setError( Error::Error( QString( "Unsupported query language %1." ).arg( Query::queryLanguageToString( language, userQueryLanguage ) ) ) );
         d->readWriteLock.unlock();
         return QueryResultIterator();

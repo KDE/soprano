@@ -41,6 +41,7 @@ private Q_SLOTS:
     void testRemoveStatement();
     void testUriEncoding_data();
     void testUriEncoding();
+    void testMassAddStatement();
     void cleanup();
 
 private:

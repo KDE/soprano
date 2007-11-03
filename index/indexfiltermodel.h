@@ -112,9 +112,9 @@ namespace Soprano {
 	     *
 	     * \param query The query string. This can be a CLucene query in which case the query will
 	     *              be passed to CLuceneIndex.
-	     * \param language The query language. Set to Soprano::Query::QUERY_LANGUAGE_USER for
+	     * \param language The query language. Set to Soprano::Query::QueryLanguageUser for
 	     *                 CLucene queries.
-	     * \param userQueryLanguage If \p language equals Query::QUERY_LANGUAGE_USER
+	     * \param userQueryLanguage If \p language equals Query::QueryLanguageUser
 	     *                          userQueryLanguage defines the language to use. Use <b>"lucene"</b>
 	     *                          to perform CLucene queries.
 	     *
@@ -126,7 +126,7 @@ namespace Soprano {
 	     */
 	    QueryResultIterator executeQuery( const QString& query, Query::QueryLanguage language, const QString& userQueryLanguage = QString() ) const;
 
-	    /**
+	    /*
 	     * Extract full text matching parts of a %query and replace them with
 	     * results from an index %query.
 	     *
@@ -136,6 +136,25 @@ namespace Soprano {
 	     * and replaced by results from an index query.
 	     */
 //	    Query::Query evaluateAndRewriteQuery( const Query::Query& query ) const;
+
+	    /**
+	     * Set the number or addStatement operations that are to be cached in the index.
+	     * The default value is 1 which means that no caching occurs. Be aware that query
+	     * operations will always close cached transactions.
+	     *
+	     * \param size The number of operations that should be handled in one transaction.
+	     * Set to 1 to disable.
+	     *
+	     * \sa CLuceneIndex::startTransaction, CLuceneIndex::closeTransaction
+	     */
+	    void setTransactionCacheSize( int size );
+	    
+	    /**
+	     * The number of addStatement operations to cache in one transaction.
+	     *
+	     * \sa setTransactionCacheSize
+	     */
+	    int transactionCacheSize() const;
 
 	private:
 	    class Private;

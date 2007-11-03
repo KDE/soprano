@@ -235,7 +235,7 @@ QList<Soprano::Node> Soprano::Inference::InferenceModel::inferedGraphsForStateme
 
         query += " }";
 
-        QueryResultIterator it = parentModel()->executeQuery( query, Query::QUERY_LANGUAGE_SPARQL );
+        QueryResultIterator it = parentModel()->executeQuery( query, Query::QueryLanguageSparql );
         while ( it.next() ) {
             // Step 2: Check for which graph it is source statement
             query = QString( "SELECT ?g WHERE { "
@@ -248,7 +248,7 @@ QList<Soprano::Node> Soprano::Inference::InferenceModel::inferedGraphsForStateme
                     .arg( Vocabulary::RDF::type().toString() )
                     .arg( Vocabulary::SIL::InferenceModel().toString() );
 
-            QueryResultIterator it2 = parentModel()->executeQuery( query, Query::QUERY_LANGUAGE_SPARQL );
+            QueryResultIterator it2 = parentModel()->executeQuery( query, Query::QueryLanguageSparql );
             while ( it2.next() ) {
                 // Step 3: remove the whole infered graph and its metadata
                 graphs += it2.binding( 0 );
@@ -274,7 +274,7 @@ QList<Soprano::Node> Soprano::Inference::InferenceModel::inferedGraphsForStateme
                             .arg( Vocabulary::SIL::sourceStatement().toString() )
                             .arg( node.toString() );
 
-            QueryResultIterator it2 = parentModel()->executeQuery( query, Query::QUERY_LANGUAGE_SPARQL );
+            QueryResultIterator it2 = parentModel()->executeQuery( query, Query::QueryLanguageSparql );
             while ( it2.next() ) {
                 // Step 3: remove the whole infered graph and its metadata
                 graphs += it2.binding( 0 );
@@ -305,7 +305,7 @@ void Soprano::Inference::InferenceModel::clearInference()
                        .arg( Vocabulary::RDF::type().toString() )
                        .arg( Vocabulary::SIL::InferenceGraph().toString() ) );
 
-    QList<BindingSet> bindings = parentModel()->executeQuery( query, Query::QUERY_LANGUAGE_SPARQL ).allBindings();
+    QList<BindingSet> bindings = parentModel()->executeQuery( query, Query::QueryLanguageSparql ).allBindings();
     for ( QList<BindingSet>::const_iterator it = bindings.constBegin(); it != bindings.constEnd(); ++it ) {
         parentModel()->removeContext( it->value( 0 ) );
     }
@@ -338,7 +338,7 @@ int Soprano::Inference::InferenceModel::inferRule( const Rule& rule, bool recurs
 
     int inferedStatementsCount = 0;
     // cache the bindings since we work recursively
-    QList<BindingSet> bindings = parentModel()->executeQuery( q, Query::QUERY_LANGUAGE_SPARQL ).allBindings();
+    QList<BindingSet> bindings = parentModel()->executeQuery( q, Query::QueryLanguageSparql ).allBindings();
     for ( QList<BindingSet>::const_iterator it = bindings.constBegin(); it != bindings.constEnd(); ++it ) {
 
 //         qDebug() << "rule bindings:";

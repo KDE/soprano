@@ -45,7 +45,7 @@ Soprano::Query::Serializer::~Serializer()
 
 bool Soprano::Query::Serializer::supportsQueryLanguage( QueryLanguage lang, const QString& userQueryLanguage ) const
 {
-    if ( lang == QUERY_LANGUAGE_USER ) {
+    if ( lang == QueryLanguageUser ) {
         return supportedUserQueryLanguages().contains( userQueryLanguage );
     }
     else {
