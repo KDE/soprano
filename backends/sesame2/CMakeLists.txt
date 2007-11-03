@@ -43,7 +43,7 @@ INSTALL(TARGETS soprano_sesame2backend
   )
 
 INSTALL(FILES
-  openrdf-sesame-2.0-beta5-onejar.jar
+  openrdf-sesame-2.0-beta6-onejar.jar
   slf4j-api-1.4.2.jar
   slf4j-simple-1.4.2.jar
   DESTINATION share/soprano/sesame2
