@@ -32,6 +32,7 @@
 #include <QtCore/QtPlugin>
 #include <QtCore/QDebug>
 #include <QtCore/QHash>
+#include <QtCore/QDir>
 
 
 Q_EXPORT_PLUGIN2(soprano_redlandbackend, Soprano::Redland::BackendPlugin)
@@ -66,7 +67,6 @@ Soprano::StorageModel* Soprano::Redland::BackendPlugin::createModel( const QList
     redlandOptions["contexts"] = "yes";
     redlandOptions["storageType"] = "hashes";
     redlandOptions["hash-type"] = "memory";
-    redlandOptions["new"] = "no";
 
     // for persistent stores we need an indentifier
     redlandOptions["name"] = "soprano";
@@ -87,6 +87,13 @@ Soprano::StorageModel* Soprano::Redland::BackendPlugin::createModel( const QList
             redlandOptions["dir"] = s.value().toString();
             redlandOptions["hash-type"] = "bdb";
         }
+    }
+
+    // create if nothing is there (stupid version)
+    if ( !redlandOptions["dir"].isEmpty() &&
+         QDir( redlandOptions["dir"] ).entryList( QDir::Files ).isEmpty() &&
+        !redlandOptions.contains( "new" ) ) {
+        redlandOptions["new"] = "yes";
     }
 
     // remove unused options from the option hash
