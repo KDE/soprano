@@ -123,7 +123,7 @@ namespace {
     {
         ParserData* pd = static_cast<ParserData*>( userData );
         Soprano::Statement s = convertTriple( triple );
-        qDebug() << "got triple: " << s;
+//        qDebug() << "got triple: " << s;
         s.setContext( pd->currentContext );
         pd->statements.append( s );
     }
@@ -134,7 +134,7 @@ namespace {
         Soprano::Node context = Soprano::Node::createResourceNode( QString::fromUtf8( ( char* )raptor_uri_as_string( graph ) ) );
         ParserData* pd = static_cast<ParserData*>( userData );
         pd->currentContext = context;
-        qDebug() << "got graph: " << context;
+//        qDebug() << "got graph: " << context;
     }
 }
 
