@@ -1,7 +1,7 @@
 project(sopranoindex)
 
 include_directories(
-  ${soprano_core_SOURCE_DIR}
+  ${soprano_SOURCE_DIR}/soprano
   ${QT_INCLUDES}
   ${soprano_SOURCE_DIR}
   ${CLUCENE_INCLUDE_DIR}
