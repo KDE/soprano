@@ -43,9 +43,9 @@ ADD_DEFINITIONS(${REDLAND_CFLAGS})
 # static libs do not get compiled with -fPIC which is needed on amd64
 # when we link to a shared lib
 # FIXME: do an amd64 check
-if(NOT MSVC)
+if(NOT WIN32)
   ADD_DEFINITIONS(-fPIC)
-endif(NOT MSVC)
+endif(NOT WIN32)
 
 TARGET_LINK_LIBRARIES(soprano_redlandcore soprano ${REDLAND_LIBRARIES})
 
