@@ -54,6 +54,7 @@ add_subdirectory(server)
 add_subdirectory(tools)
 add_subdirectory(test) 
 add_subdirectory(rules)
+add_subdirectory(includes)
 
 find_package(CLucene)
 if(CLucene_FOUND)
@@ -88,8 +89,6 @@ if(DOXYGEN_EXECUTABLE)
     COMMAND ${DOXYGEN_EXECUTABLE} Doxyfile
     COMMAND docs/html/installdox -l qt4.tag@${QTDOCS} docs/html/*.html)
 endif(DOXYGEN_EXECUTABLE)
-
-add_subdirectory(includes)
 
 message("---------------------------------------------------------------------------------------")
 message("-- Soprano Components that will be built:")
