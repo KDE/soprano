@@ -124,6 +124,15 @@ namespace Soprano
 	Q_DECLARE_FLAGS( QueryLanguages, QueryLanguage )
 
         SOPRANO_EXPORT QString queryLanguageToString( QueryLanguage lang, const QString& userQueryLanguage = QString() );
+
+	/**
+	 * Convert a query language string into a QueryLanguage value.
+	 *
+	 * \param queryLanguage The query language string to convert.
+	 *
+	 * \return The QueryLanguage value corresponding to \p queryLanguage or QueryLanguageUser if it is unknown.
+	 */
+        SOPRANO_EXPORT QueryLanguage queryLanguageFromString( const QString& queryLanguage );
     }
 }
 

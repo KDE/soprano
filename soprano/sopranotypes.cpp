@@ -87,3 +87,17 @@ QString Soprano::Query::queryLanguageToString( QueryLanguage lang, const QString
         return userQueryLanguage;
     }
 }
+
+
+Soprano::Query::QueryLanguage Soprano::Query::queryLanguageFromString( const QString& queryLanguage )
+{
+    QString ql( queryLanguage.toUpper() );
+    if ( ql == "SPARQL" )
+        return QueryLanguageSparql;
+    else if ( ql == "RDQL" )
+        return QueryLanguageRdql;
+    else if ( ql == "SERQL" )
+        return QueryLanguageSerql;
+    else
+        return QueryLanguageUser;
+}

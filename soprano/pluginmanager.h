@@ -71,10 +71,10 @@ namespace Soprano
 	/**
 	 * Find a backend plugin by its features.
 	 *
-	 * \param features The features that are requested.
+	 * \param features The features that are requested, a combination of Soprano::BackendFeature flags.
 	 * \param userFeatures If features contain Backend::BackendFeatureUser this paramter states the additionally requested user features.
 	 *
-	 * \return a backend that supports the features defined in \a features.
+	 * \return a Backend that supports the features defined in \a features.
 	 */
 	const Backend* discoverBackendByFeatures( BackendFeatures features, const QStringList& userFeatures = QStringList() );
 
