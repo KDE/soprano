@@ -242,12 +242,11 @@ int usage( const QString& error = QString() )
       << "                      (only applicable when querying against the Soprano server.)" << endl << endl
       << "   --host <host>      Specify the host the Soprano server is running on (defaults to localhost)." << endl
       << "                      (only applicable when querying against the Soprano server.)" << endl << endl
-      << "   <command>          The command to perform. Can be one of 'add', 'remove', 'list', or 'query'." << endl
-      << "                      If not specified the default command is 'query'." << endl << endl
+      << "   <command>          The command to perform. Can be one of 'add', 'remove', 'list', or 'query'." << endl << endl
       << "   <parameters>       The parameters to the command." << endl
       << "                      - For command 'query' this is a SPARQL query string." << endl
       << "                      - For commands 'add' and 'remove' this is a list of 3 or 4 RDF node definitions." << endl
-      << "                      - For command 'list' this is a list of one to four node definitions." << endl << endl;
+      << "                      - For command 'list' this is an optional list of one to four node definitions." << endl << endl;
 
     s << "   Nodes are defined in an N-Triples-like notation:" << endl
       << "   - Resouce nodes are defined in angle brackets." << endl
@@ -370,10 +369,7 @@ int main( int argc, char *argv[] )
     }
 
     int firstArg = 0;
-    if ( args.count() == 1 ) {
-        command = "query";
-    }
-    else if ( args.count() > 1 ) {
+    if ( args.count() >= 1 ) {
         command = args[0];
         ++firstArg;
     }
@@ -385,6 +381,10 @@ int main( int argc, char *argv[] )
     int queryTime = 0;
 
     if ( command == "query" ) {
+        if ( firstArg >= args.count() ) {
+            return usage();
+        }
+
         QString query = args[firstArg];
 
         QTime time;
