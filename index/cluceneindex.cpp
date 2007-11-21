@@ -212,6 +212,7 @@ public:
                         docWrapper.addProperty( field->name(), field->stringValue() );
                     }
                 }
+                _CLDELETE( fields );
             }
 
             // step 4: add the new doc to our cache
