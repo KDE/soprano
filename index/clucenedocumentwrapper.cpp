@@ -120,6 +120,7 @@ void Soprano::Index::CLuceneDocumentWrapper::removeProperty( const TString& fiel
 #endif
                               ) );
     }
+    _CLDELETE( e );
 }
 
 
