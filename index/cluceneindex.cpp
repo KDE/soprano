@@ -648,6 +648,7 @@ void Soprano::Index::CLuceneIndex::dump( QTextStream& s ) const
                 s << TString( field->name(), true ).toQString() << ": " << TString( field->stringValue(), true ).toQString() << endl;
             }
             s << endl;
+            _CLDELETE( e );
         }
 
         s << flush;
