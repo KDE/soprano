@@ -104,10 +104,10 @@ namespace Soprano
     namespace Query {
 	/**
 	 * %Soprano defines a set of well-known query languages that can be used to serialize queries.
-	 * Additional languages may be supported using Query::QUERY_LANGUAGE_USER in combination with
-	 * string codes in Parser::supportedUserQueryLanguages() and Serializer::supportedUserQueryLanguages().
+	 * Additional languages may be supported using Query::QueryLanguageUser in combination with
+	 * string codes.
 	 *
-	 * \sa Query::Parser, Query::Serializer
+	 * \sa Model::executeQuery, Query::Parser, Query::Serializer
 	 */
 	enum QueryLanguage {
 	    QueryLanguageNone = 0x0,    /**< No query language */
@@ -123,14 +123,24 @@ namespace Soprano
 	};
 	Q_DECLARE_FLAGS( QueryLanguages, QueryLanguage )
 
-        SOPRANO_EXPORT QString queryLanguageToString( QueryLanguage lang, const QString& userQueryLanguage = QString() );
+        /**
+	 * Convert a Soprano::Query::QueryLanguage value into a string representation.
+	 *
+	 * \param lang The query language to convert
+	 * \param userQueryLanguage If \p lang equals Query::QueryLanguageUser,
+	 * \p userQueryLanguage defines the language to use.
+	 *
+	 * \return A string representation of \p lang. If \p lang equals Soprano::Query::QueryLanguageUser, the method 
+	 * simply returns \p userQueryLanguage.
+	 */
+        SOPRANO_EXPORT QString queryLanguageToString( Soprano::Query::QueryLanguage lang, const QString& userQueryLanguage = QString() );
 
 	/**
-	 * Convert a query language string into a QueryLanguage value.
+	 * Convert a query language string into a Soprano::Query::QueryLanguage value.
 	 *
 	 * \param queryLanguage The query language string to convert.
 	 *
-	 * \return The QueryLanguage value corresponding to \p queryLanguage or QueryLanguageUser if it is unknown.
+	 * \return The QueryLanguage value corresponding to \p queryLanguage or Soprano::Query::QueryLanguageUser if it is unknown.
 	 */
         SOPRANO_EXPORT QueryLanguage queryLanguageFromString( const QString& queryLanguage );
     }

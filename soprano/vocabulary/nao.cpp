@@ -21,31 +21,229 @@
 
 #include "nao.h"
 
-#define NAO_NS "http://semanticdesktop.org/ontologies/2007/08/15/nao#"
-
-class Nao
+class NaoPrivate
 {
 public:
-    Nao()
-        : naoNamespace( NAO_NS ),
-          created( NAO_NS"created" ) {
+    NaoPrivate()
+        : nao_namespace( "http://www.semanticdesktop.org/ontologies/2007/08/15/nao#" ),
+          nao_hasDefaultNamespaceAbbreviation( "http://www.semanticdesktop.org/ontologies/2007/08/15/nao#hasDefaultNamespaceAbbreviation" ),
+          nao_Symbol( "http://www.semanticdesktop.org/ontologies/2007/08/15/nao#Symbol" ),
+          nao_isTopicOf( "http://www.semanticdesktop.org/ontologies/2007/08/15/nao#isTopicOf" ),
+          nao_isTagFor( "http://www.semanticdesktop.org/ontologies/2007/08/15/nao#isTagFor" ),
+          nao_version( "http://www.semanticdesktop.org/ontologies/2007/08/15/nao#version" ),
+          nao_altLabel( "http://www.semanticdesktop.org/ontologies/2007/08/15/nao#altLabel" ),
+          nao_hasSymbol( "http://www.semanticdesktop.org/ontologies/2007/08/15/nao#hasSymbol" ),
+          nao_prefSymbol( "http://www.semanticdesktop.org/ontologies/2007/08/15/nao#prefSymbol" ),
+          nao_altSymbol( "http://www.semanticdesktop.org/ontologies/2007/08/15/nao#altSymbol" ),
+          nao_hasTopic( "http://www.semanticdesktop.org/ontologies/2007/08/15/nao#hasTopic" ),
+          nao_serializationLanguage( "http://www.semanticdesktop.org/ontologies/2007/08/15/nao#serializationLanguage" ),
+          nao_creator( "http://www.semanticdesktop.org/ontologies/2007/08/15/nao#creator" ),
+          nao_annotation( "http://www.semanticdesktop.org/ontologies/2007/08/15/nao#annotation" ),
+          nao_rating( "http://www.semanticdesktop.org/ontologies/2007/08/15/nao#rating" ),
+          nao_numericRating( "http://www.semanticdesktop.org/ontologies/2007/08/15/nao#numericRating" ),
+          nao_Tag( "http://www.semanticdesktop.org/ontologies/2007/08/15/nao#Tag" ),
+          nao_contributor( "http://www.semanticdesktop.org/ontologies/2007/08/15/nao#contributor" ),
+          nao_hasDefaultNamespace( "http://www.semanticdesktop.org/ontologies/2007/08/15/nao#hasDefaultNamespace" ),
+          nao_modified( "http://www.semanticdesktop.org/ontologies/2007/08/15/nao#modified" ),
+          nao_created( "http://www.semanticdesktop.org/ontologies/2007/08/15/nao#created" ),
+          nao_lastModified( "http://www.semanticdesktop.org/ontologies/2007/08/15/nao#lastModified" ),
+          nao_identifier( "http://www.semanticdesktop.org/ontologies/2007/08/15/nao#identifier" ),
+          nao_status( "http://www.semanticdesktop.org/ontologies/2007/08/15/nao#status" ),
+          nao_description( "http://www.semanticdesktop.org/ontologies/2007/08/15/nao#description" ),
+          nao_prefLabel( "http://www.semanticdesktop.org/ontologies/2007/08/15/nao#prefLabel" ),
+          nao_engineeringTool( "http://www.semanticdesktop.org/ontologies/2007/08/15/nao#engineeringTool" ),
+          nao_hasTag( "http://www.semanticdesktop.org/ontologies/2007/08/15/nao#hasTag" ),
+          nao_isRelated( "http://www.semanticdesktop.org/ontologies/2007/08/15/nao#isRelated" ),
+          nao_personalIdentifier( "http://www.semanticdesktop.org/ontologies/2007/08/15/nao#personalIdentifier" ),
+          nao_Party( "http://www.semanticdesktop.org/ontologies/2007/08/15/nao#Party" ) {
     }
 
-    QUrl naoNamespace;
-    QUrl created;
+    QUrl nao_namespace;
+    QUrl nao_hasDefaultNamespaceAbbreviation;
+    QUrl nao_Symbol;
+    QUrl nao_isTopicOf;
+    QUrl nao_isTagFor;
+    QUrl nao_version;
+    QUrl nao_altLabel;
+    QUrl nao_hasSymbol;
+    QUrl nao_prefSymbol;
+    QUrl nao_altSymbol;
+    QUrl nao_hasTopic;
+    QUrl nao_serializationLanguage;
+    QUrl nao_creator;
+    QUrl nao_annotation;
+    QUrl nao_rating;
+    QUrl nao_numericRating;
+    QUrl nao_Tag;
+    QUrl nao_contributor;
+    QUrl nao_hasDefaultNamespace;
+    QUrl nao_modified;
+    QUrl nao_created;
+    QUrl nao_lastModified;
+    QUrl nao_identifier;
+    QUrl nao_status;
+    QUrl nao_description;
+    QUrl nao_prefLabel;
+    QUrl nao_engineeringTool;
+    QUrl nao_hasTag;
+    QUrl nao_isRelated;
+    QUrl nao_personalIdentifier;
+    QUrl nao_Party;
 };
 
-
-Q_GLOBAL_STATIC( Nao, nao )
-
+Q_GLOBAL_STATIC( NaoPrivate, s_nao )
 
 QUrl Soprano::Vocabulary::NAO::naoNamespace()
 {
-    return nao()->naoNamespace;
+    return s_nao()->nao_namespace;
 }
 
+QUrl Soprano::Vocabulary::NAO::hasDefaultNamespaceAbbreviation()
+{
+    return s_nao()->nao_hasDefaultNamespaceAbbreviation;
+}
+
+QUrl Soprano::Vocabulary::NAO::Symbol()
+{
+    return s_nao()->nao_Symbol;
+}
+
+QUrl Soprano::Vocabulary::NAO::isTopicOf()
+{
+    return s_nao()->nao_isTopicOf;
+}
+
+QUrl Soprano::Vocabulary::NAO::isTagFor()
+{
+    return s_nao()->nao_isTagFor;
+}
+
+QUrl Soprano::Vocabulary::NAO::version()
+{
+    return s_nao()->nao_version;
+}
+
+QUrl Soprano::Vocabulary::NAO::altLabel()
+{
+    return s_nao()->nao_altLabel;
+}
+
+QUrl Soprano::Vocabulary::NAO::hasSymbol()
+{
+    return s_nao()->nao_hasSymbol;
+}
+
+QUrl Soprano::Vocabulary::NAO::prefSymbol()
+{
+    return s_nao()->nao_prefSymbol;
+}
+
+QUrl Soprano::Vocabulary::NAO::altSymbol()
+{
+    return s_nao()->nao_altSymbol;
+}
+
+QUrl Soprano::Vocabulary::NAO::hasTopic()
+{
+    return s_nao()->nao_hasTopic;
+}
+
+QUrl Soprano::Vocabulary::NAO::serializationLanguage()
+{
+    return s_nao()->nao_serializationLanguage;
+}
+
+QUrl Soprano::Vocabulary::NAO::creator()
+{
+    return s_nao()->nao_creator;
+}
+
+QUrl Soprano::Vocabulary::NAO::annotation()
+{
+    return s_nao()->nao_annotation;
+}
+
+QUrl Soprano::Vocabulary::NAO::rating()
+{
+    return s_nao()->nao_rating;
+}
+
+QUrl Soprano::Vocabulary::NAO::numericRating()
+{
+    return s_nao()->nao_numericRating;
+}
+
+QUrl Soprano::Vocabulary::NAO::Tag()
+{
+    return s_nao()->nao_Tag;
+}
+
+QUrl Soprano::Vocabulary::NAO::contributor()
+{
+    return s_nao()->nao_contributor;
+}
+
+QUrl Soprano::Vocabulary::NAO::hasDefaultNamespace()
+{
+    return s_nao()->nao_hasDefaultNamespace;
+}
+
+QUrl Soprano::Vocabulary::NAO::modified()
+{
+    return s_nao()->nao_modified;
+}
 
 QUrl Soprano::Vocabulary::NAO::created()
 {
-    return nao()->created;
+    return s_nao()->nao_created;
+}
+
+QUrl Soprano::Vocabulary::NAO::lastModified()
+{
+    return s_nao()->nao_lastModified;
+}
+
+QUrl Soprano::Vocabulary::NAO::identifier()
+{
+    return s_nao()->nao_identifier;
+}
+
+QUrl Soprano::Vocabulary::NAO::status()
+{
+    return s_nao()->nao_status;
+}
+
+QUrl Soprano::Vocabulary::NAO::description()
+{
+    return s_nao()->nao_description;
+}
+
+QUrl Soprano::Vocabulary::NAO::prefLabel()
+{
+    return s_nao()->nao_prefLabel;
+}
+
+QUrl Soprano::Vocabulary::NAO::engineeringTool()
+{
+    return s_nao()->nao_engineeringTool;
+}
+
+QUrl Soprano::Vocabulary::NAO::hasTag()
+{
+    return s_nao()->nao_hasTag;
+}
+
+QUrl Soprano::Vocabulary::NAO::isRelated()
+{
+    return s_nao()->nao_isRelated;
+}
+
+QUrl Soprano::Vocabulary::NAO::personalIdentifier()
+{
+    return s_nao()->nao_personalIdentifier;
+}
+
+QUrl Soprano::Vocabulary::NAO::Party()
+{
+    return s_nao()->nao_Party;
 }

@@ -29,16 +29,163 @@ namespace Soprano {
     namespace Vocabulary {
 	/**
 	 * The Nepomuk Annotation Ontology
-	 *
-	 * \warning incomplete
 	 */
-	namespace NAO {
-	    /**
-	     * The NAO namespace
-	     */
-	    SOPRANO_EXPORT QUrl naoNamespace();
-	    SOPRANO_EXPORT QUrl created();
-	}
+        namespace NAO {
+            /**
+             * http://www.semanticdesktop.org/ontologies/2007/08/15/nao#
+             */
+            SOPRANO_EXPORT QUrl naoNamespace();
+
+            /**
+             * http://www.semanticdesktop.org/ontologies/2007/08/15/nao#hasDefaultNamespaceAbbreviation
+             */
+            SOPRANO_EXPORT QUrl hasDefaultNamespaceAbbreviation();
+
+            /**
+             * http://www.semanticdesktop.org/ontologies/2007/08/15/nao#Symbol
+             */
+            SOPRANO_EXPORT QUrl Symbol();
+
+            /**
+             * http://www.semanticdesktop.org/ontologies/2007/08/15/nao#isTopicOf
+             */
+            SOPRANO_EXPORT QUrl isTopicOf();
+
+            /**
+             * http://www.semanticdesktop.org/ontologies/2007/08/15/nao#isTagFor
+             */
+            SOPRANO_EXPORT QUrl isTagFor();
+
+            /**
+             * http://www.semanticdesktop.org/ontologies/2007/08/15/nao#version
+             */
+            SOPRANO_EXPORT QUrl version();
+
+            /**
+             * http://www.semanticdesktop.org/ontologies/2007/08/15/nao#altLabel
+             */
+            SOPRANO_EXPORT QUrl altLabel();
+
+            /**
+             * http://www.semanticdesktop.org/ontologies/2007/08/15/nao#hasSymbol
+             */
+            SOPRANO_EXPORT QUrl hasSymbol();
+
+            /**
+             * http://www.semanticdesktop.org/ontologies/2007/08/15/nao#prefSymbol
+             */
+            SOPRANO_EXPORT QUrl prefSymbol();
+
+            /**
+             * http://www.semanticdesktop.org/ontologies/2007/08/15/nao#altSymbol
+             */
+            SOPRANO_EXPORT QUrl altSymbol();
+
+            /**
+             * http://www.semanticdesktop.org/ontologies/2007/08/15/nao#hasTopic
+             */
+            SOPRANO_EXPORT QUrl hasTopic();
+
+            /**
+             * http://www.semanticdesktop.org/ontologies/2007/08/15/nao#serializationLanguage
+             */
+            SOPRANO_EXPORT QUrl serializationLanguage();
+
+            /**
+             * http://www.semanticdesktop.org/ontologies/2007/08/15/nao#creator
+             */
+            SOPRANO_EXPORT QUrl creator();
+
+            /**
+             * http://www.semanticdesktop.org/ontologies/2007/08/15/nao#annotation
+             */
+            SOPRANO_EXPORT QUrl annotation();
+
+            /**
+             * http://www.semanticdesktop.org/ontologies/2007/08/15/nao#rating
+             */
+            SOPRANO_EXPORT QUrl rating();
+
+            /**
+             * http://www.semanticdesktop.org/ontologies/2007/08/15/nao#numericRating
+             */
+            SOPRANO_EXPORT QUrl numericRating();
+
+            /**
+             * http://www.semanticdesktop.org/ontologies/2007/08/15/nao#Tag
+             */
+            SOPRANO_EXPORT QUrl Tag();
+
+            /**
+             * http://www.semanticdesktop.org/ontologies/2007/08/15/nao#contributor
+             */
+            SOPRANO_EXPORT QUrl contributor();
+
+            /**
+             * http://www.semanticdesktop.org/ontologies/2007/08/15/nao#hasDefaultNamespace
+             */
+            SOPRANO_EXPORT QUrl hasDefaultNamespace();
+
+            /**
+             * http://www.semanticdesktop.org/ontologies/2007/08/15/nao#modified
+             */
+            SOPRANO_EXPORT QUrl modified();
+
+            /**
+             * http://www.semanticdesktop.org/ontologies/2007/08/15/nao#created
+             */
+            SOPRANO_EXPORT QUrl created();
+
+            /**
+             * http://www.semanticdesktop.org/ontologies/2007/08/15/nao#lastModified
+             */
+            SOPRANO_EXPORT QUrl lastModified();
+
+            /**
+             * http://www.semanticdesktop.org/ontologies/2007/08/15/nao#identifier
+             */
+            SOPRANO_EXPORT QUrl identifier();
+
+            /**
+             * http://www.semanticdesktop.org/ontologies/2007/08/15/nao#status
+             */
+            SOPRANO_EXPORT QUrl status();
+
+            /**
+             * http://www.semanticdesktop.org/ontologies/2007/08/15/nao#description
+             */
+            SOPRANO_EXPORT QUrl description();
+
+            /**
+             * http://www.semanticdesktop.org/ontologies/2007/08/15/nao#prefLabel
+             */
+            SOPRANO_EXPORT QUrl prefLabel();
+
+            /**
+             * http://www.semanticdesktop.org/ontologies/2007/08/15/nao#engineeringTool
+             */
+            SOPRANO_EXPORT QUrl engineeringTool();
+
+            /**
+             * http://www.semanticdesktop.org/ontologies/2007/08/15/nao#hasTag
+             */
+            SOPRANO_EXPORT QUrl hasTag();
+
+            /**
+             * http://www.semanticdesktop.org/ontologies/2007/08/15/nao#isRelated
+             */
+            SOPRANO_EXPORT QUrl isRelated();
+
+            /**
+             * http://www.semanticdesktop.org/ontologies/2007/08/15/nao#personalIdentifier
+             */
+            SOPRANO_EXPORT QUrl personalIdentifier();
+
+            /**
+             * http://www.semanticdesktop.org/ontologies/2007/08/15/nao#Party
+             */
+            SOPRANO_EXPORT QUrl Party();
+        }
     }
 }
 

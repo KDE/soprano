@@ -23,7 +23,7 @@
 #define _SOPRANO_INFERENCE_LANGUAGE_H_
 
 #include <QtCore/QUrl>
-
+#include "soprano_export.h"
 
 namespace Soprano {
     namespace Vocabulary {
@@ -35,7 +35,7 @@ namespace Soprano {
 	    /**
 	     * The SIL namespace (http://soprano.org/sil#)
 	     */
-	    QUrl silNamespace();
+	    SOPRANO_EXPORT QUrl silNamespace();
 
 	    /**
 	     * URI of the named graph that contains all metadata about the inference graphs
@@ -43,7 +43,7 @@ namespace Soprano {
 	     *
 	     * (http://soprano.org/sil#InferenceMetaData)
 	     */
-	    QUrl InferenceMetaData();
+	    SOPRANO_EXPORT QUrl InferenceMetaData();
 
 	    /**
 	     * inferenceGraph is a rdfs:Class that represents named graphs containing
@@ -51,7 +51,7 @@ namespace Soprano {
 	     *
 	     * (http://soprano.org/sil#InferenceGraph)
 	     */
-	    QUrl InferenceGraph();
+	    SOPRANO_EXPORT QUrl InferenceGraph();
 
 	    /**
 	     * Property that states which statement was used to infer the triples in one
@@ -59,13 +59,13 @@ namespace Soprano {
 	     *
 	     * (http://soprano.org/sil#sourceStatement)
 	     */
-	    QUrl sourceStatement();
+	    SOPRANO_EXPORT QUrl sourceStatement();
 
 	    /**
 	     * Property as addition to rdf:subject, rdf:predicate, and rdf:object
 	     * to state the context of a statement.
 	     */
-	    QUrl context();
+	    SOPRANO_EXPORT QUrl context();
 	}
     }
 }
