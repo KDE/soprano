@@ -23,6 +23,8 @@
 #include "../soprano/queryresultiterator.h"
 #include "../soprano/version.h"
 #include "../soprano/pluginmanager.h"
+#include "../soprano/parser.h"
+#include "../soprano/serializer.h"
 
 #include "../server/tcpclient.h"
 #include "../server/dbus/dbusclient.h"
@@ -112,6 +114,87 @@ static Soprano::Node parseNode( const QString& s )
 }
 
 
+static bool importFile( Soprano::Model* model, const QString& fileName, const QString& serialization )
+{
+    const Soprano::Parser* parser = Soprano::PluginManager::instance()->discoverParserForSerialization( Soprano::mimeTypeToSerialization( serialization ), serialization );
+
+    if ( parser ) {
+
+        Soprano::StatementIterator it = parser->parseFile( fileName,
+                                                           QUrl("http://dummybaseuri.org" ),
+                                                           Soprano::mimeTypeToSerialization( serialization ), serialization );
+
+        if ( parser->lastError() ) {
+            QTextStream s( stderr );
+            s << "Parsing failed: " << parser->lastError() << endl;
+            delete model;
+            return 2;
+        }
+
+        int cnt = 0;
+        while ( it.next() ) {
+            if ( model->addStatement( *it ) == Soprano::Error::ErrorNone ) {
+                ++cnt;
+            }
+            else {
+                QTextStream s( stderr );
+                s << "Failed to import statement " << *it << endl;
+                delete model;
+                return 2;
+            }
+        }
+
+        QTextStream s( stdout );
+        s << "Imported " << cnt << " statements." << endl;
+        delete model;
+        return 0;
+    }
+    else {
+        QTextStream s( stderr );
+        s << "Could not find parser plugin for serialization " << serialization << endl;
+        delete model;
+        return 1;
+    }
+}
+
+
+static bool exportFile( Soprano::Model* model, const QString& fileName, const QString& serialization )
+{
+    const Soprano::Serializer* serializer = Soprano::PluginManager::instance()->discoverSerializerForSerialization( Soprano::mimeTypeToSerialization( serialization ), serialization );
+
+    if ( serializer ) {
+        QFile file( fileName );
+        if ( !file.open( QIODevice::WriteOnly ) ) {
+            QTextStream s( stderr );
+            s << "Could not open file for writing: " << fileName << endl;
+            delete model;
+            return 1;
+        }
+
+        QTextStream s( &file );
+
+        if ( serializer->serialize( model->listStatements(), s, Soprano::mimeTypeToSerialization( serialization ), serialization ) ) {
+            QTextStream s( stdout );
+            s << "Successfully exported model." << endl;
+            delete model;
+            return 0;
+        }
+        else {
+            QTextStream s( stderr );
+            s << "Failed to export statements: " << serializer->lastError() << endl;
+            delete model;
+            return 2;
+        }
+    }
+    else {
+        QTextStream s( stderr );
+        s << "Could not find serializer plugin for serialization " << serialization << endl;
+        delete model;
+        return 1;
+    }
+}
+
+
 
 class CmdLineArgs
 {
@@ -170,8 +253,13 @@ public:
         return m_settings.contains( name );
     }
 
-    QString getSetting( const QString& name ) const {
-        return m_settings[name];
+    QString getSetting( const QString& name, const QString& defaultValue = QString() ) const {
+        if ( m_settings.contains( name ) ) {
+            return m_settings[name];
+        }
+        else {
+            return defaultValue;
+        }
     }
 
     bool optionSet( const QString& name ) const {
@@ -229,27 +317,30 @@ int usage( const QString& error = QString() )
     QTextStream s( stderr );
     s << endl;
     s << "Usage:" << endl
-      << "   sopranocmd [--version] [--help] [--port <port>] [--host <host>] [--model <name>] [<command>] [<parameters>]" << endl
+      << "   sopranocmd [--version] [--help] [--port <port>] [--host <host>] [--model <name>] [--serialization <s>] [<command>] [<parameters>]" << endl
       << endl
-      << "   --version          Print version information." << endl << endl
-      << "   --help             Print this help." << endl << endl
-      << "   --model <name>     The name of the Soprano model to perform the command on." << endl
-      << "                      (only applicable when querying against the Soprano server.)" << endl << endl
-      << "   --backend          The backend to use. If this option is not specified the Soprano server" << endl
-      << "                      will be contacted. Possible backends are:" << endl
-      << "                      " << backendNames().join( ", " ) << endl << endl
-      << "   --dir              The storage directory. This only applies when specifying the backend. Defaults" << endl
-      << "                      to current directory." << endl << endl
-      << "   --dbus <service>   Contact the soprano server running on the specified service." << endl << endl
-      << "   --port <port>      Specify the port the Soprano server is running on." << endl
-      << "                      (only applicable when querying against the Soprano server.)" << endl << endl
-      << "   --host <host>      Specify the host the Soprano server is running on (defaults to localhost)." << endl
-      << "                      (only applicable when querying against the Soprano server.)" << endl << endl
-      << "   <command>          The command to perform. Can be one of 'add', 'remove', 'list', or 'query'." << endl << endl
-      << "   <parameters>       The parameters to the command." << endl
-      << "                      - For command 'query' this is a SPARQL query string." << endl
-      << "                      - For commands 'add' and 'remove' this is a list of 3 or 4 RDF node definitions." << endl
-      << "                      - For command 'list' this is an optional list of one to four node definitions." << endl << endl;
+      << "   --version           Print version information." << endl << endl
+      << "   --help              Print this help." << endl << endl
+      << "   --model <name>      The name of the Soprano model to perform the command on." << endl
+      << "                       (only applicable when querying against the Soprano server.)" << endl << endl
+      << "   --backend           The backend to use. If this option is not specified the Soprano server" << endl
+      << "                       will be contacted. Possible backends are:" << endl
+      << "                       " << backendNames().join( ", " ) << endl << endl
+      << "   --dir               The storage directory. This only applies when specifying the backend. Defaults" << endl
+      << "                       to current directory." << endl << endl
+      << "   --dbus <service>    Contact the soprano server running on the specified service." << endl << endl
+      << "   --port <port>       Specify the port the Soprano server is running on." << endl
+      << "                       (only applicable when querying against the Soprano server.)" << endl << endl
+      << "   --host <host>       Specify the host the Soprano server is running on (defaults to localhost)." << endl
+      << "                       (only applicable when querying against the Soprano server.)" << endl << endl
+      << "   --serialization <s> The serialization used for commands 'export' and 'import'. Defaults to 'application/x-trig'." << endl
+      << "                       (only applicable with the mentioned commands.)" << endl << endl
+      << "   <command>           The command to perform. Can be one of 'add', 'remove', 'list', 'query', 'import', or 'export'." << endl << endl
+      << "   <parameters>        The parameters to the command." << endl
+      << "                       - For command 'query' this is a SPARQL query string." << endl
+      << "                       - For commands 'add' and 'remove' this is a list of 3 or 4 RDF node definitions." << endl
+      << "                       - For command 'list' this is an optional list of one to four node definitions." << endl
+      << "                       - For commands 'import' and 'export' this is a local file name to either parse or write to." << endl << endl;
 
     s << "   Nodes are defined in an N-Triples-like notation:" << endl
       << "   - Resouce nodes are defined in angle brackets." << endl
@@ -286,6 +377,7 @@ int main( int argc, char *argv[] )
     allowedCmdLineArgs.insert( "port", true );
     allowedCmdLineArgs.insert( "host", true );
     allowedCmdLineArgs.insert( "dbus", true );
+    allowedCmdLineArgs.insert( "serialization", true );
 
     CmdLineArgs args;
     if ( !CmdLineArgs::parseCmdLine( args, app.arguments(), allowedCmdLineArgs ) ) {
@@ -383,7 +475,25 @@ int main( int argc, char *argv[] )
 
     int queryTime = 0;
 
-    if ( command == "query" ) {
+    if ( command == "import" ||
+         command == "export" ) {
+        if ( firstArg != args.count()-1 ) {
+            delete model;
+            return usage();
+        }
+
+        QString fileName = args[firstArg];
+        QString serialization = args.getSetting( "serialization", "application/x-trig" );
+
+        if ( command == "import" ) {
+            return importFile( model, fileName, serialization );
+        }
+        else {
+            return exportFile( model, fileName, serialization );
+        }
+    }
+
+    else if ( command == "query" ) {
         if ( firstArg >= args.count() ) {
             return usage();
         }

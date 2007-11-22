@@ -54,8 +54,7 @@ Soprano::Raptor::Serializer::~Serializer()
 Soprano::RdfSerializations Soprano::Raptor::Serializer::supportedSerializations() const
 {
     // FIXME: test for XML/RDF fails
-//    return SerializationRdfXml|SerializationNTriples|
-    return SerializationTurtle;
+    return SerializationRdfXml|SerializationNTriples|SerializationTurtle;
 }
 
 
@@ -199,7 +198,6 @@ bool Soprano::Raptor::Serializer::serialize( StatementIterator it,
     }
 
     librdf_free_stream( rdfStream );
-    raptor_free_iostream( raptorStream );
     librdf_free_serializer( serializer );
 
     return success;
