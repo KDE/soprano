@@ -141,10 +141,20 @@ bool Soprano::Raptor::Serializer::serialize( StatementIterator it,
 {
     clearError();
 
-    librdf_serializer* serializer = librdf_new_serializer( Redland::World::self()->worldPtr(),
-                                                           0, // all factories
-                                                           serializationMimeType( serialization, userSerialization ).toLatin1().data(),
-                                                           0 );
+    librdf_serializer* serializer = 0;
+    if ( serialization == SerializationRdfXml ) {
+        serializer = librdf_new_serializer( Redland::World::self()->worldPtr(),
+                                            "rdfxml",
+                                            0,
+                                            0 );
+    }
+    else {
+        serializer = librdf_new_serializer( Redland::World::self()->worldPtr(),
+                                            0, // all factories
+                                            serializationMimeType( serialization, userSerialization ).toLatin1().data(),
+                                            0 );
+    }
+
     if ( !serializer ) {
         qDebug() << "(Soprano::Raptor::Serializer) no serializer for mimetype " << serializationMimeType( serialization, userSerialization );
         setError( Redland::World::self()->lastError() );
