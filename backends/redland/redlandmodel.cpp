@@ -144,6 +144,9 @@ Soprano::Error::ErrorCode Soprano::Redland::RedlandModel::addStatement( const St
 
     Util::freeStatement( redlandStatement );
 
+    // make sure we store everything in case we crash
+    librdf_model_sync( d->model );
+
     d->readWriteLock.unlock();
 
     emit statementsAdded();
@@ -296,6 +299,10 @@ Soprano::Error::ErrorCode Soprano::Redland::RedlandModel::removeStatement( const
 {
     d->readWriteLock.lockForWrite();
     Error::ErrorCode r = removeOneStatement( statement );
+
+    // make sure we store everything in case we crash
+    librdf_model_sync( d->model );
+
     d->readWriteLock.unlock();
     if ( r == Error::ErrorNone ) {
         emit statementsRemoved();
@@ -361,6 +368,9 @@ Soprano::Error::ErrorCode Soprano::Redland::RedlandModel::removeAllStatements( c
 
         Util::freeNode( ctx );
 
+        // make sure we store everything in case we crash
+        librdf_model_sync( d->model );
+
         d->readWriteLock.unlock();
 
         emit statementsRemoved();
@@ -385,6 +395,9 @@ Soprano::Error::ErrorCode Soprano::Redland::RedlandModel::removeAllStatements( c
                 return error;
             }
         }
+
+        // make sure we store everything in case we crash
+        librdf_model_sync( d->model );
 
         d->readWriteLock.unlock();
 
