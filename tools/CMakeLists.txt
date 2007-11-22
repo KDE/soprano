@@ -15,11 +15,19 @@ set(sopranocmd_SRC
 
 add_executable(sopranocmd sopranocmd.cpp)
 
+add_executable(onto2vocabularyclass onto2vocabularyclass.cpp)
+
 target_link_libraries(
   sopranocmd
   sopranoclient
   ${QT_QTCORE_LIBRARY}
   soprano
+)
+
+target_link_libraries(
+  onto2vocabularyclass
+  soprano
+  ${QT_QTCORE_LIBRARY}
 )
 
 INSTALL(TARGETS sopranocmd
