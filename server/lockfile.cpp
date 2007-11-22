@@ -22,6 +22,9 @@
 #include <unistd.h>
 #endif
 
+#include <string.h>
+#include <errno.h>
+
 #include <QtCore/QFile>
 #include <QtCore/QDebug>
 
@@ -75,9 +78,15 @@ bool LockFile::aquireLock()
 {
     releaseLock();
 
+    // make sure we have write permission to the file
+    if ( QFile::exists( d->path ) ) {
+        QFile f( d->path );
+        f.setPermissions( f.permissions() | QFile::WriteOwner );
+    }
+
     d->fd = open( QFile::encodeName( d->path ).data(), O_WRONLY|O_CREAT );
     if ( d->fd == -1 ) {
-        qDebug() << "(LockFile) could not open" << d->path;
+        qDebug() << "(LockFile) could not open" << d->path << QString( "(%1)" ).arg( strerror( errno ) );
         return false;
     }
 #ifndef _WIN32
