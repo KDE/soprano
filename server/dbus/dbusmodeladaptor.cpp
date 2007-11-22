@@ -52,7 +52,7 @@ public:
     }
 
     Model* origModel;
-    Util::MutexModel* model;
+    Model* model;
     QMultiHash<QString, QPointer<IteratorWrapper> > openIterators;
 
     QString dbusObjectPath;

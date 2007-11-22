@@ -84,8 +84,9 @@ QString Soprano::Server::DBusServerAdaptor::createModel( const QString& name, co
             return it.value();
         }
         else {
-            // FIXME: memory leak!
+            // the ModelWrapper makes sure that the QObject hierachy lives in the same thread
             ModelWrapper* mw = new ModelWrapper( model );
+            connect( model, SIGNAL( destroyed( QObject* ) ), mw, SLOT( deleteLater() ) );
             QString objectPath = d->dbusObjectPath + "/models/" + normalizeModelName( name );
             ( void )new DBusModelAdaptor( model, mw, objectPath );
             QDBusConnection::sessionBus().registerObject( objectPath, mw );
