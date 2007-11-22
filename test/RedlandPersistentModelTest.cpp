@@ -40,6 +40,7 @@ Soprano::Model* RedlandPersistentModelTest::createModel()
     QList<BackendSetting> settings;
     settings.append( BackendSetting( "hash-type", "bdb" ) );
     settings.append( BackendSetting( "name", QString( "test%1" ).arg( ++modelCnt ) ) );
+    settings.append( BackendSetting( BackendOptionStorageDir, "/tmp/" ) );
 
     Model* m = b->createModel( settings );
     if ( m ) {
@@ -53,10 +54,10 @@ void RedlandPersistentModelTest::deleteModel( Soprano::Model* m )
 {
     QString name = m_nameMap[m];
     delete m;
-    QFile::remove( QString( "%1-po2s.db" ).arg( name ) );
-    QFile::remove( QString( "%1-so2p.db" ).arg( name ) );
-    QFile::remove( QString( "%1-sp2o.db" ).arg( name ) );
-    QFile::remove( QString( "%1-contexts.db" ).arg( name ) );
+    QFile::remove( QString( "/tmp/%1-po2s.db" ).arg( name ) );
+    QFile::remove( QString( "/tmp/%1-so2p.db" ).arg( name ) );
+    QFile::remove( QString( "/tmp/%1-sp2o.db" ).arg( name ) );
+    QFile::remove( QString( "/tmp/%1-contexts.db" ).arg( name ) );
 }
 
 QTEST_MAIN(RedlandPersistentModelTest)
