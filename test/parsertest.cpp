@@ -36,6 +36,7 @@ void ParserTest::init()
 {
 }
 
+Q_DECLARE_METATYPE( Soprano::RdfSerialization )
 
 void ParserTest::testParser_data()
 {
@@ -49,7 +50,6 @@ void ParserTest::testParser_data()
 }
 
 
-Q_DECLARE_METATYPE( Soprano::RdfSerialization )
 
 void ParserTest::testParser()
 {
