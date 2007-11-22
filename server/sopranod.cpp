@@ -22,10 +22,13 @@
 #include "version.h"
 #include "dbus/dbusserveradaptor.h"
 #include "lockfile.h"
+#include "sopranodcore.h"
 
 #include <signal.h>
 
-#define VERSION "1.6"
+#include "soprano-server-config.h"
+
+#define VERSION "1.7"
 
 namespace {
 #ifndef Q_OS_WIN
@@ -35,7 +38,7 @@ namespace {
         case SIGHUP:
         case SIGQUIT:
         case SIGINT:
-            QCoreApplication::exit( 1 );
+            QCoreApplication::exit( 0 );
         }
     }
 #endif
@@ -46,10 +49,17 @@ int usage()
     QTextStream s( stderr );
     s << "sopranod " << VERSION << " (using Soprano " << Soprano::versionString() << ")" << endl;
     s << "   Copyright (C) 2007 Sebastian Trueg <trueg@kde.org>" << endl;
-    s << "   This software is released under the GNU General Public License version 2." << endl;
+    s << "   This program is free software; you can redistribute it and/or modify" << endl
+      << "   it under the terms of the GNU General Public License as published by" << endl
+      << "   the Free Software Foundation; either version 2 of the License, or" << endl
+      << "   (at your option) any later version." << endl;
     s << endl;
     s << "Usage:" << endl
-      << "   sopranod [--backend <name>] [--storagedir <dir>] [--port <port>]" << endl;
+      << "   sopranod [--backend <name>] [--storagedir <dir>] [--port <port>]"
+#ifdef SOPRANO_BUILD_INDEX_LIB
+           " [--with-index]"
+#endif
+      << endl;
 
     return 1;
 }
@@ -70,6 +80,7 @@ int main( int argc, char** argv )
     QStringList args = app.arguments();
     QString backendName;
     int port = Soprano::Server::ServerCore::DEFAULT_PORT;
+    bool withIndex = false;
     QList<Soprano::BackendSetting> settings;
     int i = 1;
     while ( i < args.count() ) {
@@ -104,6 +115,11 @@ int main( int argc, char** argv )
                 return usage();
             }
         }
+#ifdef SOPRANO_BUILD_INDEX_LIB
+        else if ( args[i] == "--with-index" ) {
+            withIndex = true;
+        }
+#endif
         else {
             return usage();
         }
@@ -124,10 +140,11 @@ int main( int argc, char** argv )
         return 5;
     }
 
-    Soprano::Server::ServerCore core( &app );
+    SopranodCore* core = new SopranodCore( withIndex, &app );
+    core->setBackendSettings( settings );
 
     QDBusConnection::sessionBus().registerService( "org.soprano.Server" );
-    core.registerAsDBusObject();
+    core->registerAsDBusObject();
 
     if ( !backendName.isEmpty() ) {
         const Soprano::Backend* backend = Soprano::PluginManager::instance()->discoverBackendByName( backendName );
@@ -135,7 +152,7 @@ int main( int argc, char** argv )
             qWarning("Could not find backend: %s", qPrintable(backendName));
             return 2;
         }
-        core.setBackend( backend );
+        core->setBackend( backend );
     }
 
     QString socketPath = QDir::homePath() + QLatin1String( "/.soprano/socket" );
@@ -143,7 +160,7 @@ int main( int argc, char** argv )
         QFile::remove( socketPath );
     }
 
-    if ( core.start() && core.listen( port ) ) {
+    if ( core->start() && core->listen( port ) ) {
         return app.exec();
     }
     else {

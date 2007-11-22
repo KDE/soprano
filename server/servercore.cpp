@@ -82,6 +82,8 @@ Soprano::Server::ServerCore::~ServerCore()
         conn->close();
         conn->wait();
     }
+    qDeleteAll( d->connections );
+    qDeleteAll( d->models );
     delete d;
 }
 
@@ -120,6 +122,7 @@ Soprano::Model* Soprano::Server::ServerCore::model( const QString& name )
             BackendSetting& setting = *it;
             if ( setting.option() == BackendOptionStorageDir ) {
                 setting.setValue( setting.value().toString() + '/' + name );
+                QDir().mkpath( setting.value().toString() );
             }
         }
         Model* model = createModel( settings );

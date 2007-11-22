@@ -159,6 +159,7 @@ namespace Soprano {
 	     *
 	     * \return A newly create Model.
 	     */
+	    // FIXME: 3.0: this method should be const
 	    virtual Model* createModel( const QList<BackendSetting>& settings );
 
 	private:

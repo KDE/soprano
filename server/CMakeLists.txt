@@ -6,6 +6,7 @@ include_directories(
   ${soprano_core_BINARY_DIR}
   ${soprano_core_SOURCE_DIR}/util
   ${soprano_core_SOURCE_DIR}/query
+  ${soprano_core_SOURCE_DIR}/vocabulary
   ${QT_INCLUDES}
   ${soprano_SOURCE_DIR}
 )
@@ -83,7 +84,9 @@ add_library(sopranoserver SHARED ${soprano_server_SRC})
 add_library(sopranoclient SHARED ${soprano_client_SRC})
 #add_library(soprano_serverclientbackend SHARED ${soprano_serverbackend_SRC})
 
-add_executable(sopranod sopranod.cpp lockfile.cpp)
+qt4_automoc(sopranodcore.cpp)
+
+add_executable(sopranod sopranod.cpp sopranodcore.cpp lockfile.cpp)
 
 set_target_properties(sopranoserver PROPERTIES
   VERSION 1.0.0
@@ -125,6 +128,13 @@ target_link_libraries(
   sopranoserver
   soprano
 )
+
+if(SOPRANO_BUILD_INDEX_LIB)
+  target_link_libraries(
+    sopranod
+    sopranoindex
+  )
+endif(SOPRANO_BUILD_INDEX_LIB)
 
 INSTALL(TARGETS sopranoserver sopranoclient sopranod
 	LIBRARY DESTINATION ${LIB_DESTINATION}
