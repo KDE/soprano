@@ -51,6 +51,17 @@ namespace Soprano
 		    void setError( const Error::Error& e ) const { ErrorCache::setError( e ); }
 		    void clearError() const { ErrorCache::clearError(); }
 
+		    inline Error::Error lastError() const { return ErrorCache::lastError(); }
+
+		    Error::Error lastError( const Error::Error& fallBackError ) const {
+			if( ErrorCache::lastError() ) {
+			    return ErrorCache::lastError();
+			}
+			else {
+			    return fallBackError;
+			}
+		    }
+
 		private:
 		    librdf_world * m_world;
 		};

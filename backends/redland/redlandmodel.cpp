@@ -116,7 +116,8 @@ Soprano::Error::ErrorCode Soprano::Redland::RedlandModel::addStatement( const St
 
     librdf_statement* redlandStatement = Util::createStatement( statement );
     if ( !redlandStatement ) {
-        setError( Redland::World::self()->lastError() );
+        setError( Redland::World::self()->lastError( Error::Error( "Could not convert redland statement",
+                                                                   Error::ErrorInvalidArgument ) ) );
         d->readWriteLock.unlock();
         return Error::ErrorInvalidArgument;
     }
@@ -134,7 +135,8 @@ Soprano::Error::ErrorCode Soprano::Redland::RedlandModel::addStatement( const St
         if ( librdf_model_context_add_statement( d->model, redlandContext, redlandStatement ) ) {
             Util::freeStatement( redlandStatement );
             Util::freeNode( redlandContext );
-            setError( Redland::World::self()->lastError() );
+            setError( Redland::World::self()->lastError( Error::Error( "Failed to add statement",
+                                                                       Error::ErrorUnknown ) ) );
             d->readWriteLock.unlock();
             return Error::ErrorUnknown;
         }

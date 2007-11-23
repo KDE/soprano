@@ -62,10 +62,18 @@ librdf_node *Soprano::Redland::Util::createNode( const Node &node )
         return librdf_new_node_from_blank_identifier( world, (unsigned char *) node.identifier().toUtf8().data() );
     }
     else if ( node.isLiteral() ) {
-        return librdf_new_node_from_typed_literal( world,
-                                                   (unsigned char *)node.literal().toString().toUtf8().data(),
-                                                   node.language().toUtf8().data(),
-                                                   librdf_new_uri( world, (const unsigned char*)node.dataType().toEncoded().data() ) );
+        if ( node.literal().isString() ) {
+            return librdf_new_node_from_typed_literal( world,
+                                                       (unsigned char *)node.literal().toString().toUtf8().data(),
+                                                       node.language().toUtf8().data(),
+                                                       0 );
+        }
+        else {
+            return librdf_new_node_from_typed_literal( world,
+                                                       (unsigned char *)node.literal().toString().toUtf8().data(),
+                                                       0,
+                                                       librdf_new_uri( world, (const unsigned char*)node.dataType().toEncoded().data() ) );
+        }
     }
 
     return 0;
