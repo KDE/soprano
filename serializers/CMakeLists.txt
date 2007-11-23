@@ -13,3 +13,5 @@ else(REDLAND_FOUND AND REDLAND_VERSION STRGREATER "1.0.5")
     message(STATUS "The redland serializer plugin will not be built!")
   endif(REDLAND_FOUND)
 endif(REDLAND_FOUND AND REDLAND_VERSION STRGREATER "1.0.5")
+
+add_subdirectory(nquads)

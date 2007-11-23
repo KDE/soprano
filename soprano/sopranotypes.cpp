@@ -37,6 +37,8 @@ QString Soprano::serializationMimeType( RdfSerialization serialization, const QS
         return QString::fromLatin1( "application/x-turtle" );
     case SerializationTrig:
         return QString::fromLatin1( "application/x-trig" );
+    case SerializationNQuads:
+        return QString::fromLatin1( "application/x-nquads" ); // FIXME: find the correct one (if there is)
     case SerializationUser:
         return userSerialization;
     default:
@@ -48,27 +50,40 @@ QString Soprano::serializationMimeType( RdfSerialization serialization, const QS
 Soprano::RdfSerialization Soprano::mimeTypeToSerialization( const QString& mimetype )
 {
     if ( mimetype == "application/rdf+xml" ||
-         mimetype == "text/rdf" ) {
+         mimetype == "text/rdf" ||
+         mimetype.toLower() == "rdfxml" ) {
         return SerializationRdfXml;
     }
     else if ( mimetype == "application/rdf+n3" ||
               mimetype == "text/rdf+n3" ||
-              mimetype == "text/n3" ) {
+              mimetype == "text/n3" ||
+              mimetype.toLower() == "n3" ) {
         return SerializationN3;
     }
     // FIXME: what about text/plain?
-    else if ( mimetype == "application/n-triples" ) {
+    else if ( mimetype == "application/n-triples" ||
+              mimetype.toLower() == "ntriples" ||
+              mimetype.toLower() == "n-triples" ) {
         return SerializationNTriples;
     }
     else if ( mimetype == "application/x-turtle" ||
-              mimetype == "application/turtle") {
+              mimetype == "application/turtle" ||
+              mimetype.toLower() == "turtle" ) {
         return SerializationTurtle;
     }
     else if ( mimetype == "application/x-trig" ||
-              mimetype == "application/trig") {
+              mimetype == "application/trig" ||
+              mimetype.toLower() == "trig" ) {
         return SerializationTrig;
     }
-    return SerializationUnknown;
+    else if ( mimetype == "application/x-nquads" ||
+              mimetype.toLower() == "nquads" ||
+              mimetype.toLower() == "n-quads" ) {
+        return SerializationNQuads;
+    }
+    else {
+        return SerializationUnknown;
+    }
 }
 
 

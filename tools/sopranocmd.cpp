@@ -138,7 +138,7 @@ static bool importFile( Soprano::Model* model, const QString& fileName, const QS
             }
             else {
                 QTextStream s( stderr );
-                s << "Failed to import statement " << *it << endl;
+                s << "Failed to import statement " << *it << ": " << model->lastError() << endl;
                 delete model;
                 return 2;
             }
@@ -333,8 +333,10 @@ int usage( const QString& error = QString() )
       << "                       (only applicable when querying against the Soprano server.)" << endl << endl
       << "   --host <host>       Specify the host the Soprano server is running on (defaults to localhost)." << endl
       << "                       (only applicable when querying against the Soprano server.)" << endl << endl
-      << "   --serialization <s> The serialization used for commands 'export' and 'import'. Defaults to 'application/x-trig'." << endl
-      << "                       (only applicable with the mentioned commands.)" << endl << endl
+      << "   --serialization <s> The serialization used for commands 'export' and 'import'. Defaults to 'application/x-nquads'." << endl
+      << "                       (only applicable with the mentioned commands.)" << endl
+      << "                       (be aware that Soprano can understand simple string identifiers such as 'trig' or 'n-triples'." << endl
+      << "                       There is no need to know the exact mimetype.)" << endl << endl
       << "   <command>           The command to perform. Can be one of 'add', 'remove', 'list', 'query', 'import', or 'export'." << endl << endl
       << "   <parameters>        The parameters to the command." << endl
       << "                       - For command 'query' this is a SPARQL query string." << endl
@@ -483,7 +485,7 @@ int main( int argc, char *argv[] )
         }
 
         QString fileName = args[firstArg];
-        QString serialization = args.getSetting( "serialization", "application/x-trig" );
+        QString serialization = args.getSetting( "serialization", "application/x-nquads" );
 
         if ( command == "import" ) {
             return importFile( model, fileName, serialization );

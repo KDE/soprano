@@ -37,9 +37,10 @@ namespace Soprano
 	SerializationUnknown = 0x0,  /**< The serialization is unknown. */
 	SerializationRdfXml = 0x1,   /**< Standard RDF/XML serialization */
 	SerializationN3 = 0x2,        /**< Notation 3: http://www.w3.org/DesignIssues/Notation3 */
-	SerializationNTriples = 0x4, /**< N-Triples as defined by W3: http://www.w3.org/TR/rdf-testcases/#ntriples */
+	SerializationNTriples = 0x4,  /**< N-Triples as defined by W3: http://www.w3.org/TR/rdf-testcases/#ntriples */
 	SerializationTurtle = 0x8,    /**< Turtle - Terse RDF Triple Language: http://www.dajobe.org/2004/01/turtle/ */
 	SerializationTrig = 0x10,     /**< TriG - Turtle + Named Graphs: http://sites.wiwiss.fu-berlin.de/suhl/bizer/TriG/ */
+	SerializationNQuads = 0x20,   /**< N-Quads extends over N-Triples in that it adds an optional context node. */
 	SerializationUser = 0x1000    /**< The user type can be used to introduce unknown RDF serializations by name */
     };
     Q_DECLARE_FLAGS(RdfSerializations, RdfSerialization)
@@ -59,7 +60,8 @@ namespace Soprano
     /**
      * Parse a mimetype and match it to the Soprano::RdfSerialization enum.
      * \return the Soprano::RdfSerialization type that matches mimetype or SerializationUnknown if the mimetype 
-     * could not be parsed.
+     * could not be parsed. Be aware that Soprano is very lax in parsing the mimetype, i.e. you can use simple
+     * strings like 'trig' or 'n-quads' instead of the proper mimetype for convenience.
      */
     SOPRANO_EXPORT RdfSerialization mimeTypeToSerialization( const QString& mimetype );
 
