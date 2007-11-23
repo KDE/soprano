@@ -40,7 +40,8 @@ Soprano::Node Soprano::Redland::Util::createNode( librdf_node *node )
     else if ( librdf_node_is_literal( node ) ) {
         librdf_uri* datatype = librdf_node_get_literal_value_datatype_uri( node );
         if ( !datatype ) {
-            return Soprano::Node( Soprano::LiteralValue( (const char *)librdf_node_get_literal_value( node ) ) );
+            return Soprano::Node( Soprano::LiteralValue( (const char *)librdf_node_get_literal_value( node ) ),
+                                  QString::fromAscii( librdf_node_get_literal_value_language( node ) ) );
         }
         return Soprano::Node( Soprano::LiteralValue::fromString( QString::fromUtf8( (const char *)librdf_node_get_literal_value( node ) ),
                                                                  QUrl::fromEncoded( (const char *)librdf_uri_as_string( datatype ),
