@@ -317,26 +317,37 @@ int usage( const QString& error = QString() )
     QTextStream s( stderr );
     s << endl;
     s << "Usage:" << endl
-      << "   sopranocmd [--version] [--help] [--port <port>] [--host <host>] [--model <name>] [--serialization <s>] [<command>] [<parameters>]" << endl
+      << "   sopranocmd --backend [--dir <storagedir>] [--serialization <s>] <command> [<parameters>]" << endl
+      << "   sopranocmd --port <port> [--host <host>] --model <name> [--serialization <s>] <command> [<parameters>]" << endl
+      << "   sopranocmd --dbus <dbusservice> --model <name> [--serialization <s>] <command> [<parameters>]" << endl
       << endl
-      << "   --version           Print version information." << endl << endl
-      << "   --help              Print this help." << endl << endl
+      << "   --version           Print version information." << endl
+      << endl
+      << "   --help              Print this help." << endl
+      << endl
       << "   --model <name>      The name of the Soprano model to perform the command on." << endl
-      << "                       (only applicable when querying against the Soprano server.)" << endl << endl
-      << "   --backend           The backend to use. If this option is not specified the Soprano server" << endl
-      << "                       will be contacted. Possible backends are:" << endl
-      << "                       " << backendNames().join( ", " ) << endl << endl
+      << "                       (only applicable when querying against the Soprano server.)" << endl
+      << endl
+      << "   --backend           The backend to use when accessing a storage directly and not via the Soprano server." << endl
+      << "                       Possible backends are:" << endl
+      << "                       " << backendNames().join( ", " ) << endl
+      << endl
       << "   --dir               The storage directory. This only applies when specifying the backend. Defaults" << endl
-      << "                       to current directory." << endl << endl
-      << "   --dbus <service>    Contact the soprano server running on the specified service." << endl << endl
+      << "                       to current directory." << endl
+      << endl
+      << "   --dbus <service>    Contact the soprano server through D-Bus running on the specified service." << endl
+      << endl
       << "   --port <port>       Specify the port the Soprano server is running on." << endl
-      << "                       (only applicable when querying against the Soprano server.)" << endl << endl
+      << "                       (only applicable when querying against the Soprano server.)" << endl
+      << endl
       << "   --host <host>       Specify the host the Soprano server is running on (defaults to localhost)." << endl
-      << "                       (only applicable when querying against the Soprano server.)" << endl << endl
+      << "                       (only applicable when querying against the Soprano server.)" << endl
+      << endl
       << "   --serialization <s> The serialization used for commands 'export' and 'import'. Defaults to 'application/x-nquads'." << endl
       << "                       (only applicable with the mentioned commands.)" << endl
       << "                       (be aware that Soprano can understand simple string identifiers such as 'trig' or 'n-triples'." << endl
-      << "                       There is no need to know the exact mimetype.)" << endl << endl
+      << "                       There is no need to know the exact mimetype.)" << endl
+      << endl
       << "   <command>           The command to perform. Can be one of 'add', 'remove', 'list', 'query', 'import', or 'export'." << endl << endl
       << "   <parameters>        The parameters to the command." << endl
       << "                       - For command 'query' this is a SPARQL query string." << endl
