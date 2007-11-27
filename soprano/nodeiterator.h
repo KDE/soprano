@@ -41,6 +41,18 @@ namespace Soprano {
      *
      * The most common use of %NodeIterator is through Model::listContexts().
      *
+     * Many backends do lock the underlying Model during iteration. Thus, 
+     * it is always a good idea to cache the results if they are to be used
+     * to modify the model to prevent a deadlock:
+     *
+     * \code
+     * Soprano::NodeIterator it = model->listContexts();
+     * QList<Node> allNodes = it.allElements();
+     * Q_FOREACH( Soprano::Node n, allNodes ) {
+     *    modifyTheModel( model, n );
+     * }
+     * \endcode
+     *
      * For further details on %Soprano iterators see Iterator.
      *
      * \warning Be aware that iterators in Soprano are shared objects which means

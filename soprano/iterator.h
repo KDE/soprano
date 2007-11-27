@@ -51,7 +51,7 @@ namespace Soprano {
      *
      * Many backends do lock the underlying Model during iteration. Thus, 
      * it is always a good idea to cache the results if they are to be used
-     * to modify the model:
+     * to modify the model to prevent a deadlock:
      *
      * \code
      * Soprano::StatementIterator it = model->listStatements();
@@ -71,6 +71,7 @@ namespace Soprano {
      * \warning Be aware that iterators in Soprano are shared objects which means
      * that copies of one iterator object work on the same data.
      * 
+     * \warning Be aware that 
      * \author Daniele Galdi <daniele.galdi@gmail.com><br>Sebastian Trueg <trueg@kde.org>
      */
     template<typename T> class Iterator : public Error::ErrorCache

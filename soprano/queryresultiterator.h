@@ -64,16 +64,28 @@ namespace Soprano {
      * <b>Example:</b>
      *
      * \code
-     * QueryResultIterator it = model->query( someGraphQuery );
+     * QueryResultIterator it = model->executeQuery( someGraphQuery );
      * while( it.next() ) {
      *    doSomething( it.currentStatement() );
      * }
      *
-     * QueryResultIterator it2 = model->query( someTupleQuery );
+     * QueryResultIterator it2 = model->executeQuery( someTupleQuery );
      * while( it.next() ) {
      *    doSomethingElse( it.currentBindings() );
      *    doSomethingCompletelyDifferent( it.binding( "x" ) );
      *    doSomethingEntirelyDifferent( it.binding( 0 ) );
+     * }
+     * \endcode
+     *
+     * Many backends do lock the underlying Model during iteration. Thus, 
+     * it is always a good idea to cache the results if they are to be used
+     * to modify the model to prevent a deadlock:
+     *
+     * \code
+     * Soprano::QueryResultIterator it = model->executeQuery( someTupleQuery );
+     * QList<BindingSet> allBindings = it.allBindings();
+     * Q_FOREACH( Soprano::BindingSet bs, allBindings ) {
+     *    modifyTheModel( model, bs );
      * }
      * \endcode
      *
