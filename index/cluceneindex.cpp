@@ -122,7 +122,7 @@ public:
             catch ( CLuceneError& err ) {
                 qDebug() << "(Soprano::Index::CLuceneIndex) could not close index seacher " << err.what();
             }
-            _CLDELETE( searcher );
+            delete searcher;
             searcher = 0;
         }
         if ( indexReader ) {
@@ -132,7 +132,7 @@ public:
             catch ( CLuceneError& err ) {
                 qDebug() << "(Soprano::Index::CLuceneIndex) could not close index reader " << err.what();
             }
-            _CLDELETE( indexReader );
+            delete indexReader;
             indexReader = 0;
         }
     }
@@ -145,7 +145,7 @@ public:
             catch( CLuceneError& err ) {
                 qDebug() << "(Soprano::Index::CLuceneError) unable to close IndexWriter: " << err.what();
             }
-            _CLDELETE( indexWriter );
+            delete indexWriter;
             indexWriter = 0;
         }
     }
@@ -163,16 +163,19 @@ public:
     }
 
     lucene::document::Document* getDocument( lucene::index::Term* term ) {
-        lucene::index::TermDocs* docs = getIndexReader()->termDocs( term );
-        if ( docs->next() ) {
-            int32_t docId = docs->doc();
+        if ( lucene::index::TermDocs* docs = getIndexReader()->termDocs( term ) ) {
             if ( docs->next() ) {
-                qDebug() << "(Soprano::Index::CLuceneIndex) Multiple documents for resource " << term->text();
+                int32_t docId = docs->doc();
+                if ( docs->next() ) {
+                    qDebug() << "(Soprano::Index::CLuceneIndex) Multiple documents for resource " << term->text();
+                }
+                docs->close();
+                delete docs;
+                return getIndexReader()->document( docId );
             }
             docs->close();
-            return getIndexReader()->document( docId );
+            delete docs;
         }
-        docs->close();
         return 0;
     }
 
@@ -204,7 +207,6 @@ public:
 
             // step 3: copy the existing fields from the document into our cache
             if ( oldDoc ) {
-                CLuceneDocumentWrapper oldDocWrapper( oldDoc );
                 lucene::document::DocumentFieldEnumeration* fields = oldDoc->fields();
                 while ( fields->hasMoreElements() ) {
                     lucene::document::Field* field = fields->nextElement();
@@ -212,7 +214,8 @@ public:
                         docWrapper.addProperty( field->name(), field->stringValue() );
                     }
                 }
-                _CLDELETE( fields );
+                delete( fields );
+                delete( oldDoc );
             }
 
             // step 4: add the new doc to our cache
@@ -230,9 +233,11 @@ public:
             for ( QHash<Node, lucene::document::Document*>::iterator it = documentCache.begin();
                   it != documentCache.end(); ++it ) {
                 lucene::document::Document* doc = it.value();
-                lucene::index::Term* idTerm = _CLNEW lucene::index::Term( idFieldName().data(), doc->get( idFieldName().data() ) );
-                getIndexReader()->deleteDocuments( idTerm );
-                _CLDECDELETE( idTerm );
+                if ( const TCHAR* id = doc->get( idFieldName().data() ) ) { // this check is only for testing, it should NEVER fail
+                    lucene::index::Term* idTerm = _CLNEW lucene::index::Term( idFieldName().data(), id );
+                    getIndexReader()->deleteDocuments( idTerm );
+                    _CLDECDELETE( idTerm );
+                }
             }
         }
 
@@ -241,7 +246,7 @@ public:
               it != documentCache.end(); ++it ) {
             lucene::document::Document* doc = it.value();
             getIndexWriter()->addDocument( doc );
-            _CLDELETE( doc );
+            delete( doc );
         }
 
         documentCache.clear();
@@ -269,7 +274,7 @@ Soprano::Index::CLuceneIndex::~CLuceneIndex()
     close();
 
     if ( d->deleteAnalyzer ) {
-        _CLDELETE( d->analyzer );
+        delete( d->analyzer );
     }
     delete d;
 }
@@ -414,7 +419,7 @@ bool Soprano::Index::CLuceneIndex::closeTransaction( int id )
 
 Soprano::Error::ErrorCode Soprano::Index::CLuceneIndex::addStatement( const Soprano::Statement& statement )
 {
-    qDebug() << "CLuceneIndex::addStatement in thread " << QThread::currentThreadId();
+//    qDebug() << "CLuceneIndex::addStatement in thread " << QThread::currentThreadId();
     QMutexLocker lock( &d->mutex );
 
     if ( !statement.object().isLiteral() ) {
@@ -490,7 +495,7 @@ Soprano::Error::ErrorCode Soprano::Index::CLuceneIndex::removeStatement( const S
         }
     }
     catch( CLuceneError& err ) {
-        qDebug() << "(Soprano::Index::CLuceneIndex) Exception occured: " << err.what();
+        qDebug() << "(Soprano::Index::CLuceneIndex::removeStatement) Exception occured: " << err.what();
         setError( exceptionToError( err ) );
         success = false;
     }
@@ -583,7 +588,7 @@ double Soprano::Index::CLuceneIndex::getScore( const Soprano::Node& resource, co
     try {
         lucene::search::Query* q = lucene::queryParser::QueryParser::parse( TString( query ).data(), textFieldName().data(), d->analyzer );
         double score = getScore( resource, q );
-        _CLDELETE( q );
+        delete( q );
         return score;
     }
     catch( CLuceneError& err ) {
@@ -631,7 +636,6 @@ double Soprano::Index::CLuceneIndex::getScore( const Soprano::Node& resource, lu
 
 void Soprano::Index::CLuceneIndex::dump( QTextStream& s ) const
 {
-    qDebug() << "CLuceneIndex::dump in thread " << QThread::currentThreadId();
     QMutexLocker lock( &d->mutex );
 
     clearError();
@@ -658,7 +662,6 @@ void Soprano::Index::CLuceneIndex::dump( QTextStream& s ) const
         qDebug() << "(Soprano::Index::CLuceneIndex) failed to dump index.";
         setError( exceptionToError( err ) );
     }
-    qDebug() << "CLuceneIndex::dump done in thread " << QThread::currentThreadId();
 }
 
 

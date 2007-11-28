@@ -102,7 +102,7 @@ Soprano::Index::CLuceneIndex* Soprano::Index::IndexFilterModel::index() const
 
 Soprano::Error::ErrorCode Soprano::Index::IndexFilterModel::addStatement( const Soprano::Statement &statement )
 {
-//    qDebug() << "IndexFilterModel::addStatement in thread " << QThread::currentThreadId();
+//    qDebug() << "IndexFilterModel::addStatement(" << statement << ") in thread " << QThread::currentThreadId();
     if ( !FilterModel::containsStatement( statement ) ) {
         Error::ErrorCode c = FilterModel::addStatement( statement );
         if ( c == Error::ErrorNone && statement.object().isLiteral() ) {

@@ -65,7 +65,7 @@ void Soprano::Index::CLuceneDocumentWrapper::addProperty( const TString& field, 
 #ifdef CL_VERSION_19_OR_GREATER
                                   Field::STORE_YES|Field::INDEX_TOKENIZED|Field::TERMVECTOR_NO
 #else
-                                  true, false, false
+                                  true, true, true
 #endif
                           ) );
 
@@ -78,7 +78,7 @@ void Soprano::Index::CLuceneDocumentWrapper::addProperty( const TString& field, 
     // (YES, the CLucene API is that bad. We actually put in Fields allocated on the heap here!)
     d->document->add( *new Field( textFieldName().data(), text.data(),
 #ifdef CL_VERSION_19_OR_GREATER
-                                  Field::STORE_NO|Field::INDEX_TOKENIZED|Field::TERMVECTOR_YES
+                                  Field::STORE_NO|Field::INDEX_TOKENIZED|Field::TERMVECTOR_NO
 #else
                                   false, true, true
 #endif
