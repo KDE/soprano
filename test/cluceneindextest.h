@@ -28,6 +28,7 @@ namespace Soprano {
     class Model;
     namespace Index {
 	class IndexFilterModel;
+	class CLuceneIndex;
     }
 }
 
@@ -47,6 +48,7 @@ private Q_SLOTS:
 private:
     Soprano::Model* m_model;
     Soprano::Index::IndexFilterModel* m_indexModel;
+    Soprano::Index::CLuceneIndex* m_index;
 };
 
 #endif

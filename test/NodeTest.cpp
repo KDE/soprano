@@ -56,6 +56,13 @@ void NodeTest::testCreateLiteralNode()
   QVERIFY( node.isValid() );
   QCOMPARE( node.literal().toString(), literal );
   QVERIFY( node.uri().isEmpty() );
+
+  Node germanNode( LiteralValue( "Hallo Welt" ), "de" );
+  QCOMPARE( germanNode.type(), Node::LiteralNode );
+  QVERIFY( germanNode.isValid() );
+  QCOMPARE( germanNode.literal().toString(), QString( "Hallo Welt" )  );
+  QVERIFY( germanNode.uri().isEmpty() );
+  QCOMPARE( germanNode.language(), QString( "de" ) );
 }
 
 void NodeTest::testCreateBlankNode()

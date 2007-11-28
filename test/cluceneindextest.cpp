@@ -54,7 +54,7 @@ static QList<Statement> createTestData( const Statement& s, int num )
     for( int i = 0; i < num; ++i ) {
         sl.append( Statement( s.subject().isEmpty() ? Node( createRandomUri() ) : s.subject(),
                               s.predicate().isEmpty() ? Node( createRandomUri() ) : s.predicate(),
-                              s.object().isEmpty() ? Node( createRandomUri() ) : s.object(),
+                              s.object().isEmpty() ? Node( LiteralValue( createRandomUri().toString() ) ) : s.object(),
                               s.context() ) );
     }
     return sl;
@@ -63,24 +63,29 @@ static QList<Statement> createTestData( const Statement& s, int num )
 
 void IndexTest::init()
 {
+    // remove previous testdata
+    QProcess::execute( "rm", QString( "-rf,/tmp/sopranoindextest" ).split( "," ) );
+    QDir( "/tmp" ).mkdir( "sopranoindextest" );
+    QDir( "/tmp" ).mkpath( "sopranoindextest/index" );
+
     // create any memory model
     QList<BackendSetting> settings;
-    settings.append( BackendSetting( BackendOptionStorageMemory ) );
+    settings.append( BackendSetting( BackendOptionStorageDir, "/tmp/sopranoindextest" ) );
     m_model = createModel( settings );
 
     QVERIFY( m_model != 0 );
 
-    // remove previous testdata
-    QProcess::execute( "rm", QString( "-rf,/tmp/sopranoindextest" ).split( "," ) );
-    QDir( "/tmp" ).mkdir( "sopranoindextest" );
 
-    m_indexModel = new IndexFilterModel( "/tmp/sopranoindextest", m_model );
+    m_index = new CLuceneIndex();
+    QVERIFY( m_index->open( "/tmp/sopranoindextest/index", true ) );
+    m_indexModel = new IndexFilterModel( m_index, m_model );
 }
 
 
 void IndexTest::cleanup()
 {
     delete m_indexModel;
+    delete m_index;
     delete m_model;
 }
 
@@ -91,6 +96,12 @@ void IndexTest::testAddStatement()
                   QUrl( "http://soprano.sf.net/test#valueX" ),
                   LiteralValue( "Hello World" ) );
     Statement s2( QUrl( "http://soprano.sf.net/test#A" ),
+                  QUrl( "http://soprano.sf.net/test#valueY" ),
+                  LiteralValue( "Wurst" ) );
+    Statement s3( QUrl( "http://soprano.sf.net/test#B" ),
+                  QUrl( "http://soprano.sf.net/test#valueX" ),
+                  LiteralValue( "Hello World" ) );
+    Statement s4( QUrl( "http://soprano.sf.net/test#B" ),
                   QUrl( "http://soprano.sf.net/test#valueY" ),
                   LiteralValue( "Wurst" ) );
 
@@ -120,6 +131,22 @@ void IndexTest::testAddStatement()
     QCOMPARE( hits.current().resource(), s2.subject() );
     QVERIFY( !hits.next() );
     hits.close();
+
+
+    // now add a new resource
+    QVERIFY( m_indexModel->addStatement( s3 ) == Error::ErrorNone );
+    QVERIFY( m_indexModel->addStatement( s4 ) == Error::ErrorNone );
+    QVERIFY( m_indexModel->containsStatement( s3 ) );
+    QVERIFY( m_indexModel->containsStatement( s4 ) );
+
+    // and make sure we get both resources in a query
+    hits = m_indexModel->index()->search( "Wurst" );
+    QVERIFY( hits.next() );
+    QVERIFY( hits.next() );
+    QVERIFY( !hits.next() );
+
+    QTextStream s( stderr );
+    m_indexModel->index()->dump(s);
 }
 
 
