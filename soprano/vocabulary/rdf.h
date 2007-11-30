@@ -27,27 +27,87 @@
 
 namespace Soprano {
     namespace Vocabulary {
-	namespace RDF {
-	    /**
-	     * The RDF namespace (http://www.w3.org/1999/02/22-rdf-syntax-ns#)
-	     */
-	    SOPRANO_EXPORT QUrl rdfNamespace();
-	    SOPRANO_EXPORT QUrl type();
-	    SOPRANO_EXPORT QUrl Property();
-	    SOPRANO_EXPORT QUrl Statement();
-	    SOPRANO_EXPORT QUrl subject();
-	    SOPRANO_EXPORT QUrl predicate();
-	    SOPRANO_EXPORT QUrl object();
-	    SOPRANO_EXPORT QUrl Bag();
-	    SOPRANO_EXPORT QUrl Seq();
-	    SOPRANO_EXPORT QUrl Alt();
-	    SOPRANO_EXPORT QUrl value();
-	    SOPRANO_EXPORT QUrl List();
-	    SOPRANO_EXPORT QUrl nil();
-	    SOPRANO_EXPORT QUrl first();
-	    SOPRANO_EXPORT QUrl rest();
-	    SOPRANO_EXPORT QUrl XMLLiteral();
-	}
+        namespace RDF {
+            /**
+             * http://www.w3.org/1999/02/22-rdf-syntax-ns#
+             */
+            SOPRANO_EXPORT QUrl rdfNamespace();
+
+            /**
+             * http://www.w3.org/1999/02/22-rdf-syntax-ns#type
+             */
+            SOPRANO_EXPORT QUrl type();
+
+            /**
+             * http://www.w3.org/1999/02/22-rdf-syntax-ns#Property
+             */
+            SOPRANO_EXPORT QUrl Property();
+
+            /**
+             * http://www.w3.org/1999/02/22-rdf-syntax-ns#Statement
+             */
+            SOPRANO_EXPORT QUrl Statement();
+
+            /**
+             * http://www.w3.org/1999/02/22-rdf-syntax-ns#subject
+             */
+            SOPRANO_EXPORT QUrl subject();
+
+            /**
+             * http://www.w3.org/1999/02/22-rdf-syntax-ns#predicate
+             */
+            SOPRANO_EXPORT QUrl predicate();
+
+            /**
+             * http://www.w3.org/1999/02/22-rdf-syntax-ns#object
+             */
+            SOPRANO_EXPORT QUrl object();
+
+            /**
+             * http://www.w3.org/1999/02/22-rdf-syntax-ns#Bag
+             */
+            SOPRANO_EXPORT QUrl Bag();
+
+            /**
+             * http://www.w3.org/1999/02/22-rdf-syntax-ns#Seq
+             */
+            SOPRANO_EXPORT QUrl Seq();
+
+            /**
+             * http://www.w3.org/1999/02/22-rdf-syntax-ns#Alt
+             */
+            SOPRANO_EXPORT QUrl Alt();
+
+            /**
+             * http://www.w3.org/1999/02/22-rdf-syntax-ns#value
+             */
+            SOPRANO_EXPORT QUrl value();
+
+            /**
+             * http://www.w3.org/1999/02/22-rdf-syntax-ns#List
+             */
+            SOPRANO_EXPORT QUrl List();
+
+            /**
+             * http://www.w3.org/1999/02/22-rdf-syntax-ns#nil
+             */
+            SOPRANO_EXPORT QUrl nil();
+
+            /**
+             * http://www.w3.org/1999/02/22-rdf-syntax-ns#first
+             */
+            SOPRANO_EXPORT QUrl first();
+
+            /**
+             * http://www.w3.org/1999/02/22-rdf-syntax-ns#rest
+             */
+            SOPRANO_EXPORT QUrl rest();
+
+            /**
+             * http://www.w3.org/1999/02/22-rdf-syntax-ns#XMLLiteral
+             */
+            SOPRANO_EXPORT QUrl XMLLiteral();
+        }
     }
 }
 

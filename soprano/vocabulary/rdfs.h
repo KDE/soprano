@@ -27,24 +27,87 @@
 
 namespace Soprano {
     namespace Vocabulary {
-	namespace RDFS {
-	    SOPRANO_EXPORT QUrl rdfsNamespace();
-	    SOPRANO_EXPORT QUrl Class();
-	    SOPRANO_EXPORT QUrl comment();
-	    SOPRANO_EXPORT QUrl Datatype();
-	    SOPRANO_EXPORT QUrl domain();
-	    SOPRANO_EXPORT QUrl range();
-	    SOPRANO_EXPORT QUrl label();
-	    SOPRANO_EXPORT QUrl subClassOf();
-	    SOPRANO_EXPORT QUrl subPropertyOf();
-	    SOPRANO_EXPORT QUrl seeAlso();
-	    SOPRANO_EXPORT QUrl Resource();
-	    SOPRANO_EXPORT QUrl member();
-	    SOPRANO_EXPORT QUrl Literal();
-	    SOPRANO_EXPORT QUrl isDefinedBy();
-	    SOPRANO_EXPORT QUrl Container();
-	    SOPRANO_EXPORT QUrl ContainerMembershipProperty();
-	}
+        namespace RDFS {
+            /**
+             * http://www.w3.org/2000/01/rdf-schema#
+             */
+            SOPRANO_EXPORT QUrl rdfsNamespace();
+
+            /**
+             * http://www.w3.org/2000/01/rdf-schema#Resource
+             */
+            SOPRANO_EXPORT QUrl Resource();
+
+            /**
+             * http://www.w3.org/2000/01/rdf-schema#Class
+             */
+            SOPRANO_EXPORT QUrl Class();
+
+            /**
+             * http://www.w3.org/2000/01/rdf-schema#subClassOf
+             */
+            SOPRANO_EXPORT QUrl subClassOf();
+
+            /**
+             * http://www.w3.org/2000/01/rdf-schema#subPropertyOf
+             */
+            SOPRANO_EXPORT QUrl subPropertyOf();
+
+            /**
+             * http://www.w3.org/2000/01/rdf-schema#comment
+             */
+            SOPRANO_EXPORT QUrl comment();
+
+            /**
+             * http://www.w3.org/2000/01/rdf-schema#label
+             */
+            SOPRANO_EXPORT QUrl label();
+
+            /**
+             * http://www.w3.org/2000/01/rdf-schema#domain
+             */
+            SOPRANO_EXPORT QUrl domain();
+
+            /**
+             * http://www.w3.org/2000/01/rdf-schema#range
+             */
+            SOPRANO_EXPORT QUrl range();
+
+            /**
+             * http://www.w3.org/2000/01/rdf-schema#seeAlso
+             */
+            SOPRANO_EXPORT QUrl seeAlso();
+
+            /**
+             * http://www.w3.org/2000/01/rdf-schema#isDefinedBy
+             */
+            SOPRANO_EXPORT QUrl isDefinedBy();
+
+            /**
+             * http://www.w3.org/2000/01/rdf-schema#Literal
+             */
+            SOPRANO_EXPORT QUrl Literal();
+
+            /**
+             * http://www.w3.org/2000/01/rdf-schema#Container
+             */
+            SOPRANO_EXPORT QUrl Container();
+
+            /**
+             * http://www.w3.org/2000/01/rdf-schema#ContainerMembershipProperty
+             */
+            SOPRANO_EXPORT QUrl ContainerMembershipProperty();
+
+            /**
+             * http://www.w3.org/2000/01/rdf-schema#member
+             */
+            SOPRANO_EXPORT QUrl member();
+
+            /**
+             * http://www.w3.org/2000/01/rdf-schema#Datatype
+             */
+            SOPRANO_EXPORT QUrl Datatype();
+        }
     }
 }
 
