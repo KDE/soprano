@@ -28,16 +28,16 @@ namespace Soprano {
     class RandomGenerator
     {
     public:
-	~RandomGenerator();
+    ~RandomGenerator();
 
-	int randomInt();
+    int randomInt();
 
-	static RandomGenerator* instance();
+    static RandomGenerator* instance();
 
     private:
-	RandomGenerator();
+    RandomGenerator();
 
-	QMutex m_mutex;
+    QMutex m_mutex;
     };
 }
 

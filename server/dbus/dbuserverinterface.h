@@ -37,28 +37,28 @@ Q_DECLARE_METATYPE(Soprano::BackendSettings);
 
 namespace Soprano {
     namespace Client {
-	class DBusServerInterface: public QDBusAbstractInterface
-	{
-	    Q_OBJECT
+    class DBusServerInterface: public QDBusAbstractInterface
+    {
+        Q_OBJECT
 
-	public:
-	    DBusServerInterface( const QString& service, const QString& path, const QDBusConnection& connection, QObject* parent = 0 );
-	    ~DBusServerInterface();
+    public:
+        DBusServerInterface( const QString& service, const QString& path, const QDBusConnection& connection, QObject* parent = 0 );
+        ~DBusServerInterface();
 
-	public Q_SLOTS:
-	    inline QDBusReply<QStringList> allModels()
-	    {
-		QList<QVariant> argumentList;
-		return callWithArgumentList(QDBus::Block, QLatin1String("allModels"), argumentList);
-	    }
+    public Q_SLOTS:
+        inline QDBusReply<QStringList> allModels()
+        {
+        QList<QVariant> argumentList;
+        return callWithArgumentList(QDBus::Block, QLatin1String("allModels"), argumentList);
+        }
 
-	    inline QDBusReply<QString> createModel( const QString &name )
-	    {
-		QList<QVariant> argumentList;
-		argumentList << qVariantFromValue(name);
-		return callWithArgumentList(QDBus::Block, QLatin1String("createModel"), argumentList);
-	    }
-	};
+        inline QDBusReply<QString> createModel( const QString &name )
+        {
+        QList<QVariant> argumentList;
+        argumentList << qVariantFromValue(name);
+        return callWithArgumentList(QDBus::Block, QLatin1String("createModel"), argumentList);
+        }
+    };
     }
 }
 

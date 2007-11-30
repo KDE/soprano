@@ -32,22 +32,22 @@ namespace Soprano
 
     namespace Client {
 
-	class ClientModel;
+    class ClientModel;
 
-	class ClientNodeIteratorBackend: public Soprano::IteratorBackend<Node>
-	{
-	public:
-	    ClientNodeIteratorBackend( int itId, ClientModel* model );
-	    ~ClientNodeIteratorBackend();
+    class ClientNodeIteratorBackend: public Soprano::IteratorBackend<Node>
+    {
+    public:
+        ClientNodeIteratorBackend( int itId, ClientModel* model );
+        ~ClientNodeIteratorBackend();
 
-	    bool next();
-	    Soprano::Node current() const;
-	    void close();
+        bool next();
+        Soprano::Node current() const;
+        void close();
 
-	private:
-	    int m_iteratorId;
-	    QPointer<ClientModel> m_model;
-	};
+    private:
+        int m_iteratorId;
+        QPointer<ClientModel> m_model;
+    };
     }
 }
 

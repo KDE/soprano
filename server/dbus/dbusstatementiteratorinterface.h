@@ -34,33 +34,33 @@ namespace Soprano {
     class Statement;
 
     namespace Client {
-	class DBusStatementIteratorInterface: public QDBusAbstractInterface
-	{
-	    Q_OBJECT
+    class DBusStatementIteratorInterface: public QDBusAbstractInterface
+    {
+        Q_OBJECT
 
-	public:
-	    DBusStatementIteratorInterface( const QString& service, const QString& path, const QDBusConnection& connection, QObject *parent = 0 );
-	    ~DBusStatementIteratorInterface();
+    public:
+        DBusStatementIteratorInterface( const QString& service, const QString& path, const QDBusConnection& connection, QObject *parent = 0 );
+        ~DBusStatementIteratorInterface();
 
-	public Q_SLOTS:
-	    inline QDBusReply<Soprano::Statement> current()
-	    {
-		QList<QVariant> argumentList;
-		return callWithArgumentList(QDBus::Block, QLatin1String("current"), argumentList);
-	    }
+    public Q_SLOTS:
+        inline QDBusReply<Soprano::Statement> current()
+        {
+        QList<QVariant> argumentList;
+        return callWithArgumentList(QDBus::Block, QLatin1String("current"), argumentList);
+        }
 
-	    inline QDBusReply<bool> next()
-	    {
-		QList<QVariant> argumentList;
-		return callWithArgumentList(QDBus::Block, QLatin1String("next"), argumentList);
-	    }
+        inline QDBusReply<bool> next()
+        {
+        QList<QVariant> argumentList;
+        return callWithArgumentList(QDBus::Block, QLatin1String("next"), argumentList);
+        }
 
-	    inline QDBusReply<void> close()
-	    {
-		QList<QVariant> argumentList;
-		return callWithArgumentList(QDBus::Block, QLatin1String("close"), argumentList);
-	    }
-	};
+        inline QDBusReply<void> close()
+        {
+        QList<QVariant> argumentList;
+        return callWithArgumentList(QDBus::Block, QLatin1String("close"), argumentList);
+        }
+    };
     }
 }
 

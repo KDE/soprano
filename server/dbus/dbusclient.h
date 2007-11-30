@@ -34,70 +34,70 @@ namespace Soprano {
 
     namespace Client {
 
-	class DBusModel;
+    class DBusModel;
 
-	/**
-	 * \class DBusClient dbusclient.h Soprano/Server/DBusClient
-	 *
-	 * \brief Core class to handle a connection to a Soprano server through the
-	 * DBus interface.
-	 *
-	 * DBusClient creates a connection to a running Soprano Server via its DBus
-	 * interface. All DBus communication is handled internally.
-	 *
-	 * See DBusModel for details about thread-safety.
-	 *
-	 * \author Sebastian Trueg <trueg@kde.org>
-	 */
-	class SOPRANO_CLIENT_EXPORT DBusClient : public QObject, public Error::ErrorCache
-	{
-	    Q_OBJECT
+    /**
+     * \class DBusClient dbusclient.h Soprano/Server/DBusClient
+     *
+     * \brief Core class to handle a connection to a Soprano server through the
+     * DBus interface.
+     *
+     * DBusClient creates a connection to a running Soprano Server via its DBus
+     * interface. All DBus communication is handled internally.
+     *
+     * See DBusModel for details about thread-safety.
+     *
+     * \author Sebastian Trueg <trueg@kde.org>
+     */
+    class SOPRANO_CLIENT_EXPORT DBusClient : public QObject, public Error::ErrorCache
+    {
+        Q_OBJECT
 
-	public:
-	    /**
-	     * Create a new DBus client.
-	     *
-	     * \param service The DBus service name. If empty the client will use the
-	     * default Soprano service name.
-	     * \param parent The parent object.
-	     */
-	    DBusClient( const QString& service = QString(), QObject* parent = 0 );
+    public:
+        /**
+         * Create a new DBus client.
+         *
+         * \param service The DBus service name. If empty the client will use the
+         * default Soprano service name.
+         * \param parent The parent object.
+         */
+        DBusClient( const QString& service = QString(), QObject* parent = 0 );
 
-	    /**
-	     * Destructor
-	     */
-	    ~DBusClient();
+        /**
+         * Destructor
+         */
+        ~DBusClient();
 
-	    /**
-	     * Check if the service is valid and available.
-	     *
-	     * \return \p true if the Soprano server service could be found and used.
-	     * Otherwise returns \p false.
-	     */
-	    bool isValid() const;
+        /**
+         * Check if the service is valid and available.
+         *
+         * \return \p true if the Soprano server service could be found and used.
+         * Otherwise returns \p false.
+         */
+        bool isValid() const;
 
-	    /**
-	     * Retrive a list of all models that are available.
-	     *
-	     * \return A list of model names to be used with createModel()
-	     */
-	    QStringList allModels() const;
+        /**
+         * Retrive a list of all models that are available.
+         *
+         * \return A list of model names to be used with createModel()
+         */
+        QStringList allModels() const;
 
-	    /**
-	     * Creates a new Model instance that wraps a dbus server model.
-	     *
-	     * \param name The name of the model to access.
-	     * \param settings Settings for future extension. Not used yet.
-	     *
-	     * \return A new Model instance wrapping the requested server
-	     * model or 0 on error (check lastError() for details.)
-	     */
-	    DBusModel* createModel( const QString& name, const BackendSettings& settings = BackendSettings() );
+        /**
+         * Creates a new Model instance that wraps a dbus server model.
+         *
+         * \param name The name of the model to access.
+         * \param settings Settings for future extension. Not used yet.
+         *
+         * \return A new Model instance wrapping the requested server
+         * model or 0 on error (check lastError() for details.)
+         */
+        DBusModel* createModel( const QString& name, const BackendSettings& settings = BackendSettings() );
 
-	private:
-	    class Private;
-	    Private* const d;
-	};
+    private:
+        class Private;
+        Private* const d;
+    };
     }
 }
 

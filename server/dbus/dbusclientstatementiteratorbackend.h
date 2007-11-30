@@ -30,22 +30,22 @@ namespace Soprano {
 
     namespace Client {
 
-	class DBusStatementIteratorInterface;
+    class DBusStatementIteratorInterface;
 
-	class DBusClientStatementIteratorBackend : public IteratorBackend<Statement>
-	{
-	public:
-	    DBusClientStatementIteratorBackend( const QString& serviceName, const QString& objectPath );
-	    ~DBusClientStatementIteratorBackend();
+    class DBusClientStatementIteratorBackend : public IteratorBackend<Statement>
+    {
+    public:
+        DBusClientStatementIteratorBackend( const QString& serviceName, const QString& objectPath );
+        ~DBusClientStatementIteratorBackend();
 
-	    bool next();
-	    Soprano::Statement current() const;
-	    void close();
+        bool next();
+        Soprano::Statement current() const;
+        void close();
 
-	private:
-	    DBusStatementIteratorInterface* m_interface;
-	    bool m_done;
-	};
+    private:
+        DBusStatementIteratorInterface* m_interface;
+        bool m_done;
+    };
     }
 }
 

@@ -38,53 +38,53 @@ namespace Soprano {
     class BackendSetting;
 
     namespace Client {
-	class ClientConnection : public QObject, public Error::ErrorCache
-	{
-	    Q_OBJECT
+    class ClientConnection : public QObject, public Error::ErrorCache
+    {
+        Q_OBJECT
 
-	public:
-	    ClientConnection( QObject* parent = 0 );
-	    ~ClientConnection();
+    public:
+        ClientConnection( QObject* parent = 0 );
+        ~ClientConnection();
 
-	    void connect( QIODevice* );
-	    
-	    // Backend methods
-	    /**
-	     * Create a new Model and return its ID.
-	     */
-	    int createModel( const QString& name, const QList<BackendSetting>& );
-	    Soprano::BackendFeatures supportedFeatures();
+        void connect( QIODevice* );
+        
+        // Backend methods
+        /**
+         * Create a new Model and return its ID.
+         */
+        int createModel( const QString& name, const QList<BackendSetting>& );
+        Soprano::BackendFeatures supportedFeatures();
 
-	    // Model methods
-	    Error::ErrorCode addStatement( int modelId, const Statement &statement );
-	    int listContexts( int modelId );
-	    int executeQuery( int modelId, const QString &query, Query::QueryLanguage type, const QString& userQueryLanguage );
-	    int listStatements( int modelId, const Statement &partial );
-	    Error::ErrorCode removeStatement( int modelId, const Statement &statement );
-	    Error::ErrorCode removeAllStatements( int modelId, const Statement &statement );
-	    int statementCount( int modelId );
-	    bool isEmpty( int modelId );
-	    bool containsStatement( int modelId, const Statement &statement );
-	    bool containsAnyStatement( int modelId, const Statement &statement );
-	    Node createBlankNode( int modelId );
+        // Model methods
+        Error::ErrorCode addStatement( int modelId, const Statement &statement );
+        int listContexts( int modelId );
+        int executeQuery( int modelId, const QString &query, Query::QueryLanguage type, const QString& userQueryLanguage );
+        int listStatements( int modelId, const Statement &partial );
+        Error::ErrorCode removeStatement( int modelId, const Statement &statement );
+        Error::ErrorCode removeAllStatements( int modelId, const Statement &statement );
+        int statementCount( int modelId );
+        bool isEmpty( int modelId );
+        bool containsStatement( int modelId, const Statement &statement );
+        bool containsAnyStatement( int modelId, const Statement &statement );
+        Node createBlankNode( int modelId );
 
-	    // Iterator methods
-	    bool iteratorNext( int id );
-	    Node nodeIteratorCurrent( int id );
-	    Statement statementIteratorCurrent( int id );
-	    BindingSet queryIteratorCurrent( int id );
-	    Statement queryIteratorCurrentStatement( int id );
-	    int queryIteratorType( int id );
-	    bool queryIteratorBoolValue( int id );
+        // Iterator methods
+        bool iteratorNext( int id );
+        Node nodeIteratorCurrent( int id );
+        Statement statementIteratorCurrent( int id );
+        BindingSet queryIteratorCurrent( int id );
+        Statement queryIteratorCurrentStatement( int id );
+        int queryIteratorType( int id );
+        bool queryIteratorBoolValue( int id );
 
-	    void iteratorClose( int id );
+        void iteratorClose( int id );
 
-	    bool checkProtocolVersion();
+        bool checkProtocolVersion();
 
-	private:
-	    class Private;
-	    Private* const d;
-	};
+    private:
+        class Private;
+        Private* const d;
+    };
     }
 }
 

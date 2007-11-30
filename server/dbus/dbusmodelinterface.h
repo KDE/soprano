@@ -39,97 +39,97 @@ Q_DECLARE_METATYPE(Soprano::Node)
 
 namespace Soprano {
     namespace Client {
-	class DBusModelInterface : public QDBusAbstractInterface
-	{
-	    Q_OBJECT
+    class DBusModelInterface : public QDBusAbstractInterface
+    {
+        Q_OBJECT
 
-	public:
-	    DBusModelInterface( const QString& service, const QString& path, const QDBusConnection& connection, QObject* parent = 0 );
-	    ~DBusModelInterface();
+    public:
+        DBusModelInterface( const QString& service, const QString& path, const QDBusConnection& connection, QObject* parent = 0 );
+        ~DBusModelInterface();
 
-	public Q_SLOTS:
-	    inline QDBusReply<int> addStatement( const Soprano::Statement& statement, QDBus::CallMode mode = QDBus::Block )
-	    {
-		QList<QVariant> argumentList;
-		argumentList << qVariantFromValue(statement);
-		return callWithArgumentListAndBigTimeout(mode, QLatin1String("addStatement"), argumentList);
-	    }
+    public Q_SLOTS:
+        inline QDBusReply<int> addStatement( const Soprano::Statement& statement, QDBus::CallMode mode = QDBus::Block )
+        {
+        QList<QVariant> argumentList;
+        argumentList << qVariantFromValue(statement);
+        return callWithArgumentListAndBigTimeout(mode, QLatin1String("addStatement"), argumentList);
+        }
 
-	    inline QDBusReply<bool> containsAnyStatement( const Soprano::Statement& statement, QDBus::CallMode mode = QDBus::Block )
-	    {
-		QList<QVariant> argumentList;
-		argumentList << qVariantFromValue(statement);
-		return callWithArgumentListAndBigTimeout(mode, QLatin1String("containsAnyStatement"), argumentList);
-	    }
+        inline QDBusReply<bool> containsAnyStatement( const Soprano::Statement& statement, QDBus::CallMode mode = QDBus::Block )
+        {
+        QList<QVariant> argumentList;
+        argumentList << qVariantFromValue(statement);
+        return callWithArgumentListAndBigTimeout(mode, QLatin1String("containsAnyStatement"), argumentList);
+        }
 
-	    inline QDBusReply<bool> containsStatement( const Soprano::Statement& statement, QDBus::CallMode mode = QDBus::Block )
-	    {
-		QList<QVariant> argumentList;
-		argumentList << qVariantFromValue(statement);
-		return callWithArgumentListAndBigTimeout(mode, QLatin1String("containsStatement"), argumentList);
-	    }
+        inline QDBusReply<bool> containsStatement( const Soprano::Statement& statement, QDBus::CallMode mode = QDBus::Block )
+        {
+        QList<QVariant> argumentList;
+        argumentList << qVariantFromValue(statement);
+        return callWithArgumentListAndBigTimeout(mode, QLatin1String("containsStatement"), argumentList);
+        }
 
-	    inline QDBusReply<Soprano::Node> createBlankNode( QDBus::CallMode mode = QDBus::Block )
-	    {
-		QList<QVariant> argumentList;
-		return callWithArgumentList(mode, QLatin1String("createBlankNode"), argumentList);
-	    }
+        inline QDBusReply<Soprano::Node> createBlankNode( QDBus::CallMode mode = QDBus::Block )
+        {
+        QList<QVariant> argumentList;
+        return callWithArgumentList(mode, QLatin1String("createBlankNode"), argumentList);
+        }
 
-	    inline QDBusReply<QString> executeQuery( const QString &query, int queryLang, const QString& userQueryLanguage, QDBus::CallMode mode = QDBus::Block )
-	    {
-		QList<QVariant> argumentList;
-		argumentList << qVariantFromValue(query) << qVariantFromValue(queryLang) << qVariantFromValue(userQueryLanguage);
-		return callWithArgumentListAndBigTimeout(mode, QLatin1String("executeQuery"), argumentList);
-	    }
+        inline QDBusReply<QString> executeQuery( const QString &query, int queryLang, const QString& userQueryLanguage, QDBus::CallMode mode = QDBus::Block )
+        {
+        QList<QVariant> argumentList;
+        argumentList << qVariantFromValue(query) << qVariantFromValue(queryLang) << qVariantFromValue(userQueryLanguage);
+        return callWithArgumentListAndBigTimeout(mode, QLatin1String("executeQuery"), argumentList);
+        }
 
-	    inline QDBusReply<bool> isEmpty( QDBus::CallMode mode = QDBus::Block )
-	    {
-		QList<QVariant> argumentList;
-		return callWithArgumentListAndBigTimeout(mode, QLatin1String("isEmpty"), argumentList);
-	    }
+        inline QDBusReply<bool> isEmpty( QDBus::CallMode mode = QDBus::Block )
+        {
+        QList<QVariant> argumentList;
+        return callWithArgumentListAndBigTimeout(mode, QLatin1String("isEmpty"), argumentList);
+        }
 
-	    inline QDBusReply<QString> listContexts( QDBus::CallMode mode = QDBus::Block )
-	    {
-		QList<QVariant> argumentList;
-		return callWithArgumentListAndBigTimeout(mode, QLatin1String("listContexts"), argumentList);
-	    }
+        inline QDBusReply<QString> listContexts( QDBus::CallMode mode = QDBus::Block )
+        {
+        QList<QVariant> argumentList;
+        return callWithArgumentListAndBigTimeout(mode, QLatin1String("listContexts"), argumentList);
+        }
 
-	    inline QDBusReply<QString> listStatements( const Soprano::Statement& statement, QDBus::CallMode mode = QDBus::Block )
-	    {
-		QList<QVariant> argumentList;
-		argumentList << qVariantFromValue(statement);
-		return callWithArgumentListAndBigTimeout(mode, QLatin1String("listStatements"), argumentList);
-	    }
+        inline QDBusReply<QString> listStatements( const Soprano::Statement& statement, QDBus::CallMode mode = QDBus::Block )
+        {
+        QList<QVariant> argumentList;
+        argumentList << qVariantFromValue(statement);
+        return callWithArgumentListAndBigTimeout(mode, QLatin1String("listStatements"), argumentList);
+        }
 
-	    inline QDBusReply<int> removeAllStatements( const Soprano::Statement& statement, QDBus::CallMode mode = QDBus::Block )
-	    {
-		QList<QVariant> argumentList;
-		argumentList << qVariantFromValue(statement);
-		return callWithArgumentListAndBigTimeout(mode, QLatin1String("removeAllStatements"), argumentList);
-	    }
+        inline QDBusReply<int> removeAllStatements( const Soprano::Statement& statement, QDBus::CallMode mode = QDBus::Block )
+        {
+        QList<QVariant> argumentList;
+        argumentList << qVariantFromValue(statement);
+        return callWithArgumentListAndBigTimeout(mode, QLatin1String("removeAllStatements"), argumentList);
+        }
 
-	    inline QDBusReply<int> removeStatement( const Soprano::Statement& statement, QDBus::CallMode mode = QDBus::Block )
-	    {
-		QList<QVariant> argumentList;
-		argumentList << qVariantFromValue(statement);
-		return callWithArgumentListAndBigTimeout(mode, QLatin1String("removeStatement"), argumentList);
-	    }
+        inline QDBusReply<int> removeStatement( const Soprano::Statement& statement, QDBus::CallMode mode = QDBus::Block )
+        {
+        QList<QVariant> argumentList;
+        argumentList << qVariantFromValue(statement);
+        return callWithArgumentListAndBigTimeout(mode, QLatin1String("removeStatement"), argumentList);
+        }
 
-	    inline QDBusReply<int> statementCount( QDBus::CallMode mode = QDBus::Block )
-	    {
-		QList<QVariant> argumentList;
-		return callWithArgumentListAndBigTimeout(mode, QLatin1String("statementCount"), argumentList);
-	    }
+        inline QDBusReply<int> statementCount( QDBus::CallMode mode = QDBus::Block )
+        {
+        QList<QVariant> argumentList;
+        return callWithArgumentListAndBigTimeout(mode, QLatin1String("statementCount"), argumentList);
+        }
 
-	Q_SIGNALS:
-	    void statementsAdded();
-	    void statementsRemoved();
+    Q_SIGNALS:
+        void statementsAdded();
+        void statementsRemoved();
 
-	private:
-	    QDBusMessage callWithArgumentListAndBigTimeout( QDBus::CallMode mode,
-							    const QString& method,
-							    const QList<QVariant>& args );
-	};
+    private:
+        QDBusMessage callWithArgumentListAndBigTimeout( QDBus::CallMode mode,
+                                const QString& method,
+                                const QList<QVariant>& args );
+    };
     }
 }
 

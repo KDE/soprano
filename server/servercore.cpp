@@ -135,6 +135,59 @@ Soprano::Model* Soprano::Server::ServerCore::model( const QString& name )
 }
 
 
+namespace {
+    void removeFile( const QString& path )
+    {
+        qDebug() << "Removing" << path;
+        QDir dir( path );
+        if ( dir.exists() ) {
+            QStringList children = dir.entryList();
+            children.removeAll( "." );
+            children.removeAll( ".." );
+            Q_FOREACH( QString s, children ) {
+                removeFile( dir.filePath( s ) );
+            }
+
+            dir.rmpath( path );
+        }
+        else {
+            QFile::remove( path );
+        }
+    }
+}
+
+void Soprano::Server::ServerCore::removeModel( const QString& name )
+{
+    clearError();
+
+    QHash<QString, Model*>::iterator it = d->models.find( name );
+    if ( it == d->models.constEnd() ) {
+        setError( QString( "Could not find model with name %1" ).arg( name ) );
+    }
+    else {
+        Model* model = *it;
+        d->models.erase( it );
+        QString dir;
+        for ( QList<BackendSetting>::const_iterator it = d->settings.begin();
+              it != d->settings.end(); ++it ) {
+            const BackendSetting& setting = *it;
+            if ( setting.option() == BackendOptionStorageDir ) {
+                dir = setting.value().toString() + '/' + name;
+                break;
+            }
+        }
+
+        // delete the model, removing any cached data
+        delete model;
+
+        // remove the data on disk
+        if ( !dir.isEmpty() ) {
+            removeFile( dir );
+        }
+    }
+}
+
+
 bool Soprano::Server::ServerCore::listen( quint16 port )
 {
     clearError();

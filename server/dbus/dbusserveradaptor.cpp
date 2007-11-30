@@ -74,6 +74,7 @@ namespace {
     }
 }
 
+
 QString Soprano::Server::DBusServerAdaptor::createModel( const QString& name, const QDBusMessage& m )
 {
     // handle method call org.soprano.Server.createModel
@@ -97,6 +98,15 @@ QString Soprano::Server::DBusServerAdaptor::createModel( const QString& name, co
     else {
         DBus::sendErrorReply( m, d->core->lastError() );
         return QString();
+    }
+}
+
+
+void Soprano::Server::DBusServerAdaptor::removeModel( const QString& name, const QDBusMessage& m )
+{
+    d->core->removeModel( name );
+    if ( d->core->lastError() ) {
+        DBus::sendErrorReply( m, d->core->lastError() );
     }
 }
 

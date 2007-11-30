@@ -35,137 +35,152 @@ namespace Soprano {
     class BackendSetting;
 
     namespace Server {
-	/**
-	 * \class ServerCore servercore.h Soprano/Server/ServerCore
-	 *
-	 * \brief Central %Soprano server class.
-	 *
-	 * The %ServerCore provides a %Soprano server which maintains a set
-	 * of named Model instances that can be accessed by clients over
-	 * a tcp connection through Server::BackendPlugin.
-	 *
-	 * Creating a server is very simple: Either derive from ServerCore or 
-	 * create an instance and then call start() to make the server listen
-	 * for incoming connections.
-	 *
-	 * \code
-	 * Soprano::Server::ServerCore core;
-	 * core.start();
-	 * \endcode
-	 *
-	 * Optionally ServerCore can be configured using normal BackendSetting
-	 * settings through setBackendSettings().
-	 *
-	 * Be aware the ServerCode supports multiple ways of communication.
-	 * start() opens a TCP socket to accept new connections, registerAsDBusObject()
-	 * registers a DBus interface on the DBus session bus. Both ways of
-	 * communication can be used simultaneously.
-	 *
-	 * \author Sebastian Trueg <trueg@kde.org>
-	 *
-	 * \warning <b>The API of this class is subject to change. It is likely that it will be split into several classes.</b>
-	 */
-	class SOPRANO_SERVER_EXPORT ServerCore : public QObject, public Error::ErrorCache
-	{
-	    Q_OBJECT
+        /**
+         * \class ServerCore servercore.h Soprano/Server/ServerCore
+         *
+         * \brief Central %Soprano server class.
+         *
+         * The %ServerCore provides a %Soprano server which maintains a set
+         * of named Model instances that can be accessed by clients over
+         * a tcp connection through Server::BackendPlugin.
+         *
+         * Creating a server is very simple: Either derive from ServerCore or 
+         * create an instance and then call start() to make the server listen
+         * for incoming connections.
+         *
+         * \code
+         * Soprano::Server::ServerCore core;
+         * core.start();
+         * \endcode
+         *
+         * Optionally ServerCore can be configured using normal BackendSetting
+         * settings through setBackendSettings().
+         *
+         * Be aware the ServerCode supports multiple ways of communication.
+         * start() opens a TCP socket to accept new connections, registerAsDBusObject()
+         * registers a DBus interface on the DBus session bus. Both ways of
+         * communication can be used simultaneously.
+         *
+         * \author Sebastian Trueg <trueg@kde.org>
+         *
+         * \warning <b>The API of this class is subject to change. It is likely that it will be split into several classes.</b>
+         */
+        class SOPRANO_SERVER_EXPORT ServerCore : public QObject, public Error::ErrorCache
+        {
+            Q_OBJECT
 
-	public:
-	    ServerCore( QObject* parent = 0 );
-	    virtual ~ServerCore();
+        public:
+            ServerCore( QObject* parent = 0 );
+            virtual ~ServerCore();
 
-	    static const quint16 DEFAULT_PORT;
+            static const quint16 DEFAULT_PORT;
 
-	    /**
-	     * Set the Backend used in the Server to create Models.
-	     */
-	    void setBackend( const Backend* backend );
+            /**
+             * Set the Backend used in the Server to create Models.
+             */
+            void setBackend( const Backend* backend );
 
-	    /**
-	     * The Backend used by the Server to create Model instances.
-	     */
-	    const Backend* backend() const;
+            /**
+             * The Backend used by the Server to create Model instances.
+             */
+            const Backend* backend() const;
 
-	    /**
-	     * Set the settings that are to be used by createModel() to create new Model
-	     * instances. Be aware that Soprano::BackendOptionStorageDir will be changed
-	     * to include a subdir which is the Model's name.
-	     *
-	     * \param settings The settings to use for new Models.
-	     */
-	    void setBackendSettings( const QList<BackendSetting>& settings );
+            /**
+             * Set the settings that are to be used by createModel() to create new Model
+             * instances. Be aware that Soprano::BackendOptionStorageDir will be changed
+             * to include a subdir which is the Model's name.
+             *
+             * \param settings The settings to use for new Models.
+             */
+            void setBackendSettings( const QList<BackendSetting>& settings );
 
-	    /**
-	     * Retrieve the backend settings configured via setBackendSettings().
-	     *
-	     * \return A list of BackendSetting objects.
-	     */
-	    QList<BackendSetting> backendSettings() const;
+            /**
+             * Retrieve the backend settings configured via setBackendSettings().
+             *
+             * \return A list of BackendSetting objects.
+             */
+            QList<BackendSetting> backendSettings() const;
 
-	    /**
-	     * Get or create Model with the specific name.
-	     * The default implementation will use createModel() to create a new Model
-	     * if none with the specified name exists.
-	     *
-	     * \param name The name of the requested Model.
-	     */
-	    virtual Model* model( const QString& name );
+            /**
+             * Get or create Model with the specific name.
+             * The default implementation will use createModel() to create a new Model
+             * if none with the specified name exists.
+             *
+             * \param name The name of the requested Model.
+             */
+            virtual Model* model( const QString& name );
 
-	    /**
-	     * Retrieve all models that have been loaded.
-	     *
-	     * \return A list of Model names.
-	     */
-	    virtual QStringList allModels() const;
+            /**
+             * Remove a model and delete all data in it.
+             * Use with care.
+             *
+             * Be aware that the Model instance will also be deleted.
+             *
+             * Should be reimplemented if model() is reimplemented.
+             *
+             * \param name The name of the requested Model.
+             *
+             * \warning This is not the same as deleting the Model instance.
+             * It will also delete all the data on the harddisk.
+             */
+            virtual void removeModel( const QString& name );
 
-	    /**
-	     * Start the core on a unix socket.
-	     * This method does nothing on Windows systems.
-	     */
-	    bool start( const QString& socketPath = QString() );
+            /**
+             * Retrieve all models that have been loaded.
+             *
+             * \return A list of Model names.
+             */
+            virtual QStringList allModels() const;
 
-	    /**
-	     * Start the Server. Calling this method will make the Server
-	     * listen on the specified port for incoming client connections.
-	     *
-	     * \param port The port to listen on for client connections.
-	     *
-	     * \return \p true if the server was successfully started, \p false otherwise.
-	     */
-	    bool listen( quint16 port = DEFAULT_PORT );
+            /**
+             * Start the core on a unix socket.
+             * This method does nothing on Windows systems.
+             */
+            bool start( const QString& socketPath = QString() );
 
-	    /**
-	     * Register the ServerCore as a DBus object. The process needs to be registered
-	     * as a DBus service before (QDBusConnection::registerService()).
-	     *
-	     * \param objectPath The DBus object path to register the server as. If empty
-	     * the default path will be used (/org/soprano/Server).
-	     */
-	    void registerAsDBusObject( const QString& objectPath = QString() );
+            /**
+             * Start the Server. Calling this method will make the Server
+             * listen on the specified port for incoming client connections.
+             *
+             * \param port The port to listen on for client connections.
+             *
+             * \return \p true if the server was successfully started, \p false otherwise.
+             */
+            bool listen( quint16 port = DEFAULT_PORT );
 
-	private Q_SLOTS:
-	    void slotNewTcpConnection();
-	    void slotNewSocketConnection();
-	    void serverConnectionFinished();
+            /**
+             * Register the ServerCore as a DBus object. The process needs to be registered
+             * as a DBus service before (QDBusConnection::registerService()).
+             *
+             * \param objectPath The DBus object path to register the server as. If empty
+             * the default path will be used (/org/soprano/Server).
+             */
+            void registerAsDBusObject( const QString& objectPath = QString() );
 
-	protected:
-	    /**
-	     * Create a new Model. The default implementation uses the configured Backend
-	     * with the configured settings to create a new Model. This method can be
-	     * reimplemented to create specialized Model, for example in combination with
-	     * some FilterModel.
-	     *
-	     * \param settings The settings to use (a reimplementation may choose to ignore the
-	     * settings.)
-	     *
-	     * \return A newly create Model.
-	     */
-	    // FIXME: 3.0: this method should be const
-	    virtual Model* createModel( const QList<BackendSetting>& settings );
+        private Q_SLOTS:
+            void slotNewTcpConnection();
+            void slotNewSocketConnection();
+            void serverConnectionFinished();
 
-	private:
-	    class Private;
-	    Private* const d;
-	};
+        protected:
+            /**
+             * Create a new Model. The default implementation uses the configured Backend
+             * with the configured settings to create a new Model. This method can be
+             * reimplemented to create specialized Model, for example in combination with
+             * some FilterModel.
+             *
+             * \param settings The settings to use (a reimplementation may choose to ignore the
+             * settings.)
+             *
+             * \return A newly create Model.
+             */
+            // FIXME: 3.0: this method should be const
+            virtual Model* createModel( const QList<BackendSetting>& settings );
+
+        private:
+            class Private;
+            Private* const d;
+        };
     }
 }
 

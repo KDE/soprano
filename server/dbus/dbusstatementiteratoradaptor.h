@@ -30,37 +30,37 @@ namespace Soprano {
 
     namespace Server {
 
-	class IteratorWrapper;
+    class IteratorWrapper;
 
-	class DBusStatementIteratorAdaptor : public QDBusAbstractAdaptor
-	{
-	    Q_OBJECT
-	    Q_CLASSINFO("D-Bus Interface", "org.soprano.StatementIterator")
-	    Q_CLASSINFO("D-Bus Introspection", ""
-			"  <interface name=\"org.soprano.StatementIterator\" >\n"
-			"    <method name=\"next\" >\n"
-			"      <arg direction=\"out\" type=\"b\" name=\"reply\" />\n"
-			"    </method>\n"
-			"    <method name=\"current\" >\n"
-			"      <arg direction=\"out\" type=\"((isss)(isss)(isss)(isss))\" name=\"statement\" />\n"
-			"      <annotation value=\"Soprano::Statement\" name=\"com.trolltech.QtDBus.QtTypeName.Out0\" />\n"
-			"    </method>\n"
-			"    <method name=\"close\" />\n"
-			"  </interface>\n"
-			"")
+    class DBusStatementIteratorAdaptor : public QDBusAbstractAdaptor
+    {
+        Q_OBJECT
+        Q_CLASSINFO("D-Bus Interface", "org.soprano.StatementIterator")
+        Q_CLASSINFO("D-Bus Introspection", ""
+            "  <interface name=\"org.soprano.StatementIterator\" >\n"
+            "    <method name=\"next\" >\n"
+            "      <arg direction=\"out\" type=\"b\" name=\"reply\" />\n"
+            "    </method>\n"
+            "    <method name=\"current\" >\n"
+            "      <arg direction=\"out\" type=\"((isss)(isss)(isss)(isss))\" name=\"statement\" />\n"
+            "      <annotation value=\"Soprano::Statement\" name=\"com.trolltech.QtDBus.QtTypeName.Out0\" />\n"
+            "    </method>\n"
+            "    <method name=\"close\" />\n"
+            "  </interface>\n"
+            "")
 
-	public:
-	    DBusStatementIteratorAdaptor( IteratorWrapper* parent );
-	    virtual ~DBusStatementIteratorAdaptor();
+    public:
+        DBusStatementIteratorAdaptor( IteratorWrapper* parent );
+        virtual ~DBusStatementIteratorAdaptor();
 
-	public Q_SLOTS:
-	    Soprano::Statement current( const QDBusMessage& m );
-	    bool next( const QDBusMessage& m );
-	    void close( const QDBusMessage& m );
+    public Q_SLOTS:
+        Soprano::Statement current( const QDBusMessage& m );
+        bool next( const QDBusMessage& m );
+        void close( const QDBusMessage& m );
 
-	private:
-	    IteratorWrapper* m_iteratorWrapper;
-	};
+    private:
+        IteratorWrapper* m_iteratorWrapper;
+    };
     }
 }
 

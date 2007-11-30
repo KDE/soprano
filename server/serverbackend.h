@@ -31,38 +31,38 @@ namespace Soprano
 {
     namespace Client
     {
-	/**
-	 * \brief Backend to access RDF storage models through the %Soprano daemon.
-	 *
-	 * Additonal BackendOptions supported:
-	 * \li name - The name for the Model to be created. The daemon handles a set of models which are identified by a unique name.
-	 * This option has to be specified.
-	 * \li port - The port the Backend is supposed to try to connect to the soprano server.
-	 *
-	 * The Backend maintains a set of connections, one for each port, i.e. each different server instance.
-	 */
-	class SOPRANO_EXPORT ServerBackend : public QObject, public Soprano::Backend
-	{
-	    Q_OBJECT
-	    Q_INTERFACES(Soprano::Backend)
+    /**
+     * \brief Backend to access RDF storage models through the %Soprano daemon.
+     *
+     * Additonal BackendOptions supported:
+     * \li name - The name for the Model to be created. The daemon handles a set of models which are identified by a unique name.
+     * This option has to be specified.
+     * \li port - The port the Backend is supposed to try to connect to the soprano server.
+     *
+     * The Backend maintains a set of connections, one for each port, i.e. each different server instance.
+     */
+    class SOPRANO_EXPORT ServerBackend : public QObject, public Soprano::Backend
+    {
+        Q_OBJECT
+        Q_INTERFACES(Soprano::Backend)
 
-	public:
-	    /**
-	     * Create a new ServerBackend instance.
-	     */
-	    ServerBackend();
-	    ~ServerBackend();
+    public:
+        /**
+         * Create a new ServerBackend instance.
+         */
+        ServerBackend();
+        ~ServerBackend();
 
-	    StorageModel* createModel( const QList<BackendSetting>& settings = QList<BackendSetting>() ) const;
-	    BackendFeatures supportedFeatures() const;
+        StorageModel* createModel( const QList<BackendSetting>& settings = QList<BackendSetting>() ) const;
+        BackendFeatures supportedFeatures() const;
 
-	private Q_SLOTS:
-	    void modelDeleted();
+    private Q_SLOTS:
+        void modelDeleted();
 
-	private:
-	    class Private;
-	    Private* const d;
-	};
+    private:
+        class Private;
+        Private* const d;
+    };
     }
 }
 

@@ -32,35 +32,39 @@ namespace Soprano {
 
     namespace Server {
 
-	class ServerCore;
+    class ServerCore;
 
-	class DBusServerAdaptor : public QDBusAbstractAdaptor
-	{
-	    Q_OBJECT
-	    Q_CLASSINFO("D-Bus Interface", "org.soprano.Server")
-	    Q_CLASSINFO("D-Bus Introspection", ""
-			"  <interface name=\"org.soprano.Server\" >\n"
-			"    <method name=\"createModel\" >\n"
-			"      <arg direction=\"in\" type=\"s\" name=\"name\" />\n"
-			"      <arg direction=\"out\" type=\"s\" name=\"model\" />\n"
-			"    </method>\n"
-			"    <method name=\"allModels\" >\n"
-			"      <arg direction=\"out\" type=\"as\" name=\"models\" />\n"
-			"    </method>\n"
-			"  </interface>\n")
+    class DBusServerAdaptor : public QDBusAbstractAdaptor
+    {
+        Q_OBJECT
+        Q_CLASSINFO("D-Bus Interface", "org.soprano.Server")
+        Q_CLASSINFO("D-Bus Introspection", ""
+                    "  <interface name=\"org.soprano.Server\" >\n"
+                    "    <method name=\"createModel\" >\n"
+                    "      <arg direction=\"in\" type=\"s\" name=\"name\" />\n"
+                    "      <arg direction=\"out\" type=\"s\" name=\"model\" />\n"
+                    "    </method>\n"
+                    "    <method name=\"removeModel\" >\n"
+                    "      <arg direction=\"in\" type=\"s\" name=\"name\" />\n"
+                    "    </method>\n"
+                    "    <method name=\"allModels\" >\n"
+                    "      <arg direction=\"out\" type=\"as\" name=\"models\" />\n"
+                    "    </method>\n"
+                    "  </interface>\n")
 
-	public:
-	    DBusServerAdaptor( ServerCore* core, const QString& dbusObjectPath );
-	    virtual ~DBusServerAdaptor();
+    public:
+        DBusServerAdaptor( ServerCore* core, const QString& dbusObjectPath );
+        virtual ~DBusServerAdaptor();
 
-	public Q_SLOTS:
-	    QStringList allModels( const QDBusMessage& );
-	    QString createModel( const QString &name, const QDBusMessage& );
+    public Q_SLOTS:
+        QStringList allModels( const QDBusMessage& );
+        QString createModel( const QString &name, const QDBusMessage& );
+        void removeModel( const QString& name, const QDBusMessage& );
 
-	private:
-	    class Private;
-	    Private* const d;
-	};
+    private:
+        class Private;
+        Private* const d;
+    };
     }
 }
 

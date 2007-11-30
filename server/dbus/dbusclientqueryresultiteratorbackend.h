@@ -32,31 +32,31 @@ namespace Soprano {
 
     namespace Client {
 
-	class DBusQueryResultIteratorInterface;
+    class DBusQueryResultIteratorInterface;
 
-	class DBusClientQueryResultIteratorBackend : public QueryResultIteratorBackend
-	{
-	public:
-	    DBusClientQueryResultIteratorBackend( const QString& serviceName, const QString& objectPath );
-	    ~DBusClientQueryResultIteratorBackend();
+    class DBusClientQueryResultIteratorBackend : public QueryResultIteratorBackend
+    {
+    public:
+        DBusClientQueryResultIteratorBackend( const QString& serviceName, const QString& objectPath );
+        ~DBusClientQueryResultIteratorBackend();
 
-	    bool next();
-	    Soprano::BindingSet current() const;
-	    void close();
-	    Statement currentStatement() const;
-	    Node binding( const QString &name ) const;
-	    Node binding( int offset ) const;
-	    int bindingCount() const;
-	    QStringList bindingNames() const;
-	    bool isGraph() const;
-	    bool isBinding() const;
-	    bool isBool() const;
-	    bool boolValue() const;
+        bool next();
+        Soprano::BindingSet current() const;
+        void close();
+        Statement currentStatement() const;
+        Node binding( const QString &name ) const;
+        Node binding( int offset ) const;
+        int bindingCount() const;
+        QStringList bindingNames() const;
+        bool isGraph() const;
+        bool isBinding() const;
+        bool isBool() const;
+        bool boolValue() const;
 
-	private:
-	    DBusQueryResultIteratorInterface* m_interface;
-	    bool m_done;
-	};
+    private:
+        DBusQueryResultIteratorInterface* m_interface;
+        bool m_done;
+    };
     }
 }
 

@@ -30,30 +30,30 @@
 
 namespace Soprano {
     namespace Server {
-	/**
-	 * The only purpose of the IteratorWrapper is to provide
-	 * a QObject parent for the DBus interfaces of the Soprano
-	 * iterators.
-	 */
-	class IteratorWrapper : public QObject
-	{
-	    Q_OBJECT
-	    
-	public:
-	    IteratorWrapper( StatementIterator it, QObject* parent );
-	    IteratorWrapper( NodeIterator it, QObject* parent );
-	    IteratorWrapper( QueryResultIterator it, QObject* parent );
-	    ~IteratorWrapper();
+    /**
+     * The only purpose of the IteratorWrapper is to provide
+     * a QObject parent for the DBus interfaces of the Soprano
+     * iterators.
+     */
+    class IteratorWrapper : public QObject
+    {
+        Q_OBJECT
+        
+    public:
+        IteratorWrapper( StatementIterator it, QObject* parent );
+        IteratorWrapper( NodeIterator it, QObject* parent );
+        IteratorWrapper( QueryResultIterator it, QObject* parent );
+        ~IteratorWrapper();
 
-	    inline StatementIterator& statementIterator() { return m_statementIterator; }
-	    inline NodeIterator& nodeIterator() { return m_nodeIterator; }
-	    inline QueryResultIterator& queryResultIterator() { return m_queryResultIterator; }
+        inline StatementIterator& statementIterator() { return m_statementIterator; }
+        inline NodeIterator& nodeIterator() { return m_nodeIterator; }
+        inline QueryResultIterator& queryResultIterator() { return m_queryResultIterator; }
 
-	private:
-	    StatementIterator m_statementIterator;
-	    NodeIterator m_nodeIterator;
-	    QueryResultIterator m_queryResultIterator;
-	};
+    private:
+        StatementIterator m_statementIterator;
+        NodeIterator m_nodeIterator;
+        QueryResultIterator m_queryResultIterator;
+    };
     }
 }
 

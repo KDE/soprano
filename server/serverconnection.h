@@ -32,33 +32,33 @@ namespace Soprano {
 
     namespace Server {
 
-	class ServerCore;
+    class ServerCore;
 
-	class ServerConnection : public QThread
-	{
-	    Q_OBJECT
+    class ServerConnection : public QThread
+    {
+        Q_OBJECT
 
-	public:
-	    /**
-	     * Create a new ServerConnection.
-	     *
-	     * \param core The ServerCore that maintains all Models.
-	     * \param socket The connection socket.
-	     */
-	    ServerConnection( ServerCore* core );
-	    ~ServerConnection();
+    public:
+        /**
+         * Create a new ServerConnection.
+         *
+         * \param core The ServerCore that maintains all Models.
+         * \param socket The connection socket.
+         */
+        ServerConnection( ServerCore* core );
+        ~ServerConnection();
 
-	    void close();
+        void close();
 
-	    void start( QIODevice* socket );
+        void start( QIODevice* socket );
 
-	protected:
-	    void run();
+    protected:
+        void run();
 
-	private:
-	    class Private;
-	    Private* const d;
-	};
+    private:
+        class Private;
+        Private* const d;
+    };
     }
 }
 
