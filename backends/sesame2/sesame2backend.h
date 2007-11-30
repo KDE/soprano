@@ -32,25 +32,25 @@ class JNIWrapper;
 
 namespace Soprano {
     namespace Sesame2 {
-	class BackendPlugin : public QObject, public Soprano::Backend
-	{
-	    Q_OBJECT
-	    Q_INTERFACES(Soprano::Backend)
+    class BackendPlugin : public QObject, public Soprano::Backend
+    {
+        Q_OBJECT
+        Q_INTERFACES(Soprano::Backend)
 
-	public:
-	    BackendPlugin();
-	    ~BackendPlugin();
+    public:
+        BackendPlugin();
+        ~BackendPlugin();
 
-	    StorageModel* createModel( const QList<BackendSetting>& settings = QList<BackendSetting>() ) const;
+        StorageModel* createModel( const QList<BackendSetting>& settings = QList<BackendSetting>() ) const;
 
-	    BackendFeatures supportedFeatures() const;
+        BackendFeatures supportedFeatures() const;
 
-	    bool isAvailable() const;
+        bool isAvailable() const;
 
-	private:
-	    mutable JNIWrapper* m_jniWrapper;
-	    mutable QMutex m_mutex;
-	};
+    private:
+        mutable JNIWrapper* m_jniWrapper;
+        mutable QMutex m_mutex;
+    };
     }
 }
 

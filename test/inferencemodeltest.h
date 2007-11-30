@@ -27,7 +27,7 @@
 namespace Soprano {
     class Model;
     namespace Inference {
-	class InferenceModel;
+    class InferenceModel;
     }
 }
 

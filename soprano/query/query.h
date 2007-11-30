@@ -52,9 +52,9 @@ namespace Soprano
         public:
             virtual ~Expression();
         
-	    // FIXME: if we want to keep the visitor pattern stuff we need two methods:
-	    // one const and one non-const, the const one should call a visitor method
-	    // with a const parameter. It is ugly but I see no other way to keep this stuff.
+        // FIXME: if we want to keep the visitor pattern stuff we need two methods:
+        // one const and one non-const, the const one should call a visitor method
+        // with a const parameter. It is ugly but I see no other way to keep this stuff.
             virtual void accept( ExpressionVisitor *visitor ) const = 0;
 
             virtual Expression* clone() const = 0;
@@ -82,7 +82,7 @@ namespace Soprano
             Variable();
             Variable( const QString &name );
             Variable( const Variable &other );
-	    ~Variable();
+        ~Variable();
 
             Variable& operator=( const Variable& );
 
@@ -137,7 +137,7 @@ namespace Soprano
             BooleanExpression();
         };
 
-	class Numerical;
+    class Numerical;
 
         // An expression that return a xsd:integer, xsd:decimal, xsd:float, and xsd:double
         class SOPRANO_EXPORT NumericalExpression: public Expression {
@@ -152,11 +152,11 @@ namespace Soprano
 
         /**
          * A numerical constant.
-	 */
-	// FIXME: we also need a DateTime expression. Could we also use a generic LiteralExpression
-	//        instead? After all Numerical already forces a switch statement. Why not adding some
-	//        more? But then what is the difference between Query::Node with a LiteralValue node
-	//        and a Query::LiteralValue?
+     */
+    // FIXME: we also need a DateTime expression. Could we also use a generic LiteralExpression
+    //        instead? After all Numerical already forces a switch statement. Why not adding some
+    //        more? But then what is the difference between Query::Node with a LiteralValue node
+    //        and a Query::LiteralValue?
         class SOPRANO_EXPORT Numerical : public NumericalExpression {
         public:
             Numerical();
@@ -253,7 +253,7 @@ namespace Soprano
             QSharedDataPointer<Private> d;
         };
 
-	class SOPRANO_EXPORT UnaryRTermExpressionBase {
+    class SOPRANO_EXPORT UnaryRTermExpressionBase {
         public:
             UnaryRTermExpressionBase( RTerm *rterm );
         
@@ -958,11 +958,11 @@ namespace Soprano
             QSharedDataPointer<Private> d;
         };
         
-	/**
-	 * \class Query query.h Soprano/Query/Query
-	 *
-	 * \warning <b>The API is subject to change and far from being stable.</b>
-	 */
+    /**
+     * \class Query query.h Soprano/Query/Query
+     *
+     * \warning <b>The API is subject to change and far from being stable.</b>
+     */
         class SOPRANO_EXPORT Query {
         public:
             // Query types
@@ -1015,8 +1015,8 @@ namespace Soprano
         ////////////////////////////////////////////////////////////////////////
         // ExpressionVisitor                                                  //
         ////////////////////////////////////////////////////////////////////////
-	
-	// FIXME: why is there no visit( const Query* ) method?
+    
+    // FIXME: why is there no visit( const Query* ) method?
         class SOPRANO_EXPORT ExpressionVisitor {
         public:
         virtual ~ExpressionVisitor() {}

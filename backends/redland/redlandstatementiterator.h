@@ -35,31 +35,31 @@ namespace Soprano
     class Statement;
 
     namespace Redland {
-	class RedlandModel;
+    class RedlandModel;
 
-	class RedlandStatementIterator: public Soprano::IteratorBackend<Statement>
-	    {
-	    public:
-		/**
-		 * param forceContext Since redland does not set a context if we list statements from one specific context
-		 * we have to force it this way.
-		 */
-		explicit RedlandStatementIterator( const RedlandModel* model, librdf_stream *s, const Node& forceContext = Node() );
+    class RedlandStatementIterator: public Soprano::IteratorBackend<Statement>
+        {
+        public:
+        /**
+         * param forceContext Since redland does not set a context if we list statements from one specific context
+         * we have to force it this way.
+         */
+        explicit RedlandStatementIterator( const RedlandModel* model, librdf_stream *s, const Node& forceContext = Node() );
 
-		~RedlandStatementIterator();
+        ~RedlandStatementIterator();
 
-		bool next();
+        bool next();
 
-		Soprano::Statement current() const;
+        Soprano::Statement current() const;
 
-		void close();
+        void close();
 
-	    private:
-		const RedlandModel* m_model;
-		librdf_stream* m_stream;
-		Node m_forceContext;
-		bool m_initialized;
-	    };
+        private:
+        const RedlandModel* m_model;
+        librdf_stream* m_stream;
+        Node m_forceContext;
+        bool m_initialized;
+        };
 
     }
 }

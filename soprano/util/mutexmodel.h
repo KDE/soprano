@@ -27,95 +27,95 @@
 
 namespace Soprano {
     namespace Util {
-	class MutexIteratorBase;
+    class MutexIteratorBase;
 
-	/**
-	 * \class MutexModel mutexmodel.h Soprano/Util/MutexModel
-	 *
-	 * \brief Protect a Model for multiple calls in multi- or single-thread
-	 * applications.
-	 *
-	 * In most cases one does not need to use this FilterModel since Models
-	 * created by Soprano::createModel and Soprano::Backend::createModel
-	 * are thread-safe.
-	 *
-	 * \author Sebastian Trueg <trueg@kde.org>
-	 */
-	class SOPRANO_EXPORT MutexModel : public FilterModel
-	{
-	    Q_OBJECT
+    /**
+     * \class MutexModel mutexmodel.h Soprano/Util/MutexModel
+     *
+     * \brief Protect a Model for multiple calls in multi- or single-thread
+     * applications.
+     *
+     * In most cases one does not need to use this FilterModel since Models
+     * created by Soprano::createModel and Soprano::Backend::createModel
+     * are thread-safe.
+     *
+     * \author Sebastian Trueg <trueg@kde.org>
+     */
+    class SOPRANO_EXPORT MutexModel : public FilterModel
+    {
+        Q_OBJECT
 
-	public:
-	    enum ProtectionMode {
-		/**
-		 * In PlainMultiThreading mode only one action can be performed
-		 * at the same time. Calls block until the previous call is done.
-		 *
-		 * \warning In this mode nesting iterators will result in a deadlock.
-		 */
-		PlainMultiThreading,
+    public:
+        enum ProtectionMode {
+        /**
+         * In PlainMultiThreading mode only one action can be performed
+         * at the same time. Calls block until the previous call is done.
+         *
+         * \warning In this mode nesting iterators will result in a deadlock.
+         */
+        PlainMultiThreading,
 
-		/**
-		 * In ReadWriteMultiThreading mode multiple read operations
-		 * can be performed at the same time but only one write 
-		 * operation.
-		 */
-		ReadWriteMultiThreading,
-	    
-		/**
-		 * ReadWriteSingleThreading mode is targetted at single thread
-		 * applications. It makes sure that no read and write operations
-		 * are performed interweaved. This mainly means that an open 
-		 * iterator will block any write operation. Blocked operations
-		 * wait in a local event loop. Thus, the application is not entirely
-		 * blocked.
-		 *
-		 * This mode is mainly useful for server applications that need to
-		 * handle multiple clients at the same time in the same thread.
-		 * Actually the Soprano::Server implementation does make use of
-		 * MutexModel with this mode.
-		 *
-		 * \warning In ReadWriteSingleThreading mode MutexModel
-		 * is not thread-safe.
-		 */
-		ReadWriteSingleThreading
-	    };
+        /**
+         * In ReadWriteMultiThreading mode multiple read operations
+         * can be performed at the same time but only one write 
+         * operation.
+         */
+        ReadWriteMultiThreading,
+        
+        /**
+         * ReadWriteSingleThreading mode is targetted at single thread
+         * applications. It makes sure that no read and write operations
+         * are performed interweaved. This mainly means that an open 
+         * iterator will block any write operation. Blocked operations
+         * wait in a local event loop. Thus, the application is not entirely
+         * blocked.
+         *
+         * This mode is mainly useful for server applications that need to
+         * handle multiple clients at the same time in the same thread.
+         * Actually the Soprano::Server implementation does make use of
+         * MutexModel with this mode.
+         *
+         * \warning In ReadWriteSingleThreading mode MutexModel
+         * is not thread-safe.
+         */
+        ReadWriteSingleThreading
+        };
 
-	    /**
-	     * Create a new MutexModel.
-	     *
-	     * \param mode The mode to use.
-	     * \param parent The parent Model to forward
-	     *        the actual calls to.
-	     */
-	    MutexModel( ProtectionMode mode, Model* parent = 0 );
+        /**
+         * Create a new MutexModel.
+         *
+         * \param mode The mode to use.
+         * \param parent The parent Model to forward
+         *        the actual calls to.
+         */
+        MutexModel( ProtectionMode mode, Model* parent = 0 );
 
-	    /**
-	     * Destructor.
-	     */
-	    ~MutexModel();
+        /**
+         * Destructor.
+         */
+        ~MutexModel();
 
-	    Error::ErrorCode addStatement( const Statement &statement );
-	    Error::ErrorCode removeStatement( const Statement &statement );
-	    Error::ErrorCode removeAllStatements( const Statement &statement );
-	    StatementIterator listStatements( const Statement &partial ) const;
-	    NodeIterator listContexts() const;
-	    QueryResultIterator executeQuery( const QString& query, 
-					      Query::QueryLanguage language,
-					      const QString& userQueryLanguage = QString() ) const;
-	    bool containsStatement( const Statement &statement ) const;
-	    bool containsAnyStatement( const Statement &statement ) const;
-	    bool isEmpty() const;
-	    int statementCount() const;
+        Error::ErrorCode addStatement( const Statement &statement );
+        Error::ErrorCode removeStatement( const Statement &statement );
+        Error::ErrorCode removeAllStatements( const Statement &statement );
+        StatementIterator listStatements( const Statement &partial ) const;
+        NodeIterator listContexts() const;
+        QueryResultIterator executeQuery( const QString& query, 
+                          Query::QueryLanguage language,
+                          const QString& userQueryLanguage = QString() ) const;
+        bool containsStatement( const Statement &statement ) const;
+        bool containsAnyStatement( const Statement &statement ) const;
+        bool isEmpty() const;
+        int statementCount() const;
 
-	private:
-	    void removeIterator( MutexIteratorBase* it ) const;
+    private:
+        void removeIterator( MutexIteratorBase* it ) const;
 
-	    class Private;
-	    Private* const d;
+        class Private;
+        Private* const d;
 
-	    friend class MutexIteratorBase;
-	};
+        friend class MutexIteratorBase;
+    };
     }
 }
 

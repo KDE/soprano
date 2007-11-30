@@ -29,29 +29,29 @@
 
 namespace Soprano {
     namespace Index {
-	class QueryHitWrapperResultIteratorBackend : public QueryResultIteratorBackend
-	{
-	public:
-	    QueryHitWrapperResultIteratorBackend( const Iterator<QueryHit>& it );
-	    ~QueryHitWrapperResultIteratorBackend();
+    class QueryHitWrapperResultIteratorBackend : public QueryResultIteratorBackend
+    {
+    public:
+        QueryHitWrapperResultIteratorBackend( const Iterator<QueryHit>& it );
+        ~QueryHitWrapperResultIteratorBackend();
 
-	    bool next();
-	    void close();
+        bool next();
+        void close();
 
-	    Statement currentStatement() const { return Statement(); }
-	    Node binding( const QString &name ) const;
-	    Node binding( int offset ) const;
-	    int bindingCount() const;
-	    QStringList bindingNames() const;
-	    bool isGraph() const { return false; }
-	    bool isBinding() const { return true; }
-	    bool isBool() const { return false; }
-	    bool boolValue() const { return false; }
+        Statement currentStatement() const { return Statement(); }
+        Node binding( const QString &name ) const;
+        Node binding( int offset ) const;
+        int bindingCount() const;
+        QStringList bindingNames() const;
+        bool isGraph() const { return false; }
+        bool isBinding() const { return true; }
+        bool isBool() const { return false; }
+        bool boolValue() const { return false; }
 
-	private:
-	    Iterator<QueryHit> m_it;
-	    QStringList m_bingingNameCache;
-	};
+    private:
+        Iterator<QueryHit> m_it;
+        QStringList m_bingingNameCache;
+    };
     }
 }
 

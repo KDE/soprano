@@ -28,54 +28,54 @@
 namespace Soprano {
     namespace Sesame2 {
 
-	class RepositoryConnection : public JNIObjectWrapper
-	{
-	public:
-	    RepositoryConnection( const JObjectRef& );
-	    ~RepositoryConnection();
+    class RepositoryConnection : public JNIObjectWrapper
+    {
+    public:
+        RepositoryConnection( const JObjectRef& );
+        ~RepositoryConnection();
 
-	    /**
-	     * method throws exceptions
-	     */
-	    JObjectRef getContextIDs();
+        /**
+         * method throws exceptions
+         */
+        JObjectRef getContextIDs();
 
-	    /**
-	     * method throws exceptions
-	     */
-	    void addStatement( const JObjectRef& );
+        /**
+         * method throws exceptions
+         */
+        void addStatement( const JObjectRef& );
 
-	    /**
-	     * args may be 0 as wildcard
-	     */
-	    JObjectRef getStatements( const JObjectRef& subject, const JObjectRef& predicate, const JObjectRef& object, const JObjectRef& context );
+        /**
+         * args may be 0 as wildcard
+         */
+        JObjectRef getStatements( const JObjectRef& subject, const JObjectRef& predicate, const JObjectRef& object, const JObjectRef& context );
 
-	    /**
-	     * args may be 0 as wildcard
-	     */
-	    bool hasStatement( const JObjectRef& subject, const JObjectRef& predicate, const JObjectRef& object, const JObjectRef& context );
+        /**
+         * args may be 0 as wildcard
+         */
+        bool hasStatement( const JObjectRef& subject, const JObjectRef& predicate, const JObjectRef& object, const JObjectRef& context );
 
-	    /**
-	     * args may be 0 as wildcard
-	     */
-	    void remove( const JObjectRef& subject, const JObjectRef& predicate, const JObjectRef& object, const JObjectRef& context );
+        /**
+         * args may be 0 as wildcard
+         */
+        void remove( const JObjectRef& subject, const JObjectRef& predicate, const JObjectRef& object, const JObjectRef& context );
 
-	    void remove( const JObjectRef& statement );
+        void remove( const JObjectRef& statement );
 
-	    /**
-	     * This will call prepareQuery and query.evaluate
-	     */
-	    JObjectRef query( const JObjectRef& queryLang, const JStringRef& query );
+        /**
+         * This will call prepareQuery and query.evaluate
+         */
+        JObjectRef query( const JObjectRef& queryLang, const JStringRef& query );
 
-	    long size();
+        long size();
 
-	    bool isEmpty();
+        bool isEmpty();
 
-	    void close();
+        void close();
 
-	private:
-	    class Private;
-	    Private* const d;
-	};
+    private:
+        class Private;
+        Private* const d;
+    };
     }
 }
 

@@ -47,50 +47,50 @@ namespace Soprano {
     class SOPRANO_EXPORT NRLModel : public FilterModel
     {
     public:
-	NRLModel();
-	NRLModel( Model* parent );
-	~NRLModel();
+    NRLModel();
+    NRLModel( Model* parent );
+    ~NRLModel();
 
-	/**
-	 * When enforcing the NRL cardinality rules NRLModel can either
-	 * ignore the context of statements or treat different contexts
-	 * as separate sets, each resetting the cardinality.
-	 *
-	 * \param b If \p true (the default) NRLModel does ignore the context
-	 * when enforcing rules. If \p false the NRL rules can be violated
-	 * across contexts.
-	 *
-	 * \sa ignoreContext()
-	 */
-	void setIgnoreContext( bool b );
+    /**
+     * When enforcing the NRL cardinality rules NRLModel can either
+     * ignore the context of statements or treat different contexts
+     * as separate sets, each resetting the cardinality.
+     *
+     * \param b If \p true (the default) NRLModel does ignore the context
+     * when enforcing rules. If \p false the NRL rules can be violated
+     * across contexts.
+     *
+     * \sa ignoreContext()
+     */
+    void setIgnoreContext( bool b );
 
-	/**
-	 * \return \p true if contexts should be ignored when enforcing NRL
-	 * rules.
-	 *
-	 * \sa setIgnoreContext()
-	 */
-	bool ignoreContext() const;
+    /**
+     * \return \p true if contexts should be ignored when enforcing NRL
+     * rules.
+     *
+     * \sa setIgnoreContext()
+     */
+    bool ignoreContext() const;
 
        /**
-	* Add a statement.
-	*
-	* \param s The statement containing the property to be set.
-	* If the predicate has NRL cardinality restrictions existing
-	* statements will be updated. Otherwise this method has the
-	* same effect as Model::addStatement().
-	*
-	* Adding a statement that defines a predicate with a maximum
-	* cardinality bigger than 1 which has already been reached 
-	* fails with an error.
-	*
-	* \return Error::ErrorNone on success.
-	*/
-	Error::ErrorCode addStatement( const Statement& s );
+    * Add a statement.
+    *
+    * \param s The statement containing the property to be set.
+    * If the predicate has NRL cardinality restrictions existing
+    * statements will be updated. Otherwise this method has the
+    * same effect as Model::addStatement().
+    *
+    * Adding a statement that defines a predicate with a maximum
+    * cardinality bigger than 1 which has already been reached 
+    * fails with an error.
+    *
+    * \return Error::ErrorNone on success.
+    */
+    Error::ErrorCode addStatement( const Statement& s );
 
     private:
-	class Private;
-	Private* const d;
+    class Private;
+    Private* const d;
     };
 }
 

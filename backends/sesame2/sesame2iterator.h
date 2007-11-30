@@ -27,22 +27,22 @@
 namespace Soprano {
     namespace Sesame2 {
 
-	class Iterator : public JNIObjectWrapper
-	{
-	public:
-	    Iterator( const JObjectRef& );
-	    ~Iterator();
+    class Iterator : public JNIObjectWrapper
+    {
+    public:
+        Iterator( const JObjectRef& );
+        ~Iterator();
 
-	    bool hasNext();
+        bool hasNext();
 
-	    JObjectRef next();
+        JObjectRef next();
 
-	    void close();
+        void close();
 
-	private:
-	    class Private;
-	    Private* const d;
-	};
+    private:
+        class Private;
+        Private* const d;
+    };
     }
 }
 

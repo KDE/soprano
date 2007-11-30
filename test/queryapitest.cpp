@@ -245,9 +245,9 @@ public:
         const Soprano::Query::RTerm* object = triplePattern->object();
 
         qDebug() << "TriplePattern:";
-    	print( "Subject: ", subject );
-    	print( "Predicate: ", predicate);
-    	print( "Object: ", object);
+        print( "Subject: ", subject );
+        print( "Predicate: ", predicate);
+        print( "Object: ", object);
     }
 
     TestVisitor( Soprano::Query::Query* query )

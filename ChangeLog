@@ -12,4 +12,7 @@
 	* Support for binary data in RDF literals encoded as base64 in LiteralValue
 	* Added Vocabulary namespace containing basic ontology URIs such as RDF, RDFS, XML Schema, and NRL
 	* TriG parser through raptor >= 1.4.16
-	
+	* NQuads (trivial extension of NTriples) parser and serializer
+	* Soprano server library and simple daemon including D-Bus interface.
+	* sopranocmd tool which allows to control the soprano server as well as work on the data directly
+	  through the backends.

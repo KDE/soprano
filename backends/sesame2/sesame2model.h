@@ -33,39 +33,39 @@
 namespace Soprano {
     namespace Sesame2 {
 
-	class StatementIteratorBackend;
-	class NodeIteratorBackend;
-	class QueryResultIteratorBackend;
-	class RepositoryWrapper;
+    class StatementIteratorBackend;
+    class NodeIteratorBackend;
+    class QueryResultIteratorBackend;
+    class RepositoryWrapper;
 
-	class Model : public StorageModel
-	{
-	public:
-	    Model( const Backend* backend, RepositoryWrapper* sesame2Repository );
-	    ~Model();
+    class Model : public StorageModel
+    {
+    public:
+        Model( const Backend* backend, RepositoryWrapper* sesame2Repository );
+        ~Model();
 
-	    Error::ErrorCode addStatement( const Statement &statement );
-	    NodeIterator listContexts() const;
-	    QueryResultIterator executeQuery( const QString &query, Query::QueryLanguage language, const QString& userQueryLanguage = QString() ) const;
-	    StatementIterator listStatements( const Statement &partial ) const;
-	    Error::ErrorCode removeStatement( const Statement &statement );
-	    Error::ErrorCode removeAllStatements( const Statement &statement );
-	    int statementCount() const;
-	    bool isEmpty() const;
-	    bool containsStatement( const Statement &statement ) const;
-	    bool containsAnyStatement( const Statement &statement ) const;
-	    Node createBlankNode();
+        Error::ErrorCode addStatement( const Statement &statement );
+        NodeIterator listContexts() const;
+        QueryResultIterator executeQuery( const QString &query, Query::QueryLanguage language, const QString& userQueryLanguage = QString() ) const;
+        StatementIterator listStatements( const Statement &partial ) const;
+        Error::ErrorCode removeStatement( const Statement &statement );
+        Error::ErrorCode removeAllStatements( const Statement &statement );
+        int statementCount() const;
+        bool isEmpty() const;
+        bool containsStatement( const Statement &statement ) const;
+        bool containsAnyStatement( const Statement &statement ) const;
+        Node createBlankNode();
 
-	    void removeIterator( StatementIteratorBackend* it ) const;
-	    void removeIterator( NodeIteratorBackend* it ) const;
-	    void removeIterator( QueryResultIteratorBackend* r ) const;
+        void removeIterator( StatementIteratorBackend* it ) const;
+        void removeIterator( NodeIteratorBackend* it ) const;
+        void removeIterator( QueryResultIteratorBackend* r ) const;
 
-	private:
-	    void closeIterators();
+    private:
+        void closeIterators();
 
-	    class Private;
-	    Private* d;
-	};
+        class Private;
+        Private* d;
+    };
     }
 }
 

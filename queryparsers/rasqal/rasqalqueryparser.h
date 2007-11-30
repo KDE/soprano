@@ -31,9 +31,9 @@ namespace Soprano {
     namespace Rasqal {
 
         class QueryParser : public QObject, public Soprano::Query::Parser
-	{
-	    Q_OBJECT
-	    Q_INTERFACES(Soprano::Query::Parser)
+    {
+        Q_OBJECT
+        Q_INTERFACES(Soprano::Query::Parser)
 
         public:
             QueryParser();

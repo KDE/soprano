@@ -33,23 +33,23 @@
 namespace Soprano {
     class NQuadParser : public QObject, public Soprano::Parser
     {
-	Q_OBJECT
+    Q_OBJECT
         Q_INTERFACES(Soprano::Parser)
-	    
+        
     public:
-	NQuadParser();
-	~NQuadParser();
+    NQuadParser();
+    ~NQuadParser();
 
-	RdfSerializations supportedSerializations() const;
+    RdfSerializations supportedSerializations() const;
 
-	StatementIterator parseStream( QTextStream&, 
-				       const QUrl& baseUri, 
-				       RdfSerialization serialization,
-				       const QString& userSerialization = QString() ) const;
+    StatementIterator parseStream( QTextStream&, 
+                       const QUrl& baseUri, 
+                       RdfSerialization serialization,
+                       const QString& userSerialization = QString() ) const;
 
     private:
-	Soprano::Statement parseLine( const QString& line, int row ) const;
-	Soprano::Node parseNode( const QString& s, int& offset ) const;
+    Soprano::Statement parseLine( const QString& line, int row ) const;
+    Soprano::Node parseNode( const QString& s, int& offset ) const;
     };
 }
 

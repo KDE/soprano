@@ -38,40 +38,40 @@ namespace Soprano {
 
     namespace Sesame2 {
 
-	class Model;
+    class Model;
 
-	class QueryResultIteratorBackend : public Soprano::QueryResultIteratorBackend
-	{
-	public:
-	    QueryResultIteratorBackend( const JObjectRef& result, const Model* );
-	    ~QueryResultIteratorBackend();
+    class QueryResultIteratorBackend : public Soprano::QueryResultIteratorBackend
+    {
+    public:
+        QueryResultIteratorBackend( const JObjectRef& result, const Model* );
+        ~QueryResultIteratorBackend();
 
-	    bool next();
+        bool next();
 
-	    Statement currentStatement() const;
+        Statement currentStatement() const;
 
-	    Node binding( const QString &name ) const;
+        Node binding( const QString &name ) const;
 
-	    Node binding( int offset ) const;
+        Node binding( int offset ) const;
 
-	    int bindingCount() const;
+        int bindingCount() const;
 
-	    QStringList bindingNames() const;
+        QStringList bindingNames() const;
 
-	    bool isGraph() const;
+        bool isGraph() const;
 
-	    bool isBinding() const;
+        bool isBinding() const;
 
-	    bool isBool() const;
+        bool isBool() const;
 
-	    bool boolValue() const;
+        bool boolValue() const;
 
-	    void close();
+        void close();
 
-	private:
-	    class Private;
-	    Private* const d;
-	};
+    private:
+        class Private;
+        Private* const d;
+    };
     }
 }
 

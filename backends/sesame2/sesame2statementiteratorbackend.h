@@ -34,22 +34,22 @@ namespace Soprano {
 
     namespace Sesame2 {
 
-	class Model;
+    class Model;
 
-	class StatementIteratorBackend : public Soprano::IteratorBackend<Statement>
-	{
-	public:
-	    StatementIteratorBackend( const JObjectRef& result, const Model* model );
-	    ~StatementIteratorBackend();
+    class StatementIteratorBackend : public Soprano::IteratorBackend<Statement>
+    {
+    public:
+        StatementIteratorBackend( const JObjectRef& result, const Model* model );
+        ~StatementIteratorBackend();
 
-	    bool next();
-	    Statement current() const;
-	    void close();
+        bool next();
+        Statement current() const;
+        void close();
 
-	private:
-	    class Private;
-	    Private* const d;
-	};
+    private:
+        class Private;
+        Private* const d;
+    };
     }
 }
 

@@ -27,27 +27,27 @@
 
 namespace Soprano {
     namespace Vocabulary {
-	namespace XMLSchema {
-	    /**
-	     * http://www.w3.org/2001/XMLSchema#
-	     */
+    namespace XMLSchema {
+        /**
+         * http://www.w3.org/2001/XMLSchema#
+         */
             SOPRANO_EXPORT QUrl xmlsNamespace();
             SOPRANO_EXPORT QUrl xmlsInt();
             SOPRANO_EXPORT QUrl integer();
-	    SOPRANO_EXPORT QUrl negativeInteger();
-	    SOPRANO_EXPORT QUrl decimal();
-	    SOPRANO_EXPORT QUrl xmlsShort();
+        SOPRANO_EXPORT QUrl negativeInteger();
+        SOPRANO_EXPORT QUrl decimal();
+        SOPRANO_EXPORT QUrl xmlsShort();
             SOPRANO_EXPORT QUrl xmlsLong();
-	    SOPRANO_EXPORT QUrl unsignedInt();
-	    SOPRANO_EXPORT QUrl unsignedShort();
-	    SOPRANO_EXPORT QUrl unsignedLong();
+        SOPRANO_EXPORT QUrl unsignedInt();
+        SOPRANO_EXPORT QUrl unsignedShort();
+        SOPRANO_EXPORT QUrl unsignedLong();
             SOPRANO_EXPORT QUrl string();
             SOPRANO_EXPORT QUrl xmlsDouble();
             SOPRANO_EXPORT QUrl boolean();
             SOPRANO_EXPORT QUrl date();
             SOPRANO_EXPORT QUrl dateTime();
-	    SOPRANO_EXPORT QUrl time();
-	    SOPRANO_EXPORT QUrl base64Binary();
+        SOPRANO_EXPORT QUrl time();
+        SOPRANO_EXPORT QUrl base64Binary();
         }
     }
 }

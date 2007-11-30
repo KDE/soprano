@@ -28,22 +28,22 @@
 
 namespace Soprano {
     namespace DateTime
-	{
-	    /**
-	     * Parse a time string according to format hh:mm:ss.szzzzzz as defined in 
-	     * XML Schema Part 2: Datatypes Second Edition: http://www.w3.org/TR/xmlschema-2
-	     *
-	     * Be aware that QTime has no notion of timezones and the returned value is 
-	     * always in UTC.
-	     */
-	    QTime fromTimeString( const QString& );
-	    QDate fromDateString( const QString& );
-	    QDateTime fromDateTimeString( const QString& );
+    {
+        /**
+         * Parse a time string according to format hh:mm:ss.szzzzzz as defined in 
+         * XML Schema Part 2: Datatypes Second Edition: http://www.w3.org/TR/xmlschema-2
+         *
+         * Be aware that QTime has no notion of timezones and the returned value is 
+         * always in UTC.
+         */
+        QTime fromTimeString( const QString& );
+        QDate fromDateString( const QString& );
+        QDateTime fromDateTimeString( const QString& );
 
-	    QString toString( const QTime& );
-	    QString toString( const QDate& );
-	    QString toString( const QDateTime& );
-	}
+        QString toString( const QTime& );
+        QString toString( const QDate& );
+        QString toString( const QDateTime& );
+    }
 }
 
 #endif

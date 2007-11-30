@@ -27,10 +27,10 @@
 
 namespace lucene {
     namespace document {
-	class Document;
+    class Document;
     }
     namespace index {
-	class IndexWriter;
+    class IndexWriter;
     }
 }
 
@@ -38,40 +38,40 @@ class TString;
 
 namespace Soprano {
     namespace Index {
-	/**
-	 * Transparently handles adding of properties to a CLucene
-	 * Document.
-	 */
-	class CLuceneDocumentWrapper
-	{
-	public:
-	    CLuceneDocumentWrapper( lucene::document::Document* );
-	    ~CLuceneDocumentWrapper();
+    /**
+     * Transparently handles adding of properties to a CLucene
+     * Document.
+     */
+    class CLuceneDocumentWrapper
+    {
+    public:
+        CLuceneDocumentWrapper( lucene::document::Document* );
+        ~CLuceneDocumentWrapper();
 
-	    void addProperty( const TString& field, const TString& text );
-	    void removeProperty( const TString& field, const TString& text );
-	
-	    /**
-	     * Checks whether a field occurs with a specified value in a Document.
-	     */
-	    bool hasProperty( const QString& field, const QString& text ) const;
+        void addProperty( const TString& field, const TString& text );
+        void removeProperty( const TString& field, const TString& text );
+    
+        /**
+         * Checks whether a field occurs with a specified value in a Document.
+         */
+        bool hasProperty( const QString& field, const QString& text ) const;
 
-	    /**
-	     * Determines the number of properties stored in a Document.
-	     */
-	    int numberOfPropertyFields() const;
+        /**
+         * Determines the number of properties stored in a Document.
+         */
+        int numberOfPropertyFields() const;
 
-	    /**
-	     * Stores and indexes an ID in a Document.
-	     */
-	    void addID( const QString& id );
+        /**
+         * Stores and indexes an ID in a Document.
+         */
+        void addID( const QString& id );
 
-	    void save( lucene::index::IndexWriter* );
+        void save( lucene::index::IndexWriter* );
 
-	private:
-	    class Private;
-	    Private* const d;
-	};
+    private:
+        class Private;
+        Private* const d;
+    };
     }
 }
 

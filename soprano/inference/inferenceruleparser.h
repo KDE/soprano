@@ -29,31 +29,31 @@
 namespace Soprano {
     namespace Inference {
 
-	class RuleSet;
+    class RuleSet;
 
-	/**
-	 * \class RuleParser inferenceruleparser.h Soprano/Inference/RuleParser
-	 *
-	 * \brief The RuleParser can be used to parse %Soprano rule files.
-	 *
-	 * \sa RuleSet::standardRuleSet()
-	 *
-	 * \author Sebastian Trueg <trueg@kde.org>
-	 */
-	class SOPRANO_EXPORT RuleParser
-	{
-	public:
-	    RuleParser();
-	    ~RuleParser();
+    /**
+     * \class RuleParser inferenceruleparser.h Soprano/Inference/RuleParser
+     *
+     * \brief The RuleParser can be used to parse %Soprano rule files.
+     *
+     * \sa RuleSet::standardRuleSet()
+     *
+     * \author Sebastian Trueg <trueg@kde.org>
+     */
+    class SOPRANO_EXPORT RuleParser
+    {
+    public:
+        RuleParser();
+        ~RuleParser();
 
-	    bool parseFile( const QString& path );
+        bool parseFile( const QString& path );
 
-	    RuleSet rules() const;
+        RuleSet rules() const;
 
-	private:
-	    class Private;
-	    Private* d;
-	};
+    private:
+        class Private;
+        Private* d;
+    };
     }
 }
 

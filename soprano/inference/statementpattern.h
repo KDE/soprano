@@ -35,42 +35,42 @@ namespace Soprano {
 
     namespace Inference {
 
-	class NodePattern;
+    class NodePattern;
 
-	/**
-	 * \class StatementPattern statementpattern.h Soprano/Inference/StatementPattern
-	 *
-	 * \brief Building block of an inference Rule.
-	 *
-	 * A StatementPattern consists of three NodePattern that can either
-	 * be variables or already bound ndoes.
-	 *
-	 * StatementPattern is used to define preconditions and effects in Rule.
-	 *
-	 * \author Sebastian Trueg <trueg@kde.org>
-	 */
-	class SOPRANO_EXPORT StatementPattern
-	{
-	public:
-	    StatementPattern();
-	    StatementPattern( const NodePattern&, const NodePattern&, const NodePattern& );
-	    StatementPattern( const StatementPattern& );
-	    ~StatementPattern();
+    /**
+     * \class StatementPattern statementpattern.h Soprano/Inference/StatementPattern
+     *
+     * \brief Building block of an inference Rule.
+     *
+     * A StatementPattern consists of three NodePattern that can either
+     * be variables or already bound ndoes.
+     *
+     * StatementPattern is used to define preconditions and effects in Rule.
+     *
+     * \author Sebastian Trueg <trueg@kde.org>
+     */
+    class SOPRANO_EXPORT StatementPattern
+    {
+    public:
+        StatementPattern();
+        StatementPattern( const NodePattern&, const NodePattern&, const NodePattern& );
+        StatementPattern( const StatementPattern& );
+        ~StatementPattern();
 
-	    StatementPattern operator=( const StatementPattern& );
+        StatementPattern operator=( const StatementPattern& );
 
-	    NodePattern subjectPattern() const;
-	    NodePattern predicatePattern() const;
-	    NodePattern objectPattern() const;
+        NodePattern subjectPattern() const;
+        NodePattern predicatePattern() const;
+        NodePattern objectPattern() const;
 
-	    bool match( const Statement& ) const;
+        bool match( const Statement& ) const;
 
-	    QString createSparqlGraphPattern( const BindingSet& bindings ) const;
+        QString createSparqlGraphPattern( const BindingSet& bindings ) const;
 
-	private:
-	    class Private;
-	    QSharedDataPointer<Private> d;
-	};
+    private:
+        class Private;
+        QSharedDataPointer<Private> d;
+    };
     }
 }
 

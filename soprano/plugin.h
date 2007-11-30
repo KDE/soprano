@@ -44,26 +44,26 @@ namespace Soprano {
     class SOPRANO_EXPORT Plugin
     {
     public:
-	virtual ~Plugin();
+    virtual ~Plugin();
 
-	QString pluginName() const;
+    QString pluginName() const;
 
-	/**
-	 * This method can be reimplemented by plugins that need
-	 * to do additional run-time checks before they can be used.
-	 *
-	 * The default implementation returns \p true.
-	 *
-	 * \return \p true if the plugin can be used.
-	 */
-	virtual bool isAvailable() const;
+    /**
+     * This method can be reimplemented by plugins that need
+     * to do additional run-time checks before they can be used.
+     *
+     * The default implementation returns \p true.
+     *
+     * \return \p true if the plugin can be used.
+     */
+    virtual bool isAvailable() const;
 
     protected:
-	Plugin( const QString& name );
+    Plugin( const QString& name );
 
     private:
-	class Private;
-	Private* const d;
+    class Private;
+    Private* const d;
     };
 }
 

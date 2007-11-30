@@ -31,22 +31,22 @@
 
 namespace Soprano {
     namespace Raptor {
-	class Serializer : public QObject, public Soprano::Serializer
-	{
-	    Q_OBJECT
-	    Q_INTERFACES(Soprano::Serializer)
+    class Serializer : public QObject, public Soprano::Serializer
+    {
+        Q_OBJECT
+        Q_INTERFACES(Soprano::Serializer)
 
-	public:
-	    Serializer();
-	    ~Serializer();
+    public:
+        Serializer();
+        ~Serializer();
 
-	    RdfSerializations supportedSerializations() const;
+        RdfSerializations supportedSerializations() const;
 
-	    bool serialize( StatementIterator it, 
-			    QTextStream& stream, 
-			    RdfSerialization serialization,
-			    const QString& userSerialization = QString() ) const;
-	};
+        bool serialize( StatementIterator it, 
+                QTextStream& stream, 
+                RdfSerialization serialization,
+                const QString& userSerialization = QString() ) const;
+    };
     }
 }
 

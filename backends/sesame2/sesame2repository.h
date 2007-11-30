@@ -29,48 +29,48 @@ namespace Soprano {
 
     namespace Sesame2 {
 
-	class ValueFactory;
-	class RepositoryConnection;
+    class ValueFactory;
+    class RepositoryConnection;
 
-	class RepositoryWrapper : public JNIObjectWrapper
-	{
-	public:
-	    ~RepositoryWrapper();
+    class RepositoryWrapper : public JNIObjectWrapper
+    {
+    public:
+        ~RepositoryWrapper();
 
-	    ValueFactory* valueFactory();
-	    RepositoryConnection* repositoryConnection();
+        ValueFactory* valueFactory();
+        RepositoryConnection* repositoryConnection();
 
-	    /**
-	     * A repo has to be initialized before usage.
-	     */
-	    bool initialize();
-	    
-	    /**
-	     * Close an open repo and free all resources.
-	     * The repo is not usable afterwards.
-	     * Normally there is no need to call this as it is
-	     * called in the desctructor.
-	     */
-	    void close();
+        /**
+         * A repo has to be initialized before usage.
+         */
+        bool initialize();
+        
+        /**
+         * Close an open repo and free all resources.
+         * The repo is not usable afterwards.
+         * Normally there is no need to call this as it is
+         * called in the desctructor.
+         */
+        void close();
 
-	    JObjectRef getContextIDs();
+        JObjectRef getContextIDs();
 
-	    /**
-	     * Create a repository that stores its data in path.
-	     */
-	    static RepositoryWrapper* create( const QString& path );
+        /**
+         * Create a repository that stores its data in path.
+         */
+        static RepositoryWrapper* create( const QString& path );
 
-	    /**
-	     * Create a repository in memory
-	     */
-	    static RepositoryWrapper* create();
+        /**
+         * Create a repository in memory
+         */
+        static RepositoryWrapper* create();
 
-	private:
-	    RepositoryWrapper( const JObjectRef& );
+    private:
+        RepositoryWrapper( const JObjectRef& );
 
-	    class Private;
-	    Private* const d;
-	};
+        class Private;
+        Private* const d;
+    };
     }
 }
 

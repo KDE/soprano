@@ -34,26 +34,26 @@ namespace Soprano
 
     namespace Redland {
 
-	class RedlandModel;
+    class RedlandModel;
 
-	class NodeIteratorBackend: public Soprano::IteratorBackend<Node>
-	{
-	public:
-	    explicit NodeIteratorBackend( const RedlandModel* model, librdf_iterator *it );
+    class NodeIteratorBackend: public Soprano::IteratorBackend<Node>
+    {
+    public:
+        explicit NodeIteratorBackend( const RedlandModel* model, librdf_iterator *it );
 
-	    ~NodeIteratorBackend();
+        ~NodeIteratorBackend();
 
-	    bool next();
+        bool next();
 
-	    Soprano::Node current() const;
+        Soprano::Node current() const;
 
-	    void close();
+        void close();
 
-	private:
-	    const RedlandModel* m_model;
-	    librdf_iterator* m_iterator;
-	    bool m_initialized;
-	};
+    private:
+        const RedlandModel* m_model;
+        librdf_iterator* m_iterator;
+        bool m_initialized;
+    };
     }
 }
 

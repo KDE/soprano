@@ -42,53 +42,53 @@ namespace Soprano
 
     namespace Redland {
 
-	class RedlandStatementIterator;
-	class RedlandQueryResult;
-	class NodeIteratorBackend;
+    class RedlandStatementIterator;
+    class RedlandQueryResult;
+    class NodeIteratorBackend;
 
-	class RedlandModel: public Soprano::StorageModel
-	    {
-	    public:
-		RedlandModel( const Backend*, librdf_model *model, librdf_storage *storage );
+    class RedlandModel: public Soprano::StorageModel
+        {
+        public:
+        RedlandModel( const Backend*, librdf_model *model, librdf_storage *storage );
 
-		~RedlandModel();
+        ~RedlandModel();
 
-		librdf_model *redlandModel() const;
+        librdf_model *redlandModel() const;
 
-		Error::ErrorCode addStatement( const Statement &statement );
+        Error::ErrorCode addStatement( const Statement &statement );
 
-		virtual NodeIterator listContexts() const;
+        virtual NodeIterator listContexts() const;
 
-		bool containsAnyStatement( const Statement &statement ) const;
+        bool containsAnyStatement( const Statement &statement ) const;
 
-		Soprano::QueryResultIterator executeQuery( const QString &query, Query::QueryLanguage language, const QString& userQueryLanguage = QString() ) const;
+        Soprano::QueryResultIterator executeQuery( const QString &query, Query::QueryLanguage language, const QString& userQueryLanguage = QString() ) const;
 
-		Soprano::StatementIterator listStatements( const Statement &partial ) const;
+        Soprano::StatementIterator listStatements( const Statement &partial ) const;
 
-		Error::ErrorCode removeStatement( const Statement &statement );
+        Error::ErrorCode removeStatement( const Statement &statement );
 
-		Error::ErrorCode removeAllStatements( const Statement &statement );
+        Error::ErrorCode removeAllStatements( const Statement &statement );
 
-		int statementCount() const;
+        int statementCount() const;
 
-		Error::ErrorCode write( QTextStream &os ) const;
+        Error::ErrorCode write( QTextStream &os ) const;
 
-		Node createBlankNode();
+        Node createBlankNode();
 
-	    private:
-		class Private;
-		Private *d;
+        private:
+        class Private;
+        Private *d;
 
-		void removeIterator( RedlandStatementIterator* it ) const;
-		void removeIterator( NodeIteratorBackend* it ) const;
-		void removeQueryResult( RedlandQueryResult* r ) const;
+        void removeIterator( RedlandStatementIterator* it ) const;
+        void removeIterator( NodeIteratorBackend* it ) const;
+        void removeQueryResult( RedlandQueryResult* r ) const;
 
-		Error::ErrorCode removeOneStatement( const Statement &statement );
+        Error::ErrorCode removeOneStatement( const Statement &statement );
 
-		friend class RedlandStatementIterator;
-		friend class RedlandQueryResult;
-		friend class NodeIteratorBackend;
-	    }; 
+        friend class RedlandStatementIterator;
+        friend class RedlandQueryResult;
+        friend class NodeIteratorBackend;
+        }; 
 
     }
 }

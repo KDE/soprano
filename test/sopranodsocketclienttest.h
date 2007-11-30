@@ -29,7 +29,7 @@
 namespace Soprano {
     class Model;
     namespace Client {
-	class UnixSocketClient;
+    class UnixSocketClient;
     }
 }
 

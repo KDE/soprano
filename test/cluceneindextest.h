@@ -27,8 +27,8 @@
 namespace Soprano {
     class Model;
     namespace Index {
-	class IndexFilterModel;
-	class CLuceneIndex;
+    class IndexFilterModel;
+    class CLuceneIndex;
     }
 }
 

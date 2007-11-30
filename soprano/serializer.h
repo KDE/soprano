@@ -49,60 +49,60 @@ namespace Soprano
     class SOPRANO_EXPORT Serializer : public Plugin, public Error::ErrorCache
     {
     public:
-	virtual ~Serializer();
+    virtual ~Serializer();
 
-	/**
-	 * The serialiazation types supported by this serializer.
-	 * \return A combination of Soprano::RdfSerialization types. If
-	 * the list contains Soprano::SerializationUser the serializer 
-	 * supports additional RDF serialiazations not
-	 * officially supported by %Soprano.
-	 */
-	virtual RdfSerializations supportedSerializations() const = 0;
+    /**
+     * The serialiazation types supported by this serializer.
+     * \return A combination of Soprano::RdfSerialization types. If
+     * the list contains Soprano::SerializationUser the serializer 
+     * supports additional RDF serialiazations not
+     * officially supported by %Soprano.
+     */
+    virtual RdfSerializations supportedSerializations() const = 0;
 
-	/**
-	 * A serializer can support additional RDF serializations that are not defined in Soprano::RdfSerialization.
-	 * In that case supportedSerializations() has to include Soprano::SerializationUser.
-	 *
-	 * The default implementation returns an empty list.
-	 *
-	 * \return A list of supported user RDF serializations.
-	 */
-	virtual QStringList supportedUserSerializations() const;
+    /**
+     * A serializer can support additional RDF serializations that are not defined in Soprano::RdfSerialization.
+     * In that case supportedSerializations() has to include Soprano::SerializationUser.
+     *
+     * The default implementation returns an empty list.
+     *
+     * \return A list of supported user RDF serializations.
+     */
+    virtual QStringList supportedUserSerializations() const;
 
-	/**
-	 * Check if a plugin supports a specific serialization.
-	 *
-	 * \param s The requested serialization.
-	 * \param userSerialization If serialization is set to Soprano::SerializationUser this parameter specifies the
-	 *       requested serialization. It allows the extension of the %Soprano Serializer interface with new
-	 *       RDF serializations that are not officially supported by %Soprano.
-	 *
-	 * \return \p true if the serializer is able to parse RDF data encoded
-	 * in serialization s, \p false otherwise.
-	 */
-	bool supportsSerialization( RdfSerialization s, const QString& userSerialization = QString() ) const;
+    /**
+     * Check if a plugin supports a specific serialization.
+     *
+     * \param s The requested serialization.
+     * \param userSerialization If serialization is set to Soprano::SerializationUser this parameter specifies the
+     *       requested serialization. It allows the extension of the %Soprano Serializer interface with new
+     *       RDF serializations that are not officially supported by %Soprano.
+     *
+     * \return \p true if the serializer is able to parse RDF data encoded
+     * in serialization s, \p false otherwise.
+     */
+    bool supportsSerialization( RdfSerialization s, const QString& userSerialization = QString() ) const;
 
-	/**
-	 * Serialize a list of statements.
-	 *
-	 * \param it An iterator containing the statements to be serialized.
-	 * \param stream The stream the serialized data should be written to.
-	 * \param serialization The encoding to be used.
-	 * \param userSerialization If serialization is set to Soprano::SerializationUser this parameter specifies the
-	 *       serialization to use. It allows the extension of the %Soprano Serializer interface with new
-	 *       RDF serializations that are not officially supported by %Soprano.
-	 *
-	 * \return \p true if the %serialization was successful,  false otherwise.
-	 */
-	virtual bool serialize( StatementIterator it, QTextStream& stream, RdfSerialization serialization, const QString& userSerialization = QString() ) const = 0;
+    /**
+     * Serialize a list of statements.
+     *
+     * \param it An iterator containing the statements to be serialized.
+     * \param stream The stream the serialized data should be written to.
+     * \param serialization The encoding to be used.
+     * \param userSerialization If serialization is set to Soprano::SerializationUser this parameter specifies the
+     *       serialization to use. It allows the extension of the %Soprano Serializer interface with new
+     *       RDF serializations that are not officially supported by %Soprano.
+     *
+     * \return \p true if the %serialization was successful,  false otherwise.
+     */
+    virtual bool serialize( StatementIterator it, QTextStream& stream, RdfSerialization serialization, const QString& userSerialization = QString() ) const = 0;
 
     protected:
-	Serializer( const QString& name );
+    Serializer( const QString& name );
 
     private:
-	class Private;
-	Private* const d;
+    class Private;
+    Private* const d;
     };
 }
 

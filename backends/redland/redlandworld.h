@@ -34,38 +34,38 @@
 namespace Soprano
 {
     namespace Redland
-	{
-	    class RedlandModel;
+    {
+        class RedlandModel;
 
-	    class World : public Soprano::Error::ErrorCache
-		{
-		public:
-		    World();
-		    ~World();
+        class World : public Soprano::Error::ErrorCache
+        {
+        public:
+            World();
+            ~World();
 
-		    static World *self();
+            static World *self();
 
-		    librdf_world* worldPtr() const;
+            librdf_world* worldPtr() const;
 
-		    // make error methods public
-		    void setError( const Error::Error& e ) const { ErrorCache::setError( e ); }
-		    void clearError() const { ErrorCache::clearError(); }
+            // make error methods public
+            void setError( const Error::Error& e ) const { ErrorCache::setError( e ); }
+            void clearError() const { ErrorCache::clearError(); }
 
-		    inline Error::Error lastError() const { return ErrorCache::lastError(); }
+            inline Error::Error lastError() const { return ErrorCache::lastError(); }
 
-		    Error::Error lastError( const Error::Error& fallBackError ) const {
-			if( ErrorCache::lastError() ) {
-			    return ErrorCache::lastError();
-			}
-			else {
-			    return fallBackError;
-			}
-		    }
+            Error::Error lastError( const Error::Error& fallBackError ) const {
+            if( ErrorCache::lastError() ) {
+                return ErrorCache::lastError();
+            }
+            else {
+                return fallBackError;
+            }
+            }
 
-		private:
-		    librdf_world * m_world;
-		};
-	}
+        private:
+            librdf_world * m_world;
+        };
+    }
 }
 
 #endif // SOPRANO_BACKEND_REDLAND_WORLD_H

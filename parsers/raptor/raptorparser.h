@@ -33,38 +33,38 @@
 
 namespace Soprano {
     namespace Raptor {
-	class Parser : public QObject, public Soprano::Parser
-	{
-	    Q_OBJECT
-	    Q_INTERFACES(Soprano::Parser)
+    class Parser : public QObject, public Soprano::Parser
+    {
+        Q_OBJECT
+        Q_INTERFACES(Soprano::Parser)
 
-	public:
-	    Parser();
-	    ~Parser();
+    public:
+        Parser();
+        ~Parser();
 
-	    RdfSerializations supportedSerializations() const;
+        RdfSerializations supportedSerializations() const;
 
-	    StatementIterator parseFile( const QString& filename, 
-					 const QUrl& baseUri, 
-					 RdfSerialization serialization,
-					 const QString& userSerialization = QString() ) const;
-	    StatementIterator parseString( const QString& data, 
-					   const QUrl& baseUri, 
-					   RdfSerialization serialization,
-					   const QString& userSerialization = QString() ) const;
-	    StatementIterator parseStream( QTextStream&, 
-					   const QUrl& baseUri, 
-					   RdfSerialization serialization,
-					   const QString& userSerialization = QString() ) const;
+        StatementIterator parseFile( const QString& filename, 
+                     const QUrl& baseUri, 
+                     RdfSerialization serialization,
+                     const QString& userSerialization = QString() ) const;
+        StatementIterator parseString( const QString& data, 
+                       const QUrl& baseUri, 
+                       RdfSerialization serialization,
+                       const QString& userSerialization = QString() ) const;
+        StatementIterator parseStream( QTextStream&, 
+                       const QUrl& baseUri, 
+                       RdfSerialization serialization,
+                       const QString& userSerialization = QString() ) const;
 
-	    void setError( const Soprano::Error::Error& error ) const;
+        void setError( const Soprano::Error::Error& error ) const;
 
-	private:
-	    raptor_parser* createParser( RdfSerialization serialization,
-					 const QString& userSerialization = QString() ) const;
+    private:
+        raptor_parser* createParser( RdfSerialization serialization,
+                     const QString& userSerialization = QString() ) const;
 
-	    mutable bool m_initialized;
-	};
+        mutable bool m_initialized;
+    };
     }
 }
 

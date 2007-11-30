@@ -33,41 +33,41 @@ namespace Soprano {
     class Model;
 
     namespace Redland {
-	class RedlandModel;
+    class RedlandModel;
 
-	class RedlandQueryResult: public Soprano::QueryResultIteratorBackend
-	    {
-	    public:
-		RedlandQueryResult( const RedlandModel* model, librdf_query_results *result );
+    class RedlandQueryResult: public Soprano::QueryResultIteratorBackend
+        {
+        public:
+        RedlandQueryResult( const RedlandModel* model, librdf_query_results *result );
 
-		~RedlandQueryResult();
+        ~RedlandQueryResult();
 
-		bool next();
+        bool next();
     
-		Statement currentStatement() const;
+        Statement currentStatement() const;
 
-		Soprano::Node binding( const QString &name ) const;
+        Soprano::Node binding( const QString &name ) const;
 
-		Soprano::Node binding( int offset ) const;
+        Soprano::Node binding( int offset ) const;
 
-		int bindingCount() const;
+        int bindingCount() const;
 
-		QStringList bindingNames() const;
+        QStringList bindingNames() const;
 
-		bool isGraph() const;
+        bool isGraph() const;
 
-		bool isBinding() const;
+        bool isBinding() const;
 
-		bool isBool() const;
+        bool isBool() const;
 
-		bool boolValue() const;
+        bool boolValue() const;
 
-		void close();
+        void close();
 
-	    private:
-		class Private;
-		Private *d;
-	    };
+        private:
+        class Private;
+        Private *d;
+        };
  
     }
 }

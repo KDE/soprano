@@ -33,23 +33,23 @@ namespace Soprano {
     class SopranoPluginFile : public DesktopFile
     {
     public:
-	SopranoPluginFile();
-	SopranoPluginFile( const QString& path );
-	~SopranoPluginFile();
+    SopranoPluginFile();
+    SopranoPluginFile( const QString& path );
+    ~SopranoPluginFile();
 
-	bool open( const QString& path );
+    bool open( const QString& path );
 
-	QString library() const;
-	QString pluginAuthor() const;
-	QString pluginEmail() const;
-	QString pluginWebsite() const;
-	QString pluginLicense() const;
-	QString pluginVersion() const;
-	QString sopranoVersion() const;
+    QString library() const;
+    QString pluginAuthor() const;
+    QString pluginEmail() const;
+    QString pluginWebsite() const;
+    QString pluginLicense() const;
+    QString pluginVersion() const;
+    QString sopranoVersion() const;
 
     private:
-	class Private;
-	Private* const d;
+    class Private;
+    Private* const d;
     };
 }
 

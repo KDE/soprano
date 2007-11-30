@@ -43,116 +43,116 @@ namespace Soprano
      * \author Daniele Galdi <daniele.galdi@gmail.com><br>Sebastian Trueg <trueg@kde.org>
      */
     class SOPRANO_EXPORT Statement
-	{
-	public:
-	    //@{
-	    /**
-	     * Default Constructor, build an empty (invalid) Statement.
-	     */
-	    Statement();
+    {
+    public:
+        //@{
+        /**
+         * Default Constructor, build an empty (invalid) Statement.
+         */
+        Statement();
 
-	    /**
-	     * Build a Statement with the given subject, predicate and object.
-	     *
-	     * \param subject The subject.
-	     *
-	     * \param predicate The predicate.
-	     *
-	     * \param object The object.
-	     *
-	     * \param context The context node.
-	     */
-	    Statement( const Node &subject, const Node &predicate, const Node &object, const Node &context = Node() );
+        /**
+         * Build a Statement with the given subject, predicate and object.
+         *
+         * \param subject The subject.
+         *
+         * \param predicate The predicate.
+         *
+         * \param object The object.
+         *
+         * \param context The context node.
+         */
+        Statement( const Node &subject, const Node &predicate, const Node &object, const Node &context = Node() );
 
-	    Statement( const Statement &other );
+        Statement( const Statement &other );
 
-	    virtual ~Statement();
+        virtual ~Statement();
 
-	    Statement& operator=( const Statement& other );
-	    //@}
+        Statement& operator=( const Statement& other );
+        //@}
 
-	    //@{
-	    bool operator==( const Statement& other ) const;
-	    bool operator!=( const Statement& other ) const;
+        //@{
+        bool operator==( const Statement& other ) const;
+        bool operator!=( const Statement& other ) const;
 
-	    /**
-	     * Match this statement against other. The only difference
-	     * to operator== is that empty nodes are matched as wildcards,
-	     * i.e. they match any other node.
-	     *
-	     * \sa Node::matches()
-	     *
-	     * \return \p true if this statement matches other, \p false if not.
-	     */
-	    bool matches( const Statement& other ) const;
-	    //@}
+        /**
+         * Match this statement against other. The only difference
+         * to operator== is that empty nodes are matched as wildcards,
+         * i.e. they match any other node.
+         *
+         * \sa Node::matches()
+         *
+         * \return \p true if this statement matches other, \p false if not.
+         */
+        bool matches( const Statement& other ) const;
+        //@}
 
-	    //@{
-	    /**
-	     * A Statement is valid if the subject is a resource or blank 
-	     * node, the predicate is a resource node,
-	     * and the object is a valid node.
-	     *
-	     * \return @p true if the Statement is valid, @p false otherwise
-	     */
-	    bool isValid() const;
-	    //@}
+        //@{
+        /**
+         * A Statement is valid if the subject is a resource or blank 
+         * node, the predicate is a resource node,
+         * and the object is a valid node.
+         *
+         * \return @p true if the Statement is valid, @p false otherwise
+         */
+        bool isValid() const;
+        //@}
 
-	    //@{
-	    /**
-	     * \return The subject.
-	     */
-	    Node subject() const;
+        //@{
+        /**
+         * \return The subject.
+         */
+        Node subject() const;
 
-	    /**
-	     * \return The predicate.
-	     */
-	    Node predicate() const;
+        /**
+         * \return The predicate.
+         */
+        Node predicate() const;
 
-	    /**
-	     * \return The object.
-	     */
-	    Node object() const;
+        /**
+         * \return The object.
+         */
+        Node object() const;
 
-	    /**
-	     * \return The Context node.
-	     */
-	    Node context() const;
-	    //@}
+        /**
+         * \return The Context node.
+         */
+        Node context() const;
+        //@}
 
-	    //@{
-	    /**
-	     * Change the Statement subject.
-	     *
-	     * \param subject The new subject.
-	     */
-	    void setSubject( const Node &subject );
+        //@{
+        /**
+         * Change the Statement subject.
+         *
+         * \param subject The new subject.
+         */
+        void setSubject( const Node &subject );
 
-	    /**
-	     * Change the Statement predicate.
-	     *
-	     * \param predicate The new predicate.
-	     */
-	    void setPredicate( const Node &predicate );
-	    /**
-	     * Change the Statement object.
-	     *
-	     * \param object The new object.
-	     */
-	    void setObject( const Node &object );
+        /**
+         * Change the Statement predicate.
+         *
+         * \param predicate The new predicate.
+         */
+        void setPredicate( const Node &predicate );
+        /**
+         * Change the Statement object.
+         *
+         * \param object The new object.
+         */
+        void setObject( const Node &object );
 
-	    /**
-	     * Change the Statement context.
-	     *
-	     * \param context The new Context.
-	     */
-	    void setContext( const Node &context );
-	    //@}
+        /**
+         * Change the Statement context.
+         *
+         * \param context The new Context.
+         */
+        void setContext( const Node &context );
+        //@}
 
-	private:
-	    class Private;
-	    QSharedDataPointer<Private> d;
-	};
+    private:
+        class Private;
+        QSharedDataPointer<Private> d;
+    };
 
 }
 

@@ -86,7 +86,7 @@ public:
     QString toQString() const;
 
     static TString fromUtf8( const char* data );
-	
+    
 private:
     class Private;
     QSharedDataPointer<Private> d;

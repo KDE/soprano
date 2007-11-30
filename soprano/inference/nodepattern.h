@@ -33,59 +33,59 @@ namespace Soprano {
     class BindingSet;
 
     namespace Inference {
-	/**
-	 * \class NodePattern nodepattern.h Soprano/Inference/NodePattern
-	 *
-	 * \brief Smallest building block of an inference Rule.
-	 *
-	 * There are two types of NodePattern:
-	 * \li Simple nodes that wrap around an instance or Node
-	 *     and only match against that particular node.
-	 * \li Variable nodes that match against every Node and
-	 *     have a name.
-	 *
-	 * \author Sebastian Trueg <trueg@kde.org>
-	 */
-	class SOPRANO_EXPORT NodePattern
-	{
-	public:
-	    NodePattern();
-	    NodePattern( const Node& );
-	    NodePattern( const QString& varname );
-	    NodePattern( const NodePattern& );
-	    ~NodePattern();
+    /**
+     * \class NodePattern nodepattern.h Soprano/Inference/NodePattern
+     *
+     * \brief Smallest building block of an inference Rule.
+     *
+     * There are two types of NodePattern:
+     * \li Simple nodes that wrap around an instance or Node
+     *     and only match against that particular node.
+     * \li Variable nodes that match against every Node and
+     *     have a name.
+     *
+     * \author Sebastian Trueg <trueg@kde.org>
+     */
+    class SOPRANO_EXPORT NodePattern
+    {
+    public:
+        NodePattern();
+        NodePattern( const Node& );
+        NodePattern( const QString& varname );
+        NodePattern( const NodePattern& );
+        ~NodePattern();
 
-	    NodePattern& operator=( const NodePattern& );
-		
-	    bool isVariable() const;
+        NodePattern& operator=( const NodePattern& );
+        
+        bool isVariable() const;
 
-	    /**
-	     * \returns the associated resource of an invalid Node
-	     * if this is a variable.
-	     */
-	    Node resource() const;
+        /**
+         * \returns the associated resource of an invalid Node
+         * if this is a variable.
+         */
+        Node resource() const;
 
-	    /**
-	     * \returns The name of the variable or an empty string
-	     * if this is not a variable.
-	     */
-	    QString variableName() const;
+        /**
+         * \returns The name of the variable or an empty string
+         * if this is not a variable.
+         */
+        QString variableName() const;
 
-	    /**
-	     * Match a Node against this pattern.
-	     * Variables will match any Node while
-	     * specific %node patterns will only match
-	     * that one particular Node.
-	     * \return true if node mathes this pattern.
-	     */
-	    bool match( const Node& node ) const;
+        /**
+         * Match a Node against this pattern.
+         * Variables will match any Node while
+         * specific %node patterns will only match
+         * that one particular Node.
+         * \return true if node mathes this pattern.
+         */
+        bool match( const Node& node ) const;
 
-	    QString createSparqlNodePattern( const BindingSet& bindings ) const;
+        QString createSparqlNodePattern( const BindingSet& bindings ) const;
 
-	private:
-	    class Private;
-	    QSharedDataPointer<Private> d;
-	};
+    private:
+        class Private;
+        QSharedDataPointer<Private> d;
+    };
     }
 }
 

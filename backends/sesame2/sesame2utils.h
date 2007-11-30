@@ -34,9 +34,9 @@ namespace Soprano {
     class Statement;
 
     namespace Sesame2 {
-	QUrl convertURI( const JObjectRef& uri );
-	Node convertNode( const JObjectRef& resource );
-	Statement convertStatement( const JObjectRef& o );
+    QUrl convertURI( const JObjectRef& uri );
+    Node convertNode( const JObjectRef& resource );
+    Statement convertStatement( const JObjectRef& o );
     }
 }
 

@@ -4,3 +4,8 @@ Add here what you want to add in Soprano
 
 * threaded async inference: run inference in a different thread to make add and remove calls return quickly (as an option which can be configured)
 * some reference counting in the inference model to properly handle removal of statements
+
+Soprano 3:
+* make Soprano::Backend::createModel non-virtual and let it call a virtual protected method. Then remove the Backend* paramter
+  from the StorageModel constructor and have Backend set the Backend and the BackendSettings in Backend::createModel
+* Make Soprano::Server::ServerCore::createModel const.

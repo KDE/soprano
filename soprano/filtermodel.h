@@ -47,150 +47,150 @@ namespace Soprano {
      */
     class SOPRANO_EXPORT FilterModel : public Model
     {
-	Q_OBJECT
+    Q_OBJECT
 
     public:
-	/**
-	 * Destructor
-	 */
-	virtual ~FilterModel();
+    /**
+     * Destructor
+     */
+    virtual ~FilterModel();
 
-	//@{
-	/**
-	 * Set the parent Model.
-	 * \param model The Model that this filter will forward any commands to.
-	 */
-	virtual void setParentModel( Model* model );
+    //@{
+    /**
+     * Set the parent Model.
+     * \param model The Model that this filter will forward any commands to.
+     */
+    virtual void setParentModel( Model* model );
 
-	/**
-	 * Get the parent model.
-	 * \return The parent Model or 0 if none has been set.
-	 */
-	virtual Model* parentModel() const;
-	//@}
+    /**
+     * Get the parent model.
+     * \return The parent Model or 0 if none has been set.
+     */
+    virtual Model* parentModel() const;
+    //@}
 
-	//@{
-	/**
-	 * Default implementation simply pipes the call through to the parent model.
-	 */
-	virtual Error::ErrorCode addStatement( const Statement &statement );
-	//@}
+    //@{
+    /**
+     * Default implementation simply pipes the call through to the parent model.
+     */
+    virtual Error::ErrorCode addStatement( const Statement &statement );
+    //@}
 
-	//@{
-	/**
-	 * Default implementation simply pipes the call through to the parent model.
-	 */
-	virtual Error::ErrorCode removeStatement( const Statement &statement );
+    //@{
+    /**
+     * Default implementation simply pipes the call through to the parent model.
+     */
+    virtual Error::ErrorCode removeStatement( const Statement &statement );
 
-	/**
-	 * Default implementation simply pipes the call through to the parent model.
-	 */
-	virtual Error::ErrorCode removeAllStatements( const Statement &statement );
-	//@}
+    /**
+     * Default implementation simply pipes the call through to the parent model.
+     */
+    virtual Error::ErrorCode removeAllStatements( const Statement &statement );
+    //@}
 
-	//@{
-	/**
-	 * Default implementation simply pipes the call through to the parent model.
-	 */
-	virtual StatementIterator listStatements( const Statement &partial ) const;
+    //@{
+    /**
+     * Default implementation simply pipes the call through to the parent model.
+     */
+    virtual StatementIterator listStatements( const Statement &partial ) const;
 
-	/**
-	 * Default implementation simply pipes the call through to the parent model.
-	 */
-	virtual NodeIterator listContexts() const;
+    /**
+     * Default implementation simply pipes the call through to the parent model.
+     */
+    virtual NodeIterator listContexts() const;
 
-	/**
-	 * Default implementation simply pipes the call through to the parent model.
-	 */
-//	virtual QueryResultIterator executeQuery( const Query::Query& query ) const;
+    /**
+     * Default implementation simply pipes the call through to the parent model.
+     */
+//    virtual QueryResultIterator executeQuery( const Query::Query& query ) const;
 
-	/**
-	 * Default implementation simply pipes the call through to the parent model.
-	 */
-	virtual QueryResultIterator executeQuery( const QString& query, Query::QueryLanguage language, const QString& userQueryLanguage = QString() ) const;
-	//@}
+    /**
+     * Default implementation simply pipes the call through to the parent model.
+     */
+    virtual QueryResultIterator executeQuery( const QString& query, Query::QueryLanguage language, const QString& userQueryLanguage = QString() ) const;
+    //@}
 
-	//@{
-	/**
-	 * Default implementation simply pipes the call through to the parent model.
-	 */
-	virtual bool containsStatement( const Statement &statement ) const;
+    //@{
+    /**
+     * Default implementation simply pipes the call through to the parent model.
+     */
+    virtual bool containsStatement( const Statement &statement ) const;
 
-	/**
-	 * Default implementation simply pipes the call through to the parent model.
-	 */
-	virtual bool containsAnyStatement( const Statement &statement ) const;
-	//@}
+    /**
+     * Default implementation simply pipes the call through to the parent model.
+     */
+    virtual bool containsAnyStatement( const Statement &statement ) const;
+    //@}
 
-	//@{
-	/**
-	 * Default implementation simply pipes the call through to the parent model.
-	 */
-	virtual bool isEmpty() const;
+    //@{
+    /**
+     * Default implementation simply pipes the call through to the parent model.
+     */
+    virtual bool isEmpty() const;
 
-	/**
-	 * Default implementation simply pipes the call through to the parent model.
-	 */
-	virtual int statementCount() const;
-	//@}
+    /**
+     * Default implementation simply pipes the call through to the parent model.
+     */
+    virtual int statementCount() const;
+    //@}
 
-	//@{
-	/**
-	 * Default implementation simply pipes the call through to the parent model.
-	 */
-	virtual Error::ErrorCode write( QTextStream &os ) const;
-	//@}
+    //@{
+    /**
+     * Default implementation simply pipes the call through to the parent model.
+     */
+    virtual Error::ErrorCode write( QTextStream &os ) const;
+    //@}
 
-	//@{
-	/**
-	 * Default implementation simply pipes the call through to the parent model.
-	 */
-	virtual Node createBlankNode();
-	//@}
+    //@{
+    /**
+     * Default implementation simply pipes the call through to the parent model.
+     */
+    virtual Node createBlankNode();
+    //@}
 
     protected:
-	/**
-	 * Create an empty filter model.
-	 */
-	FilterModel();
+    /**
+     * Create an empty filter model.
+     */
+    FilterModel();
 
-	/**
-	 * Create a new FilterModel which works on parent.
-	 * Calls setParentModel.
-	 * \param parent The parent Model.
-	 */
-	FilterModel( Model* parent );
+    /**
+     * Create a new FilterModel which works on parent.
+     * Calls setParentModel.
+     * \param parent The parent Model.
+     */
+    FilterModel( Model* parent );
 
-	/**
-	 * Handle a statementsAdded() signal from the parent Model.
-	 *
-	 * The default implementation simply re-emits the signal.
-	 */
-	virtual void parentStatementsAdded();
+    /**
+     * Handle a statementsAdded() signal from the parent Model.
+     *
+     * The default implementation simply re-emits the signal.
+     */
+    virtual void parentStatementsAdded();
 
-	/**
-	 * Handle a statementsRemoved() signal from the parent Model.
-	 *
-	 * The default implementation simply re-emits the signal.
-	 */
-	virtual void parentStatementsRemoved();
+    /**
+     * Handle a statementsRemoved() signal from the parent Model.
+     *
+     * The default implementation simply re-emits the signal.
+     */
+    virtual void parentStatementsRemoved();
 
     private Q_SLOTS:
-	/**
-	 * This slot gets connected to Model::statementsAdded of the parent
-	 * model.
-	 */
-	void slotStatementsAdded();
+    /**
+     * This slot gets connected to Model::statementsAdded of the parent
+     * model.
+     */
+    void slotStatementsAdded();
 
-	/**
-	 * This slot gets connected to Model::statementsRemoved of the parent
-	 * model.
-	 */
-	void slotStatementsRemoved();
+    /**
+     * This slot gets connected to Model::statementsRemoved of the parent
+     * model.
+     */
+    void slotStatementsRemoved();
 
     private:
-	class Private;
-	Private* const d;
+    class Private;
+    Private* const d;
     };
 }
 

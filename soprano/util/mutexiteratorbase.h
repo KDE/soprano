@@ -26,37 +26,37 @@
 
 namespace Soprano {
     namespace Util {
-	/**
-	 * Does nothing. Only used as interface for 
-	 * MutexModel::removeIterator
-	 */
-	class MutexIteratorBase
-	{
-	public:
-	    MutexIteratorBase( MutexModel* model )
-		: m_model( model ) {}
-		virtual ~MutexIteratorBase() {
-		    remove();
-		}
+    /**
+     * Does nothing. Only used as interface for 
+     * MutexModel::removeIterator
+     */
+    class MutexIteratorBase
+    {
+    public:
+        MutexIteratorBase( MutexModel* model )
+        : m_model( model ) {}
+        virtual ~MutexIteratorBase() {
+            remove();
+        }
 
-		void close() {
-		    // no need to really close, that is done by
-		    // the real Model. We only need to make sure
-		    // that we do not try to unlock a deleted model
-		    m_model = 0;
-		}
+        void close() {
+            // no need to really close, that is done by
+            // the real Model. We only need to make sure
+            // that we do not try to unlock a deleted model
+            m_model = 0;
+        }
 
-	protected:
-		void remove() { 
-		    if( m_model ) {
-			m_model->removeIterator( this );
-			m_model = 0;
-		    }
-		}
+    protected:
+        void remove() { 
+            if( m_model ) {
+            m_model->removeIterator( this );
+            m_model = 0;
+            }
+        }
 
-	private:
-		MutexModel* m_model;
-	};
+    private:
+        MutexModel* m_model;
+    };
     }
 }
 

@@ -76,7 +76,7 @@ static Soprano::Query::RTerm* convert_rasqal_literal( rasqal_literal* rl )
             break;
         case RASQAL_LITERAL_DECIMAL:
             break;
-  	case RASQAL_LITERAL_DATETIME:
+      case RASQAL_LITERAL_DATETIME:
             break;
         case RASQAL_LITERAL_PATTERN:
             break;
@@ -164,7 +164,7 @@ Soprano::Query::Query Soprano::Rasqal::QueryParser::parseQuery( const QString &q
 
     if ( rasqal_query_prepare( rq, (unsigned char *)query.toLatin1().data(), NULL ) )
     {
-    	rasqal_free_query( rq );
+        rasqal_free_query( rq );
         return Soprano::Query::Query();
     }
     Soprano::Query::Query queryobj;
@@ -179,7 +179,7 @@ Soprano::Query::Query Soprano::Rasqal::QueryParser::parseQuery( const QString &q
         for (int i=0; i < raptor_sequence_size(prefix_sequence); i++)
         {
             rasqal_prefix *prefix = (rasqal_prefix*)raptor_sequence_get_at(prefix_sequence, i);
-    	    queryobj.addPrefix( convert_rasqal_prefix( prefix ) );
+            queryobj.addPrefix( convert_rasqal_prefix( prefix ) );
         }
     }
 

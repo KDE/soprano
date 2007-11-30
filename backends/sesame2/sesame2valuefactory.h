@@ -31,31 +31,31 @@ namespace Soprano {
     class Statement;
 
     namespace Sesame2 {
-	class ValueFactory : public JNIObjectWrapper
-	{
-	public:
-	    ValueFactory( const JObjectRef& );
-	    ~ValueFactory();
+    class ValueFactory : public JNIObjectWrapper
+    {
+    public:
+        ValueFactory( const JObjectRef& );
+        ~ValueFactory();
 
-	    /**
-	     * method throws exceptions
-	     */
-	    JObjectRef convertNode( const Node& node );
+        /**
+         * method throws exceptions
+         */
+        JObjectRef convertNode( const Node& node );
 
-	    /**
-	     * method throws exceptions
-	     */
-	    JObjectRef convertStatement( const Statement& statement );
+        /**
+         * method throws exceptions
+         */
+        JObjectRef convertStatement( const Statement& statement );
 
-	    /**
-	     * method throws exceptions
-	     */
-	    JObjectRef createBNode();
+        /**
+         * method throws exceptions
+         */
+        JObjectRef createBNode();
 
-	private:
-	    class Private;
-	    Private* const d;
-	};
+    private:
+        class Private;
+        Private* const d;
+    };
     }
 }
 

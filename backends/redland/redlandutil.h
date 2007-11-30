@@ -36,27 +36,27 @@ namespace Soprano
     {
 
       namespace Util
-	{
-	  Soprano::Node createNode( librdf_node *node );
+    {
+      Soprano::Node createNode( librdf_node *node );
 
-	  librdf_node *createNode( const Node &node );
+      librdf_node *createNode( const Node &node );
 
-	  Soprano::Statement createStatement( librdf_statement *st );
+      Soprano::Statement createStatement( librdf_statement *st );
   
-	  librdf_statement *createStatement( const Statement &statement );
+      librdf_statement *createStatement( const Statement &statement );
 
-	  /**
-	   * Calls librdf_free_node if \a node is not null.
-	   * The only reason for this method are the stupid asserts that clutter stderr.
-	   */
-	  void freeNode( librdf_node* node );
+      /**
+       * Calls librdf_free_node if \a node is not null.
+       * The only reason for this method are the stupid asserts that clutter stderr.
+       */
+      void freeNode( librdf_node* node );
 
-	  /**
-	   * Calls librdf_free_statement if \a statement is not null.
-	   * The only reason for this method are the stupid asserts that clutter stderr.
-	   */
-	  void freeStatement( librdf_statement* statement );
-	}
+      /**
+       * Calls librdf_free_statement if \a statement is not null.
+       * The only reason for this method are the stupid asserts that clutter stderr.
+       */
+      void freeStatement( librdf_statement* statement );
+    }
 
     }
 }

@@ -43,63 +43,63 @@ namespace Soprano {
      */
     class SOPRANO_EXPORT StorageModel : public Model
     {
-	Q_OBJECT
+        Q_OBJECT
 
     public:
-	virtual ~StorageModel();
+        virtual ~StorageModel();
 
-	/**
-	 * Default implementation is based on Model::statementCount
-	 */
-	virtual bool isEmpty() const;
-	
-	/**
-	 * Default implementation is based on Model::listStatements
-	 */
-	virtual bool containsStatement( const Statement &statement ) const;
+        /**
+         * Default implementation is based on Model::statementCount
+         */
+        virtual bool isEmpty() const;
+    
+        /**
+         * Default implementation is based on Model::listStatements
+         */
+        virtual bool containsStatement( const Statement &statement ) const;
 
-	/**
-	 * Default implementation is based on Model::listStatements
-	 */
-	virtual bool containsAnyStatement( const Statement &statement ) const;
+        /**
+         * Default implementation is based on Model::listStatements
+         */
+        virtual bool containsAnyStatement( const Statement &statement ) const;
 
-	/**
-	 * Default implementation is based on listStatements() and removeStatement().
-	 */
-	virtual Error::ErrorCode removeAllStatements( const Statement &statement );
+        /**
+         * Default implementation is based on listStatements() and removeStatement().
+         */
+        virtual Error::ErrorCode removeAllStatements( const Statement &statement );
 
-	/**
-	 * Default implementation uses Query::Serializer for Query::QueryLanguageSparql and 
-	 * executeQuery( const QString&, Query::QueryLanguage, const QString& ) const.
-	 *
-	 * Be aware that one of the two query methods has to be re-implemented.
-	 * Otherwise calling one of them results in an endless loop.
-	 */
-//	virtual QueryResultIterator executeQuery( const Query::Query& query ) const;
+        /**
+         * Default implementation uses Query::Serializer for Query::QueryLanguageSparql and 
+         * executeQuery( const QString&, Query::QueryLanguage, const QString& ) const.
+         *
+         * Be aware that one of the two query methods has to be re-implemented.
+         * Otherwise calling one of them results in an endless loop.
+         */
+//    virtual QueryResultIterator executeQuery( const Query::Query& query ) const;
 
-	/**
-	 * Default implementation uses Query::Parser and 
-	 * executeQuery( const Query::Query& ) const.
-	 *
-	 * Be aware that one of the two query methods has to be re-implemented.
-	 * Otherwise calling one of them results in an endless loop.
-	 */
-//	virtual QueryResultIterator executeQuery( const QString& query, Query::QueryLanguage language, const QString& userQueryLanguage = QString() ) const;
+        /**
+         * Default implementation uses Query::Parser and 
+         * executeQuery( const Query::Query& ) const.
+         *
+         * Be aware that one of the two query methods has to be re-implemented.
+         * Otherwise calling one of them results in an endless loop.
+         */
+//    virtual QueryResultIterator executeQuery( const QString& query, Query::QueryLanguage language, const QString& userQueryLanguage = QString() ) const;
 
-	/**
-	 * \return The backend that was used to create this model.
-	 */
-	const Backend* backend() const;
-
+        /**
+         * \return The backend that was used to create this model.
+         */
+        const Backend* backend() const;
+        
     protected:
-	/**
-	 * \param backend The Backend that created this model.
-	 */
-	StorageModel( const Backend* backend );
+        /**
+         * \param backend The Backend that created this model.
+         */
+        StorageModel( const Backend* backend );
 
     private:
-	class Private;
-	Private* const d;
+        class Private;
+        Private* const d;
     };
 }
 

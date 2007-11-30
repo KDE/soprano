@@ -27,18 +27,18 @@
 namespace Soprano {
     namespace Sesame2 {
 
-	class BindingSet : public JNIObjectWrapper
-	{
-	public:
-	    BindingSet( const JObjectRef& = JObjectRef() );
-	    ~BindingSet();
+    class BindingSet : public JNIObjectWrapper
+    {
+    public:
+        BindingSet( const JObjectRef& = JObjectRef() );
+        ~BindingSet();
 
-	    JObjectRef getValue( const JStringRef& s );
+        JObjectRef getValue( const JStringRef& s );
 
-	private:
-	    class Private;
-	    Private* const d;
-	};
+    private:
+        class Private;
+        Private* const d;
+    };
     }
 }
 
