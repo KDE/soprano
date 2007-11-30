@@ -15,7 +15,7 @@
  * 2. Fill it with statements:
  *
  * \code
- * model->addStatement( Soprano::Statement( QUrl( "http://mysite.org/data#A"), Soprano::RDFS::LABEL(), Soprano::LiteraValue( "A test resource" ) ) );
+ * model->addStatement( Soprano::Statement( QUrl( "http://mysite.org/data#A"), Soprano::Vocabulary::RDFS::label(), Soprano::LiteraValue( "A test resource" ) ) );
  * \endcode
  *
  * 3. Read the data back:
@@ -224,6 +224,19 @@
  * \code
  * Comment=
  * \endcode
+ */
+
+/**
+ * \namespace Soprano::Vocabulary
+ *
+ * The vocabulary namespace contains static const QUrl objects for the most frequently
+ * used ontology resources such as RDF or RDFS.
+ *
+ * Each member of this namespace is a namespace again which contains the resources for
+ * one particular ontology. Linking to these namespaces is no overhead since the QUrl
+ * objects are not created before the first usage. Thus, if an application for example
+ * never uses any resource from the RDF namespace no memory will be allocated for its
+ * members.
  */
 
 // DOXYGEN_VERSION=4.0
