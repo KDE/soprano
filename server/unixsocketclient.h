@@ -36,79 +36,79 @@ namespace Soprano {
     class Model;
 
     namespace Client {
-    /**
-     * \class UnixSocketClient unixsocketclient.h Soprano/Client/UnixSocketClient
-     *
-     * \brief Creates a connection to the %Soprano server through a unix socket interface.
-     *
-     * \author Sebastian Trueg <trueg@kde.org>
-     */
-    class SOPRANO_EXPORT UnixSocketClient : public QObject, public Error::ErrorCache
-    {
-        Q_OBJECT
-
-    public:
         /**
-         * Create a new Client instance.
-         */
-        UnixSocketClient( QObject* parent = 0 );
-
-        /**
-         * Destructor.
-         */
-        virtual ~UnixSocketClient();
-
-        /**
-         * Tries to connect to the %Soprano server.
+         * \class UnixSocketClient unixsocketclient.h Soprano/Client/UnixSocketClient
          *
-         * \return \p true on success, \p false if an error occured.
-         * Check lastError() for details.
-         */
-        bool connect( const QString& name = QString() );
-
-        /**
-         * Check if the client is connected to a server.
+         * \brief Creates a connection to the %Soprano server through a unix socket interface.
          *
-         * \return \p true if this client is connected to a server, \p false
-         * otherwise.
+         * \author Sebastian Trueg <trueg@kde.org>
          */
-        bool isConnected();
+        class SOPRANO_EXPORT UnixSocketClient : public QObject, public Error::ErrorCache
+        {
+            Q_OBJECT
 
-        /**
-         * Disconnect from the server. The created model instances are not
-         * deleted but remain useless; open iterators are closed.
-         */
-        void disconnect();
+        public:
+            /**
+             * Create a new Client instance.
+             */
+            UnixSocketClient( QObject* parent = 0 );
 
-        /**
-         * Creates a new Model instance that wraps a server model.
-         * %Client models are very light wrappers and creating them is
-         * very fast.
-         *
-         * \param name The name of the model to access.
-         * \param settings The settings to send to the server for creating a new model.
-         * These settings may be ignored by the server if a model with that name has
-         * already been created.
-         *
-         * \return A new Model instance wrapping the requested server
-         * model or 0 on error (check lastError() for details.)
-         */
-        Model* createModel( const QString& name, const QList<BackendSetting>& settings = QList<BackendSetting>() );
+            /**
+             * Destructor.
+             */
+            virtual ~UnixSocketClient();
 
-        /**
-         * Get a list of all models that the server currently holds.
-         * This method may return an empty list before any call to 
-         * createModel().
-         *
-         * \return A list of the names of all models that are currently
-         * opened by the server.
-         */
+            /**
+             * Tries to connect to the %Soprano server.
+             *
+             * \return \p true on success, \p false if an error occured.
+             * Check lastError() for details.
+             */
+            bool connect( const QString& name = QString() );
+
+            /**
+             * Check if the client is connected to a server.
+             *
+             * \return \p true if this client is connected to a server, \p false
+             * otherwise.
+             */
+            bool isConnected();
+
+            /**
+             * Disconnect from the server. The created model instances are not
+             * deleted but remain useless; open iterators are closed.
+             */
+            void disconnect();
+
+            /**
+             * Creates a new Model instance that wraps a server model.
+             * %Client models are very light wrappers and creating them is
+             * very fast.
+             *
+             * \param name The name of the model to access.
+             * \param settings The settings to send to the server for creating a new model.
+             * These settings may be ignored by the server if a model with that name has
+             * already been created.
+             *
+             * \return A new Model instance wrapping the requested server
+             * model or 0 on error (check lastError() for details.)
+             */
+            Model* createModel( const QString& name, const QList<BackendSetting>& settings = QList<BackendSetting>() );
+
+            /**
+             * Get a list of all models that the server currently holds.
+             * This method may return an empty list before any call to 
+             * createModel().
+             *
+             * \return A list of the names of all models that are currently
+             * opened by the server.
+             */
 //        QStringList models() const;
 
-    private:
-        class Private;
-        Private* const d;
-    };
+        private:
+            class Private;
+            Private* const d;
+        };
     }
 }
 

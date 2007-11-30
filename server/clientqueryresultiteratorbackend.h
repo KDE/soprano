@@ -32,31 +32,31 @@ namespace Soprano
 
     namespace Client {
 
-    class ClientModel;
+        class ClientModel;
 
-    class ClientQueryResultIteratorBackend: public Soprano::QueryResultIteratorBackend
-    {
-    public:
-        ClientQueryResultIteratorBackend( int itId, ClientModel* client );
-        ~ClientQueryResultIteratorBackend();
+        class ClientQueryResultIteratorBackend: public Soprano::QueryResultIteratorBackend
+        {
+        public:
+            ClientQueryResultIteratorBackend( int itId, ClientModel* client );
+            ~ClientQueryResultIteratorBackend();
 
-        bool next();
-        Soprano::BindingSet current() const;
-        void close();
-        Statement currentStatement() const;
-        Node binding( const QString &name ) const;
-        Node binding( int offset ) const;
-        int bindingCount() const;
-        QStringList bindingNames() const;
-        bool isGraph() const;
-        bool isBinding() const;
-        bool isBool() const;
-        bool boolValue() const;
+            bool next();
+            Soprano::BindingSet current() const;
+            void close();
+            Statement currentStatement() const;
+            Node binding( const QString &name ) const;
+            Node binding( int offset ) const;
+            int bindingCount() const;
+            QStringList bindingNames() const;
+            bool isGraph() const;
+            bool isBinding() const;
+            bool isBool() const;
+            bool boolValue() const;
 
-    private:
-        int m_iteratorId;
-        QPointer<ClientModel> m_model;
-    };
+        private:
+            int m_iteratorId;
+            QPointer<ClientModel> m_model;
+        };
     }
 }
 

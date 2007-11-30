@@ -37,91 +37,91 @@ namespace Soprano {
     class Model;
 
     namespace Client {
-    /**
-     * \class TcpClient tcpclient.h Soprano/Client/TcpClient
-     *
-     * \brief Creates a connection to the %Soprano server.
-     *
-     * The %Soprano server can be accessed normally through PluginManager::discoverBackendByName()
-     * with name "sopranoserver" or by simply creating an instance of TcpClient. The latter solution can have advantages
-     * as it uses a new connection to the server.
-     *
-     * \author Sebastian Trueg <trueg@kde.org>
-     */
-    class SOPRANO_CLIENT_EXPORT TcpClient : public QObject, public Error::ErrorCache
-    {
-        Q_OBJECT
-
-    public:
         /**
-         * Create a new Client instance.
-         */
-        TcpClient( QObject* parent = 0 );
-
-        /**
-         * Destructor.
-         */
-        virtual ~TcpClient();
-
-        /**
-         * The default %Soprano server connection port.
-         */
-        static const quint16 DEFAULT_PORT;
-
-        /**
-         * Tries to connect to the %Soprano server.
+         * \class TcpClient tcpclient.h Soprano/Client/TcpClient
          *
-         * \return \p true on success, \p false if an error occured.
-         * Check lastError() for details.
-         */
-        bool connect( const QHostAddress& address = QHostAddress::LocalHost, int port = DEFAULT_PORT );
-
-        /**
-         * Check if the client is connected to a server.
+         * \brief Creates a connection to the %Soprano server.
          *
-         * \return \p true if this client is connected to a server, \p false
-         * otherwise.
-         */
-        bool isConnected();
-
-        /**
-         * Disconnect from the server. The created model instances are not
-         * deleted but remain useless; open iterators are closed.
-         */
-        void disconnect();
-
-        /**
-         * Creates a new Model instance that wraps a server model.
-         * %Client models are very light wrappers and creating them is
-         * very fast.
+         * The %Soprano server can be accessed normally through PluginManager::discoverBackendByName()
+         * with name "sopranoserver" or by simply creating an instance of TcpClient. The latter solution can have advantages
+         * as it uses a new connection to the server.
          *
-         * \param name The name of the model to access.
-         * \param settings The settings to send to the server for creating a new model.
-         * These settings may be ignored by the server if a model with that name has
-         * already been created.
-         *
-         * \return A new Model instance wrapping the requested server
-         * model or 0 on error (check lastError() for details.)
+         * \author Sebastian Trueg <trueg@kde.org>
          */
-        Model* createModel( const QString& name, const QList<BackendSetting>& settings = QList<BackendSetting>() );
+        class SOPRANO_CLIENT_EXPORT TcpClient : public QObject, public Error::ErrorCache
+        {
+            Q_OBJECT
 
-        /**
-         * Get a list of all models that the server currently holds.
-         * This method may return an empty list before any call to 
-         * createModel().
-         *
-         * \return A list of the names of all models that are currently
-         * opened by the server.
-         */
+        public:
+            /**
+             * Create a new Client instance.
+             */
+            TcpClient( QObject* parent = 0 );
+
+            /**
+             * Destructor.
+             */
+            virtual ~TcpClient();
+
+            /**
+             * The default %Soprano server connection port.
+             */
+            static const quint16 DEFAULT_PORT;
+
+            /**
+             * Tries to connect to the %Soprano server.
+             *
+             * \return \p true on success, \p false if an error occured.
+             * Check lastError() for details.
+             */
+            bool connect( const QHostAddress& address = QHostAddress::LocalHost, int port = DEFAULT_PORT );
+
+            /**
+             * Check if the client is connected to a server.
+             *
+             * \return \p true if this client is connected to a server, \p false
+             * otherwise.
+             */
+            bool isConnected();
+
+            /**
+             * Disconnect from the server. The created model instances are not
+             * deleted but remain useless; open iterators are closed.
+             */
+            void disconnect();
+
+            /**
+             * Creates a new Model instance that wraps a server model.
+             * %Client models are very light wrappers and creating them is
+             * very fast.
+             *
+             * \param name The name of the model to access.
+             * \param settings The settings to send to the server for creating a new model.
+             * These settings may be ignored by the server if a model with that name has
+             * already been created.
+             *
+             * \return A new Model instance wrapping the requested server
+             * model or 0 on error (check lastError() for details.)
+             */
+            Model* createModel( const QString& name, const QList<BackendSetting>& settings = QList<BackendSetting>() );
+
+            /**
+             * Get a list of all models that the server currently holds.
+             * This method may return an empty list before any call to 
+             * createModel().
+             *
+             * \return A list of the names of all models that are currently
+             * opened by the server.
+             */
 //        QStringList models() const;
 
-    private Q_SLOTS:
-        void slotError( QAbstractSocket::SocketError error );
+        private Q_SLOTS:
+            void slotError( QAbstractSocket::SocketError error );
 
-    private:
-        class Private;
-        Private* const d;
-    };
+        private:
+            class Private;
+            Private* const d;
+        };
     }
 }
 

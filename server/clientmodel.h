@@ -32,34 +32,34 @@
 
 namespace Soprano {
     namespace Client {
-    class ClientModel : public StorageModel
-    {
-        Q_OBJECT
+        class ClientModel : public StorageModel
+        {
+            Q_OBJECT
 
-    public:
-        ClientModel( const Backend* backend, int modelId, ClientConnection* );
-        ~ClientModel();
+        public:
+            ClientModel( const Backend* backend, int modelId, ClientConnection* );
+            ~ClientModel();
 
-        Error::ErrorCode addStatement( const Statement &statement );
-        NodeIterator listContexts() const;
-        QueryResultIterator executeQuery( const QString& query, Query::QueryLanguage language, const QString& userQueryLanguage ) const;
-        StatementIterator listStatements( const Statement &partial ) const;
-        Error::ErrorCode removeStatement( const Statement &statement );
-        Error::ErrorCode removeAllStatements( const Statement &statement );
-        int statementCount() const;
-        bool containsStatement( const Statement &statement ) const;
-        bool containsAnyStatement( const Statement &statement ) const;
-        Node createBlankNode();
+            Error::ErrorCode addStatement( const Statement &statement );
+            NodeIterator listContexts() const;
+            QueryResultIterator executeQuery( const QString& query, Query::QueryLanguage language, const QString& userQueryLanguage ) const;
+            StatementIterator listStatements( const Statement &partial ) const;
+            Error::ErrorCode removeStatement( const Statement &statement );
+            Error::ErrorCode removeAllStatements( const Statement &statement );
+            int statementCount() const;
+            bool containsStatement( const Statement &statement ) const;
+            bool containsAnyStatement( const Statement &statement ) const;
+            Node createBlankNode();
 
-        void closeIterator( int id ) const;
+            void closeIterator( int id ) const;
 
-        ClientConnection* client() const { return m_client; }
+            ClientConnection* client() const { return m_client; }
 
-    private:
-        int m_modelId;
-        mutable QList<int> m_openIterators;
-        QPointer<ClientConnection> m_client;
-    };
+        private:
+            int m_modelId;
+            mutable QList<int> m_openIterators;
+            QPointer<ClientConnection> m_client;
+        };
     }
 }
 

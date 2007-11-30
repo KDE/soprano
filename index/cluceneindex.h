@@ -33,204 +33,204 @@
 
 namespace lucene {
     namespace search {
-    class Hits;
-    class Query;
+        class Hits;
+        class Query;
     }
     namespace analysis {
-    class Analyzer;
+        class Analyzer;
     }
     namespace document {
-    class Document;
-    class Field;
+        class Document;
+        class Field;
     }
 }
 
 namespace Soprano {
     namespace Index {
 
-    /**
-     * \class CLuceneIndex cluceneindex.h Soprano/Index/CLuceneIndex
-     *
-     * \brief The CLuceneIndex provides a wrapper around a CLucene index 
-     * which stores RDF statements.
-     *
-     * It is used by the IndexFilterModel to actually handle the index. It has been
-     * made visible in the public API to provide the possibility for advanced queries
-     * and data modifications.
-     *
-     * CLuceneIndex is thread-safe.
-     *
-     * <b>Data organization</b>
-     *
-     * In the %Soprano index each resouce gets its own clucene document. Only statements with literal
-     * objects are indexed. The clucene is identified through the statements' subject and then a new
-     * field is created that uses the statement's predicate as field name and the statement's object
-     * as value. The index ignores all context information.
-     *
-     * \warning <b>The API is subject to change. Most likely CLucene classes will be wrapped and hidden from the public API.</b>
-     *
-     * \author Sebastian Trueg <trueg@kde.org>
-     */
-    class SOPRANO_INDEX_EXPORT CLuceneIndex : public Error::ErrorCache
-    {
-    public:
-        //@{
         /**
-         * \param analyzer The analyzer to be used. If 0 a standard analyzer will be created.
-         */
-        CLuceneIndex( lucene::analysis::Analyzer* analyzer = 0 );
-
-        /**
-         * Destructor. 
+         * \class CLuceneIndex cluceneindex.h Soprano/Index/CLuceneIndex
          *
-         * Calls close(). 
-         */
-        ~CLuceneIndex();
-        //@}
-
-        //@{
-        /**
-         * Open the index.
-         * \param folder The folder where the index is stored.
-         * \param force If true any CLucene locks on the folder are removed. This is useful
-         * if a previous session crashed and left an unused lock lying around.
-         */
-        bool open( const QString& folder, bool force = false );
-
-        /**
-         * Close the index. Write back any changes, close any open transactions. (Is called in ~CLuceneIndex())
-         */
-        void close();
-
-        /**
-         * \return \p true If the index has been opened successfully.
-         * \sa open()
-         */
-        bool isOpen() const;
-        //@}
-
-        //@{
-        /**
-         * Get the number of indexed resources.
+         * \brief The CLuceneIndex provides a wrapper around a CLucene index 
+         * which stores RDF statements.
          *
-         * \return The number of indexed resoruces or -1 on error (In the case of error
-         * lastError() provides more information.
+         * It is used by the IndexFilterModel to actually handle the index. It has been
+         * made visible in the public API to provide the possibility for advanced queries
+         * and data modifications.
+         *
+         * CLuceneIndex is thread-safe.
+         *
+         * <b>Data organization</b>
+         *
+         * In the %Soprano index each resouce gets its own clucene document. Only statements with literal
+         * objects are indexed. The clucene is identified through the statements' subject and then a new
+         * field is created that uses the statement's predicate as field name and the statement's object
+         * as value. The index ignores all context information.
+         *
+         * \warning <b>The API is subject to change. Most likely CLucene classes will be wrapped and hidden from the public API.</b>
+         *
+         * \author Sebastian Trueg <trueg@kde.org>
          */
-        int resourceCount() const;
-        //@}
+        class SOPRANO_INDEX_EXPORT CLuceneIndex : public Error::ErrorCache
+        {
+        public:
+            //@{
+            /**
+             * \param analyzer The analyzer to be used. If 0 a standard analyzer will be created.
+             */
+            CLuceneIndex( lucene::analysis::Analyzer* analyzer = 0 );
 
-        //@{
-        /**
-         * Start a new transaction. After calling this method multiple fields and statements may be added to the
-         * index and nothing is written back to disk. A transaction has to be closed. Otherwise the data will not be written to the index.
-         * (All transactions are closed on deletion.)
-         *
-         * Methods such as addStatement will start and close a transaction internally if none has been started
-         * before.
-         *
-         * \return A transaction id that has to be used to close the transaction. This is a safety mechanism to ensure
-         * that no other user closes one's transaction. If another transaction has already been started 0 is returned.
-         */
-        int startTransaction();
+            /**
+             * Destructor. 
+             *
+             * Calls close(). 
+             */
+            ~CLuceneIndex();
+            //@}
 
-        /**
-         * Close a transaction and write the changes back to the index.
-         *
-         * \param id The transaction ID as returned by startTransaction()
-         *
-         * \return \p true if the transaction was closed,  false if no transaction was started,
-         * a wrong transaction id has been supplied, or a clucene error occured.
-         */
-        bool closeTransaction( int id );
-        //@}
+            //@{
+            /**
+             * Open the index.
+             * \param folder The folder where the index is stored.
+             * \param force If true any CLucene locks on the folder are removed. This is useful
+             * if a previous session crashed and left an unused lock lying around.
+             */
+            bool open( const QString& folder, bool force = false );
 
-        //@{
-        /**
-         * Indexes a statement.
-         * \return An error code or 0 on success
-         */
-        Error::ErrorCode addStatement( const Soprano::Statement& );
+            /**
+             * Close the index. Write back any changes, close any open transactions. (Is called in ~CLuceneIndex())
+             */
+            void close();
 
-        /**
-         * Removes a statement from the index.
-         * \return An error code or 0 on success
-         */
-        Error::ErrorCode removeStatement( const Soprano::Statement& );
-        //@}
+            /**
+             * \return \p true If the index has been opened successfully.
+             * \sa open()
+             */
+            bool isOpen() const;
+            //@}
 
-        //@{
-        /**
-         * Get a document for a specific resource. This is only possible after starting a transaction.
-         *
-         * \param resource The resource for which a document is requested.
-         *
-         * \return The document representing the resource or 0 if no transaction has been started or
-         * a clucene error occured.
-         *
-         * \warning This is an advanced method. Calling this method is thread-safe but using the 
-         * returned document is not.
-         */
-        lucene::document::Document* documentForResource( const Node& resource );
-        //@}
+            //@{
+            /**
+             * Get the number of indexed resources.
+             *
+             * \return The number of indexed resoruces or -1 on error (In the case of error
+             * lastError() provides more information.
+             */
+            int resourceCount() const;
+            //@}
 
-        //@{
-        /**
-         * Evaluates the given query.
-         * Each hit is a resource and a score. Resource properties may be read from the model.
-         *
-         * \return The results as an iterator over QueryHit objects or an invalid iterator
-         * on error.
-         */
-        Iterator<QueryHit> search( const QString& query );
+            //@{
+            /**
+             * Start a new transaction. After calling this method multiple fields and statements may be added to the
+             * index and nothing is written back to disk. A transaction has to be closed. Otherwise the data will not be written to the index.
+             * (All transactions are closed on deletion.)
+             *
+             * Methods such as addStatement will start and close a transaction internally if none has been started
+             * before.
+             *
+             * \return A transaction id that has to be used to close the transaction. This is a safety mechanism to ensure
+             * that no other user closes one's transaction. If another transaction has already been started 0 is returned.
+             */
+            int startTransaction();
 
-        /**
-         * \overload
-         */
-        Iterator<QueryHit> search( lucene::search::Query* query );
-        //@}
+            /**
+             * Close a transaction and write the changes back to the index.
+             *
+             * \param id The transaction ID as returned by startTransaction()
+             *
+             * \return \p true if the transaction was closed,  false if no transaction was started,
+             * a wrong transaction id has been supplied, or a clucene error occured.
+             */
+            bool closeTransaction( int id );
+            //@}
+
+            //@{
+            /**
+             * Indexes a statement.
+             * \return An error code or 0 on success
+             */
+            Error::ErrorCode addStatement( const Soprano::Statement& );
+
+            /**
+             * Removes a statement from the index.
+             * \return An error code or 0 on success
+             */
+            Error::ErrorCode removeStatement( const Soprano::Statement& );
+            //@}
+
+            //@{
+            /**
+             * Get a document for a specific resource. This is only possible after starting a transaction.
+             *
+             * \param resource The resource for which a document is requested.
+             *
+             * \return The document representing the resource or 0 if no transaction has been started or
+             * a clucene error occured.
+             *
+             * \warning This is an advanced method. Calling this method is thread-safe but using the 
+             * returned document is not.
+             */
+            lucene::document::Document* documentForResource( const Node& resource );
+            //@}
+
+            //@{
+            /**
+             * Evaluates the given query.
+             * Each hit is a resource and a score. Resource properties may be read from the model.
+             *
+             * \return The results as an iterator over QueryHit objects or an invalid iterator
+             * on error.
+             */
+            Iterator<QueryHit> search( const QString& query );
+
+            /**
+             * \overload
+             */
+            Iterator<QueryHit> search( lucene::search::Query* query );
+            //@}
 
 #if 0
-        /**
-         * Gets the score for a particular Resource and query. Returns a value < 0
-         * when the Resource does not match the query.
-         */
-        double getScore( const Soprano::Node& resource, const QString& query );
+            /**
+             * Gets the score for a particular Resource and query. Returns a value < 0
+             * when the Resource does not match the query.
+             */
+            double getScore( const Soprano::Node& resource, const QString& query );
 
-        /**
-         * Gets the score for a particular Resource and query. Returns a value < 0
-         * when the Resource does not match the query.
-         */
-        double getScore( const Soprano::Node& resource, lucene::search::Query* query );
+            /**
+             * Gets the score for a particular Resource and query. Returns a value < 0
+             * when the Resource does not match the query.
+             */
+            double getScore( const Soprano::Node& resource, lucene::search::Query* query );
 #endif
 
-        /**
-         * Returns the Resource corresponding with the specified Document.
-         */
-        static Soprano::Node getResource( lucene::document::Document* document );
+            /**
+             * Returns the Resource corresponding with the specified Document.
+             */
+            static Soprano::Node getResource( lucene::document::Document* document );
 
-        /**
-         * This is a temporary method which supports the advanced query interface based on
-         * CLucene classes.
-         *
-         * The %Soprano index creates one special field for each indexed resource which contains
-         * all data to allow simple queries without property names or URIs.
-         *
-         * \return The name of the default CLucene search field to be queried when no properties
-         * are known.
-         */
-        static QString defaultSearchField();
+            /**
+             * This is a temporary method which supports the advanced query interface based on
+             * CLucene classes.
+             *
+             * The %Soprano index creates one special field for each indexed resource which contains
+             * all data to allow simple queries without property names or URIs.
+             *
+             * \return The name of the default CLucene search field to be queried when no properties
+             * are known.
+             */
+            static QString defaultSearchField();
 
-        //@{
-        /**
-         * Dump the index contents to the stream
-         */
-        void dump( QTextStream& ) const;
-        //@}
+            //@{
+            /**
+             * Dump the index contents to the stream
+             */
+            void dump( QTextStream& ) const;
+            //@}
 
-    private:
-        class Private;
-        Private* const d;
-    };
+        private:
+            class Private;
+            Private* const d;
+        };
     }
 }
 

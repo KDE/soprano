@@ -33,7 +33,7 @@ namespace Soprano {
     class BackendSetting;
     class BindingSet;
     namespace Error {
-    class Locator;
+        class Locator;
     }
 }
 
