@@ -404,6 +404,20 @@ int main( int argc, char *argv[] )
         return usage();
     }
 
+    if ( args.hasSetting( "backend" ) ) {
+        if ( args.hasSetting( "port" ) ||
+             args.hasSetting( "dbus" ) ||
+             args.hasSetting( "host" ) ||
+             args.hasSetting( "model" ) ) {
+            return usage( "Cannot mix server parameters with --backend." );
+        }
+    }
+
+    if ( args.hasSetting( "dir" ) &&
+         !args.hasSetting( "backend" ) ) {
+        return usage( "Parameter --dir only makes sense in combination with --backend." );
+    }
+
     QString backendName = args.getSetting( "backend" );
     QString dir = args.getSetting( "dir" );
     QString command;
@@ -506,78 +520,84 @@ int main( int argc, char *argv[] )
         }
     }
 
-    else if ( command == "query" ) {
-        if ( firstArg >= args.count() ) {
-            return usage();
-        }
-
-        QString query = args[firstArg];
-
-        QTime time;
-        time.start();
-
-        Soprano::QueryResultIterator it = model->executeQuery( query, Soprano::Query::QueryLanguageSparql );
-        queryTime = time.elapsed();
-        printQueryResult( it );
-    }
-
     else {
-        // parse node commands (max 4)
-        Soprano::Node n1, n2, n3, n4;
-        if ( args.count() > 5 ) {
-            delete model;
-            return usage();
+        if ( args.hasSetting( "serialization" ) ) {
+            return usage( "Parameter --serialization does only make sense for commands 'import' and 'export'" );
         }
 
-        if ( args.count() > 1 ) {
-            n1 = parseNode( args.arg( 1 ) );
-        }
-        if ( args.count() > 2 ) {
-            n2 = parseNode( args.arg( 2 ) );
-        }
-        if ( args.count() > 3 ) {
-            n3 = parseNode( args.arg( 3 ) );
-        }
-        if ( args.count() > 4 ) {
-            n4 = parseNode( args.arg( 4 ) );
-        }
+        if ( command == "query" ) {
+            if ( firstArg >= args.count() ) {
+                return usage();
+            }
 
-        if ( !n1.isResource() && !n1.isEmpty() ) {
-            errStream << "Subject needs to be a resource node." << endl;
-            delete model;
-            return 1;
-        }
-        if ( !n2.isResource() && !n2.isEmpty() ) {
-            errStream << "Predicate needs to be a resource node." << endl;
-            delete model;
-            return 1;
-        }
+            QString query = args[firstArg];
 
-        QTime time;
-        time.start();
+            QTime time;
+            time.start();
 
-        if ( command == "list" ) {
-            Soprano::StatementIterator it = model->listStatements( Soprano::Statement( n1, n2, n3, n4 ) );
+            Soprano::QueryResultIterator it = model->executeQuery( query, Soprano::Query::QueryLanguageSparql );
             queryTime = time.elapsed();
-            printStatementList( it );
+            printQueryResult( it );
         }
-        else if ( command == "add" ) {
-            if ( n1.isEmpty() || n2.isEmpty() || n3.isEmpty() ) {
-                errStream << "At least subject, predicate, and object have to be defined." << endl;
+
+        else {
+            // parse node commands (max 4)
+            Soprano::Node n1, n2, n3, n4;
+            if ( args.count() > 5 ) {
+                delete model;
+                return usage();
+            }
+
+            if ( args.count() > 1 ) {
+                n1 = parseNode( args.arg( 1 ) );
+            }
+            if ( args.count() > 2 ) {
+                n2 = parseNode( args.arg( 2 ) );
+            }
+            if ( args.count() > 3 ) {
+                n3 = parseNode( args.arg( 3 ) );
+            }
+            if ( args.count() > 4 ) {
+                n4 = parseNode( args.arg( 4 ) );
+            }
+
+            if ( !n1.isResource() && !n1.isEmpty() ) {
+                errStream << "Subject needs to be a resource node." << endl;
                 delete model;
                 return 1;
             }
-            model->addStatement( Soprano::Statement( n1, n2, n3, n4 ) );
-            queryTime = time.elapsed();
-        }
-        else if ( command == "remove" ) {
-            model->removeAllStatements( Soprano::Statement( n1, n2, n3, n4 ) );
-            queryTime = time.elapsed();
-        }
-        else {
-            errStream << "Unsupported command: " << command << endl;
-            delete model;
-            return 1;
+            if ( !n2.isResource() && !n2.isEmpty() ) {
+                errStream << "Predicate needs to be a resource node." << endl;
+                delete model;
+                return 1;
+            }
+
+            QTime time;
+            time.start();
+
+            if ( command == "list" ) {
+                Soprano::StatementIterator it = model->listStatements( Soprano::Statement( n1, n2, n3, n4 ) );
+                queryTime = time.elapsed();
+                printStatementList( it );
+            }
+            else if ( command == "add" ) {
+                if ( n1.isEmpty() || n2.isEmpty() || n3.isEmpty() ) {
+                    errStream << "At least subject, predicate, and object have to be defined." << endl;
+                    delete model;
+                    return 1;
+                }
+                model->addStatement( Soprano::Statement( n1, n2, n3, n4 ) );
+                queryTime = time.elapsed();
+            }
+            else if ( command == "remove" ) {
+                model->removeAllStatements( Soprano::Statement( n1, n2, n3, n4 ) );
+                queryTime = time.elapsed();
+            }
+            else {
+                errStream << "Unsupported command: " << command << endl;
+                delete model;
+                return 1;
+            }
         }
     }
 
