@@ -114,7 +114,7 @@ void Soprano::Index::CLuceneDocumentWrapper::removeProperty( const TString& fiel
         lucene::document::Field* field = e->nextElement();
         d->document->add( *new Field( textFieldName().data(), field->stringValue(),
 #ifdef CL_VERSION_19_OR_GREATER
-                                      Field::STORE_NO|Field::INDEX_TOKENIZED|Field::TERMVECTOR_YES
+                                      Field::STORE_NO|Field::INDEX_TOKENIZED|Field::TERMVECTOR_NO
 #else
                                       false, true, true
 #endif
