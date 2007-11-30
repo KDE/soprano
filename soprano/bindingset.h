@@ -48,91 +48,91 @@ namespace Soprano {
     class SOPRANO_EXPORT BindingSet
     {
     public:
-    /**
-     * Create an emtpy set.
-     */
-    BindingSet();
+        /**
+         * Create an emtpy set.
+         */
+        BindingSet();
 
-    /**
-     * Copy constructor.
-     */
-    BindingSet( const BindingSet& other );
+        /**
+         * Copy constructor.
+         */
+        BindingSet( const BindingSet& other );
 
-    /**
-     * Destructor.
-     */
-    ~BindingSet();
+        /**
+         * Destructor.
+         */
+        ~BindingSet();
 
-    BindingSet& operator=( const BindingSet& );
+        BindingSet& operator=( const BindingSet& );
 
-    /**
-     * \return The names of the bound variables in this set.
-     */
-    QStringList bindingNames() const;
+        /**
+         * \return The names of the bound variables in this set.
+         */
+        QStringList bindingNames() const;
 
-    /**
-     * Get the binding for a variable by index.
-     *
-     * This is equivalent to value(int) const.
-     */
-    Node operator[]( int offset ) const;
+        /**
+         * Get the binding for a variable by index.
+         *
+         * This is equivalent to value(int) const.
+         */
+        Node operator[]( int offset ) const;
 
-    /**
-     * Get the binding for a variable.
-     *
-     * This is equivalent to value(const QString&) const.
-     */
-    Node operator[]( const QString name ) const;
+        /**
+         * Get the binding for a variable.
+         *
+         * This is equivalent to value(const QString&) const.
+         */
+        Node operator[]( const QString name ) const;
 
-    /**
-     * Get the binding for a variable by index.
-     *
-     * \param offset The index of the requested variable.
-     *
-     * \return The binding for the requested variable or and invalid
-     * node if offset is out of bounds, i.e. bigger or equal to count().
-     *
-     * \sa QueryResultIterator::binding(int) const.
-     */    
-    Node value( int offset ) const;
+        /**
+         * Get the binding for a variable by index.
+         *
+         * \param offset The index of the requested variable.
+         *
+         * \return The binding for the requested variable or and invalid
+         * node if offset is out of bounds, i.e. bigger or equal to count().
+         *
+         * \sa QueryResultIterator::binding(int) const.
+         */    
+        Node value( int offset ) const;
 
-    /**
-     * Get the binding for a variable.
-     *
-     * \param name The name of the requested variable.
-     *
-     * \return The binding for the requested variable or and invalid
-     * node if the bindings do not contain the variable.
-     *
-     * \sa QueryResultIterator::binding(const QString&) const.
-     */
-    Node value( const QString& name ) const;
+        /**
+         * Get the binding for a variable.
+         *
+         * \param name The name of the requested variable.
+         *
+         * \return The binding for the requested variable or and invalid
+         * node if the bindings do not contain the variable.
+         *
+         * \sa QueryResultIterator::binding(const QString&) const.
+         */
+        Node value( const QString& name ) const;
 
-    /**
-     * Check if a certain variable has a binding in this set.
-     *
-     * \param name The variable name.
-     *
-     * \return \p true if this set contains a binding for the 
-     * variable name, \p false otherwise.
-     */
-    bool contains( const QString& name ) const;
+        /**
+         * Check if a certain variable has a binding in this set.
+         *
+         * \param name The variable name.
+         *
+         * \return \p true if this set contains a binding for the 
+         * variable name, \p false otherwise.
+         */
+        bool contains( const QString& name ) const;
 
-    /**
-     * The number of bindings in this set.
-     *
-     * \return The number of bindings.
-     */
-    int count() const;
+        /**
+         * The number of bindings in this set.
+         *
+         * \return The number of bindings.
+         */
+        int count() const;
 
-    /**
-     * Insert a new binding into the set.
-     */
-    void insert( const QString& name, const Node& value );
+        /**
+         * Insert a new binding into the set.
+         */
+        void insert( const QString& name, const Node& value );
 
     private:
-    class Private;
-    QSharedDataPointer<Private> d;
+        class Private;
+        QSharedDataPointer<Private> d;
     };
 }
 

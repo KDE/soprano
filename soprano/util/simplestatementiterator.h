@@ -30,41 +30,41 @@
 namespace Soprano {
     namespace Util {
 
-    /**
-     * \class SimpleStatementIterator simplestatementiterator.h Soprano/Util/SimpleStatementIterator
-     *
-     * \brief The most simple version of a StatementIterator simply iterates over
-     * a list of Statements.
-     *
-     * The SimpleStatementIterator has been designed as a trivial extension
-     * to StatementIterator and can be used as a drop-in-replacement as shown
-     * below:
-     *
-     * \code
-     * QList<Statement> list;
-     * SimpleStatementIterator it( list );
-     *
-     * // it and it2 iterate over the exact same data
-     * StatementIterator it2 = it;
-     * \endcode
-     *
-     * \author Sebastian Trueg <trueg@kde.org>
-     */
-    class SOPRANO_EXPORT SimpleStatementIterator : public StatementIterator
-    {
-    public:
-        SimpleStatementIterator();
-        SimpleStatementIterator( const QList<Statement>& );
-        SimpleStatementIterator( const SimpleStatementIterator& );
-        virtual ~SimpleStatementIterator();
+        /**
+         * \class SimpleStatementIterator simplestatementiterator.h Soprano/Util/SimpleStatementIterator
+         *
+         * \brief The most simple version of a StatementIterator simply iterates over
+         * a list of Statements.
+         *
+         * The SimpleStatementIterator has been designed as a trivial extension
+         * to StatementIterator and can be used as a drop-in-replacement as shown
+         * below:
+         *
+         * \code
+         * QList<Statement> list;
+         * SimpleStatementIterator it( list );
+         *
+         * // it and it2 iterate over the exact same data
+         * StatementIterator it2 = it;
+         * \endcode
+         *
+         * \author Sebastian Trueg <trueg@kde.org>
+         */
+        class SOPRANO_EXPORT SimpleStatementIterator : public StatementIterator
+        {
+        public:
+            SimpleStatementIterator();
+            SimpleStatementIterator( const QList<Statement>& );
+            SimpleStatementIterator( const SimpleStatementIterator& );
+            virtual ~SimpleStatementIterator();
 
-        SimpleStatementIterator& operator=( const QList<Statement>& );
-        SimpleStatementIterator& operator=( const SimpleStatementIterator& );
+            SimpleStatementIterator& operator=( const QList<Statement>& );
+            SimpleStatementIterator& operator=( const SimpleStatementIterator& );
 
-    private:
-        class Private;
-        Private* const d;
-    };
+        private:
+            class Private;
+            Private* const d;
+        };
     }
 }
 

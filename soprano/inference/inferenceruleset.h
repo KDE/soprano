@@ -31,84 +31,84 @@
 namespace Soprano {
     namespace Inference {
 
-    /**
-     * %Soprano defines a number of rule sets.
-     */
-    enum StandardRuleSet {
-        RDFS,  /**< RDFS closure rules. */
-        NRL    /**< NRL (Nepomuk Representation Language closure rules. */
-    };
-
-    class Rule;
-
-    /**
-     * \class RuleSet inferenceruleset.h Soprano/Inference/RuleSet
-     *
-     * \brief A set of inference rules.
-     *
-     * RuleSet represents a set of inference rules. Each Rule
-     * has a unique name.
-     *
-     * \author Sebastian Trueg <trueg@kde.org>
-     */
-    class SOPRANO_EXPORT RuleSet
-    {
-    public:
         /**
-         * Create an empty RuleSet.
+         * %Soprano defines a number of rule sets.
          */
-        RuleSet();
+        enum StandardRuleSet {
+            RDFS,  /**< RDFS closure rules. */
+            NRL    /**< NRL (Nepomuk Representation Language closure rules. */
+        };
+
+        class Rule;
+
+        /**
+         * \class RuleSet inferenceruleset.h Soprano/Inference/RuleSet
+         *
+         * \brief A set of inference rules.
+         *
+         * RuleSet represents a set of inference rules. Each Rule
+         * has a unique name.
+         *
+         * \author Sebastian Trueg <trueg@kde.org>
+         */
+        class SOPRANO_EXPORT RuleSet
+        {
+        public:
+            /**
+             * Create an empty RuleSet.
+             */
+            RuleSet();
         
-        /**
-         * Copy constructor.
-         */
-        RuleSet( const RuleSet& );
+            /**
+             * Copy constructor.
+             */
+            RuleSet( const RuleSet& );
 
-        /**
-         * Destructor.
-         */
-        ~RuleSet();
+            /**
+             * Destructor.
+             */
+            ~RuleSet();
 
-        RuleSet& operator=( const RuleSet& );
+            RuleSet& operator=( const RuleSet& );
 
-        void clear();
+            void clear();
 
-        /**
-         * Add a Rule to the set.
-         *
-         * \param name The name the new rule is supposed to be
-         * stored under.
-         * \param rule The new rule to store in the set.
-         */
-        void insert( const QString& name, const Rule& rule );
+            /**
+             * Add a Rule to the set.
+             *
+             * \param name The name the new rule is supposed to be
+             * stored under.
+             * \param rule The new rule to store in the set.
+             */
+            void insert( const QString& name, const Rule& rule );
 
-        /**
-         * Number of rules in the set.
-         * \return The number of rules.
-         */
-        int count() const;
+            /**
+             * Number of rules in the set.
+             * \return The number of rules.
+             */
+            int count() const;
 
-        Rule at( int index ) const;
-        Rule operator[]( int index ) const;
+            Rule at( int index ) const;
+            Rule operator[]( int index ) const;
 
-        Rule rule( const QString& name ) const;
-        Rule operator[]( const QString& name ) const;
+            Rule rule( const QString& name ) const;
+            Rule operator[]( const QString& name ) const;
 
-        QStringList ruleNames() const;
+            QStringList ruleNames() const;
 
-        QList<Rule> allRules() const;
+            QList<Rule> allRules() const;
 
-        /**
-         * Read a standard %Soprano rulset.
-         *
-         * \sa RuleParser
-         */
-        static RuleSet standardRuleSet( StandardRuleSet );
+            /**
+             * Read a standard %Soprano rulset.
+             *
+             * \sa RuleParser
+             */
+            static RuleSet standardRuleSet( StandardRuleSet );
 
-    private:
-        class Private;
-        QSharedDataPointer<Private> d;
-    };
+        private:
+            class Private;
+            QSharedDataPointer<Private> d;
+        };
     }
 }
 

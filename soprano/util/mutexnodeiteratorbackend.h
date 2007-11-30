@@ -29,21 +29,21 @@
 
 namespace Soprano {
     namespace Util {
-    class MutexModel;
+        class MutexModel;
 
-    class MutexNodeIteratorBackend : public IteratorBackend<Node>, public MutexIteratorBase
-    {
-    public:
-        MutexNodeIteratorBackend( const NodeIterator& it, MutexModel* model );
-        ~MutexNodeIteratorBackend();
+        class MutexNodeIteratorBackend : public IteratorBackend<Node>, public MutexIteratorBase
+        {
+        public:
+            MutexNodeIteratorBackend( const NodeIterator& it, MutexModel* model );
+            ~MutexNodeIteratorBackend();
 
-        bool next();
-        Soprano::Node current() const;
-        void close();
+            bool next();
+            Soprano::Node current() const;
+            void close();
 
-    private:
-        NodeIterator m_iterator;
-    };
+        private:
+            NodeIterator m_iterator;
+        };
     }
 }
 

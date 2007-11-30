@@ -30,41 +30,41 @@
 namespace Soprano 
 {
     namespace Error {
-    /**
-     * \class Locator locator.h Soprano/Error/Locator
-     *
-     * A Locator object provides additional information about
-     * parsing errors.
-     */
-    class SOPRANO_EXPORT Locator {
-    public:
-        //@{
-        Locator();
-        Locator( int line, int column, int byte = -1, const QString& filename = QString() );
-        Locator( const Locator &other );
-        ~Locator();
+        /**
+         * \class Locator locator.h Soprano/Error/Locator
+         *
+         * A Locator object provides additional information about
+         * parsing errors.
+         */
+        class SOPRANO_EXPORT Locator {
+        public:
+            //@{
+            Locator();
+            Locator( int line, int column, int byte = -1, const QString& filename = QString() );
+            Locator( const Locator &other );
+            ~Locator();
 
-        Locator& operator=( const Locator &other );
-        //@}
+            Locator& operator=( const Locator &other );
+            //@}
 
-        //@{
-        int line() const;
-        int column() const;
-        int byte() const;
-        QString fileName() const;
-        //@}
+            //@{
+            int line() const;
+            int column() const;
+            int byte() const;
+            QString fileName() const;
+            //@}
 
-        //@{
-        void setLine( int line );
-        void setColumn( int column );
-        void setByte( int byte );
-        void setFileName( const QString& fileName );
-        //@}
+            //@{
+            void setLine( int line );
+            void setColumn( int column );
+            void setByte( int byte );
+            void setFileName( const QString& fileName );
+            //@}
 
-    private:
-        class Private;
-        QSharedDataPointer<Private> d;     
-    };
+        private:
+            class Private;
+            QSharedDataPointer<Private> d;     
+        };
     }
 }
 

@@ -63,33 +63,33 @@ namespace Soprano {
     class SOPRANO_EXPORT NodeIterator : public Iterator<Node>
     {
     public:
-    /**
-     * Creates and empty, invalid iterator.
-     */
-    NodeIterator();
+        /**
+         * Creates and empty, invalid iterator.
+         */
+        NodeIterator();
 
-    /**
-     * Create a new NodeIterator instance that uses sti as backend.
-     * NodeIterator will take ownership of the backend.
-     */
-    NodeIterator( IteratorBackend<Node> *sti );
+        /**
+         * Create a new NodeIterator instance that uses sti as backend.
+         * NodeIterator will take ownership of the backend.
+         */
+        NodeIterator( IteratorBackend<Node> *sti );
 
-    NodeIterator( const NodeIterator &sti );
+        NodeIterator( const NodeIterator &sti );
 
-    virtual ~NodeIterator();
+        virtual ~NodeIterator();
 
-    NodeIterator& operator=( const NodeIterator& );
+        NodeIterator& operator=( const NodeIterator& );
 
-    /**
-     * Convenience method which extracts all nodes (this does not include the
-     * nodes that have already been read from the iterator) from the iterator
-     * and returns them in a list.
-     *
-     * Be aware that after calling this method the iterator will be invalid.
-     *
-     * \return A list of all nodes that rest in the iterator.
-     */
-    QList<Node> allNodes() { return allElements(); }
+        /**
+         * Convenience method which extracts all nodes (this does not include the
+         * nodes that have already been read from the iterator) from the iterator
+         * and returns them in a list.
+         *
+         * Be aware that after calling this method the iterator will be invalid.
+         *
+         * \return A list of all nodes that rest in the iterator.
+         */
+        QList<Node> allNodes() { return allElements(); }
     };
 }
 

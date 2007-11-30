@@ -77,83 +77,83 @@ namespace Soprano {
     template<typename T> class Iterator : public Error::ErrorCache
     {
     public:
-    /**
-     * Creates and empty, invalid iterator.
-     */
-    Iterator();
+        /**
+         * Creates and empty, invalid iterator.
+         */
+        Iterator();
 
-    /**
-     * Create a new Iterator instance that uses sti as backend.
-     * Iterator will take ownership of the backend.
-     */
-    Iterator( IteratorBackend<T> *sti );
+        /**
+         * Create a new Iterator instance that uses sti as backend.
+         * Iterator will take ownership of the backend.
+         */
+        Iterator( IteratorBackend<T> *sti );
 
-    Iterator( const Iterator &sti );
+        Iterator( const Iterator &sti );
 
-    virtual ~Iterator();
+        virtual ~Iterator();
 
-    Iterator& operator=( const Iterator& );
+        Iterator& operator=( const Iterator& );
 
-    /**
-     * Close the iterator and release any locks on the underlying Model.
-     */
-    void close();
+        /**
+         * Close the iterator and release any locks on the underlying Model.
+         */
+        void close();
 
-    /**
-     * Advances to the next element in the iterator.
-     *\return true if another element can be read from the iterator,
-     * false if the end has been reached.
-     */
-    bool next();
+        /**
+         * Advances to the next element in the iterator.
+         *\return true if another element can be read from the iterator,
+         * false if the end has been reached.
+         */
+        bool next();
 
-    /**
-     * Get the element the iterator currently points to. Be aware that
-     * a valid current element is only available if next() returned \p true.
-     *
-     *\return the current element.
-     */
-    T current() const;
+        /**
+         * Get the element the iterator currently points to. Be aware that
+         * a valid current element is only available if next() returned \p true.
+         *
+         *\return the current element.
+         */
+        T current() const;
 
-    /**
-     * Retrieve the current element in the iterator.
-     *
-     * This is equivalent to current().
-     *
-     * \return The element the iterator currently points to or
-     * an invalid one if next has never been called.
-     */
-    T operator*() const;
+        /**
+         * Retrieve the current element in the iterator.
+         *
+         * This is equivalent to current().
+         *
+         * \return The element the iterator currently points to or
+         * an invalid one if next has never been called.
+         */
+        T operator*() const;
 
-    /**
-     * \return \p true if the Iterator is valid, \p false otherwise. (An invalid iterator
-     * has no backend.)
-     */
-    bool isValid() const;
+        /**
+         * \return \p true if the Iterator is valid, \p false otherwise. (An invalid iterator
+         * has no backend.)
+         */
+        bool isValid() const;
 
-    /**
-     * Convenience method which extracts all elements (this does not include the
-     * elements that have already been read from the iterator) from the iterator
-     * and returns them in a list.
-     *
-     * Be aware that after calling this method the iterator will be invalid.
-     *
-     * \return A list of all elements that rest in the iterator.
-     */
-    QList<T> allElements();
+        /**
+         * Convenience method which extracts all elements (this does not include the
+         * elements that have already been read from the iterator) from the iterator
+         * and returns them in a list.
+         *
+         * Be aware that after calling this method the iterator will be invalid.
+         *
+         * \return A list of all elements that rest in the iterator.
+         */
+        QList<T> allElements();
 
     protected:
-    /**
-     * Set the backend to read the actual data from.
-     * A previous backend will be deleted if there are no other Iterator
-     * instances using it.
-     */
-    void setBackend( IteratorBackend<T>* b );
+        /**
+         * Set the backend to read the actual data from.
+         * A previous backend will be deleted if there are no other Iterator
+         * instances using it.
+         */
+        void setBackend( IteratorBackend<T>* b );
 
-    IteratorBackend<T>* backend() const;
+        IteratorBackend<T>* backend() const;
 
     private:
-    class Private;
-    QSharedDataPointer<Private> d;
+        class Private;
+        QSharedDataPointer<Private> d;
     };
 }
 
@@ -166,14 +166,14 @@ public:
         : backend( 0 ) {
     }
     
-    ~Private() {
-    if( backend ) {
-        backend->close();
-        delete backend;
-    }
-    }
+        ~Private() {
+            if( backend ) {
+                backend->close();
+                delete backend;
+            }
+        }
     
-    IteratorBackend<T>* backend;
+        IteratorBackend<T>* backend;
 };
 
 
@@ -207,7 +207,7 @@ template<typename T> Soprano::Iterator<T>& Soprano::Iterator<T>::operator=( cons
     return *this;
 }
 
-template<typename T> void Soprano::Iterator<T>::setBackend( IteratorBackend<T>* b )
+    template<typename T> void Soprano::Iterator<T>::setBackend( IteratorBackend<T>* b )
 {
     if ( d->backend != b ) {
         // now we want it to detach
@@ -224,12 +224,12 @@ template<typename T> void Soprano::Iterator<T>::close()
 {
     // some evil hacking to avoid detachment of the shared data
     if( isValid() ) {
-    const Private* cd = d.constData();
-    cd->backend->close();
-    setError( cd->backend->lastError() );
+        const Private* cd = d.constData();
+        cd->backend->close();
+        setError( cd->backend->lastError() );
     }
     else {
-    setError( QString::fromLatin1( "Invalid iterator." ) );
+        setError( QString::fromLatin1( "Invalid iterator." ) );
     }
 }
 
@@ -238,29 +238,29 @@ template<typename T> bool Soprano::Iterator<T>::next()
     // some evil hacking to avoid detachment of the shared data
     const Private* cd = d.constData();
     if( isValid() ) {
-    bool hasNext = cd->backend->next();
-    setError( cd->backend->lastError() );
-    if( !hasNext ) {
-        cd->backend->close();
-    }
-    return hasNext;
+        bool hasNext = cd->backend->next();
+        setError( cd->backend->lastError() );
+        if( !hasNext ) {
+            cd->backend->close();
+        }
+        return hasNext;
     }
     else {
-    setError( QString::fromLatin1( "Invalid iterator." ) );
-    return false;
+        setError( QString::fromLatin1( "Invalid iterator." ) );
+        return false;
     }
 }
 
 template<typename T> T Soprano::Iterator<T>::current() const
 {
     if( isValid() ){
-    T c = d->backend->current();
-    setError( d->backend->lastError() );
-    return c;
+        T c = d->backend->current();
+        setError( d->backend->lastError() );
+        return c;
     }
     else {
-    setError( QString::fromLatin1( "Invalid iterator." ) );
-    return T();
+        setError( QString::fromLatin1( "Invalid iterator." ) );
+        return T();
     }
 }
 

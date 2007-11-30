@@ -99,171 +99,171 @@ namespace Soprano {
     class SOPRANO_EXPORT QueryResultIterator : public Iterator<BindingSet>
     {
     public:
-    //@{
-    /**
-     * Creates and empty, invalid iterator.
-     */
-    QueryResultIterator();
+        //@{
+        /**
+         * Creates and empty, invalid iterator.
+         */
+        QueryResultIterator();
 
-    /**
-     * Copy constructor. Copies of iterators share their data.
-     */
-    QueryResultIterator( const QueryResultIterator& );
+        /**
+         * Copy constructor. Copies of iterators share their data.
+         */
+        QueryResultIterator( const QueryResultIterator& );
 
-    /**
-     * Create a new QueryResultIterator which uses qr as backend.
-     * QueryResultIterator will take ownership of the QueryResultIteratorBackend.
-     */
-    QueryResultIterator( QueryResultIteratorBackend *qr );
+        /**
+         * Create a new QueryResultIterator which uses qr as backend.
+         * QueryResultIterator will take ownership of the QueryResultIteratorBackend.
+         */
+        QueryResultIterator( QueryResultIteratorBackend *qr );
 
-    /**
-     * Destructor.
-     */
-    virtual ~QueryResultIterator();
+        /**
+         * Destructor.
+         */
+        virtual ~QueryResultIterator();
 
-    /**
-     * Copies of iterators share their data.
-     */
-    QueryResultIterator& operator=( const QueryResultIterator& );
-    //@}
+        /**
+         * Copies of iterators share their data.
+         */
+        QueryResultIterator& operator=( const QueryResultIterator& );
+        //@}
 
-    //@{
-    /**
-     * Retrieve the current Statement after a call to next.
-     * This method does only make sense for graph queries.
-     */
-    Statement currentStatement() const;
+        //@{
+        /**
+         * Retrieve the current Statement after a call to next.
+         * This method does only make sense for graph queries.
+         */
+        Statement currentStatement() const;
 
-    /**
-     * Convenience method that puts all current bindings into one map.
-     * This method does only make sense for tuple queries.
-     */
-    BindingSet currentBindings() const;
+        /**
+         * Convenience method that puts all current bindings into one map.
+         * This method does only make sense for tuple queries.
+         */
+        BindingSet currentBindings() const;
 
-    /**
-     * This method does only make sense for boolean queries.
-     *
-     * \return The result of a boolean query (SPARQL ASK).
-     *
-     * \sa isBool()
-     */
-    bool boolValue() const;
-    //@}
+        /**
+         * This method does only make sense for boolean queries.
+         *
+         * \return The result of a boolean query (SPARQL ASK).
+         *
+         * \sa isBool()
+         */
+        bool boolValue() const;
+        //@}
 
-    //@{
-    /**
-     * Get the current binding for a variable.
-     *
-     * \param name The name of the requested variable.
-     *
-     * This method does only make sense for tuple queries.
-     *
-     * \return The binding for the requested variable or and invalid
-     * node if the bindings do not contain the variable.
-     */
-    Node binding( const QString &name ) const;
+        //@{
+        /**
+         * Get the current binding for a variable.
+         *
+         * \param name The name of the requested variable.
+         *
+         * This method does only make sense for tuple queries.
+         *
+         * \return The binding for the requested variable or and invalid
+         * node if the bindings do not contain the variable.
+         */
+        Node binding( const QString &name ) const;
 
-    /**
-     * Get the current binding for a variable by index.
-     *
-     * \param offset The index of the requested variable.
-     *
-     * This method does only make sense for tuple queries.
-     *
-     * \return The binding for the requested variable or and invalid
-     * node if offset is out of bounds, i.e. bigger or equal to bindingCount().
-     */    
-    Node binding( int offset ) const;
+        /**
+         * Get the current binding for a variable by index.
+         *
+         * \param offset The index of the requested variable.
+         *
+         * This method does only make sense for tuple queries.
+         *
+         * \return The binding for the requested variable or and invalid
+         * node if offset is out of bounds, i.e. bigger or equal to bindingCount().
+         */    
+        Node binding( int offset ) const;
 
-    /**
-     * The number of bindings in this query result.
-     *
-     * This method does only make sense for tuple queries.
-     *
-     * \return The number of bindings.
-     */
-    int bindingCount() const;
+        /**
+         * The number of bindings in this query result.
+         *
+         * This method does only make sense for tuple queries.
+         *
+         * \return The number of bindings.
+         */
+        int bindingCount() const;
 
-    /**
-     * This method does only make sense for tuple queries.
-     *
-     * \return The names of the bound variables in this query result.
-     */
-    QStringList bindingNames() const;
-    //@}
+        /**
+         * This method does only make sense for tuple queries.
+         *
+         * \return The names of the bound variables in this query result.
+         */
+        QStringList bindingNames() const;
+        //@}
 
-    //@{
-    /**
-     * Check if this is a graph result.
-     *
-     * \return \p true if this result refers to a graph query, i.e. currentStatement()
-     * and iterateStatements() return valid values.
-     */
-    bool isGraph() const;
+        //@{
+        /**
+         * Check if this is a graph result.
+         *
+         * \return \p true if this result refers to a graph query, i.e. currentStatement()
+         * and iterateStatements() return valid values.
+         */
+        bool isGraph() const;
 
-    /**
-     * Check if this is a tuple result.
-     *
-     * \return \p true if this result refers to a tuple query, i.e. currentBindings(),
-     * binding(), bindingCount(), bindingNames(), and allBindings() return valid values.
-     */
-    bool isBinding() const;
+        /**
+         * Check if this is a tuple result.
+         *
+         * \return \p true if this result refers to a tuple query, i.e. currentBindings(),
+         * binding(), bindingCount(), bindingNames(), and allBindings() return valid values.
+         */
+        bool isBinding() const;
 
-    /**
-     * Check if this is a boolean result.
-     *
-     * \return \p true if this result refers to a boolean query (SPARQL ASK), i.e.
-     * boolValue() returns a valid value.
-     */
-    bool isBool() const;
-    //@}
+        /**
+         * Check if this is a boolean result.
+         *
+         * \return \p true if this result refers to a boolean query (SPARQL ASK), i.e.
+         * boolValue() returns a valid value.
+         */
+        bool isBool() const;
+        //@}
 
-    //@{
-    /**
-     * Convenience method that collects all binding sets that are left
-     * in the iterator.
-     */
-    QList<BindingSet> allBindings();
+        //@{
+        /**
+         * Convenience method that collects all binding sets that are left
+         * in the iterator.
+         */
+        QList<BindingSet> allBindings();
 
-    /**
-     * Convenience method that creates an iterator over the statements in this query result.
-     * This method does only make sense for graph queries.
-     *
-     * \warning The new iterator is just a wrapper around this one. Thus, changing it will also
-     * change this one.
-     * 
-     * \return A wrapper iterator over the statements in a graph query.
-     */
-    StatementIterator iterateStatements() const;
+        /**
+         * Convenience method that creates an iterator over the statements in this query result.
+         * This method does only make sense for graph queries.
+         *
+         * \warning The new iterator is just a wrapper around this one. Thus, changing it will also
+         * change this one.
+         * 
+         * \return A wrapper iterator over the statements in a graph query.
+         */
+        StatementIterator iterateStatements() const;
 
-    /**
-     * Convenience method that creates an iterator over one column of bindings in this query result.
-     * This method does only make sense for tuple queries.
-     *
-     * \param variableName The name of the requested variable.
-     *
-     * \warning The new iterator is just a wrapper around this one. Thus, changing it will also
-     * change this one.
-     * 
-     * \return A wrapper iterator over one column in a tuple query or an invalid iterator if the
-     * result does not contain bindings for variableName.
-     */
-    NodeIterator iterateBindings( const QString& variableName ) const;
+        /**
+         * Convenience method that creates an iterator over one column of bindings in this query result.
+         * This method does only make sense for tuple queries.
+         *
+         * \param variableName The name of the requested variable.
+         *
+         * \warning The new iterator is just a wrapper around this one. Thus, changing it will also
+         * change this one.
+         * 
+         * \return A wrapper iterator over one column in a tuple query or an invalid iterator if the
+         * result does not contain bindings for variableName.
+         */
+        NodeIterator iterateBindings( const QString& variableName ) const;
 
-    /**
-     * Convenience method that creates an iterator over one column of bindings in this query result.
-     * This method does only make sense for tuple queries.
-     *
-     * \param offset The index of the requested variable.
-     *
-     * \warning The new iterator is just a wrapper around this one. Thus, changing it will also
-     * change this one.
-     * 
-     * \return A wrapper iterator over one column in a tuple query or an invalid iterator
-     * if offset is out of bounds, i.e. bigger or equal to bindingCount().
-     */
-    NodeIterator iterateBindings( int offset ) const;
-    //@}
+        /**
+         * Convenience method that creates an iterator over one column of bindings in this query result.
+         * This method does only make sense for tuple queries.
+         *
+         * \param offset The index of the requested variable.
+         *
+         * \warning The new iterator is just a wrapper around this one. Thus, changing it will also
+         * change this one.
+         * 
+         * \return A wrapper iterator over one column in a tuple query or an invalid iterator
+         * if offset is out of bounds, i.e. bigger or equal to bindingCount().
+         */
+        NodeIterator iterateBindings( int offset ) const;
+        //@}
     };
 }
 

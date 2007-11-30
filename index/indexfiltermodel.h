@@ -28,138 +28,138 @@
 namespace Soprano {
 
     namespace Query {
-    class Query;
+        class Query;
     }
 
     namespace Index {
 
-    class CLuceneIndex;
-    class QueryResult;
-
-    /**
-     * \class IndexFilterModel indexfiltermodel.h Soprano/Index/IndexFilterModel
-     *
-     * \brief The IndexFilterModel provides a full text index around any Soprano Model.
-     *
-     * All statements with a literal object will be indexed.
-     *
-     * \author Sebastian Trueg <trueg@kde.org>
-     */
-    class SOPRANO_INDEX_EXPORT IndexFilterModel : public Soprano::FilterModel
-    {
-    public:
-        /**
-         * Create a new index model.
-         *
-         * \param indexDir The directory where the index should be stored. If the
-         * directory already contains an index, it will be used. Otherwise a new
-         * one will be created.
-         * \param model The parent model to forward the calls to. If 0 the Model has to
-         * be set later on with FilterModel::setParentModel.
-         */
-        IndexFilterModel( const QString& indexDir, Soprano::Model* model = 0 );
+        class CLuceneIndex;
+        class QueryResult;
 
         /**
-         * Create a new index model.
+         * \class IndexFilterModel indexfiltermodel.h Soprano/Index/IndexFilterModel
          *
-         * \param index The index to be used. The filter model will NOT take ownership of
-         * the index. The caller has to take care of deleting the index.
-         * \param model The parent model to forward the calls to. If 0 the Model has to
-         * be set later on with FilterModel::setParentModel.
+         * \brief The IndexFilterModel provides a full text index around any Soprano Model.
+         *
+         * All statements with a literal object will be indexed.
+         *
+         * \author Sebastian Trueg <trueg@kde.org>
          */
-        IndexFilterModel( CLuceneIndex* index, Soprano::Model* model = 0 );
+        class SOPRANO_INDEX_EXPORT IndexFilterModel : public Soprano::FilterModel
+        {
+        public:
+            /**
+             * Create a new index model.
+             *
+             * \param indexDir The directory where the index should be stored. If the
+             * directory already contains an index, it will be used. Otherwise a new
+             * one will be created.
+             * \param model The parent model to forward the calls to. If 0 the Model has to
+             * be set later on with FilterModel::setParentModel.
+             */
+            IndexFilterModel( const QString& indexDir, Soprano::Model* model = 0 );
+
+            /**
+             * Create a new index model.
+             *
+             * \param index The index to be used. The filter model will NOT take ownership of
+             * the index. The caller has to take care of deleting the index.
+             * \param model The parent model to forward the calls to. If 0 the Model has to
+             * be set later on with FilterModel::setParentModel.
+             */
+            IndexFilterModel( CLuceneIndex* index, Soprano::Model* model = 0 );
         
-        /**
-         * Destructor.
-         */
-        ~IndexFilterModel();
+            /**
+             * Destructor.
+             */
+            ~IndexFilterModel();
 
-        /**
-         * Retrieve the index used by this index model.
-         */
-        CLuceneIndex* index() const;
+            /**
+             * Retrieve the index used by this index model.
+             */
+            CLuceneIndex* index() const;
 
-        /**
-         * Adds a new statement.
-         *
-         * This will index the statement and then forward the call to the parent model.
-         */
-        Soprano::Error::ErrorCode addStatement( const Soprano::Statement &statement );
+            /**
+             * Adds a new statement.
+             *
+             * This will index the statement and then forward the call to the parent model.
+             */
+            Soprano::Error::ErrorCode addStatement( const Soprano::Statement &statement );
 
-        /**
-         * Removes a statement.
-         *
-         * This will remove the statement from the index and then forward the call to the parent model.
-         */
-        Soprano::Error::ErrorCode removeStatement( const Soprano::Statement &statement );
+            /**
+             * Removes a statement.
+             *
+             * This will remove the statement from the index and then forward the call to the parent model.
+             */
+            Soprano::Error::ErrorCode removeStatement( const Soprano::Statement &statement );
 
-        /**
-         * Removes statements.
-         *
-         * This will remove the statements from the index and then forward the call to the parent model.
-         */
-        Soprano::Error::ErrorCode removeAllStatements( const Soprano::Statement &statement );
+            /**
+             * Removes statements.
+             *
+             * This will remove the statements from the index and then forward the call to the parent model.
+             */
+            Soprano::Error::ErrorCode removeAllStatements( const Soprano::Statement &statement );
 
-        /**
-         * The IndexFilterModel is currently based on CLucene. While the index itself is available
-         * via index() and allows querying via CLucene queries it is not available over the 
-         * Soprano::Client interface.
-         * Thus, CLucene queries are supported through this method and will return QueryHit objects
-         * wrapped in a QueryResultIterator.
-         *
-         * Future versions of %Soprano will support querying the index through the Soprano::Query API
-         * (still unfinished and unstable).
-         *
-         * \param query The query string. This can be a CLucene query in which case the query will
-         *              be passed to CLuceneIndex.
-         * \param language The query language. Set to Soprano::Query::QueryLanguageUser for
-         *                 CLucene queries.
-         * \param userQueryLanguage If \p language equals Query::QueryLanguageUser
-         *                          userQueryLanguage defines the language to use. Use <b>"lucene"</b>
-         *                          to perform CLucene queries.
-         *
-         * \return An iterator over all results matching the query, 
-         * on error an invalid iterator is returned. In case of a CLucene query the iterator will
-         * wrap a set of QueryHit objects through the bindings <b>"resource"</b> and <b>"score"</b>.
-         *
-         * \sa CLuceneIndex::search()
-         */
-        QueryResultIterator executeQuery( const QString& query, Query::QueryLanguage language, const QString& userQueryLanguage = QString() ) const;
+            /**
+             * The IndexFilterModel is currently based on CLucene. While the index itself is available
+             * via index() and allows querying via CLucene queries it is not available over the 
+             * Soprano::Client interface.
+             * Thus, CLucene queries are supported through this method and will return QueryHit objects
+             * wrapped in a QueryResultIterator.
+             *
+             * Future versions of %Soprano will support querying the index through the Soprano::Query API
+             * (still unfinished and unstable).
+             *
+             * \param query The query string. This can be a CLucene query in which case the query will
+             *              be passed to CLuceneIndex.
+             * \param language The query language. Set to Soprano::Query::QueryLanguageUser for
+             *                 CLucene queries.
+             * \param userQueryLanguage If \p language equals Query::QueryLanguageUser
+             *                          userQueryLanguage defines the language to use. Use <b>"lucene"</b>
+             *                          to perform CLucene queries.
+             *
+             * \return An iterator over all results matching the query, 
+             * on error an invalid iterator is returned. In case of a CLucene query the iterator will
+             * wrap a set of QueryHit objects through the bindings <b>"resource"</b> and <b>"score"</b>.
+             *
+             * \sa CLuceneIndex::search()
+             */
+            QueryResultIterator executeQuery( const QString& query, Query::QueryLanguage language, const QString& userQueryLanguage = QString() ) const;
 
-        /*
-         * Extract full text matching parts of a %query and replace them with
-         * results from an index %query.
-         *
-         * \param query The query to rewrite.
-         *
-         * \return A rewritten query stripped of all full test and regexp matching parts
-         * and replaced by results from an index query.
-         */
+            /*
+             * Extract full text matching parts of a %query and replace them with
+             * results from an index %query.
+             *
+             * \param query The query to rewrite.
+             *
+             * \return A rewritten query stripped of all full test and regexp matching parts
+             * and replaced by results from an index query.
+             */
 //        Query::Query evaluateAndRewriteQuery( const Query::Query& query ) const;
 
-        /**
-         * Set the number or addStatement operations that are to be cached in the index.
-         * The default value is 1 which means that no caching occurs. Be aware that query
-         * operations will always close cached transactions.
-         *
-         * \param size The number of operations that should be handled in one transaction.
-         * Set to 1 to disable.
-         *
-         * \sa CLuceneIndex::startTransaction, CLuceneIndex::closeTransaction
-         */
-        void setTransactionCacheSize( int size );
+            /**
+             * Set the number or addStatement operations that are to be cached in the index.
+             * The default value is 1 which means that no caching occurs. Be aware that query
+             * operations will always close cached transactions.
+             *
+             * \param size The number of operations that should be handled in one transaction.
+             * Set to 1 to disable.
+             *
+             * \sa CLuceneIndex::startTransaction, CLuceneIndex::closeTransaction
+             */
+            void setTransactionCacheSize( int size );
         
-        /**
-         * The number of addStatement operations to cache in one transaction.
-         *
-         * \sa setTransactionCacheSize
-         */
-        int transactionCacheSize() const;
+            /**
+             * The number of addStatement operations to cache in one transaction.
+             *
+             * \sa setTransactionCacheSize
+             */
+            int transactionCacheSize() const;
 
-    private:
-        class Private;
-        Private* const d;
-    };
+        private:
+            class Private;
+            Private* const d;
+        };
     }
 }
 

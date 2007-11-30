@@ -66,77 +66,77 @@ namespace Soprano {
     class SOPRANO_EXPORT StatementIterator : public Iterator<Statement>
     {
     public:
-    /**
-     * Creates and empty, invalid iterator.
-     */
-    StatementIterator();
+        /**
+         * Creates and empty, invalid iterator.
+         */
+        StatementIterator();
 
-    /**
-     * Create a new StatementIterator instance that uses sti as backend.
-     * StatementIterator will take ownership of the backend.
-     */
-    StatementIterator( IteratorBackend<Statement> *sti );
+        /**
+         * Create a new StatementIterator instance that uses sti as backend.
+         * StatementIterator will take ownership of the backend.
+         */
+        StatementIterator( IteratorBackend<Statement> *sti );
 
-    StatementIterator( const StatementIterator &sti );
+        StatementIterator( const StatementIterator &sti );
 
-    virtual ~StatementIterator();
+        virtual ~StatementIterator();
 
-    StatementIterator& operator=( const StatementIterator& );
+        StatementIterator& operator=( const StatementIterator& );
 
-    /**
-     * Convenience method which extracts all statements (this does not include the
-     * statements that have already been read from the iterator) from the iterator
-     * and returns them in a list.
-     *
-     * Be aware that after calling this method the iterator will be invalid.
-     *
-     * \return A list of all statements that rest in the iterator.
-     */
-    QList<Statement> allStatements() { return allElements(); }
+        /**
+         * Convenience method which extracts all statements (this does not include the
+         * statements that have already been read from the iterator) from the iterator
+         * and returns them in a list.
+         *
+         * Be aware that after calling this method the iterator will be invalid.
+         *
+         * \return A list of all statements that rest in the iterator.
+         */
+        QList<Statement> allStatements() { return allElements(); }
 
-    /**
-     * Convenience method that creates an iterator over the subject nodes of the statements
-     * in this iterator.
-     *
-     * \warning The new iterator is just a wrapper around this one. Thus, changing it will also
-     * change this one.
-     * 
-     * \return A wrapper iterator over the subject nodes.
-     */
-    NodeIterator iterateSubjects() const;
+        /**
+         * Convenience method that creates an iterator over the subject nodes of the statements
+         * in this iterator.
+         *
+         * \warning The new iterator is just a wrapper around this one. Thus, changing it will also
+         * change this one.
+         * 
+         * \return A wrapper iterator over the subject nodes.
+         */
+        NodeIterator iterateSubjects() const;
 
-    /**
-     * Convenience method that creates an iterator over the predicate nodes of the statements
-     * in this iterator.
-     *
-     * \warning The new iterator is just a wrapper around this one. Thus, changing it will also
-     * change this one.
-     * 
-     * \return A wrapper iterator over the predicate nodes.
-     */
-    NodeIterator iteratePredicates() const;
+        /**
+         * Convenience method that creates an iterator over the predicate nodes of the statements
+         * in this iterator.
+         *
+         * \warning The new iterator is just a wrapper around this one. Thus, changing it will also
+         * change this one.
+         * 
+         * \return A wrapper iterator over the predicate nodes.
+         */
+        NodeIterator iteratePredicates() const;
 
-    /**
-     * Convenience method that creates an iterator over the object nodes of the statements
-     * in this iterator.
-     *
-     * \warning The new iterator is just a wrapper around this one. Thus, changing it will also
-     * change this one.
-     * 
-     * \return A wrapper iterator over the object nodes.
-     */
-    NodeIterator iterateObjects() const;
+        /**
+         * Convenience method that creates an iterator over the object nodes of the statements
+         * in this iterator.
+         *
+         * \warning The new iterator is just a wrapper around this one. Thus, changing it will also
+         * change this one.
+         * 
+         * \return A wrapper iterator over the object nodes.
+         */
+        NodeIterator iterateObjects() const;
 
-    /**
-     * Convenience method that creates an iterator over the context nodes of the statements
-     * in this iterator.
-     *
-     * \warning The new iterator is just a wrapper around this one. Thus, changing it will also
-     * change this one.
-     * 
-     * \return A wrapper iterator over the context nodes.
-     */
-    NodeIterator iterateContexts() const;
+        /**
+         * Convenience method that creates an iterator over the context nodes of the statements
+         * in this iterator.
+         *
+         * \warning The new iterator is just a wrapper around this one. Thus, changing it will also
+         * change this one.
+         * 
+         * \return A wrapper iterator over the context nodes.
+         */
+        NodeIterator iterateContexts() const;
     };
 }
 

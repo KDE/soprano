@@ -33,22 +33,22 @@ namespace Soprano {
     class IniFile
     {
     public:
-    IniFile();
-    IniFile( const QString& path );
-    virtual ~IniFile();
+        IniFile();
+        IniFile( const QString& path );
+        virtual ~IniFile();
 
-    virtual bool open( const QString& path );
-    virtual void close();
+        virtual bool open( const QString& path );
+        virtual void close();
 
-    QString fileName() const;
+        QString fileName() const;
 
-    QStringList groups() const;
+        QStringList groups() const;
 
-    QString readEntry( const QString& group, const QString& entry ) const;
+        QString readEntry( const QString& group, const QString& entry ) const;
 
     private:
-    class Private;
-    Private* const d;
+        class Private;
+        Private* const d;
     };
 }
 

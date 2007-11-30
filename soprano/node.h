@@ -42,12 +42,11 @@ namespace Soprano
     class SOPRANO_EXPORT Node
     {
     public:
-
         enum Type {
-        EmptyNode    = 0, /**< An empty node, can be used as a placeholder in queries. */
-        ResourceNode = 1, /**< rdf:Resource (& rdf:Property) - has a URI */
-        LiteralNode  = 2, /**< rdf:Literal - has an XML string, language, XML space */
-        BlankNode    = 3  /**< blank node has an identifier string */
+            EmptyNode    = 0, /**< An empty node, can be used as a placeholder in queries. */
+            ResourceNode = 1, /**< rdf:Resource (& rdf:Property) - has a URI */
+            LiteralNode  = 2, /**< rdf:Literal - has an XML string, language, XML space */
+            BlankNode    = 3  /**< blank node has an identifier string */
         };
 
         /**
@@ -93,7 +92,7 @@ namespace Soprano
          * \sa createLiteralNode()
          */
         Node( const LiteralValue& value,
-          const QString& language = QString() );
+              const QString& language = QString() );
 
         Node( const Node &other );
 
@@ -277,7 +276,6 @@ namespace Soprano
         class LiteralNodeData;
         QSharedDataPointer<NodeData> d;
     };
-
 }
 
 SOPRANO_EXPORT QDebug operator<<( QDebug s, const Soprano::Node& );

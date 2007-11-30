@@ -27,26 +27,26 @@
 
 namespace lucene {
     namespace search {
-    class Hits;
+        class Hits;
     }
 }
 
 namespace Soprano {
     namespace Index {
-    class QueryHitIteratorBackend : public IteratorBackend<QueryHit>
-    {
-    public:
-        QueryHitIteratorBackend( lucene::search::Hits* hits );
-        ~QueryHitIteratorBackend();
+        class QueryHitIteratorBackend : public IteratorBackend<QueryHit>
+        {
+        public:
+            QueryHitIteratorBackend( lucene::search::Hits* hits );
+            ~QueryHitIteratorBackend();
 
-        bool next();
-        QueryHit current() const;
-        void close();
+            bool next();
+            QueryHit current() const;
+            void close();
 
-    private:
-        lucene::search::Hits* m_hits;
-        qint32 m_currentDocId;
-    };
+        private:
+            lucene::search::Hits* m_hits;
+            qint32 m_currentDocId;
+        };
     }
 }
 

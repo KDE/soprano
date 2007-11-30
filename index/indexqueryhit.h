@@ -31,46 +31,46 @@ namespace Soprano {
     class Node;
 
     namespace Index {
-    /**
-     * \class QueryHit indexqueryhit.h Soprano/Index/QueryHit
-     *
-     * \brief QueryHit represents a hit from an IndexFilterModel query. 
-     * It basically is an RDF resource combined with a hit score.
-     */
-    class SOPRANO_INDEX_EXPORT QueryHit
-    {
-    public:
         /**
-         * Create an empty hit.
+         * \class QueryHit indexqueryhit.h Soprano/Index/QueryHit
+         *
+         * \brief QueryHit represents a hit from an IndexFilterModel query. 
+         * It basically is an RDF resource combined with a hit score.
          */
-        QueryHit();
+        class SOPRANO_INDEX_EXPORT QueryHit
+        {
+        public:
+            /**
+             * Create an empty hit.
+             */
+            QueryHit();
 
-        /**
-         * Default copy constructor.
-         */
-        QueryHit( const QueryHit& );
+            /**
+             * Default copy constructor.
+             */
+            QueryHit( const QueryHit& );
         
-        /**
-         * Create a new hit.
-         * \param resource The resource of the hit.
-         * \param score The hit score.
-         */
-        QueryHit( const Node& resource, double score );
+            /**
+             * Create a new hit.
+             * \param resource The resource of the hit.
+             * \param score The hit score.
+             */
+            QueryHit( const Node& resource, double score );
 
-        /**
-         * Destructor.
-         */
-        ~QueryHit();
+            /**
+             * Destructor.
+             */
+            ~QueryHit();
 
-        QueryHit& operator=( const QueryHit& );
+            QueryHit& operator=( const QueryHit& );
 
-        double score() const;
-        Node resource() const;
+            double score() const;
+            Node resource() const;
 
-    private:
-        class Private;
-        QSharedDataPointer<Private> d;
-    };
+        private:
+            class Private;
+            QSharedDataPointer<Private> d;
+        };
     }
 }
 

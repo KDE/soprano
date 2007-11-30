@@ -153,7 +153,6 @@ namespace Soprano
         class Private;
         QSharedDataPointer<Private> d;
     };
-
 }
 
 SOPRANO_EXPORT QDebug operator<<( QDebug s, const Soprano::Statement& );

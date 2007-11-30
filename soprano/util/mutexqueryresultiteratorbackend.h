@@ -28,30 +28,30 @@
 
 namespace Soprano {
     namespace Util {
-    class MutexModel;
+        class MutexModel;
 
-    class MutexQueryResultIteratorBackend : public QueryResultIteratorBackend, public MutexIteratorBase
-    {
-    public:
-        MutexQueryResultIteratorBackend( const QueryResultIterator& it, MutexModel* model );
-        ~MutexQueryResultIteratorBackend();
+        class MutexQueryResultIteratorBackend : public QueryResultIteratorBackend, public MutexIteratorBase
+        {
+        public:
+            MutexQueryResultIteratorBackend( const QueryResultIterator& it, MutexModel* model );
+            ~MutexQueryResultIteratorBackend();
 
-        bool next();
-        BindingSet current() const;
-        void close();
-        Statement currentStatement() const;
-        Node binding( const QString &name ) const;
-        Node binding( int offset ) const;
-        int bindingCount() const;
-        QStringList bindingNames() const;
-        bool isGraph() const;
-        bool isBinding() const;
-        bool isBool() const;
-        bool boolValue() const;
+            bool next();
+            BindingSet current() const;
+            void close();
+            Statement currentStatement() const;
+            Node binding( const QString &name ) const;
+            Node binding( int offset ) const;
+            int bindingCount() const;
+            QStringList bindingNames() const;
+            bool isGraph() const;
+            bool isBinding() const;
+            bool isBool() const;
+            bool boolValue() const;
 
-    private:
-        QueryResultIterator m_iterator;
-    };
+        private:
+            QueryResultIterator m_iterator;
+        };
     }
 }
 
