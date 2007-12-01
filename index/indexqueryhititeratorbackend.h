@@ -28,6 +28,7 @@
 namespace lucene {
     namespace search {
         class Hits;
+        class Query;
     }
 }
 
@@ -36,7 +37,7 @@ namespace Soprano {
         class QueryHitIteratorBackend : public IteratorBackend<QueryHit>
         {
         public:
-            QueryHitIteratorBackend( lucene::search::Hits* hits );
+            QueryHitIteratorBackend( lucene::search::Hits* hits, lucene::search::Query* query );
             ~QueryHitIteratorBackend();
 
             bool next();
@@ -45,6 +46,7 @@ namespace Soprano {
 
         private:
             lucene::search::Hits* m_hits;
+            lucene::search::Query* m_query;
             qint32 m_currentDocId;
         };
     }

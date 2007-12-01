@@ -178,13 +178,25 @@ namespace Soprano {
              * Evaluates the given query.
              * Each hit is a resource and a score. Resource properties may be read from the model.
              *
+             * \param query The query in the CLucene query language.
+             *
              * \return The results as an iterator over QueryHit objects or an invalid iterator
              * on error.
              */
             Iterator<QueryHit> search( const QString& query );
 
             /**
-             * \overload
+             * Evaluates the given query.
+             * Each hit is a resource and a score. Resource properties may be read from the model.
+             *
+             * \param query The query to evaluate. The iterator takes ownership of the query. 
+             * Do not delete.it! (If anyone using this understands the weird CLucene memory
+             * management enough to fix this issue, please...)
+             *
+             * \return The results as an iterator over QueryHit objects or an invalid iterator
+             * on error.
+             *
+             * \warning The result iterator uses the query object.
              */
             Iterator<QueryHit> search( lucene::search::Query* query );
             //@}

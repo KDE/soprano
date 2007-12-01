@@ -30,8 +30,11 @@
 #include <QtCore/QUrl>
 
 
-Soprano::Index::QueryHitIteratorBackend::QueryHitIteratorBackend( lucene::search::Hits* hits )
+// FIXME: is it possible to use the stupid CLucene ref counting for the query here?
+Soprano::Index::QueryHitIteratorBackend::QueryHitIteratorBackend( lucene::search::Hits* hits,
+                                                                  lucene::search::Query* query )
     : m_hits( hits ),
+      m_query( query ),
       m_currentDocId( -1 )
 {
 }
@@ -95,5 +98,7 @@ void Soprano::Index::QueryHitIteratorBackend::close()
     if ( m_hits ) {
         _CLDELETE( m_hits );
         m_hits = 0;
+        _CLDELETE( m_query );
+        m_query = 0;
     }
 }
