@@ -285,12 +285,10 @@ private:
 };
 
 
-#define VERSION "0.99"
-
 int version()
 {
     QTextStream s( stderr );
-    s << "sopranocmd " << VERSION << " (using Soprano " << Soprano::versionString() << ")" << endl;
+    s << "sopranocmd " << Soprano::versionString() << endl;
     s << "   Copyright (C) 2007 Sebastian Trueg <trueg@kde.org>" << endl;
     s << "   This program is free software; you can redistribute it and/or modify" << endl
       << "   it under the terms of the GNU General Public License as published by" << endl
@@ -348,6 +346,8 @@ int usage( const QString& error = QString() )
       << "                       (be aware that Soprano can understand simple string identifiers such as 'trig' or 'n-triples'." << endl
       << "                       There is no need to know the exact mimetype.)" << endl
       << endl
+      << "   --querylang <lang>  The query language used for query commands. Defaults to 'SPARQL'" << endl
+      << endl
       << "   <command>           The command to perform. Can be one of 'add', 'remove', 'list', 'query', 'import', or 'export'." << endl << endl
       << "   <parameters>        The parameters to the command." << endl
       << "                       - For command 'query' this is a SPARQL query string." << endl
@@ -391,6 +391,7 @@ int main( int argc, char *argv[] )
     allowedCmdLineArgs.insert( "host", true );
     allowedCmdLineArgs.insert( "dbus", true );
     allowedCmdLineArgs.insert( "serialization", true );
+    allowedCmdLineArgs.insert( "querylang", true );
 
     CmdLineArgs args;
     if ( !CmdLineArgs::parseCmdLine( args, app.arguments(), allowedCmdLineArgs ) ) {
@@ -530,17 +531,22 @@ int main( int argc, char *argv[] )
                 return usage();
             }
 
+            QString queryLang = args.getSetting( "querylang", "SPARQL" );
             QString query = args[firstArg];
 
             QTime time;
             time.start();
 
-            Soprano::QueryResultIterator it = model->executeQuery( query, Soprano::Query::QueryLanguageSparql );
+            Soprano::QueryResultIterator it = model->executeQuery( query, Soprano::Query::queryLanguageFromString( queryLang ), queryLang );
             queryTime = time.elapsed();
             printQueryResult( it );
         }
 
         else {
+            if ( args.hasSetting( "querylang" ) ) {
+                return usage( "--querylang does only make sense with command 'query'" );
+            }
+
             // parse node commands (max 4)
             Soprano::Node n1, n2, n3, n4;
             if ( args.count() > 5 ) {
