@@ -177,11 +177,17 @@ raptor_parser* Soprano::Raptor::Parser::createParser( RdfSerialization serializa
 
     // create the parser
     QString mimeType = mimeTypeString( serialization, userSerialization );
-    raptor_parser* parser = raptor_new_parser_for_content( 0,
-                                                           mimeType.toLatin1().data(),
-                                                           0,
-                                                           0,
-                                                           0 );
+    raptor_parser* parser = 0;
+    if ( serialization == Soprano::SerializationNTriples ) {
+        parser = raptor_new_parser( "ntriples" ); // mimetype for ntriple is text/plain which is useless for the method below
+    }
+    else {
+        parser = raptor_new_parser_for_content( 0,
+                                                mimeType.toLatin1().data(),
+                                                0,
+                                                0,
+                                                0 );
+    }
 
     if ( !parser ) {
         qDebug() << "(Soprano::Raptor::Parser) no parser for serialization " << mimeTypeString( serialization, userSerialization );

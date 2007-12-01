@@ -90,20 +90,26 @@ void Soprano::NQuadSerializer::serializeStatement( const Statement& s, QTextStre
 void Soprano::NQuadSerializer::serializeNode( const Node& node, QTextStream& stream ) const
 {
     switch( node.type() ) {
-    case Soprano::Node::LiteralNode:
-        stream << '\"' << node.literal().toString() << "\"";
+    case Soprano::Node::LiteralNode: {
+        QString val = node.literal().toString();
+        val.replace( '\\', "\\\\" );
+        val.replace( '\n', "\\n" );
+        val.replace( '\r', "\\r" );
+        val.replace( '\"', "\\\"" );
+        stream << '\"' << val << "\"";
         if ( node.literal().isString() && !node.language().isEmpty() ) {
             stream << "@" << node.language();
         }
         else {
-            stream << "^^<" << node.literal().dataTypeUri().toString() << '>';
+            stream << "^^<" << node.literal().dataTypeUri().toEncoded() << '>';
         }
         break;
+    }
     case Soprano::Node::BlankNode:
         stream << "_:" << node.identifier();
         break;
     case Soprano::Node::ResourceNode:
-        stream << '<' << node.uri().toString() << '>';
+        stream << '<' << node.uri().toEncoded() << '>';
         break;
     default:
         // do nothing

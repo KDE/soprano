@@ -87,7 +87,7 @@ QTime Soprano::DateTime::fromTimeString( const QString& s )
     int z = 0;
     if( s[8] == '.' || s[8] == ',' ) {
         ++pos;
-        while( s[pos].isDigit() )
+        while( s.length() > pos && s[pos].isDigit() )
             ++pos;
         z = s.mid(9, pos-9).leftJustified( 3, '0' ).toInt(&ok);
         if( !ok ) {
@@ -98,6 +98,11 @@ QTime Soprano::DateTime::fromTimeString( const QString& s )
 
     // finally create the time object
     QTime t( hh, mm, ss, z );
+
+    if ( pos >= s.length() ) {
+        qDebug() << Q_FUNC_INFO << " invalid formatted time string: " << s << endl;
+        return QTime();
+    }
 
     // parse the timezone
     if( s[pos] == 'Z' ) {

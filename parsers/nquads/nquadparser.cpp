@@ -30,6 +30,7 @@
 
 #include <QtCore/QtPlugin>
 #include <QtCore/QRegExp>
+#include <QtCore/QTextStream>
 
 
 Q_EXPORT_PLUGIN2(soprano_nquadparser, Soprano::NQuadParser)
@@ -71,6 +72,8 @@ Soprano::StatementIterator Soprano::NQuadParser::parseStream( QTextStream& strea
             if ( !line.startsWith( '#' ) ) {
                 Statement s = parseLine( line.trimmed(), row );
                 if ( s.isValid() ) {
+                    QTextStream str( stderr );
+                    str << s << endl;
                     sl += s;
                 }
                 else {
@@ -118,7 +121,7 @@ Soprano::Statement Soprano::NQuadParser::parseLine( const QString& line, int row
         ++offset;
     }
 
-    // parse predicate
+    // parse object
     Node object = parseNode( line, offset );
     if ( object.isEmpty() ) {
         setError( Error::ParserError( Error::Locator( row, offset+1 ), "Need to have a valid object node" ) );
@@ -138,6 +141,8 @@ Soprano::Statement Soprano::NQuadParser::parseLine( const QString& line, int row
         context = parseNode( line, offset );
         if ( !context.isResource() ) {
             setError( Error::ParserError( Error::Locator( row, offset+1 ), "Context has to be a resource node" ) );
+            QTextStream str( stderr );
+            str << context << endl;
             return Statement();
         }
     }
@@ -159,6 +164,71 @@ Soprano::Statement Soprano::NQuadParser::parseLine( const QString& line, int row
 }
 
 
+namespace {
+    bool isEscaped( const QString& s, int pos )
+    {
+        int bsc = 0;
+        while ( pos >= 1 ) {
+            if ( s[--pos] == '\\' ) {
+                bsc++;
+            }
+            else {
+                break;
+            }
+        }
+        return(  bsc % 2 > 0 );
+    }
+
+    int findLiteralEnd( const QString& s, int offset, bool* lang )
+    {
+        int pos = offset;
+        do {
+            pos = s.indexOf( "\"", pos+1 );
+        } while ( pos < s.length() && isEscaped( s, pos ) );
+
+        if ( pos+1 < s.length() ) {
+            if ( s[pos+1] == '@' ) {
+                *lang = true;
+                return pos;
+            }
+            else {
+                *lang = false;
+                if ( pos+3 < s.length() ) {
+                    if ( s.mid( pos+1, 3 ) == "^^<" ) {
+                        return pos;
+                    }
+                }
+            }
+        }
+
+        return -1;
+    }
+
+    QString& decodeLiteral( QString& s )
+    {
+        int pos = 0;
+        while ( pos >= 0 && pos < s.length() ) {
+            pos = s.indexOf( "\\", pos );
+            if ( pos != -1 && s.length() > pos+1 ) {
+                if ( s[pos+1] == '\\' ) {
+                    s.remove( pos, 1 );
+                }
+                else if ( s[pos+1] == 'n' ) {
+                    s.replace( pos, 2, '\n' );
+                }
+                else if ( s[pos+1] == 'r' ) {
+                    s.replace( pos, 2, '\r' );
+                }
+                else if ( s[pos+1] == '\"' ) {
+                    s.remove( pos, 1 );
+                }
+                ++pos;
+            }
+        }
+        return s;
+    }
+}
+
 Soprano::Node Soprano::NQuadParser::parseNode( const QString& s, int& offset ) const
 {
     Node node;
@@ -169,7 +239,7 @@ Soprano::Node Soprano::NQuadParser::parseNode( const QString& s, int& offset ) c
         if ( s[offset] == '<' ) {
             int pos = s.indexOf( '>', offset+1 );
             if ( pos > 0 ) {
-                node = Soprano::Node( QUrl( s.mid( offset+1, pos-offset-1 ) ) );
+                node = Soprano::Node( QUrl::fromEncoded( s.mid( offset+1, pos-offset-1 ).toAscii() ) );
                 offset = pos+1;
             }
         }
@@ -185,27 +255,30 @@ Soprano::Node Soprano::NQuadParser::parseNode( const QString& s, int& offset ) c
 
         // parse literal node
         else if ( s[offset] == '"' ) {
-            int langPos = s.indexOf( "\"@", offset+1 );
-            int literalTypePos = s.indexOf( "\"^^<", offset+1 );
+            bool hasLangTag = false;
+            int literalEndPos = findLiteralEnd( s, offset, &hasLangTag );
 
-            if ( langPos > 0 ) {
-                int langEnd = s.indexOf( QRegExp( "\\s" ), langPos+1 );
-                if ( langEnd > 0 ) {
-                    QString value = s.mid( offset+1, langPos-offset-1 );
-                    QString lang = s.mid( langPos+2, langEnd-langPos-2 );
-                    node = Node( LiteralValue( value ), lang );
+            if ( literalEndPos > 0 ) {
+                QString value = s.mid( offset+1, literalEndPos-offset-1 );
+                decodeLiteral( value );
 
-                    offset = langEnd;
+                if ( hasLangTag ) {
+                    int langEnd = s.indexOf( QRegExp( "\\s" ), literalEndPos+1 );
+                    if ( langEnd > 0 ) {
+                        QString lang = s.mid( literalEndPos+2, langEnd-literalEndPos-2 );
+                        node = Node( LiteralValue( value ), lang );
+
+                        offset = langEnd;
+                    }
                 }
-            }
-            else if ( literalTypePos > 0 ) {
-                int literalTypeEnd = s.indexOf( ">", literalTypePos );
-                if ( literalTypeEnd > 0 ) {
-                    QString value = s.mid( offset+1, literalTypePos-offset-1 );
-                    QString literalType = s.mid( literalTypePos + 4, literalTypeEnd - literalTypePos - 4 );
-                    node = Soprano::LiteralValue::fromString( value, QUrl( literalType ) );
+                else {
+                    int literalTypeEnd = s.indexOf( ">", literalEndPos + 4 );
+                    if ( literalTypeEnd > 0 ) {
+                        QString literalType = s.mid( literalEndPos + 4, literalTypeEnd - literalEndPos - 4 );
+                        node = Soprano::LiteralValue::fromString( value, QUrl::fromEncoded( literalType.toAscii() ) );
 
-                    offset = literalTypeEnd+1;
+                        offset = literalTypeEnd+1;
+                    }
                 }
             }
         }
