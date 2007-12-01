@@ -31,6 +31,16 @@ namespace Soprano {
         class Query;
     }
 
+    /**
+     * The %Soprano %Index provides a full text search index based on CLucene. It allows
+     * very fast full text queries against the literal object nodes in a %Soprano Model.
+     *
+     * The perfect starting point is IndexFilterModel. Most users will not need more.
+     *
+     * In a future version of %Soprano the index will be integrated into the query API,
+     * allowing for fast full text queries in combination with standard RDF queries.
+     * At the moment these have to be done separately (see IndexFilterModel::executeQuery()).
+     */
     namespace Index {
 
         class CLuceneIndex;
@@ -41,7 +51,9 @@ namespace Soprano {
          *
          * \brief The IndexFilterModel provides a full text index around any Soprano Model.
          *
-         * All statements with a literal object will be indexed.
+         * All statements with a literal object will be indexed. The literals can then be searched 
+         * with CLucene queries. More details regarding queries can be found in the documentation fo
+         * executeQuery().
          *
          * \author Sebastian Trueg <trueg@kde.org>
          */
