@@ -72,8 +72,6 @@ Soprano::StatementIterator Soprano::NQuadParser::parseStream( QTextStream& strea
             if ( !line.startsWith( '#' ) ) {
                 Statement s = parseLine( line.trimmed(), row );
                 if ( s.isValid() ) {
-                    QTextStream str( stderr );
-                    str << s << endl;
                     sl += s;
                 }
                 else {
@@ -141,8 +139,6 @@ Soprano::Statement Soprano::NQuadParser::parseLine( const QString& line, int row
         context = parseNode( line, offset );
         if ( !context.isResource() ) {
             setError( Error::ParserError( Error::Locator( row, offset+1 ), "Context has to be a resource node" ) );
-            QTextStream str( stderr );
-            str << context << endl;
             return Statement();
         }
     }
