@@ -30,6 +30,7 @@ public:
           xmlsInt( "http://www.w3.org/2001/XMLSchema#int" ),
           xmlsInteger( "http://www.w3.org/2001/XMLSchema#integer" ),
           xmlsNegativeInteger( "http://www.w3.org/2001/XMLSchema#negativeInteger" ),
+          xmlsNonNegativeInteger( "http://www.w3.org/2001/XMLSchema#nonNegativeInteger" ),
           xmlsDecimal( "http://www.w3.org/2001/XMLSchema#decimal" ),
           xmlsShort( "http://www.w3.org/2001/XMLSchema#short" ),
           xmlsLong( "http://www.w3.org/2001/XMLSchema#long" ),
@@ -49,6 +50,7 @@ public:
     QUrl xmlsInt;
     QUrl xmlsInteger;
     QUrl xmlsNegativeInteger;
+    QUrl xmlsNonNegativeInteger;
     QUrl xmlsDecimal;
     QUrl xmlsShort;
     QUrl xmlsLong;
@@ -89,6 +91,12 @@ QUrl Soprano::Vocabulary::XMLSchema::integer()
 QUrl Soprano::Vocabulary::XMLSchema::negativeInteger()
 {
     return xmls()->xmlsNegativeInteger;
+}
+
+
+QUrl Soprano::Vocabulary::XMLSchema::nonNegativeInteger()
+{
+    return xmls()->xmlsNonNegativeInteger;
 }
 
 
