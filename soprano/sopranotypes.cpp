@@ -51,6 +51,7 @@ Soprano::RdfSerialization Soprano::mimeTypeToSerialization( const QString& mimet
 {
     if ( mimetype == "application/rdf+xml" ||
          mimetype == "text/rdf" ||
+         mimetype.toLower() == "rdf+xml" ||
          mimetype.toLower() == "rdfxml" ) {
         return SerializationRdfXml;
     }

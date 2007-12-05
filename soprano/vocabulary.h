@@ -24,3 +24,4 @@
 #include "xmls.h"
 #include "nrl.h"
 #include "nao.h"
+#include "xesam.h"

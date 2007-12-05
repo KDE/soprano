@@ -509,6 +509,7 @@ QVariant::Type Soprano::LiteralValue::typeFromDataTypeUri( const QUrl& dataTypeU
         s_xmlSchemaTypes.insert( Vocabulary::XMLSchema::xmlsInt(), QVariant::Int );
         s_xmlSchemaTypes.insert( Vocabulary::XMLSchema::integer(), QVariant::Int );
         s_xmlSchemaTypes.insert( Vocabulary::XMLSchema::negativeInteger(), QVariant::Int );
+        s_xmlSchemaTypes.insert( Vocabulary::XMLSchema::nonNegativeInteger(), QVariant::UInt );
         s_xmlSchemaTypes.insert( Vocabulary::XMLSchema::decimal(), QVariant::Int );
         s_xmlSchemaTypes.insert( Vocabulary::XMLSchema::xmlsShort(), QVariant::Int );
         s_xmlSchemaTypes.insert( Vocabulary::XMLSchema::xmlsLong(), QVariant::LongLong );
