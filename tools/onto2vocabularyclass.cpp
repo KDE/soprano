@@ -29,6 +29,18 @@
 
 using namespace Soprano;
 
+static const char* LGPL_HEADER = "/*\n"
+                                 " * This file is part of the Soprano project.\n"
+                                 " * Copyright (C) 2007 Sebastian Trueg <trueg@kde.org>\n"
+                                 " *\n"
+                                 " * This program is free software; you can redistribute it and/or modify\n"
+                                 " * it under the terms of the GNU General Public License as published by\n"
+                                 " * the Free Software Foundation; either version 2 of the License, or\n"
+                                 " * (at your option) any later version.\n"
+                                 " * See the file \"COPYING\" for the exact licensing terms.\n"
+                                 " */\n";
+
+
 #define VERSION "0.1"
 
 int version()
@@ -139,7 +151,7 @@ int main( int argc, char *argv[] )
     const Parser* parser = PluginManager::instance()->discoverParserForSerialization( mimeTypeToSerialization( encoding ), encoding );
     if ( !parser ) {
         QTextStream s( stderr );
-        s << "Could not find parser plugin for encoding" << encoding << endl;
+        s << "Could not find parser plugin for encoding " << encoding << endl;
         return 1;
     }
 
@@ -205,6 +217,8 @@ int main( int argc, char *argv[] )
 
     // write the header
     // ----------------------------------------------------
+    headerStream << LGPL_HEADER << endl;
+
     headerStream << "#ifndef _SOPRANO_" << className.toUpper() << "_H_" << endl
                  << "#define _SOPRANO_" << className.toUpper() << "_H_" << endl << endl;
 
@@ -253,6 +267,7 @@ int main( int argc, char *argv[] )
 
     // write source
     // ----------------------------------------------------
+    sourceStream << LGPL_HEADER << endl;
     sourceStream << "#include \"" << headerFile.fileName() << "\"" << endl << endl;
 
     QString privateClassName = className[0].toUpper() + className.mid( 1 ).toLower() + "Private";
