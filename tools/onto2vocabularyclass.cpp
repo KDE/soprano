@@ -26,18 +26,30 @@
 #include "../soprano/pluginmanager.h"
 #include "../soprano/parser.h"
 #include "../soprano/node.h"
+#include "../soprano/vocabulary/rdfs.h"
+
 
 using namespace Soprano;
 
 static const char* LGPL_HEADER = "/*\n"
-                                 " * This file is part of the Soprano project.\n"
+                                 " * This file is part of Soprano Project.\n"
+                                 " *\n"
                                  " * Copyright (C) 2007 Sebastian Trueg <trueg@kde.org>\n"
                                  " *\n"
-                                 " * This program is free software; you can redistribute it and/or modify\n"
-                                 " * it under the terms of the GNU General Public License as published by\n"
-                                 " * the Free Software Foundation; either version 2 of the License, or\n"
-                                 " * (at your option) any later version.\n"
-                                 " * See the file \"COPYING\" for the exact licensing terms.\n"
+                                 " * This library is free software; you can redistribute it and/or\n"
+                                 " * modify it under the terms of the GNU Library General Public\n"
+                                 " * License as published by the Free Software Foundation; either\n"
+                                 " * version 2 of the License, or (at your option) any later version.\n"
+                                 " *\n"
+                                 " * This library is distributed in the hope that it will be useful,\n"
+                                 " * but WITHOUT ANY WARRANTY; without even the implied warranty of\n"
+                                 " * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU\n"
+                                 " * Library General Public License for more details.\n"
+                                 " *\n"
+                                 " * You should have received a copy of the GNU Library General Public License\n"
+                                 " * along with this library; see the file COPYING.LIB.  If not, write to\n"
+                                 " * the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,\n"
+                                 " * Boston, MA 02110-1301, USA.\n"
                                  " */\n";
 
 
@@ -84,6 +96,43 @@ QString createIndent( int indent )
     }
     return s;
 }
+
+
+QString writeComment( const QString& comment, int indent )
+{
+    static const int maxLine = 50;
+
+    QString s;
+
+    if( !comment.isEmpty() ) {
+        s += createIndent( indent );
+        s += "/**\n";
+
+        QStringList paragraphs = comment.split( '\n', QString::KeepEmptyParts );
+        Q_FOREACH( QString paragraph, paragraphs ) {
+            s += createIndent( indent ) + " * ";
+            QStringList words = paragraph.split( QRegExp("\\s"), QString::SkipEmptyParts );
+            int cnt = 0;
+            for( int i = 0; i < words.count(); ++i ) {
+                if( cnt >= maxLine ) {
+                    s += '\n'
+                         + createIndent( indent ) + " * ";
+                    cnt = 0;
+                }
+
+                s += words[i] + ' ';
+                cnt += words[i].length();
+            }
+            s += '\n';
+        }
+
+
+        s += createIndent( indent ) + " */";
+    }
+
+    return s;
+}
+
 
 
 int main( int argc, char *argv[] )
@@ -180,36 +229,51 @@ int main( int argc, char *argv[] )
     QTextStream headerStream( &headerFile );
     QTextStream sourceStream( &sourceFile );
 
-    QList<Node> resources = it.iterateSubjects().allNodes();
+    QList<Statement> resources = it.allStatements();
 
     qDebug() << "parsed" << resources.count() << "resources.";
 
     // create entries
     // ----------------------------------------------------
-    QList<QPair<QString,QString> > normalizedResoruces;
+    QMap<QString, QPair<QString, QString> > normalizedResources;
     QStringList done;
-    foreach( Node resource, resources ) {
-        QString uri = resource.uri().toString();
-        QString name = resource.uri().fragment();
+    foreach( Statement resource, resources ) {
+        QString uri = resource.subject().uri().toString();
+        QString name = resource.subject().uri().fragment();
         if ( name.isEmpty() && !uri.contains( '#' ) ) {
-            name = resource.uri().path().section( "/", -1 );
+            name = resource.subject().uri().path().section( "/", -1 );
         }
 
         if ( !name.isEmpty() && !done.contains( name ) ) {
-            normalizedResoruces.append( qMakePair( uri, name ) );
+            normalizedResources.insert( uri, qMakePair( name, QString() ) );
             done += name;
         }
     }
 
+    // extract comments
+    foreach( Statement resource, resources ) {
+        if ( resource.predicate().uri() == Soprano::Vocabulary::RDFS::comment() ) {
+            if ( normalizedResources.contains( resource.subject().toString() ) ) {
+                normalizedResources[resource.subject().toString()].second = resource.object().literal().toString();
+            }
+        }
+    }
+
+    if ( normalizedResources.isEmpty() ) {
+        QTextStream s( stderr );
+        s << "Nothing found to export." << endl;
+        return 1;
+    }
+
     // We simplify and take it as granted that all resources have the same NS
     QString ontoNamespace;
-    if ( QUrl( normalizedResoruces[0].first ).hasFragment() ) {
-        QUrl uri = normalizedResoruces[0].first;
-        uri.setFragment( QString() );
-        ontoNamespace = uri.toString() + "#";
+    QUrl namespaceUri( normalizedResources.begin().key() );
+    if ( namespaceUri.hasFragment() ) {
+        namespaceUri.setFragment( QString() );
+        ontoNamespace = namespaceUri.toString() + "#";
     }
     else {
-        ontoNamespace = normalizedResoruces[0].first.section( "/", 0, -2 ) + "/";
+        ontoNamespace = namespaceUri.toString().section( "/", 0, -2 ) + "/";
     }
     qDebug() << "namespace: " << ontoNamespace;
     // ----------------------------------------------------
@@ -242,18 +306,25 @@ int main( int argc, char *argv[] )
                  << createIndent( indent ) << " */" << endl;
     headerStream << createIndent( indent ) << "SOPRANO_EXPORT QUrl " << className.toLower() << "Namespace();" << endl << endl;
 
-    for( int i = 0; i < normalizedResoruces.count(); ++i ) {
-        QString uri = normalizedResoruces[i].first;
-        QString name = normalizedResoruces[i].second;
+    for( QMap<QString, QPair<QString, QString> >::const_iterator it = normalizedResources.begin();
+         it != normalizedResources.end(); ++it ) {
+        QString uri = it.key();
+        QString name = it.value().first;
+        QString comment = it.value().second;
 
-        headerStream << createIndent( indent ) << "/**" << endl
-                     << createIndent( indent ) << " * " << uri << endl
-                     << createIndent( indent ) << " */" << endl;
+        if ( comment.isEmpty() ) {
+            headerStream << writeComment( uri, indent ) << endl;
+        }
+        else {
+            headerStream << writeComment( uri + "\n\n" + comment, indent ) << endl;
+        }
         headerStream << createIndent( indent ) << "SOPRANO_EXPORT QUrl " << name << "();" << endl;
 
-        if ( i < normalizedResoruces.count()-1 ) {
+        ++it;
+        if ( it != normalizedResources.end() ) {
             headerStream << endl;
         }
+        --it;
     }
 
     // close the namespaces
@@ -281,14 +352,18 @@ int main( int argc, char *argv[] )
 
     sourceStream << className.toLower() << "_namespace( \"" << ontoNamespace << "\" )," << endl;
 
-    for( int i = 0; i < normalizedResoruces.count(); ++i ) {
-        QString uri = normalizedResoruces[i].first;
-        QString name = normalizedResoruces[i].second;
+    for( QMap<QString, QPair<QString, QString> >::const_iterator it = normalizedResources.begin();
+         it != normalizedResources.end(); ++it ) {
+        QString uri = it.key();
+        QString name = it.value().first;
 
         sourceStream << createIndent( 2 ) << "  " << className.toLower() << "_" << name << "( \"" << uri << "\" )";
-        if ( i < normalizedResoruces.count()-1 ) {
+
+        ++it;
+        if ( it != normalizedResources.end() ) {
             sourceStream << "," << endl;
         }
+        --it;
     }
 
     sourceStream << " {" << endl
@@ -296,9 +371,9 @@ int main( int argc, char *argv[] )
 
     sourceStream << createIndent( 1 ) << "QUrl " << className.toLower() << "_namespace;" << endl;
 
-    for( int i = 0; i < normalizedResoruces.count(); ++i ) {
-        QString name = normalizedResoruces[i].second;
-
+    for( QMap<QString, QPair<QString, QString> >::const_iterator it = normalizedResources.begin();
+         it != normalizedResources.end(); ++it ) {
+        QString name = it.value().first;
         sourceStream << createIndent( 1 ) << "QUrl " << className.toLower() << "_" << name << ";" << endl;
     }
     sourceStream << "};" << endl << endl;
@@ -314,21 +389,26 @@ int main( int argc, char *argv[] )
                  << createIndent( 1 ) << "return " << singletonName << "()->" << className.toLower() << "_namespace;" << endl
                  << "}" << endl << endl;
 
-    for( int i = 0; i < normalizedResoruces.count(); ++i ) {
-        QString name = normalizedResoruces[i].second;
+    for( QMap<QString, QPair<QString, QString> >::const_iterator it = normalizedResources.begin();
+         it != normalizedResources.end(); ++it ) {
+        QString name = it.value().first;
 
         sourceStream << "QUrl ";
+
         if ( !namespaceName.isEmpty() ) {
             sourceStream << namespaceName << "::";
         }
+
         sourceStream << className << "::" << name << "()" << endl
                      << "{" << endl
                      << createIndent( 1 ) << "return " << singletonName << "()->" << className.toLower() << "_" << name << ";" << endl
                      << "}" << endl;
 
-        if ( i < normalizedResoruces.count()-1 ) {
+        ++it;
+        if ( it != normalizedResources.end() ) {
             sourceStream << endl;
         }
+        --it;
     }
 
     // ----------------------------------------------------
