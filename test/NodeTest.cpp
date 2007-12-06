@@ -20,7 +20,7 @@
  */
 
 #include <QtTest/QtTest>
-#include <QtCore>
+#include <QtCore/QtCore>
 
 #include <soprano/node.h>
 
