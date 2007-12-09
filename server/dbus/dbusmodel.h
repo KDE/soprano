@@ -44,9 +44,9 @@ namespace Soprano {
      *
      * \warning DBusModel is not thread-safe by default
      * and has to be protected if is is to be used from different
-     * threads (This can be done via Util::MutexModel
-     * in Util::MutexModel::ReadWriteMultiThreading mode
-     * or via setting the model to async mode via setAsyncCalls).
+     * threads (This can be done via Soprano::Util::MutexModel
+     * in Soprano::Util::MutexModel::ReadWriteMultiThreading mode
+     * or via setting the model to async mode via setAsyncCalls()).
      *
      * \author Sebastian Trueg <trueg@kde.org>
      */
