@@ -60,9 +60,10 @@ SET(soprano_SRCS
   sopranotypes.cpp
   vocabulary/rdf.cpp
   vocabulary/rdfs.cpp
-  vocabulary/xmls.cpp
+  vocabulary/xsd.cpp
   vocabulary/nrl.cpp
   vocabulary/nao.cpp
+  vocabulary/xesam.cpp
   query/query.cpp
   query/queryparser.cpp
   query/queryserializer.cpp
@@ -134,9 +135,10 @@ INSTALL(FILES
   iteratorbackend.h
   vocabulary/rdf.h
   vocabulary/rdfs.h
-  vocabulary/xmls.h
+  vocabulary/xsd.h
   vocabulary/nrl.h
   vocabulary/nao.h
+  vocabulary/xesam.h
   inference/inferencemodel.h
   inference/inferencerule.h
   inference/inferenceruleset.h

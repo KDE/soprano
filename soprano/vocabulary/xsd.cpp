@@ -19,160 +19,160 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#include "xmls.h"
+#include "xsd.h"
 
 
 class XMLSchema
 {
 public:
     XMLSchema()
-        : xmlsNamespace( "http://www.w3.org/2001/XMLSchema#" ),
-          xmlsInt( "http://www.w3.org/2001/XMLSchema#int" ),
-          xmlsInteger( "http://www.w3.org/2001/XMLSchema#integer" ),
-          xmlsNegativeInteger( "http://www.w3.org/2001/XMLSchema#negativeInteger" ),
-          xmlsNonNegativeInteger( "http://www.w3.org/2001/XMLSchema#nonNegativeInteger" ),
-          xmlsDecimal( "http://www.w3.org/2001/XMLSchema#decimal" ),
-          xmlsShort( "http://www.w3.org/2001/XMLSchema#short" ),
-          xmlsLong( "http://www.w3.org/2001/XMLSchema#long" ),
-          xmlsUnsignedInt( "http://www.w3.org/2001/XMLSchema#unsignedInt" ),
-          xmlsUnsignedShort( "http://www.w3.org/2001/XMLSchema#unsignedShort" ),
-          xmlsUnsignedLong( "http://www.w3.org/2001/XMLSchema#unsignedLong" ),
-          xmlsBoolean( "http://www.w3.org/2001/XMLSchema#boolean" ),
-          xmlsDouble( "http://www.w3.org/2001/XMLSchema#double" ),
-          xmlsString( "http://www.w3.org/2001/XMLSchema#string" ),
-          xmlsDate( "http://www.w3.org/2001/XMLSchema#date" ),
-          xmlsTime( "http://www.w3.org/2001/XMLSchema#time" ),
-          xmlsDateTime( "http://www.w3.org/2001/XMLSchema#dateTime" ),
-          xmlsBase64Binary( "http://www.w3.org/2001/XMLSchema#base64Binary" ) {
+        : xsdNamespace( "http://www.w3.org/2001/XMLSchema#" ),
+          xsdInt( "http://www.w3.org/2001/XMLSchema#int" ),
+          xsdInteger( "http://www.w3.org/2001/XMLSchema#integer" ),
+          xsdNegativeInteger( "http://www.w3.org/2001/XMLSchema#negativeInteger" ),
+          xsdNonNegativeInteger( "http://www.w3.org/2001/XMLSchema#nonNegativeInteger" ),
+          xsdDecimal( "http://www.w3.org/2001/XMLSchema#decimal" ),
+          xsdShort( "http://www.w3.org/2001/XMLSchema#short" ),
+          xsdLong( "http://www.w3.org/2001/XMLSchema#long" ),
+          xsdUnsignedInt( "http://www.w3.org/2001/XMLSchema#unsignedInt" ),
+          xsdUnsignedShort( "http://www.w3.org/2001/XMLSchema#unsignedShort" ),
+          xsdUnsignedLong( "http://www.w3.org/2001/XMLSchema#unsignedLong" ),
+          xsdBoolean( "http://www.w3.org/2001/XMLSchema#boolean" ),
+          xsdDouble( "http://www.w3.org/2001/XMLSchema#double" ),
+          xsdString( "http://www.w3.org/2001/XMLSchema#string" ),
+          xsdDate( "http://www.w3.org/2001/XMLSchema#date" ),
+          xsdTime( "http://www.w3.org/2001/XMLSchema#time" ),
+          xsdDateTime( "http://www.w3.org/2001/XMLSchema#dateTime" ),
+          xsdBase64Binary( "http://www.w3.org/2001/XMLSchema#base64Binary" ) {
     }
 
-    QUrl xmlsNamespace;
-    QUrl xmlsInt;
-    QUrl xmlsInteger;
-    QUrl xmlsNegativeInteger;
-    QUrl xmlsNonNegativeInteger;
-    QUrl xmlsDecimal;
-    QUrl xmlsShort;
-    QUrl xmlsLong;
-    QUrl xmlsUnsignedInt;
-    QUrl xmlsUnsignedShort;
-    QUrl xmlsUnsignedLong;
-    QUrl xmlsBoolean;
-    QUrl xmlsDouble;
-    QUrl xmlsString;
-    QUrl xmlsDate;
-    QUrl xmlsTime;
-    QUrl xmlsDateTime;
-    QUrl xmlsBase64Binary;
+    QUrl xsdNamespace;
+    QUrl xsdInt;
+    QUrl xsdInteger;
+    QUrl xsdNegativeInteger;
+    QUrl xsdNonNegativeInteger;
+    QUrl xsdDecimal;
+    QUrl xsdShort;
+    QUrl xsdLong;
+    QUrl xsdUnsignedInt;
+    QUrl xsdUnsignedShort;
+    QUrl xsdUnsignedLong;
+    QUrl xsdBoolean;
+    QUrl xsdDouble;
+    QUrl xsdString;
+    QUrl xsdDate;
+    QUrl xsdTime;
+    QUrl xsdDateTime;
+    QUrl xsdBase64Binary;
 };
 
 
-Q_GLOBAL_STATIC( XMLSchema, xmls )
+Q_GLOBAL_STATIC( XMLSchema, xsd )
 
 
-QUrl Soprano::Vocabulary::XMLSchema::xmlsNamespace()
+QUrl Soprano::Vocabulary::XMLSchema::xsdNamespace()
 {
-    return xmls()->xmlsNamespace;
+    return xsd()->xsdNamespace;
 }
 
 
-QUrl Soprano::Vocabulary::XMLSchema::xmlsInt()
+QUrl Soprano::Vocabulary::XMLSchema::xsdInt()
 {
-    return xmls()->xmlsInt;
+    return xsd()->xsdInt;
 }
 
 
 QUrl Soprano::Vocabulary::XMLSchema::integer()
 {
-    return xmls()->xmlsInteger;
+    return xsd()->xsdInteger;
 }
 
 
 QUrl Soprano::Vocabulary::XMLSchema::negativeInteger()
 {
-    return xmls()->xmlsNegativeInteger;
+    return xsd()->xsdNegativeInteger;
 }
 
 
 QUrl Soprano::Vocabulary::XMLSchema::nonNegativeInteger()
 {
-    return xmls()->xmlsNonNegativeInteger;
+    return xsd()->xsdNonNegativeInteger;
 }
 
 
 QUrl Soprano::Vocabulary::XMLSchema::decimal()
 {
-    return xmls()->xmlsDecimal;
+    return xsd()->xsdDecimal;
 }
 
 
-QUrl Soprano::Vocabulary::XMLSchema::xmlsShort()
+QUrl Soprano::Vocabulary::XMLSchema::xsdShort()
 {
-    return xmls()->xmlsShort;
+    return xsd()->xsdShort;
 }
 
 
-QUrl Soprano::Vocabulary::XMLSchema::xmlsLong()
+QUrl Soprano::Vocabulary::XMLSchema::xsdLong()
 {
-    return xmls()->xmlsLong;
+    return xsd()->xsdLong;
 }
 
 
 QUrl Soprano::Vocabulary::XMLSchema::unsignedInt()
 {
-    return xmls()->xmlsUnsignedInt;
+    return xsd()->xsdUnsignedInt;
 }
 
 
 QUrl Soprano::Vocabulary::XMLSchema::unsignedShort()
 {
-    return xmls()->xmlsUnsignedShort;
+    return xsd()->xsdUnsignedShort;
 }
 
 
 QUrl Soprano::Vocabulary::XMLSchema::unsignedLong()
 {
-    return xmls()->xmlsUnsignedLong;
+    return xsd()->xsdUnsignedLong;
 }
 
 
 QUrl Soprano::Vocabulary::XMLSchema::string()
 {
-    return xmls()->xmlsString;
+    return xsd()->xsdString;
 }
 
 
-QUrl Soprano::Vocabulary::XMLSchema::xmlsDouble()
+QUrl Soprano::Vocabulary::XMLSchema::xsdDouble()
 {
-    return xmls()->xmlsDouble;
+    return xsd()->xsdDouble;
 }
 
 
 QUrl Soprano::Vocabulary::XMLSchema::boolean()
 {
-    return xmls()->xmlsBoolean;
+    return xsd()->xsdBoolean;
 }
 
 
 QUrl Soprano::Vocabulary::XMLSchema::date()
 {
-    return xmls()->xmlsDate;
+    return xsd()->xsdDate;
 }
 
 
 QUrl Soprano::Vocabulary::XMLSchema::time()
 {
-    return xmls()->xmlsTime;
+    return xsd()->xsdTime;
 }
 
 
 QUrl Soprano::Vocabulary::XMLSchema::dateTime()
 {
-    return xmls()->xmlsDateTime;
+    return xsd()->xsdDateTime;
 }
 
 
 QUrl Soprano::Vocabulary::XMLSchema::base64Binary()
 {
-    return xmls()->xmlsBase64Binary;
+    return xsd()->xsdBase64Binary;
 }

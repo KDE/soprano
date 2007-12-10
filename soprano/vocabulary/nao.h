@@ -27,164 +27,232 @@
 
 namespace Soprano {
     namespace Vocabulary {
-    /**
-     * The Nepomuk Annotation Ontology
-     */
         namespace NAO {
             /**
-             * http://www.semanticdesktop.org/ontologies/2007/08/15/nao#
+             * http://www.semanticdesktop.org/ontologies/2007/08/15/
              */
             SOPRANO_EXPORT QUrl naoNamespace();
 
             /**
-             * http://www.semanticdesktop.org/ontologies/2007/08/15/nao#hasDefaultNamespaceAbbreviation
+             * http://www.semanticdesktop.org/ontologies/2007/08/15/nao 
              */
-            SOPRANO_EXPORT QUrl hasDefaultNamespaceAbbreviation();
+            SOPRANO_EXPORT QUrl nao();
 
             /**
-             * http://www.semanticdesktop.org/ontologies/2007/08/15/nao#Symbol
+             * http://www.semanticdesktop.org/ontologies/2007/08/15/nao#Party 
+             * 
+             * Represents a single or a group of individuals 
+             */
+            SOPRANO_EXPORT QUrl Party();
+
+            /**
+             * http://www.semanticdesktop.org/ontologies/2007/08/15/nao#Symbol 
+             * 
+             * Represents a symbol 
              */
             SOPRANO_EXPORT QUrl Symbol();
 
             /**
-             * http://www.semanticdesktop.org/ontologies/2007/08/15/nao#isTopicOf
-             */
-            SOPRANO_EXPORT QUrl isTopicOf();
-
-            /**
-             * http://www.semanticdesktop.org/ontologies/2007/08/15/nao#isTagFor
-             */
-            SOPRANO_EXPORT QUrl isTagFor();
-
-            /**
-             * http://www.semanticdesktop.org/ontologies/2007/08/15/nao#version
-             */
-            SOPRANO_EXPORT QUrl version();
-
-            /**
-             * http://www.semanticdesktop.org/ontologies/2007/08/15/nao#altLabel
-             */
-            SOPRANO_EXPORT QUrl altLabel();
-
-            /**
-             * http://www.semanticdesktop.org/ontologies/2007/08/15/nao#hasSymbol
-             */
-            SOPRANO_EXPORT QUrl hasSymbol();
-
-            /**
-             * http://www.semanticdesktop.org/ontologies/2007/08/15/nao#prefSymbol
-             */
-            SOPRANO_EXPORT QUrl prefSymbol();
-
-            /**
-             * http://www.semanticdesktop.org/ontologies/2007/08/15/nao#altSymbol
-             */
-            SOPRANO_EXPORT QUrl altSymbol();
-
-            /**
-             * http://www.semanticdesktop.org/ontologies/2007/08/15/nao#hasTopic
-             */
-            SOPRANO_EXPORT QUrl hasTopic();
-
-            /**
-             * http://www.semanticdesktop.org/ontologies/2007/08/15/nao#serializationLanguage
-             */
-            SOPRANO_EXPORT QUrl serializationLanguage();
-
-            /**
-             * http://www.semanticdesktop.org/ontologies/2007/08/15/nao#creator
-             */
-            SOPRANO_EXPORT QUrl creator();
-
-            /**
-             * http://www.semanticdesktop.org/ontologies/2007/08/15/nao#annotation
-             */
-            SOPRANO_EXPORT QUrl annotation();
-
-            /**
-             * http://www.semanticdesktop.org/ontologies/2007/08/15/nao#rating
-             */
-            SOPRANO_EXPORT QUrl rating();
-
-            /**
-             * http://www.semanticdesktop.org/ontologies/2007/08/15/nao#numericRating
-             */
-            SOPRANO_EXPORT QUrl numericRating();
-
-            /**
-             * http://www.semanticdesktop.org/ontologies/2007/08/15/nao#Tag
+             * http://www.semanticdesktop.org/ontologies/2007/08/15/nao#Tag 
+             * 
+             * Represents a generic tag 
              */
             SOPRANO_EXPORT QUrl Tag();
 
             /**
-             * http://www.semanticdesktop.org/ontologies/2007/08/15/nao#contributor
+             * http://www.semanticdesktop.org/ontologies/2007/08/15/nao#altLabel 
+             * 
+             * An alternative label alongside the preferred label for a resource 
+             */
+            SOPRANO_EXPORT QUrl altLabel();
+
+            /**
+             * http://www.semanticdesktop.org/ontologies/2007/08/15/nao#altSymbol 
+             * 
+             * An alternative symbol representation for a resource 
+             */
+            SOPRANO_EXPORT QUrl altSymbol();
+
+            /**
+             * http://www.semanticdesktop.org/ontologies/2007/08/15/nao#annotation 
+             * 
+             * Generic annotation for a resource 
+             */
+            SOPRANO_EXPORT QUrl annotation();
+
+            /**
+             * http://www.semanticdesktop.org/ontologies/2007/08/15/nao#contributor 
+             * 
+             * Refers to a single or a group of individuals that contributed 
+             * to a resource 
              */
             SOPRANO_EXPORT QUrl contributor();
 
             /**
-             * http://www.semanticdesktop.org/ontologies/2007/08/15/nao#hasDefaultNamespace
-             */
-            SOPRANO_EXPORT QUrl hasDefaultNamespace();
-
-            /**
-             * http://www.semanticdesktop.org/ontologies/2007/08/15/nao#modified
-             */
-            SOPRANO_EXPORT QUrl modified();
-
-            /**
-             * http://www.semanticdesktop.org/ontologies/2007/08/15/nao#created
+             * http://www.semanticdesktop.org/ontologies/2007/08/15/nao#created 
+             * 
+             * States the creation, or first modification time for a resource 
              */
             SOPRANO_EXPORT QUrl created();
 
             /**
-             * http://www.semanticdesktop.org/ontologies/2007/08/15/nao#lastModified
+             * http://www.semanticdesktop.org/ontologies/2007/08/15/nao#creator 
+             * 
+             * Refers to the single or group of individuals that created the 
+             * resource 
              */
-            SOPRANO_EXPORT QUrl lastModified();
+            SOPRANO_EXPORT QUrl creator();
 
             /**
-             * http://www.semanticdesktop.org/ontologies/2007/08/15/nao#identifier
-             */
-            SOPRANO_EXPORT QUrl identifier();
-
-            /**
-             * http://www.semanticdesktop.org/ontologies/2007/08/15/nao#status
-             */
-            SOPRANO_EXPORT QUrl status();
-
-            /**
-             * http://www.semanticdesktop.org/ontologies/2007/08/15/nao#description
+             * http://www.semanticdesktop.org/ontologies/2007/08/15/nao#description 
+             * 
+             * A non-technical textual annotation for a resource 
              */
             SOPRANO_EXPORT QUrl description();
 
             /**
-             * http://www.semanticdesktop.org/ontologies/2007/08/15/nao#prefLabel
-             */
-            SOPRANO_EXPORT QUrl prefLabel();
-
-            /**
-             * http://www.semanticdesktop.org/ontologies/2007/08/15/nao#engineeringTool
+             * http://www.semanticdesktop.org/ontologies/2007/08/15/nao#engineeringTool 
+             * 
+             * Specifies the engineering tool used to generate the graph 
              */
             SOPRANO_EXPORT QUrl engineeringTool();
 
             /**
-             * http://www.semanticdesktop.org/ontologies/2007/08/15/nao#hasTag
+             * http://www.semanticdesktop.org/ontologies/2007/08/15/nao#hasDefaultNamespace 
+             * 
+             * Defines the default static namespace for a graph 
+             */
+            SOPRANO_EXPORT QUrl hasDefaultNamespace();
+
+            /**
+             * http://www.semanticdesktop.org/ontologies/2007/08/15/nao#hasDefaultNamespaceAbbreviation 
+             * 
+             * Defines the default static namespace abbreviation for a graph 
+             */
+            SOPRANO_EXPORT QUrl hasDefaultNamespaceAbbreviation();
+
+            /**
+             * http://www.semanticdesktop.org/ontologies/2007/08/15/nao#hasSymbol 
+             * 
+             * Annotation for a resource in the form of a symbol representation 
+             */
+            SOPRANO_EXPORT QUrl hasSymbol();
+
+            /**
+             * http://www.semanticdesktop.org/ontologies/2007/08/15/nao#hasTag 
+             * 
+             * Defines an existing tag for a resource 
              */
             SOPRANO_EXPORT QUrl hasTag();
 
             /**
-             * http://www.semanticdesktop.org/ontologies/2007/08/15/nao#isRelated
+             * http://www.semanticdesktop.org/ontologies/2007/08/15/nao#hasTopic 
+             * 
+             * Defines a relationship between two resources, where the object 
+             * is a topic of the subject 
+             */
+            SOPRANO_EXPORT QUrl hasTopic();
+
+            /**
+             * http://www.semanticdesktop.org/ontologies/2007/08/15/nao#identifier 
+             * 
+             * Defines a generic identifier for a resource 
+             */
+            SOPRANO_EXPORT QUrl identifier();
+
+            /**
+             * http://www.semanticdesktop.org/ontologies/2007/08/15/nao#isRelated 
+             * 
+             * Defines an annotation for a resource in the form of a relationship 
+             * between the subject resource and another resource 
              */
             SOPRANO_EXPORT QUrl isRelated();
 
             /**
-             * http://www.semanticdesktop.org/ontologies/2007/08/15/nao#personalIdentifier
+             * http://www.semanticdesktop.org/ontologies/2007/08/15/nao#isTagFor 
+             * 
+             * States which resources a tag is associated with 
+             */
+            SOPRANO_EXPORT QUrl isTagFor();
+
+            /**
+             * http://www.semanticdesktop.org/ontologies/2007/08/15/nao#isTopicOf 
+             * 
+             * Defines a relationship between two resources, where the subject 
+             * is a topic of the object 
+             */
+            SOPRANO_EXPORT QUrl isTopicOf();
+
+            /**
+             * http://www.semanticdesktop.org/ontologies/2007/08/15/nao#lastModified 
+             * 
+             * States the last modification time for a resource 
+             */
+            SOPRANO_EXPORT QUrl lastModified();
+
+            /**
+             * http://www.semanticdesktop.org/ontologies/2007/08/15/nao#modified 
+             * 
+             * States the modification time for a resource 
+             */
+            SOPRANO_EXPORT QUrl modified();
+
+            /**
+             * http://www.semanticdesktop.org/ontologies/2007/08/15/nao#numericRating 
+             * 
+             * Annotation for a resource in the form of a numeric decimal rating 
+             */
+            SOPRANO_EXPORT QUrl numericRating();
+
+            /**
+             * http://www.semanticdesktop.org/ontologies/2007/08/15/nao#personalIdentifier 
+             * 
+             * Defines a personal string identifier for a resource 
              */
             SOPRANO_EXPORT QUrl personalIdentifier();
 
             /**
-             * http://www.semanticdesktop.org/ontologies/2007/08/15/nao#Party
+             * http://www.semanticdesktop.org/ontologies/2007/08/15/nao#prefLabel 
+             * 
+             * A preferred label for a resource 
              */
-            SOPRANO_EXPORT QUrl Party();
+            SOPRANO_EXPORT QUrl prefLabel();
+
+            /**
+             * http://www.semanticdesktop.org/ontologies/2007/08/15/nao#prefSymbol 
+             * 
+             * A unique preferred symbol representation for a resource 
+             */
+            SOPRANO_EXPORT QUrl prefSymbol();
+
+            /**
+             * http://www.semanticdesktop.org/ontologies/2007/08/15/nao#rating 
+             * 
+             * Annotation for a resource in the form of an unrestricted rating 
+             */
+            SOPRANO_EXPORT QUrl rating();
+
+            /**
+             * http://www.semanticdesktop.org/ontologies/2007/08/15/nao#serializationLanguage 
+             * 
+             * States the serialization language for a named graph that is 
+             * represented within a document 
+             */
+            SOPRANO_EXPORT QUrl serializationLanguage();
+
+            /**
+             * http://www.semanticdesktop.org/ontologies/2007/08/15/nao#status 
+             * 
+             * Specifies the status of a graph, stable, unstable or testing 
+             */
+            SOPRANO_EXPORT QUrl status();
+
+            /**
+             * http://www.semanticdesktop.org/ontologies/2007/08/15/nao#version 
+             * 
+             * Specifies the version of a graph, in numeric format 
+             */
+            SOPRANO_EXPORT QUrl version();
         }
     }
 }

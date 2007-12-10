@@ -21,7 +21,7 @@
 
 #include "rdf.h"
 #include "rdfs.h"
-#include "xmls.h"
+#include "xsd.h"
 #include "nrl.h"
 #include "nao.h"
-//#include "xesam.h"
+#include "xesam.h"

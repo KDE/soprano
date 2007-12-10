@@ -5,5 +5,6 @@ install(FILES
   SIL
   NRL
   NAO
+  Xesam
   DESTINATION
   include/Soprano/Vocabulary)
