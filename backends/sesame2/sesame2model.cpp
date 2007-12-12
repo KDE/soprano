@@ -31,6 +31,7 @@
 #include "sesame2queryresultiteratorbackend.h"
 #include "jniwrapper.h"
 #include "jobjectref.h"
+#include "sesame2sopranowrapper.h"
 
 #include <soprano/statementiterator.h>
 #include <soprano/queryresultiterator.h>
@@ -92,6 +93,7 @@ Soprano::Error::ErrorCode Soprano::Sesame2::Model::addStatement( const Statement
         }
         else {
             d->readWriteLock.unlock();
+            emit statementAdded( statement );
             emit statementsAdded();
             return Error::ErrorNone;
         }
@@ -145,11 +147,28 @@ Soprano::QueryResultIterator Soprano::Sesame2::Model::executeQuery( const QStrin
     JObjectRef sparqlQueryLang = JNIWrapper::instance()->env()->GetStaticObjectField( JNIWrapper::instance()->env()->FindClass( ORG_OPENRDF_QUERY_QUERYLANGUAGE ),
                                                                                       sparqlID );
 
-    JObjectRef queryResult = d->repository->repositoryConnection()->query( sparqlQueryLang, JStringRef( query ) );
+    JObjectRef queryObject = d->repository->repositoryConnection()->prepareQuery( sparqlQueryLang, JStringRef( query ) );
 
-    if ( queryResult ) {
-        QueryResultIteratorBackend* it = new QueryResultIteratorBackend( queryResult, this );
-        d->queryIterators.append( it );
+    if ( queryObject ) {
+        QueryResultIteratorBackend* it = 0;
+
+        // evaluate the query
+        if ( JNIWrapper::instance()->env()->IsInstanceOf( queryObject, JNIWrapper::instance()->env()->FindClass( ORG_OPENRDF_QUERY_TUPLEQUERY ) ) ) {
+            JNIObjectWrapper queryWrapper( queryObject );
+            it = new QueryResultIteratorBackend( queryWrapper.callObjectMethod( queryWrapper.getMethodID( "evaluate", "()L"ORG_OPENRDF_QUERY_TUPLEQUERYRESULT";" ) ), this );
+        }
+        else if ( JNIWrapper::instance()->env()->IsInstanceOf( queryObject, JNIWrapper::instance()->env()->FindClass( ORG_OPENRDF_QUERY_GRAPHQUERY ) ) ) {
+            JNIObjectWrapper queryWrapper( queryObject );
+            it = new QueryResultIteratorBackend( queryWrapper.callObjectMethod( queryWrapper.getMethodID( "evaluate", "()L"ORG_OPENRDF_QUERY_GRAPHQUERYRESULT";" ) ), this );
+        }
+        else {
+            JNIObjectWrapper queryWrapper( queryObject );
+            it = new QueryResultIteratorBackend( queryWrapper.callBooleanMethod( queryWrapper.getMethodID( "evaluate", "()Z" ) ), this );
+        }
+
+        if ( it ) {
+            d->queryIterators.append( it );
+        }
         return it;
     }
     else {
@@ -214,25 +233,47 @@ Soprano::Error::ErrorCode Soprano::Sesame2::Model::removeStatement( const Statem
         return Error::ErrorInvalidArgument;
     }
 
-    // Sesame does not seems to support the "default context", i.e. no context, it is always used
-    // as a wildcard, thus we have to do some serious hacking to get our way
+    // we need to use (Resource)null as context parameter to RepositoryConnection.remove()
+    // in this case. Since I have no idea how to do that with JNI we use the Java wrapper
+    // class SopranoSesame2Wrapper (see sesame2repositoryconnection.cpp)
     if ( statement.context().isEmpty() ) {
-        QList<Statement> sl = listStatements( statement ).allStatements();
-        // this may look weird but is perfectly ok since an empty context is used as
-        // a wildcard in listStatements but not in QList.contains
-        if ( sl.contains( statement ) ) {
-            // we cannot use Model::removeStatements here since otherwise we might end
-            // up in an endless loop if we have statements in the default context (i.e. empty)
-            for ( QList<Statement>::const_iterator it = sl.constBegin();
-                  it != sl.constEnd(); ++it ) {
-                Error::ErrorCode c = removeAllStatements( *it );
-                if ( lastError() ) {
-                    return c;
-                }
-            }
-            sl.removeAll( statement );
-            return addStatements( sl );
+        d->readWriteLock.lockForWrite();
+
+        clearError();
+
+        JObjectRef subject = d->repository->valueFactory()->convertNode( statement.subject() );
+        if ( JNIWrapper::instance()->exceptionOccured() ) {
+            setError( JNIWrapper::instance()->convertAndClearException() );
+            d->readWriteLock.unlock();
+            return Error::ErrorUnknown;
         }
+        JObjectRef predicate = d->repository->valueFactory()->convertNode( statement.predicate() );
+        if ( JNIWrapper::instance()->exceptionOccured() ) {
+            setError( JNIWrapper::instance()->convertAndClearException() );
+            d->readWriteLock.unlock();
+            return Error::ErrorUnknown;
+        }
+        JObjectRef object = d->repository->valueFactory()->convertNode( statement.object() );
+        if ( JNIWrapper::instance()->exceptionOccured() ) {
+            setError( JNIWrapper::instance()->convertAndClearException() );
+            d->readWriteLock.unlock();
+            return Error::ErrorUnknown;
+        }
+
+        d->repository->sopranoWrapper()->removeFromDefaultContext( subject, predicate, object );
+        if ( JNIWrapper::instance()->exceptionOccured() ) {
+            qDebug() << "(Soprano::Sesame2::Model::removeStatement) failed.";
+            setError( JNIWrapper::instance()->convertAndClearException() );
+            d->readWriteLock.unlock();
+            return Error::ErrorUnknown;
+        }
+
+        d->readWriteLock.unlock();
+
+        emit statementRemoved( statement );
+        emit statementsRemoved();
+
+        return Error::ErrorNone;
     }
     else {
         return removeAllStatements( statement );
@@ -285,6 +326,8 @@ Soprano::Error::ErrorCode Soprano::Sesame2::Model::removeAllStatements( const St
 
     d->readWriteLock.unlock();
 
+    // FIXME: list all the removed statements? That could mean a bad slowdown...
+    emit statementRemoved( statement );
     emit statementsRemoved();
 
     return Error::ErrorNone;

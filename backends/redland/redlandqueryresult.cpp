@@ -35,11 +35,23 @@
 class Soprano::Redland::RedlandQueryResult::Private
 {
 public:
-    Private()
-        : result( 0 ),
+    Private( librdf_query_results* result_ )
+        : result( result_ ),
           stream( 0 ),
-          first( true )
-    {}
+          first( true ),
+          isBool( false ),
+          isGraph( false ),
+          isBinding( false ),
+          boolResult( false )
+    {
+        Q_ASSERT( result != 0 );
+
+        isGraph = librdf_query_results_is_graph( result ) != 0;
+        isBinding = librdf_query_results_is_bindings( result ) != 0;
+        if ( isBool = librdf_query_results_is_boolean( result ) ) {
+            boolResult = librdf_query_results_get_boolean( result ) > 0;
+        }
+    }
 
     librdf_query_results *result;
 
@@ -48,17 +60,21 @@ public:
     QStringList names;
     bool first;
 
+    // It seems we have to cache these values as
+    // redland only provides them once.
+    bool isBool;
+    bool isGraph;
+    bool isBinding;
+    bool boolResult;
+
     const RedlandModel* model;
 };
 
 
 Soprano::Redland::RedlandQueryResult::RedlandQueryResult( const RedlandModel* model, librdf_query_results *result )
 {
-    d = new Private;
+    d = new Private( result );
     d->model = model;
-    d->result = result;
-
-    Q_ASSERT( d->result != 0 );
 
     const char** names = 0;
     if ( !librdf_query_results_get_bindings( d->result, &names, 0 ) ) {
@@ -218,45 +234,25 @@ QStringList Soprano::Redland::RedlandQueryResult::bindingNames() const
 
 bool Soprano::Redland::RedlandQueryResult::isGraph() const
 {
-    if ( d->result ) {
-        return librdf_query_results_is_graph( d->result ) != 0;
-    }
-    else {
-        return false;
-    }
+    return d->isGraph;
 }
 
 
 bool Soprano::Redland::RedlandQueryResult::isBinding() const
 {
-    if ( d->result ) {
-        return librdf_query_results_is_bindings( d->result ) != 0;
-    }
-    else {
-        return false;
-    }
+    return d->isBinding;
 }
 
 
 bool Soprano::Redland::RedlandQueryResult::isBool() const
 {
-    if ( d->result ) {
-        return librdf_query_results_is_boolean( d->result ) != 0;
-    }
-    else {
-        return false;
-    }
+    return d->isBool;
 }
 
 
 bool Soprano::Redland::RedlandQueryResult::boolValue() const
 {
-    if ( d->result ) {
-        return librdf_query_results_get_boolean( d->result ) > 0;
-    }
-    else {
-        return false;
-    }
+    return d->boolResult;
 }
 
 

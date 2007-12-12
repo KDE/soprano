@@ -212,6 +212,8 @@ namespace Soprano {
         /**
          * Check if this is a boolean result.
          *
+         * There is no need to call next() for boolean results.
+         *
          * \return \p true if this result refers to a boolean query (SPARQL ASK), i.e.
          * boolValue() returns a valid value.
          */

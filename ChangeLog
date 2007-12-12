@@ -16,3 +16,5 @@
 	* Soprano server library and simple daemon including D-Bus interface.
 	* sopranocmd tool which allows to control the soprano server as well as work on the data directly
 	  through the backends.
+	* Working SPARQL ASK queries with rasqal >= 0.9.15
+	

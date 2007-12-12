@@ -19,31 +19,21 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef _SESAME2_ITERATOR_H_
-#define _SESAME2_ITERATOR_H_
+import org.openrdf.repository.RepositoryConnection;
+import org.openrdf.repository.RepositoryException;
+import org.openrdf.model.Resource;
+import org.openrdf.model.Value;
+import org.openrdf.model.URI;
 
-#include "jniobjectwrapper.h"
+public class SopranoSesame2Wrapper {
 
-namespace Soprano {
-    namespace Sesame2 {
+    private RepositoryConnection m_connection;
 
-        class Iterator : public JNIObjectWrapper
-        {
-        public:
-            Iterator( const JObjectRef& );
-            ~Iterator();
+    public SopranoSesame2Wrapper( RepositoryConnection connection ) {
+        m_connection = connection;
+    }
 
-            bool hasNext();
-
-            JObjectRef next();
-
-            void close();
-
-        private:
-            class Private;
-            Private* const d;
-        };
+    public void removeFromDefaultContext( Resource subject, URI predicate, Value object ) throws RepositoryException {
+        m_connection.remove( subject, predicate, object, (Resource)null );
     }
 }
-
-#endif

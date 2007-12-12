@@ -2,6 +2,10 @@ project(soprano_redland)
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${soprano_SOURCE_DIR}/cmake/modules)
 
+if (RASQAL_VERSION STRLESS "0.9.15")
+  message(STATUS "WARNING! - SPARQL ASK queries are broken in rasqal <= 0.9.14. It is recommended to update to at least version 0.9.15.")
+endif (RASQAL_VERSION STRLESS "0.9.15")
+
 include_directories(
   ${QT_QTCORE_INCLUDE_DIR}
   ${soprano_SOURCE_DIR}

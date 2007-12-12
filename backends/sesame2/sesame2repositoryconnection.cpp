@@ -40,9 +40,7 @@ public:
           m_IDsize( 0 ),
           m_IDisEmpty( 0 ),
           m_IDprepareQuery( 0 ),
-          m_classResource( 0 ),
-          m_classTupleQuery( 0 ),
-          m_classGraphQuery( 0 ) {
+          m_classResource( 0 ) {
     }
 
     jmethodID IDgetContextIDs() {
@@ -126,21 +124,7 @@ public:
         return m_classResource;
     }
 
-    JClassRef classTupleQuery() {
-        if ( !m_classTupleQuery ) {
-            m_classTupleQuery = JNIWrapper::instance()->env()->FindClass( ORG_OPENRDF_QUERY_TUPLEQUERY );
-            JNIWrapper::instance()->debugException();
-        }
-        return m_classTupleQuery;
-    }
-
-    JClassRef classGraphQuery() {
-        if ( !m_classGraphQuery ) {
-            m_classGraphQuery = JNIWrapper::instance()->env()->FindClass( ORG_OPENRDF_QUERY_GRAPHQUERY );
-            JNIWrapper::instance()->debugException();
-        }
-        return m_classGraphQuery;
-    }
+    JNIObjectWrapper m_sopranoWrapper;
 
 private:
     RepositoryConnection* m_parent;
@@ -156,8 +140,6 @@ private:
     jmethodID m_IDprepareQuery;
 
     JClassRef m_classResource;
-    JClassRef m_classTupleQuery;
-    JClassRef m_classGraphQuery;
 };
 
 
@@ -235,30 +217,10 @@ bool Soprano::Sesame2::RepositoryConnection::isEmpty()
 }
 
 
-JObjectRef Soprano::Sesame2::RepositoryConnection::query( const JObjectRef& queryLang, const JStringRef& queryString )
+JObjectRef Soprano::Sesame2::RepositoryConnection::prepareQuery( const JObjectRef& queryLang, const JStringRef& queryString )
 {
     // prepare the query
-    JObjectRef query = callObjectMethod( d->IDprepareQuery(), queryLang.data(), queryString.data() );
-    if ( !query ) {
-        qDebug() << "Failed to prepare query.";
-        return 0;
-    }
-
-    // evaluate the query
-    if ( JNIWrapper::instance()->env()->IsInstanceOf( query, d->classTupleQuery() ) ) {
-        JNIObjectWrapper queryWrapper( query );
-        JObjectRef result = queryWrapper.callObjectMethod( queryWrapper.getMethodID( "evaluate", "()L"ORG_OPENRDF_QUERY_TUPLEQUERYRESULT";" ) );
-        return result;
-    }
-    else if ( JNIWrapper::instance()->env()->IsInstanceOf( query, d->classGraphQuery() ) ) {
-        JNIObjectWrapper queryWrapper( query );
-        JObjectRef result = queryWrapper.callObjectMethod( queryWrapper.getMethodID( "evaluate", "()L"ORG_OPENRDF_QUERY_GRAPHQUERYRESULT";" ) );
-        return result;
-    }
-    else {
-        qDebug() << "Uknown query type.";
-        return 0;
-    }
+    return callObjectMethod( d->IDprepareQuery(), queryLang.data(), queryString.data() );
 }
 
 

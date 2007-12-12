@@ -151,6 +151,7 @@ Soprano::Error::ErrorCode Soprano::Redland::RedlandModel::addStatement( const St
 
     d->readWriteLock.unlock();
 
+    emit statementAdded( statement );
     emit statementsAdded();
 
     return Error::ErrorNone;
@@ -348,6 +349,8 @@ Soprano::Error::ErrorCode Soprano::Redland::RedlandModel::removeOneStatement( co
 
     Util::freeStatement( redlandStatement );
 
+    emit statementRemoved( statement );
+
     return Error::ErrorNone;
 }
 
@@ -375,6 +378,8 @@ Soprano::Error::ErrorCode Soprano::Redland::RedlandModel::removeAllStatements( c
 
         d->readWriteLock.unlock();
 
+        // FIXME: list all the removed statements? That could mean a bad slowdown...
+        emit statementRemoved( statement );
         emit statementsRemoved();
 
         return Error::ErrorNone;

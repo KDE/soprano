@@ -31,6 +31,7 @@ namespace Soprano {
 
     class ValueFactory;
     class RepositoryConnection;
+    class SopranoWrapper;
 
     class RepositoryWrapper : public JNIObjectWrapper
     {
@@ -39,6 +40,7 @@ namespace Soprano {
 
         ValueFactory* valueFactory();
         RepositoryConnection* repositoryConnection();
+        SopranoWrapper* sopranoWrapper();
 
         /**
          * A repo has to be initialized before usage.

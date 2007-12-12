@@ -24,6 +24,7 @@
 #include "sesame2types.h"
 #include "sesame2valuefactory.h"
 #include "sesame2repositoryconnection.h"
+#include "sesame2sopranowrapper.h"
 
 #include <soprano/node.h>
 #include <soprano/literalvalue.h>
@@ -34,11 +35,13 @@ class Soprano::Sesame2::RepositoryWrapper::Private
 public:
     Private()
         : valueFactory( 0 ),
-          repositoryConnection( 0 ) {
+          repositoryConnection( 0 ),
+          sopranoWrapper( 0 ) {
     }
 
     ValueFactory* valueFactory;
     RepositoryConnection* repositoryConnection;
+    SopranoWrapper* sopranoWrapper;
 };
 
 
@@ -162,4 +165,21 @@ Soprano::Sesame2::RepositoryConnection* Soprano::Sesame2::RepositoryWrapper::rep
     }
 
     return d->repositoryConnection;
+}
+
+
+Soprano::Sesame2::SopranoWrapper* Soprano::Sesame2::RepositoryWrapper::sopranoWrapper()
+{
+    if ( !d->sopranoWrapper ) {
+        JObjectRef sopranoWrapper = JNIWrapper::instance()->constructObject( "SopranoSesame2Wrapper",
+                                                                             "(Lorg/openrdf/repository/RepositoryConnection;)V",
+                                                                             repositoryConnection()->object().data() );
+        if ( !sopranoWrapper ) {
+            JNIWrapper::instance()->debugException();
+            return 0;
+        }
+        d->sopranoWrapper = new SopranoWrapper( sopranoWrapper );
+    }
+
+    return d->sopranoWrapper;
 }

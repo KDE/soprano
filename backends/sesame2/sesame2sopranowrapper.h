@@ -19,25 +19,28 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef _SESAME2_ITERATOR_H_
-#define _SESAME2_ITERATOR_H_
+#ifndef _SESAME2_SOPRANO_WRAPPER_H_
+#define _SESAME2_SOPRANO_WRAPPER_H__
 
 #include "jniobjectwrapper.h"
+#include "jobjectref.h"
 
 namespace Soprano {
     namespace Sesame2 {
-
-        class Iterator : public JNIObjectWrapper
+        /**
+         * Wrapper class around our own SopranoSesame2Wrapper
+         * which has only one purpose:
+         * Passing "(Resource)null" as context parameter to
+         * RepositoryConnection.remove() since I have no idea
+         * how to cast in JNI (if even possible).
+         */
+        class SopranoWrapper : public JNIObjectWrapper
         {
         public:
-            Iterator( const JObjectRef& );
-            ~Iterator();
+            SopranoWrapper( const JObjectRef& );
+            ~SopranoWrapper();
 
-            bool hasNext();
-
-            JObjectRef next();
-
-            void close();
+            void removeFromDefaultContext( const JObjectRef& subject, const JObjectRef& predicate, const JObjectRef& object );
 
         private:
             class Private;

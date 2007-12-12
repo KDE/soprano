@@ -44,6 +44,7 @@ namespace Soprano {
     {
     public:
         QueryResultIteratorBackend( const JObjectRef& result, const Model* );
+        QueryResultIteratorBackend( bool result, const Model* );
         ~QueryResultIteratorBackend();
 
         bool next();

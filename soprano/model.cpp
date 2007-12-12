@@ -67,6 +67,13 @@ bool Soprano::Model::containsContext( const Node &context ) const
     return listStatementsInContext( context ).next();
 }
 
+
+Soprano::StatementIterator Soprano::Model::listStatements( const Node& subject, const Node& predicate, const Node& object, const Node& context ) const
+{
+    return listStatements( Statement( subject, predicate, object, context ) );
+}
+
+
 Soprano::StatementIterator Soprano::Model::listStatements() const
 {
     return listStatements( Statement() );

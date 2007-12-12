@@ -29,12 +29,12 @@
 #include "soprano_export.h"
 #include "error.h"
 #include "sopranotypes.h"
+#include "node.h"
 
 class QTextStream;
 
 namespace Soprano
 {
-    class Node;
     class QueryLegacy;
     class QueryResultIterator;
     class Statement;
@@ -161,9 +161,21 @@ namespace Soprano
         virtual StatementIterator listStatements( const Statement &partial ) const = 0;
 
         /**
-         * Convenience method which lists all statements in this Model.
+         * \overload
+         *
+         * \param subject The subject node to match. Can be empty as a wildcard.
+         * \param predicate The predicate node to match. Can be empty as a wildcard.
+         * \param object The object node to match. Can be empty as a wildcard.
+         * \param context The context node to match. Can be empty as a wildcard.
          *
          * \return An iterator for all the matched Statements, on error an invalid iterator is returned.
+         */
+        StatementIterator listStatements( const Node& subject, const Node& predicate, const Node& object, const Node& context = Node() ) const;
+
+        /**
+         * \overload
+         *
+         * \return An iterator for all statements in the model, on error an invalid iterator is returned.
          */
         StatementIterator listStatements() const;
 
@@ -292,6 +304,23 @@ namespace Soprano
          * Implementations of this interface have to emit this signal.
          */
         void statementsRemoved();
+
+        /**
+         * Notification signal for new statements. Model implementations
+         * should emit this signal for each newly added statement.
+         */
+        void statementAdded( const Statement& statement );
+
+        /**
+         * Notification signal for removed statements. Model implementations
+         * should emit this signal for each removed statement.
+         *
+         * \warning Backends may choose not to emit this signal for each
+         * removed statement but only for a statement pattern (i.e. an
+         * invalid statement as used in removeAllStatements()) to
+         * prevent massive performance loss.
+         */
+        void statementRemoved( const Statement& statement );
 
     protected:
         Model();

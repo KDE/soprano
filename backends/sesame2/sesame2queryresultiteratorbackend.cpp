@@ -37,14 +37,23 @@
 class Soprano::Sesame2::QueryResultIteratorBackend::Private
 {
 public:
+    Private( bool result )
+        : result( 0 ),
+          booleanResult( result ),
+          isTupleResult( false ),
+          isBooleanResult( true ) {
+    }
+
     Private( const JObjectRef& result_ )
-        : result( result_ ) {
-        tupleResult = JNIWrapper::instance()->env()->IsInstanceOf( result_,
-                                                                   JNIWrapper::instance()->env()->FindClass( ORG_OPENRDF_QUERY_TUPLEQUERYRESULT ) );
+        : result( new Iterator( result_ ) ),
+          booleanResult( false ),
+          isBooleanResult( false ) {
+        isTupleResult = JNIWrapper::instance()->env()->IsInstanceOf( result_,
+                                                                     JNIWrapper::instance()->env()->FindClass( ORG_OPENRDF_QUERY_TUPLEQUERYRESULT ) );
 
         // cache the binding names, it is just simpler
-        if ( tupleResult ) {
-            jobject bindingList = result.callObjectMethod( result.getMethodID( "getBindingNames", "()L"JAVA_UTIL_LIST";" ) );
+        if ( isTupleResult ) {
+            jobject bindingList = result->callObjectMethod( result->getMethodID( "getBindingNames", "()L"JAVA_UTIL_LIST";" ) );
             JNIObjectWrapper listWrapper( bindingList );
             Iterator it( listWrapper.callObjectMethod( listWrapper.getMethodID( "iterator", "()L"JAVA_UTIL_ITERATOR";" ) ) );
             while ( it.hasNext() ) {
@@ -53,9 +62,11 @@ public:
         }
     }
 
-    Iterator result;
+    Iterator* result;
+    bool booleanResult;
 
-    bool tupleResult;
+    bool isTupleResult;
+    bool isBooleanResult;
 
     Statement currentStatement;
     BindingSet currentBindings;
@@ -73,19 +84,31 @@ Soprano::Sesame2::QueryResultIteratorBackend::QueryResultIteratorBackend( const 
 }
 
 
+Soprano::Sesame2::QueryResultIteratorBackend::QueryResultIteratorBackend( bool result, const Model* model )
+    : d( new Private( result ) )
+{
+    d->model = model;
+}
+
+
 Soprano::Sesame2::QueryResultIteratorBackend::~QueryResultIteratorBackend()
 {
     close();
+    delete d->result;
     delete d;
 }
 
 
 bool Soprano::Sesame2::QueryResultIteratorBackend::next()
 {
-    if ( d->result.hasNext() ) {
-        JObjectRef next = d->result.next();
+    if ( d->isBooleanResult ) {
+        return false;
+    }
+
+    if ( d->result->hasNext() ) {
+        JObjectRef next = d->result->next();
         if ( next ) {
-            if ( d->tupleResult ) {
+            if ( d->isTupleResult ) {
                 d->currentBindings.setObject( next );
             }
             else {
@@ -144,33 +167,34 @@ QStringList Soprano::Sesame2::QueryResultIteratorBackend::bindingNames() const
 
 bool Soprano::Sesame2::QueryResultIteratorBackend::isGraph() const
 {
-    return !d->tupleResult;
+    return !d->isTupleResult && !d->isBooleanResult;
 }
 
 
 bool Soprano::Sesame2::QueryResultIteratorBackend::isBinding() const
 {
-    return d->tupleResult;
+    return d->isTupleResult;
 }
 
 
 bool Soprano::Sesame2::QueryResultIteratorBackend::isBool() const
 {
-    // FIXME: how does sesame handle ask queries?
-    return false;
+    return d->isBooleanResult;
 }
 
 
 bool Soprano::Sesame2::QueryResultIteratorBackend::boolValue() const
 {
-    return false;
+    return d->booleanResult;
 }
 
 
 void Soprano::Sesame2::QueryResultIteratorBackend::close()
 {
     if ( d->model ) {
-        d->result.close();
+        if ( d->result ) {
+            d->result->close();
+        }
         setError( JNIWrapper::instance()->convertAndClearException() );
         d->model->removeIterator( this );
         d->model = 0;

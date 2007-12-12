@@ -27,6 +27,7 @@ set(sesame2_backend_SRC
   sesame2nodeiteratorbackend.cpp
   sesame2queryresultiteratorbackend.cpp
   sesame2bindingset.cpp
+  sesame2sopranowrapper.cpp
   jobjectref.cpp
   )
 
@@ -46,6 +47,7 @@ INSTALL(FILES
   openrdf-sesame-2.0-rc1-onejar.jar
   slf4j-api-1.4.2.jar
   slf4j-simple-1.4.2.jar
+  SopranoSesame2Wrapper.class
   DESTINATION share/soprano/sesame2
   )
 
