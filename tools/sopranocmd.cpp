@@ -287,7 +287,7 @@ private:
 
 int version()
 {
-    QTextStream s( stderr );
+    QTextStream s( stdout );
     s << "sopranocmd " << Soprano::versionString() << endl;
     s << "   Copyright (C) 2007 Sebastian Trueg <trueg@kde.org>" << endl;
     s << "   This program is free software; you can redistribute it and/or modify" << endl
@@ -312,7 +312,7 @@ int usage( const QString& error = QString() )
 {
     version();
 
-    QTextStream s( stderr );
+    QTextStream s( stdout );
     s << endl;
     s << "Usage:" << endl
       << "   sopranocmd --backend [--dir <storagedir>] [--serialization <s>] <command> [<parameters>]" << endl
@@ -395,7 +395,7 @@ int main( int argc, char *argv[] )
 
     CmdLineArgs args;
     if ( !CmdLineArgs::parseCmdLine( args, app.arguments(), allowedCmdLineArgs ) ) {
-        return usage();
+        return 1;
     }
 
     if ( args.optionSet( "version" ) ) {
