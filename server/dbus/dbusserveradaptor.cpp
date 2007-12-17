@@ -35,7 +35,7 @@ class Soprano::Server::DBusServerAdaptor::Private
 {
 public:
     ServerCore* core;
-    QHash<Model*, QString> modelDBusObjectPaths;
+    QHash<QString, ModelWrapper*> modelDBusObjectPaths;
 
     QString dbusObjectPath;
 };
@@ -78,26 +78,26 @@ namespace {
 QString Soprano::Server::DBusServerAdaptor::createModel( const QString& name, const QDBusMessage& m )
 {
     // handle method call org.soprano.Server.createModel
-    Model* model = d->core->model( name );
-    if ( model ) {
-        QHash<Model*, QString>::const_iterator it = d->modelDBusObjectPaths.find( model );
-        if ( it != d->modelDBusObjectPaths.constEnd() ) {
-            return it.value();
-        }
-        else {
-            // the ModelWrapper makes sure that the QObject hierachy lives in the same thread
-            ModelWrapper* mw = new ModelWrapper( model );
-            connect( model, SIGNAL( destroyed( QObject* ) ), mw, SLOT( deleteLater() ) );
-            QString objectPath = d->dbusObjectPath + "/models/" + normalizeModelName( name );
-            ( void )new DBusModelAdaptor( model, mw, objectPath );
-            QDBusConnection::sessionBus().registerObject( objectPath, mw );
-            d->modelDBusObjectPaths.insert( model, objectPath );
-            return objectPath;
-        }
+    QHash<QString, ModelWrapper*>::const_iterator it = d->modelDBusObjectPaths.find( name );
+    if ( it != d->modelDBusObjectPaths.constEnd() ) {
+        return it.value()->dbusPath();
     }
     else {
-        DBus::sendErrorReply( m, d->core->lastError() );
-        return QString();
+        Model* model = d->core->model( name );
+        if ( model ) {
+            // the ModelWrapper makes sure that the QObject hierachy lives in the same thread
+            QString objectPath = d->dbusObjectPath + "/models/" + normalizeModelName( name );
+            ModelWrapper* mw = new ModelWrapper( model, objectPath );
+            connect( model, SIGNAL( destroyed( QObject* ) ), mw, SLOT( deleteLater() ) );
+            ( void )new DBusModelAdaptor( model, mw, objectPath );
+            QDBusConnection::sessionBus().registerObject( objectPath, mw );
+            d->modelDBusObjectPaths.insert( name, mw );
+            return objectPath;
+        }
+        else {
+            DBus::sendErrorReply( m, d->core->lastError() );
+            return QString();
+        }
     }
 }
 
@@ -105,6 +105,9 @@ QString Soprano::Server::DBusServerAdaptor::createModel( const QString& name, co
 void Soprano::Server::DBusServerAdaptor::removeModel( const QString& name, const QDBusMessage& m )
 {
     d->core->removeModel( name );
+    QDBusConnection::sessionBus().unregisterObject( d->modelDBusObjectPaths[name]->dbusPath() );
+    delete d->modelDBusObjectPaths[name];
+    d->modelDBusObjectPaths.remove( name );
     if ( d->core->lastError() ) {
         DBus::sendErrorReply( m, d->core->lastError() );
     }

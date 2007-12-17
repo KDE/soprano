@@ -46,7 +46,17 @@ void SopranoDBusClientTest::cleanupTestCase()
 
 Soprano::Model* SopranoDBusClientTest::createModel()
 {
-    return m_client->createModel( QString( "Testmodel%1" ).arg( m_modelCnt++ ) );
+    Soprano::Model* m = m_client->createModel( QString( "Testmodel%1" ).arg( ++m_modelCnt ) );
+    m_modelMap.insert( m, QString( "Testmodel%1" ).arg( m_modelCnt ) );
+    return m;
+}
+
+
+void SopranoDBusClientTest::deleteModel( Soprano::Model* m )
+{
+    m_client->removeModel( m_modelMap[m] );
+    m_modelMap.remove( m );
+    delete m;
 }
 
 

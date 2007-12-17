@@ -204,7 +204,7 @@ void SopranoModelTest::testListStatements()
         statements.append( st );
     }
 
-    m_model->addStatements( statements );
+    QVERIFY( m_model->addStatements( statements ) == Error::ErrorNone );
 
     /* Resource 1 */
 
@@ -266,7 +266,7 @@ void SopranoModelTest::testListStatements()
         ++cnt;
         Statement st = *it4;
 
-        QVERIFY( statements.indexOf( st ) != -1 || st == m_st1 || st == m_st2 || st == m_st3 || st == m_st4 );
+        QVERIFY( statements.contains( st ) || st == m_st1 || st == m_st2 || st == m_st3 || st == m_st4 );
     }
 
     QCOMPARE( cnt, 124 );
@@ -503,13 +503,18 @@ void SopranoModelTest::testBooleanQuery()
     QString query( "ASK where {?a ?b ?c}" );
 
     QueryResultIterator res = m_model->executeQuery( query, Query::QueryLanguageSparql );
-    QVERIFY( !res.next() );
+    QVERIFY( res.next() );
+    QVERIFY( res.next() );
 
     QVERIFY( !res.isGraph() );
     QVERIFY( !res.isBinding() );
     QVERIFY( res.isBool() );
 
     QVERIFY( res.boolValue() );
+
+    QVERIFY( res.next() );
+
+    res.close();
 
     QVERIFY( !res.next() );
 }

@@ -21,9 +21,10 @@
 
 #include "modelwrapper.h"
 
-Soprano::Server::ModelWrapper::ModelWrapper( Model* model, QObject* parent )
+Soprano::Server::ModelWrapper::ModelWrapper( Model* model, const QString& dbusPath, QObject* parent )
     : QObject( parent ),
-      m_model( model )
+      m_model( model ),
+      m_dbusPath( dbusPath )
 {
 }
 

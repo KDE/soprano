@@ -23,6 +23,7 @@
 #include "../server/dbus/dbusclient.h"
 #include "../server/dbus/dbusmodel.h"
 #include "../soprano/storagemodel.h"
+#include "../soprano/util/mutexmodel.h"
 
 #include <QtTest/QtTest>
 
@@ -46,8 +47,21 @@ SopranoDBusMultiThreadingTest::~SopranoDBusMultiThreadingTest()
 
 Soprano::Model* SopranoDBusMultiThreadingTest::createModel()
 {
-    return m_client->createModel( QString( "Testmodel%1" ).arg( m_modelCnt++ ) );
+    Soprano::Model* m = m_client->createModel( QString( "Testmodel%1" ).arg( ++m_modelCnt ) );
+    m_modelMap.insert( m, QString( "Testmodel%1" ).arg( m_modelCnt ) );
+    Soprano::Util::MutexModel* mutexModel = new Soprano::Util::MutexModel( Soprano::Util::MutexModel::ReadWriteMultiThreading, m );
+    return mutexModel;
 }
+
+
+void SopranoDBusMultiThreadingTest::deleteModel( Soprano::Model* model )
+{
+    Soprano::Model* origModel = static_cast<Soprano::Util::MutexModel*>( model )->parentModel();
+    m_client->removeModel( m_modelMap[origModel] );
+    delete origModel;
+    delete model;
+}
+
 
 QTEST_MAIN( SopranoDBusMultiThreadingTest )
 

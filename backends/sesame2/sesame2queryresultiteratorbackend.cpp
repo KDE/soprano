@@ -102,7 +102,7 @@ Soprano::Sesame2::QueryResultIteratorBackend::~QueryResultIteratorBackend()
 bool Soprano::Sesame2::QueryResultIteratorBackend::next()
 {
     if ( d->isBooleanResult ) {
-        return false;
+        return d->model != 0;
     }
 
     if ( d->result->hasNext() ) {

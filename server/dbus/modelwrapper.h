@@ -29,23 +29,25 @@ namespace Soprano {
     class Model;
 
     namespace Server {
-    /**
-     * The only purpose of the ModelWrapper is to provide
-     * a QObject parent for the DBus interfaces of the Soprano
-     * models.
-     */
-    class ModelWrapper : public QObject
-    {
-        Q_OBJECT
+        /**
+         * The only purpose of the ModelWrapper is to provide
+         * a QObject parent for the DBus interfaces of the Soprano
+         * models.
+         */
+        class ModelWrapper : public QObject
+        {
+            Q_OBJECT
         
-    public:
-        ModelWrapper( Model* model, QObject* parent = 0 );
+        public:
+            ModelWrapper( Model* model, const QString& dbusPath, QObject* parent = 0 );
 
-        inline Model* model() { return m_model; }
+            inline Model* model() { return m_model; }
+            inline QString dbusPath() { return m_dbusPath; }
 
-    private:
-        Model* m_model;
-    };
+        private:
+            Model* m_model;
+            QString m_dbusPath;
+        };
     }
 }
 

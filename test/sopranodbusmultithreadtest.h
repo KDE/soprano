@@ -25,6 +25,7 @@
 #include "multithreadingtest.h"
 
 #include <QtCore/QProcess>
+#include <QtCore/QHash>
 
 namespace Soprano {
     class Model;
@@ -43,10 +44,12 @@ public:
 
 protected:
     virtual Soprano::Model* createModel();
+    void deleteModel( Soprano::Model* model );
 
 private:
     Soprano::Client::DBusClient* m_client;
     int m_modelCnt;
+    QHash<Soprano::Model*, QString> m_modelMap;
 };
 
 #endif

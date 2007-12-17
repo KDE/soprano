@@ -242,6 +242,6 @@
 // DOXYGEN_VERSION=4.0
 // DOXYGEN_NAME=soprano
 // DOXYGEN_ENABLE=YES
-// DOXYGEN_SET_RECURSIVE = NO
-// DOXYGEN_EXCLUDE = server index backends parsers serializers soprano/query soprano/datetime.h soprano/desktopfile.h soprano/inifile.h soprano/sopranopluginfile.h
+// DOXYGEN_SET_RECURSIVE = YES
+// DOXYGEN_EXCLUDE = server backends parsers serializers soprano/query soprano/datetime.h soprano/desktopfile.h soprano/inifile.h soprano/sopranopluginfile.h
 // DOXYGEN_INCLUDE = soprano soprano/vocabulary soprano/inference soprano/util index/indexfiltermodel.h index/cluceneindex.h index/indexqueryhit.h server/servercore.h server/dbus/dbusclient.h server/dbus/dbusmodel.h

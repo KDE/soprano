@@ -135,10 +135,10 @@ Soprano::Node Soprano::Server::DBusModelAdaptor::createBlankNode( const QDBusMes
     return node;
 }
 
-QString Soprano::Server::DBusModelAdaptor::executeQuery( const QString &query, int queryLang, const QString& userQueryLanguage, const QDBusMessage& m )
+QString Soprano::Server::DBusModelAdaptor::executeQuery( const QString &query, const QString& queryLanguage, const QDBusMessage& m )
 {
     // handle method call org.soprano.Model.executeQuery
-    QueryResultIterator it = d->model->executeQuery( query, ( Query::QueryLanguage )queryLang, userQueryLanguage );
+    QueryResultIterator it = d->model->executeQuery( query, Query::queryLanguageFromString( queryLanguage ), queryLanguage );
     if ( it.isValid() ) {
         IteratorWrapper* itW = new IteratorWrapper( it, this );
         d->openIterators.insert( m.service(), itW );

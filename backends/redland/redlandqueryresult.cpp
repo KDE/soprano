@@ -115,7 +115,7 @@ bool Soprano::Redland::RedlandQueryResult::next()
         return false;
     }
     else if ( isBool() ) {
-        return false;
+        return true;
     }
     else if ( isBinding() ) {
         bool hasNext = librdf_query_results_finished( d->result ) == 0;

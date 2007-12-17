@@ -101,7 +101,7 @@ Soprano::NodeIterator Soprano::Client::DBusModel::listContexts() const
 
 Soprano::QueryResultIterator Soprano::Client::DBusModel::executeQuery( const QString& query, Query::QueryLanguage language, const QString& userQueryLanguage ) const
 {
-    QDBusReply<QString> reply = d->interface->executeQuery( query, ( int )language, userQueryLanguage, d->callMode );
+    QDBusReply<QString> reply = d->interface->executeQuery( query, Query::queryLanguageToString( language, userQueryLanguage ), d->callMode );
     setError( DBus::convertError( reply.error() ) );
     if ( reply.isValid() ) {
         return new DBusClientQueryResultIteratorBackend( d->interface->service(), reply.value() );

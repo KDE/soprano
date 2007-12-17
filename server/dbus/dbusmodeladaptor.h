@@ -78,7 +78,7 @@ namespace Soprano {
             "    </method>\n"
             "    <method name=\"executeQuery\" >\n"
             "      <arg direction=\"in\" type=\"s\" name=\"query\" />\n"
-            "      <arg direction=\"in\" type=\"i\" name=\"queryLang\" />\n"
+            "      <arg direction=\"in\" type=\"s\" name=\"queryLang\" />\n"
             "      <arg direction=\"out\" type=\"s\" name=\"iterator\" />\n"
             "    </method>\n"
             "    <method name=\"createBlankNode\" >\n"
@@ -98,7 +98,7 @@ namespace Soprano {
         bool containsAnyStatement( const Soprano::Statement& statement, const QDBusMessage& m );
         bool containsStatement( const Soprano::Statement& statement, const QDBusMessage& m );
         Soprano::Node createBlankNode( const QDBusMessage& m );
-        QString executeQuery( const QString &query, int queryLang, const QString& userQueryLanguage, const QDBusMessage& m );
+        QString executeQuery( const QString &query, const QString& queryLang, const QDBusMessage& m );
         bool isEmpty( const QDBusMessage& m );
         QString listContexts( const QDBusMessage& m );
         QString listStatements( const Soprano::Statement& statement, const QDBusMessage& m );
