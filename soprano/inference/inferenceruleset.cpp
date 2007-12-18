@@ -19,7 +19,7 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#include "config.h"
+#include "soprano-config.h"
 
 #include "inferenceruleset.h"
 #include "inferencerule.h"
