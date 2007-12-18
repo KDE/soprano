@@ -111,11 +111,15 @@ namespace {
             return lib;
         }
         else {
-            // using the same prefix should be sufficient
-            lib.prepend( file.fileName().section( "/", 0, -5, QString::SectionIncludeTrailingSep ) + "lib/soprano/" );
-            qDebug() << lib;
-            if ( QFile::exists( lib ) ) {
-                return lib;
+            QString basePath = file.fileName().section( "/", 0, -5, QString::SectionIncludeTrailingSep );
+            if ( QFile::exists( basePath + "lib"SOPRANO_LIB_SUFFIX"/soprano/" + lib ) ) {
+                return basePath + "lib/soprano/" + lib;
+            }
+            else if ( QFile::exists( basePath + "lib/soprano/" + lib ) ) {
+                return basePath + "lib/soprano/" + lib;
+            }
+            else if ( QFile::exists( basePath + "lib64/soprano/" + lib ) ) {
+                return basePath + "lib64/soprano/" + lib;
             }
             return QString();
         }
