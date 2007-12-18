@@ -6,17 +6,17 @@ if (APPLE)
 endif (APPLE)
 
 include_directories(
-  ${QT_QTCORE_INCLUDE_DIR}
   ${soprano_SOURCE_DIR}
   ${soprano_core_BINARY_DIR}
   ${soprano_core_SOURCE_DIR}
   ${soprano_core_SOURCE_DIR}/util
   ${soprano_core_SOURCE_DIR}/query
   ${soprano_core_SOURCE_DIR}/vocabulary
+  ${QT_QTCORE_INCLUDE_DIR}
   ${QT_INCLUDE_DIR}
   )
 
-configure_file(config.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/config.h)
+configure_file(soprano-config.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/soprano-config.h)
 configure_file(version.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/version.h)
 
 SET(soprano_SRCS

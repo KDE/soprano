@@ -25,7 +25,7 @@
 #include "serializer.h"
 #include "query/queryparser.h"
 #include "query/queryserializer.h"
-#include "config.h"
+#include "soprano-config.h"
 #include "sopranopluginfile.h"
 #include "version.h"
 
