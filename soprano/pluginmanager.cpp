@@ -113,7 +113,7 @@ namespace {
         else {
             QString basePath = file.fileName().section( "/", 0, -5, QString::SectionIncludeTrailingSep );
             if ( QFile::exists( basePath + "lib"SOPRANO_LIB_SUFFIX"/soprano/" + lib ) ) {
-                return basePath + "lib/soprano/" + lib;
+                return basePath + "lib"SOPRANO_LIB_SUFFIX"/soprano/" + lib;
             }
             else if ( QFile::exists( basePath + "lib/soprano/" + lib ) ) {
                 return basePath + "lib/soprano/" + lib;
