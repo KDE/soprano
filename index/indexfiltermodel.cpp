@@ -126,7 +126,8 @@ Soprano::Error::ErrorCode Soprano::Index::IndexFilterModel::addStatement( const 
 Soprano::Error::ErrorCode Soprano::Index::IndexFilterModel::removeStatement( const Soprano::Statement &statement )
 {
     Error::ErrorCode c = FilterModel::removeStatement( statement );
-    if ( c == Error::ErrorNone ) {
+    if ( c == Error::ErrorNone &&
+         statement.object().isLiteral() ) {
         d->startTransaction();
         c = d->index->removeStatement( statement );
         d->closeTransaction();
