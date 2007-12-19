@@ -301,6 +301,16 @@ bool Soprano::Node::operator!=( const Node& other ) const
     }
 }
 
+bool Soprano::Node::operator==( const QUrl& other ) const
+{
+    return uri() == other;
+}
+
+bool Soprano::Node::operator==( const LiteralValue& other ) const
+{
+    return literal() == other;
+}
+
 bool Soprano::Node::matches( const Node& other ) const
 {
     if ( isEmpty() || other.isEmpty() ) {

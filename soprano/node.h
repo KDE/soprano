@@ -115,6 +115,9 @@ namespace Soprano
         bool operator==( const Node& other ) const;
         bool operator!=( const Node& other ) const;
 
+        bool operator==( const QUrl& other ) const;
+        bool operator==( const LiteralValue& other ) const;
+
         /**
          * Match this node against other. The only difference
          * to operator== is that empty nodes are matched as wildcards,
