@@ -79,6 +79,8 @@ void Soprano::FilterModel::setParentModel( Model* model )
         if ( d->parent ) {
             connect( d->parent, SIGNAL(statementsAdded()), this, SLOT(slotStatementsAdded()) );
             connect( d->parent, SIGNAL(statementsRemoved()), this, SLOT(slotStatementsRemoved()) );
+            connect( d->parent, SIGNAL(statementAdded(const Soprano::Statement&)), this, SLOT(slotStatementAdded(const Soprano::Statement&)) );
+            connect( d->parent, SIGNAL(statementRemoved(const Soprano::Statement&)), this, SLOT(slotStatementRemoved(const Soprano::Statement&)) );
         }
     }
 }
@@ -213,6 +215,18 @@ void Soprano::FilterModel::parentStatementsRemoved()
 }
 
 
+void Soprano::FilterModel::parentStatementAdded( const Statement& s )
+{
+    emit statementAdded( s );
+}
+
+
+void Soprano::FilterModel::parentStatementRemoved( const Statement& s )
+{
+    emit statementRemoved( s );
+}
+
+
 void Soprano::FilterModel::slotStatementsAdded()
 {
     parentStatementsAdded();
@@ -222,6 +236,18 @@ void Soprano::FilterModel::slotStatementsAdded()
 void Soprano::FilterModel::slotStatementsRemoved()
 {
     parentStatementsRemoved();
+}
+
+
+void Soprano::FilterModel::slotStatementAdded( const Statement& s )
+{
+    parentStatementAdded( s );
+}
+
+
+void Soprano::FilterModel::slotStatementRemoved( const Statement& s )
+{
+    parentStatementRemoved( s );
 }
 
 #include "filtermodel.moc"

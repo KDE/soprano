@@ -175,6 +175,20 @@ namespace Soprano {
          */
         virtual void parentStatementsRemoved();
 
+        /**
+         * Handle a statementsAdded() signal from the parent Model.
+         *
+         * The default implementation simply re-emits the signal.
+         */
+        virtual void parentStatementAdded( const Statement& );
+
+        /**
+         * Handle a statementsRemoved() signal from the parent Model.
+         *
+         * The default implementation simply re-emits the signal.
+         */
+        virtual void parentStatementRemoved( const Statement& );
+
     private Q_SLOTS:
         /**
          * This slot gets connected to Model::statementsAdded of the parent
@@ -187,6 +201,18 @@ namespace Soprano {
          * model.
          */
         void slotStatementsRemoved();
+
+        /**
+         * This slot gets connected to Model::statementAdded of the parent
+         * model.
+         */
+        void slotStatementAdded( const Soprano::Statement& );
+
+        /**
+         * This slot gets connected to Model::statementRemoved of the parent
+         * model.
+         */
+        void slotStatementRemoved( const Soprano::Statement& );
 
     private:
         class Private;

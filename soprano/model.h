@@ -107,7 +107,12 @@ namespace Soprano
         virtual Error::ErrorCode addStatement( const Statement &statement ) = 0;
 
         /**
-         * Convenience method which adds all %statements in statements to this Model.
+	 * \overload
+         */
+        Error::ErrorCode addStatement( const Node& subject, const Node& predicate, const Node& object, const Node& context = Node() );
+
+        /**
+         * \overload
          */
         Error::ErrorCode addStatements( const QList<Statement> &statements );
         //@}
@@ -124,6 +129,11 @@ namespace Soprano
         virtual Error::ErrorCode removeStatement( const Statement &statement ) = 0;
 
         /**
+	 * \overload
+         */
+        Error::ErrorCode removeStatement( const Node& subject, const Node& predicate, const Node& object, const Node& context = Node() );
+
+        /**
          * Remove all statements that match the partial statement. For removing
          * one specific statement see removeStatement().
          *
@@ -131,6 +141,16 @@ namespace Soprano
          * a filter for all statements that should be removed.
          */
         virtual Error::ErrorCode removeAllStatements( const Statement &statement ) = 0;
+
+        /**
+	 * \overload
+	 *
+         * \param subject The subject node to match. Can be empty as a wildcard.
+         * \param predicate The predicate node to match. Can be empty as a wildcard.
+         * \param object The object node to match. Can be empty as a wildcard.
+         * \param context The context node to match. Can be empty as a wildcard.
+         */
+        Error::ErrorCode removeAllStatements( const Node& subject, const Node& predicate, const Node& object, const Node& context = Node() );
 
         /**
          * Convenience method which removes all %statements in statements.
@@ -242,6 +262,16 @@ namespace Soprano
         virtual bool containsAnyStatement( const Statement &statement ) const = 0;
 
         /**
+	 * \overload
+         *
+         * \param subject The subject node to match. Can be empty as a wildcard.
+         * \param predicate The predicate node to match. Can be empty as a wildcard.
+         * \param object The object node to match. Can be empty as a wildcard.
+         * \param context The context node to match. Can be empty as a wildcard.
+         */
+        bool containsAnyStatement( const Node& subject, const Node& predicate, const Node& object, const Node& context = Node() ) const;
+
+        /**
          * Check if the model contains a statements.
          *
          * \param statement The statement in question. This has to be a valid statement,
@@ -252,6 +282,11 @@ namespace Soprano
          * is statement is invalid.
          */
         virtual bool containsStatement( const Statement &statement ) const = 0;
+
+        /**
+	 * \overload
+         */
+        bool containsStatement( const Node& subject, const Node& predicate, const Node& object, const Node& context = Node() ) const;
 
         /**
          * Convenience method which is based on containsAnyStatement
@@ -309,7 +344,7 @@ namespace Soprano
          * Notification signal for new statements. Model implementations
          * should emit this signal for each newly added statement.
          */
-        void statementAdded( const Statement& statement );
+        void statementAdded( const Soprano::Statement& statement );
 
         /**
          * Notification signal for removed statements. Model implementations
@@ -320,7 +355,7 @@ namespace Soprano
          * invalid statement as used in removeAllStatements()) to
          * prevent massive performance loss.
          */
-        void statementRemoved( const Statement& statement );
+        void statementRemoved( const Soprano::Statement& statement );
 
     protected:
         Model();

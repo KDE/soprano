@@ -68,7 +68,7 @@ namespace Soprano {
          */
         virtual Error::ErrorCode removeAllStatements( const Statement &statement );
 
-        /**
+        /*
          * Default implementation uses Query::Serializer for Query::QueryLanguageSparql and 
          * executeQuery( const QString&, Query::QueryLanguage, const QString& ) const.
          *
@@ -77,7 +77,7 @@ namespace Soprano {
          */
 //    virtual QueryResultIterator executeQuery( const Query::Query& query ) const;
 
-        /**
+        /*
          * Default implementation uses Query::Parser and 
          * executeQuery( const Query::Query& ) const.
          *

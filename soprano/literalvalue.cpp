@@ -44,11 +44,14 @@ public:
     }
 
     Private( const QVariant& v )
-        :value( v ) {
+        : value( v ),
+          stringCacheValid( false ) {
     }
 
     QVariant value;
     mutable QUrl dataTypeUri;
+    mutable QString stringCache;
+    mutable bool stringCacheValid;
 };
 
 
@@ -173,6 +176,7 @@ Soprano::LiteralValue& Soprano::LiteralValue::operator=( const LiteralValue& v )
 
 Soprano::LiteralValue& Soprano::LiteralValue::operator=( int i )
 {
+    d->stringCacheValid = false;
     d->value.setValue( i );
     if ( typeFromDataTypeUri( d->dataTypeUri ) != QVariant::Int ) {
         d->dataTypeUri = QUrl();
@@ -183,6 +187,7 @@ Soprano::LiteralValue& Soprano::LiteralValue::operator=( int i )
 
 Soprano::LiteralValue& Soprano::LiteralValue::operator=( qlonglong i )
 {
+    d->stringCacheValid = false;
     d->value.setValue( i );
     d->dataTypeUri = QUrl();
     return *this;
@@ -191,6 +196,7 @@ Soprano::LiteralValue& Soprano::LiteralValue::operator=( qlonglong i )
 
 Soprano::LiteralValue& Soprano::LiteralValue::operator=( uint i )
 {
+    d->stringCacheValid = false;
     d->value.setValue( i );
     if ( typeFromDataTypeUri( d->dataTypeUri ) != QVariant::UInt ) {
         d->dataTypeUri = QUrl();
@@ -201,6 +207,7 @@ Soprano::LiteralValue& Soprano::LiteralValue::operator=( uint i )
 
 Soprano::LiteralValue& Soprano::LiteralValue::operator=( qulonglong i )
 {
+    d->stringCacheValid = false;
     d->value.setValue( i );
     d->dataTypeUri = QUrl();
     return *this;
@@ -209,6 +216,7 @@ Soprano::LiteralValue& Soprano::LiteralValue::operator=( qulonglong i )
 
 Soprano::LiteralValue& Soprano::LiteralValue::operator=( bool b )
 {
+    d->stringCacheValid = false;
     d->value.setValue( b );
     d->dataTypeUri = QUrl();
     return *this;
@@ -217,6 +225,7 @@ Soprano::LiteralValue& Soprano::LiteralValue::operator=( bool b )
 
 Soprano::LiteralValue& Soprano::LiteralValue::operator=( double v )
 {
+    d->stringCacheValid = false;
     d->value.setValue( v );
     d->dataTypeUri = QUrl();
     return *this;
@@ -225,6 +234,8 @@ Soprano::LiteralValue& Soprano::LiteralValue::operator=( double v )
 
 Soprano::LiteralValue& Soprano::LiteralValue::operator=( const QString& string )
 {
+    d->stringCacheValid = true;
+    d->stringCache = string;
     d->value.setValue( string );
     d->dataTypeUri = QUrl();
     return *this;
@@ -233,14 +244,13 @@ Soprano::LiteralValue& Soprano::LiteralValue::operator=( const QString& string )
 
 Soprano::LiteralValue& Soprano::LiteralValue::operator=( const QLatin1String& string )
 {
-    d->value.setValue( QString::fromLatin1( string.latin1() ) );
-    d->dataTypeUri = QUrl();
-    return *this;
+    return operator=( QString::fromLatin1( string.latin1() ) );
 }
 
 
 Soprano::LiteralValue& Soprano::LiteralValue::operator=( const QDate& date )
 {
+    d->stringCacheValid = true;
     d->value.setValue( date );
     d->dataTypeUri = QUrl();
     return *this;
@@ -249,6 +259,7 @@ Soprano::LiteralValue& Soprano::LiteralValue::operator=( const QDate& date )
 
 Soprano::LiteralValue& Soprano::LiteralValue::operator=( const QTime& time )
 {
+    d->stringCacheValid = true;
     d->value.setValue( time );
     d->dataTypeUri = QUrl();
     return *this;
@@ -257,6 +268,7 @@ Soprano::LiteralValue& Soprano::LiteralValue::operator=( const QTime& time )
 
 Soprano::LiteralValue& Soprano::LiteralValue::operator=( const QDateTime& datetime )
 {
+    d->stringCacheValid = true;
     d->value.setValue( datetime.toUTC() );
     d->dataTypeUri = QUrl();
     return *this;
@@ -265,6 +277,7 @@ Soprano::LiteralValue& Soprano::LiteralValue::operator=( const QDateTime& dateti
 
 Soprano::LiteralValue& Soprano::LiteralValue::operator=( const QByteArray& data )
 {
+    d->stringCacheValid = true;
     d->value.setValue( data );
     d->dataTypeUri = QUrl();
     return *this;
@@ -378,28 +391,34 @@ double Soprano::LiteralValue::toDouble() const
 // in the ISO8601 specification.
 QString Soprano::LiteralValue::toString() const
 {
-    if( isInt() )
-        return QString::number( toInt() );
-    else if( isInt64() )
-        return QString::number( toInt64() );
-    else if( isUnsignedInt() )
-        return QString::number( toUnsignedInt() );
-    else if( isUnsignedInt64() )
-        return QString::number( toUnsignedInt64() );
-    else if( isBool() )
-        return ( toBool() ? QString("true") : QString("false" ) );
-    else if( isDouble() ) // FIXME: decide on a proper double encoding or check if there is one in xml schema
-        return QString::number( toDouble(), 'e', 10 );
-    else if( isDate() )
-        return DateTime::toString( toDate() );
-    else if( isTime() )
-        return DateTime::toString( toTime() );
-    else if( isDateTime() )
-        return DateTime::toString( toDateTime() );
-    else if ( isByteArray() )
-        return QString::fromAscii( toByteArray().toBase64() );
-    else
-        return d->value.value<QString>();
+    if ( !d->stringCacheValid ) {
+        if( isInt() )
+            d->stringCache = QString::number( toInt() );
+        else if( isInt64() )
+            d->stringCache = QString::number( toInt64() );
+        else if( isUnsignedInt() )
+            d->stringCache = QString::number( toUnsignedInt() );
+        else if( isUnsignedInt64() )
+            d->stringCache = QString::number( toUnsignedInt64() );
+        else if( isBool() )
+            d->stringCache = ( toBool() ? QString("true") : QString("false" ) );
+        else if( isDouble() ) // FIXME: decide on a proper double encoding or check if there is one in xml schema
+            d->stringCache = QString::number( toDouble(), 'e', 10 );
+        else if( isDate() )
+            d->stringCache = DateTime::toString( toDate() );
+        else if( isTime() )
+            d->stringCache = DateTime::toString( toTime() );
+        else if( isDateTime() )
+            d->stringCache = DateTime::toString( toDateTime() );
+        else if ( isByteArray() )
+            d->stringCache = QString::fromAscii( toByteArray().toBase64() );
+        else
+            d->stringCache = d->value.toString();
+
+        d->stringCacheValid = true;
+    }
+
+    return d->stringCache;
 }
 
 

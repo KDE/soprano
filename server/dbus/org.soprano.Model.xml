@@ -53,5 +53,13 @@
     </method>
     <signal name="statementsAdded" />
     <signal name="statementsRemoved" />
+    <signal name="statementAdded">
+      <arg name="statement" type="((isss)(isss)(isss)(isss))" />
+      <annotation name="com.trolltech.QtDBus.QtTypeName.In0" value="Soprano::Statement" />
+    </signal>
+    <signal name="statementRemoved">
+      <arg name="statement" type="((isss)(isss)(isss)(isss))" />
+      <annotation name="com.trolltech.QtDBus.QtTypeName.In0" value="Soprano::Statement" />
+    </signal>
   </interface>
 </node>

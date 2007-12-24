@@ -86,6 +86,12 @@ Soprano::StatementIterator Soprano::Model::listStatementsInContext( const Node &
 }
 
 
+Soprano::Error::ErrorCode Soprano::Model::removeStatement( const Node& subject, const Node& predicate, const Node& object, const Node& context )
+{
+    return removeStatement( Statement( subject, predicate, object, context ) );
+}
+
+
 Soprano::Error::ErrorCode Soprano::Model::removeStatements( const QList<Statement> &statements )
 {
     for ( QList<Statement>::const_iterator it = statements.constBegin();
@@ -105,23 +111,46 @@ Soprano::Error::ErrorCode Soprano::Model::removeContext( const Node& context )
 }
 
 
+Soprano::Error::ErrorCode Soprano::Model::removeAllStatements( const Node& subject, const Node& predicate, const Node& object, const Node& context )
+{
+    return removeAllStatements( Statement( subject, predicate, object, context ) );
+}
+
+
 Soprano::Error::ErrorCode Soprano::Model::removeAllStatements()
 {
     return removeAllStatements( Statement() );
 }
 
 
+Soprano::Error::ErrorCode Soprano::Model::addStatement( const Node& subject, const Node& predicate, const Node& object, const Node& context )
+{
+    return addStatement( Statement( subject, predicate, object, context ) );
+}
+
+
 Soprano::Error::ErrorCode Soprano::Model::addStatements( const QList<Statement> &statements )
 {
-    QListIterator<Statement> iter(statements);
-    while ( iter.hasNext() ) {
-        Error::ErrorCode c = addStatement( iter.next() );
+    for ( QList<Statement>::const_iterator it = statements.constBegin(); it != statements.constEnd(); ++it ) {
+        Error::ErrorCode c = addStatement( *it );
         if ( Error::ErrorNone != c ) {
             return c;
         }
     }
 
     return Error::ErrorNone;
+}
+
+
+bool Soprano::Model::containsStatement( const Node& subject, const Node& predicate, const Node& object, const Node& context ) const
+{
+    return containsStatement( Statement( subject, predicate, object, context ) );
+}
+
+
+bool Soprano::Model::containsAnyStatement( const Node& subject, const Node& predicate, const Node& object, const Node& context ) const
+{
+    return containsAnyStatement( Statement( subject, predicate, object, context ) );
 }
 
 

@@ -73,7 +73,12 @@ private Q_SLOTS:
   void testUriEncoding();
 
   void testIteratorNesting();
-  
+
+  void testStatementsAddedSignal();
+  void testStatementAddedSignal();
+  void testStatementsRemovedSignal();
+  void testStatementRemovedSignal();
+
   void testPerformance();
 
 protected:

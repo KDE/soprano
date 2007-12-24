@@ -84,6 +84,10 @@ Soprano::Server::DBusModelAdaptor::DBusModelAdaptor( Model* model, QObject* pare
              this, SIGNAL( statementsAdded() ) );
     connect( model, SIGNAL( statementsRemoved() ),
              this, SIGNAL( statementsRemoved() ) );
+    connect( model, SIGNAL( statementAdded(const Soprano::Statement&) ),
+             this, SIGNAL( statementAdded(const Soprano::Statement&) ) );
+    connect( model, SIGNAL( statementRemoved(const Soprano::Statement&) ),
+             this, SIGNAL( statementRemoved(const Soprano::Statement&) ) );
 
     connect( QDBusConnection::sessionBus().interface(), SIGNAL(serviceOwnerChanged(const QString&, const QString&, const QString&)),
              this, SLOT(slotServiceOwnerChanged(const QString&, const QString&, const QString&)) );

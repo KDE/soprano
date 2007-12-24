@@ -52,6 +52,10 @@ Soprano::Client::DBusModel::DBusModel( const QString& serviceName, const QString
              this, SIGNAL( statementsAdded() ) );
     connect( d->interface, SIGNAL( statementsRemoved() ),
              this, SIGNAL( statementsRemoved() ) );
+    connect( d->interface, SIGNAL( statementAdded(const Soprano::Statement&) ),
+             this, SIGNAL( statementAdded(const Soprano::Statement&) ) );
+    connect( d->interface, SIGNAL( statementRemoved(const Soprano::Statement&) ),
+             this, SIGNAL( statementRemoved(const Soprano::Statement&) ) );
 }
 
 

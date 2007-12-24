@@ -124,7 +124,9 @@ namespace Soprano {
         Q_SIGNALS:
             void statementsAdded();
             void statementsRemoved();
-
+            void statementAdded( const Soprano::Statement& statement );
+            void statementRemoved( const Soprano::Statement& statement );
+        
         private:
             QDBusMessage callWithArgumentListAndBigTimeout( QDBus::CallMode mode,
                                                             const QString& method,

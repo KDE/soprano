@@ -303,6 +303,9 @@ namespace Soprano
          * Each type can be converted to a string which means that
          * toString in combination with dataTypeUrl provides all the
          * information necessary to store this literal as RDF.
+	 *
+	 * The string value is cached so calling it multiple times in 
+	 * a row is fast.
          */
         QString toString() const;
         QDate toDate() const;

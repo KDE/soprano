@@ -32,6 +32,7 @@
 #include <QtCore/QTime>
 #include <QtCore/QUrl>
 #include <QtCore/QUuid>
+#include <QtTest/QSignalSpy>
 
 
 // FIXME: Use the QTest framework to create data tables
@@ -974,6 +975,137 @@ void SopranoModelTest::testIteratorNesting()
 }
 
 
+Q_DECLARE_METATYPE( Soprano::Statement );
+
+namespace {
+    /**
+     * Give it a bit of time for the DBus client to deliver the signals.
+     */
+    void waitForSignals() {
+        for ( int i = 0; i < 10000; ++i ) {
+            QCoreApplication::processEvents();
+        }
+    }
+}
+
+void SopranoModelTest::testStatementsAddedSignal()
+{
+    QVERIFY( m_model );
+
+    m_model->removeAllStatements();
+
+    // clear out any dangling signals from previous calls
+    waitForSignals();
+
+    QSignalSpy spy( m_model, SIGNAL( statementsAdded() ) );
+
+    m_model->addStatement( m_st1 );
+
+    // let's give the dbus client model a chance to actually transport the signals
+    waitForSignals();
+
+    QCOMPARE( spy.count(), 1 );
+}
+
+
+void SopranoModelTest::testStatementAddedSignal()
+{
+    QVERIFY( m_model );
+
+    m_model->removeAllStatements();
+
+    waitForSignals();
+
+    qRegisterMetaType<Soprano::Statement>( "Soprano::Statement" );
+    QSignalSpy spy( m_model, SIGNAL( statementAdded( const Soprano::Statement& ) ) );
+
+    m_model->addStatement( m_st1 );
+    m_model->addStatement( m_st2 );
+
+    // let's give the dbus client model a chance to actually transport the signals
+    waitForSignals();
+
+    QCOMPARE( spy.count(), 2 );
+
+    QList<QVariant> args = spy.takeFirst();
+    QVERIFY( args.at( 0 ).value<Soprano::Statement>() == m_st1 );
+
+    args = spy.takeFirst();
+    QVERIFY( args.at( 0 ).value<Soprano::Statement>() == m_st2 );
+}
+
+
+void SopranoModelTest::testStatementsRemovedSignal()
+{
+    QVERIFY( m_model );
+
+    m_model->removeAllStatements();
+
+    waitForSignals();
+
+    QSignalSpy spy( m_model, SIGNAL( statementsRemoved() ) );
+
+    m_model->addStatement( m_st1 );
+    m_model->removeStatement( m_st1 );
+
+    // let's give the dbus client model a chance to actually transport the signals
+    waitForSignals();
+
+    QCOMPARE( spy.count(), 1 );
+    spy.clear();
+
+    m_model->addStatement( m_st1 );
+    m_model->removeAllStatements( m_st1.subject(), Node(), Node() );
+
+    // let's give the dbus client model a chance to actually transport the signals
+    waitForSignals();
+
+    QCOMPARE( spy.count(), 1 );
+}
+
+
+void SopranoModelTest::testStatementRemovedSignal()
+{
+    QVERIFY( m_model );
+
+    m_model->removeAllStatements();
+
+    waitForSignals();
+
+    qRegisterMetaType<Soprano::Statement>( "Soprano::Statement" );
+    QSignalSpy spy( m_model, SIGNAL( statementRemoved( const Soprano::Statement& ) ) );
+
+    QVERIFY( m_model->addStatement( m_st1 ) == Error::ErrorNone );
+    QVERIFY( m_model->addStatement( m_st2 ) == Error::ErrorNone );
+    QVERIFY( m_model->removeStatement( m_st1 ) == Error::ErrorNone );
+    QVERIFY( m_model->removeStatement( m_st2 ) == Error::ErrorNone );
+
+    // let's give the dbus client model a chance to actually transport the signals
+    waitForSignals();
+
+    QCOMPARE( spy.count(), 2 );
+
+    QList<QVariant> args = spy.takeFirst();
+    QVERIFY( args.at( 0 ).value<Soprano::Statement>() == m_st1 );
+
+    args = spy.takeFirst();
+    QVERIFY( args.at( 0 ).value<Soprano::Statement>() == m_st2 );
+
+
+    spy.clear();
+
+    m_model->addStatement( m_st1 );
+    m_model->removeAllStatements( m_st1.subject(), Node(), Node() );
+
+    waitForSignals();
+
+    QCOMPARE( spy.count(), 1 );
+
+    args = spy.takeFirst();
+    QVERIFY( m_st1.matches( args.at( 0 ).value<Soprano::Statement>() ) );
+}
+
+
 void SopranoModelTest::testPerformance()
 {
     QVERIFY( m_model );
@@ -993,6 +1125,7 @@ void SopranoModelTest::testPerformance()
                               Node::createResourceNode( QString( "http://soprano.org/test/property%1" ).arg( i ) ),
                               Node::createResourceNode( QString( "http://soprano.org/test/object%1" ).arg( i ) ) ) );
     }
+
 
     time.start();
     m_model->addStatements( sl );
