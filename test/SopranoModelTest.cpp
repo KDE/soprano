@@ -975,7 +975,7 @@ void SopranoModelTest::testIteratorNesting()
 }
 
 
-Q_DECLARE_METATYPE( Soprano::Statement );
+Q_DECLARE_METATYPE( Soprano::Statement )
 
 namespace {
     /**
