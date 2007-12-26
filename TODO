@@ -9,3 +9,9 @@ Soprano 3:
 * make Soprano::Backend::createModel non-virtual and let it call a virtual protected method. Then remove the Backend* paramter
   from the StorageModel constructor and have Backend set the Backend and the BackendSettings in Backend::createModel
 * Make Soprano::Server::ServerCore::createModel const.
+* Add transaction API including BackendFeature FeatureTransactionSupport:
+  Model::startTransaction
+  Model::commit
+  Model::rollback
+  (Only question: Can we support multiple transactions at the same time?)
+  Idea: Create a transaction FilterModel that allows to have transactions on any backend in memory. Problem: queries!

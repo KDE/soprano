@@ -71,7 +71,6 @@ namespace Soprano {
      * \warning Be aware that iterators in Soprano are shared objects which means
      * that copies of one iterator object work on the same data.
      * 
-     * \warning Be aware that 
      * \author Daniele Galdi <daniele.galdi@gmail.com><br>Sebastian Trueg <trueg@kde.org>
      */
     template<typename T> class Iterator : public Error::ErrorCache
