@@ -23,7 +23,7 @@
 #define _SOPRANO_INFERENCE_MODEL_H_
 
 #include "filtermodel.h"
-#include <soprano_export.h>
+#include "soprano_export.h"
 
 class QUrl;
 
