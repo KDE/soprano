@@ -48,6 +48,8 @@ namespace Soprano {
          * See DBusModel for details about thread-safety.
          *
          * \author Sebastian Trueg <trueg@kde.org>
+         *
+         * \sa \ref soprano_server_dbus
          */
         class SOPRANO_CLIENT_EXPORT DBusClient : public QObject, public Error::ErrorCache
         {

@@ -49,6 +49,8 @@ namespace Soprano {
          * or via setting the model to async mode via setAsyncCalls()).
          *
          * \author Sebastian Trueg <trueg@kde.org>
+         *
+         * \sa \ref soprano_server_dbus
          */
         class SOPRANO_CLIENT_EXPORT DBusModel : public Soprano::StorageModel
         {

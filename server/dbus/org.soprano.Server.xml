@@ -4,9 +4,10 @@
   <interface name="org.soprano.Server">
     <method name="createModel">
       <arg name="name" type="s" direction="in" />
-      <arg name="settings" type="a(iss)" direction="in" />
       <arg name="model" type="s" direction="out" />
-      <annotation name="com.trolltech.QtDBus.QtTypeName.In1" value="Soprano::BackendSettings" />
+    </method>
+    <method name="removeeModel">
+      <arg name="name" type="s" direction="in" />
     </method>
     <method name="allModels">
       <arg name="models" type="as" direction="out" />

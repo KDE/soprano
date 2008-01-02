@@ -3,7 +3,214 @@
  *
  * %Soprano provides simple server and client librarys which allow for remote access to %Soprano models.
  *
- * \sa \ref soprano_server_protocol, Soprano::Server, Soprano::Client
+ * \sa \ref soprano_server_dbus, \ref soprano_server_protocol, Soprano::Server, Soprano::Client
+ */
+
+/**
+ * \page soprano_server_dbus Soprano D-Bus Interface
+ *
+ * \warning When using the %Soprano D-Bus interface from a QT application there is normally no need to use the D-Bus
+ * interfaces directly. Soprano::Client::DBusClient and Soprano::Client::DBusModel provide very convenient wrapping
+ * classes.
+ *
+ *
+ * %Soprano provides a server implementation with a D-Bus interface. The server can be deployed in two different ways:
+ * by running the sopranod server application which registers the org.soprano.Server service or by using
+ * the Soprano::Server::ServerCore class and calling Soprano::Server::ServerCore::registerAsDBusObject method.
+ *
+ * The %Soprano server uses a set of D-Bus interfaces. When registered the server exports the org.soprano.Server interface
+ * on the /org/soprano/Server object.
+ *
+ * \section soprano_server_dbus_server_interface org.soprano.Server
+ *
+ * \code
+ * <interface name="org.soprano.Server">
+ *   <method name="createModel">
+ *     <arg name="name" type="s" direction="in" />
+ *     <arg name="model" type="s" direction="out" />
+ *   </method>
+ *   <method name="removeModel">
+ *     <arg name="name" type="s" direction="in" />
+ *   </method>
+ *   <method name="allModels">
+ *     <arg name="models" type="as" direction="out" />
+ *   </method>
+ * </interface>
+ * \endcode
+ *
+ * The org.soprano.Server interface provides two main methods to create and remove %Soprano models:
+ *
+ * <b>org.soprano.Server.createModel</b>
+ *
+ * The createModel method only takes a single argument: the model's unique name which identifies the model. The
+ * method returns the path to the D-Bus object which exports the org.soprano.Model interface.
+ *
+ * <b>org.soprano.Server.removeModel</b>
+ *
+ * The removeModel method also just takes the one parameter that is the model's name. It completely removes the model
+ * including the data on disk. Use with care.
+ *
+ *
+ * \section soprano_server_dbus_model_interface org.soprano.Model
+ *
+ * \code
+ * <interface name="org.soprano.Model">
+ *   <method name="addStatement">
+ *     <arg name="statement" type="((isss)(isss)(isss)(isss))" direction="in" />
+ *     <arg name="errorCode" type="i" direction="out" />
+ *     <annotation name="com.trolltech.QtDBus.QtTypeName.In0" value="Soprano::Statement" />
+ *   </method>
+ *   <method name="removeStatement">
+ *     <arg name="statement" type="((isss)(isss)(isss)(isss))" direction="in" />
+ *     <arg name="errorCode" type="i" direction="out" />
+ *     <annotation name="com.trolltech.QtDBus.QtTypeName.In0" value="Soprano::Statement" />
+ *   </method>
+ *   <method name="removeAllStatements">
+ *     <arg name="statement" type="((isss)(isss)(isss)(isss))" direction="in" />
+ *     <arg name="errorCode" type="i" direction="out" />
+ *     <annotation name="com.trolltech.QtDBus.QtTypeName.In0" value="Soprano::Statement" />
+ *   </method>
+ *   <method name="containsStatement">
+ *     <arg name="statement" type="((isss)(isss)(isss)(isss))" direction="in" />
+ *     <arg name="reply" type="b" direction="out" />
+ *     <annotation name="com.trolltech.QtDBus.QtTypeName.In0" value="Soprano::Statement" />
+ *   </method>
+ *   <method name="containsAnyStatement">
+ *     <arg name="statement" type="((isss)(isss)(isss)(isss))" direction="in" />
+ *     <arg name="reply" type="b" direction="out" />
+ *     <annotation name="com.trolltech.QtDBus.QtTypeName.In0" value="Soprano::Statement" />
+ *   </method>
+ *   <method name="listStatements">
+ *     <arg name="statement" type="((isss)(isss)(isss)(isss))" direction="in" />
+ *     <arg name="iterator" type="s" direction="out" />
+ *     <annotation name="com.trolltech.QtDBus.QtTypeName.In0" value="Soprano::Statement" />
+ *   </method>
+ *   <method name="listContexts">
+ *     <arg name="iterator" type="s" direction="out" />
+ *   </method>
+ *   <method name="statementCount">
+ *     <arg name="count" type="i" direction="out" />
+ *   </method>
+ *   <method name="isEmpty">
+ *     <arg name="reply" type="b" direction="out" />
+ *   </method>
+ *   <method name="executeQuery">
+ *     <arg name="query" type="s" direction="in" />
+ *     <arg name="queryLang" type="i" direction="in" />
+ *     <arg name="userQueryLang" type="s" direction="in" />
+ *     <arg name="iterator" type="s" direction="out" />
+ *   </method>
+ *   <method name="createBlankNode">
+ *     <arg name="node" type="(isss)" direction="out" />
+ *     <annotation name="com.trolltech.QtDBus.QtTypeName.Out0" value="Soprano::Node" />
+ *   </method>
+ *   <signal name="statementsAdded" />
+ *   <signal name="statementsRemoved" />
+ *   <signal name="statementAdded">
+ *     <arg name="statement" type="((isss)(isss)(isss)(isss))" />
+ *     <annotation name="com.trolltech.QtDBus.QtTypeName.In0" value="Soprano::Statement" />
+ *   </signal>
+ *   <signal name="statementRemoved">
+ *     <arg name="statement" type="((isss)(isss)(isss)(isss))" />
+ *     <annotation name="com.trolltech.QtDBus.QtTypeName.In0" value="Soprano::Statement" />
+ *   </signal>
+ * </interface>
+ * \endcode
+ *
+ * The org.soprano.Model interface maps the Soprano::Model API to a D-Bus interface. The only difference is that
+ * instead of iterators the interface returns D-Bus object paths which provide D-Bus interfaces themselves and that
+ * the executeQuery method does take two string parameters: the query itself and the query language.
+ *
+ * The method listContexts returns the path of a D-Bus object exporting the org.soprano.NodeIterator interface,
+ * listStatements returns the path of a D-Bus object exporting the org.soprano.StatementIterator interface, and
+ * executeQuery returns the path of a D-Bus object exporting the org.soprano.QueryResultIterator interface.
+ *
+ *
+ * \section soprano_server_dbus_node_iterator_interface org.soprano.NodeIterator
+ *
+ * \code
+ * <interface name="org.soprano.NodeIterator">
+ *   <method name="next">
+ *     <arg name="reply" type="b" direction="out" />
+ *   </method>
+ *   <method name="current">
+ *     <arg name="node" type="(isss)" direction="out" />
+ *     <annotation name="com.trolltech.QtDBus.QtTypeName.Out0" value="Soprano::Node" />
+ *   </method>
+ *   <method name="close" />
+ * </interface>
+ * \endcode
+ *
+ * The node iterator interface maps very closely to the API of Soprano::NodeIterator.
+ *
+ *
+ * \section soprano_server_dbus_statement_iterator_interface org.soprano.StatementIterator
+ *
+ * \code
+ * <interface name="org.soprano.StatementIterator">
+ *   <method name="next">
+ *     <arg name="reply" type="b" direction="out" />
+ *   </method>
+ *   <method name="current">
+ *     <arg name="statement" type="((isss)(isss)(isss)(isss))" direction="out" />
+ *     <annotation name="com.trolltech.QtDBus.QtTypeName.Out0" value="Soprano::Statement" />
+ *   </method>
+ *   <method name="close" />
+ * </interface>
+ * \endcode
+ *
+ * The statement iterator interface maps very closely to the API of Soprano::StatementIterator.
+ *
+ *
+ * \section soprano_server_dbus_queryresult_iterator_interface org.soprano.QueryResultIterator
+ *
+ * \code
+ * <interface name="org.soprano.QueryResultIterator">
+ *   <method name="next">
+ *     <arg name="reply" type="b" direction="out" />
+ *   </method>
+ *   <method name="current">
+ *     <arg name="node" type="a{s(isss)}" direction="out" />
+ *     <annotation name="com.trolltech.QtDBus.QtTypeName.Out0" value="Soprano::BindingSet" />
+ *   </method>
+ *   <method name="close" />
+ *   <method name="currentStatement">
+ *     <arg name="statement" type="((isss)(isss)(isss)(isss))" direction="out" />
+ *     <annotation name="com.trolltech.QtDBus.QtTypeName.Out0" value="Soprano::Statement" />
+ *   </method>
+ *   <method name="bindingByName">
+ *     <arg name="name" type="s" direction="in" />
+ *     <arg name="node" type="(isss)" direction="out" />
+ *     <annotation name="com.trolltech.QtDBus.QtTypeName.Out0" value="Soprano::Node" />
+ *   </method>
+ *   <method name="bindingByIndex">
+ *     <arg name="index" type="i" direction="in" />
+ *     <arg name="node" type="(isss)" direction="out" />
+ *     <annotation name="com.trolltech.QtDBus.QtTypeName.Out0" value="Soprano::Node" />
+ *   </method>
+ *   <method name="bindingCount">
+ *     <arg name="names" type="i" direction="out" />
+ *   </method>
+ *   <method name="bindingNames">
+ *     <arg name="names" type="as" direction="out" />
+ *   </method>
+ *   <method name="boolValue">
+ *     <arg name="reply" type="b" direction="out" />
+ *   </method>
+ *   <method name="isGraph">
+ *     <arg name="reply" type="b" direction="out" />
+ *   </method>
+ *   <method name="isBinding">
+ *     <arg name="reply" type="b" direction="out" />
+ *   </method>
+ *   <method name="isBool">
+ *     <arg name="reply" type="b" direction="out" />
+ *   </method>
+ * </interface>
+ * \endcode
+ *
+ * The query result iterator interface maps closely to the Soprano::QueryResultIterator API except that
+ * it does not use method overloading (compare bindingByName and bindingByIndex).
  */
 
 /**
@@ -58,7 +265,7 @@
 /**
  * \namespace Soprano::Server
  *
- * \sa \ref soprano_server, Soprano::Client
+ * \sa \ref soprano_server_dbus, \ref soprano_server, Soprano::Client
  */
 
 /**
@@ -87,5 +294,5 @@
  * it yet. The best solution at the moment is the DBus client. Although being the slowest (slightly slower than
  * the Unix Socket client) it is reliable and feature-complete (signals are transmitted).
  *
- * \sa \ref soprano_server, Soprano::Server
+ * \sa \ref soprano_server, \ref soprano_server_dbus, Soprano::Server
  */
