@@ -15,3 +15,5 @@ Soprano 3:
   Model::rollback
   (Only question: Can we support multiple transactions at the same time?)
   Idea: Create a transaction FilterModel that allows to have transactions on any backend in memory. Problem: queries!
+* Overload each Model method in FilterModel so subclasses such as Nepomuk::ResourceModel can call methods such as removeContext
+  without fear of recursion

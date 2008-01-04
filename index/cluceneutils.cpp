@@ -23,6 +23,7 @@
 #include "tstring.h"
 #include "error.h"
 
+
 namespace Soprano {
     namespace Index {
         class IndexStatics
@@ -64,5 +65,5 @@ QString Soprano::Index::bnodeIdPrefix()
 
 Soprano::Error::Error Soprano::Index::exceptionToError( CLuceneError& err )
 {
-    return Error::Error( err.what(), Error::ErrorUnknown + err.number() );
+    return Error::Error( QString( "CLucene index error: '%1'" ).arg( err.what() ), Error::ErrorUnknown + err.number() );
 }
