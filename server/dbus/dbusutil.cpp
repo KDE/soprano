@@ -73,7 +73,7 @@ Soprano::Error::Error Soprano::DBus::convertError( const QDBusError& e )
                                  errorMessage.mid( 0, m ).toInt() );
         }
         else {
-            return Error::Error( errorMessage );
+            return Error::Error( errorName + " - " + errorMessage );
         }
     }
     else {
