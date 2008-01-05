@@ -64,19 +64,30 @@ Soprano::Sesame2::RepositoryWrapper* Soprano::Sesame2::RepositoryWrapper::create
     JStringRef path( path_ );
 
     // put the path into a java.io.File
-    JObjectRef file = JNIWrapper::instance()->constructObject( JAVA_IO_FILE, "(L"JAVA_LANG_STRING";)V", path.data() );
+    JObjectRef file = JNIWrapper::instance()->constructObject( JAVA_IO_FILE,
+                                                               "(L"JAVA_LANG_STRING";)V",
+                                                               path.data() );
     if ( !file ) {
         return 0;
     }
 
+    // triple indexes: default indexes + index to query on graphs which we do often in Nepomuk
+    // FIXME: it would be great to make this configurable through Soprano
+    JStringRef tripleIndexes( QString::fromLatin1( "spoc,posc,cspo" ) );
+
     // create an instance of org.openrdf.sail.nativerdf.NativeStore;
-    JObjectRef store = JNIWrapper::instance()->constructObject( ORG_OPENRDF_SAIL_NATIVERDF_NATIVESTORE, "(L"JAVA_IO_FILE";)V", file.data() );
+    JObjectRef store = JNIWrapper::instance()->constructObject( ORG_OPENRDF_SAIL_NATIVERDF_NATIVESTORE,
+                                                                "(L"JAVA_IO_FILE";L"JAVA_LANG_STRING";)V",
+                                                                file.data(),
+                                                                tripleIndexes.data() );
     if ( !store ) {
         return 0;
     }
 
     // create an instance of org.openrdf.repository.sail.SailRepository
-    JObjectRef repository = JNIWrapper::instance()->constructObject( ORG_OPENRDF_REPOSITORY_SAIL_SAILREPOSITORY, "(L"ORG_OPENRDF_SAIL_SAIL";)V", store.data() );
+    JObjectRef repository = JNIWrapper::instance()->constructObject( ORG_OPENRDF_REPOSITORY_SAIL_SAILREPOSITORY,
+                                                                     "(L"ORG_OPENRDF_SAIL_SAIL";)V",
+                                                                     store.data() );
     if ( !repository ) {
         return 0;
     }
