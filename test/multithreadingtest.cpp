@@ -240,7 +240,7 @@ void MultiThreadingTest::testNodeIterator_data()
     QTest::addColumn<TestingThread*>( "thread" );
 
     Q_FOREACH( QThread* t, m_testThreads ) {
-        TestingThread* tt = dynamic_cast<TestingThread*>( t );
+        TestingThread* tt = static_cast<TestingThread*>( t );
         QTest::newRow( tt->name().toLatin1().data() ) << tt;
     }
 }
