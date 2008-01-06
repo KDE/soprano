@@ -550,7 +550,7 @@ Soprano::Query::IsBound::Private::Private( const Private& other )
       variable( 0 )
 {
     if ( other.variable ) {
-        variable = variable->clone();
+        variable = other.variable->clone();
     }
 }
 
