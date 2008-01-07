@@ -7,12 +7,14 @@ allows to  replace the actual RDF storage implementation used.
 
 Soprano has the following features:
 
-* Full context (i.e. named graph support)
+* Full context (i.e. named graph) support
 * Plugin structure for extensibility.
 * Backend plugins for:
   - Redland
   - Sesame2
-  - 3store (incomplete)
+* Parser and serializer plugins for:
+  - raptor (rdf+xml, turtle, trig, nTriples)
+  - nQuads
 * A server and client lib which allows a simple remote
   Soprano server.
 * Simple sopranod server application.
@@ -21,5 +23,7 @@ Soprano has the following features:
 * Rule-based Forward inference engine.
 * Full-text index based on CLucene which indexes all literal 
   statements (i.e. those statements with a literal object node)
+* Hierarchical architecture which allows to stack multiple filter models
+  on top of an RDF storage.
 
 See INSTALL for installation instructions.

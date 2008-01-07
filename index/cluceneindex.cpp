@@ -370,7 +370,7 @@ lucene::document::Document* Soprano::Index::CLuceneIndex::documentForResource( c
 
 int Soprano::Index::CLuceneIndex::startTransaction()
 {
-    qDebug() << "CLuceneIndex::startTransaction in thread " << QThread::currentThreadId();
+//    qDebug() << "CLuceneIndex::startTransaction in thread " << QThread::currentThreadId();
     QMutexLocker lock( &d->mutex );
 
     clearError();
@@ -378,12 +378,12 @@ int Soprano::Index::CLuceneIndex::startTransaction()
     if ( d->transactionID == 0 ) {
         // FIXME: use a random number
         d->transactionID = 1;
-        qDebug() << "CLuceneIndex::startTransaction done in thread " << QThread::currentThreadId();
+//        qDebug() << "CLuceneIndex::startTransaction done in thread " << QThread::currentThreadId();
         return d->transactionID;
     }
     else {
         setError( "Previous transaction still open." );
-        qDebug() << "CLuceneIndex::startTransaction done in thread " << QThread::currentThreadId();
+//        qDebug() << "CLuceneIndex::startTransaction done in thread " << QThread::currentThreadId();
         return 0;
     }
 }
@@ -391,7 +391,7 @@ int Soprano::Index::CLuceneIndex::startTransaction()
 
 bool Soprano::Index::CLuceneIndex::closeTransaction( int id )
 {
-    qDebug() << "CLuceneIndex::closeTransaction in thread " << QThread::currentThreadId();
+//    qDebug() << "CLuceneIndex::closeTransaction in thread " << QThread::currentThreadId();
     QMutexLocker lock( &d->mutex );
 
     if ( id == d->transactionID && id > 0 ) {
@@ -401,17 +401,17 @@ bool Soprano::Index::CLuceneIndex::closeTransaction( int id )
         }
         catch( CLuceneError& err ) {
             setError( exceptionToError( err ) );
-            qDebug() << "CLuceneIndex::closeTransaction done in thread " << QThread::currentThreadId();
+//            qDebug() << "CLuceneIndex::closeTransaction done in thread " << QThread::currentThreadId();
             return false;
         }
 
         d->transactionID = 0;
-        qDebug() << "CLuceneIndex::closeTransaction done in thread " << QThread::currentThreadId();
+//        qDebug() << "CLuceneIndex::closeTransaction done in thread " << QThread::currentThreadId();
         return true;
     }
     else {
         setError( QString( "Invalid transaction ID: %1" ).arg( id ) );
-        qDebug() << "CLuceneIndex::closeTransaction done in thread " << QThread::currentThreadId();
+//        qDebug() << "CLuceneIndex::closeTransaction done in thread " << QThread::currentThreadId();
         return false;
     }
 }
