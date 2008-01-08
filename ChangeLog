@@ -1,3 +1,6 @@
+2.0.1
+	* Fixed method statementCount in Sesame2 backend
+
 2.0
 	* LiteralValue is not derived from QVariant anymore but uses it internally
 	* ResultSet renamed to QueryResultIterator
