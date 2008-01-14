@@ -84,7 +84,7 @@ bool LockFile::aquireLock()
         f.setPermissions( f.permissions() | QFile::WriteOwner );
     }
 
-    d->fd = open( QFile::encodeName( d->path ).data(), O_WRONLY|O_CREAT );
+    d->fd = open( QFile::encodeName( d->path ).data(), O_WRONLY|O_CREAT, 0600 );
     if ( d->fd == -1 ) {
         qDebug() << "(LockFile) could not open" << d->path << QString( "(%1)" ).arg( strerror( errno ) );
         return false;
