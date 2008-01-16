@@ -293,7 +293,8 @@ int main( int argc, char *argv[] )
     headerStream << "#include <QtCore/QUrl>" << endl;
 
     if ( visibilityExport )
-        headerStream << "#include \"soprano_export.h\"" << endl << endl;
+        headerStream << "#include \"soprano_export.h\"" << endl;
+    headerStream << endl;
 
     int indent = 0;
     if ( !namespaceName.isEmpty() ) {
@@ -328,7 +329,10 @@ int main( int argc, char *argv[] )
         else {
             headerStream << writeComment( uri + "\n\n" + comment, indent ) << endl;
         }
-        headerStream << createIndent( indent ) << "SOPRANO_EXPORT QUrl " << name << "();" << endl;
+        headerStream << createIndent( indent );
+        if ( visibilityExport )
+            headerStream << "SOPRANO_EXPORT ";
+        headerStream << "QUrl " << name << "();" << endl;
 
         ++it;
         if ( it != normalizedResources.end() ) {
