@@ -36,24 +36,60 @@
 /// @brief The Soprano release version number at compile time
 #define SOPRANO_VERSION_RELEASE ${CMAKE_SOPRANO_VERSION_RELEASE}
 
+/**
+ * \brief Create a unique number from the major, minor and release number of a %Soprano version
+ *
+ * This function can be used for preprocessing. For version information at runtime
+ * use the version methods in the Soprano namespace.
+ */
+#define SOPRANO_MAKE_VERSION( a,b,c ) (((a) << 16) | ((b) << 8) | (c))
+
+/**
+ * \brief %Soprano Version as a unique number at compile time
+ *
+ * This macro calculates the %Soprano version into a number. It is mainly used
+ * through SOPRANO_IS_VERSION in preprocessing. For version information at runtime
+ * use the version methods in the Soprano namespace.
+ */
+#define SOPRANO_VERSION \
+    SOPRANO_MAKE_VERSION(SOPRANO_VERSION_MAJOR,SOPRANO_VERSION_MINOR,SOPRANO_VERSION_RELEASE)
+
+/**
+ * \brief Check if the %Soprano version matches a certain version or is higher
+ *
+ * This macro is typically used to compile conditionally a part of code:
+ * \code
+ * #if SOPRANO_IS_VERSION(2,1)
+ * // Code for Soprano 2.1
+ * #else
+ * // Code for Soprano 2.0
+ * #endif
+ * \endcode
+ *
+ * For version information at runtime
+ * use the version methods in the Soprano namespace.
+ */
+#define SOPRANO_IS_VERSION(a,b,c) ( SOPRANO_VERSION >= SOPRANO_MAKE_VERSION(a,b,c) )
+
+
 namespace Soprano {
     /**
      * @brief Returns the major number of Soprano's version, e.g.
-     * 1 for %Soprano 1.0.2. 
+     * 1 for %Soprano 1.0.2.
      * @return the major version number at runtime.
      */
     SOPRANO_EXPORT unsigned int versionMajor();
 
     /**
      * @brief Returns the minor number of Soprano's version, e.g.
-     * 0 for %Soprano 1.0.2. 
+     * 0 for %Soprano 1.0.2.
      * @return the minor version number at runtime.
      */
     SOPRANO_EXPORT unsigned int versionMinor();
 
     /**
      * @brief Returns the release of Soprano's version, e.g.
-     * 2 for %Soprano 1.0.2. 
+     * 2 for %Soprano 1.0.2.
      * @return the release number at runtime.
      */
     SOPRANO_EXPORT unsigned int versionRelease();

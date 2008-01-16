@@ -87,6 +87,7 @@ SET(soprano_SRCS
   util/simplestatementiterator.cpp
   util/simplenodeiterator.cpp
   util/dummymodel.cpp
+  util/signalcachemodel.cpp
   )
 
 qt4_automoc(${soprano_SRCS})
@@ -155,4 +156,5 @@ INSTALL(FILES
   util/mutexmodel.h
   util/simplestatementiterator.h
   util/simplenodeiterator.h
+  util/signalcachemodel.h
   DESTINATION include/soprano)

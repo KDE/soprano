@@ -41,7 +41,7 @@ namespace Soprano {
                 remove();
             }
 
-            void close() {
+            void setModelGone() {
                 // no need to really close, that is done by
                 // the real Model. We only need to make sure
                 // that we do not try to unlock a deleted model

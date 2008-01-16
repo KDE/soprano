@@ -3,5 +3,6 @@ install(FILES
   SimpleStatementIterator
   SimpleNodeIterator
   DummyModel
+  SignalCacheModel
   DESTINATION
   include/Soprano/Util)

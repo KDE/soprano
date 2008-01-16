@@ -104,7 +104,7 @@ Soprano::Util::MutexModel::MutexModel( ProtectionMode mode, Model* parent )
 Soprano::Util::MutexModel::~MutexModel()
 {
     Q_FOREACH( MutexIteratorBase* it, d->openIterators ) {
-        it->close();
+        it->setModelGone();
     }
 
     delete d;

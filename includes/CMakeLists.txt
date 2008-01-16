@@ -26,6 +26,7 @@ install(FILES
   RdfSchemaWrapper
   StorageModel
   Global
+  Version
   DESTINATION
   include/Soprano)
 
