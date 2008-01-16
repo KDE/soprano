@@ -174,7 +174,7 @@ int main( int argc, char *argv[] )
                 return usage();
             }
         }
-        else if ( args[i] == "-no-visibility-export" ) {
+        else if ( args[i] == "--no-visibility-export" ) {
             visibilityExport = false;
         }
         else if ( i == args.count()-1 ) {
