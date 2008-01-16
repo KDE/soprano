@@ -76,7 +76,7 @@ int usage( const QString& error = QString() )
     QTextStream s( stderr );
     s << endl;
     s << "Usage:" << endl
-      << "   onto2vocabularyclass --name <name> --encoding <encoding> [--namespace <ns>] <ontologyfile>" << endl;
+      << "   onto2vocabularyclass --name <name> --encoding <encoding> [--namespace <ns>] [--no-visibility-export] <ontologyfile>" << endl;
 
     if ( !error.isEmpty() ) {
         s << endl << error << endl;
@@ -144,6 +144,7 @@ int main( int argc, char *argv[] )
     QString className;
     QString namespaceName;
     QString encoding;
+    bool visibilityExport = true;
     int i = 1;
     while ( i < args.count() ) {
         if ( args[i] == "--encoding" ) {
@@ -172,6 +173,9 @@ int main( int argc, char *argv[] )
             else {
                 return usage();
             }
+        }
+        else if ( args[i] == "-no-visibility-export" ) {
+            visibilityExport = false;
         }
         else if ( i == args.count()-1 ) {
             fileName = args[i];
@@ -286,8 +290,10 @@ int main( int argc, char *argv[] )
     headerStream << "#ifndef _SOPRANO_" << className.toUpper() << "_H_" << endl
                  << "#define _SOPRANO_" << className.toUpper() << "_H_" << endl << endl;
 
-    headerStream << "#include <QtCore/QUrl>" << endl
-                 << "#include \"soprano_export.h\"" << endl << endl;
+    headerStream << "#include <QtCore/QUrl>" << endl;
+
+    if ( visibilityExport )
+        headerStream << "#include \"soprano_export.h\"" << endl << endl;
 
     int indent = 0;
     if ( !namespaceName.isEmpty() ) {
@@ -304,7 +310,11 @@ int main( int argc, char *argv[] )
     headerStream << createIndent( indent ) << "/**" << endl
                  << createIndent( indent ) << " * " << ontoNamespace << endl
                  << createIndent( indent ) << " */" << endl;
-    headerStream << createIndent( indent ) << "SOPRANO_EXPORT QUrl " << className.toLower() << "Namespace();" << endl << endl;
+
+    headerStream << createIndent( indent );
+    if ( visibilityExport )
+        headerStream << "SOPRANO_EXPORT ";
+    headerStream << "QUrl " << className.toLower() << "Namespace();" << endl << endl;
 
     for( QMap<QString, QPair<QString, QString> >::const_iterator it = normalizedResources.begin();
          it != normalizedResources.end(); ++it ) {

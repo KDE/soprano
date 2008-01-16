@@ -1,3 +1,7 @@
+2.1
+	* SignalCacheModel to restrict the number of emitted statementsAdded and statementsRemoved signals
+	  in a certain timeframe.
+
 2.0
 	* LiteralValue is not derived from QVariant anymore but uses it internally
 	* ResultSet renamed to QueryResultIterator
