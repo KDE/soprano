@@ -56,6 +56,13 @@ Soprano::Error::ErrorCode Soprano::Util::DummyModel::addStatement( const Stateme
 }
 
 
+Soprano::Error::ErrorCode Soprano::Util::DummyModel::addStatement( const Node&, const Node&, const Node&, const Node& )
+{
+    setError( d->defaultError );
+    return Error::ErrorNotSupported;
+}
+
+
 bool Soprano::Util::DummyModel::isEmpty() const
 {
     setError( d->defaultError );
@@ -77,7 +84,21 @@ bool Soprano::Util::DummyModel::containsStatement( const Statement& ) const
 }
 
 
+bool Soprano::Util::DummyModel::containsStatement( const Node&, const Node&, const Node&, const Node& ) const
+{
+    setError( d->defaultError );
+    return false;
+}
+
+
 bool Soprano::Util::DummyModel::containsAnyStatement( const Statement& ) const
+{
+    setError( d->defaultError );
+    return false;
+}
+
+
+bool Soprano::Util::DummyModel::containsAnyStatement( const Node&, const Node&, const Node&, const Node& ) const
 {
     setError( d->defaultError );
     return false;
@@ -105,7 +126,21 @@ Soprano::StatementIterator Soprano::Util::DummyModel::listStatements( const Stat
 }
 
 
+Soprano::StatementIterator Soprano::Util::DummyModel::listStatements( const Node&, const Node&, const Node&, const Node& ) const
+{
+    setError( d->defaultError );
+    return StatementIterator();
+}
+
+
 Soprano::Error::ErrorCode Soprano::Util::DummyModel::removeStatement( const Statement& )
+{
+    setError( d->defaultError );
+    return Error::ErrorNotSupported;
+}
+
+
+Soprano::Error::ErrorCode Soprano::Util::DummyModel::removeStatement( const Node&, const Node&, const Node&, const Node& )
 {
     setError( d->defaultError );
     return Error::ErrorNotSupported;

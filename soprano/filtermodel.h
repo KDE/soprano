@@ -74,6 +74,11 @@ namespace Soprano {
          * Default implementation simply pipes the call through to the parent model.
          */
         virtual Error::ErrorCode addStatement( const Statement &statement );
+
+        /**
+         * Reimplemented for convenience. Calls Model::addStatement(const Node&,const Node&,const Node&,const Node&)
+         */
+        Error::ErrorCode addStatement( const Node& subject, const Node& predicate, const Node& object, const Node& context = Node() );
         //@}
 
         //@{
@@ -83,9 +88,19 @@ namespace Soprano {
         virtual Error::ErrorCode removeStatement( const Statement &statement );
 
         /**
+         * Reimplemented for convenience. Calls Model::removeStatement(const Node&,const Node&,const Node&,const Node&)
+         */
+        Error::ErrorCode removeStatement( const Node& subject, const Node& predicate, const Node& object, const Node& context = Node() );
+
+        /**
          * Default implementation simply pipes the call through to the parent model.
          */
         virtual Error::ErrorCode removeAllStatements( const Statement &statement );
+
+        /**
+         * Reimplemented for convenience. Calls Model::removeAllStatements(const Node&,const Node&,const Node&,const Node&)
+         */
+        Error::ErrorCode removeAllStatements( const Node& subject, const Node& predicate, const Node& object, const Node& context = Node() );
         //@}
 
         //@{
@@ -93,6 +108,11 @@ namespace Soprano {
          * Default implementation simply pipes the call through to the parent model.
          */
         virtual StatementIterator listStatements( const Statement &partial ) const;
+
+        /**
+         * Reimplemented for convenience. Calls Model::listStatements(const Node&,const Node&,const Node&,const Node&)
+         */
+        StatementIterator listStatements( const Node& subject, const Node& predicate, const Node& object, const Node& context = Node() ) const;
 
         /**
          * Default implementation simply pipes the call through to the parent model.
@@ -117,9 +137,19 @@ namespace Soprano {
         virtual bool containsStatement( const Statement &statement ) const;
 
         /**
+         * Reimplemented for convenience. Calls Model::containsStatement(const Node&,const Node&,const Node&,const Node&)
+         */
+        bool containsStatement( const Node& subject, const Node& predicate, const Node& object, const Node& context = Node() ) const;
+
+        /**
          * Default implementation simply pipes the call through to the parent model.
          */
         virtual bool containsAnyStatement( const Statement &statement ) const;
+
+        /**
+         * Reimplemented for convenience. Calls Model::containsAnyStatement(const Node&,const Node&,const Node&,const Node&)
+         */
+        bool containsAnyStatement( const Node& subject, const Node& predicate, const Node& object, const Node& context = Node() ) const;
         //@}
 
         //@{

@@ -107,7 +107,7 @@ namespace Soprano
         virtual Error::ErrorCode addStatement( const Statement &statement ) = 0;
 
         /**
-	 * \overload
+         * \overload
          */
         Error::ErrorCode addStatement( const Node& subject, const Node& predicate, const Node& object, const Node& context = Node() );
 
@@ -129,7 +129,7 @@ namespace Soprano
         virtual Error::ErrorCode removeStatement( const Statement &statement ) = 0;
 
         /**
-	 * \overload
+         * \overload
          */
         Error::ErrorCode removeStatement( const Node& subject, const Node& predicate, const Node& object, const Node& context = Node() );
 
@@ -143,8 +143,8 @@ namespace Soprano
         virtual Error::ErrorCode removeAllStatements( const Statement &statement ) = 0;
 
         /**
-	 * \overload
-	 *
+         * \overload
+         *
          * \param subject The subject node to match. Can be empty as a wildcard.
          * \param predicate The predicate node to match. Can be empty as a wildcard.
          * \param object The object node to match. Can be empty as a wildcard.
@@ -262,7 +262,7 @@ namespace Soprano
         virtual bool containsAnyStatement( const Statement &statement ) const = 0;
 
         /**
-	 * \overload
+         * \overload
          *
          * \param subject The subject node to match. Can be empty as a wildcard.
          * \param predicate The predicate node to match. Can be empty as a wildcard.
@@ -284,7 +284,7 @@ namespace Soprano
         virtual bool containsStatement( const Statement &statement ) const = 0;
 
         /**
-	 * \overload
+         * \overload
          */
         bool containsStatement( const Node& subject, const Node& predicate, const Node& object, const Node& context = Node() ) const;
 

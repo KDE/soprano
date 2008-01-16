@@ -56,11 +56,13 @@ namespace Soprano {
 
             //@{
             Error::ErrorCode addStatement( const Statement &statement );
+            Error::ErrorCode addStatement( const Node& subject, const Node& predicate, const Node& object, const Node& context = Node() );
             Error::ErrorCode addStatements( const QList<Statement> &statements );
             //@}
 
             //@{
             Error::ErrorCode removeStatement( const Statement &statement );
+            Error::ErrorCode removeStatement( const Node& subject, const Node& predicate, const Node& object, const Node& context = Node() );
             Error::ErrorCode removeAllStatements( const Statement &statement );
             Error::ErrorCode removeStatements( const QList<Statement> &statements );
             Error::ErrorCode removeContext( const Node& );
@@ -69,6 +71,7 @@ namespace Soprano {
 
             //@{
             StatementIterator listStatements( const Statement &partial ) const;
+            StatementIterator listStatements( const Node& subject, const Node& predicate, const Node& object, const Node& context = Node() ) const;
             StatementIterator listStatements() const;
             StatementIterator listStatementsInContext( const Node &context ) const;
             NodeIterator listContexts() const;
@@ -78,7 +81,9 @@ namespace Soprano {
 
             //@{
             bool containsAnyStatement( const Statement &statement ) const;
+            bool containsAnyStatement( const Node& subject, const Node& predicate, const Node& object, const Node& context = Node() ) const;
             bool containsStatement( const Statement &statement ) const;
+            bool containsStatement( const Node& subject, const Node& predicate, const Node& object, const Node& context = Node() ) const;
             bool containsContext( const Node &context ) const;
             bool isEmpty() const;
             int statementCount() const;
