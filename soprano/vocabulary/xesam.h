@@ -68,7 +68,8 @@ namespace Soprano {
             /**
              * http://freedesktop.org/standards/xesam/1.0/core#Audio 
              * 
-             * Audio content 
+             * Defines audio aspect of content. The content itself may have 
+             * other aspects. 
              */
             SOPRANO_EXPORT QUrl Audio();
 
@@ -96,11 +97,25 @@ namespace Soprano {
             SOPRANO_EXPORT QUrl Bookmark();
 
             /**
+             * http://freedesktop.org/standards/xesam/1.0/core#CommunicationChannel 
+             * 
+             * Communication channel 
+             */
+            SOPRANO_EXPORT QUrl CommunicationChannel();
+
+            /**
              * http://freedesktop.org/standards/xesam/1.0/core#Contact 
              * 
              * Contact 
              */
             SOPRANO_EXPORT QUrl Contact();
+
+            /**
+             * http://freedesktop.org/standards/xesam/1.0/core#ContactGroup 
+             * 
+             * ContactGroup 
+             */
+            SOPRANO_EXPORT QUrl ContactGroup();
 
             /**
              * http://freedesktop.org/standards/xesam/1.0/core#Content 
@@ -216,6 +231,13 @@ namespace Soprano {
             SOPRANO_EXPORT QUrl Image();
 
             /**
+             * http://freedesktop.org/standards/xesam/1.0/core#MailingList 
+             * 
+             * Mailing list 
+             */
+            SOPRANO_EXPORT QUrl MailingList();
+
+            /**
              * http://freedesktop.org/standards/xesam/1.0/core#MailingListEmail 
              * 
              * Email message addressed at/received from a mailing list 
@@ -254,6 +276,20 @@ namespace Soprano {
              * Message stored in a message box 
              */
             SOPRANO_EXPORT QUrl MessageboxMessage();
+
+            /**
+             * http://freedesktop.org/standards/xesam/1.0/core#Music 
+             * 
+             * Music content 
+             */
+            SOPRANO_EXPORT QUrl Music();
+
+            /**
+             * http://freedesktop.org/standards/xesam/1.0/core#NewsGroup 
+             * 
+             * News group 
+             */
+            SOPRANO_EXPORT QUrl NewsGroup();
 
             /**
              * http://freedesktop.org/standards/xesam/1.0/core#NewsGroupEmail 
@@ -320,6 +356,13 @@ namespace Soprano {
             SOPRANO_EXPORT QUrl Project();
 
             /**
+             * http://freedesktop.org/standards/xesam/1.0/core#RSSFeed 
+             * 
+             * RSS feed 
+             */
+            SOPRANO_EXPORT QUrl RSSFeed();
+
+            /**
              * http://freedesktop.org/standards/xesam/1.0/core#RSSMessage 
              * 
              * RSS message(RSS feed item) 
@@ -355,6 +398,14 @@ namespace Soprano {
             SOPRANO_EXPORT QUrl RevisionControlledFile();
 
             /**
+             * http://freedesktop.org/standards/xesam/1.0/core#RevisionControlledRepository 
+             * 
+             * Revision-controlled repository. In case of distributed repositories, 
+             * those must be linked with derivation relations. 
+             */
+            SOPRANO_EXPORT QUrl RevisionControlledRepository();
+
+            /**
              * http://freedesktop.org/standards/xesam/1.0/core#SoftwarePackage 
              * 
              * Software distribution package 
@@ -381,6 +432,13 @@ namespace Soprano {
              * Spreadsheet document 
              */
             SOPRANO_EXPORT QUrl Spreadsheet();
+
+            /**
+             * http://freedesktop.org/standards/xesam/1.0/core#SystemResource 
+             * 
+             * Generic system resource like man documentation 
+             */
+            SOPRANO_EXPORT QUrl SystemResource();
 
             /**
              * http://freedesktop.org/standards/xesam/1.0/core#Tag 
@@ -954,6 +1012,13 @@ namespace Soprano {
             SOPRANO_EXPORT QUrl exposureTime();
 
             /**
+             * http://freedesktop.org/standards/xesam/1.0/core#familyName 
+             * 
+             * Person family name 
+             */
+            SOPRANO_EXPORT QUrl familyName();
+
+            /**
              * http://freedesktop.org/standards/xesam/1.0/core#faxPhoneNumber 
              * 
              * Contact fax phone number 
@@ -1067,6 +1132,13 @@ namespace Soprano {
             SOPRANO_EXPORT QUrl genre();
 
             /**
+             * http://freedesktop.org/standards/xesam/1.0/core#givenName 
+             * 
+             * Person given name 
+             */
+            SOPRANO_EXPORT QUrl givenName();
+
+            /**
              * http://freedesktop.org/standards/xesam/1.0/core#group 
              * 
              * File group 
@@ -1109,6 +1181,20 @@ namespace Soprano {
             SOPRANO_EXPORT QUrl homepageContactURL();
 
             /**
+             * http://freedesktop.org/standards/xesam/1.0/core#honorificPrefix 
+             * 
+             * Person honorific name prefix 
+             */
+            SOPRANO_EXPORT QUrl honorificPrefix();
+
+            /**
+             * http://freedesktop.org/standards/xesam/1.0/core#honorificSuffix 
+             * 
+             * Person honorific name suffix 
+             */
+            SOPRANO_EXPORT QUrl honorificSuffix();
+
+            /**
              * http://freedesktop.org/standards/xesam/1.0/core#horizontalResolution 
              * 
              * Visual content horizontal resolution 
@@ -1137,11 +1223,11 @@ namespace Soprano {
             SOPRANO_EXPORT QUrl inReplyTo();
 
             /**
-             * http://freedesktop.org/standards/xesam/1.0/core#interests 
+             * http://freedesktop.org/standards/xesam/1.0/core#interest 
              * 
              * Contact interests/hobbies 
              */
-            SOPRANO_EXPORT QUrl interests();
+            SOPRANO_EXPORT QUrl interest();
 
             /**
              * http://freedesktop.org/standards/xesam/1.0/core#interlaceMode 
@@ -1187,6 +1273,13 @@ namespace Soprano {
             SOPRANO_EXPORT QUrl isInProgress();
 
             /**
+             * http://freedesktop.org/standards/xesam/1.0/core#isPublicChannel 
+             * 
+             * Is channel public? 
+             */
+            SOPRANO_EXPORT QUrl isPublicChannel();
+
+            /**
              * http://freedesktop.org/standards/xesam/1.0/core#isRead 
              * 
              * Is the message read 
@@ -1224,7 +1317,7 @@ namespace Soprano {
             /**
              * http://freedesktop.org/standards/xesam/1.0/core#knows 
              * 
-             * FOAF:knows relation 
+             * FOAF:knows relation. Points to a contact known by this contact. 
              */
             SOPRANO_EXPORT QUrl knows();
 
@@ -1435,6 +1528,13 @@ namespace Soprano {
              * Deleted file original location 
              */
             SOPRANO_EXPORT QUrl originalLocation();
+
+            /**
+             * http://freedesktop.org/standards/xesam/1.0/core#otherName 
+             * 
+             * Person other name 
+             */
+            SOPRANO_EXPORT QUrl otherName();
 
             /**
              * http://freedesktop.org/standards/xesam/1.0/core#owner 

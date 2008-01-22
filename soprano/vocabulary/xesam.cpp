@@ -34,7 +34,9 @@ public:
           xesam_AudioList( "http://freedesktop.org/standards/xesam/1.0/core#AudioList" ),
           xesam_BlockDevice( "http://freedesktop.org/standards/xesam/1.0/core#BlockDevice" ),
           xesam_Bookmark( "http://freedesktop.org/standards/xesam/1.0/core#Bookmark" ),
+          xesam_CommunicationChannel( "http://freedesktop.org/standards/xesam/1.0/core#CommunicationChannel" ),
           xesam_Contact( "http://freedesktop.org/standards/xesam/1.0/core#Contact" ),
+          xesam_ContactGroup( "http://freedesktop.org/standards/xesam/1.0/core#ContactGroup" ),
           xesam_Content( "http://freedesktop.org/standards/xesam/1.0/core#Content" ),
           xesam_DataObject( "http://freedesktop.org/standards/xesam/1.0/core#DataObject" ),
           xesam_DeletedFile( "http://freedesktop.org/standards/xesam/1.0/core#DeletedFile" ),
@@ -50,11 +52,14 @@ public:
           xesam_IMAP4Message( "http://freedesktop.org/standards/xesam/1.0/core#IMAP4Message" ),
           xesam_IMMessage( "http://freedesktop.org/standards/xesam/1.0/core#IMMessage" ),
           xesam_Image( "http://freedesktop.org/standards/xesam/1.0/core#Image" ),
+          xesam_MailingList( "http://freedesktop.org/standards/xesam/1.0/core#MailingList" ),
           xesam_MailingListEmail( "http://freedesktop.org/standards/xesam/1.0/core#MailingListEmail" ),
           xesam_Media( "http://freedesktop.org/standards/xesam/1.0/core#Media" ),
           xesam_MediaList( "http://freedesktop.org/standards/xesam/1.0/core#MediaList" ),
           xesam_Message( "http://freedesktop.org/standards/xesam/1.0/core#Message" ),
           xesam_MessageboxMessage( "http://freedesktop.org/standards/xesam/1.0/core#MessageboxMessage" ),
+          xesam_Music( "http://freedesktop.org/standards/xesam/1.0/core#Music" ),
+          xesam_NewsGroup( "http://freedesktop.org/standards/xesam/1.0/core#NewsGroup" ),
           xesam_NewsGroupEmail( "http://freedesktop.org/standards/xesam/1.0/core#NewsGroupEmail" ),
           xesam_OfflineMedia( "http://freedesktop.org/standards/xesam/1.0/core#OfflineMedia" ),
           xesam_Organization( "http://freedesktop.org/standards/xesam/1.0/core#Organization" ),
@@ -64,15 +69,18 @@ public:
           xesam_Photo( "http://freedesktop.org/standards/xesam/1.0/core#Photo" ),
           xesam_Presentation( "http://freedesktop.org/standards/xesam/1.0/core#Presentation" ),
           xesam_Project( "http://freedesktop.org/standards/xesam/1.0/core#Project" ),
+          xesam_RSSFeed( "http://freedesktop.org/standards/xesam/1.0/core#RSSFeed" ),
           xesam_RSSMessage( "http://freedesktop.org/standards/xesam/1.0/core#RSSMessage" ),
           xesam_RemoteFile( "http://freedesktop.org/standards/xesam/1.0/core#RemoteFile" ),
           xesam_RemoteMessageboxMessage( "http://freedesktop.org/standards/xesam/1.0/core#RemoteMessageboxMessage" ),
           xesam_RemoteResource( "http://freedesktop.org/standards/xesam/1.0/core#RemoteResource" ),
           xesam_RevisionControlledFile( "http://freedesktop.org/standards/xesam/1.0/core#RevisionControlledFile" ),
+          xesam_RevisionControlledRepository( "http://freedesktop.org/standards/xesam/1.0/core#RevisionControlledRepository" ),
           xesam_SoftwarePackage( "http://freedesktop.org/standards/xesam/1.0/core#SoftwarePackage" ),
           xesam_Source( "http://freedesktop.org/standards/xesam/1.0/core#Source" ),
           xesam_SourceCode( "http://freedesktop.org/standards/xesam/1.0/core#SourceCode" ),
           xesam_Spreadsheet( "http://freedesktop.org/standards/xesam/1.0/core#Spreadsheet" ),
+          xesam_SystemResource( "http://freedesktop.org/standards/xesam/1.0/core#SystemResource" ),
           xesam_Tag( "http://freedesktop.org/standards/xesam/1.0/core#Tag" ),
           xesam_Text( "http://freedesktop.org/standards/xesam/1.0/core#Text" ),
           xesam_TextDocument( "http://freedesktop.org/standards/xesam/1.0/core#TextDocument" ),
@@ -153,6 +161,7 @@ public:
           xesam_exposureBias( "http://freedesktop.org/standards/xesam/1.0/core#exposureBias" ),
           xesam_exposureProgram( "http://freedesktop.org/standards/xesam/1.0/core#exposureProgram" ),
           xesam_exposureTime( "http://freedesktop.org/standards/xesam/1.0/core#exposureTime" ),
+          xesam_familyName( "http://freedesktop.org/standards/xesam/1.0/core#familyName" ),
           xesam_faxPhoneNumber( "http://freedesktop.org/standards/xesam/1.0/core#faxPhoneNumber" ),
           xesam_fileExtension( "http://freedesktop.org/standards/xesam/1.0/core#fileExtension" ),
           xesam_fileSystemType( "http://freedesktop.org/standards/xesam/1.0/core#fileSystemType" ),
@@ -169,23 +178,27 @@ public:
           xesam_generator( "http://freedesktop.org/standards/xesam/1.0/core#generator" ),
           xesam_generatorOptions( "http://freedesktop.org/standards/xesam/1.0/core#generatorOptions" ),
           xesam_genre( "http://freedesktop.org/standards/xesam/1.0/core#genre" ),
+          xesam_givenName( "http://freedesktop.org/standards/xesam/1.0/core#givenName" ),
           xesam_group( "http://freedesktop.org/standards/xesam/1.0/core#group" ),
           xesam_height( "http://freedesktop.org/standards/xesam/1.0/core#height" ),
           xesam_homeEmailAddress( "http://freedesktop.org/standards/xesam/1.0/core#homeEmailAddress" ),
           xesam_homePhoneNumber( "http://freedesktop.org/standards/xesam/1.0/core#homePhoneNumber" ),
           xesam_homePostalAddress( "http://freedesktop.org/standards/xesam/1.0/core#homePostalAddress" ),
           xesam_homepageContactURL( "http://freedesktop.org/standards/xesam/1.0/core#homepageContactURL" ),
+          xesam_honorificPrefix( "http://freedesktop.org/standards/xesam/1.0/core#honorificPrefix" ),
+          xesam_honorificSuffix( "http://freedesktop.org/standards/xesam/1.0/core#honorificSuffix" ),
           xesam_horizontalResolution( "http://freedesktop.org/standards/xesam/1.0/core#horizontalResolution" ),
           xesam_id( "http://freedesktop.org/standards/xesam/1.0/core#id" ),
           xesam_imContactMedium( "http://freedesktop.org/standards/xesam/1.0/core#imContactMedium" ),
           xesam_inReplyTo( "http://freedesktop.org/standards/xesam/1.0/core#inReplyTo" ),
-          xesam_interests( "http://freedesktop.org/standards/xesam/1.0/core#interests" ),
+          xesam_interest( "http://freedesktop.org/standards/xesam/1.0/core#interest" ),
           xesam_interlaceMode( "http://freedesktop.org/standards/xesam/1.0/core#interlaceMode" ),
           xesam_ircContactMedium( "http://freedesktop.org/standards/xesam/1.0/core#ircContactMedium" ),
           xesam_isContentEncrypted( "http://freedesktop.org/standards/xesam/1.0/core#isContentEncrypted" ),
           xesam_isEncrypted( "http://freedesktop.org/standards/xesam/1.0/core#isEncrypted" ),
           xesam_isImportant( "http://freedesktop.org/standards/xesam/1.0/core#isImportant" ),
           xesam_isInProgress( "http://freedesktop.org/standards/xesam/1.0/core#isInProgress" ),
+          xesam_isPublicChannel( "http://freedesktop.org/standards/xesam/1.0/core#isPublicChannel" ),
           xesam_isRead( "http://freedesktop.org/standards/xesam/1.0/core#isRead" ),
           xesam_isSourceEncrypted( "http://freedesktop.org/standards/xesam/1.0/core#isSourceEncrypted" ),
           xesam_isoEquivalent( "http://freedesktop.org/standards/xesam/1.0/core#isoEquivalent" ),
@@ -221,6 +234,7 @@ public:
           xesam_orientation( "http://freedesktop.org/standards/xesam/1.0/core#orientation" ),
           xesam_originURL( "http://freedesktop.org/standards/xesam/1.0/core#originURL" ),
           xesam_originalLocation( "http://freedesktop.org/standards/xesam/1.0/core#originalLocation" ),
+          xesam_otherName( "http://freedesktop.org/standards/xesam/1.0/core#otherName" ),
           xesam_owner( "http://freedesktop.org/standards/xesam/1.0/core#owner" ),
           xesam_pageCount( "http://freedesktop.org/standards/xesam/1.0/core#pageCount" ),
           xesam_paragraphCount( "http://freedesktop.org/standards/xesam/1.0/core#paragraphCount" ),
@@ -294,7 +308,9 @@ public:
     QUrl xesam_AudioList;
     QUrl xesam_BlockDevice;
     QUrl xesam_Bookmark;
+    QUrl xesam_CommunicationChannel;
     QUrl xesam_Contact;
+    QUrl xesam_ContactGroup;
     QUrl xesam_Content;
     QUrl xesam_DataObject;
     QUrl xesam_DeletedFile;
@@ -310,11 +326,14 @@ public:
     QUrl xesam_IMAP4Message;
     QUrl xesam_IMMessage;
     QUrl xesam_Image;
+    QUrl xesam_MailingList;
     QUrl xesam_MailingListEmail;
     QUrl xesam_Media;
     QUrl xesam_MediaList;
     QUrl xesam_Message;
     QUrl xesam_MessageboxMessage;
+    QUrl xesam_Music;
+    QUrl xesam_NewsGroup;
     QUrl xesam_NewsGroupEmail;
     QUrl xesam_OfflineMedia;
     QUrl xesam_Organization;
@@ -324,15 +343,18 @@ public:
     QUrl xesam_Photo;
     QUrl xesam_Presentation;
     QUrl xesam_Project;
+    QUrl xesam_RSSFeed;
     QUrl xesam_RSSMessage;
     QUrl xesam_RemoteFile;
     QUrl xesam_RemoteMessageboxMessage;
     QUrl xesam_RemoteResource;
     QUrl xesam_RevisionControlledFile;
+    QUrl xesam_RevisionControlledRepository;
     QUrl xesam_SoftwarePackage;
     QUrl xesam_Source;
     QUrl xesam_SourceCode;
     QUrl xesam_Spreadsheet;
+    QUrl xesam_SystemResource;
     QUrl xesam_Tag;
     QUrl xesam_Text;
     QUrl xesam_TextDocument;
@@ -413,6 +435,7 @@ public:
     QUrl xesam_exposureBias;
     QUrl xesam_exposureProgram;
     QUrl xesam_exposureTime;
+    QUrl xesam_familyName;
     QUrl xesam_faxPhoneNumber;
     QUrl xesam_fileExtension;
     QUrl xesam_fileSystemType;
@@ -429,23 +452,27 @@ public:
     QUrl xesam_generator;
     QUrl xesam_generatorOptions;
     QUrl xesam_genre;
+    QUrl xesam_givenName;
     QUrl xesam_group;
     QUrl xesam_height;
     QUrl xesam_homeEmailAddress;
     QUrl xesam_homePhoneNumber;
     QUrl xesam_homePostalAddress;
     QUrl xesam_homepageContactURL;
+    QUrl xesam_honorificPrefix;
+    QUrl xesam_honorificSuffix;
     QUrl xesam_horizontalResolution;
     QUrl xesam_id;
     QUrl xesam_imContactMedium;
     QUrl xesam_inReplyTo;
-    QUrl xesam_interests;
+    QUrl xesam_interest;
     QUrl xesam_interlaceMode;
     QUrl xesam_ircContactMedium;
     QUrl xesam_isContentEncrypted;
     QUrl xesam_isEncrypted;
     QUrl xesam_isImportant;
     QUrl xesam_isInProgress;
+    QUrl xesam_isPublicChannel;
     QUrl xesam_isRead;
     QUrl xesam_isSourceEncrypted;
     QUrl xesam_isoEquivalent;
@@ -481,6 +508,7 @@ public:
     QUrl xesam_orientation;
     QUrl xesam_originURL;
     QUrl xesam_originalLocation;
+    QUrl xesam_otherName;
     QUrl xesam_owner;
     QUrl xesam_pageCount;
     QUrl xesam_paragraphCount;
@@ -592,9 +620,19 @@ QUrl Soprano::Vocabulary::Xesam::Bookmark()
     return s_xesam()->xesam_Bookmark;
 }
 
+QUrl Soprano::Vocabulary::Xesam::CommunicationChannel()
+{
+    return s_xesam()->xesam_CommunicationChannel;
+}
+
 QUrl Soprano::Vocabulary::Xesam::Contact()
 {
     return s_xesam()->xesam_Contact;
+}
+
+QUrl Soprano::Vocabulary::Xesam::ContactGroup()
+{
+    return s_xesam()->xesam_ContactGroup;
 }
 
 QUrl Soprano::Vocabulary::Xesam::Content()
@@ -672,6 +710,11 @@ QUrl Soprano::Vocabulary::Xesam::Image()
     return s_xesam()->xesam_Image;
 }
 
+QUrl Soprano::Vocabulary::Xesam::MailingList()
+{
+    return s_xesam()->xesam_MailingList;
+}
+
 QUrl Soprano::Vocabulary::Xesam::MailingListEmail()
 {
     return s_xesam()->xesam_MailingListEmail;
@@ -695,6 +738,16 @@ QUrl Soprano::Vocabulary::Xesam::Message()
 QUrl Soprano::Vocabulary::Xesam::MessageboxMessage()
 {
     return s_xesam()->xesam_MessageboxMessage;
+}
+
+QUrl Soprano::Vocabulary::Xesam::Music()
+{
+    return s_xesam()->xesam_Music;
+}
+
+QUrl Soprano::Vocabulary::Xesam::NewsGroup()
+{
+    return s_xesam()->xesam_NewsGroup;
 }
 
 QUrl Soprano::Vocabulary::Xesam::NewsGroupEmail()
@@ -742,6 +795,11 @@ QUrl Soprano::Vocabulary::Xesam::Project()
     return s_xesam()->xesam_Project;
 }
 
+QUrl Soprano::Vocabulary::Xesam::RSSFeed()
+{
+    return s_xesam()->xesam_RSSFeed;
+}
+
 QUrl Soprano::Vocabulary::Xesam::RSSMessage()
 {
     return s_xesam()->xesam_RSSMessage;
@@ -767,6 +825,11 @@ QUrl Soprano::Vocabulary::Xesam::RevisionControlledFile()
     return s_xesam()->xesam_RevisionControlledFile;
 }
 
+QUrl Soprano::Vocabulary::Xesam::RevisionControlledRepository()
+{
+    return s_xesam()->xesam_RevisionControlledRepository;
+}
+
 QUrl Soprano::Vocabulary::Xesam::SoftwarePackage()
 {
     return s_xesam()->xesam_SoftwarePackage;
@@ -785,6 +848,11 @@ QUrl Soprano::Vocabulary::Xesam::SourceCode()
 QUrl Soprano::Vocabulary::Xesam::Spreadsheet()
 {
     return s_xesam()->xesam_Spreadsheet;
+}
+
+QUrl Soprano::Vocabulary::Xesam::SystemResource()
+{
+    return s_xesam()->xesam_SystemResource;
 }
 
 QUrl Soprano::Vocabulary::Xesam::Tag()
@@ -1187,6 +1255,11 @@ QUrl Soprano::Vocabulary::Xesam::exposureTime()
     return s_xesam()->xesam_exposureTime;
 }
 
+QUrl Soprano::Vocabulary::Xesam::familyName()
+{
+    return s_xesam()->xesam_familyName;
+}
+
 QUrl Soprano::Vocabulary::Xesam::faxPhoneNumber()
 {
     return s_xesam()->xesam_faxPhoneNumber;
@@ -1267,6 +1340,11 @@ QUrl Soprano::Vocabulary::Xesam::genre()
     return s_xesam()->xesam_genre;
 }
 
+QUrl Soprano::Vocabulary::Xesam::givenName()
+{
+    return s_xesam()->xesam_givenName;
+}
+
 QUrl Soprano::Vocabulary::Xesam::group()
 {
     return s_xesam()->xesam_group;
@@ -1297,6 +1375,16 @@ QUrl Soprano::Vocabulary::Xesam::homepageContactURL()
     return s_xesam()->xesam_homepageContactURL;
 }
 
+QUrl Soprano::Vocabulary::Xesam::honorificPrefix()
+{
+    return s_xesam()->xesam_honorificPrefix;
+}
+
+QUrl Soprano::Vocabulary::Xesam::honorificSuffix()
+{
+    return s_xesam()->xesam_honorificSuffix;
+}
+
 QUrl Soprano::Vocabulary::Xesam::horizontalResolution()
 {
     return s_xesam()->xesam_horizontalResolution;
@@ -1317,9 +1405,9 @@ QUrl Soprano::Vocabulary::Xesam::inReplyTo()
     return s_xesam()->xesam_inReplyTo;
 }
 
-QUrl Soprano::Vocabulary::Xesam::interests()
+QUrl Soprano::Vocabulary::Xesam::interest()
 {
-    return s_xesam()->xesam_interests;
+    return s_xesam()->xesam_interest;
 }
 
 QUrl Soprano::Vocabulary::Xesam::interlaceMode()
@@ -1350,6 +1438,11 @@ QUrl Soprano::Vocabulary::Xesam::isImportant()
 QUrl Soprano::Vocabulary::Xesam::isInProgress()
 {
     return s_xesam()->xesam_isInProgress;
+}
+
+QUrl Soprano::Vocabulary::Xesam::isPublicChannel()
+{
+    return s_xesam()->xesam_isPublicChannel;
 }
 
 QUrl Soprano::Vocabulary::Xesam::isRead()
@@ -1525,6 +1618,11 @@ QUrl Soprano::Vocabulary::Xesam::originURL()
 QUrl Soprano::Vocabulary::Xesam::originalLocation()
 {
     return s_xesam()->xesam_originalLocation;
+}
+
+QUrl Soprano::Vocabulary::Xesam::otherName()
+{
+    return s_xesam()->xesam_otherName;
 }
 
 QUrl Soprano::Vocabulary::Xesam::owner()
