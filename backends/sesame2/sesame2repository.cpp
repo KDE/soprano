@@ -73,7 +73,7 @@ Soprano::Sesame2::RepositoryWrapper* Soprano::Sesame2::RepositoryWrapper::create
 
     // triple indexes: default indexes + index to query on graphs which we do often in Nepomuk
     // FIXME: it would be great to make this configurable through Soprano
-    JStringRef tripleIndexes( QString::fromLatin1( "spoc,posc,cspo" ) );
+    JStringRef tripleIndexes( QString::fromLatin1( "spoc,posc,opsc,cspo" ) );
 
     // create an instance of org.openrdf.sail.nativerdf.NativeStore;
     JObjectRef store = JNIWrapper::instance()->constructObject( ORG_OPENRDF_SAIL_NATIVERDF_NATIVESTORE,
