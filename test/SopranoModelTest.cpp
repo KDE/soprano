@@ -32,6 +32,7 @@
 #include <QtCore/QTime>
 #include <QtCore/QUrl>
 #include <QtCore/QUuid>
+#include <QtCore/QCoreApplication>
 #include <QtTest/QSignalSpy>
 
 
