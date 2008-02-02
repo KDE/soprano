@@ -37,7 +37,7 @@ namespace Soprano {
         class DBusModel;
 
         /**
-         * \class DBusClient dbusclient.h Soprano/Server/DBusClient
+         * \class DBusClient dbusclient.h Soprano/Client/DBusClient
          *
          * \brief Core class to handle a connection to a Soprano server through the
          * DBus interface.
