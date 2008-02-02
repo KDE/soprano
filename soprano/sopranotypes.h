@@ -33,15 +33,16 @@ namespace Soprano
      * Different types of RDF serialization.
      */
     // FIXME: what about the used charsets? Should we and if so, how should we include them?
+    // FIXME: SerializationUnknown and SerializationUser should become the same, i.e. one should become deprecated
     enum RdfSerialization {
-        SerializationUnknown = 0x0,  /**< The serialization is unknown. */
-        SerializationRdfXml = 0x1,   /**< Standard RDF/XML serialization */
+        SerializationUnknown = 0x0,   /**< The serialization is unknown. */
+        SerializationRdfXml = 0x1,    /**< Standard RDF/XML serialization */
         SerializationN3 = 0x2,        /**< Notation 3: http://www.w3.org/DesignIssues/Notation3 */
         SerializationNTriples = 0x4,  /**< N-Triples as defined by W3: http://www.w3.org/TR/rdf-testcases/#ntriples */
         SerializationTurtle = 0x8,    /**< Turtle - Terse RDF Triple Language: http://www.dajobe.org/2004/01/turtle/ */
         SerializationTrig = 0x10,     /**< TriG - Turtle + Named Graphs: http://sites.wiwiss.fu-berlin.de/suhl/bizer/TriG/ */
         SerializationNQuads = 0x20,   /**< N-Quads extends over N-Triples in that it adds an optional context node. */
-        SerializationUser = 0x1000    /**< The user type can be used to introduce unknown RDF serializations by name */
+        SerializationUser = 0x0       /**< The user type can be used to introduce unknown RDF serializations by name */
     };
     Q_DECLARE_FLAGS(RdfSerializations, RdfSerialization)
 

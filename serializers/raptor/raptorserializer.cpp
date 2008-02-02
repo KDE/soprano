@@ -53,7 +53,27 @@ Soprano::Raptor::Serializer::~Serializer()
 
 Soprano::RdfSerializations Soprano::Raptor::Serializer::supportedSerializations() const
 {
-    return SerializationRdfXml|SerializationNTriples|SerializationTurtle;
+    return SerializationRdfXml|SerializationNTriples|SerializationTurtle|SerializationUser;
+}
+
+
+QStringList Soprano::Raptor::Serializer::supportedUserSerializations() const
+{
+    QStringList sl;
+    int i = 0;
+    const char* name = 0;
+    const char* label = 0;
+    const char* mimeType = 0;
+    const unsigned char* uri = 0;
+    while ( !raptor_serializers_enumerate( i,
+                                           &name,
+                                           &label,
+                                           &mimeType,
+                                           &uri ) ) {
+        sl << QString::fromUtf8( name );
+        ++i;
+    }
+    return sl;
 }
 
 
@@ -144,6 +164,12 @@ bool Soprano::Raptor::Serializer::serialize( StatementIterator it,
     if ( serialization == SerializationRdfXml ) {
         serializer = librdf_new_serializer( Redland::World::self()->worldPtr(),
                                             "rdfxml",
+                                            0,
+                                            0 );
+    }
+    else if ( serialization == SerializationUser ) {
+        serializer = librdf_new_serializer( Redland::World::self()->worldPtr(),
+                                            userSerialization.toLatin1().data(),
                                             0,
                                             0 );
     }

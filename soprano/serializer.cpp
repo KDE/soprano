@@ -46,7 +46,7 @@ Soprano::Serializer::~Serializer()
 
 bool Soprano::Serializer::supportsSerialization( RdfSerialization s, const QString& userSerialization ) const
 {
-    if ( s == SerializationUser ) {
+    if ( s == SerializationUser || s == SerializationUnknown ) {
         return supportedUserSerializations().contains( userSerialization );
     }
     else {

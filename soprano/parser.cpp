@@ -71,7 +71,7 @@ Soprano::StatementIterator Soprano::Parser::parseString( const QString& data, co
 
 bool Soprano::Parser::supportsSerialization( RdfSerialization s, const QString& userSerialization ) const
 {
-    if ( s == SerializationUser ) {
+    if ( s == SerializationUser || s == SerializationUnknown ) {
         return supportedUserSerializations().contains( userSerialization );
     }
     else {

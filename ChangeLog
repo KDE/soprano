@@ -1,6 +1,8 @@
 2.1
 	* SignalCacheModel to restrict the number of emitted statementsAdded and statementsRemoved signals
 	  in a certain timeframe.
+	* Raptor serializer now supports all raptor serializer factory names which are mapped to Soprano
+	  user serialization types.
 
 2.0
 	* LiteralValue is not derived from QVariant anymore but uses it internally
