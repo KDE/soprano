@@ -1,5 +1,8 @@
 2.0.1
 	* Fixed method statementCount in Sesame2 backend
+	* Redland backend: Always encode strings as xls:string rather than rdfs:Literal values to match the 
+	  Soprano guidelines.
+	* Always set a dummy base URI in the raptor serializer
 
 2.0
 	* LiteralValue is not derived from QVariant anymore but uses it internally
