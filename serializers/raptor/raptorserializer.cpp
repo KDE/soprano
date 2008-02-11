@@ -223,8 +223,11 @@ bool Soprano::Raptor::Serializer::serialize( StatementIterator it,
         return false;
     }
 
+    librdf_uri* baseUri = librdf_new_uri( Redland::World::self()->worldPtr(),
+                                          ( const unsigned char* )"http://soprano.org/FIXME/WeNeedABaseUriParameter" );
+
     if ( librdf_serializer_serialize_stream_to_iostream( serializer,
-                                                         0,
+                                                         baseUri,
                                                          rdfStream,
                                                          raptorStream ) ) {
         qDebug() << "(Soprano::Raptor::Serializer) serialization failed.";
@@ -232,6 +235,7 @@ bool Soprano::Raptor::Serializer::serialize( StatementIterator it,
         success = false;
     }
 
+    librdf_free_uri( baseUri );
     librdf_free_stream( rdfStream );
     librdf_free_serializer( serializer );
 
