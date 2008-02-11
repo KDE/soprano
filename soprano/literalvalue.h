@@ -57,6 +57,10 @@ namespace Soprano
      *
      * Literal values can be converted from strings via fromString().
      *
+     * \warning Be aware that string literals in %Soprano always have type
+     * xsd:string. There is no direct support for rdfs:Literal. Backend implementations
+     * should honour this restriction.
+     *
      * \sa Vocabulary::XMLSchema
      *
      * \author Sebastian Trueg <trueg@kde.org>

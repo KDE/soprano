@@ -3,6 +3,7 @@
 	  in a certain timeframe.
 	* Raptor serializer now supports all raptor serializer factory names which are mapped to Soprano
 	  user serialization types.
+	* Changed mimetype of N-Triples to "application/n-triples"
 
 2.0
 	* LiteralValue is not derived from QVariant anymore but uses it internally

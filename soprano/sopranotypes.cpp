@@ -32,7 +32,7 @@ QString Soprano::serializationMimeType( RdfSerialization serialization, const QS
     case SerializationN3:
         return QString::fromLatin1( "text/rdf+n3" );
     case SerializationNTriples:
-        return QString::fromLatin1( "text/plain" ); // FIXME: is this correct?
+        return QString::fromLatin1( "application/n-triples" ); // FIXME: is this correct?
     case SerializationTurtle:
         return QString::fromLatin1( "application/x-turtle" );
     case SerializationTrig:
