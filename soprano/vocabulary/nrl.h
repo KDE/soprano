@@ -29,14 +29,9 @@ namespace Soprano {
     namespace Vocabulary {
         namespace NRL {
             /**
-             * http://semanticdesktop.org/ontologies/2007/08/15/
+             * http://semanticdesktop.org/ontologies/2007/08/15#
              */
             SOPRANO_EXPORT QUrl nrlNamespace();
-
-            /**
-             * http://semanticdesktop.org/ontologies/2007/08/15/nrl 
-             */
-            SOPRANO_EXPORT QUrl nrl();
 
             /**
              * http://www.semanticdesktop.org/ontologies/2007/08/15/nrl#AsymmetricProperty 
