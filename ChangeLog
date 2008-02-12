@@ -3,6 +3,7 @@
 	* Redland backend: Always encode strings as xls:string rather than rdfs:Literal values to match the 
 	  Soprano guidelines.
 	* Always set a dummy base URI in the raptor serializer
+	* Fixed formatting of dateTime values.
 
 2.0
 	* LiteralValue is not derived from QVariant anymore but uses it internally
