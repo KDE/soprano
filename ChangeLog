@@ -4,6 +4,8 @@
 	  Soprano guidelines.
 	* Always set a dummy base URI in the raptor serializer
 	* Fixed formatting of dateTime values.
+	* Fixed NRL namespace
+	* Fixed NAO namespace
 
 2.0
 	* LiteralValue is not derived from QVariant anymore but uses it internally
