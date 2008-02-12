@@ -29,7 +29,7 @@ namespace Soprano {
     namespace Vocabulary {
         namespace NAO {
             /**
-             * http://www.semanticdesktop.org/ontologies/2007/08/15#
+             * http://www.semanticdesktop.org/ontologies/2007/08/15/nao#
              */
             SOPRANO_EXPORT QUrl naoNamespace();
 

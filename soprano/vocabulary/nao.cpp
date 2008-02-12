@@ -25,7 +25,7 @@ class NaoPrivate
 {
 public:
     NaoPrivate()
-        : nao_namespace( "http://www.semanticdesktop.org/ontologies/2007/08/15#" ),
+        : nao_namespace( "http://www.semanticdesktop.org/ontologies/2007/08/15/nao#" ),
           nao_Party( "http://www.semanticdesktop.org/ontologies/2007/08/15/nao#Party" ),
           nao_Symbol( "http://www.semanticdesktop.org/ontologies/2007/08/15/nao#Symbol" ),
           nao_Tag( "http://www.semanticdesktop.org/ontologies/2007/08/15/nao#Tag" ),

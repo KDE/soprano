@@ -25,7 +25,7 @@ class NrlPrivate
 {
 public:
     NrlPrivate()
-        : nrl_namespace( "http://semanticdesktop.org/ontologies/2007/08/15#" ),
+        : nrl_namespace( "http://semanticdesktop.org/ontologies/2007/08/15/nrl#" ),
           nrl_AsymmetricProperty( "http://www.semanticdesktop.org/ontologies/2007/08/15/nrl#AsymmetricProperty" ),
           nrl_Configuration( "http://www.semanticdesktop.org/ontologies/2007/08/15/nrl#Configuration" ),
           nrl_Data( "http://www.semanticdesktop.org/ontologies/2007/08/15/nrl#Data" ),
