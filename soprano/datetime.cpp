@@ -210,12 +210,7 @@ QString Soprano::DateTime::toString( const QTime& t )
             frac.truncate( frac.length() -1 );
     }
 
-    // Comma is preferred by ISO8601 as the decimal point symbol,
-    // so use it unless '.' is the symbol used in this locale.
-    return t.toString( "HH:mm:ss" )
-        + ( QLocale::system().decimalPoint() == QChar( '.' ) ? QChar( '.' ) : QChar( ',' ) )
-        + frac
-        + 'Z';
+    return t.toString( "HH:mm:ss" ) + '.' + frac + 'Z';
 }
 
 
