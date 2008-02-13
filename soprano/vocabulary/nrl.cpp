@@ -25,8 +25,7 @@ class NrlPrivate
 {
 public:
     NrlPrivate()
-        : nrl_namespace( "http://semanticdesktop.org/ontologies/2007/08/15/" ),
-          nrl_nrl( "http://semanticdesktop.org/ontologies/2007/08/15/nrl" ),
+        : nrl_namespace( "http://semanticdesktop.org/ontologies/2007/08/15/nrl#" ),
           nrl_AsymmetricProperty( "http://www.semanticdesktop.org/ontologies/2007/08/15/nrl#AsymmetricProperty" ),
           nrl_Configuration( "http://www.semanticdesktop.org/ontologies/2007/08/15/nrl#Configuration" ),
           nrl_Data( "http://www.semanticdesktop.org/ontologies/2007/08/15/nrl#Data" ),
@@ -70,7 +69,6 @@ public:
     }
 
     QUrl nrl_namespace;
-    QUrl nrl_nrl;
     QUrl nrl_AsymmetricProperty;
     QUrl nrl_Configuration;
     QUrl nrl_Data;
@@ -118,11 +116,6 @@ Q_GLOBAL_STATIC( NrlPrivate, s_nrl )
 QUrl Soprano::Vocabulary::NRL::nrlNamespace()
 {
     return s_nrl()->nrl_namespace;
-}
-
-QUrl Soprano::Vocabulary::NRL::nrl()
-{
-    return s_nrl()->nrl_nrl;
 }
 
 QUrl Soprano::Vocabulary::NRL::AsymmetricProperty()

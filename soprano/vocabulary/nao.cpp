@@ -25,8 +25,7 @@ class NaoPrivate
 {
 public:
     NaoPrivate()
-        : nao_namespace( "http://www.semanticdesktop.org/ontologies/2007/08/15/" ),
-          nao_nao( "http://www.semanticdesktop.org/ontologies/2007/08/15/nao" ),
+        : nao_namespace( "http://www.semanticdesktop.org/ontologies/2007/08/15/nao#" ),
           nao_Party( "http://www.semanticdesktop.org/ontologies/2007/08/15/nao#Party" ),
           nao_Symbol( "http://www.semanticdesktop.org/ontologies/2007/08/15/nao#Symbol" ),
           nao_Tag( "http://www.semanticdesktop.org/ontologies/2007/08/15/nao#Tag" ),
@@ -60,7 +59,6 @@ public:
     }
 
     QUrl nao_namespace;
-    QUrl nao_nao;
     QUrl nao_Party;
     QUrl nao_Symbol;
     QUrl nao_Tag;
@@ -98,11 +96,6 @@ Q_GLOBAL_STATIC( NaoPrivate, s_nao )
 QUrl Soprano::Vocabulary::NAO::naoNamespace()
 {
     return s_nao()->nao_namespace;
-}
-
-QUrl Soprano::Vocabulary::NAO::nao()
-{
-    return s_nao()->nao_nao;
 }
 
 QUrl Soprano::Vocabulary::NAO::Party()
