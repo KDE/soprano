@@ -1,7 +1,7 @@
 /*
  * This file is part of Soprano Project.
  *
- * Copyright (C) 2007 Sebastian Trueg <trueg@kde.org>
+ * Copyright (C) 2007-2008 Sebastian Trueg <trueg@kde.org>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -69,18 +69,18 @@ namespace {
         if (pos < 0) {
             pos = 0;
         }
-        
+
         QStringList libNames;
         if (libname.indexOf('.', pos) < 0) {
             const char* const extList[] = { ".so", ".dylib", ".bundle", ".sl" };
             for (uint i = 0; i < sizeof(extList) / sizeof(*extList); ++i) {
                 if (QLibrary::isLibrary(libname + extList[i])) {
-                    qDebug() << "(Soprano::PluginManager) plugin extension [" << extList[i]<< " ]";
                     libNames.append(libname + extList[i]);
                 }
             }
-        } else {
-            libNames.append(libname);  
+        }
+        else {
+            libNames.append(libname);
         }
         return libNames;
 #endif
@@ -109,25 +109,43 @@ namespace {
 
         return paths;
     }
-    
+
+    /**
+     * lib dirs without lib suffix or trailing slash.
+     */
+    QStringList libDirs()
+    {
+        QStringList paths;
+        paths << QLatin1String( SOPRANO_PREFIX"/lib" );
+        paths << QLatin1String( "/usr/lib" );
+        paths << QLatin1String( "/usr/local/lib" );
+#ifndef Q_OS_WIN
+        paths += envDirList( "LD_LIBRARY_PATH" );
+#endif
+        return paths;
+    }
+
     QString findPluginLib( const Soprano::SopranoPluginFile& file )
     {
         QStringList libs = makeLibName( file.library() );
         Q_FOREACH( QString lib, libs ) {
-        	   qDebug() << "(Soprano::PluginManager::findPluginLib)" << lib;
             if ( lib.startsWith( "/" ) ) {
                 return lib;
             }
             else {
-                QString basePath = file.fileName().section( "/", 0, -4, QString::SectionIncludeTrailingSep );                
-                if ( QFile::exists( basePath + "lib"SOPRANO_LIB_SUFFIX"/soprano/" + lib ) ) {
-                    return basePath + "lib"SOPRANO_LIB_SUFFIX"/soprano/" + lib;
-                }
-                else if ( QFile::exists( basePath + "lib/soprano/" + lib ) ) {
-                    return basePath + "lib/soprano/" + lib;
-                }
-                else if ( QFile::exists( basePath + "lib64/soprano/" + lib ) ) {
-                    return basePath + "lib64/soprano/" + lib;
+                QStringList dirs( libDirs() );
+                dirs.prepend( file.fileName().section( "/", 0, -5, QString::SectionIncludeTrailingSep ) + "lib" );
+
+                foreach( QString dir, dirs ) {
+                    if ( QFile::exists( dir + SOPRANO_LIB_SUFFIX"/soprano/" + lib ) ) {
+                        return dir + SOPRANO_LIB_SUFFIX"/soprano/" + lib;
+                    }
+                    else if ( QFile::exists( dir + "/soprano/" + lib ) ) {
+                        return dir + "/soprano/" + lib;
+                    }
+                    else if ( QFile::exists( dir + "64/soprano/" + lib ) ) {
+                        return dir + "64/soprano/" + lib;
+                    }
                 }
             }
         }
@@ -201,6 +219,50 @@ const Soprano::Serializer* Soprano::PluginManager::discoverSerializerForSerializ
 }
 
 
+// const Soprano::Query::Parser* Soprano::PluginManager::discoverQueryParserByName( const QString& name )
+// {
+//     QHash<QString, Query::Parser*>::iterator it = d->queryParsers.find( name );
+//     if( it != d->queryParsers.end() )
+//         return *it;
+//     else
+//         return 0;
+// }
+
+
+// const Soprano::Query::Parser* Soprano::PluginManager::discoverQueryParserForQueryLanguage( Query::QueryLanguage lang, const QString& userQueryLanguage )
+// {
+//     for( QHash<QString, Query::Parser*>::const_iterator it = d->queryParsers.begin(); it != d->queryParsers.end(); ++it ) {
+//         const Query::Parser* p = *it;
+//         if( p->supportsQueryLanguage( lang, userQueryLanguage ) ) {
+//             return p;
+//         }
+//     }
+//     return 0;
+// }
+
+
+// const Soprano::Query::Serializer* Soprano::PluginManager::discoverQuerySerializerByName( const QString& name )
+// {
+//     QHash<QString, Query::Serializer*>::iterator it = d->querySerializers.find( name );
+//     if( it != d->querySerializers.end() )
+//         return *it;
+//     else
+//         return 0;
+// }
+
+
+// const Soprano::Query::Serializer* Soprano::PluginManager::discoverQuerySerializerForQueryLanguage( Query::QueryLanguage lang, const QString& userQueryLanguage )
+// {
+//     for( QHash<QString, Query::Serializer*>::const_iterator it = d->querySerializers.begin(); it != d->querySerializers.end(); ++it ) {
+//         const Query::Serializer* p = *it;
+//         if( p->supportsQueryLanguage( lang, userQueryLanguage ) ) {
+//             return p;
+//         }
+//     }
+//     return 0;
+// }
+
+
 QList<const Soprano::Backend*> Soprano::PluginManager::allBackends()
 {
     QList<const Backend*> bl;
@@ -233,6 +295,29 @@ QList<const Soprano::Serializer*> Soprano::PluginManager::allSerializers()
     return pl;
 }
 
+
+// QList<const Soprano::Query::Parser*> Soprano::PluginManager::allQueryParsers()
+// {
+//     QList<const Query::Parser*> pl;
+//     for ( QHash<QString, Query::Parser*>::const_iterator it = d->queryParsers.constBegin();
+//           it != d->queryParsers.constEnd(); ++it ) {
+//         pl.append( it.value() );
+//     }
+//     return pl;
+// }
+
+
+// QList<const Soprano::Query::Serializer*> Soprano::PluginManager::allQuerySerializers()
+// {
+//     QList<const Query::Serializer*> pl;
+//     for ( QHash<QString, Query::Serializer*>::const_iterator it = d->querySerializers.constBegin();
+//           it != d->querySerializers.constEnd(); ++it ) {
+//         pl.append( it.value() );
+//     }
+//     return pl;
+// }
+
+
 Soprano::PluginManager::PluginManager( QObject* parent )
     : QObject( parent ),
       d( new Private )
@@ -259,7 +344,6 @@ void Soprano::PluginManager::loadAllPlugins()
     QStringList dirs = dataDirs();
     Q_FOREACH( QString dir, dirs ) {
         QDir pluginDir( dir + "/soprano/plugins" );
-        qDebug() << "(Soprano::PluginManager) searching plugin file from " << pluginDir.absolutePath();
         QStringList pluginFiles = pluginDir.entryList( QStringList( QLatin1String( "*.desktop" ) ) );
         Q_FOREACH( QString plugin, pluginFiles ) {
             loadPlugin( pluginDir.absoluteFilePath( plugin ) );
@@ -275,7 +359,6 @@ void Soprano::PluginManager::loadPlugin( const QString& path )
         if ( f.sopranoVersion().left( f.sopranoVersion().indexOf( '.' ) ).toUInt() == Soprano::versionMajor() ) {
             qDebug() << "(Soprano::PluginManager) plugin has proper version. Trying to load lib:" << f.library();
             QString libPath = findPluginLib( f );
-
             QPluginLoader loader( libPath );
             QObject* plugin = loader.instance();
             Plugin* sopranoPlugin = dynamic_cast<Plugin*>( plugin );
@@ -324,10 +407,6 @@ void Soprano::PluginManager::loadPlugin( const QString& path )
             else {
                 qDebug() << "(Soprano::PluginManager) found no plugin at " << libPath;
             }
-        } else {
-        	   qDebug() << "(Soprano::PluginManager) plugin has major version:" 
-        	            << f.sopranoVersion().left( f.sopranoVersion().indexOf( '.' ) ).toUInt()
-                     << "required major version:" << Soprano::versionMajor();         			
         }
     }
 }

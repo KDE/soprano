@@ -6,6 +6,7 @@
 	* Fixed formatting of dateTime values.
 	* Fixed NRL namespace
 	* Fixed NAO namespace
+	* Fixed plugin loading on MAC OS/X
 
 2.0
 	* LiteralValue is not derived from QVariant anymore but uses it internally
