@@ -1,7 +1,7 @@
 /*
  * This file is part of Soprano Project.
  *
- * Copyright (C) 2007 Sebastian Trueg <trueg@kde.org>
+ * Copyright (C) 2007-2008 Sebastian Trueg <trueg@kde.org>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -69,18 +69,18 @@ namespace {
         if (pos < 0) {
             pos = 0;
         }
-        
+
         QStringList libNames;
         if (libname.indexOf('.', pos) < 0) {
             const char* const extList[] = { ".so", ".dylib", ".bundle", ".sl" };
             for (uint i = 0; i < sizeof(extList) / sizeof(*extList); ++i) {
                 if (QLibrary::isLibrary(libname + extList[i])) {
-                    qDebug() << "(Soprano::PluginManager) plugin extension [" << extList[i]<< " ]";
                     libNames.append(libname + extList[i]);
                 }
             }
-        } else {
-            libNames.append(libname);  
+        }
+        else {
+            libNames.append(libname);
         }
         return libNames;
 #endif
@@ -109,25 +109,43 @@ namespace {
 
         return paths;
     }
-    
+
+    /**
+     * lib dirs without lib suffix or trailing slash.
+     */
+    QStringList libDirs()
+    {
+        QStringList paths;
+        paths << QLatin1String( SOPRANO_PREFIX"/lib" );
+        paths << QLatin1String( "/usr/lib" );
+        paths << QLatin1String( "/usr/local/lib" );
+#ifndef Q_OS_WIN
+        paths += envDirList( "LD_LIBRARY_PATH" );
+#endif
+        return paths;
+    }
+
     QString findPluginLib( const Soprano::SopranoPluginFile& file )
     {
         QStringList libs = makeLibName( file.library() );
         Q_FOREACH( QString lib, libs ) {
-        	   qDebug() << "(Soprano::PluginManager::findPluginLib)" << lib;
             if ( lib.startsWith( "/" ) ) {
                 return lib;
             }
             else {
-                QString basePath = file.fileName().section( "/", 0, -4, QString::SectionIncludeTrailingSep );                
-                if ( QFile::exists( basePath + "lib"SOPRANO_LIB_SUFFIX"/soprano/" + lib ) ) {
-                    return basePath + "lib"SOPRANO_LIB_SUFFIX"/soprano/" + lib;
-                }
-                else if ( QFile::exists( basePath + "lib/soprano/" + lib ) ) {
-                    return basePath + "lib/soprano/" + lib;
-                }
-                else if ( QFile::exists( basePath + "lib64/soprano/" + lib ) ) {
-                    return basePath + "lib64/soprano/" + lib;
+                QStringList dirs( libDirs() );
+                dirs.prepend( file.fileName().section( "/", 0, -5, QString::SectionIncludeTrailingSep ) + "lib" );
+
+                foreach( QString dir, dirs ) {
+                    if ( QFile::exists( dir + SOPRANO_LIB_SUFFIX"/soprano/" + lib ) ) {
+                        return dir + SOPRANO_LIB_SUFFIX"/soprano/" + lib;
+                    }
+                    else if ( QFile::exists( dir + "/soprano/" + lib ) ) {
+                        return dir + "/soprano/" + lib;
+                    }
+                    else if ( QFile::exists( dir + "64/soprano/" + lib ) ) {
+                        return dir + "64/soprano/" + lib;
+                    }
                 }
             }
         }
@@ -325,9 +343,9 @@ void Soprano::PluginManager::loadPlugin( const QString& path )
                 qDebug() << "(Soprano::PluginManager) found no plugin at " << libPath;
             }
         } else {
-        	   qDebug() << "(Soprano::PluginManager) plugin has major version:" 
+        	   qDebug() << "(Soprano::PluginManager) plugin has major version:"
         	            << f.sopranoVersion().left( f.sopranoVersion().indexOf( '.' ) ).toUInt()
-                     << "required major version:" << Soprano::versionMajor();         			
+                     << "required major version:" << Soprano::versionMajor();
         }
     }
 }
