@@ -80,6 +80,7 @@ SET(soprano_SRCS
   desktopfile.cpp
   sopranopluginfile.cpp
   util/looplock.cpp
+  util/extreadwritelock.cpp
   util/mutexmodel.cpp
   util/mutexstatementiteratorbackend.cpp
   util/mutexnodeiteratorbackend.cpp

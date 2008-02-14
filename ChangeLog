@@ -1,3 +1,8 @@
+2.0.2
+	* MutexModel in ReadWriteMultiThreading mode now allows multiple read operations from the same thread
+	  at the same time even if a write operation is waiting. This fixes a deadlock in the Nepomuk Strigi
+	  backend from KDE.
+
 2.0.1
 	* Fixed method statementCount in Sesame2 backend
 	* Redland backend: Always encode strings as xls:string rather than rdfs:Literal values to match the 
