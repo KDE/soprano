@@ -25,7 +25,7 @@
 #include "dbusmodeladaptor.h"
 #include "modelwrapper.h"
 
-#include <soprano/model.h>
+#include "model.h"
 
 #include <QtCore/QHash>
 #include <QtCore/QRegExp>

@@ -24,7 +24,7 @@
 
 #include <QtCore/QDataStream>
 
-#include <soprano/error.h>
+#include "error.h"
 
 namespace Soprano {
     class Node;

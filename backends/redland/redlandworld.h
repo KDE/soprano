@@ -25,7 +25,7 @@
 
 #include <redland.h>
 
-#include <soprano/error.h>
+#include "error.h"
 
 #include <QtCore/QStringList>
 

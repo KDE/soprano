@@ -22,7 +22,7 @@
 #ifndef _SOPRANO_SERVER_CLIENT_MODEL_H_
 #define _SOPRANO_SERVER_CLIENT_MODEL_H_
 
-#include <soprano/storagemodel.h>
+#include "storagemodel.h"
 
 #include <QtCore/QList>
 #include <QtCore/QPointer>

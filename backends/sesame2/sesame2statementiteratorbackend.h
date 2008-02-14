@@ -22,7 +22,7 @@
 #ifndef _SOPRANO_SESAME2_STATEMENT_ITERATOR_BACKEND_H_
 #define _SOPRANO_SESAME2_STATEMENT_ITERATOR_BACKEND_H_
 
-#include <soprano/iteratorbackend.h>
+#include "iteratorbackend.h"
 
 #include <jni.h>
 

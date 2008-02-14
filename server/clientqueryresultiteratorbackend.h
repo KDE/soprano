@@ -22,7 +22,7 @@
 #ifndef _SOPRANO_SERVER_CLIENT_QUERYRESULT_ITERATOR_H_
 #define _SOPRANO_SERVER_CLIENT_QUERYRESULT_ITERATOR_H_
 
-#include <soprano/queryresultiteratorbackend.h>
+#include "queryresultiteratorbackend.h"
 
 #include <QtCore/QPointer>
 

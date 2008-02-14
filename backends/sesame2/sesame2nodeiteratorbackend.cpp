@@ -25,7 +25,7 @@
 #include "sesame2model.h"
 #include "jniwrapper.h"
 
-#include <soprano/node.h>
+#include "node.h"
 
 #include <QtCore/QDebug>
 

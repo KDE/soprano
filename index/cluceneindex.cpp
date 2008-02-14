@@ -533,7 +533,7 @@ Soprano::Iterator<Soprano::Index::QueryHit> Soprano::Index::CLuceneIndex::search
         return hits;
     }
     catch( CLuceneError& err ) {
-        qDebug() << "search failed: " << err.what();
+        qDebug() << "search" << query << "failed: " << err.what();
         setError( exceptionToError( err ) );
         return Iterator<QueryHit>();
     }

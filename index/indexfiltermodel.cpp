@@ -22,8 +22,8 @@
 #include "indexfiltermodel.h"
 #include "cluceneindex.h"
 #include "queryhitwrapperresultiteratorbackend.h"
-#include <soprano/queryresultiterator.h>
-#include <soprano/statementiterator.h>
+#include "queryresultiterator.h"
+#include "statementiterator.h"
 
 #include <CLucene.h>
 

@@ -22,7 +22,7 @@
 #ifndef _SOPRANO_SERVER_DBUS_CLIENT_NODE_ITERATOR_BACKEND_H_
 #define _SOPRANO_SERVER_DBUS_CLIENT_NODE_ITERATOR_BACKEND_H_
 
-#include <soprano/iteratorbackend.h>
+#include "iteratorbackend.h"
 
 namespace Soprano {
 

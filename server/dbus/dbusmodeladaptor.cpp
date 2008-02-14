@@ -76,6 +76,9 @@ Soprano::Server::DBusModelAdaptor::DBusModelAdaptor( Model* model, QObject* pare
 
     d->dbusObjectPath = dbusObjectPath;
     d->origModel = model;
+    // TODO: What would be perfect here was a read/write locking that would in general prefer write locks over read locks
+    //       (like QReadWriteLock) with one exception: if the same DBus service currently read-locking wants to lock for read
+    //       again, we allow it.
     d->model = new Util::MutexModel( Util::MutexModel::ReadWriteSingleThreading, model );
 
     // we cannot use setAutoRelaySignals here since that would connect (non-existing)

@@ -22,7 +22,7 @@
 #ifndef _SERVER_BACKEND_H_
 #define _SERVER_BACKEND_H_
 
-#include <soprano/backend.h>
+#include "backend.h"
 #include "../soprano/soprano_export.h"
 
 #include <QObject>

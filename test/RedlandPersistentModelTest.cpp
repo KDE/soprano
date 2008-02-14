@@ -21,7 +21,7 @@
 
 #include "RedlandPersistentModelTest.h"
 
-#include <soprano/soprano.h>
+#include "soprano.h"
 
 #include <QtCore/QFile>
 

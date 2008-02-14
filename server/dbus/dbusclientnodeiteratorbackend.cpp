@@ -23,7 +23,7 @@
 #include "dbusnodeiteratorinterface.h"
 #include "dbusutil.h"
 
-#include <soprano/node.h>
+#include "node.h"
 
 
 Soprano::Client::DBusClientNodeIteratorBackend::DBusClientNodeIteratorBackend( const QString& serviceName, const QString& objectPath )

@@ -23,9 +23,9 @@
 #include "sesame2types.h"
 #include "jniwrapper.h"
 
-#include <soprano/node.h>
-#include <soprano/statement.h>
-#include <soprano/literalvalue.h>
+#include "node.h"
+#include "statement.h"
+#include "literalvalue.h"
 
 #include <QtCore/QDebug>
 

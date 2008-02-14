@@ -25,9 +25,9 @@
 #include <QtCore/QVariant>
 #include <QtDBus/QtDBus>
 
-#include <soprano/bindingset.h>
-#include <soprano/node.h>
-#include <soprano/statement.h>
+#include "bindingset.h"
+#include "node.h"
+#include "statement.h"
 
 Q_DECLARE_METATYPE(Soprano::BindingSet)
     Q_DECLARE_METATYPE(Soprano::Statement)

@@ -24,9 +24,9 @@
 
 #include <QtCore/QObject>
 
-#include <soprano/statementiterator.h>
-#include <soprano/nodeiterator.h>
-#include <soprano/queryresultiterator.h>
+#include "statementiterator.h"
+#include "nodeiterator.h"
+#include "queryresultiterator.h"
 
 namespace Soprano {
     namespace Server {

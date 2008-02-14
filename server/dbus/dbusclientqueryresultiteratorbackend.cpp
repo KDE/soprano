@@ -23,8 +23,8 @@
 #include "dbusqueryresultiteratorinterface.h"
 #include "dbusutil.h"
 
-#include <soprano/statement.h>
-#include <soprano/bindingset.h>
+#include "statement.h"
+#include "bindingset.h"
 
 
 Soprano::Client::DBusClientQueryResultIteratorBackend::DBusClientQueryResultIteratorBackend( const QString& serviceName, const QString& objectPath )

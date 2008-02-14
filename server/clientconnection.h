@@ -22,8 +22,8 @@
 #ifndef _SOPRANO_SERVER_CLIENT_CONNECTION_H_
 #define _SOPRANO_SERVER_CLIENT_CONNECTION_H_
 
-#include <soprano/error.h>
-#include <soprano/sopranotypes.h>
+#include "error.h"
+#include "sopranotypes.h"
 
 #include <QtCore/QObject>
 #include <QtCore/QList>

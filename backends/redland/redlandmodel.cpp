@@ -22,9 +22,9 @@
 
 #include "redlandmodel.h"
 
-#include <soprano/queryresultiterator.h>
-#include <soprano/statementiterator.h>
-#include <soprano/nodeiterator.h>
+#include "queryresultiterator.h"
+#include "statementiterator.h"
+#include "nodeiterator.h"
 
 #include "redlandworld.h"
 #include "redlandutil.h"

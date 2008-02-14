@@ -25,7 +25,7 @@
 #include <QtCore/QUrl>
 #include <QtCore/QCoreApplication>
 
-#include <soprano/soprano.h>
+#include "soprano.h"
 
 using namespace Soprano;
 

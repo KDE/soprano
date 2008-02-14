@@ -24,7 +24,7 @@
 
 #include <QtDBus/QtDBus>
 
-#include <soprano/backend.h>
+#include "backend.h"
 
 namespace Soprano {
 

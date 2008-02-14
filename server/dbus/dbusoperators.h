@@ -23,9 +23,9 @@
 #define _SOPRANO_SERVER_DBUS_OPERATORS_H_
 
 
-#include <soprano/node.h>
-#include <soprano/statement.h>
-#include <soprano/bindingset.h>
+#include "node.h"
+#include "statement.h"
+#include "bindingset.h"
 
 #include <QtDBus/QDBusArgument>
 

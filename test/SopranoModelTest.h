@@ -24,7 +24,7 @@
 #ifndef SOPRANO_TEST_H
 #define SOPRANO_TEST_H
 
-#include <soprano/backend.h>
+#include "backend.h"
 #include "../soprano/statement.h"
 
 namespace Soprano {

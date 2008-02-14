@@ -25,9 +25,9 @@
 #include <QtCore/QUrl>
 #include <QtCore/QObject>
 
-#include <soprano/serializer.h>
-#include <soprano/node.h>
-#include <soprano/statement.h>
+#include "serializer.h"
+#include "node.h"
+#include "statement.h"
 
 
 namespace Soprano {

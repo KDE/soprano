@@ -27,9 +27,9 @@
 #include "mutexnodeiteratorbackend.h"
 #include "mutexqueryresultiteratorbackend.h"
 
-#include <soprano/statementiterator.h>
-#include <soprano/nodeiterator.h>
-#include <soprano/queryresultiterator.h>
+#include "statementiterator.h"
+#include "nodeiterator.h"
+#include "queryresultiterator.h"
 
 #include <QtCore/QMutex>
 

@@ -22,7 +22,7 @@
 #ifndef _SESAME2_STORE_BACKEND_H_
 #define _SESAME2_STORE_BACKEND_H_
 
-#include <soprano/backend.h>
+#include "backend.h"
 
 #include <QtCore/QObject>
 #include <QtCore/QMutex>

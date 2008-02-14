@@ -21,7 +21,7 @@
 
 #include "redlandstatementiteratortest.h"
 
-#include <soprano/soprano.h>
+#include "soprano.h"
 
 using namespace Soprano;
 

@@ -21,12 +21,12 @@
 
 #include "operators.h"
 
-#include <soprano/node.h>
-#include <soprano/statement.h>
-#include <soprano/backend.h>
-#include <soprano/literalvalue.h>
-#include <soprano/locator.h>
-#include <soprano/bindingset.h>
+#include "node.h"
+#include "statement.h"
+#include "backend.h"
+#include "literalvalue.h"
+#include "locator.h"
+#include "bindingset.h"
 
 #include <QtCore/QVariant>
 

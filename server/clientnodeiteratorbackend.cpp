@@ -23,7 +23,7 @@
 #include "clientconnection.h"
 #include "clientmodel.h"
 
-#include <soprano/node.h>
+#include "node.h"
 
 
 Soprano::Client::ClientNodeIteratorBackend::ClientNodeIteratorBackend( int itId, ClientModel* client )

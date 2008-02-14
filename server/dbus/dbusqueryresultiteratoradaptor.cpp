@@ -23,9 +23,9 @@
 #include "dbusutil.h"
 #include "iteratorwrapper.h"
 
-#include <soprano/node.h>
-#include <soprano/statement.h>
-#include <soprano/bindingset.h>
+#include "node.h"
+#include "statement.h"
+#include "bindingset.h"
 
 
 Soprano::Server::DBusQueryResultIteratorAdaptor::DBusQueryResultIteratorAdaptor( IteratorWrapper* it )

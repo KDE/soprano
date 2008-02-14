@@ -26,7 +26,7 @@
 #include <QtCore/QUrl>
 #include <QtCore/QObject>
 
-#include <soprano/parser.h>
+#include "parser.h"
 
 #include <raptor.h>
 

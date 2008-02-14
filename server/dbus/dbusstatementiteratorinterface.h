@@ -25,7 +25,7 @@
 #include <QtCore/QVariant>
 #include <QtDBus/QtDBus>
 
-#include <soprano/statement.h>
+#include "statement.h"
 
 Q_DECLARE_METATYPE(Soprano::Statement)
 

@@ -24,7 +24,7 @@
 
 #include <QtCore/QObject>
 
-#include <soprano/query/queryparser.h>
+#include "query/queryparser.h"
 
 namespace Soprano {
 

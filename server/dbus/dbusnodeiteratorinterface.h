@@ -25,7 +25,7 @@
 #include <QtCore/QVariant>
 #include <QtDBus/QtDBus>
 
-#include <soprano/node.h>
+#include "node.h"
 
 Q_DECLARE_METATYPE(Soprano::Node)
 

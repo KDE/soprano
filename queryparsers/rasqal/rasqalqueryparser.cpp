@@ -24,9 +24,9 @@
 #include <QtCore/QtPlugin>
 #include <QtCore/QTextStream>
 
-#include <soprano/node.h>
-#include <soprano/locator.h>
-#include <soprano/query/query.h>
+#include "node.h"
+#include "locator.h"
+#include "query/query.h"
 
 #include <rasqal.h>
 

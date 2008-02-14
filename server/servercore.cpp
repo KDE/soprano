@@ -27,9 +27,9 @@
 
 #include "soprano-server-config.h"
 
-#include <soprano/backend.h>
-#include <soprano/storagemodel.h>
-#include <soprano/global.h>
+#include "backend.h"
+#include "storagemodel.h"
+#include "global.h"
 
 #include <QtCore/QHash>
 #include <QtCore/QDebug>

@@ -23,7 +23,7 @@
 #include "dbusstatementiteratorinterface.h"
 #include "dbusutil.h"
 
-#include <soprano/statement.h>
+#include "statement.h"
 
 
 Soprano::Client::DBusClientStatementIteratorBackend::DBusClientStatementIteratorBackend( const QString& serviceName, const QString& objectPath )

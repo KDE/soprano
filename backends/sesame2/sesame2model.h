@@ -22,7 +22,7 @@
 #ifndef _SESAME2_MODEL_H_
 #define _SESAME2_MODEL_H_
 
-#include <soprano/storagemodel.h>
+#include "storagemodel.h"
 
 #include <QtCore/QList>
 

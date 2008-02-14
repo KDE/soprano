@@ -22,7 +22,7 @@
 #ifndef _SOPRANO_SERVER_CLIENT_NODE_ITERATOR_H_
 #define _SOPRANO_SERVER_CLIENT_NODE_ITERATOR_H_
 
-#include <soprano/iteratorbackend.h>
+#include "iteratorbackend.h"
 
 #include <QtCore/QPointer>
 

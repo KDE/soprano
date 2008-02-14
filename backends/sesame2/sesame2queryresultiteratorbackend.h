@@ -22,7 +22,7 @@
 #ifndef _SOPRANO_SESAME2_QUERY_RESULT_ITERATOR_BACKEND_H_
 #define _SOPRANO_SESAME2_QUERY_RESULT_ITERATOR_BACKEND_H_
 
-#include <soprano/queryresultiteratorbackend.h>
+#include "queryresultiteratorbackend.h"
 
 #include <jni.h>
 

@@ -22,7 +22,7 @@
 #include "SopranoModelTest.h"
 #include "stringpool.h"
 
-#include <soprano/soprano.h>
+#include "soprano.h"
 
 #include <QtTest/QTest>
 #include <QtCore/QList>

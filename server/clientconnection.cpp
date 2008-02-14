@@ -24,11 +24,11 @@
 #include "commands.h"
 #include "socketdevice.h"
 
-#include <soprano/node.h>
-#include <soprano/statement.h>
-#include <soprano/model.h>
-#include <soprano/bindingset.h>
-#include <soprano/backend.h>
+#include "node.h"
+#include "statement.h"
+#include "model.h"
+#include "bindingset.h"
+#include "backend.h"
 
 #include <QtNetwork/QTcpSocket>
 #include <QtCore/QMutex>

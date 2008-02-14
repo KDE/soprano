@@ -22,7 +22,7 @@
 #ifndef _SOPRANO_SERVER_DBUS_CLIENT_QUERYRESULT_ITERATOR_BACKEND_H_
 #define _SOPRANO_SERVER_DBUS_CLIENT_QUERYRESULT_ITERATOR_BACKEND_H_
 
-#include <soprano/queryresultiteratorbackend.h>
+#include "queryresultiteratorbackend.h"
 
 namespace Soprano {
 

@@ -25,9 +25,9 @@
 #include <QtCore/QUrl>
 #include <QtCore/QObject>
 
-#include <soprano/parser.h>
-#include <soprano/statement.h>
-#include <soprano/node.h>
+#include "parser.h"
+#include "statement.h"
+#include "node.h"
 
 
 namespace Soprano {

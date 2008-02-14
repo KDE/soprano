@@ -25,11 +25,11 @@
 #include "clientstatementiteratorbackend.h"
 #include "clientqueryresultiteratorbackend.h"
 
-#include <soprano/backend.h>
-#include <soprano/error.h>
-#include <soprano/nodeiterator.h>
-#include <soprano/statementiterator.h>
-#include <soprano/queryresultiterator.h>
+#include "backend.h"
+#include "error.h"
+#include "nodeiterator.h"
+#include "statementiterator.h"
+#include "queryresultiterator.h"
 
 
 Soprano::Client::ClientModel::ClientModel( const Backend* backend, int modelId, ClientConnection* client )

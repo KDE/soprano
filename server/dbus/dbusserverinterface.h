@@ -31,7 +31,7 @@
 #include <QtCore/QVariant>
 #include <QtDBus/QtDBus>
 
-#include <soprano/backend.h>
+#include "backend.h"
 
 Q_DECLARE_METATYPE(Soprano::BackendSettings)
 

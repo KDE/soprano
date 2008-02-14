@@ -27,7 +27,7 @@
 
 #include <jni.h>
 
-#include <soprano/error.h>
+#include "error.h"
 
 #include "jobjectref.h"
 

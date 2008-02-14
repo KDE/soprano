@@ -25,8 +25,8 @@
 #include "../../backends/redland/redlandstatementiterator.h"
 #include "../../backends/redland/redlandutil.h"
 
-#include <soprano/statementiterator.h>
-#include <soprano/statement.h>
+#include "statementiterator.h"
+#include "statement.h"
 
 #include <redland.h>
 

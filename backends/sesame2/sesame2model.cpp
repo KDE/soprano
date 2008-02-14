@@ -33,10 +33,10 @@
 #include "jobjectref.h"
 #include "sesame2sopranowrapper.h"
 
-#include <soprano/statementiterator.h>
-#include <soprano/queryresultiterator.h>
-#include <soprano/statement.h>
-#include <soprano/nodeiterator.h>
+#include "statementiterator.h"
+#include "queryresultiterator.h"
+#include "statement.h"
+#include "nodeiterator.h"
 
 #include <QtCore/QDebug>
 #include <QtCore/QReadWriteLock>

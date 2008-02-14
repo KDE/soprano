@@ -23,8 +23,8 @@
 #include "clientconnection.h"
 #include "clientmodel.h"
 
-#include <soprano/bindingset.h>
-#include <soprano/statement.h>
+#include "bindingset.h"
+#include "statement.h"
 
 
 Soprano::Client::ClientQueryResultIteratorBackend::ClientQueryResultIteratorBackend( int itId, ClientModel* client )

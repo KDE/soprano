@@ -22,8 +22,8 @@
 #ifndef _SOPRANO_SERVER_DBUS_CLIENT_MODEL_H_
 #define _SOPRANO_SERVER_DBUS_CLIENT_MODEL_H_
 
-#include <soprano/storagemodel.h>
-#include <soprano/soprano_export.h>
+#include "storagemodel.h"
+#include "soprano_export.h"
 
 namespace Soprano {
     namespace Client {

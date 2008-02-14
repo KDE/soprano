@@ -26,8 +26,8 @@
 #include "sesame2repositoryconnection.h"
 #include "sesame2sopranowrapper.h"
 
-#include <soprano/node.h>
-#include <soprano/literalvalue.h>
+#include "node.h"
+#include "literalvalue.h"
 
 
 class Soprano::Sesame2::RepositoryWrapper::Private

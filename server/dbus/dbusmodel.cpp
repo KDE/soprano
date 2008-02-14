@@ -26,11 +26,11 @@
 #include "dbusclientstatementiteratorbackend.h"
 #include "dbusclientqueryresultiteratorbackend.h"
 
-#include <soprano/backend.h>
-#include <soprano/error.h>
-#include <soprano/nodeiterator.h>
-#include <soprano/statementiterator.h>
-#include <soprano/queryresultiterator.h>
+#include "backend.h"
+#include "error.h"
+#include "nodeiterator.h"
+#include "statementiterator.h"
+#include "queryresultiterator.h"
 
 #include <QDebug>
 

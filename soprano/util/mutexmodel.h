@@ -59,6 +59,10 @@ namespace Soprano {
                  * In ReadWriteMultiThreading mode multiple read operations
                  * can be performed at the same time but only one write 
                  * operation.
+                 *
+                 * In general write operations take precedence over read 
+                 * operations when locking. However, the same thread can perform
+                 * nested read locks an arbitrary number of times.
                  */
                 ReadWriteMultiThreading,
         

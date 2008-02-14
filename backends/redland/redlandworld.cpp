@@ -23,7 +23,7 @@
 #include "redlandworld.h"
 #include "redlandmodel.h"
 
-#include <soprano/locator.h>
+#include "locator.h"
 
 #include <QtCore/QObject>
 #include <QtCore/QStringList>
