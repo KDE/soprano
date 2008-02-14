@@ -22,6 +22,7 @@
 #include "mutexmodel.h"
 #include "mutexiteratorbase.h"
 #include "looplock.h"
+#include "extreadwritelock.h"
 #include "mutexstatementiteratorbackend.h"
 #include "mutexnodeiteratorbackend.h"
 #include "mutexqueryresultiteratorbackend.h"
@@ -30,7 +31,6 @@
 #include <soprano/nodeiterator.h>
 #include <soprano/queryresultiterator.h>
 
-#include <QtCore/QReadWriteLock>
 #include <QtCore/QMutex>
 
 
@@ -87,7 +87,7 @@ public:
 
 private:
     LoopLock m_loopLock;
-    QReadWriteLock m_msLock;
+    ExtReadWriteLock m_msLock;
     QMutex m_mutex;
 
     ProtectionMode m_protectionMode;
