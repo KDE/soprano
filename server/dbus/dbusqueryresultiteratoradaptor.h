@@ -99,7 +99,6 @@ namespace Soprano {
             bool isBinding( const QDBusMessage& m );
             bool isBool( const QDBusMessage& m );
             bool isGraph( const QDBusMessage& m );
-            //QString owner();
 
         private:
             IteratorWrapper* m_iteratorWrapper;
