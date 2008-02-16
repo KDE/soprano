@@ -28,7 +28,6 @@
 
 #include <stdarg.h>
 
-#include <QtCore/QAtomic>
 #include <QtCore/QGlobalStatic>
 #include <QtCore/QDebug>
 #include <QtCore/QThread>
