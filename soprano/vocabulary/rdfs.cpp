@@ -21,141 +21,124 @@
 
 #include "rdfs.h"
 
-class Rdfs
+class RdfsPrivate
 {
 public:
-    Rdfs()
-        : rdfsNs( "http://www.w3.org/2000/01/rdf-schema#" ),
-          rdfsClass( "http://www.w3.org/2000/01/rdf-schema#Class" ),
-          rdfsComment( "http://www.w3.org/2000/01/rdf-schema#comment" ),
-          rdfsDatatype( "http://www.w3.org/2000/01/rdf-schema#Datatype" ),
-          rdfsDomain( "http://www.w3.org/2000/01/rdf-schema#domain" ),
-          rdfsRange( "http://www.w3.org/2000/01/rdf-schema#range" ),
-          rdfsLabel( "http://www.w3.org/2000/01/rdf-schema#label" ),
-          rdfsSubClassOf( "http://www.w3.org/2000/01/rdf-schema#subClassOf" ),
-          rdfsSubPropertyOf( "http://www.w3.org/2000/01/rdf-schema#subPropertyOf" ),
-          rdfsSeeAlso( "http://www.w3.org/2000/01/rdf-schema#seeAlso" ),
-          rdfsResource( "http://www.w3.org/2000/01/rdf-schema#Resource" ),
-          rdfsMember( "http://www.w3.org/2000/01/rdf-schema#member" ),
-          rdfsLiteral( "http://www.w3.org/2000/01/rdf-schema#Literal" ),
-          rdfsIsDefinedBy( "http://www.w3.org/2000/01/rdf-schema#isDefinedBy" ),
-          rdfsContainer( "http://www.w3.org/2000/01/rdf-schema#Container" ),
-          rdfsContainerMembershipProperty( "http://www.w3.org/2000/01/rdf-schema#ContainerMembershipProperty" ) {
+    RdfsPrivate()
+        : rdfs_namespace( "http://www.w3.org/2000/01/rdf-schema#" ),
+          rdfs_Class( "http://www.w3.org/2000/01/rdf-schema#Class" ),
+          rdfs_Container( "http://www.w3.org/2000/01/rdf-schema#Container" ),
+          rdfs_ContainerMembershipProperty( "http://www.w3.org/2000/01/rdf-schema#ContainerMembershipProperty" ),
+          rdfs_Datatype( "http://www.w3.org/2000/01/rdf-schema#Datatype" ),
+          rdfs_Literal( "http://www.w3.org/2000/01/rdf-schema#Literal" ),
+          rdfs_Resource( "http://www.w3.org/2000/01/rdf-schema#Resource" ),
+          rdfs_comment( "http://www.w3.org/2000/01/rdf-schema#comment" ),
+          rdfs_domain( "http://www.w3.org/2000/01/rdf-schema#domain" ),
+          rdfs_isDefinedBy( "http://www.w3.org/2000/01/rdf-schema#isDefinedBy" ),
+          rdfs_label( "http://www.w3.org/2000/01/rdf-schema#label" ),
+          rdfs_member( "http://www.w3.org/2000/01/rdf-schema#member" ),
+          rdfs_range( "http://www.w3.org/2000/01/rdf-schema#range" ),
+          rdfs_seeAlso( "http://www.w3.org/2000/01/rdf-schema#seeAlso" ),
+          rdfs_subClassOf( "http://www.w3.org/2000/01/rdf-schema#subClassOf" ),
+          rdfs_subPropertyOf( "http://www.w3.org/2000/01/rdf-schema#subPropertyOf" ) {
     }
 
-    QUrl rdfsNs;
-    QUrl rdfsClass;
-    QUrl rdfsComment;
-    QUrl rdfsDatatype;
-    QUrl rdfsDomain;
-    QUrl rdfsRange;
-    QUrl rdfsLabel;
-    QUrl rdfsSubClassOf;
-    QUrl rdfsSubPropertyOf;
-    QUrl rdfsSeeAlso;
-    QUrl rdfsResource;
-    QUrl rdfsMember;
-    QUrl rdfsLiteral;
-    QUrl rdfsIsDefinedBy;
-    QUrl rdfsContainer;
-    QUrl rdfsContainerMembershipProperty;
+    QUrl rdfs_namespace;
+    QUrl rdfs_Class;
+    QUrl rdfs_Container;
+    QUrl rdfs_ContainerMembershipProperty;
+    QUrl rdfs_Datatype;
+    QUrl rdfs_Literal;
+    QUrl rdfs_Resource;
+    QUrl rdfs_comment;
+    QUrl rdfs_domain;
+    QUrl rdfs_isDefinedBy;
+    QUrl rdfs_label;
+    QUrl rdfs_member;
+    QUrl rdfs_range;
+    QUrl rdfs_seeAlso;
+    QUrl rdfs_subClassOf;
+    QUrl rdfs_subPropertyOf;
 };
 
-
-Q_GLOBAL_STATIC( Rdfs, rdfs )
-
+Q_GLOBAL_STATIC( RdfsPrivate, s_rdfs )
 
 QUrl Soprano::Vocabulary::RDFS::rdfsNamespace()
 {
-    return rdfs()->rdfsNs;
+    return s_rdfs()->rdfs_namespace;
 }
-
 
 QUrl Soprano::Vocabulary::RDFS::Class()
 {
-    return rdfs()->rdfsClass;
+    return s_rdfs()->rdfs_Class;
 }
-
-
-QUrl Soprano::Vocabulary::RDFS::comment()
-{
-    return rdfs()->rdfsComment;
-}
-
-
-QUrl Soprano::Vocabulary::RDFS::Datatype()
-{
-    return rdfs()->rdfsDatatype;
-}
-
-
-QUrl Soprano::Vocabulary::RDFS::domain()
-{
-    return rdfs()->rdfsDomain;
-}
-
-
-QUrl Soprano::Vocabulary::RDFS::range()
-{
-    return rdfs()->rdfsRange;
-}
-
-
-QUrl Soprano::Vocabulary::RDFS::label()
-{
-    return rdfs()->rdfsLabel;
-}
-
-
-QUrl Soprano::Vocabulary::RDFS::subClassOf()
-{
-    return rdfs()->rdfsSubClassOf;
-}
-
-
-QUrl Soprano::Vocabulary::RDFS::subPropertyOf()
-{
-    return rdfs()->rdfsSubPropertyOf;
-}
-
-
-QUrl Soprano::Vocabulary::RDFS::seeAlso()
-{
-    return rdfs()->rdfsSeeAlso;
-}
-
-
-QUrl Soprano::Vocabulary::RDFS::Resource()
-{
-    return rdfs()->rdfsResource;
-}
-
-
-QUrl Soprano::Vocabulary::RDFS::member()
-{
-    return rdfs()->rdfsMember;
-}
-
-
-QUrl Soprano::Vocabulary::RDFS::Literal()
-{
-    return rdfs()->rdfsLiteral;
-}
-
-
-QUrl Soprano::Vocabulary::RDFS::isDefinedBy()
-{
-    return rdfs()->rdfsIsDefinedBy;
-}
-
 
 QUrl Soprano::Vocabulary::RDFS::Container()
 {
-    return rdfs()->rdfsContainer;
+    return s_rdfs()->rdfs_Container;
 }
-
 
 QUrl Soprano::Vocabulary::RDFS::ContainerMembershipProperty()
 {
-    return rdfs()->rdfsContainerMembershipProperty;
+    return s_rdfs()->rdfs_ContainerMembershipProperty;
+}
+
+QUrl Soprano::Vocabulary::RDFS::Datatype()
+{
+    return s_rdfs()->rdfs_Datatype;
+}
+
+QUrl Soprano::Vocabulary::RDFS::Literal()
+{
+    return s_rdfs()->rdfs_Literal;
+}
+
+QUrl Soprano::Vocabulary::RDFS::Resource()
+{
+    return s_rdfs()->rdfs_Resource;
+}
+
+QUrl Soprano::Vocabulary::RDFS::comment()
+{
+    return s_rdfs()->rdfs_comment;
+}
+
+QUrl Soprano::Vocabulary::RDFS::domain()
+{
+    return s_rdfs()->rdfs_domain;
+}
+
+QUrl Soprano::Vocabulary::RDFS::isDefinedBy()
+{
+    return s_rdfs()->rdfs_isDefinedBy;
+}
+
+QUrl Soprano::Vocabulary::RDFS::label()
+{
+    return s_rdfs()->rdfs_label;
+}
+
+QUrl Soprano::Vocabulary::RDFS::member()
+{
+    return s_rdfs()->rdfs_member;
+}
+
+QUrl Soprano::Vocabulary::RDFS::range()
+{
+    return s_rdfs()->rdfs_range;
+}
+
+QUrl Soprano::Vocabulary::RDFS::seeAlso()
+{
+    return s_rdfs()->rdfs_seeAlso;
+}
+
+QUrl Soprano::Vocabulary::RDFS::subClassOf()
+{
+    return s_rdfs()->rdfs_subClassOf;
+}
+
+QUrl Soprano::Vocabulary::RDFS::subPropertyOf()
+{
+    return s_rdfs()->rdfs_subPropertyOf;
 }

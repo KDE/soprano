@@ -34,79 +34,111 @@ namespace Soprano {
             SOPRANO_EXPORT QUrl rdfsNamespace();
 
             /**
-             * http://www.w3.org/2000/01/rdf-schema#Resource
-             */
-            SOPRANO_EXPORT QUrl Resource();
-
-            /**
-             * http://www.w3.org/2000/01/rdf-schema#Class
+             * http://www.w3.org/2000/01/rdf-schema#Class 
+             * 
+             * The class of classes. 
              */
             SOPRANO_EXPORT QUrl Class();
 
             /**
-             * http://www.w3.org/2000/01/rdf-schema#subClassOf
-             */
-            SOPRANO_EXPORT QUrl subClassOf();
-
-            /**
-             * http://www.w3.org/2000/01/rdf-schema#subPropertyOf
-             */
-            SOPRANO_EXPORT QUrl subPropertyOf();
-
-            /**
-             * http://www.w3.org/2000/01/rdf-schema#comment
-             */
-            SOPRANO_EXPORT QUrl comment();
-
-            /**
-             * http://www.w3.org/2000/01/rdf-schema#label
-             */
-            SOPRANO_EXPORT QUrl label();
-
-            /**
-             * http://www.w3.org/2000/01/rdf-schema#domain
-             */
-            SOPRANO_EXPORT QUrl domain();
-
-            /**
-             * http://www.w3.org/2000/01/rdf-schema#range
-             */
-            SOPRANO_EXPORT QUrl range();
-
-            /**
-             * http://www.w3.org/2000/01/rdf-schema#seeAlso
-             */
-            SOPRANO_EXPORT QUrl seeAlso();
-
-            /**
-             * http://www.w3.org/2000/01/rdf-schema#isDefinedBy
-             */
-            SOPRANO_EXPORT QUrl isDefinedBy();
-
-            /**
-             * http://www.w3.org/2000/01/rdf-schema#Literal
-             */
-            SOPRANO_EXPORT QUrl Literal();
-
-            /**
-             * http://www.w3.org/2000/01/rdf-schema#Container
+             * http://www.w3.org/2000/01/rdf-schema#Container 
+             * 
+             * The class of RDF containers. 
              */
             SOPRANO_EXPORT QUrl Container();
 
             /**
-             * http://www.w3.org/2000/01/rdf-schema#ContainerMembershipProperty
+             * http://www.w3.org/2000/01/rdf-schema#ContainerMembershipProperty 
+             * 
+             * The class of container membership properties, rdf:_1, rdf:_2, 
+             * ..., 
+             * all of which are sub-properties of 'member'. 
              */
             SOPRANO_EXPORT QUrl ContainerMembershipProperty();
 
             /**
-             * http://www.w3.org/2000/01/rdf-schema#member
+             * http://www.w3.org/2000/01/rdf-schema#Datatype 
+             * 
+             * The class of RDF datatypes. 
+             */
+            SOPRANO_EXPORT QUrl Datatype();
+
+            /**
+             * http://www.w3.org/2000/01/rdf-schema#Literal 
+             * 
+             * The class of literal values, eg. textual strings and integers. 
+             */
+            SOPRANO_EXPORT QUrl Literal();
+
+            /**
+             * http://www.w3.org/2000/01/rdf-schema#Resource 
+             * 
+             * The class resource, everything. 
+             */
+            SOPRANO_EXPORT QUrl Resource();
+
+            /**
+             * http://www.w3.org/2000/01/rdf-schema#comment 
+             * 
+             * A description of the subject resource. 
+             */
+            SOPRANO_EXPORT QUrl comment();
+
+            /**
+             * http://www.w3.org/2000/01/rdf-schema#domain 
+             * 
+             * A domain of the subject property. 
+             */
+            SOPRANO_EXPORT QUrl domain();
+
+            /**
+             * http://www.w3.org/2000/01/rdf-schema#isDefinedBy 
+             * 
+             * The defininition of the subject resource. 
+             */
+            SOPRANO_EXPORT QUrl isDefinedBy();
+
+            /**
+             * http://www.w3.org/2000/01/rdf-schema#label 
+             * 
+             * A human-readable name for the subject. 
+             */
+            SOPRANO_EXPORT QUrl label();
+
+            /**
+             * http://www.w3.org/2000/01/rdf-schema#member 
+             * 
+             * A member of the subject resource. 
              */
             SOPRANO_EXPORT QUrl member();
 
             /**
-             * http://www.w3.org/2000/01/rdf-schema#Datatype
+             * http://www.w3.org/2000/01/rdf-schema#range 
+             * 
+             * A range of the subject property. 
              */
-            SOPRANO_EXPORT QUrl Datatype();
+            SOPRANO_EXPORT QUrl range();
+
+            /**
+             * http://www.w3.org/2000/01/rdf-schema#seeAlso 
+             * 
+             * Further information about the subject resource. 
+             */
+            SOPRANO_EXPORT QUrl seeAlso();
+
+            /**
+             * http://www.w3.org/2000/01/rdf-schema#subClassOf 
+             * 
+             * The subject is a subclass of a class. 
+             */
+            SOPRANO_EXPORT QUrl subClassOf();
+
+            /**
+             * http://www.w3.org/2000/01/rdf-schema#subPropertyOf 
+             * 
+             * The subject is a subproperty of a property. 
+             */
+            SOPRANO_EXPORT QUrl subPropertyOf();
         }
     }
 }
