@@ -27,6 +27,7 @@
 #include "../soprano/parser.h"
 #include "../soprano/node.h"
 #include "../soprano/vocabulary/rdfs.h"
+#include "../soprano/vocabulary/rdf.h"
 
 
 using namespace Soprano;
@@ -53,7 +54,7 @@ static const char* LGPL_HEADER = "/*\n"
                                  " */\n";
 
 
-#define VERSION "0.1"
+#define VERSION "0.2"
 
 int version()
 {
@@ -242,15 +243,21 @@ int main( int argc, char *argv[] )
     QMap<QString, QPair<QString, QString> > normalizedResources;
     QStringList done;
     foreach( Statement resource, resources ) {
-        QString uri = resource.subject().uri().toString();
-        QString name = resource.subject().uri().fragment();
-        if ( name.isEmpty() && !uri.contains( '#' ) ) {
-            name = resource.subject().uri().path().section( "/", -1 );
-        }
+        if ( resource.predicate() == Soprano::Vocabulary::RDF::type() &&
+             ( resource.object() == Soprano::Vocabulary::RDFS::Class() ||
+               resource.object() == Soprano::Vocabulary::RDF::Property() ) ) {
+            QString uri = resource.subject().uri().toString();
+            if ( !normalizedResources.contains( uri ) ) {
+                QString name = resource.subject().uri().fragment();
+                if ( name.isEmpty() && !uri.contains( '#' ) ) {
+                    name = resource.subject().uri().path().section( "/", -1 );
+                }
 
-        if ( !name.isEmpty() && !done.contains( name ) ) {
-            normalizedResources.insert( uri, qMakePair( name, QString() ) );
-            done += name;
+                if ( !name.isEmpty() && !done.contains( name ) ) {
+                    normalizedResources.insert( uri, qMakePair( name, QString() ) );
+                    done += name;
+                }
+            }
         }
     }
 

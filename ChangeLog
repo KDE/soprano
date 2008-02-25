@@ -5,7 +5,8 @@
 	  user serialization types.
 	* Changed mimetype of N-Triples to "application/n-triples"
 	* New filter model DBusExportModel which exports a single Model via D-Bus.
-
+	* The onto2vocabularyclass tool is now installed by default.
+	
 2.0.1
 	* Fixed method statementCount in Sesame2 backend
 	* Redland backend: Always encode strings as xls:string rather than rdfs:Literal values to match the 

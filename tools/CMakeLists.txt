@@ -30,7 +30,7 @@ target_link_libraries(
   ${QT_QTCORE_LIBRARY}
 )
 
-INSTALL(TARGETS sopranocmd
+INSTALL(TARGETS sopranocmd onto2vocabularyclass
 	LIBRARY DESTINATION ${LIB_DESTINATION}
 	RUNTIME DESTINATION bin
 	ARCHIVE DESTINATION lib
