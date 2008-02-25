@@ -23,7 +23,7 @@
 #include "dbusutil.h"
 #include "../servercore.h"
 #include "dbusmodeladaptor.h"
-#include "modelwrapper.h"
+#include "dbusexportmodel.h"
 
 #include "model.h"
 
@@ -35,7 +35,7 @@ class Soprano::Server::DBusServerAdaptor::Private
 {
 public:
     ServerCore* core;
-    QHash<QString, ModelWrapper*> modelDBusObjectPaths;
+    QHash<QString, DBusExportModel*> modelDBusObjectPaths;
 
     QString dbusObjectPath;
 };
@@ -78,19 +78,17 @@ namespace {
 QString Soprano::Server::DBusServerAdaptor::createModel( const QString& name, const QDBusMessage& m )
 {
     // handle method call org.soprano.Server.createModel
-    QHash<QString, ModelWrapper*>::const_iterator it = d->modelDBusObjectPaths.find( name );
+    QHash<QString, DBusExportModel*>::const_iterator it = d->modelDBusObjectPaths.find( name );
     if ( it != d->modelDBusObjectPaths.constEnd() ) {
-        return it.value()->dbusPath();
+        return it.value()->dbusObjectPath();
     }
     else {
         Model* model = d->core->model( name );
         if ( model ) {
-            // the ModelWrapper makes sure that the QObject hierachy lives in the same thread
             QString objectPath = d->dbusObjectPath + "/models/" + normalizeModelName( name );
-            ModelWrapper* mw = new ModelWrapper( model, objectPath );
+            DBusExportModel* mw = new DBusExportModel( model );
             connect( model, SIGNAL( destroyed( QObject* ) ), mw, SLOT( deleteLater() ) );
-            ( void )new DBusModelAdaptor( model, mw, objectPath );
-            QDBusConnection::sessionBus().registerObject( objectPath, mw );
+            mw->registerModel( objectPath );
             d->modelDBusObjectPaths.insert( name, mw );
             return objectPath;
         }
@@ -105,7 +103,7 @@ QString Soprano::Server::DBusServerAdaptor::createModel( const QString& name, co
 void Soprano::Server::DBusServerAdaptor::removeModel( const QString& name, const QDBusMessage& m )
 {
     d->core->removeModel( name );
-    QDBusConnection::sessionBus().unregisterObject( d->modelDBusObjectPaths[name]->dbusPath() );
+    d->modelDBusObjectPaths[name]->unregisterModel();
     delete d->modelDBusObjectPaths[name];
     d->modelDBusObjectPaths.remove( name );
     if ( d->core->lastError() ) {

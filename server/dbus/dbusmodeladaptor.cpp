@@ -26,6 +26,7 @@
 #include "dbusnodeiteratoradaptor.h"
 #include "dbusqueryresultiteratoradaptor.h"
 #include "dbusoperators.h"
+#include "dbusexportmodel.h"
 
 #include <QtCore/QObject>
 #include <QtCore/QMetaObject>
@@ -51,14 +52,12 @@ public:
         : m_iteratorCount( 0 ) {
     }
 
-    Model* origModel;
+    DBusExportModel* dbusModel;
     Model* model;
     QMultiHash<QString, QPointer<IteratorWrapper> > openIterators;
 
-    QString dbusObjectPath;
-
     QString createUniqueIteratorDBusObjectPath() {
-        return QString( "%1/iterator%2" ).arg( dbusObjectPath ).arg( ++m_iteratorCount );
+        return QString( "%1/iterator%2" ).arg( dbusModel->dbusObjectPath() ).arg( ++m_iteratorCount );
     }
 
 private:
@@ -66,30 +65,30 @@ private:
 };
 
 
-Soprano::Server::DBusModelAdaptor::DBusModelAdaptor( Model* model, QObject* parent, const QString& dbusObjectPath )
-    : QDBusAbstractAdaptor( parent ),
+Soprano::Server::DBusModelAdaptor::DBusModelAdaptor( DBusExportModel* dbusModel )
+    : QDBusAbstractAdaptor( dbusModel ),
       d( new Private() )
 {
     qDBusRegisterMetaType<Soprano::Node>();
     qDBusRegisterMetaType<Soprano::Statement>();
     qDBusRegisterMetaType<Soprano::BindingSet>();
 
-    d->dbusObjectPath = dbusObjectPath;
-    d->origModel = model;
+    d->dbusModel = dbusModel;
+
     // TODO: What would be perfect here was a read/write locking that would in general prefer write locks over read locks
     //       (like QReadWriteLock) with one exception: if the same DBus service currently read-locking wants to lock for read
     //       again, we allow it.
-    d->model = new Util::MutexModel( Util::MutexModel::ReadWriteSingleThreading, model );
+    d->model = new Util::MutexModel( Util::MutexModel::ReadWriteSingleThreading, dbusModel->parentModel() );
 
     // we cannot use setAutoRelaySignals here since that would connect (non-existing)
     // signals from parent instead of model
-    connect( model, SIGNAL( statementsAdded() ),
+    connect( dbusModel->parentModel(), SIGNAL( statementsAdded() ),
              this, SIGNAL( statementsAdded() ) );
-    connect( model, SIGNAL( statementsRemoved() ),
+    connect( dbusModel->parentModel(), SIGNAL( statementsRemoved() ),
              this, SIGNAL( statementsRemoved() ) );
-    connect( model, SIGNAL( statementAdded(const Soprano::Statement&) ),
+    connect( dbusModel->parentModel(), SIGNAL( statementAdded(const Soprano::Statement&) ),
              this, SIGNAL( statementAdded(const Soprano::Statement&) ) );
-    connect( model, SIGNAL( statementRemoved(const Soprano::Statement&) ),
+    connect( dbusModel->parentModel(), SIGNAL( statementRemoved(const Soprano::Statement&) ),
              this, SIGNAL( statementRemoved(const Soprano::Statement&) ) );
 
     connect( QDBusConnection::sessionBus().interface(), SIGNAL(serviceOwnerChanged(const QString&, const QString&, const QString&)),

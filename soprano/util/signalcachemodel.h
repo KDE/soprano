@@ -46,6 +46,8 @@ namespace Soprano {
          * however, should seldomly be a problem.
          *
          * \author Sebastian Trueg <trueg@kde.org>
+         *
+         * \since 2.1
          */
         class SOPRANO_EXPORT SignalCacheModel : public FilterModel
         {

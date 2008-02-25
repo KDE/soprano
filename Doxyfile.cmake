@@ -93,11 +93,12 @@ INPUT                  = ${soprano_SOURCE_DIR}/soprano \
                          ${soprano_SOURCE_DIR}/index/indexfiltermodel.h \
                          ${soprano_SOURCE_DIR}/index/cluceneindex.h \
                          ${soprano_SOURCE_DIR}/index/indexqueryhit.h \
-                         ${soprano_SOURCE_DIR}/server/Mainpage.dox \
+                         ${soprano_SOURCE_DIR}/server/SopranoServer.dox \
                          ${soprano_SOURCE_DIR}/server/servercore.h \
                          ${soprano_SOURCE_DIR}/server/tcpclient.h \
                          ${soprano_SOURCE_DIR}/server/unixsocketclient.h \
                          ${soprano_SOURCE_DIR}/server/dbus/dbusclient.h \
+                         ${soprano_SOURCE_DIR}/server/dbus/dbusexportmodel.h \
                          ${soprano_SOURCE_DIR}/server/dbus/dbusmodel.h
 #                         ${soprano_SOURCE_DIR}/soprano/query
 INPUT_ENCODING         = UTF-8
@@ -111,7 +112,8 @@ EXCLUDE                = ${soprano_SOURCE_DIR}/soprano/datetime.h \
                          ${soprano_SOURCE_DIR}/soprano/util/mutexnodeiteratorbackend.h \
                          ${soprano_SOURCE_DIR}/soprano/util/mutexstatementiteratorbackend.h \
                          ${soprano_SOURCE_DIR}/soprano/util/mutexqueryresultiteratorbackend.h \
-                         ${soprano_SOURCE_DIR}/soprano/util/looplock.h
+                         ${soprano_SOURCE_DIR}/soprano/util/looplock.h \
+                         ${soprano_SOURCE_DIR}/soprano/util/extreadwritelock.h
 EXCLUDE_SYMLINKS       = NO
 EXCLUDE_PATTERNS       = 
 EXCLUDE_SYMBOLS        = 
@@ -136,7 +138,7 @@ VERBATIM_HEADERS       = NO
 #---------------------------------------------------------------------------
 # configuration options related to the alphabetical class index
 #---------------------------------------------------------------------------
-ALPHABETICAL_INDEX     = NO
+ALPHABETICAL_INDEX     = YES
 COLS_IN_ALPHA_INDEX    = 5
 IGNORE_PREFIX          = 
 #---------------------------------------------------------------------------

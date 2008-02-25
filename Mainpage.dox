@@ -239,9 +239,32 @@
  * members.
  */
 
-// DOXYGEN_VERSION=4.0
-// DOXYGEN_NAME=soprano
+// DOXYGEN_VERSION=2.0.93
+// DOXYGEN_NAME=Soprano
 // DOXYGEN_ENABLE=YES
-// DOXYGEN_SET_RECURSIVE = YES
-// DOXYGEN_EXCLUDE = server backends parsers serializers soprano/query soprano/datetime.h soprano/desktopfile.h soprano/inifile.h soprano/sopranopluginfile.h
-// DOXYGEN_INCLUDE = soprano soprano/vocabulary soprano/inference soprano/util index/indexfiltermodel.h index/cluceneindex.h index/indexqueryhit.h server/servercore.h server/dbus/dbusclient.h server/dbus/dbusmodel.h
+// DOXYGEN_SET_RECURSIVE = NO
+// DOXYGEN_SET_HTML_DYNAMIC_SECTIONS  = YES
+// DOXYGEN_SET_FILE_PATTERNS = *.h
+// DOXYGEN_SET_INPUT = @topdir@/Mainpage.dox
+// DOXYGEN_SET_INPUT += @topdir@/soprano/
+// DOXYGEN_SET_INPUT += @topdir@/soprano/util/
+// DOXYGEN_SET_INPUT += @topdir@/soprano/vocabulary/
+// DOXYGEN_SET_INPUT += @topdir@/soprano/inference/
+// DOXYGEN_SET_INPUT += @topdir@/index/indexfiltermodel.h
+// DOXYGEN_SET_INPUT += @topdir@/index/cluceneindex.h
+// DOXYGEN_SET_INPUT += @topdir@/index/indexqueryhit.h
+// DOXYGEN_SET_INPUT += @topdir@/server/servercore.h
+// DOXYGEN_SET_INPUT += @topdir@/server/dbus/dbusclient.h
+// DOXYGEN_SET_INPUT += @topdir@/server/dbus/dbusmodel.h
+// DOXYGEN_SET_INPUT += @topdir@/server/dbus/dbusexportmodel.h
+// DOXYGEN_SET_INPUT += @topdir@/server/SopranoServer.dox
+// DOXYGEN_SET_EXCLUDE = @topdir@/soprano/datetime.h
+// DOXYGEN_SET_EXCLUDE += @topdir@/soprano/desktopfile.h
+// DOXYGEN_SET_EXCLUDE += @topdir@/soprano/inifile.h
+// DOXYGEN_SET_EXCLUDE += @topdir@/soprano/sopranopluginfile.h
+// DOXYGEN_SET_EXCLUDE += @topdir@/soprano/util/mutexiteratorbase.h
+// DOXYGEN_SET_EXCLUDE += @topdir@/soprano/util/mutexnodeiteratorbackend.h
+// DOXYGEN_SET_EXCLUDE += @topdir@/soprano/util/mutexstatementiteratorbackend.h
+// DOXYGEN_SET_EXCLUDE += @topdir@/soprano/util/mutexqueryresultiteratorbackend.h
+// DOXYGEN_SET_EXCLUDE += @topdir@/soprano/util/looplock.h
+// DOXYGEN_SET_EXCLUDE += @topdir@/soprano/util/extreadwritelock.h

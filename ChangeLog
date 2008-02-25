@@ -4,6 +4,7 @@
 	* Raptor serializer now supports all raptor serializer factory names which are mapped to Soprano
 	  user serialization types.
 	* Changed mimetype of N-Triples to "application/n-triples"
+	* New filter model DBusExportModel which exports a single Model via D-Bus.
 
 2.0.1
 	* Fixed method statementCount in Sesame2 backend

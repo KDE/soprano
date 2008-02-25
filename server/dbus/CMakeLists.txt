@@ -13,6 +13,7 @@ install(
   FILES 
   dbusclient.h
   dbusmodel.h
+  dbusexportmodel.h
   DESTINATION include/soprano
 )
 

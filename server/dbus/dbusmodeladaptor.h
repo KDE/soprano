@@ -31,6 +31,9 @@ namespace Soprano {
     class Model;
 
     namespace Server {
+
+        class DBusExportModel;
+
         class DBusModelAdaptor: public QDBusAbstractAdaptor
         {
             Q_OBJECT
@@ -98,7 +101,7 @@ namespace Soprano {
                         "  </interface>\n")
 
         public:
-            DBusModelAdaptor( Model* model, QObject* parent, const QString& dbusObjectPath );
+            DBusModelAdaptor( DBusExportModel* parent );
             virtual ~DBusModelAdaptor();
 
         public Q_SLOTS:
