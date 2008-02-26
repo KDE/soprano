@@ -285,7 +285,7 @@ int version()
 {
     QTextStream s( stdout );
     s << "sopranocmd " << Soprano::versionString() << endl;
-    s << "   Copyright (C) 2007 Sebastian Trueg <trueg@kde.org>" << endl;
+    s << "   Copyright (C) 2007-2008 Sebastian Trueg <trueg@kde.org>" << endl;
     s << "   This program is free software; you can redistribute it and/or modify" << endl
       << "   it under the terms of the GNU General Public License as published by" << endl
       << "   the Free Software Foundation; either version 2 of the License, or" << endl
