@@ -158,7 +158,7 @@ static bool importFile( Soprano::Model* model, const QString& fileName, const QS
 }
 
 
-static bool exportFile( Soprano::Model* model, const QString& fileName, const QString& serialization )
+static bool exportFile( Soprano::StatementIterator data, const QString& fileName, const QString& serialization )
 {
     const Soprano::Serializer* serializer = Soprano::PluginManager::instance()->discoverSerializerForSerialization( Soprano::mimeTypeToSerialization( serialization ), serialization );
 
@@ -167,30 +167,26 @@ static bool exportFile( Soprano::Model* model, const QString& fileName, const QS
         if ( !file.open( QIODevice::WriteOnly ) ) {
             QTextStream s( stderr );
             s << "Could not open file for writing: " << fileName << endl;
-            delete model;
-            return 1;
+            return false;
         }
 
         QTextStream s( &file );
 
-        if ( serializer->serialize( model->listStatements(), s, Soprano::mimeTypeToSerialization( serialization ), serialization ) ) {
+        if ( serializer->serialize( data, s, Soprano::mimeTypeToSerialization( serialization ), serialization ) ) {
             QTextStream s( stdout );
             s << "Successfully exported model." << endl;
-            delete model;
-            return 0;
+            return true;
         }
         else {
             QTextStream s( stderr );
             s << "Failed to export statements: " << serializer->lastError() << endl;
-            delete model;
-            return 2;
+            return false;
         }
     }
     else {
         QTextStream s( stderr );
         s << "Could not find serializer plugin for serialization " << serialization << endl;
-        delete model;
-        return 1;
+        return false;
     }
 }
 
@@ -353,7 +349,9 @@ int usage( const QString& error = QString() )
       << "                       - For command 'query' this is a SPARQL query string." << endl
       << "                       - For commands 'add' and 'remove' this is a list of 3 or 4 RDF node definitions." << endl
       << "                       - For command 'list' this is an optional list of one to four node definitions." << endl
-      << "                       - For commands 'import' and 'export' this is a local file name to either parse or write to." << endl << endl;
+      << "                       - For commands 'import' and 'export' this is a local file name to either parse or write to." << endl
+      << "                         For command 'export' an optional second parameter before the filename can define a construct" << endl
+      << "                         query to only select a subset to export." << endl << endl;
 
     s << "   Nodes are defined in an N-Triples-like notation:" << endl
       << "   - Resouce nodes are defined in angle brackets." << endl
@@ -503,8 +501,7 @@ int main( int argc, char *argv[] )
 
     int queryTime = 0;
 
-    if ( command == "import" ||
-         command == "export" ) {
+    if ( command == "import" ) {
         if ( firstArg != args.count()-1 ) {
             delete model;
             return usage();
@@ -513,14 +510,42 @@ int main( int argc, char *argv[] )
         QString fileName = args[firstArg];
         QString serialization = args.getSetting( "serialization", "application/x-nquads" );
 
-        if ( command == "import" ) {
-            return importFile( model, fileName, serialization );
+        return importFile( model, fileName, serialization );
+    }
+    else if ( command == "export" ) {
+        QString fileName;
+        QString query;
+
+        if ( firstArg == args.count()-1 ) {
+            fileName = args[firstArg];
+        }
+        else if ( firstArg == args.count()-2 ) {
+            fileName = args[firstArg+1];
+            query = args[firstArg];
         }
         else {
-            return exportFile( model, fileName, serialization );
+            delete model;
+            return usage();
         }
-    }
 
+        QString queryLang = args.getSetting( "querylang", "SPARQL" );
+        QString serialization = args.getSetting( "serialization", "application/x-nquads" );
+
+        bool success = true;
+        if ( query.isEmpty() ) {
+            // export all statements
+            success = exportFile( model->listStatements(), fileName, serialization );
+        }
+        else {
+            success = exportFile( model->executeQuery( query, Soprano::Query::queryLanguageFromString( queryLang ), queryLang ).iterateStatements(),
+                                  fileName,
+                                  serialization );
+        }
+
+        delete model;
+
+        return success ? 0 : 1;
+    }
     else {
         if ( args.hasSetting( "serialization" ) ) {
             return usage( "Parameter --serialization does only make sense for commands 'import' and 'export'" );
