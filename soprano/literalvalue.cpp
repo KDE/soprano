@@ -250,7 +250,7 @@ Soprano::LiteralValue& Soprano::LiteralValue::operator=( const QLatin1String& st
 
 Soprano::LiteralValue& Soprano::LiteralValue::operator=( const QDate& date )
 {
-    d->stringCacheValid = true;
+    d->stringCacheValid = false;
     d->value.setValue( date );
     d->dataTypeUri = QUrl();
     return *this;
@@ -259,7 +259,7 @@ Soprano::LiteralValue& Soprano::LiteralValue::operator=( const QDate& date )
 
 Soprano::LiteralValue& Soprano::LiteralValue::operator=( const QTime& time )
 {
-    d->stringCacheValid = true;
+    d->stringCacheValid = false;
     d->value.setValue( time );
     d->dataTypeUri = QUrl();
     return *this;
@@ -268,7 +268,7 @@ Soprano::LiteralValue& Soprano::LiteralValue::operator=( const QTime& time )
 
 Soprano::LiteralValue& Soprano::LiteralValue::operator=( const QDateTime& datetime )
 {
-    d->stringCacheValid = true;
+    d->stringCacheValid = false;
     d->value.setValue( datetime.toUTC() );
     d->dataTypeUri = QUrl();
     return *this;
@@ -277,7 +277,7 @@ Soprano::LiteralValue& Soprano::LiteralValue::operator=( const QDateTime& dateti
 
 Soprano::LiteralValue& Soprano::LiteralValue::operator=( const QByteArray& data )
 {
-    d->stringCacheValid = true;
+    d->stringCacheValid = false;
     d->value.setValue( data );
     d->dataTypeUri = QUrl();
     return *this;
