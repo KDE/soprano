@@ -204,13 +204,13 @@ QString Soprano::DateTime::toString( const QTime& t )
 {
     QString frac;
     if( t.msec() > 0 ) {
-        frac.sprintf( "%03d", t.msec() );
+        frac.sprintf( ".%03d", t.msec() );
         // remove trailing zeros
         while( frac.endsWith( "0" ) )
             frac.truncate( frac.length() -1 );
     }
 
-    return t.toString( "HH:mm:ss" ) + '.' + frac + 'Z';
+    return t.toString( "HH:mm:ss" ) + frac + 'Z';
 }
 
 
