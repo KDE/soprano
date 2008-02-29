@@ -64,6 +64,7 @@ SET(soprano_SRCS
   vocabulary/nrl.cpp
   vocabulary/nao.cpp
   vocabulary/xesam.cpp
+  vocabulary/owl.cpp
   query/query.cpp
   query/queryparser.cpp
   query/queryserializer.cpp
@@ -141,6 +142,7 @@ INSTALL(FILES
   vocabulary/nrl.h
   vocabulary/nao.h
   vocabulary/xesam.h
+  vocabulary/owl.h
   inference/inferencemodel.h
   inference/inferencerule.h
   inference/inferenceruleset.h

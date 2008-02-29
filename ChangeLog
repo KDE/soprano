@@ -7,6 +7,7 @@
 	* New filter model DBusExportModel which exports a single Model via D-Bus.
 	* The onto2vocabularyclass tool is now installed by default.
 	* New sopranocmd feature: export only part of a model based on a SPARQL construct query.
+	* Added OWL Lite resource instances for easy access to OWL Lite members
 	
 2.0.1
 	* Fixed method statementCount in Sesame2 backend
