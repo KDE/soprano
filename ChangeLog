@@ -8,6 +8,9 @@
 	* The onto2vocabularyclass tool is now installed by default.
 	* New sopranocmd feature: export only part of a model based on a SPARQL construct query.
 	* Added OWL Lite resource instances for easy access to OWL Lite members
+	* Finer grained control over the D-Bus server components:
+	  Soprano::Server::DBusExportModel exports a single model
+	  Soprano::Server::DBusExportIterator exports a single iterator
 	
 2.0.1
 	* Fixed method statementCount in Sesame2 backend

@@ -99,6 +99,7 @@ INPUT                  = ${soprano_SOURCE_DIR}/soprano \
                          ${soprano_SOURCE_DIR}/server/unixsocketclient.h \
                          ${soprano_SOURCE_DIR}/server/dbus/dbusclient.h \
                          ${soprano_SOURCE_DIR}/server/dbus/dbusexportmodel.h \
+                         ${soprano_SOURCE_DIR}/server/dbus/dbusexportiterator.h \
                          ${soprano_SOURCE_DIR}/server/dbus/dbusmodel.h
 #                         ${soprano_SOURCE_DIR}/soprano/query
 INPUT_ENCODING         = UTF-8

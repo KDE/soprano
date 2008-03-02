@@ -249,11 +249,11 @@ public:
             delete( doc );
         }
 
-        documentCache.clear();
-
         // write all changes back to disk
         getIndexWriter()->optimize();
         closeWriter();
+
+        documentCache.clear();
     }
 };
 
@@ -653,7 +653,9 @@ void Soprano::Index::CLuceneIndex::dump( QTextStream& s ) const
             while ( e->hasMoreElements() ) {
                 lucene::document::Field* field = e->nextElement();
 
-                s << TString( field->name(), true ).toQString() << ": " << TString( field->stringValue(), true ).toQString() << endl;
+                s << TString( field->name(), true ).toQString() << ": "
+                  << TString( field->stringValue(), true ).toQString()
+                  << endl;
             }
             s << endl;
             _CLDELETE( e );

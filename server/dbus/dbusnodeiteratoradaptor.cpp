@@ -21,9 +21,10 @@
 
 #include "dbusnodeiteratoradaptor.h"
 #include "dbusutil.h"
-#include "iteratorwrapper.h"
+#include "dbusexportiterator.h"
+#include "nodeiterator.h"
 
-Soprano::Server::DBusNodeIteratorAdaptor::DBusNodeIteratorAdaptor( IteratorWrapper* it )
+Soprano::Server::DBusNodeIteratorAdaptor::DBusNodeIteratorAdaptor( DBusExportIterator* it )
     : QDBusAbstractAdaptor( it ),
       m_iteratorWrapper( it )
 {
@@ -62,7 +63,9 @@ void Soprano::Server::DBusNodeIteratorAdaptor::close( const QDBusMessage& m )
     }
 
     // some housekeeping
-    m_iteratorWrapper->deleteLater();
+    if ( m_iteratorWrapper->deleteOnClose() ) {
+        m_iteratorWrapper->deleteLater();
+    }
 }
 
 #include "dbusnodeiteratoradaptor.moc"

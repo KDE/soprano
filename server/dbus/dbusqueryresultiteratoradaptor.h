@@ -32,7 +32,7 @@ namespace Soprano {
 
     namespace Server {
 
-        class IteratorWrapper;
+        class DBusExportIterator;
 
         class DBusQueryResultIteratorAdaptor : public QDBusAbstractAdaptor
         {
@@ -83,7 +83,7 @@ namespace Soprano {
                         "  </interface>\n")
 
         public:
-            DBusQueryResultIteratorAdaptor( IteratorWrapper* parent );
+            DBusQueryResultIteratorAdaptor( DBusExportIterator* parent );
             virtual ~DBusQueryResultIteratorAdaptor();
 
         public Q_SLOTS:
@@ -101,7 +101,7 @@ namespace Soprano {
             bool isGraph( const QDBusMessage& m );
 
         private:
-            IteratorWrapper* m_iteratorWrapper;
+            DBusExportIterator* m_iteratorWrapper;
         };
     }
 }

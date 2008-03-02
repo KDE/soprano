@@ -31,7 +31,7 @@ namespace Soprano {
         /**
          * \class DBusExportModel dbusexportmodel.h Soprano/Server/DBusExportModel
          *
-         * \brief Exports a %Soprano model via D-Bus.
+         * \brief Exports a %Soprano Model via D-Bus.
          *
          * DBusExportModel is a FilterModel like any other. As such,
          * it can occure anywhere in a stack of models. However,

@@ -123,9 +123,6 @@ namespace Soprano {
             void statementAdded( const Soprano::Statement& statement );
             void statementRemoved( const Soprano::Statement& statement );
 
-        private Q_SLOTS:
-            void slotServiceOwnerChanged( const QString & name, const QString & oldOwner, const QString & newOwner );
-
         private:
             class Private;
             Private* const d;

@@ -61,6 +61,7 @@ bool Soprano::Server::DBusExportModel::registerModel( const QString& dbusObjectP
 
 void Soprano::Server::DBusExportModel::unregisterModel()
 {
+    d->dbusPath = QString();
     QDBusConnection::sessionBus().unregisterObject( d->dbusPath );
 }
 

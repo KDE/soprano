@@ -30,7 +30,7 @@ namespace Soprano {
 
     namespace Server {
 
-        class IteratorWrapper;
+        class DBusExportIterator;
 
         class DBusStatementIteratorAdaptor : public QDBusAbstractAdaptor
         {
@@ -50,7 +50,7 @@ namespace Soprano {
                         "")
 
         public:
-            DBusStatementIteratorAdaptor( IteratorWrapper* parent );
+            DBusStatementIteratorAdaptor( DBusExportIterator* parent );
             virtual ~DBusStatementIteratorAdaptor();
 
         public Q_SLOTS:
@@ -59,7 +59,7 @@ namespace Soprano {
             void close( const QDBusMessage& m );
 
         private:
-            IteratorWrapper* m_iteratorWrapper;
+            DBusExportIterator* m_iteratorWrapper;
         };
     }
 }

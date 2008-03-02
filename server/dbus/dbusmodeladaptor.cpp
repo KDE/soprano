@@ -21,12 +21,15 @@
 
 #include "dbusmodeladaptor.h"
 #include "dbusutil.h"
-#include "iteratorwrapper.h"
+#include "dbusexportiterator.h"
 #include "dbusstatementiteratoradaptor.h"
 #include "dbusnodeiteratoradaptor.h"
 #include "dbusqueryresultiteratoradaptor.h"
 #include "dbusoperators.h"
 #include "dbusexportmodel.h"
+#include "statementiterator.h"
+#include "nodeiterator.h"
+#include "queryresultiterator.h"
 
 #include <QtCore/QObject>
 #include <QtCore/QMetaObject>
@@ -54,7 +57,6 @@ public:
 
     DBusExportModel* dbusModel;
     Model* model;
-    QMultiHash<QString, QPointer<IteratorWrapper> > openIterators;
 
     QString createUniqueIteratorDBusObjectPath() {
         return QString( "%1/iterator%2" ).arg( dbusModel->dbusObjectPath() ).arg( ++m_iteratorCount );
@@ -90,9 +92,6 @@ Soprano::Server::DBusModelAdaptor::DBusModelAdaptor( DBusExportModel* dbusModel 
              this, SIGNAL( statementAdded(const Soprano::Statement&) ) );
     connect( dbusModel->parentModel(), SIGNAL( statementRemoved(const Soprano::Statement&) ),
              this, SIGNAL( statementRemoved(const Soprano::Statement&) ) );
-
-    connect( QDBusConnection::sessionBus().interface(), SIGNAL(serviceOwnerChanged(const QString&, const QString&, const QString&)),
-             this, SLOT(slotServiceOwnerChanged(const QString&, const QString&, const QString&)) );
 }
 
 Soprano::Server::DBusModelAdaptor::~DBusModelAdaptor()
@@ -146,11 +145,10 @@ QString Soprano::Server::DBusModelAdaptor::executeQuery( const QString &query, c
     // handle method call org.soprano.Model.executeQuery
     QueryResultIterator it = d->model->executeQuery( query, Query::queryLanguageFromString( queryLanguage ), queryLanguage );
     if ( it.isValid() ) {
-        IteratorWrapper* itW = new IteratorWrapper( it, this );
-        d->openIterators.insert( m.service(), itW );
-        ( void )new DBusQueryResultIteratorAdaptor( itW );
+        DBusExportIterator* itW = new DBusExportIterator( it, this );
+        itW->setDeleteOnClose( true );
         QString objectPath = d->createUniqueIteratorDBusObjectPath();
-        QDBusConnection::sessionBus().registerObject( objectPath, itW );
+        itW->registerIterator( objectPath, m.service() );
         return objectPath;
     }
     else {
@@ -175,11 +173,10 @@ QString Soprano::Server::DBusModelAdaptor::listContexts( const QDBusMessage& m )
     // handle method call org.soprano.Model.listContexts
     NodeIterator it = d->model->listContexts();
     if ( it.isValid() ) {
-        IteratorWrapper* itW = new IteratorWrapper( it, this );
-        d->openIterators.insert( m.service(), itW );
-        ( void )new DBusNodeIteratorAdaptor( itW );
+        DBusExportIterator* itW = new DBusExportIterator( it, this );
+        itW->setDeleteOnClose( true );
         QString objectPath = d->createUniqueIteratorDBusObjectPath();
-        QDBusConnection::sessionBus().registerObject( objectPath, itW );
+        itW->registerIterator( objectPath, m.service() );
         return objectPath;
     }
     else {
@@ -193,11 +190,10 @@ QString Soprano::Server::DBusModelAdaptor::listStatements( const Soprano::Statem
     // handle method call org.soprano.Model.listStatements
     StatementIterator it = d->model->listStatements( statement );
     if ( it.isValid() ) {
-        IteratorWrapper* itW = new IteratorWrapper( it, this );
-        d->openIterators.insert( m.service(), itW );
-        ( void )new DBusStatementIteratorAdaptor( itW );
+        DBusExportIterator* itW = new DBusExportIterator( it, this );
+        itW->setDeleteOnClose( true );
         QString objectPath = d->createUniqueIteratorDBusObjectPath();
-        QDBusConnection::sessionBus().registerObject( objectPath, itW );
+        itW->registerIterator( objectPath, m.service() );
         return objectPath;
     }
     else {
@@ -234,19 +230,6 @@ int Soprano::Server::DBusModelAdaptor::statementCount( const QDBusMessage& m )
         DBus::sendErrorReply( m, d->model->lastError() );
     }
     return cnt;
-}
-
-
-void Soprano::Server::DBusModelAdaptor::slotServiceOwnerChanged( const QString& name, const QString&, const QString& )
-{
-    // delete all iterators that were opened by that client
-    QList<QPointer<IteratorWrapper> > its = d->openIterators.values( name );
-    for ( int i = 0; i < its.count(); ++i ) {
-        if ( its[i] ) {
-            delete its[i];
-        }
-    }
-    d->openIterators.remove( name );
 }
 
 #include "dbusmodeladaptor.moc"

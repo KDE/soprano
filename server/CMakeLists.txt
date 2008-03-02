@@ -20,7 +20,7 @@ set(soprano_server_SRC
   operators.cpp
   dbus/dbusutil.cpp
   dbus/dbusmodeladaptor.cpp
-  dbus/iteratorwrapper.cpp
+  dbus/dbusexportiterator.cpp
   dbus/dbusexportmodel.cpp
   dbus/dbusstatementiteratoradaptor.cpp
   dbus/dbusnodeiteratoradaptor.cpp

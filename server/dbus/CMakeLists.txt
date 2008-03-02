@@ -14,6 +14,7 @@ install(
   dbusclient.h
   dbusmodel.h
   dbusexportmodel.h
+  dbusexportiterator.h
   DESTINATION include/soprano
 )
 

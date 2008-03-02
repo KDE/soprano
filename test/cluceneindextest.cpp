@@ -104,6 +104,9 @@ void IndexTest::testAddStatement()
     Statement s4( QUrl( "http://soprano.sf.net/test#B" ),
                   QUrl( "http://soprano.sf.net/test#valueY" ),
                   LiteralValue( "Wurst" ) );
+    Statement s5( QUrl( "http://soprano.sf.net/test#B" ),
+                  QUrl( "http://soprano.sf.net/test#valueZ" ),
+                  LiteralValue( 42 ) );
 
     QVERIFY( m_indexModel->addStatement( s1 ) == Error::ErrorNone );
     QVERIFY( m_indexModel->containsAnyStatement( s1 ) );
@@ -145,8 +148,15 @@ void IndexTest::testAddStatement()
     QVERIFY( hits.next() );
     QVERIFY( !hits.next() );
 
+    QVERIFY( m_indexModel->addStatement( s5 ) == Error::ErrorNone );
+
     QTextStream s( stderr );
     m_indexModel->index()->dump(s);
+
+    hits = m_indexModel->index()->search( "42" );
+    QVERIFY( hits.next() );
+    QCOMPARE( hits.current().resource(), s5.subject() );
+    QVERIFY( !hits.next() );
 }
 
 
@@ -164,16 +174,16 @@ void IndexTest::testRemoveStatement()
 
     QVERIFY( m_indexModel->addStatement( s1 ) == Error::ErrorNone );
     QVERIFY( m_indexModel->containsAnyStatement( s1 ) );
-    m_indexModel->index()->dump( s );
+//    m_indexModel->index()->dump( s );
     QVERIFY( m_indexModel->addStatement( s2 ) == Error::ErrorNone );
     QVERIFY( m_indexModel->containsAnyStatement( s2 ) );
 
-    m_indexModel->index()->dump( s );
+//    m_indexModel->index()->dump( s );
 
     // now remove one of them
     QVERIFY( m_indexModel->removeStatement( s1 ) == Error::ErrorNone );
 
-    m_indexModel->index()->dump( s );
+//    m_indexModel->index()->dump( s );
 
     // now make sure that the index does not contain it anymore
     Iterator<QueryHit> hits = m_indexModel->index()->search( "Hello World" );

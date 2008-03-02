@@ -21,14 +21,14 @@
 
 #include "dbusqueryresultiteratoradaptor.h"
 #include "dbusutil.h"
-#include "iteratorwrapper.h"
+#include "dbusexportiterator.h"
 
 #include "node.h"
 #include "statement.h"
 #include "bindingset.h"
+#include "queryresultiterator.h"
 
-
-Soprano::Server::DBusQueryResultIteratorAdaptor::DBusQueryResultIteratorAdaptor( IteratorWrapper* it )
+Soprano::Server::DBusQueryResultIteratorAdaptor::DBusQueryResultIteratorAdaptor( DBusExportIterator* it )
     : QDBusAbstractAdaptor( it ),
       m_iteratorWrapper( it )
 {
@@ -157,7 +157,9 @@ void Soprano::Server::DBusQueryResultIteratorAdaptor::close( const QDBusMessage&
     }
 
     // some housekeeping
-    m_iteratorWrapper->deleteLater();
+    if ( m_iteratorWrapper->deleteOnClose() ) {
+        m_iteratorWrapper->deleteLater();
+    }
 }
 
 #include "dbusqueryresultiteratoradaptor.moc"
