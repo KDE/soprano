@@ -23,6 +23,7 @@
 #define _SOPRANO_SERVER_DBUS_ITERATOR_H_
 
 #include <QtCore/QObject>
+#include "error.h"
 #include "soprano_export.h"
 
 namespace Soprano {
@@ -59,7 +60,7 @@ namespace Soprano {
          *
          * \since 2.1
          */
-        class SOPRANO_SERVER_EXPORT DBusExportIterator : public QObject
+        class SOPRANO_SERVER_EXPORT DBusExportIterator : public QObject, public Error::ErrorCache
         {
             Q_OBJECT
         
@@ -67,17 +68,17 @@ namespace Soprano {
             /**
              * Create a new instance to export a StatementIterator
              */
-            DBusExportIterator( StatementIterator it, QObject* parent );
+            DBusExportIterator( StatementIterator it, QObject* parent = 0 );
 
             /**
              * Create a new instance to export a NodeIterator
              */
-            DBusExportIterator( NodeIterator it, QObject* parent );
+            DBusExportIterator( NodeIterator it, QObject* parent = 0 );
 
             /**
              * Create a new instance to export a QueryResultIterator
              */
-            DBusExportIterator( QueryResultIterator it, QObject* parent );
+            DBusExportIterator( QueryResultIterator it, QObject* parent = 0 );
 
             /**
              * Destructor

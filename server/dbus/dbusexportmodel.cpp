@@ -21,6 +21,7 @@
 
 #include "dbusexportmodel.h"
 #include "dbusmodeladaptor.h"
+#include "dbusutil.h"
 
 #include <QtDBus/QDBusConnection>
 
@@ -53,6 +54,7 @@ bool Soprano::Server::DBusExportModel::registerModel( const QString& dbusObjectP
         return true;
     }
     else {
+        setError( DBus::convertError( QDBusConnection::sessionBus().lastError() ) );
         d->dbusPath = QString();
         return false;
     }

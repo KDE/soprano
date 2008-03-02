@@ -29,19 +29,19 @@ class QString;
 namespace Soprano {
 
     namespace Error {
-    class Error;
+        class Error;
     }
 
     namespace DBus {
-    /**
-     * Encodes \p e into a DBus error reply and sends it back to the sender of \p m.
-     */
-    void sendErrorReply( const QDBusMessage& m, const Soprano::Error::Error& e );
+        /**
+         * Encodes \p e into a DBus error reply and sends it back to the sender of \p m.
+         */
+        void sendErrorReply( const QDBusMessage& m, const Soprano::Error::Error& e );
 
-    /**
-     * Converts a DBus error as encoded by sendErrorReply() to a Soprano::Error.
-     */
-    Soprano::Error::Error convertError( const QDBusError& e );
+        /**
+         * Converts a DBus error as encoded by sendErrorReply() to a Soprano::Error.
+         */
+        Soprano::Error::Error convertError( const QDBusError& e );
     }
 }
 

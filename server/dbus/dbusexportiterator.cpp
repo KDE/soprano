@@ -23,6 +23,7 @@
 #include "dbusstatementiteratoradaptor.h"
 #include "dbusnodeiteratoradaptor.h"
 #include "dbusqueryresultiteratoradaptor.h"
+#include "dbusutil.h"
 
 #include "statementiterator.h"
 #include "nodeiterator.h"
@@ -157,6 +158,7 @@ bool Soprano::Server::DBusExportIterator::registerIterator( const QString& dbusO
         return true;
     }
     else {
+        setError( DBus::convertError( QDBusConnection::sessionBus().lastError() ) );
         d->dbusObjectPath = QString();
         d->dbusClient = QString();
         return false;
