@@ -59,7 +59,7 @@ namespace Soprano {
          *
          * \since 2.1
          */
-        class SOPRANO_EXPORT DBusExportIterator : public QObject
+        class SOPRANO_SERVER_EXPORT DBusExportIterator : public QObject
         {
             Q_OBJECT
         

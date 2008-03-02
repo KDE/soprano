@@ -44,13 +44,15 @@ namespace Soprano {
          * For creating a simple %Soprano D-Bus server see 
          * ServerCore::registerAsDBusObject.
          *
+         * The interface exported can be accessed via Client::DBusModel.
+         *
          * \author Sebastian Trueg <trueg@kde.org>
          *
          * \sa \ref soprano_server_dbus
          *
          * \since 2.1
          */
-        class SOPRANO_EXPORT DBusExportModel : public FilterModel
+        class SOPRANO_SERVER_EXPORT DBusExportModel : public FilterModel
         {
             Q_OBJECT
 

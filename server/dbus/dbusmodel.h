@@ -34,7 +34,8 @@ namespace Soprano {
          * \brief Interface to a DBus server model.
          *
          * The DBusModel provides a fully functional interface
-         * to a Model provided through a %Soprano DBus server.
+         * to a Model provided through a %Soprano DBus server. It can thus,
+         * be seen as the counterpart to Server::DBusExportModel.
          *
          * Given the DBus service name and the object path of the Model
          * in question it handles all DBus communication transparently.

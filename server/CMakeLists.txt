@@ -51,6 +51,9 @@ set(soprano_client_SRC
   dbus/dbusclientstatementiteratorbackend.cpp
   dbus/dbusclientqueryresultiteratorbackend.cpp
   dbus/dbusoperators.cpp
+  dbus/dbusstatementiterator.cpp
+  dbus/dbusnodeiterator.cpp
+  dbus/dbusqueryresultiterator.cpp
 )
 
 # no unix sockets on windows

@@ -13,6 +13,9 @@ install(
   FILES 
   dbusclient.h
   dbusmodel.h
+  dbusstatementiterator.h
+  dbusnodeiterator.h
+  dbusqueryresultiterator.h
   dbusexportmodel.h
   dbusexportiterator.h
   DESTINATION include/soprano

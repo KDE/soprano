@@ -2,5 +2,8 @@ install(FILES
   TcpClient
   DBusClient
   DBusModel
+  DBusStatementIterator
+  DBusNodeIterator
+  DBusQueryResultIterator
   DESTINATION
   include/Soprano/Client)
