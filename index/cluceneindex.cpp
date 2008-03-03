@@ -263,7 +263,7 @@ Soprano::Index::CLuceneIndex::CLuceneIndex( lucene::analysis::Analyzer* analyzer
 {
     d->analyzer = analyzer;
     if ( !d->analyzer ) {
-        d->analyzer = _CLNEW lucene::analysis::SimpleAnalyzer();
+        d->analyzer = _CLNEW lucene::analysis::standard::StandardAnalyzer();
         d->deleteAnalyzer = true;
     }
 }

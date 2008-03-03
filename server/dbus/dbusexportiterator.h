@@ -43,11 +43,15 @@ namespace Soprano {
          * the complete Model API but restrict access via custom methods
          * that return %Soprano Iterators.
          *
-         * Usage is simple:
+         * The most common usage is probably as a fire-and-forget class:
          * \code
-         * Soprano::StatementIterator it = model->listStatements();
-         * Soprano::Server::DBusExportIterator dbusIt( it, this );
-         * dbusIt->registerIterator( myFancyDBusObjectPath );
+         * void myDbusMethod( const QDBusMessage& m ) {
+         *    Soprano::StatementIterator it = model->listStatements();
+         *    Soprano::Server::DBusExportIterator* dbusIt = new Soprano::Server::DBusExportIterator( it, this );
+         *    dbusIt->setDeleteOnClose( true );
+         *    dbusIt->registerIterator( myFancyDBusObjectPath, m.service() );
+         *    return myFancyDBusObjectPath;
+         * }
          * \endcode
          *
          * This is a class for advanced usage. In most situations using
