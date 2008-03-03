@@ -249,11 +249,11 @@ public:
             delete( doc );
         }
 
-        documentCache.clear();
-
         // write all changes back to disk
         getIndexWriter()->optimize();
         closeWriter();
+
+        documentCache.clear();
     }
 };
 
@@ -263,7 +263,7 @@ Soprano::Index::CLuceneIndex::CLuceneIndex( lucene::analysis::Analyzer* analyzer
 {
     d->analyzer = analyzer;
     if ( !d->analyzer ) {
-        d->analyzer = _CLNEW lucene::analysis::SimpleAnalyzer();
+        d->analyzer = _CLNEW lucene::analysis::standard::StandardAnalyzer();
         d->deleteAnalyzer = true;
     }
 }
@@ -533,7 +533,7 @@ Soprano::Iterator<Soprano::Index::QueryHit> Soprano::Index::CLuceneIndex::search
         return hits;
     }
     catch( CLuceneError& err ) {
-        qDebug() << "search failed: " << err.what();
+        qDebug() << "search" << query << "failed: " << err.what();
         setError( exceptionToError( err ) );
         return Iterator<QueryHit>();
     }
@@ -653,7 +653,9 @@ void Soprano::Index::CLuceneIndex::dump( QTextStream& s ) const
             while ( e->hasMoreElements() ) {
                 lucene::document::Field* field = e->nextElement();
 
-                s << TString( field->name(), true ).toQString() << ": " << TString( field->stringValue(), true ).toQString() << endl;
+                s << TString( field->name(), true ).toQString() << ": "
+                  << TString( field->stringValue(), true ).toQString()
+                  << endl;
             }
             s << endl;
             _CLDELETE( e );

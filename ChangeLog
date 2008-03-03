@@ -1,6 +1,8 @@
 2.0.3
 	* Fixed a string caching bug in LiteralValue which resulted in invalid string representations when
 	  assigning a QDate, QTime, QDateTime, or QByteArray via operator=
+	* Use the CLucene StandardAnalyser by default instead of the SimpleAnalyser. This fixes indexing of 
+	  numbers.
 
 2.0.2
 	* MutexModel in ReadWriteMultiThreading mode now allows multiple read operations from the same thread
