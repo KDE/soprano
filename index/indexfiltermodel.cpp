@@ -196,3 +196,35 @@ int Soprano::Index::IndexFilterModel::transactionCacheSize() const
 {
     return d->transactionCacheSize;
 }
+
+
+void Soprano::Index::IndexFilterModel::rebuildIndex()
+{
+    d->closeTransaction();
+
+    // clear the index
+    // -----------------------------
+    d->index->clear();
+
+    // rebuild the index
+    // -----------------------------
+
+    // select all resources that have literal statements
+    QueryResultIterator it = FilterModel::executeQuery( "select distinct ?r where { ?r ?p ?o . FILTER(isLiteral(?o)) . }",
+                                                        Query::QueryLanguageSparql );
+
+    while ( it.next() ) {
+        int id = d->index->startTransaction();
+        Node res = it.binding( "r" );
+
+        // and re-add all the literal statements (we can savely ignore the context here)
+        QueryResultIterator it2 = FilterModel::executeQuery( QString( "select distinct ?p ?o where { <%1> ?p ?o . FILTER(isLiteral(?o)) . }" )
+                                                             .arg( QString::fromAscii( res.uri().toEncoded() ) ),
+                                                             Query::QueryLanguageSparql );
+        while ( it2.next() ) {
+            d->index->addStatement( Statement( res, it2.binding( "p" ), it2.binding( "o" ) ) );
+        }
+
+        d->index->closeTransaction( id );
+    }
+}

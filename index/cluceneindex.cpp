@@ -674,3 +674,13 @@ QString Soprano::Index::CLuceneIndex::defaultSearchField()
 {
     return textFieldName().toQString();
 }
+
+
+void Soprano::Index::CLuceneIndex::clear()
+{
+    int numDocs = d->getIndexReader()->numDocs();
+    for ( int i = 0; i < numDocs; ++i ) {
+        d->getIndexReader()->deleteDocument( i );
+    }
+    d->closeReader();
+}

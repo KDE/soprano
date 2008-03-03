@@ -157,6 +157,16 @@ void IndexTest::testAddStatement()
     QVERIFY( hits.next() );
     QCOMPARE( hits.current().resource(), s5.subject() );
     QVERIFY( !hits.next() );
+
+    m_indexModel->index()->clear();
+    QCOMPARE( m_indexModel->index()->resourceCount(), 0 );
+
+    m_indexModel->rebuildIndex();
+
+    hits = m_indexModel->index()->search( "42" );
+    QVERIFY( hits.next() );
+    QCOMPARE( hits.current().resource(), s5.subject() );
+    QVERIFY( !hits.next() );
 }
 
 

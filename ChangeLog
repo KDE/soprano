@@ -14,6 +14,7 @@
 	* Finer grained access to objects exported via D-Bus:
 	  the Soprano::Client::DBusXXXIterator classes provide thin wrappers around Soprano iterators
 	  exported via D-Bus
+	* New method IndexFilterModel::rebuildIndex to rebuild the complete index.
 	
 2.0.1
 	* Fixed method statementCount in Sesame2 backend

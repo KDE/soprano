@@ -237,6 +237,13 @@ namespace Soprano {
              * Dump the index contents to the stream
              */
             void dump( QTextStream& ) const;
+
+            /**
+             * Clear the index, i.e. delete all entries.
+             *
+             * \since 2.1
+             */
+            void clear();
             //@}
 
         private:

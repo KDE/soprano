@@ -168,6 +168,16 @@ namespace Soprano {
              */
             int transactionCacheSize() const;
 
+            /**
+             * Rebuild the complete index. This means that the index will be cleared and all 
+             * literal statements will be re-indexed.
+             *
+             * This method is purely intended for maintenance.
+             *
+             * \since 2.1
+             */
+            void rebuildIndex();
+
         private:
             class Private;
             Private* const d;
