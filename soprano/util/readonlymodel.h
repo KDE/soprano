@@ -46,7 +46,7 @@ namespace Soprano {
         public:
             /**
              * Create a new read-only-model
-             * \param parent The parent Model.
+             * \param parentModel The parent Model.
              */
             ReadOnlyModel( Model* parentModel = 0 );
 
