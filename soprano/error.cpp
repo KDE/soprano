@@ -221,7 +221,7 @@ void Soprano::Error::ErrorCache::clearError() const
 
 
 namespace {
-    const int s_maxErr = 3;
+    const int s_maxErr = 4;
     const char* s_errorMessages[] = {
         "Success",
         "Invalid argument",
