@@ -73,6 +73,9 @@ namespace Soprano {
             ServerCore( QObject* parent = 0 );
             virtual ~ServerCore();
 
+            /**
+             * The default %Soprano server port: 5000
+             */
             static const quint16 DEFAULT_PORT;
 
             /**
@@ -147,6 +150,14 @@ namespace Soprano {
              * \return \p true if the server was successfully started, \p false otherwise.
              */
             bool listen( quint16 port = DEFAULT_PORT );
+
+            /**
+             * \return The port this server is listening on or 0 if listen has not
+             * been called successfully.
+             *
+             * \since 2.1
+             */
+            quint16 serverPort() const;
 
             /**
              * Register the ServerCore as a DBus object. The process needs to be registered

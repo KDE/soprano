@@ -209,6 +209,17 @@ bool Soprano::Server::ServerCore::listen( quint16 port )
 }
 
 
+quint16 Soprano::Server::ServerCore::serverPort() const
+{
+    if ( d->tcpServer ) {
+        return d->tcpServer->serverPort();
+    }
+    else {
+        return 0;
+    }
+}
+
+
 bool Soprano::Server::ServerCore::start( const QString& name )
 {
 #ifdef HAVE_UNIX_SOCKETS
