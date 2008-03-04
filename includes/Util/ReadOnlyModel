@@ -1,1 +1,1 @@
-#include "../../readonlymodel.h"
+#include "../../soprano/readonlymodel.h"
