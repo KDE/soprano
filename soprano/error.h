@@ -43,6 +43,7 @@ namespace Soprano {
             ErrorInvalidStatement = ErrorInvalidArgument, /**< \deprecated: use ErrorInvalidArgument */
             ErrorNotSupported = 0x2,     /**< Error indicating that a certain functionality is not supported. */
             ErrorParsingFailed = 0x3,    /**< Parsing a query or an RDF serialization failed. */
+            ErrorPermissionDenied = 0x4, /**< Permission is denied. \since 2.1 */
             ErrorUnknown = 0x1000        /**< An unknown error occured. */
         };
 

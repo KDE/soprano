@@ -227,6 +227,7 @@ namespace {
         "Invalid argument",
         "Unsupported operation",
         "Parsing failed",
+        "Permission denied",
         0
     };
 }
