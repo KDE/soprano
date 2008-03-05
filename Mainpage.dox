@@ -1,24 +1,42 @@
 /**
  * \mainpage Soprano (aka QRDF) - A modular RDF storage framework
  *
- * Soprano is a QT-based pluggable framework for RDF storage and parsing. It tries to provide a highly usable
+ * %Soprano is a QT-based pluggable framework for RDF storage and parsing. It tries to provide a highly usable
  * interface to several RDF storage solutions.
+ *
+ * \section overview Overview
+ *
+ * %Soprano centers around the Soprano::Model class which represents one storage set. A Soprano::Model is basically a set of
+ * RDF quadruples, i.e. Soprano::Statement. The actual storage is done via Soprano::Backend plugins. All
+ * query operations return Soprano::Iterator instances. Iterator is a explicitely shared class which is very
+ * easy to understand and use.
+ *
+ * %Soprano makes the distinction between two types of Models: Soprano::StorageModel and Soprano::FilterModel.
+ * The former one is intended to be the basic Model which actually stores the data while the latter ones can be
+ * stacked on top of a Soprano::StorageModel to perform certain filter operations. Thes filter operations can range
+ * from very basic things such as disallowing any write operation (Soprano::Util::ReadOnlyModel) to more complex
+ * things such as full text indexing of all literal statements (Soprano::Index::IndexFilterModel) or exporting
+ * the Model via D-Bus (Soprano::Server::DBusExportModel).
+ *
+ * Apart from storage %Soprano provides a system for RDF parser and serializer plugins. For more details on parsing
+ * or serializing RDF data see the Soprano::Parser and Soprano::Serializer classes.
+ *
  *
  * \section quickstart Quickstart
  *
- * 1. Create an RDF Model:
+ * Create an RDF Model:
  *
  * \code
  * Soprano::Model* model = Soprano::createModel();
  * \endcode
  *
- * 2. Fill it with statements:
+ * Fill it with statements:
  *
  * \code
  * model->addStatement( Soprano::Statement( QUrl( "http://mysite.org/data#A"), Soprano::Vocabulary::RDFS::label(), Soprano::LiteraValue( "A test resource" ) ) );
  * \endcode
  *
- * 3. Read the data back:
+ * Read the data back:
  *
  * \code
  * Soprano::StatementIterator it = model->listStatements();
@@ -27,6 +45,14 @@
  * }
  * \endcode
  *
+ * Query the data:
+ *
+ * \code
+ * Soprano::QueryResultIterator it = model->executeQuery( "select ?r where { ?r ?p ?o . }", Soprano::Query::QueryLanguageSparql );
+ * while( it.next() ) {
+ *    displayResult( it.binding( "r" ) );
+ * }
+ * \endcode
  *
  * \section contents Contents
  *

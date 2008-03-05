@@ -47,11 +47,11 @@ namespace Soprano
      *
      * \section Usage
      *
-     * Using a Parser is straightforward. Once starts by getting a plugin that supports the requested
-     * RDF data serilization:
+     * Using a Parser is straightforward. One starts by getting a plugin that supports the requested
+     * RDF data serialization:
      *
      * \code
-     * Parser* p = PluginManager::instance()->discoverParserForSerialization( SerializationRdfXml );
+     * Soprano::Parser* p = Soprano::PluginManager::instance()->discoverParserForSerialization( Soprano::SerializationRdfXml );
      * \endcode
      *
      * Then parsing RDF data is done in a single method call resulting in a StatementIterator over
@@ -59,7 +59,7 @@ namespace Soprano
      * provide the serialization type unless a parser plugin support autodetection).
      *
      * \code
-     * StatementIterator it = p->parseFile( "myrdffile.rdf", SerializationRdfXml );
+     * Soprano::StatementIterator it = p->parseFile( "myrdffile.rdf", Soprano::SerializationRdfXml );
      * \endcode
      *
      * \sa \ref soprano_writing_plugins

@@ -42,6 +42,22 @@ namespace Soprano
      *
      * Each serializer plugin may support multiple RDF serializations (supportedSerializations()).
      *
+     * \section Usage
+     *
+     * Using a Serializer is straightforward. One starts by getting a plugin that supports the requested
+     * RDF data serialization:
+     *
+     * \code
+     * Soprano::Serializer* s = Soprano::PluginManager::instance()->discoverSerializerForSerialization( Soprano::SerializationRdfXml );
+     * \endcode
+     *
+     * Then serializing RDF data is done in a single method call which writes the serialized data to a QTextStream:
+     *
+     * \code
+     * QTextStream stream( stdout );
+     * s->serialize( model->listStatements(), stream, Soprano::SerializationRdfXml );
+     * \endcode
+     *
      * \sa \ref soprano_writing_plugins
      *
      * \author Sebastian Trueg <trueg@kde.org>
