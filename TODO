@@ -5,7 +5,6 @@ Add here what you want to add in Soprano
 * threaded async inference: run inference in a different thread to make add and remove calls return quickly (as an option which can be configured)
 * some reference counting in the inference model to properly handle removal of statements
 * copy the types of the source statement's graph to the inference graph
-* ontoclassgenerator: Only handle resources that have their type defined and set to rdfs:Class or rdf:Property
 
 Soprano 3:
 * make Soprano::Backend::createModel non-virtual and let it call a virtual protected method. Then remove the Backend* paramter
@@ -17,3 +16,6 @@ Soprano 3:
   Model::rollback
   (Only question: Can we support multiple transactions at the same time?)
   Idea: Create a transaction FilterModel that allows to have transactions on any backend in memory. Problem: queries!
+* FilterModel: make all methods pure virtual and parentModel() protected.
+  Reason: now ReadOnlyModel needs to be derived from Model directly for security reasons. Otherwise one could just
+          take parentModel() and call non-const methods.

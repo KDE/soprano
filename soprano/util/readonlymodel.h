@@ -22,7 +22,7 @@
 #ifndef _SOPRANO_READ_ONLY_MODEL_H_
 #define _SOPRANO_READ_ONLY_MODEL_H_
 
-#include "filtermodel.h"
+#include "model.h"
 
 namespace Soprano {
     namespace Util {
@@ -39,7 +39,7 @@ namespace Soprano {
          *
          * \since 2.1
          */
-        class ReadOnlyModel : public FilterModel
+        class ReadOnlyModel : public Model
         {
             Q_OBJECT
 
@@ -49,6 +49,52 @@ namespace Soprano {
              * \param parentModel The parent Model.
              */
             ReadOnlyModel( Model* parentModel = 0 );
+
+            /**
+             * Destructor
+             */
+            ~ReadOnlyModel();
+    
+            /**
+             * Set the parent Model.
+             * \param model The Model that this filter will forward any commands to.
+             */
+            void setParentModel( Model* model );
+
+            /**
+             * Default implementation simply pipes the call through to the parent model.
+             */
+            StatementIterator listStatements( const Statement &partial ) const;
+
+            /**
+             * Simply pipes the call through to the parent model.
+             */
+            NodeIterator listContexts() const;
+
+            /**
+             * Simply pipes the call through to the parent model.
+             */
+            QueryResultIterator executeQuery( const QString& query, Query::QueryLanguage language, const QString& userQueryLanguage = QString() ) const;
+
+            /**
+             * Simply pipes the call through to the parent model.
+             */
+            bool containsStatement( const Statement &statement ) const;
+
+            /**
+             * Simply pipes the call through to the parent model.
+             */
+            bool containsAnyStatement( const Statement &statement ) const;
+
+            /**
+             * Simply pipes the call through to the parent model.
+             */
+            bool isEmpty() const;
+
+            /**
+             * Simply pipes the call through to the parent model.
+             */
+            int statementCount() const;
 
             /**
              * Will do nothing but set an Error::ErrorPermissionDenied error.
@@ -69,6 +115,10 @@ namespace Soprano {
              * Will do nothing but set an Error::ErrorPermissionDenied error.
              */
             Node createBlankNode();
+
+        private:
+            class Private;
+            Private* const d;
         };
     }
 }
