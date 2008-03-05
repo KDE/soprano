@@ -197,7 +197,7 @@ bool Soprano::Server::ServerCore::listen( quint16 port )
                  this, SLOT( slotNewTcpConnection() ) );
     }
 
-    if ( !d->tcpServer->listen( QHostAddress::LocalHost, port ) ) {
+    if ( !d->tcpServer->listen( QHostAddress::Any, port ) ) {
         setError( QString( "Failed to start listening at port %1 on localhost." ).arg( port ) );
         qDebug() << "Failed to start listening at port " << port;
         return false;
