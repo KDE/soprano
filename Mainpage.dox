@@ -33,7 +33,7 @@
  * Fill it with statements:
  *
  * \code
- * model->addStatement( Soprano::Statement( QUrl( "http://mysite.org/data#A"), Soprano::Vocabulary::RDFS::label(), Soprano::LiteraValue( "A test resource" ) ) );
+ * model->addStatement( Soprano::Statement( QUrl( "http://mysite.org/data#A"), Soprano::Vocabulary::RDFS::label(), Soprano::LiteralValue( "A test resource" ) ) );
  * \endcode
  *
  * Read the data back:
