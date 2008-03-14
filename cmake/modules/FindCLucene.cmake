@@ -20,7 +20,7 @@ ENDIF(EXISTS ${PROJECT_CMAKE}/CLuceneConfig.cmake)
     $ENV{CLUCENE_HOME}/lib${LIB_SUFFIX}
     ${CMAKE_INSTALL_PREFIX}/lib${LIB_SUFFIX}
     /usr/local/lib${LIB_SUFFIX}
-    /usr/lib${LIB_SUFFIX}
+    /usr/lib64
     /sw/lib${LIB_SUFFIX}
   )
   SET(TRIAL_INCLUDE_PATHS
