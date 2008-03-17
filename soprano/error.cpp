@@ -25,6 +25,7 @@
 #include <QtCore/QHash>
 #include <QtCore/QThread>
 #include <QtCore/QDebug>
+#include <QtCore/QCoreApplication>
 
 
 namespace Soprano {
@@ -201,7 +202,9 @@ Soprano::Error::Error Soprano::Error::ErrorCache::lastError() const
 void Soprano::Error::ErrorCache::setError( const Error& error ) const
 {
     if ( error ) {
-        qDebug() << "(Soprano) Error occured in thread" << QThread::currentThreadId() << ":" << error;
+        QCoreApplication* app = QCoreApplication::instance();
+        qDebug() << ( app ? QString( "%1(%2)" ).arg( app->applicationFilePath() ).arg( app->applicationPid() ) : QString( "(Soprano)" ) )
+                 << "Error in thread" << QThread::currentThreadId() << ":" << error;
     }
 
     d->errorMap[QThread::currentThread()] = error;

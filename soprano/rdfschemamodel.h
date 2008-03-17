@@ -49,7 +49,7 @@ namespace Soprano {
          * Create a new RDF Schema wrapper model that performs actions
          * on \p model
          */
-        RdfSchemaModel( Model* parentModel );
+        RdfSchemaModel( Model* parentModel = 0 );
 
         /**
          * Destructor.
