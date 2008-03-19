@@ -13,6 +13,7 @@ if(WIN32)
   set(CMAKE_DEBUG_POSTFIX "d")
 endif(WIN32)
 
+set(QT_MIN_VERSION "4.4.0")
 find_package(Qt4 REQUIRED) 
 
 find_package(Redland)
