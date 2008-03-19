@@ -92,7 +92,7 @@ namespace Soprano
     enum BackendFeature {
         BackendFeatureNone = 0x0,
         BackendFeatureAddStatement = 0x1,       /**< The backend supports the adding of statements (Model::addStatement()). */
-        BackendFeatureRemoveStatementS = 0x2,   /**< The backend supports the removal of statements (Model::removeStatement()). */
+        BackendFeatureRemoveStatements = 0x2,   /**< The backend supports the removal of statements (Model::removeStatement()). */
         BackendFeatureListStatements = 0x4,     /**< The backend supports the listing of statements (Model::listStatements(), Model::containsStatement()) */
         BackendFeatureQuery = 0x8,               /**< The backend supports RDF queries (Model::executeQuery()) */
         BackendFeatureInference = 0x10,          /**< The backend provides includes inference engine. */

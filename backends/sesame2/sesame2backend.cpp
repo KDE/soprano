@@ -138,7 +138,7 @@ Soprano::BackendFeatures Soprano::Sesame2::BackendPlugin::supportedFeatures() co
 {
     return(  BackendFeatureStorageMemory|
              BackendFeatureAddStatement|
-             BackendFeatureRemoveStatementS|
+             BackendFeatureRemoveStatements|
              BackendFeatureListStatements|
              BackendFeatureQuery|
              BackendFeatureContext );

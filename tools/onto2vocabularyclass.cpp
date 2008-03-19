@@ -21,11 +21,14 @@
 #include <QtCore/QRegExp>
 
 #include "../soprano/statementiterator.h"
+#include "../soprano/queryresultiterator.h"
 #include "../soprano/nodeiterator.h"
 #include "../soprano/version.h"
 #include "../soprano/pluginmanager.h"
 #include "../soprano/parser.h"
 #include "../soprano/node.h"
+#include "../soprano/model.h"
+#include "../soprano/global.h"
 #include "../soprano/vocabulary/rdfs.h"
 #include "../soprano/vocabulary/rdf.h"
 #include "../soprano/vocabulary/owl.h"
@@ -216,6 +219,18 @@ int main( int argc, char *argv[] )
         return 1;
     }
 
+    // try using the sesame2 backend for graph queries
+    Soprano::setUsedBackend( Soprano::discoverBackendByName( "sesame2" ) );
+    Model* model = Soprano::createModel( BackendSettings() << BackendSetting( BackendOptionStorageMemory ) );
+    if ( !model ) {
+        QTextStream s( stderr );
+        s << "Failed to create memory model" << endl;
+        return 1;
+    }
+    while ( it.next() ) {
+        model->addStatement( *it );
+    }
+
     QFile headerFile( className.toLower() + ".h" );
     QFile sourceFile( className.toLower() + ".cpp" );
 
@@ -234,47 +249,48 @@ int main( int argc, char *argv[] )
     QTextStream headerStream( &headerFile );
     QTextStream sourceStream( &sourceFile );
 
-    QList<Statement> resources = it.allStatements();
+    // select all relevant resource, try to be intelligent about it...
+    QList<Node> allResources = model->executeQuery( QString( "select distinct ?r where { "
+                                                             "graph ?g { ?r a ?rt . } . "
+                                                             "OPTIONAL { ?g a ?gt . "
+                                                             "FILTER(?gt = <http://www.semanticdesktop.org/ontologies/2007/08/15/nrl#GraphMetadata>) . } . "
+                                                             "FILTER(!BOUND(?gt)) . "
+                                                             "}" ),
+                                                    Query::QueryLanguageSparql ).iterateBindings( "r" ).allNodes();
 
-    qDebug() << "parsed" << resources.count() << "resources.";
+    // stupid sparql has no way of saying: "empty graph" so we need to do that manually for
+    // the case where no graph is defined
+    if ( allResources.isEmpty() ) {
+        allResources = model->executeQuery( QString( "select distinct ?r where { "
+                                                     "?r a ?t . }" ),
+                                            Query::QueryLanguageSparql ).iterateBindings( "r" ).allNodes();
+    }
 
     // create entries
     // ----------------------------------------------------
     QMap<QString, QPair<QString, QString> > normalizedResources;
     QStringList done;
-    foreach( Statement resource, resources ) {
-        if ( resource.predicate() == Soprano::Vocabulary::RDF::type() &&
-             ( resource.object() == Soprano::Vocabulary::RDFS::Class() ||
-               resource.object() == Soprano::Vocabulary::OWL::Class() ||
-               resource.object() == Soprano::Vocabulary::RDF::Property() ||
-               resource.object() == Soprano::Vocabulary::OWL::AnnotationProperty() ||
-               resource.object() == Soprano::Vocabulary::OWL::DatatypeProperty() ||
-               resource.object() == Soprano::Vocabulary::OWL::FunctionalProperty() ||
-               resource.object() == Soprano::Vocabulary::OWL::InverseFunctionalProperty() ||
-               resource.object() == Soprano::Vocabulary::OWL::ObjectProperty() ||
-               resource.object() == Soprano::Vocabulary::OWL::OntologyProperty() ||
-               resource.object() == Soprano::Vocabulary::OWL::SymmetricProperty() ||
-               resource.object() == Soprano::Vocabulary::OWL::TransitiveProperty() ) ) {
-            QString uri = resource.subject().uri().toString();
-            if ( !normalizedResources.contains( uri ) ) {
-                QString name = resource.subject().uri().fragment();
-                if ( name.isEmpty() && !uri.contains( '#' ) ) {
-                    name = resource.subject().uri().path().section( "/", -1 );
-                }
+    foreach( Node resource, allResources ) {
+        QString uri = resource.uri().toString();
+        if ( !normalizedResources.contains( uri ) ) {
+            QString name = resource.uri().fragment();
+            if ( name.isEmpty() && !uri.contains( '#' ) ) {
+                name = resource.uri().path().section( "/", -1 );
+            }
 
-                if ( !name.isEmpty() && !done.contains( name ) ) {
-                    normalizedResources.insert( uri, qMakePair( name, QString() ) );
-                    done += name;
-                }
+            if ( !name.isEmpty() && !done.contains( name ) ) {
+                normalizedResources.insert( uri, qMakePair( name, QString() ) );
+                done += name;
             }
         }
     }
 
     // extract comments
-    foreach( Statement resource, resources ) {
-        if ( resource.predicate().uri() == Soprano::Vocabulary::RDFS::comment() ) {
-            if ( normalizedResources.contains( resource.subject().toString() ) ) {
-                normalizedResources[resource.subject().toString()].second = resource.object().literal().toString();
+    foreach( Node resource, allResources ) {
+        StatementIterator it = model->listStatements( resource, Soprano::Vocabulary::RDFS::comment(), Node() );
+        if ( it.next() ) {
+            if ( normalizedResources.contains( resource.toString() ) ) {
+                normalizedResources[resource.toString()].second = it.current().object().literal().toString();
             }
         }
     }
@@ -380,14 +396,14 @@ int main( int argc, char *argv[] )
                  << createIndent( 1 ) << privateClassName << "()" << endl
                  << createIndent( 2 ) << ": ";
 
-    sourceStream << className.toLower() << "_namespace( \"" << ontoNamespace << "\" )," << endl;
+    sourceStream << className.toLower() << "_namespace( QUrl::fromEncoded( \"" << ontoNamespace << "\", QUrl::StrictMode ) )," << endl;
 
     for( QMap<QString, QPair<QString, QString> >::const_iterator it = normalizedResources.begin();
          it != normalizedResources.end(); ++it ) {
         QString uri = it.key();
         QString name = it.value().first;
 
-        sourceStream << createIndent( 2 ) << "  " << className.toLower() << "_" << name << "( \"" << uri << "\" )";
+        sourceStream << createIndent( 2 ) << "  " << className.toLower() << "_" << name << "( QUrl::fromEncoded( \"" << uri << "\", QUrl::StrictMode ) )";
 
         ++it;
         if ( it != normalizedResources.end() ) {

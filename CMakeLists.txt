@@ -2,7 +2,7 @@ project(soprano)
 
 set(CMAKE_SOPRANO_VERSION_MAJOR 2 CACHE INT "Major Soprano version number" FORCE)
 set(CMAKE_SOPRANO_VERSION_MINOR 0 CACHE INT "Minor Soprano version number" FORCE)
-set(CMAKE_SOPRANO_VERSION_RELEASE 95 CACHE INT "Release Soprano version number" FORCE)
+set(CMAKE_SOPRANO_VERSION_RELEASE 96 CACHE INT "Release Soprano version number" FORCE)
 set(CMAKE_SOPRANO_VERSION_STRING "${CMAKE_SOPRANO_VERSION_MAJOR}.${CMAKE_SOPRANO_VERSION_MINOR}.${CMAKE_SOPRANO_VERSION_RELEASE}" CACHE STRING "Soprano version string" FORCE)
 
 enable_testing()
@@ -13,7 +13,6 @@ if(WIN32)
   set(CMAKE_DEBUG_POSTFIX "d")
 endif(WIN32)
 
-set(QT_MIN_VERSION "4.4.0")
 find_package(Qt4 REQUIRED) 
 
 find_package(Redland)

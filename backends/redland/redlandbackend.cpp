@@ -132,7 +132,7 @@ Soprano::BackendFeatures Soprano::Redland::BackendPlugin::supportedFeatures() co
 {
     return(  BackendFeatureStorageMemory|
              BackendFeatureAddStatement|
-             BackendFeatureRemoveStatementS|
+             BackendFeatureRemoveStatements|
              BackendFeatureListStatements|
              BackendFeatureQuery|
              BackendFeatureContext );

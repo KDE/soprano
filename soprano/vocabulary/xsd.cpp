@@ -26,24 +26,24 @@ class XMLSchema
 {
 public:
     XMLSchema()
-        : xsdNamespace( "http://www.w3.org/2001/XMLSchema#" ),
-          xsdInt( "http://www.w3.org/2001/XMLSchema#int" ),
-          xsdInteger( "http://www.w3.org/2001/XMLSchema#integer" ),
-          xsdNegativeInteger( "http://www.w3.org/2001/XMLSchema#negativeInteger" ),
-          xsdNonNegativeInteger( "http://www.w3.org/2001/XMLSchema#nonNegativeInteger" ),
-          xsdDecimal( "http://www.w3.org/2001/XMLSchema#decimal" ),
-          xsdShort( "http://www.w3.org/2001/XMLSchema#short" ),
-          xsdLong( "http://www.w3.org/2001/XMLSchema#long" ),
-          xsdUnsignedInt( "http://www.w3.org/2001/XMLSchema#unsignedInt" ),
-          xsdUnsignedShort( "http://www.w3.org/2001/XMLSchema#unsignedShort" ),
-          xsdUnsignedLong( "http://www.w3.org/2001/XMLSchema#unsignedLong" ),
-          xsdBoolean( "http://www.w3.org/2001/XMLSchema#boolean" ),
-          xsdDouble( "http://www.w3.org/2001/XMLSchema#double" ),
-          xsdString( "http://www.w3.org/2001/XMLSchema#string" ),
-          xsdDate( "http://www.w3.org/2001/XMLSchema#date" ),
-          xsdTime( "http://www.w3.org/2001/XMLSchema#time" ),
-          xsdDateTime( "http://www.w3.org/2001/XMLSchema#dateTime" ),
-          xsdBase64Binary( "http://www.w3.org/2001/XMLSchema#base64Binary" ) {
+        : xsdNamespace( QUrl::fromEncoded( "http://www.w3.org/2001/XMLSchema#", QUrl::StrictMode ) ),
+          xsdInt( QUrl::fromEncoded( "http://www.w3.org/2001/XMLSchema#int", QUrl::StrictMode ) ),
+          xsdInteger( QUrl::fromEncoded( "http://www.w3.org/2001/XMLSchema#integer", QUrl::StrictMode ) ),
+          xsdNegativeInteger( QUrl::fromEncoded( "http://www.w3.org/2001/XMLSchema#negativeInteger", QUrl::StrictMode ) ),
+          xsdNonNegativeInteger( QUrl::fromEncoded( "http://www.w3.org/2001/XMLSchema#nonNegativeInteger", QUrl::StrictMode ) ),
+          xsdDecimal( QUrl::fromEncoded( "http://www.w3.org/2001/XMLSchema#decimal", QUrl::StrictMode ) ),
+          xsdShort( QUrl::fromEncoded( "http://www.w3.org/2001/XMLSchema#short", QUrl::StrictMode ) ),
+          xsdLong( QUrl::fromEncoded( "http://www.w3.org/2001/XMLSchema#long", QUrl::StrictMode ) ),
+          xsdUnsignedInt( QUrl::fromEncoded( "http://www.w3.org/2001/XMLSchema#unsignedInt", QUrl::StrictMode ) ),
+          xsdUnsignedShort( QUrl::fromEncoded( "http://www.w3.org/2001/XMLSchema#unsignedShort", QUrl::StrictMode ) ),
+          xsdUnsignedLong( QUrl::fromEncoded( "http://www.w3.org/2001/XMLSchema#unsignedLong", QUrl::StrictMode ) ),
+          xsdBoolean( QUrl::fromEncoded( "http://www.w3.org/2001/XMLSchema#boolean", QUrl::StrictMode ) ),
+          xsdDouble( QUrl::fromEncoded( "http://www.w3.org/2001/XMLSchema#double", QUrl::StrictMode ) ),
+          xsdString( QUrl::fromEncoded( "http://www.w3.org/2001/XMLSchema#string", QUrl::StrictMode ) ),
+          xsdDate( QUrl::fromEncoded( "http://www.w3.org/2001/XMLSchema#date", QUrl::StrictMode ) ),
+          xsdTime( QUrl::fromEncoded( "http://www.w3.org/2001/XMLSchema#time", QUrl::StrictMode ) ),
+          xsdDateTime( QUrl::fromEncoded( "http://www.w3.org/2001/XMLSchema#dateTime", QUrl::StrictMode ) ),
+          xsdBase64Binary( QUrl::fromEncoded( "http://www.w3.org/2001/XMLSchema#base64Binary", QUrl::StrictMode ) ) {
     }
 
     QUrl xsdNamespace;
