@@ -24,12 +24,12 @@
 
 #include "SopranoModelTest.h"
 
-#include <QtCore/QProcess>
+#include <QtCore/QHash>
 
 namespace Soprano {
     class Model;
     namespace Client {
-    class UnixSocketClient;
+        class LocalSocketClient;
     }
 }
 
@@ -39,14 +39,16 @@ class SopranodSocketClientTest : public SopranoModelTest
 
 protected:
     virtual Soprano::Model* createModel();
+    virtual void deleteModel( Soprano::Model* );
 
 private Q_SLOTS:
     void initTestCase();
     void cleanupTestCase();
 
 private:
-    Soprano::Client::UnixSocketClient* m_client;
+    Soprano::Client::LocalSocketClient* m_client;
     int m_modelCnt;
+    QHash<Soprano::Model*, QString> m_modelMap;
 };
 
 #endif

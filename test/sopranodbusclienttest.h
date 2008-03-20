@@ -24,13 +24,12 @@
 
 #include "SopranoModelTest.h"
 
-#include <QtCore/QProcess>
 #include <QtCore/QHash>
 
 namespace Soprano {
     class Model;
     namespace Client {
-    class DBusClient;
+        class DBusClient;
     }
 }
 

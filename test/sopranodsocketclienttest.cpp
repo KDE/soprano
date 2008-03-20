@@ -20,7 +20,7 @@
  */
 
 #include "sopranodsocketclienttest.h"
-#include "../server/unixsocketclient.h"
+#include "../server/localsocketclient.h"
 #include "../soprano/storagemodel.h"
 
 #include <QtTest/QtTest>
@@ -34,7 +34,7 @@ using namespace Soprano::Client;
 
 void SopranodSocketClientTest::initTestCase()
 {
-    m_client = new UnixSocketClient();
+    m_client = new LocalSocketClient();
     QVERIFY( m_client->connect() );
     m_modelCnt = 0;
 }
@@ -48,7 +48,17 @@ void SopranodSocketClientTest::cleanupTestCase()
 
 Soprano::Model* SopranodSocketClientTest::createModel()
 {
-    return m_client->createModel( QString( "Testmodel%1" ).arg( m_modelCnt++ ) );
+    Soprano::Model* m = m_client->createModel( QString( "Testmodel%1" ).arg( ++m_modelCnt ) );
+    m_modelMap.insert( m, QString( "Testmodel%1" ).arg( m_modelCnt ) );
+    return m;
+}
+
+
+void SopranodSocketClientTest::deleteModel( Soprano::Model* m )
+{
+    m_client->removeModel( m_modelMap[m] );
+    m_modelMap.remove( m );
+    delete m;
 }
 
 QTEST_MAIN( SopranodSocketClientTest )

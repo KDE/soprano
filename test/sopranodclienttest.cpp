@@ -37,10 +37,6 @@ void SopranodClientTest::initTestCase()
     m_client = new TcpClient();
     QVERIFY( m_client->connect() );
     m_modelCnt = 0;
-
-    // start the server
-//    m_serverProcess.start( "../server/sopranod" );
-//    QVERIFY( !m_serverProcess.waitForStarted(-1) );
 }
 
 
@@ -55,7 +51,17 @@ void SopranodClientTest::cleanupTestCase()
 
 Soprano::Model* SopranodClientTest::createModel()
 {
-    return m_client->createModel( QString( "Testmodel%1" ).arg( m_modelCnt++ ) );
+    Soprano::Model* m = m_client->createModel( QString( "Testmodel%1" ).arg( ++m_modelCnt ) );
+    m_modelMap.insert( m, QString( "Testmodel%1" ).arg( m_modelCnt ) );
+    return m;
+}
+
+
+void SopranodClientTest::deleteModel( Soprano::Model* m )
+{
+    m_client->removeModel( m_modelMap[m] );
+    m_modelMap.remove( m );
+    delete m;
 }
 
 QTEST_MAIN( SopranodClientTest )

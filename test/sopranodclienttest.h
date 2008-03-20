@@ -24,7 +24,7 @@
 
 #include "SopranoModelTest.h"
 
-#include <QtCore/QProcess>
+#include <QtCore/QHash>
 
 namespace Soprano {
     class Model;
@@ -39,6 +39,7 @@ class SopranodClientTest : public SopranoModelTest
 
 protected:
     virtual Soprano::Model* createModel();
+    virtual void deleteModel( Soprano::Model* );
 
 private Q_SLOTS:
     void initTestCase();
@@ -46,8 +47,8 @@ private Q_SLOTS:
 
 private:
     Soprano::Client::TcpClient* m_client;
-    QProcess m_serverProcess;
     int m_modelCnt;
+    QHash<Soprano::Model*, QString> m_modelMap;
 };
 
 #endif
