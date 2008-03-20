@@ -1,7 +1,7 @@
 /* 
  * This file is part of Soprano Project.
  *
- * Copyright (C) 2007 Sebastian Trueg <trueg@kde.org>
+ * Copyright (C) 2007-2008 Sebastian Trueg <trueg@kde.org>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -28,28 +28,30 @@
 
 namespace Soprano
 {
-  namespace Redland
+    namespace Redland
     {
-      class BackendPlugin : public QObject, public Soprano::Backend
-    {
-      Q_OBJECT
-      Q_INTERFACES(Soprano::Backend)
+        class BackendPlugin : public QObject, public Soprano::Backend
+        {
+            Q_OBJECT
+            Q_INTERFACES(Soprano::Backend)
 
-    public:
-      BackendPlugin();
+        public:
+            BackendPlugin();
 
-      /**
-       * Supported user options are:
-       * \li name - The name of the RDF storage for persistant storage types. Defaults to "soprano".
-       * \li storageType - The storage type, can be one of the redland storage types, defaults to "hashes".
-       * \li All supported redland options as can be used with librdf_new_storage(), defaults are:
-       *     contexts=yes, new=no. Soprano::BackendOptions Soprano::BackendOptionStorageDir and
-       *     Soprano::BackendOptionStorageMemory change the values of redland options "dir" and "has-type".
-       */
-      StorageModel* createModel( const QList<BackendSetting>& settings = QList<BackendSetting>() ) const;
+            /**
+             * Supported user options are:
+             * \li name - The name of the RDF storage for persistant storage types. Defaults to "soprano".
+             * \li storageType - The storage type, can be one of the redland storage types, defaults to "hashes".
+             * \li All supported redland options as can be used with librdf_new_storage(), defaults are:
+             *     contexts=yes, new=no. Soprano::BackendOptions Soprano::BackendOptionStorageDir and
+             *     Soprano::BackendOptionStorageMemory change the values of redland options "dir" and "has-type".
+             */
+            StorageModel* createModel( const QList<BackendSetting>& settings = QList<BackendSetting>() ) const;
 
-      BackendFeatures supportedFeatures() const;
-    };
+            bool deleteModelData( const BackendSettings& settings ) const;
+
+            BackendFeatures supportedFeatures() const;
+        };
     }
 }
 

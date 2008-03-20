@@ -1,7 +1,7 @@
 /*
  * This file is part of Soprano Project.
  *
- * Copyright (C) 2007 Sebastian Trueg <trueg@kde.org>
+ * Copyright (C) 2007-2008 Sebastian Trueg <trueg@kde.org>
  *
  * Based on RedlandModelFactory.cpp
  * Copyright (C) 2006 Daniele Galdi <daniele.galdi@gmail.com>
@@ -125,6 +125,42 @@ Soprano::StorageModel* Soprano::Redland::BackendPlugin::createModel( const QList
     }
 
     return new RedlandModel( this, model, storage );
+}
+
+
+bool Soprano::Redland::BackendPlugin::deleteModelData( const BackendSettings& settings ) const
+{
+    QString path;
+    QString name = "soprano";
+    Q_FOREACH( BackendSetting s, settings ) {
+        if ( s.option() == BackendOptionUser &&
+            s.userOptionName() == "name" ) {
+            name = s.value().toString();
+        }
+        else if ( s.option() == BackendOptionStorageDir ) {
+            path = s.value().toString();
+            break;
+        }
+    }
+
+    if ( path.isEmpty() ) {
+        setError( "No storage path set.", Error::ErrorInvalidArgument );
+        return false;
+    }
+
+    // FIXME: <name>-*.db is probably only valid for the bdb backend
+    // is there a way to get the actual list of files?
+    QDir dir( path );
+    QStringList files = dir.entryList( QStringList() << ( name + "-*.db" ), QDir::Files );
+    foreach( QString file, files ) {
+        if ( !dir.remove( file ) ) {
+            setError( "Failed to remove file '" + dir.filePath( file ), Error::ErrorUnknown );
+            return false;
+        }
+    }
+
+    clearError();
+    return true;
 }
 
 

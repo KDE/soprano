@@ -20,3 +20,4 @@ Soprano 3:
   Reason: now ReadOnlyModel needs to be derived from Model directly for security reasons. Otherwise one could just
           take parentModel() and call non-const methods.
 * Use QDbusObjectPath as return value for models and iterators in the DBus inteface
+* Make BackendSettings a class which provides method to lookup a value

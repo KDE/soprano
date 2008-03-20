@@ -143,7 +143,7 @@
  */
 
 /**
- * \page soprano_writing_plugins Writing Soprano Plugins
+ * \page soprano_writing_plugins Writing %Soprano Plugins
  *
  * %Soprano has five kinds of plugins: Soprano::Backend, Soprano::Parser, Soprano::Serializer,
  * Soprano::Query::Parser, and Soprano::Query::Serializer.
@@ -163,6 +163,7 @@
  *
  * public:
  *    StorageModel* createModel( const QStringList& options = QStringList() ) const;
+ *    bool deleteModelData( const BackendSettings& settings ) const;
  *    BackendFeatures supportedFeatures() const;
  * };
  * \endcode
@@ -184,7 +185,7 @@
  * [Desktop Entry]
  * Encoding=UTF-8
  * X-Soprano-Library=libsoprano_mybackend
- * X-Soprano-Version=2.0
+ * X-Soprano-Version=2.1
  * Type=Service
  * ServiceTypes=Soprano/Backend
  * Name=MyBackend
@@ -265,7 +266,7 @@
  * members.
  */
 
-// DOXYGEN_VERSION=2.0.93
+// DOXYGEN_VERSION=2.0.96
 // DOXYGEN_NAME=Soprano
 // DOXYGEN_COPYRIGHT=2007-2008 <a href='mailto:trueg@kde.org'>Sebastian Trueg</a>
 // DOXYGEN_ENABLE=YES
@@ -281,6 +282,8 @@
 // DOXYGEN_SET_INPUT += @topdir@/soprano/index/cluceneindex.h
 // DOXYGEN_SET_INPUT += @topdir@/soprano/index/indexqueryhit.h
 // DOXYGEN_SET_INPUT += @topdir@/soprano/server/servercore.h
+// DOXYGEN_SET_INPUT += @topdir@/soprano/server/dbus/tcpclient.h
+// DOXYGEN_SET_INPUT += @topdir@/soprano/server/dbus/localsocketclient.h
 // DOXYGEN_SET_INPUT += @topdir@/soprano/server/dbus/dbusclient.h
 // DOXYGEN_SET_INPUT += @topdir@/soprano/server/dbus/dbusmodel.h
 // DOXYGEN_SET_INPUT += @topdir@/soprano/server/dbus/dbusstatementiterator.h

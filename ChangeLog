@@ -16,6 +16,10 @@
 	  exported via D-Bus
 	* New method IndexFilterModel::rebuildIndex to rebuild the complete index.
 	* New filter model ReadOnlyModel which does exactly what its name suggests: it blocks all writing operations.
+	* The unix socket client has been replaced be the LocalSocketClient based on the QLocalSocket which was
+	  introduced in QT 4.4. As a result of the design on QLocalServer and QLocalSocket the server is not
+	  multithreaded anymore.
+	* New Backend method "deleteModelData"
 	
 2.0.1
 	* Fixed method statementCount in Sesame2 backend

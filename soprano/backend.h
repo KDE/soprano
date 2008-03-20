@@ -1,7 +1,7 @@
 /*
  * This file is part of Soprano Project.
  *
- * Copyright (C) 2007 Sebastian Trueg <trueg@kde.org>
+ * Copyright (C) 2007-2008 Sebastian Trueg <trueg@kde.org>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -149,6 +149,23 @@ namespace Soprano
         virtual StorageModel* createModel( const BackendSettings& settings = BackendSettings() ) const = 0;
 
         /**
+         * Phyically delete all data for a specific model. For most backends this means deleting some files
+         * on the hard disk. With others it may mean to delete tables from an SQL database.
+         *
+         * \param settings The settings that were used to create the model which should be deleted.
+         *                 For most backends the Soprano::BackendOptionStorageDir setting is probably most important.
+         *                 If the settings do not provide enough information to uniquely identify the model
+         *                 to delete, the method should be terminated with an Error::ErrorInvalidArgument
+         *                 error.
+         *
+         * \return \p true if the data was successfully removed, \p false otherwise. ErrorCache::lastError()
+         *         may provide more detailed error information in the latter case.
+         *
+         * \since 2.1
+         */
+        virtual bool deleteModelData( const BackendSettings& settings ) const = 0;
+
+        /**
          * Each backend can support a set of features. Backends without any features do not make much sense.
          * If the features include Soprano::BackendFeatureUser additional user features not defined in 
          * Backend::BackendFeature can be supported via supportedUserFeatures().
@@ -182,6 +199,6 @@ namespace Soprano
     };
 }
 
-Q_DECLARE_INTERFACE(Soprano::Backend, "org.soprano.plugins.Backend/2.0")
+Q_DECLARE_INTERFACE(Soprano::Backend, "org.soprano.plugins.Backend/2.1")
 
 #endif

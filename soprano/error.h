@@ -35,7 +35,7 @@ namespace Soprano {
          * used to provide a quick success status check in methods
          * such as Model::addStatement().
          *
-         * \sa Error::code()
+         * \sa Error::Error::code()
          */
         enum ErrorCode {
             ErrorNone = 0x0,             /**< No error occured, i.e. success. */

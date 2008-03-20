@@ -1,7 +1,7 @@
 /* 
  * This file is part of Soprano Project.
  *
- * Copyright (C) 2007 Sebastian Trueg <trueg@kde.org>
+ * Copyright (C) 2007-2008 Sebastian Trueg <trueg@kde.org>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -32,25 +32,27 @@ class JNIWrapper;
 
 namespace Soprano {
     namespace Sesame2 {
-    class BackendPlugin : public QObject, public Soprano::Backend
-    {
-        Q_OBJECT
-        Q_INTERFACES(Soprano::Backend)
+        class BackendPlugin : public QObject, public Soprano::Backend
+        {
+            Q_OBJECT
+            Q_INTERFACES(Soprano::Backend)
 
-    public:
-        BackendPlugin();
-        ~BackendPlugin();
+        public:
+            BackendPlugin();
+            ~BackendPlugin();
 
-        StorageModel* createModel( const QList<BackendSetting>& settings = QList<BackendSetting>() ) const;
+            StorageModel* createModel( const QList<BackendSetting>& settings = QList<BackendSetting>() ) const;
 
-        BackendFeatures supportedFeatures() const;
+            bool deleteModelData( const BackendSettings& settings ) const;
 
-        bool isAvailable() const;
+            BackendFeatures supportedFeatures() const;
 
-    private:
-        mutable JNIWrapper* m_jniWrapper;
-        mutable QMutex m_mutex;
-    };
+            bool isAvailable() const;
+
+        private:
+            mutable JNIWrapper* m_jniWrapper;
+            mutable QMutex m_mutex;
+        };
     }
 }
 

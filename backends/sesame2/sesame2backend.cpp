@@ -1,7 +1,7 @@
 /*
  * This file is part of Soprano Project.
  *
- * Copyright (C) 2007 Sebastian Trueg <trueg@kde.org>
+ * Copyright (C) 2007-2008 Sebastian Trueg <trueg@kde.org>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -27,6 +27,7 @@
 
 #include <QtCore/QtPlugin>
 #include <QtCore/QDebug>
+#include <QtCore/QDir>
 
 
 Q_EXPORT_PLUGIN2(soprano_sesame2backend, Soprano::Sesame2::BackendPlugin)
@@ -131,6 +132,36 @@ Soprano::StorageModel* Soprano::Sesame2::BackendPlugin::createModel( const QList
     }
 
     return 0;
+}
+
+
+bool Soprano::Sesame2::BackendPlugin::deleteModelData( const BackendSettings& settings ) const
+{
+    QString path;
+    Q_FOREACH( BackendSetting s, settings ) {
+        if ( s.option() == BackendOptionStorageDir ) {
+            path = s.value().toString();
+            break;
+        }
+    }
+
+    if ( path.isEmpty() ) {
+        setError( "No storage path set.", Error::ErrorInvalidArgument );
+        return false;
+    }
+
+    // FIXME: is there a way to get the actual list of files
+    QDir dir( path );
+    QStringList files = dir.entryList( QStringList() << "triples*" << "namespaces*" << "values*", QDir::Files );
+    foreach( QString file, files ) {
+        if ( !dir.remove( file ) ) {
+            setError( "Failed to remove file '" + dir.filePath( file ), Error::ErrorUnknown );
+            return false;
+        }
+    }
+
+    clearError();
+    return true;
 }
 
 
