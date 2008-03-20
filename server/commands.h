@@ -24,7 +24,7 @@
 
 #include <qglobal.h>
 
-#define PROTOCOL_VERSION 1
+#define PROTOCOL_VERSION 2
 
 namespace Soprano {
     namespace Server {
@@ -49,6 +49,7 @@ namespace Soprano {
         const quint16 COMMAND_SUPPORTED_FEATURES = 0x19;
         const quint16 COMMAND_SUPPORTS_PROTOCOL_VERSION = 0x20;
         const quint16 COMMAND_MODEL_CREATE_BLANK_NODE = 0x21;
+        const quint16 COMMAND_REMOVE_MODEL = 0x22;
     }
 }
 

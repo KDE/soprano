@@ -96,7 +96,7 @@ INPUT                  = ${soprano_SOURCE_DIR}/soprano \
                          ${soprano_SOURCE_DIR}/server/SopranoServer.dox \
                          ${soprano_SOURCE_DIR}/server/servercore.h \
                          ${soprano_SOURCE_DIR}/server/tcpclient.h \
-                         ${soprano_SOURCE_DIR}/server/unixsocketclient.h \
+                         ${soprano_SOURCE_DIR}/server/localsocketclient.h \
                          ${soprano_SOURCE_DIR}/server/dbus/dbusclient.h \
                          ${soprano_SOURCE_DIR}/server/dbus/dbusexportmodel.h \
                          ${soprano_SOURCE_DIR}/server/dbus/dbusexportiterator.h \

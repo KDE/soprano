@@ -136,8 +136,15 @@ namespace Soprano {
             virtual QStringList allModels() const;
 
             /**
-             * Start the core on a unix socket.
-             * This method does nothing on Windows systems.
+             * Start the core on a local socket.
+             * On Windows this is a named pipe and on Unix this this is a local domain socket.
+             *
+             * Use Client::LocalSocketClient to connect.
+             *
+             * \warning Via the local socket connection signals are not supported.
+             *
+             * \return \p true if the local socket could be successfully
+             * opened. \p false on error. See ErrorCache::lastError() for details.
              */
             bool start( const QString& socketPath = QString() );
 
@@ -146,6 +153,14 @@ namespace Soprano {
              * listen on the specified port for incoming client connections.
              *
              * \param port The port to listen on for client connections.
+             *
+             * Use Client::TcpClient to connect.
+             *
+             * \warning Via the TCP connection signals are not supported. Thus, the models created
+             * by it will not emit signals such as Model::statementAdded. Also no permission handling or
+             * any kind of security is implemented at the moment. Thus, if a server is running and is 
+             * listening on a port, it is open to connections from any client on any computer in the
+             * network.
              *
              * \return \p true if the server was successfully started, \p false otherwise.
              */
@@ -165,6 +180,8 @@ namespace Soprano {
              *
              * \param objectPath The DBus object path to register the server as. If empty
              * the default path will be used (/org/soprano/Server).
+             *
+             * Use Client::DBusClient to connect.
              */
             void registerAsDBusObject( const QString& objectPath = QString() );
 

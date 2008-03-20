@@ -1,5 +1,6 @@
 install(FILES
   TcpClient
+  LocalSocketClient
   DBusClient
   DBusModel
   DBusStatementIterator

@@ -1,7 +1,7 @@
 /*
  * This file is part of Soprano Project.
  *
- * Copyright (C) 2007 Sebastian Trueg <trueg@kde.org>
+ * Copyright (C) 2007-2008 Sebastian Trueg <trueg@kde.org>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -19,8 +19,8 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef _SOPRANO_SERVER_CLIENT_H_
-#define _SOPRANO_SERVER_CLIENT_H_
+#ifndef _SOPRANO_CLIENT_LOCAL_SOCKET_CLIENT_H_
+#define _SOPRANO_CLIENT_LOCAL_SOCKET_CLIENT_H_
 
 #include <QtCore/QObject>
 #include <QtCore/QList>
@@ -37,13 +37,21 @@ namespace Soprano {
 
     namespace Client {
         /**
-         * \class UnixSocketClient unixsocketclient.h Soprano/Client/UnixSocketClient
+         * \class LocalSocketClient localsocketclient.h Soprano/Client/LocalSocketClient
          *
-         * \brief Creates a connection to the %Soprano server through a unix socket interface.
+         * \brief Creates a connection to the %Soprano server through a local socket interface.
+         *
+         * The %Soprano server supports more than one way of communication. Beside D-Bus (see
+         * DBusClient) it can be contacted via a local socket.
+         *
+         * \warning The LocalSocketClient does not support signals. Thus, the models created
+         * by it will not emit signals such as Model::statementAdded.
          *
          * \author Sebastian Trueg <trueg@kde.org>
+         *
+         * \since 2.1
          */
-        class SOPRANO_EXPORT UnixSocketClient : public QObject, public Error::ErrorCache
+        class SOPRANO_EXPORT LocalSocketClient : public QObject, public Error::ErrorCache
         {
             Q_OBJECT
 
@@ -51,12 +59,12 @@ namespace Soprano {
             /**
              * Create a new Client instance.
              */
-            UnixSocketClient( QObject* parent = 0 );
+            LocalSocketClient( QObject* parent = 0 );
 
             /**
              * Destructor.
              */
-            virtual ~UnixSocketClient();
+            virtual ~LocalSocketClient();
 
             /**
              * Tries to connect to the %Soprano server.
@@ -96,14 +104,14 @@ namespace Soprano {
             Model* createModel( const QString& name, const QList<BackendSetting>& settings = QList<BackendSetting>() );
 
             /**
-             * Get a list of all models that the server currently holds.
-             * This method may return an empty list before any call to 
-             * createModel().
+             * Deletes a model including all its data.
              *
-             * \return A list of the names of all models that are currently
-             * opened by the server.
+             * \param name The name of the model to remove.
+             *
+             * \warning Calling this method will remove all data physically. It can not
+             * be reverted. Use with care.
              */
-//        QStringList models() const;
+            void removeModel( const QString& name );
 
         private:
             class Private;

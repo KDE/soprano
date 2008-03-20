@@ -22,9 +22,9 @@
 #ifndef _SOPRANO_SERVER_CONNECTION_H_
 #define _SOPRANO_SERVER_CONNECTION_H_
 
-#include <QtCore/QThread>
-#include <QtNetwork/QTcpSocket>
+#include <QtCore/QObject>
 
+class QIODevice;
 
 namespace Soprano {
 
@@ -34,7 +34,7 @@ namespace Soprano {
 
         class ServerCore;
 
-        class ServerConnection : public QThread
+        class ServerConnection : public QObject
         {
             Q_OBJECT
 
@@ -52,12 +52,17 @@ namespace Soprano {
 
             void start( QIODevice* socket );
 
+        Q_SIGNALS:
+            void finished();
+
         protected:
             void run();
 
         private:
             class Private;
             Private* const d;
+
+            Q_PRIVATE_SLOT( d, void _k_readNextCommand() )
         };
     }
 }

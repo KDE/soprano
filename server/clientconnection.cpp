@@ -96,6 +96,28 @@ int Soprano::Client::ClientConnection::createModel( const QString& name, const Q
 }
 
 
+void Soprano::Client::ClientConnection::removeModel( const QString& name )
+{
+//    qDebug() << "(ClientConnection::createModel)";
+    QMutexLocker( &d->mutex );
+
+    QDataStream stream( d->socket );
+
+    stream << COMMAND_REMOVE_MODEL << name;
+
+    if ( !d->socket->waitForReadyRead(s_defaultTimeout) ) {
+        setError( "Command timed out." );
+        return;
+    }
+
+    Error::Error error;
+
+    stream >> error;
+
+    setError( error );
+}
+
+
 Soprano::BackendFeatures Soprano::Client::ClientConnection::supportedFeatures()
 {
 //    qDebug() << "(ClientConnection::supportedFeatures)";

@@ -21,8 +21,6 @@
 
 #include "servercore.h"
 #include "serverconnection.h"
-#include "socketserver.h"
-#include "socketdevice.h"
 #include "dbus/dbusserveradaptor.h"
 
 #include "soprano-server-config.h"
@@ -36,6 +34,9 @@
 #include <QtCore/QDir>
 #include <QtNetwork/QTcpServer>
 #include <QtNetwork/QHostAddress>
+#include <QtNetwork/QLocalServer>
+#include <QtNetwork/QLocalSocket>
+#include <QtNetwork/QTcpSocket>
 
 
 const quint16 Soprano::Server::ServerCore::DEFAULT_PORT = 5000;
@@ -46,14 +47,12 @@ class Soprano::Server::ServerCore::Private
 public:
     Private()
         : dbusAdaptor( 0 ),
-          tcpServer( 0 )
-#ifdef HAVE_UNIX_SOCKETS
-          , socketServer( 0 )
-#endif
+          tcpServer( 0 ),
+          socketServer( 0 )
     {}
 
     const Backend* backend;
-    QList<BackendSetting> settings;
+    BackendSettings settings;
 
     QHash<QString, Model*> models;
     QList<ServerConnection*> connections;
@@ -61,9 +60,19 @@ public:
     DBusServerAdaptor* dbusAdaptor;
 
     QTcpServer* tcpServer;
-#ifdef HAVE_UNIX_SOCKETS
-    SocketServer* socketServer;
-#endif
+    QLocalServer* socketServer;
+
+    BackendSettings createBackendSettings( const QString& name ) {
+        BackendSettings newSettings = settings;
+        for ( BackendSettings::iterator it = newSettings.begin();
+              it != newSettings.end(); ++it ) {
+            BackendSetting& setting = *it;
+            if ( setting.option() == BackendOptionStorageDir ) {
+                setting.setValue( setting.value().toString() + '/' + name );
+            }
+        }
+        return newSettings;
+    }
 };
 
 
@@ -80,7 +89,6 @@ Soprano::Server::ServerCore::~ServerCore()
 {
     Q_FOREACH( ServerConnection* conn, d->connections ) {
         conn->close();
-        conn->wait();
     }
     qDeleteAll( d->connections );
     qDeleteAll( d->models );
@@ -116,13 +124,13 @@ Soprano::Model* Soprano::Server::ServerCore::model( const QString& name )
 {
     QHash<QString, Model*>::const_iterator it = d->models.find( name );
     if ( it == d->models.constEnd() ) {
-        QList<BackendSetting> settings = d->settings;
+        QList<BackendSetting> settings = d->createBackendSettings( name );
         for ( QList<BackendSetting>::iterator it = settings.begin();
               it != settings.end(); ++it ) {
             BackendSetting& setting = *it;
             if ( setting.option() == BackendOptionStorageDir ) {
-                setting.setValue( setting.value().toString() + '/' + name );
                 QDir().mkpath( setting.value().toString() );
+                break;
             }
         }
         Model* model = createModel( settings );
@@ -135,27 +143,6 @@ Soprano::Model* Soprano::Server::ServerCore::model( const QString& name )
 }
 
 
-namespace {
-    void removeFile( const QString& path )
-    {
-        qDebug() << "Removing" << path;
-        QDir dir( path );
-        if ( dir.exists() ) {
-            QStringList children = dir.entryList();
-            children.removeAll( "." );
-            children.removeAll( ".." );
-            Q_FOREACH( QString s, children ) {
-                removeFile( dir.filePath( s ) );
-            }
-
-            dir.rmpath( path );
-        }
-        else {
-            QFile::remove( path );
-        }
-    }
-}
-
 void Soprano::Server::ServerCore::removeModel( const QString& name )
 {
     clearError();
@@ -167,22 +154,20 @@ void Soprano::Server::ServerCore::removeModel( const QString& name )
     else {
         Model* model = *it;
         d->models.erase( it );
-        QString dir;
-        for ( QList<BackendSetting>::const_iterator it = d->settings.begin();
-              it != d->settings.end(); ++it ) {
-            const BackendSetting& setting = *it;
-            if ( setting.option() == BackendOptionStorageDir ) {
-                dir = setting.value().toString() + '/' + name;
-                break;
-            }
-        }
-
         // delete the model, removing any cached data
         delete model;
 
         // remove the data on disk
-        if ( !dir.isEmpty() ) {
-            removeFile( dir );
+        backend()->deleteModelData( d->createBackendSettings( name ) );
+
+        // remove the dir which should now be empty
+        for ( QList<BackendSetting>::iterator it = d->settings.begin();
+              it != d->settings.end(); ++it ) {
+            BackendSetting& setting = *it;
+            if ( setting.option() == BackendOptionStorageDir ) {
+                QDir( setting.value().toString() ).rmdir( name );
+                break;
+            }
         }
     }
 }
@@ -222,10 +207,9 @@ quint16 Soprano::Server::ServerCore::serverPort() const
 
 bool Soprano::Server::ServerCore::start( const QString& name )
 {
-#ifdef HAVE_UNIX_SOCKETS
     clearError();
     if ( !d->socketServer ) {
-        d->socketServer = new SocketServer( this );
+        d->socketServer = new QLocalServer( this );
         connect( d->socketServer, SIGNAL( newConnection() ),
                  this, SLOT( slotNewSocketConnection() ) );
     }
@@ -242,10 +226,6 @@ bool Soprano::Server::ServerCore::start( const QString& name )
     else {
         return true;
     }
-#else
-    setError( QLatin1String( "Unix socket communication not supported." ) );
-    return false;
-#endif
 }
 
 
@@ -305,13 +285,11 @@ void Soprano::Server::ServerCore::slotNewTcpConnection()
 
 void Soprano::Server::ServerCore::slotNewSocketConnection()
 {
-#ifdef HAVE_UNIX_SOCKETS
     qDebug() << "(ServerCore) new socket connection.";
     ServerConnection* conn = new ServerConnection( this );
     d->connections.append( conn );
     connect( conn, SIGNAL(finished()), this, SLOT(serverConnectionFinished()));
     conn->start( d->socketServer->nextPendingConnection() );
-#endif
 }
 
 #include "servercore.moc"

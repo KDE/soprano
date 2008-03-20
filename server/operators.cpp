@@ -62,7 +62,8 @@ QDataStream& operator<<( QDataStream& stream, const Soprano::BackendSetting& set
 
 QDataStream& operator<<( QDataStream& stream, const Soprano::LiteralValue& value )
 {
-    return stream << value.variant();
+//    return stream << value.variant();
+    return stream << value.dataTypeUri() << value.toString();
 }
 
 
@@ -162,9 +163,13 @@ QDataStream& operator>>( QDataStream& stream, Soprano::BackendSetting& setting )
 
 QDataStream& operator>>( QDataStream& stream, Soprano::LiteralValue& value )
 {
-    QVariant v;
-    stream >> v;
-    value = v;
+//     QVariant v;
+//     stream >> v;
+//     value = v;
+    QUrl dt;
+    QString v;
+    stream >> dt >> v;
+    value = Soprano::LiteralValue::fromString( v, dt );
     return stream;
 }
 

@@ -107,6 +107,12 @@ Soprano::Model* Soprano::Client::TcpClient::createModel( const QString& name, co
 }
 
 
+void Soprano::Client::TcpClient::removeModel( const QString& name )
+{
+    d->connection.removeModel( name );
+    setError( d->connection.lastError() );
+}
+
 
 void Soprano::Client::TcpClient::slotError( QAbstractSocket::SocketError error )
 {

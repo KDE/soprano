@@ -25,6 +25,7 @@
 #include "randomgenerator.h"
 #include "operators.h"
 #include "socketdevice.h"
+#include "mutexmodel.h"
 
 #include "queryresultiterator.h"
 #include "node.h"
@@ -39,7 +40,6 @@
 
 #include <QtCore/QHash>
 #include <QtCore/QDebug>
-#include <QtCore/QMutex>
 #include <QtNetwork/QTcpSocket>
 
 
@@ -51,12 +51,13 @@ public:
     ServerCore* core;
     QIODevice* socket;
 
-    QMutex mutex;
-
     QHash<quint32, Model*> modelIdMap;
+    QHash<QString, quint32> modelNameMap;
     QHash<quint32, StatementIterator> openStatementIterators;
     QHash<quint32, NodeIterator> openNodeIterators;
     QHash<quint32, QueryResultIterator> openQueryIterators;
+
+    void _k_readNextCommand();
 
     quint32 generateUniqueId();
     Soprano::Model* getModel( QDataStream& stream );
@@ -67,6 +68,7 @@ public:
     void supportsProtocolVersion( QDataStream& stream );
 
     void createModel( QDataStream& stream );
+    void removeModel( QDataStream& stream );
     void supportedFeatures( QDataStream& );
     void addStatement( QDataStream& stream );
     void removeStatement( QDataStream& stream );
@@ -88,12 +90,17 @@ public:
     void queryIteratorCurrentStatement( QDataStream& stream );
     void queryIteratorType( QDataStream& stream );
     void queryIteratorBoolValue( QDataStream& stream );
+
+    ServerConnection* q;
 };
 
 
 Soprano::Server::ServerConnection::ServerConnection( ServerCore* core )
-    : d( new Private() )
+    : QObject( core ),
+      d( new Private() )
 {
+    d->q = this;
+
     d->core = core;
     d->socket = 0;
 }
@@ -116,119 +123,113 @@ void Soprano::Server::ServerConnection::close()
 void Soprano::Server::ServerConnection::start( QIODevice* socket )
 {
     d->socket = socket;
-    d->socket->setParent( 0 );
-    d->mutex.lock();
-    QThread::start();
-    d->socket->moveToThread( this );
-    d->mutex.unlock();
+    connect( socket, SIGNAL( readyRead() ),
+             this, SLOT( _k_readNextCommand() ) );
+    connect( socket, SIGNAL( disconnected() ),
+             this, SIGNAL( finished() ) );
 }
 
 
-void Soprano::Server::ServerConnection::run()
+void Soprano::Server::ServerConnection::Private::_k_readNextCommand()
 {
-    d->mutex.lock();
+    QDataStream stream( socket );
+    quint16 command = 0;
+    stream >> command;
+    switch( command ) {
+    case COMMAND_SUPPORTS_PROTOCOL_VERSION:
+        supportsProtocolVersion( stream );
+        break;
 
-    while ( d->socket->waitForReadyRead(-1) ) {
-//            qDebug() << "ServerConnection: reading command.";
-        QDataStream stream( d->socket );
-        quint16 command = 0;
-        stream >> command;
-        switch( command ) {
-        case COMMAND_SUPPORTS_PROTOCOL_VERSION:
-            d->supportsProtocolVersion( stream );
-            break;
+    case COMMAND_CREATE_MODEL:
+        createModel( stream );
+        break;
 
-        case COMMAND_CREATE_MODEL:
-            d->createModel( stream );
-            break;
+    case COMMAND_REMOVE_MODEL:
+        removeModel( stream );
+        break;
 
-        case COMMAND_SUPPORTED_FEATURES:
-            d->supportedFeatures( stream );
-            break;
+    case COMMAND_SUPPORTED_FEATURES:
+        supportedFeatures( stream );
+        break;
 
-        case COMMAND_MODEL_ADD_STATEMENT:
-            d->addStatement( stream );
-            break;
+    case COMMAND_MODEL_ADD_STATEMENT:
+        addStatement( stream );
+        break;
 
-        case COMMAND_MODEL_REMOVE_STATEMENT:
-            d->removeStatement( stream );
-            break;
+    case COMMAND_MODEL_REMOVE_STATEMENT:
+        removeStatement( stream );
+        break;
 
-        case COMMAND_MODEL_REMOVE_ALL_STATEMENTS:
-            d->removeAllStatements( stream );
-            break;
+    case COMMAND_MODEL_REMOVE_ALL_STATEMENTS:
+        removeAllStatements( stream );
+        break;
 
-        case COMMAND_MODEL_LIST_STATEMENTS:
-            d->listStatements( stream );
-            break;
+    case COMMAND_MODEL_LIST_STATEMENTS:
+        listStatements( stream );
+        break;
 
-        case COMMAND_MODEL_CONTAINS_STATEMENT:
-            d->containsStatement( stream );
-            break;
+    case COMMAND_MODEL_CONTAINS_STATEMENT:
+        containsStatement( stream );
+        break;
 
-        case COMMAND_MODEL_CONTAINS_ANY_STATEMENT:
-            d->containsAnyStatement( stream );
-            break;
+    case COMMAND_MODEL_CONTAINS_ANY_STATEMENT:
+        containsAnyStatement( stream );
+        break;
 
-        case COMMAND_MODEL_LIST_CONTEXTS:
-            d->listContexts( stream );
-            break;
+    case COMMAND_MODEL_LIST_CONTEXTS:
+        listContexts( stream );
+        break;
 
-        case COMMAND_MODEL_STATEMENT_COUNT:
-            d->statementCount( stream );
-            break;
+    case COMMAND_MODEL_STATEMENT_COUNT:
+        statementCount( stream );
+        break;
 
-        case COMMAND_MODEL_IS_EMPTY:
-            d->isEmpty( stream );
-            break;
+    case COMMAND_MODEL_IS_EMPTY:
+        isEmpty( stream );
+        break;
 
-        case COMMAND_MODEL_QUERY:
-            d->query( stream );
-            break;
+    case COMMAND_MODEL_QUERY:
+        query( stream );
+        break;
 
-        case COMMAND_ITERATOR_NEXT:
-            d->iteratorNext( stream );
-            break;
+    case COMMAND_ITERATOR_NEXT:
+        iteratorNext( stream );
+        break;
 
-        case COMMAND_ITERATOR_CURRENT_STATEMENT:
-            d->statementIteratorCurrent( stream );
-            break;
+    case COMMAND_ITERATOR_CURRENT_STATEMENT:
+        statementIteratorCurrent( stream );
+        break;
 
-        case COMMAND_ITERATOR_CURRENT_NODE:
-            d->nodeIteratorCurrent( stream );
-            break;
+    case COMMAND_ITERATOR_CURRENT_NODE:
+        nodeIteratorCurrent( stream );
+        break;
 
-        case COMMAND_ITERATOR_CURRENT_BINDINGSET:
-            d->queryIteratorCurrent( stream );
-            break;
+    case COMMAND_ITERATOR_CURRENT_BINDINGSET:
+        queryIteratorCurrent( stream );
+        break;
 
-        case COMMAND_ITERATOR_CLOSE:
-            d->iteratorClose( stream );
-            break;
+    case COMMAND_ITERATOR_CLOSE:
+        iteratorClose( stream );
+        break;
 
-        case COMMAND_ITERATOR_QUERY_TYPE:
-            d->queryIteratorType( stream );
-            break;
+    case COMMAND_ITERATOR_QUERY_TYPE:
+        queryIteratorType( stream );
+        break;
 
-        case COMMAND_ITERATOR_QUERY_BOOL_VALUE:
-            d->queryIteratorBoolValue( stream );
-            break;
+    case COMMAND_ITERATOR_QUERY_BOOL_VALUE:
+        queryIteratorBoolValue( stream );
+        break;
 
-        case COMMAND_MODEL_CREATE_BLANK_NODE:
-            d->createBlankNode( stream );
-            break;
+    case COMMAND_MODEL_CREATE_BLANK_NODE:
+        createBlankNode( stream );
+        break;
 
-        default:
-            // FIXME: handle an error
-            // for now we just close the connection on error.
-            qDebug() << "Unknown command: " << command;
-            break;
-        }
+    default:
+        // FIXME: handle an error
+        // for now we just close the connection on error.
+        qDebug() << "Unknown command: " << command;
+        break;
     }
-
-    d->socket->close();
-
-    qDebug() << "(ServerConnection) done.";
 }
 
 
@@ -299,11 +300,38 @@ void Soprano::Server::ServerConnection::Private::createModel( QDataStream& strea
     Model* model = core->model( name );
     quint32 id = 0;
     if ( model ) {
+        // Use a mutexmodel for single thread since otherwise one client
+        // could lock via an iterator. If then another tries to access the model
+        // the whole server locks down
+        Util::MutexModel* mm = new Util::MutexModel( Util::MutexModel::ReadWriteSingleThreading, model );
+        mm->setParent( q ); // memory management
+
         id = generateUniqueId();
-        modelIdMap.insert( id, model );
+        modelIdMap.insert( id, mm );
+        modelNameMap.insert( name, id );
     }
 
     stream << id << Error::Error();
+    //qDebug() << "(ServerConnection::createModel) done";
+}
+
+
+void Soprano::Server::ServerConnection::Private::removeModel( QDataStream& stream )
+{
+    //qDebug() << "(ServerConnection::createModel)";
+
+    // extract options
+    QString name;
+    stream >> name;
+
+    // delete the mutex model created above
+    delete modelIdMap[modelNameMap[name]];
+    modelIdMap.remove( modelNameMap[name] );
+    modelNameMap.remove( name );
+
+    core->removeModel( name );
+
+    stream << Error::Error();
     //qDebug() << "(ServerConnection::createModel) done";
 }
 

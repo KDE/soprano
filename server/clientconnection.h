@@ -53,6 +53,7 @@ namespace Soprano {
              * Create a new Model and return its ID.
              */
             int createModel( const QString& name, const QList<BackendSetting>& );
+            void removeModel( const QString& name );
             Soprano::BackendFeatures supportedFeatures();
 
             // Model methods

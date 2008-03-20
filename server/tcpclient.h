@@ -40,11 +40,17 @@ namespace Soprano {
         /**
          * \class TcpClient tcpclient.h Soprano/Client/TcpClient
          *
-         * \brief Creates a connection to the %Soprano server.
+         * \brief Creates a connection to the %Soprano server through a TCP connection.
          *
-         * The %Soprano server can be accessed normally through PluginManager::discoverBackendByName()
-         * with name "sopranoserver" or by simply creating an instance of TcpClient. The latter solution can have advantages
-         * as it uses a new connection to the server.
+         * The %Soprano server supports more than one way of communication. Beside D-Bus (see
+         * DBusClient) and local socket communication (LocalSocketClient) it can be contacted via
+         * TCP. For that to work the server has to be listening on some port (Server::ServerCore::listen).
+         *
+         * \warning The TcpClient does not support signals. Thus, the models created
+         * by it will not emit signals such as Model::statementAdded. Also no permission handling or
+         * any kind of security is implemented at the moment. Thus, if a server is running and is 
+         * listening on a port, it is open to connections from any client on any computer in the
+         * network.
          *
          * \author Sebastian Trueg <trueg@kde.org>
          */
@@ -104,6 +110,18 @@ namespace Soprano {
              * model or 0 on error (check lastError() for details.)
              */
             Model* createModel( const QString& name, const QList<BackendSetting>& settings = QList<BackendSetting>() );
+
+            /**
+             * Deletes a model including all its data.
+             *
+             * \param name The name of the model to remove.
+             *
+             * \warning Calling this method will remove all data physically. It can not
+             * be reverted. Use with care.
+             *
+             * \since 2.1
+             */
+            void removeModel( const QString& name );
 
             /**
              * Get a list of all models that the server currently holds.

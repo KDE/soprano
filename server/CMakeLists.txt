@@ -32,6 +32,7 @@ set(soprano_server_SRC
 set(soprano_client_SRC
   tcpclient.h
   tcpclient.cpp
+  localsocketclient.cpp
   clientconnection.h
   clientconnection.cpp
   clientmodel.cpp
@@ -55,21 +56,6 @@ set(soprano_client_SRC
   dbus/dbusnodeiterator.cpp
   dbus/dbusqueryresultiterator.cpp
 )
-
-# no unix sockets on windows
-if(NOT WIN32)
-  set(HAVE_UNIX_SOCKETS "yes")
-  set(soprano_server_SRC
-    ${soprano_server_SRC}
-    socketserver.cpp
-    socketdevice.cpp
-  )
-  set(soprano_client_SRC
-    ${soprano_client_SRC}
-    unixsocketclient.cpp
-    socketdevice.cpp
-  )
-endif(NOT WIN32)
 
 configure_file(soprano-server-config.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/soprano-server-config.h)
 
@@ -155,15 +141,8 @@ install(
   FILES 
   servercore.h
   tcpclient.h
+  localsocketclient.h
   DESTINATION include/soprano
 )
-
-if(HAVE_UNIX_SOCKETS)
-  install(
-    FILES 
-    unixsocketclient.h
-    DESTINATION include/soprano
-    )
-endif(HAVE_UNIX_SOCKETS)
 
 add_subdirectory(dbus)

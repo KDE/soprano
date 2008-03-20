@@ -215,7 +215,7 @@
 /**
  * \page soprano_server_protocol Soprano Server Protocol
  *
- * \warning The protocol described on this page is used internally by the Soprano TCP and Unix socket server and client.
+ * \warning The protocol described on this page is used internally by the Soprano TCP and local socket server and client.
  * Normally there is no need to deal with it except if you want to write a client or server in another
  * programming language.
  *
@@ -272,26 +272,28 @@
  *
  * The server clients have the following restrictions:
  *
- * <b>TCP %Client:</b>
+ * <b>TCP %Client:</b> (TcpClient)
  * \li No signals are emitted (Model::statementsAdded() and Model::statementsRemoved())
  * \li No permission handling, i.e. each process running on the machine can access a running %Soprano server,
  *     indifferent of the user id of the server process.
  * <!--\li Queries are always transmitted as strings and thus, might be serialized on the client side and parsed
  *     again on the server side when using Model::executeQuery( const Query& ) const.-->
  *
- * <b>Unix Socket %Client:</b>
+ * <b>Local Socket %Client:</b> (LocalSocketClient)
  * \li No signals are emitted (Model::statementsAdded() and Model::statementsRemoved())
  * <!--\li Queries are always transmitted as strings and thus, might be serialized on the client side and parsed
  *     again on the server side when using Model::executeQuery( const Query& ) const.-->
  *
- * <b>DBus %Client:</b>
+ * <b>DBus %Client:</b> (DBusClient)
  * \li No restrictions
  * <!--\li Queries are always transmitted as strings and thus, might be serialized on the client side and parsed
  *     again on the server side when using Model::executeQuery( const Query& ) const.-->
  *
- * While the TCP comunication is the fastest due to its missing permission handling it is not recommended to use
- * it yet. The best solution at the moment is the DBus client. Although being the slowest (slightly slower than
- * the Unix Socket client) it is reliable and feature-complete (signals are transmitted).
+ * While the local socket comunication is the fastest due to its missing signal handling it can be sub-optimal at times.
+ * The best solution at the moment is the DBus client. Although being the slowest (slightly slower than
+ * the local Socket client) it is reliable and feature-complete (signals are transmitted). However, it is also possible
+ * to combine both: use the local socket communication for fast commands and create a D-Bus connection only for the
+ * signals.
  *
  * \sa \ref soprano_server, \ref soprano_server_dbus, Soprano::Server
  */

@@ -1,7 +1,7 @@
 /*
  * This file is part of Soprano Project.
  *
- * Copyright (C) 2007 Sebastian Trueg <trueg@kde.org>
+ * Copyright (C) 2007-2008 Sebastian Trueg <trueg@kde.org>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -19,23 +19,23 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#include "unixsocketclient.h"
+#include "localsocketclient.h"
 #include "clientconnection.h"
 #include "clientmodel.h"
-#include "socketdevice.h"
 
 #include <QtCore/QDir>
+#include <QtNetwork/QLocalSocket>
 
 
-class Soprano::Client::UnixSocketClient::Private
+class Soprano::Client::LocalSocketClient::Private
 {
 public:
     ClientConnection connection;
-    SocketDevice socket;
+    QLocalSocket socket;
 };
 
 
-Soprano::Client::UnixSocketClient::UnixSocketClient( QObject* parent )
+Soprano::Client::LocalSocketClient::LocalSocketClient( QObject* parent )
     : QObject( parent ),
       d( new Private() )
 {
@@ -43,14 +43,14 @@ Soprano::Client::UnixSocketClient::UnixSocketClient( QObject* parent )
 }
 
 
-Soprano::Client::UnixSocketClient::~UnixSocketClient()
+Soprano::Client::LocalSocketClient::~LocalSocketClient()
 {
     disconnect();
     delete d;
 }
 
 
-bool Soprano::Client::UnixSocketClient::connect( const QString& name )
+bool Soprano::Client::LocalSocketClient::connect( const QString& name )
 {
     if ( !d->socket.isValid() ) {
         QString path( name );
@@ -58,7 +58,8 @@ bool Soprano::Client::UnixSocketClient::connect( const QString& name )
             path = QDir::homePath() + QLatin1String( "/.soprano/socket" );
         }
 
-        if ( !d->socket.open( path, QIODevice::ReadWrite ) ) {
+        d->socket.connectToServer( path, QIODevice::ReadWrite );
+        if ( !d->socket.waitForConnected() ) {
             setError( d->socket.errorString() );
             return false;
         }
@@ -79,19 +80,19 @@ bool Soprano::Client::UnixSocketClient::connect( const QString& name )
 }
 
 
-bool Soprano::Client::UnixSocketClient::isConnected()
+bool Soprano::Client::LocalSocketClient::isConnected()
 {
     return d->socket.isValid();
 }
 
 
-void Soprano::Client::UnixSocketClient::disconnect()
+void Soprano::Client::LocalSocketClient::disconnect()
 {
     d->socket.close();
 }
 
 
-Soprano::Model* Soprano::Client::UnixSocketClient::createModel( const QString& name, const QList<BackendSetting>& settings )
+Soprano::Model* Soprano::Client::LocalSocketClient::createModel( const QString& name, const QList<BackendSetting>& settings )
 {
     int modelId = d->connection.createModel( name, settings );
     setError( d->connection.lastError() );
@@ -105,9 +106,10 @@ Soprano::Model* Soprano::Client::UnixSocketClient::createModel( const QString& n
 }
 
 
-// QStringList Soprano::Client::UnixSocketClient::models() const
-// {
+void Soprano::Client::LocalSocketClient::removeModel( const QString& name )
+{
+    d->connection.removeModel( name );
+    setError( d->connection.lastError() );
+}
 
-// }
-
-#include "unixsocketclient.moc"
+#include "localsocketclient.moc"
