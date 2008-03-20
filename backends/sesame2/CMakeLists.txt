@@ -49,7 +49,7 @@ INSTALL(TARGETS soprano_sesame2backend
   )
 
 INSTALL(FILES
-  openrdf-sesame-2.0-onejar.jar
+  openrdf-sesame-2.0.1-onejar.jar
   slf4j-api-1.4.2.jar
   slf4j-simple-1.4.2.jar
   SopranoSesame2Wrapper.class
