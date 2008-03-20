@@ -55,7 +55,8 @@
 QTime Soprano::DateTime::fromTimeString( const QString& s )
 {
     // ensure the format
-    if( s[2] != ':' ||
+    if( s.length() < 9 ||
+        s[2] != ':' ||
         s[5] != ':' ) {
         qDebug() << Q_FUNC_INFO << " invalid formatted time string: " << s << endl;
         return QTime();
