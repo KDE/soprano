@@ -1,3 +1,6 @@
+2.0.4
+	* Make use of RPATH in the sesame2 backend to ensure that the JVM is found on runtime.
+
 2.0.3
 	* Fixed a string caching bug in LiteralValue which resulted in invalid string representations when
 	  assigning a QDate, QTime, QDateTime, or QByteArray via operator=

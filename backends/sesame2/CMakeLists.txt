@@ -37,6 +37,11 @@ add_library(soprano_sesame2backend SHARED ${sesame2_backend_SRC})
 
 TARGET_LINK_LIBRARIES(soprano_sesame2backend soprano ${JAVA_JVM_LIBRARY})
 
+set_target_properties(soprano_sesame2backend
+  PROPERTIES
+  INSTALL_RPATH_USE_LINK_PATH true
+)
+
 INSTALL(TARGETS soprano_sesame2backend
   LIBRARY DESTINATION ${LIB_DESTINATION}/soprano
   RUNTIME DESTINATION bin/soprano
