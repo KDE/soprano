@@ -25,6 +25,7 @@
 
 #include <QtCore/QUrl>
 #include <QtCore/QObject>
+#include <QtCore/QMutex>
 
 #include "parser.h"
 
@@ -63,7 +64,7 @@ namespace Soprano {
         raptor_parser* createParser( RdfSerialization serialization,
                      const QString& userSerialization = QString() ) const;
 
-        mutable bool m_initialized;
+        mutable QMutex m_mutex;
     };
     }
 }

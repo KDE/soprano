@@ -37,7 +37,21 @@
 #include <QtCore/QTextStream>
 #include <QtCore/QDebug>
 #include <QtCore/QLatin1String>
+#include <QtCore/QMutexLocker>
 
+
+namespace {
+    class RaptorInitHelper
+    {
+    public:
+        RaptorInitHelper() {
+            raptor_init();
+        }
+        ~RaptorInitHelper() {
+            raptor_finish();
+        }
+    };
+}
 
 Q_EXPORT_PLUGIN2(soprano_raptorparser, Soprano::Raptor::Parser)
 
@@ -141,17 +155,13 @@ namespace {
 
 Soprano::Raptor::Parser::Parser()
     : QObject(),
-      Soprano::Parser( "raptor" ),
-      m_initialized( false )
+      Soprano::Parser( "raptor" )
 {
 }
 
 
 Soprano::Raptor::Parser::~Parser()
 {
-    if ( m_initialized ) {
-        raptor_finish();
-    }
 }
 
 
@@ -170,11 +180,6 @@ Soprano::RdfSerializations Soprano::Raptor::Parser::supportedSerializations() co
 raptor_parser* Soprano::Raptor::Parser::createParser( RdfSerialization serialization,
                                                       const QString& userSerialization ) const
 {
-    if ( !m_initialized ) {
-        raptor_init();
-        m_initialized = true;
-    }
-
     // create the parser
     QString mimeType = mimeTypeString( serialization, userSerialization );
     raptor_parser* parser = 0;
@@ -281,6 +286,9 @@ Soprano::Raptor::Parser::parseStream( QTextStream& stream,
                                       RdfSerialization serialization,
                                       const QString& userSerialization ) const
 {
+    QMutexLocker lock( &m_mutex );
+    RaptorInitHelper raptorInitHelper;
+
     clearError();
 
     raptor_parser* parser = createParser( serialization, userSerialization );
