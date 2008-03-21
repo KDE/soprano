@@ -24,7 +24,8 @@
 
 #include "backend.h"
 
-#include <QObject>
+#include <QtCore/QObject>
+#include <QtCore/QMutex>
 
 namespace Soprano
 {
@@ -51,6 +52,9 @@ namespace Soprano
             bool deleteModelData( const BackendSettings& settings ) const;
 
             BackendFeatures supportedFeatures() const;
+
+        private:
+            mutable QMutex m_mutex;
         };
     }
 }

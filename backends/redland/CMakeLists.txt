@@ -17,23 +17,16 @@ include_directories(
   )
 
 set(redland_core_SRC
-  redlandutil.cpp
-  redlandutil.h
   redlandworld.cpp
-  redlandworld.h
   redlandstatementiterator.cpp
-  redlandstatementiterator.h
   redlandqueryresult.cpp
-  redlandqueryresult.h
   redlandmodel.cpp
-  redlandmodel.h
   redlandnodeiteratorbackend.cpp
   multimutex.cpp
   )
 
 set(redland_backend_SRC
   redlandbackend.cpp
-  redlandbackend.h
   )
 
 qt4_automoc(${redland_backend_SRC})

@@ -20,9 +20,9 @@
  */
 
 #include "redlandnodeiteratorbackend.h"
+#include "redlandworld.h"
 
 #include "node.h"
-#include "redlandutil.h"
 #include "redlandmodel.h"
 
 #include <QtCore/QtGlobal>
@@ -81,7 +81,7 @@ Soprano::Node Soprano::Redland::NodeIteratorBackend::current() const
         return Soprano::Node();
     }
 
-    return Util::createNode( ctx );
+    return m_model->world()->createNode( ctx );
 }
 
 

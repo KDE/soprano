@@ -21,9 +21,9 @@
  */
 
 #include "redlandstatementiterator.h"
+#include "redlandworld.h"
 
 #include "statement.h"
-#include "redlandutil.h"
 #include "redlandmodel.h"
 
 #include <QtCore/QtGlobal>
@@ -89,9 +89,9 @@ Soprano::Statement Soprano::Redland::RedlandStatementIterator::current() const
         return Soprano::Statement();
     }
 
-    Statement copy = Util::createStatement( st );
+    Statement copy = m_model->world()->createStatement( st );
     if ( librdf_node* context = static_cast<librdf_node*>( librdf_stream_get_context( m_stream ) ) ) {
-        copy.setContext( Util::createNode( context ) );
+        copy.setContext( m_model->world()->createNode( context ) );
     }
     else if ( m_forceContext.isValid() ) {
         copy.setContext( m_forceContext );

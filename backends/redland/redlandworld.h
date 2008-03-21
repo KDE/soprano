@@ -2,7 +2,7 @@
  * This file is part of Soprano Project
  *
  * Copyright (C) 2006 Daniele Galdi <daniele.galdi@gmail.com>
- * Copyright (C) 2007 Sebastian Trueg <trueg@kde.org>
+ * Copyright (C) 2007-2008 Sebastian Trueg <trueg@kde.org>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -30,11 +30,13 @@
 #include <QtCore/QStringList>
 
 
+namespace Soprano {
 
-namespace Soprano
-{
-    namespace Redland
-    {
+    class Node;
+    class Statement;
+
+    namespace Redland {
+
         class RedlandModel;
 
         class World : public Soprano::Error::ErrorCache
@@ -42,8 +44,6 @@ namespace Soprano
         public:
             World();
             ~World();
-
-            static World *self();
 
             librdf_world* worldPtr() const;
 
@@ -53,14 +53,32 @@ namespace Soprano
 
             inline Error::Error lastError() const { return ErrorCache::lastError(); }
 
-            Error::Error lastError( const Error::Error& fallBackError ) const {
-            if( ErrorCache::lastError() ) {
-                return ErrorCache::lastError();
+            inline Error::Error lastError( const Error::Error& fallBackError ) const {
+                if( ErrorCache::lastError() ) {
+                    return ErrorCache::lastError();
+                }
+                else {
+                    return fallBackError;
+                }
             }
-            else {
-                return fallBackError;
-            }
-            }
+
+            librdf_node *createNode( const Node &node );
+            librdf_statement *createStatement( const Statement &statement );
+
+            Soprano::Node createNode( librdf_node *node );
+            Soprano::Statement createStatement( librdf_statement *st );
+
+            /**
+             * Calls librdf_free_node if \a node is not null.
+             * The only reason for this method are the stupid asserts that clutter stderr.
+             */
+            void freeNode( librdf_node* node );
+
+            /**
+             * Calls librdf_free_statement if \a statement is not null.
+             * The only reason for this method are the stupid asserts that clutter stderr.
+             */
+            void freeStatement( librdf_statement* statement );
 
         private:
             librdf_world * m_world;

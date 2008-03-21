@@ -33,6 +33,7 @@
 #include <QtCore/QDebug>
 #include <QtCore/QHash>
 #include <QtCore/QDir>
+#include <QtCore/QMutexLocker>
 
 
 Q_EXPORT_PLUGIN2(soprano_redlandbackend, Soprano::Redland::BackendPlugin)
@@ -57,6 +58,8 @@ Soprano::Redland::BackendPlugin::BackendPlugin()
 
 Soprano::StorageModel* Soprano::Redland::BackendPlugin::createModel( const QList<BackendSetting>& settings ) const
 {
+    QMutexLocker lock( &m_mutex );
+
     clearError();
 
     // check all settings.
@@ -64,9 +67,9 @@ Soprano::StorageModel* Soprano::Redland::BackendPlugin::createModel( const QList
     QHash<QString, QString> redlandOptions;
 
     // set some defaults
-    redlandOptions["contexts"] = "yes";
-    redlandOptions["storageType"] = "hashes";
-    redlandOptions["hash-type"] = "memory";
+    redlandOptions["contexts"] = "yes";       // always use context
+    redlandOptions["storageType"] = "hashes"; // default to hashes storage, so even the memory storage has an index
+    redlandOptions["hash-type"] = "memory";   // default to the memory hash type
 
     // for persistent stores we need an indentifier
     redlandOptions["name"] = "soprano";
@@ -90,7 +93,8 @@ Soprano::StorageModel* Soprano::Redland::BackendPlugin::createModel( const QList
     }
 
     // create if nothing is there (stupid version)
-    if ( !redlandOptions["dir"].isEmpty() &&
+    if ( redlandOptions.contains( "dir" ) &&
+         !redlandOptions["dir"].isEmpty() &&
          QDir( redlandOptions["dir"] ).entryList( QDir::Files ).isEmpty() &&
         !redlandOptions.contains( "new" ) ) {
         redlandOptions["new"] = "yes";
@@ -104,27 +108,30 @@ Soprano::StorageModel* Soprano::Redland::BackendPlugin::createModel( const QList
 
     QString os = createRedlandOptionString( redlandOptions );
 
-    qDebug() << "(Soprano::Redland::BackendPlugin) creating model of type " << storageType << " with options " << os;
+    qDebug() << "(Soprano::Redland::BackendPlugin) creating model of type" << storageType << "with options" << os;
 
+    World* world = new World();
     // create a new storage
-    librdf_storage* storage = librdf_new_storage( World::self()->worldPtr(),
+    librdf_storage* storage = librdf_new_storage( world->worldPtr(),
                                                   storageType.toUtf8().data(),
                                                   storageName.toUtf8().data(),
                                                   os.toUtf8().data() );
     if( !storage ) {
+        delete world;
         qDebug() << "(Soprano::Redland) storage creation failed!";
-        setError( Redland::World::self()->lastError() );
+        setError( world->lastError() );
         return 0;
     }
 
-    librdf_model *model = librdf_new_model( World::self()->worldPtr(), storage, 0 );
+    librdf_model *model = librdf_new_model( world->worldPtr(), storage, 0 );
     if ( !model ) {
+        delete world;
         librdf_free_storage( storage );
-        setError( Redland::World::self()->lastError() );
+        setError( world->lastError() );
         return 0;
     }
 
-    return new RedlandModel( this, model, storage );
+    return new RedlandModel( this, model, storage, world );
 }
 
 

@@ -21,11 +21,11 @@
  */
 
 #include "redlandqueryresult.h"
+#include "redlandworld.h"
 
 #include "model.h"
 #include "node.h"
 #include "statementiterator.h"
-#include "redlandutil.h"
 #include "redlandstatementiterator.h"
 #include "redlandworld.h"
 #include "redlandmodel.h"
@@ -166,7 +166,7 @@ Soprano::Statement Soprano::Redland::RedlandQueryResult::currentStatement() cons
             return Soprano::Statement();
         }
         else {
-            Statement copy = Util::createStatement( st );
+            Statement copy = d->model->world()->createStatement( st );
 
             // Move to the next element
             librdf_stream_next( d->stream );
@@ -188,8 +188,8 @@ Soprano::Node Soprano::Redland::RedlandQueryResult::binding( const QString &name
             return Soprano::Node();
         }
 
-        Soprano::Node tmp = Util::createNode( node );
-        Util::freeNode( node );
+        Soprano::Node tmp = d->model->world()->createNode( node );
+        d->model->world()->freeNode( node );
 
         return tmp;
     }
@@ -208,8 +208,8 @@ Soprano::Node Soprano::Redland::RedlandQueryResult::binding( int offset ) const
             return Soprano::Node();
         }
 
-        Soprano::Node tmp = Util::createNode( node );
-        Util::freeNode( node );
+        Soprano::Node tmp = d->model->world()->createNode( node );
+        d->model->world()->freeNode( node );
 
         return tmp;
     }

@@ -27,7 +27,6 @@
 #include "nodeiterator.h"
 
 #include "redlandworld.h"
-#include "redlandutil.h"
 #include "redlandqueryresult.h"
 #include "redlandstatementiterator.h"
 #include "redlandnodeiteratorbackend.h"
@@ -53,7 +52,7 @@ public:
         storage(0)
     {}
 
-    librdf_world *world;
+    World *world;
     librdf_model *model;
     librdf_storage *storage;
 
@@ -64,11 +63,11 @@ public:
     QList<RedlandQueryResult*> results;
 };
 
-Soprano::Redland::RedlandModel::RedlandModel( const Backend* b, librdf_model *model, librdf_storage *storage )
+Soprano::Redland::RedlandModel::RedlandModel( const Backend* b, librdf_model *model, librdf_storage *storage, World* world )
     : StorageModel( b )
 {
     d = new Private;
-    d->world = World::self()->worldPtr();
+    d->world = world;
     d->model = model;
     d->storage = storage;
 
@@ -94,7 +93,14 @@ Soprano::Redland::RedlandModel::~RedlandModel()
     librdf_free_model( d->model );
     librdf_free_storage( d->storage );
 
+    delete d->world;
     delete d;
+}
+
+
+Soprano::Redland::World* Soprano::Redland::RedlandModel::world() const
+{
+    return d->world;
 }
 
 
@@ -102,6 +108,7 @@ librdf_model *Soprano::Redland::RedlandModel::redlandModel() const
 {
     return d->model;
 }
+
 
 Soprano::Error::ErrorCode Soprano::Redland::RedlandModel::addStatement( const Statement &statement )
 {
@@ -114,37 +121,37 @@ Soprano::Error::ErrorCode Soprano::Redland::RedlandModel::addStatement( const St
 
     d->readWriteLock.lockForWrite();
 
-    librdf_statement* redlandStatement = Util::createStatement( statement );
+    librdf_statement* redlandStatement = d->world->createStatement( statement );
     if ( !redlandStatement ) {
-        setError( Redland::World::self()->lastError( Error::Error( "Could not convert redland statement",
-                                                                   Error::ErrorInvalidArgument ) ) );
+        setError( d->world->lastError( Error::Error( "Could not convert redland statement",
+                                                     Error::ErrorInvalidArgument ) ) );
         d->readWriteLock.unlock();
         return Error::ErrorInvalidArgument;
     }
 
     if ( statement.context().isEmpty() ) {
         if ( librdf_model_add_statement( d->model, redlandStatement ) ) {
-            Util::freeStatement( redlandStatement );
-            setError( Redland::World::self()->lastError() );
+            d->world->freeStatement( redlandStatement );
+            setError( d->world->lastError() );
             d->readWriteLock.unlock();
             return Error::ErrorUnknown;
         }
     }
     else {
-        librdf_node* redlandContext = Util::createNode( statement.context() );
+        librdf_node* redlandContext = d->world->createNode( statement.context() );
         if ( librdf_model_context_add_statement( d->model, redlandContext, redlandStatement ) ) {
-            Util::freeStatement( redlandStatement );
-            Util::freeNode( redlandContext );
-            setError( Redland::World::self()->lastError( Error::Error( "Failed to add statement",
+            d->world->freeStatement( redlandStatement );
+            d->world->freeNode( redlandContext );
+            setError( d->world->lastError( Error::Error( "Failed to add statement",
                                                                        Error::ErrorUnknown ) ) );
             d->readWriteLock.unlock();
             return Error::ErrorUnknown;
         }
 
-        Util::freeNode( redlandContext );
+        d->world->freeNode( redlandContext );
     }
 
-    Util::freeStatement( redlandStatement );
+    d->world->freeStatement( redlandStatement );
 
     // make sure we store everything in case we crash
     librdf_model_sync( d->model );
@@ -166,7 +173,7 @@ Soprano::NodeIterator Soprano::Redland::RedlandModel::listContexts() const
 
     librdf_iterator *iter = librdf_model_get_contexts( d->model );
     if (!iter) {
-        setError( Redland::World::self()->lastError() );
+        setError( d->world->lastError() );
         d->readWriteLock.unlock();
         return 0;
     }
@@ -184,15 +191,15 @@ bool Soprano::Redland::RedlandModel::containsAnyStatement( const Statement &stat
     if ( isContextOnlyStatement( statement ) ) {
         MultiMutexReadLocker lock( &d->readWriteLock );
 
-        librdf_node *ctx = Util::createNode( statement.context() );
+        librdf_node *ctx = d->world->createNode( statement.context() );
         if ( !ctx ) {
-            setError( Redland::World::self()->lastError() );
+            setError( d->world->lastError() );
             return false;
         }
 
         int result = librdf_model_contains_context( d->model, ctx );
 
-        Util::freeNode( ctx );
+        d->world->freeNode( ctx );
 
         return result != 0;
     }
@@ -209,20 +216,20 @@ Soprano::QueryResultIterator Soprano::Redland::RedlandModel::executeQuery( const
 
     clearError();
 
-    librdf_query *q = librdf_new_query( d->world,
+    librdf_query *q = librdf_new_query( d->world->worldPtr(),
                                         Query::queryLanguageToString( language, userQueryLanguage ).toLower().toLatin1().data(),
                                         0,
                                         (unsigned char *)query.toLatin1().data(),
                                         0 );
     if ( !q ) {
-        setError( Redland::World::self()->lastError() );
+        setError( d->world->lastError() );
         d->readWriteLock.unlock();
         return QueryResultIterator();
     }
 
     librdf_query_results *res = librdf_model_query_execute( d->model, q );
     if ( !res ) {
-        setError( Redland::World::self()->lastError() );
+        setError( d->world->lastError() );
         d->readWriteLock.unlock();
         return QueryResultIterator();
     }
@@ -244,12 +251,12 @@ Soprano::StatementIterator Soprano::Redland::RedlandModel::listStatements( const
 
     if ( isContextOnlyStatement( partial ) ) {
 
-        librdf_node *ctx = Util::createNode( partial.context() );
+        librdf_node *ctx = d->world->createNode( partial.context() );
 
         librdf_stream *stream = librdf_model_context_as_stream( d->model, ctx );
-        Util::freeNode( ctx );
+        d->world->freeNode( ctx );
         if ( !stream ) {
-            setError( Redland::World::self()->lastError() );
+            setError( d->world->lastError() );
             d->readWriteLock.unlock();
             return StatementIterator();
         }
@@ -261,14 +268,14 @@ Soprano::StatementIterator Soprano::Redland::RedlandModel::listStatements( const
         return StatementIterator( it );
     }
     else {
-        librdf_statement *st = Util::createStatement( partial );
+        librdf_statement *st = d->world->createStatement( partial );
         if ( !st ) {
-            setError( Redland::World::self()->lastError() );
+            setError( d->world->lastError() );
             d->readWriteLock.unlock();
             return StatementIterator();
         }
 
-        librdf_node *ctx = Util::createNode( partial.context() );
+        librdf_node *ctx = d->world->createNode( partial.context() );
 
         // FIXME: context support does not work, redland API claims that librdf_model_find_statements_in_context
         // with a NULL context is the same as librdf_model_find_statements. Well, in practice it is not.
@@ -281,11 +288,11 @@ Soprano::StatementIterator Soprano::Redland::RedlandModel::listStatements( const
             stream = librdf_model_find_statements_in_context( d->model, st, ctx );
         }
 
-        Util::freeNode( ctx );
-        Util::freeStatement( st );
+        d->world->freeNode( ctx );
+        d->world->freeStatement( st );
 
         if ( !stream ) {
-            setError( Redland::World::self()->lastError() );
+            setError( d->world->lastError() );
             d->readWriteLock.unlock();
             return StatementIterator();
         }
@@ -323,31 +330,31 @@ Soprano::Error::ErrorCode Soprano::Redland::RedlandModel::removeOneStatement( co
         return Error::ErrorInvalidArgument;
     }
 
-    librdf_statement* redlandStatement = Util::createStatement( statement );
+    librdf_statement* redlandStatement = d->world->createStatement( statement );
     if ( !redlandStatement ) {
-        setError( Redland::World::self()->lastError() );
+        setError( d->world->lastError() );
         return Error::ErrorInvalidArgument;
     }
 
     if ( statement.context().isEmpty() ) {
         if ( librdf_model_remove_statement( d->model, redlandStatement ) ) {
-            Util::freeStatement( redlandStatement );
-            setError( Redland::World::self()->lastError() );
+            d->world->freeStatement( redlandStatement );
+            setError( d->world->lastError() );
             return Error::ErrorUnknown;
         }
     }
     else {
-        librdf_node* redlandContext = Util::createNode( statement.context() );
+        librdf_node* redlandContext = d->world->createNode( statement.context() );
         if ( librdf_model_context_remove_statement( d->model, redlandContext, redlandStatement ) ) {
-            Util::freeNode( redlandContext );
-            Util::freeStatement( redlandStatement );
-            setError( Redland::World::self()->lastError() );
+            d->world->freeNode( redlandContext );
+            d->world->freeStatement( redlandStatement );
+            setError( d->world->lastError() );
             return Error::ErrorUnknown;
         }
-        Util::freeNode( redlandContext );
+        d->world->freeNode( redlandContext );
     }
 
-    Util::freeStatement( redlandStatement );
+    d->world->freeStatement( redlandStatement );
 
     emit statementRemoved( statement );
 
@@ -362,16 +369,16 @@ Soprano::Error::ErrorCode Soprano::Redland::RedlandModel::removeAllStatements( c
     if ( isContextOnlyStatement( statement ) ) {
         d->readWriteLock.lockForWrite();
 
-        librdf_node *ctx = Util::createNode( statement.context() );
+        librdf_node *ctx = d->world->createNode( statement.context() );
 
         if ( librdf_model_context_remove_statements( d->model, ctx ) ) {
-            Util::freeNode( ctx );
-            setError( Redland::World::self()->lastError() );
+            d->world->freeNode( ctx );
+            setError( d->world->lastError() );
             d->readWriteLock.unlock();
             return Error::ErrorUnknown;
         }
 
-        Util::freeNode( ctx );
+        d->world->freeNode( ctx );
 
         // make sure we store everything in case we crash
         librdf_model_sync( d->model );
@@ -426,7 +433,7 @@ int Soprano::Redland::RedlandModel::statementCount() const
     clearError();
     int size = librdf_model_size( d->model );
     if ( size < 0 ) {
-        setError( Redland::World::self()->lastError() );
+        setError( d->world->lastError() );
     }
     return size;
 }
@@ -443,7 +450,7 @@ Soprano::Error::ErrorCode Soprano::Redland::RedlandModel::write( QTextStream &os
         return Error::ErrorNone;
     }
     else {
-        setError( Redland::World::self()->lastError() );
+        setError( d->world->lastError() );
         return Error::ErrorUnknown;
     }
 }
@@ -451,9 +458,9 @@ Soprano::Error::ErrorCode Soprano::Redland::RedlandModel::write( QTextStream &os
 Soprano::Node Soprano::Redland::RedlandModel::createBlankNode()
 {
     clearError();
-    Node n = Util::createNode( librdf_new_node_from_blank_identifier( Redland::World::self()->worldPtr(), 0 ) );
+    Node n = d->world->createNode( librdf_new_node_from_blank_identifier( d->world->worldPtr(), 0 ) );
     if ( n.isEmpty() ) {
-        setError( Redland::World::self()->lastError() );
+        setError( d->world->lastError() );
     }
     return n;
 }

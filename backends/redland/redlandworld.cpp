@@ -2,7 +2,7 @@
  * This file is part of Soprano Project
  *
  * Copyright (C) 2006 Daniele Galdi <daniele.galdi@gmail.com>
- * Copyright (C) 2007 Sebastian Trueg <trueg@kde.org>
+ * Copyright (C) 2007-2008 Sebastian Trueg <trueg@kde.org>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -124,14 +124,6 @@ int redlandLogHandler( void* user, librdf_log_message* msg )
 }
 
 
-Q_GLOBAL_STATIC( Soprano::Redland::World, worldInstance )
-
-
-Soprano::Redland::World* Soprano::Redland::World::self()
-{
-    return worldInstance();
-}
-
 Soprano::Redland::World::World()
 {
     m_world = librdf_new_world();
@@ -144,7 +136,93 @@ Soprano::Redland::World::~World()
     librdf_free_world( m_world );
 }
 
+
 librdf_world* Soprano::Redland::World::worldPtr() const
 {
     return m_world;
+}
+
+
+librdf_node *Soprano::Redland::World::createNode( const Node &node )
+{
+    librdf_world *world = worldPtr();
+
+    if ( node.isResource() ) {
+        return librdf_new_node_from_uri_string( world, (unsigned char *)node.uri().toEncoded().data() );
+    }
+    else if ( node.isBlank() ) {
+        return librdf_new_node_from_blank_identifier( world, (unsigned char *) node.identifier().toUtf8().data() );
+    }
+    else if ( node.isLiteral() ) {
+        return librdf_new_node_from_typed_literal( world,
+                                                   (unsigned char *)node.literal().toString().toUtf8().data(),
+                                                   node.language().toUtf8().data(),
+                                                   librdf_new_uri( world, (const unsigned char*)node.dataType().toEncoded().data() ) );
+    }
+
+    return 0;
+}
+
+
+librdf_statement *Soprano::Redland::World::createStatement( const Statement &statement )
+{
+    librdf_world *world = worldPtr();
+
+    librdf_node *subject = createNode( statement.subject() );
+    librdf_node *predicate = createNode( statement.predicate() );
+    librdf_node *object = createNode( statement.object() );
+
+    return librdf_new_statement_from_nodes( world, subject, predicate, object );
+}
+
+
+// Hint: all strings in redland are Utf8, except for the literal language tags.
+
+Soprano::Node Soprano::Redland::World::createNode( librdf_node *node )
+{
+    if ( librdf_node_is_resource( node ) ) {
+        librdf_uri *uri = librdf_node_get_uri( node );
+        return Soprano::Node( QUrl::fromEncoded( (const char *)librdf_uri_as_string(uri), QUrl::StrictMode ) );
+    }
+    else if ( librdf_node_is_blank( node ) ) {
+        return Soprano::Node( QString::fromUtf8( (const char *)librdf_node_get_blank_identifier( node ), QUrl::StrictMode ) );
+    }
+    else if ( librdf_node_is_literal( node ) ) {
+        librdf_uri* datatype = librdf_node_get_literal_value_datatype_uri( node );
+        if ( !datatype ) {
+            return Soprano::Node( Soprano::LiteralValue( (const char *)librdf_node_get_literal_value( node ) ),
+                                  QString::fromAscii( librdf_node_get_literal_value_language( node ) ) );
+        }
+        return Soprano::Node( Soprano::LiteralValue::fromString( QString::fromUtf8( (const char *)librdf_node_get_literal_value( node ) ),
+                                                                 QUrl::fromEncoded( (const char *)librdf_uri_as_string( datatype ),
+                                                                                    QUrl::StrictMode ) ),
+                              QString::fromAscii( librdf_node_get_literal_value_language( node ) ) );
+    }
+
+    return Soprano::Node();
+}
+
+
+Soprano::Statement Soprano::Redland::World::createStatement( librdf_statement *st )
+{
+    librdf_node *subject = librdf_statement_get_subject( st );
+    librdf_node *predicate = librdf_statement_get_predicate( st );
+    librdf_node *object = librdf_statement_get_object( st );
+
+    return Soprano::Statement( createNode( subject), createNode( predicate), createNode( object ) );
+}
+
+void Soprano::Redland::World::freeNode( librdf_node* node )
+{
+    if( node ) {
+        librdf_free_node( node );
+    }
+}
+
+
+void Soprano::Redland::World::freeStatement( librdf_statement* statement )
+{
+    if( statement ) {
+        librdf_free_statement( statement );
+    }
 }

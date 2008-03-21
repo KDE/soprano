@@ -2,7 +2,7 @@
  * This file is part of Soprano Project
  *
  * Copyright (C) 2006 Daniele Galdi <daniele.galdi@gmail.com>
- * Copyright (C) 2007 Sebastian Trueg <trueg@kde.org>
+ * Copyright (C) 2007-2008 Sebastian Trueg <trueg@kde.org>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -34,60 +34,61 @@
 #include "statement.h"
 #include "node.h"
 
-namespace Soprano
-{
+namespace Soprano {
 
     class QueryResultIterator;
     class StatementIterator;
 
     namespace Redland {
 
-    class RedlandStatementIterator;
-    class RedlandQueryResult;
-    class NodeIteratorBackend;
+        class World;
+        class RedlandStatementIterator;
+        class RedlandQueryResult;
+        class NodeIteratorBackend;
 
-    class RedlandModel: public Soprano::StorageModel
+        class RedlandModel: public Soprano::StorageModel
         {
         public:
-        RedlandModel( const Backend*, librdf_model *model, librdf_storage *storage );
+            RedlandModel( const Backend*, librdf_model *model, librdf_storage *storage, World* world );
+            ~RedlandModel();
 
-        ~RedlandModel();
+            World* world() const;
 
-        librdf_model *redlandModel() const;
+            librdf_model *redlandModel() const;
 
-        Error::ErrorCode addStatement( const Statement &statement );
+            Error::ErrorCode addStatement( const Statement &statement );
 
-        virtual NodeIterator listContexts() const;
+            virtual NodeIterator listContexts() const;
 
-        bool containsAnyStatement( const Statement &statement ) const;
+            bool containsAnyStatement( const Statement &statement ) const;
 
-        Soprano::QueryResultIterator executeQuery( const QString &query, Query::QueryLanguage language, const QString& userQueryLanguage = QString() ) const;
+            Soprano::QueryResultIterator executeQuery( const QString &query, Query::QueryLanguage language, const QString& userQueryLanguage = QString() ) const;
 
-        Soprano::StatementIterator listStatements( const Statement &partial ) const;
+            Soprano::StatementIterator listStatements( const Statement &partial ) const;
 
-        Error::ErrorCode removeStatement( const Statement &statement );
+            Error::ErrorCode removeStatement( const Statement &statement );
 
-        Error::ErrorCode removeAllStatements( const Statement &statement );
+            Error::ErrorCode removeAllStatements( const Statement &statement );
 
-        int statementCount() const;
+            int statementCount() const;
 
-        Error::ErrorCode write( QTextStream &os ) const;
+            Error::ErrorCode write( QTextStream &os ) const;
 
-        Node createBlankNode();
+            Node createBlankNode();
 
         private:
-        class Private;
-        Private *d;
+            class Private;
+            Private *d;
 
-        void removeIterator( RedlandStatementIterator* it ) const;
-        void removeIterator( NodeIteratorBackend* it ) const;
-        void removeQueryResult( RedlandQueryResult* r ) const;
+            void removeIterator( RedlandStatementIterator* it ) const;
+            void removeIterator( NodeIteratorBackend* it ) const;
+            void removeQueryResult( RedlandQueryResult* r ) const;
 
-        Error::ErrorCode removeOneStatement( const Statement &statement );
+            Error::ErrorCode removeOneStatement( const Statement &statement );
 
-        friend class RedlandStatementIterator;
-        friend class RedlandQueryResult;
-        friend class NodeIteratorBackend;
+            friend class RedlandStatementIterator;
+            friend class RedlandQueryResult;
+            friend class NodeIteratorBackend;
         }; 
 
     }
