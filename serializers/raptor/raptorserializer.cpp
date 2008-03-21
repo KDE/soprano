@@ -23,7 +23,6 @@
 #include "raptorserializer.h"
 #include "../../backends/redland/redlandworld.h"
 #include "../../backends/redland/redlandstatementiterator.h"
-#include "../../backends/redland/redlandutil.h"
 
 #include "statementiterator.h"
 #include "statement.h"
@@ -109,6 +108,7 @@ int raptorIOStreamWriteBytes( void* data, const void* ptr, size_t size, size_t n
 class StreamData {
 public:
     Soprano::StatementIterator it;
+    Soprano::Redland::World* world;
     bool initialized;
     bool atEnd;
 };
@@ -140,11 +140,11 @@ void* streamGet( void* data, int what )
 
     if ( what == 0 ) {
         // statement (stupid librdf does not export it)
-        return Soprano::Redland::Util::createStatement( it->it.current() );
+        return it->world->createStatement( it->it.current() );
     }
     else {
         // context
-        return Soprano::Redland::Util::createNode( it->it.current().context() );
+        return it->world->createNode( it->it.current().context() );
     }
 }
 
@@ -160,21 +160,23 @@ bool Soprano::Raptor::Serializer::serialize( StatementIterator it,
 {
     clearError();
 
+    Redland::World world;
+
     librdf_serializer* serializer = 0;
     if ( serialization == SerializationRdfXml ) {
-        serializer = librdf_new_serializer( Redland::World::self()->worldPtr(),
+        serializer = librdf_new_serializer( world.worldPtr(),
                                             "rdfxml",
                                             0,
                                             0 );
     }
     else if ( serialization == SerializationUser ) {
-        serializer = librdf_new_serializer( Redland::World::self()->worldPtr(),
+        serializer = librdf_new_serializer( world.worldPtr(),
                                             userSerialization.toLatin1().data(),
                                             0,
                                             0 );
     }
     else {
-        serializer = librdf_new_serializer( Redland::World::self()->worldPtr(),
+        serializer = librdf_new_serializer( world.worldPtr(),
                                             0, // all factories
                                             serializationMimeType( serialization, userSerialization ).toLatin1().data(),
                                             0 );
@@ -182,7 +184,7 @@ bool Soprano::Raptor::Serializer::serialize( StatementIterator it,
 
     if ( !serializer ) {
         qDebug() << "(Soprano::Raptor::Serializer) no serializer for mimetype " << serializationMimeType( serialization, userSerialization );
-        setError( Redland::World::self()->lastError() );
+        setError( world.lastError() );
         return false;
     }
 
@@ -201,7 +203,7 @@ bool Soprano::Raptor::Serializer::serialize( StatementIterator it,
     if ( !raptorStream ) {
         qDebug() << "(Soprano::Raptor::Serializer) failed to create Raptor stream.";
         librdf_free_serializer( serializer );
-        setError( Redland::World::self()->lastError() );
+        setError( world.lastError() );
         return false;
     }
 
@@ -209,7 +211,8 @@ bool Soprano::Raptor::Serializer::serialize( StatementIterator it,
     streamData.it = it;
     streamData.atEnd = false;
     streamData.initialized = false;
-    librdf_stream* rdfStream = librdf_new_stream( Redland::World::self()->worldPtr(),
+    streamData.world = &world;
+    librdf_stream* rdfStream = librdf_new_stream( world.worldPtr(),
                                                   &streamData,
                                                   streamIsEnd,
                                                   streamNext,
@@ -219,11 +222,11 @@ bool Soprano::Raptor::Serializer::serialize( StatementIterator it,
     if ( !rdfStream ) {
         qDebug() << "(Soprano::Raptor::Serializer) failed to create librdf stream.";
         raptor_free_iostream( raptorStream );
-        setError( Redland::World::self()->lastError() );
+        setError( world.lastError() );
         return false;
     }
 
-    librdf_uri* baseUri = librdf_new_uri( Redland::World::self()->worldPtr(),
+    librdf_uri* baseUri = librdf_new_uri( world.worldPtr(),
                                           ( const unsigned char* )"http://soprano.org/FIXME/WeNeedABaseUriParameter" );
 
     if ( librdf_serializer_serialize_stream_to_iostream( serializer,
@@ -231,7 +234,7 @@ bool Soprano::Raptor::Serializer::serialize( StatementIterator it,
                                                          rdfStream,
                                                          raptorStream ) ) {
         qDebug() << "(Soprano::Raptor::Serializer) serialization failed.";
-        setError( Redland::World::self()->lastError() );
+        setError( world.lastError() );
         success = false;
     }
 
