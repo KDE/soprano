@@ -117,17 +117,17 @@ Soprano::StorageModel* Soprano::Redland::BackendPlugin::createModel( const QList
                                                   storageName.toUtf8().data(),
                                                   os.toUtf8().data() );
     if( !storage ) {
-        delete world;
         qDebug() << "(Soprano::Redland) storage creation failed!";
         setError( world->lastError() );
+        delete world;
         return 0;
     }
 
     librdf_model *model = librdf_new_model( world->worldPtr(), storage, 0 );
     if ( !model ) {
-        delete world;
         librdf_free_storage( storage );
         setError( world->lastError() );
+        delete world;
         return 0;
     }
 
