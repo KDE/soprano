@@ -27,6 +27,7 @@
 #include "../soprano/serializer.h"
 
 #include "../server/tcpclient.h"
+#include "../server/localsocketclient.h"
 #include "../server/dbus/dbusclient.h"
 #include "../server/dbus/dbusmodel.h"
 
@@ -313,6 +314,7 @@ int usage( const QString& error = QString() )
     s << "Usage:" << endl
       << "   sopranocmd --backend [--dir <storagedir>] [--serialization <s>] <command> [<parameters>]" << endl
       << "   sopranocmd --port <port> [--host <host>] --model <name> [--serialization <s>] <command> [<parameters>]" << endl
+      << "   sopranocmd --socket <socketpath>  --model <name> [--serialization <s>] <command> [<parameters>]" << endl
       << "   sopranocmd --dbus <dbusservice> --model <name> [--serialization <s>] <command> [<parameters>]" << endl
       << endl
       << "   --version           Print version information." << endl
@@ -335,6 +337,9 @@ int usage( const QString& error = QString() )
       << "                       (only applicable when querying against the Soprano server.)" << endl
       << endl
       << "   --host <host>       Specify the host the Soprano server is running on (defaults to localhost)." << endl
+      << "                       (only applicable when querying against the Soprano server.)" << endl
+      << endl
+      << "   --socket <path>     Specify the path to the local socket the Soprano server is running on." << endl
       << "                       (only applicable when querying against the Soprano server.)" << endl
       << endl
       << "   --serialization <s> The serialization used for commands 'export' and 'import'. Defaults to 'application/x-nquads'." << endl
@@ -387,6 +392,7 @@ int main( int argc, char *argv[] )
     allowedCmdLineArgs.insert( "dir", true );
     allowedCmdLineArgs.insert( "port", true );
     allowedCmdLineArgs.insert( "host", true );
+    allowedCmdLineArgs.insert( "socket", true );
     allowedCmdLineArgs.insert( "dbus", true );
     allowedCmdLineArgs.insert( "serialization", true );
     allowedCmdLineArgs.insert( "querylang", true );
@@ -407,6 +413,7 @@ int main( int argc, char *argv[] )
         if ( args.hasSetting( "port" ) ||
              args.hasSetting( "dbus" ) ||
              args.hasSetting( "host" ) ||
+             args.hasSetting( "socket" ) ||
              args.hasSetting( "model" ) ) {
             return usage( "Cannot mix server parameters with --backend." );
         }
@@ -429,6 +436,7 @@ int main( int argc, char *argv[] )
     QTextStream errStream(stderr);
     Soprano::Client::TcpClient* tcpClient = 0;
     Soprano::Client::DBusClient* dbusClient = 0;
+    Soprano::Client::LocalSocketClient* localSocketClient = 0;
     Soprano::Model* model = 0;
     if ( backendName.isEmpty() ) {
         if ( args.hasSetting( "port" ) ) {
@@ -449,6 +457,20 @@ int main( int argc, char *argv[] )
             if ( !( model = tcpClient->createModel( modelName ) ) ) {
                 errStream << "Failed to create Model: " << tcpClient->lastError() << endl;
                 delete tcpClient;
+                return 2;
+            }
+        }
+        else if ( args.hasSetting( "socket" ) ) {
+            QString socketPath = args.getSetting( "socket" );
+            localSocketClient = new Soprano::Client::LocalSocketClient();
+            if ( !localSocketClient->connect( socketPath ) ) {
+                errStream << "Failed to contact Soprano server through socket at " << socketPath << endl;
+                delete localSocketClient;
+                return 3;
+            }
+            if ( !( model = localSocketClient->createModel( modelName ) ) ) {
+                errStream << "Failed to create Model: " << localSocketClient->lastError() << endl;
+                delete localSocketClient;
                 return 2;
             }
         }
