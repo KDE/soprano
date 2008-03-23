@@ -51,7 +51,7 @@ namespace Soprano {
          *
          * \since 2.1
          */
-        class SOPRANO_EXPORT LocalSocketClient : public QObject, public Error::ErrorCache
+        class SOPRANO_CLIENT_EXPORT LocalSocketClient : public QObject, public Error::ErrorCache
         {
             Q_OBJECT
 
