@@ -59,12 +59,6 @@ public:
 namespace {
     inline QStringList makeLibName( const QString &libname )
     {
-#ifdef Q_OS_WIN
-        if (!libname.endsWith(".dll")) {
-            return libname + ".dll";
-        }
-        return libname;
-#else
         int pos = libname.lastIndexOf('/');
         if (pos < 0) {
             pos = 0;
@@ -72,7 +66,7 @@ namespace {
 
         QStringList libNames;
         if (libname.indexOf('.', pos) < 0) {
-            const char* const extList[] = { ".so", ".dylib", ".bundle", ".sl" };
+            const char* const extList[] = { ".so", ".dylib", ".bundle", ".sl", ".dll" };
             for (uint i = 0; i < sizeof(extList) / sizeof(*extList); ++i) {
                 if (QLibrary::isLibrary(libname + extList[i])) {
                     libNames.append(libname + extList[i]);
@@ -83,7 +77,6 @@ namespace {
             libNames.append(libname);
         }
         return libNames;
-#endif
     }
 
     QStringList envDirList( const char* var )
