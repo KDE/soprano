@@ -1,6 +1,7 @@
 2.0.4
 	* Make use of RPATH in the sesame2 backend to ensure that the JVM is found on runtime.
 	* Updated Sesame2 to 2.0.1
+	* Fixed a deadlock in the Sesame2 model
 
 2.0.3
 	* Fixed a string caching bug in LiteralValue which resulted in invalid string representations when

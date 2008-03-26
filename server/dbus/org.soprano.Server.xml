@@ -6,7 +6,7 @@
       <arg name="name" type="s" direction="in" />
       <arg name="model" type="s" direction="out" />
     </method>
-    <method name="removeeModel">
+    <method name="removeModel">
       <arg name="name" type="s" direction="in" />
     </method>
     <method name="allModels">

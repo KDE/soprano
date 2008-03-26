@@ -169,6 +169,9 @@ Soprano::QueryResultIterator Soprano::Sesame2::Model::executeQuery( const QStrin
         if ( it ) {
             d->queryIterators.append( it );
         }
+        else {
+            d->readWriteLock.unlock();
+        }
         return it;
     }
     else {
