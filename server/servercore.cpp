@@ -87,9 +87,6 @@ Soprano::Server::ServerCore::ServerCore( QObject* parent )
 
 Soprano::Server::ServerCore::~ServerCore()
 {
-    Q_FOREACH( ServerConnection* conn, d->connections ) {
-        conn->close();
-    }
     qDeleteAll( d->connections );
     qDeleteAll( d->models );
     delete d;

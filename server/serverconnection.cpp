@@ -95,8 +95,10 @@ public:
 };
 
 
+// do NOT use core as parent. Otherwise ~QObject will crash us
+// when we shut down the connections gracefully in ~ServerCore
 Soprano::Server::ServerConnection::ServerConnection( ServerCore* core )
-    : QObject( core ),
+    : QObject( 0 ),
       d( new Private() )
 {
     d->q = this;
