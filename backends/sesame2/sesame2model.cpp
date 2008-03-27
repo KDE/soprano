@@ -236,9 +236,6 @@ Soprano::Error::ErrorCode Soprano::Sesame2::Model::removeStatement( const Statem
         return Error::ErrorInvalidArgument;
     }
 
-    // we need to use (Resource)null as context parameter to RepositoryConnection.remove()
-    // in this case. Since I have no idea how to do that with JNI we use the Java wrapper
-    // class SopranoSesame2Wrapper (see sesame2repositoryconnection.cpp)
     if ( statement.context().isEmpty() ) {
         d->readWriteLock.lockForWrite();
 
@@ -263,6 +260,9 @@ Soprano::Error::ErrorCode Soprano::Sesame2::Model::removeStatement( const Statem
             return Error::ErrorUnknown;
         }
 
+        // we need to use (Resource)null as context parameter to RepositoryConnection.remove()
+        // in this case. Since I have no idea how to do that with JNI we use the Java wrapper
+        // class SopranoSesame2Wrapper (see sesame2repositoryconnection.cpp)
         d->repository->sopranoWrapper()->removeFromDefaultContext( subject, predicate, object );
         if ( JNIWrapper::instance()->exceptionOccured() ) {
             qDebug() << "(Soprano::Sesame2::Model::removeStatement) failed.";

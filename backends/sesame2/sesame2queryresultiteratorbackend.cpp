@@ -88,6 +88,8 @@ Soprano::Sesame2::QueryResultIteratorBackend::QueryResultIteratorBackend( bool r
     : d( new Private( result ) )
 {
     d->model = model;
+    // there is no need for us blocking the model
+    close();
 }
 
 

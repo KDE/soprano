@@ -73,7 +73,6 @@ bool Soprano::Sesame2::StatementIteratorBackend::next()
     // if there is an exception d->result returns false and it
     // is sufficient to catch it once here
     setError( JNIWrapper::instance()->convertAndClearException() );
-
     return false;
 }
 
