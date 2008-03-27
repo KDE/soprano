@@ -115,7 +115,7 @@ static Soprano::Node parseNode( const QString& s )
 }
 
 
-static bool importFile( Soprano::Model* model, const QString& fileName, const QString& serialization )
+static int importFile( Soprano::Model* model, const QString& fileName, const QString& serialization )
 {
     const Soprano::Parser* parser = Soprano::PluginManager::instance()->discoverParserForSerialization( Soprano::mimeTypeToSerialization( serialization ), serialization );
 
