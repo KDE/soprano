@@ -25,7 +25,6 @@
 #include "randomgenerator.h"
 #include "operators.h"
 #include "socketdevice.h"
-#include "mutexmodel.h"
 
 #include "queryresultiterator.h"
 #include "node.h"
@@ -298,19 +297,20 @@ void Soprano::Server::ServerConnection::Private::createModel( QDataStream& strea
 
     // for now we ignore the settings
 
-    // see if we already have that model
-    Model* model = core->model( name );
     quint32 id = 0;
-    if ( model ) {
-        // Use a mutexmodel for single thread since otherwise one client
-        // could lock via an iterator. If then another tries to access the model
-        // the whole server locks down
-        Util::MutexModel* mm = new Util::MutexModel( Util::MutexModel::ReadWriteSingleThreading, model );
-        mm->setParent( q ); // memory management
 
-        id = generateUniqueId();
-        modelIdMap.insert( id, mm );
-        modelNameMap.insert( name, id );
+    // see if we already have that model
+    QHash<QString, quint32>::const_iterator it = modelNameMap.find( name );
+    if ( it != modelNameMap.end() ) {
+        id = *it;
+    }
+    else {
+        Model* model = core->model( name );
+        if ( model ) {
+            id = generateUniqueId();
+            modelIdMap.insert( id, model );
+            modelNameMap.insert( name, id );
+        }
     }
 
     stream << id << Error::Error();
@@ -326,8 +326,6 @@ void Soprano::Server::ServerConnection::Private::removeModel( QDataStream& strea
     QString name;
     stream >> name;
 
-    // delete the mutex model created above
-    delete modelIdMap[modelNameMap[name]];
     modelIdMap.remove( modelNameMap[name] );
     modelNameMap.remove( name );
 

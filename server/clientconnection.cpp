@@ -38,7 +38,7 @@
 using namespace Soprano::Server;
 
 namespace {
-    const int s_defaultTimeout = 30000;
+    const int s_defaultTimeout = 600000;
 }
 
 class Soprano::Client::ClientConnection::Private

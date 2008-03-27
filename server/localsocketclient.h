@@ -67,26 +67,12 @@ namespace Soprano {
             virtual ~LocalSocketClient();
 
             /**
-             * Tries to connect to the %Soprano server.
-             *
-             * \return \p true on success, \p false if an error occured.
-             * Check lastError() for details.
-             */
-            bool connect( const QString& name = QString() );
-
-            /**
              * Check if the client is connected to a server.
              *
              * \return \p true if this client is connected to a server, \p false
              * otherwise.
              */
             bool isConnected();
-
-            /**
-             * Disconnect from the server. The created model instances are not
-             * deleted but remain useless; open iterators are closed.
-             */
-            void disconnect();
 
             /**
              * Creates a new Model instance that wraps a server model.
@@ -112,6 +98,21 @@ namespace Soprano {
              * be reverted. Use with care.
              */
             void removeModel( const QString& name );
+
+        public Q_SLOTS:
+            /**
+             * Tries to connect to the %Soprano server.
+             *
+             * \return \p true on success, \p false if an error occured.
+             * Check lastError() for details.
+             */
+            bool connect( const QString& name = QString() );
+
+            /**
+             * Disconnect from the server. The created model instances are not
+             * deleted but remain useless; open iterators are closed.
+             */
+            void disconnect();
 
         private:
             class Private;

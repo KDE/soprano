@@ -45,8 +45,6 @@
 #include "soprano/model.h"
 #include "soprano/node.h"
 
-#include "mutexmodel.h"
-
 
 class Soprano::Server::DBusModelAdaptor::Private
 {
@@ -55,11 +53,10 @@ public:
         : m_iteratorCount( 0 ) {
     }
 
-    DBusExportModel* dbusModel;
-    Model* model;
+    DBusExportModel* model;
 
     QString createUniqueIteratorDBusObjectPath() {
-        return QString( "%1/iterator%2" ).arg( dbusModel->dbusObjectPath() ).arg( ++m_iteratorCount );
+        return QString( "%1/iterator%2" ).arg( model->dbusObjectPath() ).arg( ++m_iteratorCount );
     }
 
 private:
@@ -75,12 +72,7 @@ Soprano::Server::DBusModelAdaptor::DBusModelAdaptor( DBusExportModel* dbusModel 
     qDBusRegisterMetaType<Soprano::Statement>();
     qDBusRegisterMetaType<Soprano::BindingSet>();
 
-    d->dbusModel = dbusModel;
-
-    // TODO: What would be perfect here was a read/write locking that would in general prefer write locks over read locks
-    //       (like QReadWriteLock) with one exception: if the same DBus service currently read-locking wants to lock for read
-    //       again, we allow it.
-    d->model = new Util::MutexModel( Util::MutexModel::ReadWriteSingleThreading, dbusModel->parentModel() );
+    d->model = dbusModel;
 
     // we cannot use setAutoRelaySignals here since that would connect (non-existing)
     // signals from parent instead of model
@@ -96,7 +88,6 @@ Soprano::Server::DBusModelAdaptor::DBusModelAdaptor( DBusExportModel* dbusModel 
 
 Soprano::Server::DBusModelAdaptor::~DBusModelAdaptor()
 {
-    delete d->model;
     delete d;
 }
 

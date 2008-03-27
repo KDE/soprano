@@ -61,6 +61,10 @@ namespace Soprano {
          * registers a DBus interface on the DBus session bus. Both ways of
          * communication can be used simultaneously.
          *
+         * ServerCore is designed for single-threaded usage. I.e. the models returned
+         * by model() are not thread-safe but use Soprano::Util::MutexModel::ReadWriteSingleThreading
+         * mode. This behaviour can of course be changed by reimplementing model().
+         *
          * \author Sebastian Trueg <trueg@kde.org>
          *
          * \warning <b>The API of this class is subject to change. It is likely that it will be split into several classes.</b>
