@@ -1,7 +1,7 @@
 /* 
  * This file is part of Soprano Project.
  *
- * Copyright (C) 2007 Sebastian Trueg <trueg@kde.org>
+ * Copyright (C) 2007-2008 Sebastian Trueg <trueg@kde.org>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -32,12 +32,12 @@ namespace Soprano {
         /**
          * \class MutexModel mutexmodel.h Soprano/Util/MutexModel
          *
-         * \brief Protect a Model for multiple calls in multi- or single-thread
+         * \brief Protect a Model for multiple calls in multi-threaded
          * applications.
          *
          * In most cases one does not need to use this FilterModel since Models
          * created by Soprano::createModel and Soprano::Backend::createModel
-         * are thread-safe.
+         * are thread-safe. It may, however, come in handy for custom models.
          *
          * \author Sebastian Trueg <trueg@kde.org>
          */
@@ -67,20 +67,8 @@ namespace Soprano {
                 ReadWriteMultiThreading,
         
                 /**
-                 * ReadWriteSingleThreading mode is targetted at single thread
-                 * applications. It makes sure that no read and write operations
-                 * are performed interweaved. This mainly means that an open 
-                 * iterator will block any write operation. Blocked operations
-                 * wait in a local event loop. Thus, the application is not entirely
-                 * blocked.
-                 *
-                 * This mode is mainly useful for server applications that need to
-                 * handle multiple clients at the same time in the same thread.
-                 * Actually the Soprano::Server implementation does make use of
-                 * MutexModel with this mode.
-                 *
-                 * \warning In ReadWriteSingleThreading mode MutexModel
-                 * is not thread-safe.
+                 * \deprecated This was a buggy mode which was impossible to fix.
+                 * Use AsyncModel instead.
                  */
                 ReadWriteSingleThreading
             };

@@ -1,7 +1,7 @@
 /*
  * This file is part of Soprano Project.
  *
- * Copyright (C) 2007 Sebastian Trueg <trueg@kde.org>
+ * Copyright (C) 2008 Sebastian Trueg <trueg@kde.org>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -19,29 +19,32 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef _LOOP_LOCK_H_
-#define _LOOP_LOCK_H_
+#include "asynciteratorbackend.h"
+#include "asyncmodel_p.h"
 
-/**
- * Provides a locking mechanism for single-thread applications.
- * Its usage is just like QReadWriteLock except that is uses
- * local event loops to prevent the whole application from blocking
- * when waiting for a lock.
- */
-class LoopLock
+Soprano::Util::AsyncIteratorBase::AsyncIteratorBase( AsyncModelPrivate* d )
+    : m_asyncModelPrivate( d )
 {
-public:
-    LoopLock();
-    ~LoopLock();
+    m_asyncModelPrivate->addIterator( this );
+}
 
-    void lockForWrite();
-    void lockForRead();
 
-    void unlock();
-    
-private:
-    class Private;
-    Private* const d;
-};
+Soprano::Util::AsyncIteratorBase::~AsyncIteratorBase()
+{
+    remove();
+}
 
-#endif
+
+void Soprano::Util::AsyncIteratorBase::setModelGone()
+{
+    m_asyncModelPrivate = 0;
+}
+
+
+void Soprano::Util::AsyncIteratorBase::remove()
+{
+    if( m_asyncModelPrivate ) {
+        m_asyncModelPrivate->removeIterator( this );
+        m_asyncModelPrivate = 0;
+    }
+}

@@ -21,34 +21,13 @@
 
 #include "dbusmodelinterface.h"
 
-// we need a big timeout for methods such as query which can take a rather long time
-// let's set it to the aweful big value of 10 minutes! :)
-static const int bigTimeout = 600000;
-
 Soprano::Client::DBusModelInterface::DBusModelInterface( const QString& service, const QString& path, const QDBusConnection& connection, QObject* parent )
-    : QDBusAbstractInterface( service, path, "org.soprano.Model", connection, parent )
+    : DBusAbstractInterface( service, path, "org.soprano.Model", connection, parent )
 {
 }
 
 Soprano::Client::DBusModelInterface::~DBusModelInterface()
 {
-}
-
-
-QDBusMessage Soprano::Client::DBusModelInterface::callWithArgumentListAndBigTimeout( QDBus::CallMode mode,
-                                                                                     const QString& method,
-                                                                                     const QList<QVariant>& args )
-{
-    QDBusMessage msg = QDBusMessage::createMethodCall( service(), path(), interface(), method );
-    msg.setArguments( args );
-
-    QDBusMessage reply = connection().call( msg, mode, bigTimeout );
-
-    // ensure that there is at least one element
-    if (reply.arguments().isEmpty())
-        reply << QVariant();
-
-    return reply;
 }
 
 #include "dbusmodelinterface.moc"

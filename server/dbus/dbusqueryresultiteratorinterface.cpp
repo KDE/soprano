@@ -1,7 +1,7 @@
 /*
  * This file is part of Soprano Project.
  *
- * Copyright (C) 2007 Sebastian Trueg <trueg@kde.org>
+ * Copyright (C) 2007-2008 Sebastian Trueg <trueg@kde.org>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -22,7 +22,7 @@
 #include "dbusqueryresultiteratorinterface.h"
 
 Soprano::Client::DBusQueryResultIteratorInterface::DBusQueryResultIteratorInterface( const QString& service, const QString& path, const QDBusConnection& connection, QObject* parent )
-    : QDBusAbstractInterface( service, path, "org.soprano.QueryResultIterator", connection, parent )
+    : DBusAbstractInterface( service, path, "org.soprano.QueryResultIterator", connection, parent )
 {
 }
 

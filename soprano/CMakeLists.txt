@@ -80,7 +80,6 @@ SET(soprano_SRCS
   inifile.cpp
   desktopfile.cpp
   sopranopluginfile.cpp
-  util/looplock.cpp
   util/extreadwritelock.cpp
   util/mutexmodel.cpp
   util/mutexstatementiteratorbackend.cpp
@@ -91,6 +90,9 @@ SET(soprano_SRCS
   util/dummymodel.cpp
   util/signalcachemodel.cpp
   util/readonlymodel.cpp
+  util/asyncmodel.cpp
+  util/asynccommand.cpp
+  util/asynciteratorbackend.cpp
   )
 
 qt4_automoc(${soprano_SRCS})
@@ -100,7 +102,7 @@ ADD_LIBRARY(soprano SHARED ${soprano_SRCS})
 TARGET_LINK_LIBRARIES(soprano ${QT_QTCORE_LIBRARY})
 
 set_target_properties(soprano PROPERTIES
-  VERSION 4.0.0
+  VERSION 4.1.0
   SOVERSION 4
   DEFINE_SYMBOL MAKE_SOPRANO_LIB
   INSTALL_NAME_DIR ${LIB_DESTINATION}
@@ -162,4 +164,5 @@ INSTALL(FILES
   util/simplenodeiterator.h
   util/signalcachemodel.h
   util/readonlymodel.h
+  util/asyncmodel.h
   DESTINATION include/soprano)

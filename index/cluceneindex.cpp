@@ -184,6 +184,19 @@ public:
                  textFieldName() != fieldName );
     }
 
+    /**
+     * A doc is empty if it only contains the fields id and text
+     */
+    static bool docEmpty( lucene::document::Document* doc ) {
+        int cnt = 0;
+        lucene::document::DocumentFieldEnumeration* it = doc->fields();
+        while ( it->hasMoreElements() ) {
+            lucene::document::Field* field = it->nextElement();
+            ++cnt;
+        }
+        return cnt <= 2;
+    }
+
     lucene::document::Document* getDocument( const Node& resource ) {
         // check if the resource is already cached
         QHash<Node, lucene::document::Document*>::const_iterator it = documentCache.find( resource );
@@ -245,7 +258,10 @@ public:
         for ( QHash<Node, lucene::document::Document*>::iterator it = documentCache.begin();
               it != documentCache.end(); ++it ) {
             lucene::document::Document* doc = it.value();
-            getIndexWriter()->addDocument( doc );
+            // never add empty docs
+            if ( !docEmpty( doc ) ) {
+                getIndexWriter()->addDocument( doc );
+            }
             delete( doc );
         }
 

@@ -1,7 +1,7 @@
 /*
  * This file is part of Soprano Project.
  *
- * Copyright (C) 2007 Sebastian Trueg <trueg@kde.org>
+ * Copyright (C) 2007-2008 Sebastian Trueg <trueg@kde.org>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -21,7 +21,6 @@
 
 #include "mutexmodel.h"
 #include "mutexiteratorbase.h"
-#include "looplock.h"
 #include "extreadwritelock.h"
 #include "mutexstatementiteratorbackend.h"
 #include "mutexnodeiteratorbackend.h"
@@ -52,9 +51,9 @@ public:
             m_msLock.lockForWrite();
             break;
         case ReadWriteSingleThreading:
-            m_loopLock.lockForWrite();
             break;
         }
+        Q_ASSERT( openIterators.isEmpty() );
     }
 
     void lockForRead() {
@@ -66,7 +65,6 @@ public:
             m_msLock.lockForRead();
             break;
         case ReadWriteSingleThreading:
-            m_loopLock.lockForRead();
             break;
         }
     }
@@ -80,13 +78,11 @@ public:
             m_msLock.unlock();
             break;
         case ReadWriteSingleThreading:
-            m_loopLock.unlock();
             break;
         }
     }
 
 private:
-    LoopLock m_loopLock;
     ExtReadWriteLock m_msLock;
     QMutex m_mutex;
 
@@ -98,6 +94,7 @@ Soprano::Util::MutexModel::MutexModel( ProtectionMode mode, Model* parent )
     : FilterModel( parent ),
       d( new Private( mode ) )
 {
+    Q_ASSERT( mode != ReadWriteSingleThreading );
 }
 
 
@@ -226,6 +223,7 @@ int Soprano::Util::MutexModel::statementCount() const
 
 void Soprano::Util::MutexModel::removeIterator( MutexIteratorBase* it ) const
 {
+    Q_ASSERT( d->openIterators.contains( it ) );
     d->openIterators.removeAll( it );
     d->unlock();
 }

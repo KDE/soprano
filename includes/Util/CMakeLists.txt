@@ -5,5 +5,7 @@ install(FILES
   DummyModel
   SignalCacheModel
   ReadOnlyModel
+  AsyncModel
+  AsyncResult
   DESTINATION
   include/Soprano/Util)

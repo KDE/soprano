@@ -126,6 +126,8 @@ namespace Soprano {
         private:
             class Private;
             Private* const d;
+
+            Q_PRIVATE_SLOT( d, void _s_delayedResultReady( Soprano::Util::AsyncResult* ) )
         };
     }
 }

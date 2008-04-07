@@ -1,7 +1,7 @@
 /* 
  * This file is part of Soprano Project.
  *
- * Copyright (C) 2007 Sebastian Trueg <trueg@kde.org>
+ * Copyright (C) 2007-2008 Sebastian Trueg <trueg@kde.org>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -28,17 +28,18 @@
 #include "bindingset.h"
 #include "node.h"
 #include "statement.h"
+#include "dbusabstractinterface.h"
 
 Q_DECLARE_METATYPE(Soprano::BindingSet)
-    Q_DECLARE_METATYPE(Soprano::Statement)
-    Q_DECLARE_METATYPE(Soprano::Node)
+Q_DECLARE_METATYPE(Soprano::Statement)
+Q_DECLARE_METATYPE(Soprano::Node)
 
-    namespace Soprano {
+namespace Soprano {
 
     class BindingSet;
 
     namespace Client {
-        class DBusQueryResultIteratorInterface: public QDBusAbstractInterface
+        class DBusQueryResultIteratorInterface: public DBusAbstractInterface
         {
             Q_OBJECT
 
@@ -51,74 +52,74 @@ Q_DECLARE_METATYPE(Soprano::BindingSet)
             {
                 QList<QVariant> argumentList;
                 argumentList << qVariantFromValue(index);
-                return callWithArgumentList(QDBus::Block, QLatin1String("bindingByIndex"), argumentList);
+                return callWithArgumentListAndBigTimeout(QDBus::Block, QLatin1String("bindingByIndex"), argumentList);
             }
 
             inline QDBusReply<Soprano::Node> bindingByName(const QString &name)
             {
                 QList<QVariant> argumentList;
                 argumentList << qVariantFromValue(name);
-                return callWithArgumentList(QDBus::Block, QLatin1String("bindingByName"), argumentList);
+                return callWithArgumentListAndBigTimeout(QDBus::Block, QLatin1String("bindingByName"), argumentList);
             }
 
             inline QDBusReply<int> bindingCount()
             {
                 QList<QVariant> argumentList;
-                return callWithArgumentList(QDBus::Block, QLatin1String("bindingCount"), argumentList);
+                return callWithArgumentListAndBigTimeout(QDBus::Block, QLatin1String("bindingCount"), argumentList);
             }
 
             inline QDBusReply<QStringList> bindingNames()
             {
                 QList<QVariant> argumentList;
-                return callWithArgumentList(QDBus::Block, QLatin1String("bindingNames"), argumentList);
+                return callWithArgumentListAndBigTimeout(QDBus::Block, QLatin1String("bindingNames"), argumentList);
             }
 
             inline QDBusReply<bool> boolValue()
             {
                 QList<QVariant> argumentList;
-                return callWithArgumentList(QDBus::Block, QLatin1String("boolValue"), argumentList);
+                return callWithArgumentListAndBigTimeout(QDBus::Block, QLatin1String("boolValue"), argumentList);
             }
 
             inline QDBusReply<Soprano::BindingSet> current()
             {
                 QList<QVariant> argumentList;
-                return callWithArgumentList(QDBus::Block, QLatin1String("current"), argumentList);
+                return callWithArgumentListAndBigTimeout(QDBus::Block, QLatin1String("current"), argumentList);
             }
 
             inline QDBusReply<Soprano::Statement> currentStatement()
             {
                 QList<QVariant> argumentList;
-                return callWithArgumentList(QDBus::Block, QLatin1String("currentStatement"), argumentList);
+                return callWithArgumentListAndBigTimeout(QDBus::Block, QLatin1String("currentStatement"), argumentList);
             }
 
             inline QDBusReply<bool> isBinding()
             {
                 QList<QVariant> argumentList;
-                return callWithArgumentList(QDBus::Block, QLatin1String("isBinding"), argumentList);
+                return callWithArgumentListAndBigTimeout(QDBus::Block, QLatin1String("isBinding"), argumentList);
             }
 
             inline QDBusReply<bool> isBool()
             {
                 QList<QVariant> argumentList;
-                return callWithArgumentList(QDBus::Block, QLatin1String("isBool"), argumentList);
+                return callWithArgumentListAndBigTimeout(QDBus::Block, QLatin1String("isBool"), argumentList);
             }
 
             inline QDBusReply<bool> isGraph()
             {
                 QList<QVariant> argumentList;
-                return callWithArgumentList(QDBus::Block, QLatin1String("isGraph"), argumentList);
+                return callWithArgumentListAndBigTimeout(QDBus::Block, QLatin1String("isGraph"), argumentList);
             }
 
             inline QDBusReply<bool> next()
             {
                 QList<QVariant> argumentList;
-                return callWithArgumentList(QDBus::Block, QLatin1String("next"), argumentList);
+                return callWithArgumentListAndBigTimeout(QDBus::Block, QLatin1String("next"), argumentList);
             }
 
             inline QDBusReply<void> close()
             {
                 QList<QVariant> argumentList;
-                return callWithArgumentList(QDBus::Block, QLatin1String("close"), argumentList);
+                return callWithArgumentListAndBigTimeout(QDBus::Block, QLatin1String("close"), argumentList);
             }
         };
     }

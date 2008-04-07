@@ -25,6 +25,7 @@
 #include "randomgenerator.h"
 #include "operators.h"
 #include "socketdevice.h"
+#include "asyncmodel.h"
 
 #include "queryresultiterator.h"
 #include "node.h"
@@ -41,7 +42,11 @@
 #include <QtCore/QDebug>
 #include <QtNetwork/QTcpSocket>
 
-
+Q_DECLARE_METATYPE(Soprano::Error::ErrorCode)
+Q_DECLARE_METATYPE(Soprano::Node)
+Q_DECLARE_METATYPE(Soprano::StatementIterator)
+Q_DECLARE_METATYPE(Soprano::NodeIterator)
+Q_DECLARE_METATYPE(Soprano::QueryResultIterator)
 
 
 class Soprano::Server::ServerConnection::Private
@@ -56,7 +61,8 @@ public:
     QHash<quint32, NodeIterator> openNodeIterators;
     QHash<quint32, QueryResultIterator> openQueryIterators;
 
-    void _k_readNextCommand();
+    void _s_readNextCommand();
+    void _s_resultReady( Soprano::Util::AsyncResult* result );
 
     quint32 generateUniqueId();
     Soprano::Model* getModel( QDataStream& stream );
@@ -125,13 +131,13 @@ void Soprano::Server::ServerConnection::start( QIODevice* socket )
 {
     d->socket = socket;
     connect( socket, SIGNAL( readyRead() ),
-             this, SLOT( _k_readNextCommand() ) );
+             this, SLOT( _s_readNextCommand() ) );
     connect( socket, SIGNAL( disconnected() ),
              this, SIGNAL( finished() ) );
 }
 
 
-void Soprano::Server::ServerConnection::Private::_k_readNextCommand()
+void Soprano::Server::ServerConnection::Private::_s_readNextCommand()
 {
     QDataStream stream( socket );
     quint16 command = 0;
@@ -231,6 +237,44 @@ void Soprano::Server::ServerConnection::Private::_k_readNextCommand()
         qDebug() << "Unknown command: " << command;
         break;
     }
+}
+
+
+void Soprano::Server::ServerConnection::Private::_s_resultReady( Util::AsyncResult* result )
+{
+    // we only handle one client request at the same time
+    // Thus, we simply communicate the result
+
+    QDataStream stream( socket );
+
+    QVariant value = result->value();
+
+    if( value.userType() == QVariant::Bool ) {
+        stream << value.toBool();
+    }
+    else if ( value.userType() == QVariant::Int ) {
+        stream << value.toInt();
+    }
+    else if ( value.userType() == qMetaTypeId<Node>() ) {
+        stream << value.value<Node>();
+    }
+    else if ( value.userType() == qMetaTypeId<StatementIterator>() ) {
+        stream << mapIterator( value.value<StatementIterator>() );
+    }
+    else if ( value.userType() == qMetaTypeId<NodeIterator>() ) {
+        stream << mapIterator( value.value<NodeIterator>() );
+    }
+    else if ( value.userType() == qMetaTypeId<QueryResultIterator>() ) {
+        stream << mapIterator( value.value<QueryResultIterator>() );
+    }
+    else if ( value.userType() == qMetaTypeId<Error::ErrorCode>() ) {
+        stream << value.value<Error::ErrorCode>();
+    }
+    else {
+        Q_ASSERT( false );
+    }
+
+    stream << result->lastError();
 }
 
 
@@ -362,8 +406,14 @@ void Soprano::Server::ServerConnection::Private::addStatement( QDataStream& stre
         Statement s;
         stream >> s;
 
-        stream << model->addStatement( s );
-        stream << model->lastError();
+        if ( Util::AsyncModel* am = qobject_cast<Util::AsyncModel*>( model ) ) {
+            connect( am->addStatementAsync( s ), SIGNAL( resultReady( Soprano::Util::AsyncResult* ) ),
+                     q, SLOT( _s_resultReady( Soprano::Util::AsyncResult* ) ) );
+        }
+        else {
+            stream << model->addStatement( s );
+            stream << model->lastError();
+        }
     }
     else {
         stream << Error::ErrorInvalidArgument << Error::Error( "Invalid model id" );
@@ -380,8 +430,14 @@ void Soprano::Server::ServerConnection::Private::removeStatement( QDataStream& s
         Statement s;
         stream >> s;
 
-        stream << model->removeStatement( s );
-        stream << model->lastError();
+        if ( Util::AsyncModel* am = qobject_cast<Util::AsyncModel*>( model ) ) {
+            connect( am->removeStatementAsync( s ), SIGNAL( resultReady( Soprano::Util::AsyncResult* ) ),
+                     q, SLOT( _s_resultReady( Soprano::Util::AsyncResult* ) ) );
+        }
+        else {
+            stream << model->removeStatement( s );
+            stream << model->lastError();
+        }
     }
     else {
         stream << Error::ErrorInvalidArgument << Error::Error( "Invalid model id" );
@@ -398,8 +454,14 @@ void Soprano::Server::ServerConnection::Private::removeAllStatements( QDataStrea
         Statement s;
         stream >> s;
 
-        stream << model->removeAllStatements( s );
-        stream << model->lastError();
+        if ( Util::AsyncModel* am = qobject_cast<Util::AsyncModel*>( model ) ) {
+            connect( am->removeAllStatementsAsync( s ), SIGNAL( resultReady( Soprano::Util::AsyncResult* ) ),
+                     q, SLOT( _s_resultReady( Soprano::Util::AsyncResult* ) ) );
+        }
+        else {
+            stream << model->removeAllStatements( s );
+            stream << model->lastError();
+        }
     }
     else {
         stream << Error::ErrorInvalidArgument << Error::Error( "Invalid model id" );
@@ -416,8 +478,14 @@ void Soprano::Server::ServerConnection::Private::listStatements( QDataStream& st
         Statement s;
         stream >> s;
 
-        StatementIterator it = model->listStatements( s );
-        stream << mapIterator( it ) << model->lastError();
+        if ( Util::AsyncModel* am = qobject_cast<Util::AsyncModel*>( model ) ) {
+            connect( am->listStatementsAsync( s ), SIGNAL( resultReady( Soprano::Util::AsyncResult* ) ),
+                     q, SLOT( _s_resultReady( Soprano::Util::AsyncResult* ) ) );
+        }
+        else {
+            StatementIterator it = model->listStatements( s );
+            stream << mapIterator( it ) << model->lastError();
+        }
     }
     else {
         stream << Error::ErrorInvalidArgument << Error::Error( "Invalid model id" );
@@ -434,8 +502,14 @@ void Soprano::Server::ServerConnection::Private::containsStatement( QDataStream&
         Statement s;
         stream >> s;
 
-        stream << model->containsStatement( s );
-        stream << model->lastError();
+        if ( Util::AsyncModel* am = qobject_cast<Util::AsyncModel*>( model ) ) {
+            connect( am->containsStatementAsync( s ), SIGNAL( resultReady( Soprano::Util::AsyncResult* ) ),
+                     q, SLOT( _s_resultReady( Soprano::Util::AsyncResult* ) ) );
+        }
+        else {
+            stream << model->containsStatement( s );
+            stream << model->lastError();
+        }
     }
     else {
         stream << Error::ErrorInvalidArgument << Error::Error( "Invalid model id" );
@@ -452,8 +526,14 @@ void Soprano::Server::ServerConnection::Private::containsAnyStatement( QDataStre
         Statement s;
         stream >> s;
 
-        stream << model->containsAnyStatement( s );
-        stream << model->lastError();
+        if ( Util::AsyncModel* am = qobject_cast<Util::AsyncModel*>( model ) ) {
+            connect( am->containsAnyStatementAsync( s ), SIGNAL( resultReady( Soprano::Util::AsyncResult* ) ),
+                     q, SLOT( _s_resultReady( Soprano::Util::AsyncResult* ) ) );
+        }
+        else {
+            stream << model->containsAnyStatement( s );
+            stream << model->lastError();
+        }
     }
     else {
         stream << Error::ErrorInvalidArgument << Error::Error( "Invalid model id" );
@@ -466,8 +546,14 @@ void Soprano::Server::ServerConnection::Private::listContexts( QDataStream& stre
 {
     Model* model = getModel( stream );
     if ( model ) {
-        NodeIterator it = model->listContexts();
-        stream << mapIterator( it ) << model->lastError();
+        if ( Util::AsyncModel* am = qobject_cast<Util::AsyncModel*>( model ) ) {
+            connect( am->listContextsAsync(), SIGNAL( resultReady( Soprano::Util::AsyncResult* ) ),
+                     q, SLOT( _s_resultReady( Soprano::Util::AsyncResult* ) ) );
+        }
+        else {
+            NodeIterator it = model->listContexts();
+            stream << mapIterator( it ) << model->lastError();
+        }
     }
     else {
         stream << Error::ErrorInvalidArgument << Error::Error( "Invalid model id" );
@@ -483,8 +569,15 @@ void Soprano::Server::ServerConnection::Private::query( QDataStream& stream )
         quint16 queryLang;
         QString userLang;
         stream >> queryString >> queryLang >> userLang;
-        QueryResultIterator it = model->executeQuery( queryString, ( Query::QueryLanguage )queryLang, userLang );
-        stream << mapIterator( it ) << model->lastError();
+
+        if ( Util::AsyncModel* am = qobject_cast<Util::AsyncModel*>( model ) ) {
+            connect( am->executeQueryAsync( queryString, ( Query::QueryLanguage )queryLang, userLang ), SIGNAL( resultReady( Soprano::Util::AsyncResult* ) ),
+                     q, SLOT( _s_resultReady( Soprano::Util::AsyncResult* ) ) );
+        }
+        else {
+            QueryResultIterator it = model->executeQuery( queryString, ( Query::QueryLanguage )queryLang, userLang );
+            stream << mapIterator( it ) << model->lastError();
+        }
     }
     else {
         stream << Error::ErrorInvalidArgument << Error::Error( "Invalid model id" );
@@ -496,8 +589,14 @@ void Soprano::Server::ServerConnection::Private::statementCount( QDataStream& st
 {
     Model* model = getModel( stream );
     if ( model ) {
-        qint32 count = model->statementCount();
-        stream << count << model->lastError();
+        if ( Util::AsyncModel* am = qobject_cast<Util::AsyncModel*>( model ) ) {
+            connect( am->statementCountAsync(), SIGNAL( resultReady( Soprano::Util::AsyncResult* ) ),
+                     q, SLOT( _s_resultReady( Soprano::Util::AsyncResult* ) ) );
+        }
+        else {
+            qint32 count = model->statementCount();
+            stream << count << model->lastError();
+        }
     }
     else {
         stream << Error::ErrorInvalidArgument << Error::Error( "Invalid model id" );
@@ -509,8 +608,14 @@ void Soprano::Server::ServerConnection::Private::isEmpty( QDataStream& stream )
 {
     Model* model = getModel( stream );
     if ( model ) {
-        stream << model->isEmpty();
-        stream << model->lastError();
+        if ( Util::AsyncModel* am = qobject_cast<Util::AsyncModel*>( model ) ) {
+            connect( am->isEmptyAsync(), SIGNAL( resultReady( Soprano::Util::AsyncResult* ) ),
+                     q, SLOT( _s_resultReady( Soprano::Util::AsyncResult* ) ) );
+        }
+        else {
+            stream << model->isEmpty();
+            stream << model->lastError();
+        }
     }
     else {
         stream << Error::ErrorInvalidArgument << Error::Error( "Invalid model id" );
@@ -522,8 +627,14 @@ void Soprano::Server::ServerConnection::Private::createBlankNode( QDataStream& s
 {
     Model* model = getModel( stream );
     if ( model ) {
-        stream << model->createBlankNode();
-        stream << model->lastError();
+        if ( Util::AsyncModel* am = qobject_cast<Util::AsyncModel*>( model ) ) {
+            connect( am->createBlankNodeAsync(), SIGNAL( resultReady( Soprano::Util::AsyncResult* ) ),
+                     q, SLOT( _s_resultReady( Soprano::Util::AsyncResult* ) ) );
+        }
+        else {
+            stream << model->createBlankNode();
+            stream << model->lastError();
+        }
     }
     else {
         stream << Error::ErrorInvalidArgument << Error::Error( "Invalid model id" );

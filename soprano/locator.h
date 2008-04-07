@@ -33,6 +33,8 @@ namespace Soprano
         /**
          * \class Locator locator.h Soprano/Error/Locator
          *
+         * \brief Details of a parser Error
+         *
          * A Locator object provides additional information about
          * parsing errors.
          */

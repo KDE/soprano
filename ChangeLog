@@ -20,6 +20,7 @@
 	  introduced in QT 4.4. As a result of the design on QLocalServer and QLocalSocket the server is not
 	  multithreaded anymore.
 	* New Backend method "deleteModelData"
+	* New AsyncModel to asyncroneously execute commands on any model.
 	
 2.0.1
 	* Fixed method statementCount in Sesame2 backend

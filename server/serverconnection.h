@@ -29,6 +29,9 @@ class QIODevice;
 namespace Soprano {
 
     class Backend;
+    namespace Util {
+        class AsyncResult;
+    }
 
     namespace Server {
 
@@ -62,7 +65,8 @@ namespace Soprano {
             class Private;
             Private* const d;
 
-            Q_PRIVATE_SLOT( d, void _k_readNextCommand() )
+            Q_PRIVATE_SLOT( d, void _s_readNextCommand() )
+            Q_PRIVATE_SLOT( d, void _s_resultReady( Soprano::Util::AsyncResult* ) )
         };
     }
 }

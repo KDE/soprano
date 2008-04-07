@@ -1,7 +1,7 @@
 /* 
  * This file is part of Soprano Project.
  *
- * Copyright (C) 2007 Sebastian Trueg <trueg@kde.org>
+ * Copyright (C) 2007-2008 Sebastian Trueg <trueg@kde.org>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -26,6 +26,7 @@
 #include <QtDBus/QtDBus>
 
 #include "node.h"
+#include "dbusabstractinterface.h"
 
 Q_DECLARE_METATYPE(Soprano::Node)
 
@@ -34,33 +35,33 @@ namespace Soprano {
     class Node;
 
     namespace Client {
-    class DBusNodeIteratorInterface: public QDBusAbstractInterface
-    {
-        Q_OBJECT
-
-    public:
-        DBusNodeIteratorInterface( const QString& service, const QString& path, const QDBusConnection& connection, QObject *parent = 0 );
-        ~DBusNodeIteratorInterface();
-
-    public Q_SLOTS:
-        inline QDBusReply<Soprano::Node> current()
+        class DBusNodeIteratorInterface: public DBusAbstractInterface
         {
-        QList<QVariant> argumentList;
-        return callWithArgumentList(QDBus::Block, QLatin1String("current"), argumentList);
-        }
+            Q_OBJECT
 
-        inline QDBusReply<bool> next()
-        {
-        QList<QVariant> argumentList;
-        return callWithArgumentList(QDBus::Block, QLatin1String("next"), argumentList);
-        }
+        public:
+            DBusNodeIteratorInterface( const QString& service, const QString& path, const QDBusConnection& connection, QObject *parent = 0 );
+            ~DBusNodeIteratorInterface();
 
-        inline QDBusReply<void> close()
-        {
-        QList<QVariant> argumentList;
-        return callWithArgumentList(QDBus::Block, QLatin1String("close"), argumentList);
-        }
-    };
+        public Q_SLOTS:
+            inline QDBusReply<Soprano::Node> current()
+            {
+                QList<QVariant> argumentList;
+                return callWithArgumentListAndBigTimeout(QDBus::Block, QLatin1String("current"), argumentList);
+            }
+
+            inline QDBusReply<bool> next()
+            {
+                QList<QVariant> argumentList;
+                return callWithArgumentListAndBigTimeout(QDBus::Block, QLatin1String("next"), argumentList);
+            }
+
+            inline QDBusReply<void> close()
+            {
+                QList<QVariant> argumentList;
+                return callWithArgumentListAndBigTimeout(QDBus::Block, QLatin1String("close"), argumentList);
+            }
+        };
     }
 }
 

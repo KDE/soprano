@@ -28,7 +28,7 @@
 #include "backend.h"
 #include "storagemodel.h"
 #include "global.h"
-#include "mutexmodel.h"
+#include "asyncmodel.h"
 
 #include <QtCore/QHash>
 #include <QtCore/QDebug>
@@ -135,16 +135,13 @@ Soprano::Model* Soprano::Server::ServerCore::model( const QString& name )
         Model* model = createModel( settings );
 
         // protect the model against deadlocks when used by multiple clients. ServerCore is single-threaded, thus,
-        // we use MutexModel in its ReadWriteSingleThreading mode which creates local event loops instead of hard locking
-        //
-        // TODO: What would be perfect here was a read/write locking that would in general prefer write locks over read locks
-        //       (like QReadWriteLock) with one exception: if the same DBus service currently read-locking wants to lock for read
-        //       again, we allow it.
-        Util::MutexModel* mutexModel = new Util::MutexModel( Util::MutexModel::ReadWriteSingleThreading, model );
-        model->setParent( mutexModel ); // memory management
-        d->models.insert( name, mutexModel );
+        // we use AsyncModel which is used automatically by ServerConnection and DBusExportModel
 
-        return mutexModel;
+        Util::AsyncModel* asyncModel = new Util::AsyncModel( model );
+        model->setParent( asyncModel ); // memory management
+        d->models.insert( name, asyncModel );
+
+        return asyncModel;
     }
     else {
         return *it;

@@ -218,6 +218,8 @@ namespace Soprano {
         /**
          * \class ErrorCache error.h Soprano/Error/ErrorCache
          *
+         * \brief Core class of %Soprano's exception system.
+         *
          * The ErrorCache caches Error instances for different threads.
          * Each thread has its own last error. This mechanism tries to
          * replace the missing exceptions for methods that do not return

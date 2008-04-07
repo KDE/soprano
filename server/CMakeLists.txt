@@ -41,6 +41,7 @@ set(soprano_client_SRC
   clientqueryresultiteratorbackend.cpp
   operators.cpp
   dbus/dbusutil.cpp
+  dbus/dbusabstractinterface.cpp
   dbus/dbusmodelinterface.cpp
   dbus/dbusstatementiteratorinterface.cpp
   dbus/dbusnodeiteratorinterface.cpp

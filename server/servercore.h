@@ -61,13 +61,11 @@ namespace Soprano {
          * registers a DBus interface on the DBus session bus. Both ways of
          * communication can be used simultaneously.
          *
-         * ServerCore is designed for single-threaded usage. I.e. the models returned
-         * by model() are not thread-safe but use Soprano::Util::MutexModel::ReadWriteSingleThreading
-         * mode. This behaviour can of course be changed by reimplementing model().
+         * ServerCore is designed for single-threaded usage. Thus, model() uses
+         * Util::AsyncModel to protect against deadlocks.
+         * This behaviour can of course be changed by reimplementing model().
          *
          * \author Sebastian Trueg <trueg@kde.org>
-         *
-         * \warning <b>The API of this class is subject to change. It is likely that it will be split into several classes.</b>
          */
         class SOPRANO_SERVER_EXPORT ServerCore : public QObject, public Error::ErrorCache
         {
@@ -111,7 +109,8 @@ namespace Soprano {
             /**
              * Get or create Model with the specific name.
              * The default implementation will use createModel() to create a new Model
-             * if none with the specified name exists.
+             * if none with the specified name exists and protect it against deadlocks
+             * with a Util::AsyncModel.
              *
              * \param name The name of the requested Model.
              */

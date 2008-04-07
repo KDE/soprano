@@ -22,6 +22,8 @@
 #ifndef _SOPRANO_SERVER_DBUS_MODEL_INTERFACE_H_
 #define _SOPRANO_SERVER_DBUS_MODEL_INTERFACE_H_
 
+#include "dbusabstractinterface.h"
+
 #include <QtCore/QObject>
 #include <QtCore/QByteArray>
 #include <QtCore/QList>
@@ -39,7 +41,7 @@ Q_DECLARE_METATYPE(Soprano::Node)
 
 namespace Soprano {
     namespace Client {
-        class DBusModelInterface : public QDBusAbstractInterface
+        class DBusModelInterface : public DBusAbstractInterface
         {
             Q_OBJECT
 
@@ -72,7 +74,7 @@ namespace Soprano {
             inline QDBusReply<Soprano::Node> createBlankNode( QDBus::CallMode mode = QDBus::Block )
             {
                 QList<QVariant> argumentList;
-                return callWithArgumentList(mode, QLatin1String("createBlankNode"), argumentList);
+                return callWithArgumentListAndBigTimeout(mode, QLatin1String("createBlankNode"), argumentList);
             }
 
             inline QDBusReply<QString> executeQuery( const QString &query, const QString& queryLanguage, QDBus::CallMode mode = QDBus::Block )
@@ -126,11 +128,6 @@ namespace Soprano {
             void statementsRemoved();
             void statementAdded( const Soprano::Statement& statement );
             void statementRemoved( const Soprano::Statement& statement );
-        
-        private:
-            QDBusMessage callWithArgumentListAndBigTimeout( QDBus::CallMode mode,
-                                                            const QString& method,
-                                                            const QList<QVariant>& args );
         };
     }
 }

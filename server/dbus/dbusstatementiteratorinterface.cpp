@@ -22,7 +22,7 @@
 #include "dbusstatementiteratorinterface.h"
 
 Soprano::Client::DBusStatementIteratorInterface::DBusStatementIteratorInterface( const QString& service, const QString& path, const QDBusConnection& connection, QObject* parent )
-    : QDBusAbstractInterface( service, path, "org.soprano.StatementIterator", connection, parent )
+    : DBusAbstractInterface( service, path, "org.soprano.StatementIterator", connection, parent )
 {
 }
 

@@ -61,7 +61,7 @@ public:
           m_success( true ) {
     }
 
-    void start( Model* m ) {
+    void start( Model* m = 0 ) {
         m_model = m;
         QThread::start();
     }
@@ -191,6 +191,27 @@ private:
 };
 
 
+class CreateModelTest : public TestingThread
+{
+public:
+    CreateModelTest()
+        : TestingThread( "createModel" ) {
+    }
+
+    bool performTest() {
+        Soprano::Model* model = Soprano::createModel();
+        foreach( Statement s, createTestData( Statement(), 100 ) ) {
+            if ( model->addStatement( s ) != Soprano::Error::ErrorNone ) {
+                delete model;
+                return false;
+            }
+        }
+        delete model;
+        return true;
+    }
+};
+
+
 void MultiThreadingTest::startAllTests( Model* m )
 {
     Q_FOREACH( QThread* t, m_testThreads ) {
@@ -222,6 +243,7 @@ void MultiThreadingTest::initTestCase()
     m_testThreads.append( new QueryTest( "select * where { ?s ?p ?o . }" ) );
     m_testThreads.append( new AddStatementTest() );
     m_testThreads.append( new RemoveStatementTest() );
+    m_testThreads.append( new CreateModelTest() );
 }
 
 
@@ -250,7 +272,7 @@ void MultiThreadingTest::testNodeIterator()
 {
     QFETCH( TestingThread*, thread );
 
-    Model* model = createModel();
+    Model* model = PluginManager::instance()->discoverBackendByName( "sesame2" )->createModel();
     QVERIFY( model != 0 );
 
     // add some testdata with the same context
@@ -315,6 +337,50 @@ void MultiThreadingTest::testAddStatement()
     delete t4;
 
     deleteModel( model );
+}
+
+
+Q_DECLARE_METATYPE( const Soprano::Backend* )
+
+void MultiThreadingTest::testModelCreation_data()
+{
+    QTest::addColumn<const Soprano::Backend*>( "backend" );
+
+    foreach( const Backend* backend, PluginManager::instance()->allBackends() ) {
+        QTest::newRow( backend->pluginName().toLatin1() ) << backend;
+    }
+}
+
+
+void MultiThreadingTest::testModelCreation()
+{
+    QFETCH( const Soprano::Backend*, backend );
+
+    Soprano::setUsedBackend( backend );
+    CreateModelTest* t1 = new CreateModelTest();
+    CreateModelTest* t2 = new CreateModelTest();
+    CreateModelTest* t3 = new CreateModelTest();
+    CreateModelTest* t4 = new CreateModelTest();
+
+    t1->start();
+    t2->start();
+    t3->start();
+    t4->start();
+
+    t1->wait();
+    t2->wait();
+    t3->wait();
+    t4->wait();
+
+    QVERIFY( t1->verifyResult() );
+    QVERIFY( t2->verifyResult() );
+    QVERIFY( t3->verifyResult() );
+    QVERIFY( t4->verifyResult() );
+
+    delete t1;
+    delete t2;
+    delete t3;
+    delete t4;
 }
 
 

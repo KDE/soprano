@@ -46,6 +46,10 @@ namespace Soprano {
          *
          * The interface exported can be accessed via Client::DBusModel.
          *
+         * DBusExportModel automatically makes use of a Util::AsyncModel as
+         * parent model to create delayed D-Bus replies. If the parent model
+         * is not a Util::AsyncModel all calls will be performed syncroneously.
+         *
          * \author Sebastian Trueg <trueg@kde.org>
          *
          * \sa \ref soprano_server_dbus
