@@ -352,10 +352,13 @@ namespace Soprano
 
         /**
          * Create a LiteralValue object by parsing string \a value based on \a dataTypeUri.
-         * If \a type is unknown it will be stored as a string value with the plain
+         * If \a dataTypeUri is unknown it will be stored as a string value with the plain
          * \a dataTypeUri as type. Thus, unknown literal types can still be used without
          * automatic type conversion. Be aware that changing the value will also change
          * the type.
+         * Both an empty \a value and \a dataTypeUri will result in an invalid LiteralValue
+         * instance but an empty \a value with a valid \a dataTypeUri is possible. A valid
+         * \a value with an invalid \a dataTypeUri will result in a string LiteralValue.
          */
         static LiteralValue fromString( const QString& value, const QUrl& dataTypeUri );
 

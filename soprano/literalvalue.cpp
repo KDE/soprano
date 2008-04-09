@@ -514,9 +514,14 @@ Soprano::LiteralValue Soprano::LiteralValue::fromString( const QString& value, Q
 
 Soprano::LiteralValue Soprano::LiteralValue::fromString( const QString& value, const QUrl& type )
 {
-    LiteralValue v = LiteralValue::fromString( value, typeFromDataTypeUri( type ) );
-    v.d->dataTypeUri = type;
-    return v;
+    if ( type.isEmpty() && value.isEmpty() ) {
+        return LiteralValue();
+    }
+    else {
+        LiteralValue v = LiteralValue::fromString( value, typeFromDataTypeUri( type ) );
+        v.d->dataTypeUri = type;
+        return v;
+    }
 }
 
 
