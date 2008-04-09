@@ -131,6 +131,7 @@ INSTALL(FILES
   soprano_export.h
   backend.h
   error.h
+  locator.h
   literalvalue.h
   ${CMAKE_CURRENT_BINARY_DIR}/version.h
   rdfschemamodel.h
