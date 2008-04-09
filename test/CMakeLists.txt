@@ -183,3 +183,8 @@ add_test(nrlmodeltest ${EXECUTABLE_OUTPUT_PATH}/nrlmodeltest)
 qt4_automoc(sopranodbussignalspy modelsignalspy.cpp)
 add_executable(sopranodbussignalspy modelsignalspy.cpp sopranodbussignalspy.cpp)
 target_link_libraries(sopranodbussignalspy sopranoclient ${QT_QTCORE_LIBRARY})
+
+# Server QDataStream operators
+qt4_automoc(serveroperatortest.cpp)
+add_executable(serveroperatortest serveroperatortest.cpp ../server/operators.cpp)
+target_link_libraries(serveroperatortest soprano ${QT_QTCORE_LIBRARY} ${QT_QTTEST_LIBRARY})
