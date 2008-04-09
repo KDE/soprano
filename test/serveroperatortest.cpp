@@ -24,7 +24,7 @@
 
 #include "../soprano/soprano.h"
 
-#include <QtTest>
+#include <QtTest/QtTest>
 
 #include <QtCore/QByteArray>
 #include <QtCore/QDataStream>
