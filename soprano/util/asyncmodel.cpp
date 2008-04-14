@@ -44,7 +44,7 @@ void Soprano::Util::AsyncModelPrivate::removeIterator( AsyncIteratorBase* it )
 {
     Q_ASSERT( openIterators.contains( it ) );
     openIterators.removeAll( it );
-    _s_executeNextCommand();
+    QTimer::singleShot( 0, m_model, SLOT( _s_executeNextCommand() ) );
 }
 
 
