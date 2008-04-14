@@ -356,7 +356,7 @@ QDebug operator<<( QDebug s, const Soprano::Node& n )
 //         s.nospace() << "(blank)";
 //         break;
     case Soprano::Node::LiteralNode:
-        s.nospace() << '\"' << n.literal().toString() << "\"";
+        s.nospace() << '\"' << n.literal() << "\"";
         if ( n.literal().isString() && !n.language().isEmpty() ) {
             s.nospace() << "@" << n.language();
         }

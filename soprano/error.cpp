@@ -61,7 +61,7 @@ Soprano::Error::Error::Error( ErrorData* data )
 
 
 Soprano::Error::Error::Error( const QString& message, int code )
-    : d( new ErrorData( message,  code ) )
+    : d( new ErrorData( message, code ) )
 {
     if ( d->message.isEmpty() && code < ErrorUnknown ) {
         d->message = errorMessage( ( ErrorCode )code );
@@ -267,7 +267,7 @@ Soprano::Error::ErrorCode Soprano::Error::convertErrorCode( int code )
 QDebug operator<<( QDebug s, const Soprano::Error::Error& error )
 {
     if ( error.code() < Soprano::Error::ErrorUnknown ) {
-        s.nospace() << errorMessage( ( Soprano::Error::ErrorCode )error.code() ) << ": ";
+        s.nospace() << QString( "%1 (%2)" ).arg( errorMessage( ( Soprano::Error::ErrorCode )error.code() ) ).arg( error.code() ) << ": ";
     }
     s.nospace() << error.message();
 
@@ -283,7 +283,7 @@ QDebug operator<<( QDebug s, const Soprano::Error::Error& error )
 QTextStream& operator<<( QTextStream& s, const Soprano::Error::Error& error )
 {
     if ( error.code() < Soprano::Error::ErrorUnknown ) {
-        s << errorMessage( ( Soprano::Error::ErrorCode )error.code() ) << ": ";
+        s << QString( "%1 (%2)" ).arg( errorMessage( ( Soprano::Error::ErrorCode )error.code() ) ).arg( error.code() ) << ": ";
     }
     s << error.message();
 
