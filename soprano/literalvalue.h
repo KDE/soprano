@@ -347,18 +347,31 @@ namespace Soprano
          * Create a LiteralValue object by parsing string \a value based on \a type.
          * If \a type is unknown a simple string LiteralValue object is returned
          * containing the plain string \a value.
+         *
+         * \sa fromString(const QString&, const QUrl&)
          */
         static LiteralValue fromString( const QString& value, QVariant::Type type );
 
         /**
          * Create a LiteralValue object by parsing string \a value based on \a dataTypeUri.
-         * If \a dataTypeUri is unknown it will be stored as a string value with the plain
+         *
+         * \param value The value of the literal. Might be converted based on \a dataTypeUri.
+         *
+         * \param dataTypeUri The data type URI. %Soprano can automatically convert all XML schema
+         * types. All other (unknown) types will be stored as a string value with the plain
          * \a dataTypeUri as type. Thus, unknown literal types can still be used without
-         * automatic type conversion. Be aware that changing the value will also change
-         * the type.
+         * automatic type conversion. (Be aware though, that changing the value of a LiteralValue
+         * instance will reset the type, ie. custom data type URIs will be lost.)
+         *
          * Both an empty \a value and \a dataTypeUri will result in an invalid LiteralValue
          * instance but an empty \a value with a valid \a dataTypeUri is possible. A valid
-         * \a value with an invalid \a dataTypeUri will result in a string LiteralValue.
+         * \a value with an invalid \a dataTypeUri will result in a LiteralValue of type
+         * Vocabulary::XMLSchema::string.
+         *
+         * \return A newly created LiteralValue instance based on the provided \a value and
+         * \a dataTypeUri.
+         *
+         * \sa fromString(const QString&, QVariant::Type), Vocabulary::XMLSchema
          */
         static LiteralValue fromString( const QString& value, const QUrl& dataTypeUri );
 
