@@ -23,9 +23,9 @@
 #include "servercore.h"
 #include "commands.h"
 #include "randomgenerator.h"
-#include "operators.h"
 #include "socketdevice.h"
 #include "asyncmodel.h"
+#include "datastream.h"
 
 #include "queryresultiterator.h"
 #include "node.h"
@@ -41,6 +41,8 @@
 #include <QtCore/QHash>
 #include <QtCore/QDebug>
 #include <QtNetwork/QTcpSocket>
+#include <QtCore/QThread>
+#include <QtCore/QTime>
 
 Q_DECLARE_METATYPE(Soprano::Error::ErrorCode)
 Q_DECLARE_METATYPE(Soprano::Node)
@@ -65,36 +67,36 @@ public:
     void _s_resultReady( Soprano::Util::AsyncResult* result );
 
     quint32 generateUniqueId();
-    Soprano::Model* getModel( QDataStream& stream );
+    Soprano::Model* getModel();
     quint32 mapIterator( const StatementIterator& it );
     quint32 mapIterator( const NodeIterator& it );
     quint32 mapIterator( const QueryResultIterator& it );
 
-    void supportsProtocolVersion( QDataStream& stream );
+    void supportsProtocolVersion();
 
-    void createModel( QDataStream& stream );
-    void removeModel( QDataStream& stream );
-    void supportedFeatures( QDataStream& );
-    void addStatement( QDataStream& stream );
-    void removeStatement( QDataStream& stream );
-    void removeAllStatements( QDataStream& stream );
-    void listStatements( QDataStream& stream );
-    void containsStatement( QDataStream& stream );
-    void containsAnyStatement( QDataStream& stream );
-    void listContexts( QDataStream& stream );
-    void statementCount( QDataStream& stream );
-    void isEmpty( QDataStream& stream );
-    void query( QDataStream& );
-    void createBlankNode( QDataStream& );
+    void createModel();
+    void removeModel();
+    void supportedFeatures();
+    void addStatement();
+    void removeStatement();
+    void removeAllStatements();
+    void listStatements();
+    void containsStatement();
+    void containsAnyStatement();
+    void listContexts();
+    void statementCount();
+    void isEmpty();
+    void query();
+    void createBlankNode();
 
-    void iteratorNext( QDataStream& stream );
-    void statementIteratorCurrent( QDataStream& stream );
-    void nodeIteratorCurrent( QDataStream& stream );
-    void queryIteratorCurrent( QDataStream& stream );
-    void iteratorClose( QDataStream& stream );
-    void queryIteratorCurrentStatement( QDataStream& stream );
-    void queryIteratorType( QDataStream& stream );
-    void queryIteratorBoolValue( QDataStream& stream );
+    void iteratorNext();
+    void statementIteratorCurrent();
+    void nodeIteratorCurrent();
+    void queryIteratorCurrent();
+    void iteratorClose();
+    void queryIteratorCurrentStatement();
+    void queryIteratorType();
+    void queryIteratorBoolValue();
 
     ServerConnection* q;
 };
@@ -139,102 +141,103 @@ void Soprano::Server::ServerConnection::start( QIODevice* socket )
 
 void Soprano::Server::ServerConnection::Private::_s_readNextCommand()
 {
-    QDataStream stream( socket );
+    DataStream stream( socket );
     quint16 command = 0;
-    stream >> command;
+    stream.readUnsignedInt16( command );
     switch( command ) {
     case COMMAND_SUPPORTS_PROTOCOL_VERSION:
-        supportsProtocolVersion( stream );
+        supportsProtocolVersion();
         break;
 
     case COMMAND_CREATE_MODEL:
-        createModel( stream );
+        createModel();
         break;
 
     case COMMAND_REMOVE_MODEL:
-        removeModel( stream );
+        removeModel();
         break;
 
     case COMMAND_SUPPORTED_FEATURES:
-        supportedFeatures( stream );
+        supportedFeatures();
         break;
 
     case COMMAND_MODEL_ADD_STATEMENT:
-        addStatement( stream );
+        addStatement();
         break;
 
     case COMMAND_MODEL_REMOVE_STATEMENT:
-        removeStatement( stream );
+        removeStatement();
         break;
 
     case COMMAND_MODEL_REMOVE_ALL_STATEMENTS:
-        removeAllStatements( stream );
+        removeAllStatements();
         break;
 
     case COMMAND_MODEL_LIST_STATEMENTS:
-        listStatements( stream );
+        listStatements();
         break;
 
     case COMMAND_MODEL_CONTAINS_STATEMENT:
-        containsStatement( stream );
+        containsStatement();
         break;
 
     case COMMAND_MODEL_CONTAINS_ANY_STATEMENT:
-        containsAnyStatement( stream );
+        containsAnyStatement();
         break;
 
     case COMMAND_MODEL_LIST_CONTEXTS:
-        listContexts( stream );
+        listContexts();
         break;
 
     case COMMAND_MODEL_STATEMENT_COUNT:
-        statementCount( stream );
+        statementCount();
         break;
 
     case COMMAND_MODEL_IS_EMPTY:
-        isEmpty( stream );
+        isEmpty();
         break;
 
     case COMMAND_MODEL_QUERY:
-        query( stream );
+        query();
         break;
 
     case COMMAND_ITERATOR_NEXT:
-        iteratorNext( stream );
+        iteratorNext();
         break;
 
     case COMMAND_ITERATOR_CURRENT_STATEMENT:
-        statementIteratorCurrent( stream );
+        statementIteratorCurrent();
         break;
 
     case COMMAND_ITERATOR_CURRENT_NODE:
-        nodeIteratorCurrent( stream );
+        nodeIteratorCurrent();
         break;
 
     case COMMAND_ITERATOR_CURRENT_BINDINGSET:
-        queryIteratorCurrent( stream );
+        queryIteratorCurrent();
         break;
 
     case COMMAND_ITERATOR_CLOSE:
-        iteratorClose( stream );
+        iteratorClose();
         break;
 
     case COMMAND_ITERATOR_QUERY_TYPE:
-        queryIteratorType( stream );
+        queryIteratorType();
         break;
 
     case COMMAND_ITERATOR_QUERY_BOOL_VALUE:
-        queryIteratorBoolValue( stream );
+        queryIteratorBoolValue();
         break;
 
     case COMMAND_MODEL_CREATE_BLANK_NODE:
-        createBlankNode( stream );
+        createBlankNode();
         break;
 
     default:
         // FIXME: handle an error
         // for now we just close the connection on error.
-        qDebug() << "Unknown command: " << command;
+        qDebug() << "Unknown command: " << command << "closing connection";
+        q->close();
         break;
     }
 }
@@ -245,51 +248,51 @@ void Soprano::Server::ServerConnection::Private::_s_resultReady( Util::AsyncResu
     // we only handle one client request at the same time
     // Thus, we simply communicate the result
 
-    QDataStream stream( socket );
+    DataStream stream( socket );
 
     QVariant value = result->value();
 
     if( value.userType() == QVariant::Bool ) {
-        stream << value.toBool();
+        stream.writeBool( value.toBool() );
     }
     else if ( value.userType() == QVariant::Int ) {
-        stream << value.toInt();
+        stream.writeInt32( ( qint32 )value.toInt() );
     }
     else if ( value.userType() == qMetaTypeId<Node>() ) {
-        stream << value.value<Node>();
+        stream.writeNode( value.value<Node>() );
     }
     else if ( value.userType() == qMetaTypeId<StatementIterator>() ) {
-        stream << mapIterator( value.value<StatementIterator>() );
+        stream.writeUnsignedInt32( mapIterator( value.value<StatementIterator>() ) );
     }
     else if ( value.userType() == qMetaTypeId<NodeIterator>() ) {
-        stream << mapIterator( value.value<NodeIterator>() );
+        stream.writeUnsignedInt32( mapIterator( value.value<NodeIterator>() ) );
     }
     else if ( value.userType() == qMetaTypeId<QueryResultIterator>() ) {
-        stream << mapIterator( value.value<QueryResultIterator>() );
+        stream.writeUnsignedInt32( mapIterator( value.value<QueryResultIterator>() ) );
     }
     else if ( value.userType() == qMetaTypeId<Error::ErrorCode>() ) {
-        stream << value.value<Error::ErrorCode>();
+        stream.writeErrorCode( value.value<Error::ErrorCode>() );
     }
     else {
         Q_ASSERT( false );
     }
 
-    stream << result->lastError();
+    stream.writeError( result->lastError() );
 }
 
 
-Soprano::Model* Soprano::Server::ServerConnection::Private::getModel( QDataStream& stream )
+Soprano::Model* Soprano::Server::ServerConnection::Private::getModel()
 {
-    quint32 id = 0;
-    stream >> id;
+    DataStream stream( socket );
 
-    QHash<quint32, Model*>::iterator it = modelIdMap.find( id );
-    if ( it != modelIdMap.end() ) {
-        return *it;
+    quint32 id = 0;
+    if ( stream.readUnsignedInt32( id ) ) {
+        QHash<quint32, Model*>::iterator it = modelIdMap.find( id );
+        if ( it != modelIdMap.end() ) {
+            return *it;
+        }
     }
-    else {
-        return 0;
-    }
+    return 0;
 }
 
 
@@ -330,14 +333,15 @@ quint32 Soprano::Server::ServerConnection::Private::mapIterator( const QueryResu
 }
 
 
-void Soprano::Server::ServerConnection::Private::createModel( QDataStream& stream )
+void Soprano::Server::ServerConnection::Private::createModel()
 {
     //qDebug() << "(ServerConnection::createModel)";
 
+    DataStream stream( socket );
+
     // extract options
     QString name;
-    QList<BackendSetting> settings;
-    stream >> name >> settings;
+    stream.readString( name );
 
     // for now we ignore the settings
 
@@ -357,32 +361,37 @@ void Soprano::Server::ServerConnection::Private::createModel( QDataStream& strea
         }
     }
 
-    stream << id << Error::Error();
+    stream.writeUnsignedInt32( id );
+    stream.writeError( Error::Error() );
     //qDebug() << "(ServerConnection::createModel) done";
 }
 
 
-void Soprano::Server::ServerConnection::Private::removeModel( QDataStream& stream )
+void Soprano::Server::ServerConnection::Private::removeModel()
 {
     //qDebug() << "(ServerConnection::createModel)";
 
+    DataStream stream( socket );
+
     // extract options
     QString name;
-    stream >> name;
+    stream.readString( name );
 
     modelIdMap.remove( modelNameMap[name] );
     modelNameMap.remove( name );
 
     core->removeModel( name );
 
-    stream << Error::Error();
+    stream.writeError( Error::Error() );
     //qDebug() << "(ServerConnection::createModel) done";
 }
 
 
-void Soprano::Server::ServerConnection::Private::supportedFeatures( QDataStream& stream )
+void Soprano::Server::ServerConnection::Private::supportedFeatures()
 {
     //qDebug() << "(ServerConnection::supportedFeatures)";
+
+    DataStream stream( socket );
 
     quint32 features = 0;
     Error::Error error;
@@ -393,90 +402,102 @@ void Soprano::Server::ServerConnection::Private::supportedFeatures( QDataStream&
         error = Error::Error( "No backend available" );
     }
 
-    stream << features << error;
+    stream.writeUnsignedInt32( features );
+    stream.writeError( error );
     //qDebug() << "(ServerConnection::supportedFeatures) done";
 }
 
 
-void Soprano::Server::ServerConnection::Private::addStatement( QDataStream& stream )
+void Soprano::Server::ServerConnection::Private::addStatement()
 {
     //qDebug() << "(ServerConnection::addStatement)";
-    Model* model = getModel( stream );
+    DataStream stream( socket );
+
+    Model* model = getModel();
     if ( model ) {
         Statement s;
-        stream >> s;
+        stream.readStatement( s );
 
         if ( Util::AsyncModel* am = qobject_cast<Util::AsyncModel*>( model ) ) {
             connect( am->addStatementAsync( s ), SIGNAL( resultReady( Soprano::Util::AsyncResult* ) ),
                      q, SLOT( _s_resultReady( Soprano::Util::AsyncResult* ) ) );
         }
         else {
-            stream << model->addStatement( s );
-            stream << model->lastError();
+            stream.writeErrorCode( model->addStatement( s ) );
+            stream.writeError( model->lastError() );
         }
     }
     else {
-        stream << Error::ErrorInvalidArgument << Error::Error( "Invalid model id" );
+        stream.writeErrorCode( Error::ErrorInvalidArgument );
+        stream.writeError( Error::Error( "Invalid model id" ) );
     }
     //qDebug() << "(ServerConnection::addStatement) done";
 }
 
 
-void Soprano::Server::ServerConnection::Private::removeStatement( QDataStream& stream )
+void Soprano::Server::ServerConnection::Private::removeStatement()
 {
     //qDebug() << "(ServerConnection::removeStatement)";
-    Model* model = getModel( stream );
+    DataStream stream( socket );
+
+    Model* model = getModel();
     if ( model ) {
         Statement s;
-        stream >> s;
+        stream.readStatement( s );
 
         if ( Util::AsyncModel* am = qobject_cast<Util::AsyncModel*>( model ) ) {
             connect( am->removeStatementAsync( s ), SIGNAL( resultReady( Soprano::Util::AsyncResult* ) ),
                      q, SLOT( _s_resultReady( Soprano::Util::AsyncResult* ) ) );
         }
         else {
-            stream << model->removeStatement( s );
-            stream << model->lastError();
+            stream.writeErrorCode( model->removeStatement( s ) );
+            stream.writeError( model->lastError() );
         }
     }
     else {
-        stream << Error::ErrorInvalidArgument << Error::Error( "Invalid model id" );
+        stream.writeErrorCode( Error::ErrorInvalidArgument );
+        stream.writeError( Error::Error( "Invalid model id" ) );
     }
     //qDebug() << "(ServerConnection::removeStatement) done";
 }
 
 
-void Soprano::Server::ServerConnection::Private::removeAllStatements( QDataStream& stream )
+void Soprano::Server::ServerConnection::Private::removeAllStatements()
 {
     //qDebug() << "(ServerConnection::removeAllStatements)";
-    Model* model = getModel( stream );
+    DataStream stream( socket );
+
+    Model* model = getModel();
     if ( model ) {
         Statement s;
-        stream >> s;
+        stream.readStatement( s );
 
         if ( Util::AsyncModel* am = qobject_cast<Util::AsyncModel*>( model ) ) {
             connect( am->removeAllStatementsAsync( s ), SIGNAL( resultReady( Soprano::Util::AsyncResult* ) ),
                      q, SLOT( _s_resultReady( Soprano::Util::AsyncResult* ) ) );
         }
         else {
-            stream << model->removeAllStatements( s );
-            stream << model->lastError();
+            stream.writeErrorCode( model->removeAllStatements( s ) );
+            stream.writeError( model->lastError() );
         }
     }
     else {
-        stream << Error::ErrorInvalidArgument << Error::Error( "Invalid model id" );
+        stream.writeErrorCode( Error::ErrorInvalidArgument );
+        stream.writeError( Error::Error( "Invalid model id" ) );
     }
     //qDebug() << "(ServerConnection::removeAllStatements) done";
 }
 
 
-void Soprano::Server::ServerConnection::Private::listStatements( QDataStream& stream )
+void Soprano::Server::ServerConnection::Private::listStatements()
 {
     //qDebug() << "(ServerConnection::listStatements)";
-    Model* model = getModel( stream );
+    DataStream stream( socket );
+
+    Model* model = getModel();
     if ( model ) {
         Statement s;
-        stream >> s;
+        stream.readStatement( s );
 
         if ( Util::AsyncModel* am = qobject_cast<Util::AsyncModel*>( model ) ) {
             connect( am->listStatementsAsync( s ), SIGNAL( resultReady( Soprano::Util::AsyncResult* ) ),
@@ -484,67 +505,77 @@ void Soprano::Server::ServerConnection::Private::listStatements( QDataStream& st
         }
         else {
             StatementIterator it = model->listStatements( s );
-            stream << mapIterator( it ) << model->lastError();
+            stream.writeUnsignedInt32( mapIterator( it ) );
+            stream.writeError( model->lastError() );
         }
     }
     else {
-        stream << Error::ErrorInvalidArgument << Error::Error( "Invalid model id" );
+        stream.writeUnsignedInt32( 0 );
+        stream.writeError( Error::Error( "Invalid model id" ) );
     }
     //qDebug() << "(ServerConnection::listStatements) done";
 }
 
 
-void Soprano::Server::ServerConnection::Private::containsStatement( QDataStream& stream )
+void Soprano::Server::ServerConnection::Private::containsStatement()
 {
     //qDebug() << "(ServerConnection::containsStatement)";
-    Model* model = getModel( stream );
+    DataStream stream( socket );
+
+    Model* model = getModel();
     if ( model ) {
         Statement s;
-        stream >> s;
+        stream.readStatement( s );
 
         if ( Util::AsyncModel* am = qobject_cast<Util::AsyncModel*>( model ) ) {
             connect( am->containsStatementAsync( s ), SIGNAL( resultReady( Soprano::Util::AsyncResult* ) ),
                      q, SLOT( _s_resultReady( Soprano::Util::AsyncResult* ) ) );
         }
         else {
-            stream << model->containsStatement( s );
-            stream << model->lastError();
+            stream.writeBool( model->containsStatement( s ) );
+            stream.writeError( model->lastError() );
         }
     }
     else {
-        stream << Error::ErrorInvalidArgument << Error::Error( "Invalid model id" );
+        stream.writeBool( false );
+        stream.writeError( Error::Error( "Invalid model id" ) );
     }
     //qDebug() << "(ServerConnection::containsStatement) done";
 }
 
 
-void Soprano::Server::ServerConnection::Private::containsAnyStatement( QDataStream& stream )
+void Soprano::Server::ServerConnection::Private::containsAnyStatement()
 {
     //qDebug() << "(ServerConnection::containsAnyStatement)";
-    Model* model = getModel( stream );
+    DataStream stream( socket );
+
+    Model* model = getModel();
     if ( model ) {
         Statement s;
-        stream >> s;
+        stream.readStatement( s );
 
         if ( Util::AsyncModel* am = qobject_cast<Util::AsyncModel*>( model ) ) {
             connect( am->containsAnyStatementAsync( s ), SIGNAL( resultReady( Soprano::Util::AsyncResult* ) ),
                      q, SLOT( _s_resultReady( Soprano::Util::AsyncResult* ) ) );
         }
         else {
-            stream << model->containsAnyStatement( s );
-            stream << model->lastError();
+            stream.writeBool( model->containsAnyStatement( s ) );
+            stream.writeError( model->lastError() );
         }
     }
     else {
-        stream << Error::ErrorInvalidArgument << Error::Error( "Invalid model id" );
+        stream.writeBool( false );
+        stream.writeError( Error::Error( "Invalid model id" ) );
     }
     //qDebug() << "(ServerConnection::containsAnyStatement) done";
 }
 
 
-void Soprano::Server::ServerConnection::Private::listContexts( QDataStream& stream )
+void Soprano::Server::ServerConnection::Private::listContexts()
 {
-    Model* model = getModel( stream );
+    DataStream stream( socket );
+
+    Model* model = getModel();
     if ( model ) {
         if ( Util::AsyncModel* am = qobject_cast<Util::AsyncModel*>( model ) ) {
             connect( am->listContextsAsync(), SIGNAL( resultReady( Soprano::Util::AsyncResult* ) ),
@@ -552,23 +583,29 @@ void Soprano::Server::ServerConnection::Private::listContexts( QDataStream& stre
         }
         else {
             NodeIterator it = model->listContexts();
-            stream << mapIterator( it ) << model->lastError();
+            stream.writeUnsignedInt32( mapIterator( it ) );
+            stream.writeError( model->lastError() );
         }
     }
     else {
-        stream << Error::ErrorInvalidArgument << Error::Error( "Invalid model id" );
+        stream.writeUnsignedInt32( 0 );
+        stream.writeError( Error::Error( "Invalid model id" ) );
     }
 }
 
 
-void Soprano::Server::ServerConnection::Private::query( QDataStream& stream )
+void Soprano::Server::ServerConnection::Private::query()
 {
-    Model* model = getModel( stream );
+    DataStream stream( socket );
+
+    Model* model = getModel();
     if ( model ) {
         QString queryString;
         quint16 queryLang;
         QString userLang;
-        stream >> queryString >> queryLang >> userLang;
+        stream.readString( queryString );
+        stream.readUnsignedInt16( queryLang );
+        stream.readString( userLang );
 
         if ( Util::AsyncModel* am = qobject_cast<Util::AsyncModel*>( model ) ) {
             connect( am->executeQueryAsync( queryString, ( Query::QueryLanguage )queryLang, userLang ), SIGNAL( resultReady( Soprano::Util::AsyncResult* ) ),
@@ -576,18 +613,22 @@ void Soprano::Server::ServerConnection::Private::query( QDataStream& stream )
         }
         else {
             QueryResultIterator it = model->executeQuery( queryString, ( Query::QueryLanguage )queryLang, userLang );
-            stream << mapIterator( it ) << model->lastError();
+            stream.writeUnsignedInt32( mapIterator( it ) );
+            stream.writeError( model->lastError() );
         }
     }
     else {
-        stream << Error::ErrorInvalidArgument << Error::Error( "Invalid model id" );
+        stream.writeUnsignedInt32( 0 );
+        stream.writeError( Error::Error( "Invalid model id" ) );
     }
 }
 
 
-void Soprano::Server::ServerConnection::Private::statementCount( QDataStream& stream )
+void Soprano::Server::ServerConnection::Private::statementCount()
 {
-    Model* model = getModel( stream );
+    DataStream stream( socket );
+
+    Model* model = getModel();
     if ( model ) {
         if ( Util::AsyncModel* am = qobject_cast<Util::AsyncModel*>( model ) ) {
             connect( am->statementCountAsync(), SIGNAL( resultReady( Soprano::Util::AsyncResult* ) ),
@@ -595,157 +636,179 @@ void Soprano::Server::ServerConnection::Private::statementCount( QDataStream& st
         }
         else {
             qint32 count = model->statementCount();
-            stream << count << model->lastError();
+            stream.writeInt32( count );
+            stream.writeError( model->lastError() );
         }
     }
     else {
-        stream << Error::ErrorInvalidArgument << Error::Error( "Invalid model id" );
+        stream.writeInt32( -1 );
+        stream.writeError( Error::Error( "Invalid model id" ) );
     }
 }
 
 
-void Soprano::Server::ServerConnection::Private::isEmpty( QDataStream& stream )
+void Soprano::Server::ServerConnection::Private::isEmpty()
 {
-    Model* model = getModel( stream );
+    DataStream stream( socket );
+
+    Model* model = getModel();
     if ( model ) {
         if ( Util::AsyncModel* am = qobject_cast<Util::AsyncModel*>( model ) ) {
             connect( am->isEmptyAsync(), SIGNAL( resultReady( Soprano::Util::AsyncResult* ) ),
                      q, SLOT( _s_resultReady( Soprano::Util::AsyncResult* ) ) );
         }
         else {
-            stream << model->isEmpty();
-            stream << model->lastError();
+            stream.writeBool( model->isEmpty() );
+            stream.writeError( model->lastError() );
         }
     }
     else {
-        stream << Error::ErrorInvalidArgument << Error::Error( "Invalid model id" );
+        stream.writeBool( false );
+        stream.writeError( Error::Error( "Invalid model id" ) );
     }
 }
 
 
-void Soprano::Server::ServerConnection::Private::createBlankNode( QDataStream& stream )
+void Soprano::Server::ServerConnection::Private::createBlankNode()
 {
-    Model* model = getModel( stream );
+    DataStream stream( socket );
+
+    Model* model = getModel();
     if ( model ) {
         if ( Util::AsyncModel* am = qobject_cast<Util::AsyncModel*>( model ) ) {
             connect( am->createBlankNodeAsync(), SIGNAL( resultReady( Soprano::Util::AsyncResult* ) ),
                      q, SLOT( _s_resultReady( Soprano::Util::AsyncResult* ) ) );
         }
         else {
-            stream << model->createBlankNode();
-            stream << model->lastError();
+            stream.writeNode( model->createBlankNode() );
+            stream.writeError( model->lastError() );
         }
     }
     else {
-        stream << Error::ErrorInvalidArgument << Error::Error( "Invalid model id" );
+        stream.writeNode( Node() );
+        stream.writeError( Error::Error( "Invalid model id" ) );
     }
 }
 
 
-void Soprano::Server::ServerConnection::Private::iteratorNext( QDataStream& stream )
+void Soprano::Server::ServerConnection::Private::iteratorNext()
 {
+    DataStream stream( socket );
+
     //qDebug() << "(ServerConnection::iteratorNext)";
     quint32 id = 0;
-    stream >> id;
+    stream.readUnsignedInt32( id );
 
     QHash<quint32, StatementIterator>::iterator it1 = openStatementIterators.find( id );
     if ( it1 != openStatementIterators.end() ) {
-        stream << it1.value().next();
-        stream << it1.value().lastError();
+        stream.writeBool( it1.value().next() );
+        stream.writeError( it1.value().lastError() );
         return;
     }
 
     QHash<quint32, NodeIterator>::iterator it2 = openNodeIterators.find( id );
     if ( it2 != openNodeIterators.end() ) {
-        stream << it2.value().next();
-        stream << it2.value().lastError();
+        stream.writeBool( it2.value().next() );
+        stream.writeError( it2.value().lastError() );
         return;
     }
 
     QHash<quint32, QueryResultIterator>::iterator it3 = openQueryIterators.find( id );
     if ( it3 != openQueryIterators.end() ) {
-        stream << it3.value().next();
-        stream << it3.value().lastError();
+        stream.writeBool( it3.value().next() );
+        stream.writeError( it3.value().lastError() );
         return;
     }
 
-    stream << false << Error::Error( "Invalid iterator ID." );
+    stream.writeBool( false );
+    stream.writeError( Error::Error( "Invalid iterator ID." ) );
     //qDebug() << "(ServerConnection::iteratorNext) done";
 }
 
 
-void Soprano::Server::ServerConnection::Private::statementIteratorCurrent( QDataStream& stream )
+void Soprano::Server::ServerConnection::Private::statementIteratorCurrent()
 {
+    DataStream stream( socket );
+
     //qDebug() << "(ServerConnection::statementIteratorCurrent)";
     quint32 id = 0;
-    stream >> id;
+    stream.readUnsignedInt32( id );
 
     QHash<quint32, StatementIterator>::iterator it = openStatementIterators.find( id );
     if ( it != openStatementIterators.end() ) {
-        stream << it.value().current();
-        stream << it.value().lastError();
+        stream.writeStatement( it.value().current() );
+        stream.writeError( it.value().lastError() );
         return;
     }
 
     // could be a graph query iterator
     QHash<quint32, QueryResultIterator>::iterator it2 = openQueryIterators.find( id );
     if ( it2 != openQueryIterators.end() ) {
-        stream << it2.value().currentStatement();
-        stream << it2.value().lastError();
+        stream.writeStatement( it2.value().currentStatement() );
+        stream.writeError( it2.value().lastError() );
         return;
     }
 
-    stream << Statement() << Error::Error( "Invalid iterator ID." );
+    stream.writeStatement( Statement() );
+    stream.writeError( Error::Error( "Invalid iterator ID." ) );
     //qDebug() << "(ServerConnection::statementIteratorCurrent) done";
 }
 
 
-void Soprano::Server::ServerConnection::Private::nodeIteratorCurrent( QDataStream& stream )
+void Soprano::Server::ServerConnection::Private::nodeIteratorCurrent()
 {
+    DataStream stream( socket );
+
     //qDebug() << "(ServerConnection::nodeIteratorCurrent)";
     quint32 id = 0;
-    stream >> id;
+    stream.readUnsignedInt32( id );
 
     QHash<quint32, NodeIterator>::iterator it = openNodeIterators.find( id );
     if ( it != openNodeIterators.end() ) {
-        stream << it.value().current();
-        stream << it.value().lastError();
+        stream.writeNode( it.value().current() );
+        stream.writeError( it.value().lastError() );
     }
     else {
-        stream << Node() << Error::Error( "Invalid iterator ID." );
+        stream.writeNode( Node() );
+        stream.writeError( Error::Error( "Invalid iterator ID." ) );
     }
     //qDebug() << "(ServerConnection::nodeIteratorCurrent) done";
 }
 
 
-void Soprano::Server::ServerConnection::Private::queryIteratorCurrent( QDataStream& stream )
+void Soprano::Server::ServerConnection::Private::queryIteratorCurrent()
 {
+    DataStream stream( socket );
+
     //qDebug() << "(ServerConnection::queryIteratorCurrent)";
     quint32 id = 0;
-    stream >> id;
+    stream.readUnsignedInt32( id );
 
     QHash<quint32, QueryResultIterator>::iterator it = openQueryIterators.find( id );
     if ( it != openQueryIterators.end() ) {
-        stream << it.value().current();
-        stream << it.value().lastError();
+        stream.writeBindingSet( it.value().current() );
+        stream.writeError( it.value().lastError() );
     }
     else {
-        stream << BindingSet() << Error::Error( "Invalid iterator ID." );
+        stream.writeBindingSet( BindingSet() );
+        stream.writeError( Error::Error( "Invalid iterator ID." ) );
     }
     //qDebug() << "(ServerConnection::queryIteratorCurrent) done";
 }
 
 
-void Soprano::Server::ServerConnection::Private::iteratorClose( QDataStream& stream )
+void Soprano::Server::ServerConnection::Private::iteratorClose()
 {
+    DataStream stream( socket );
+
     //qDebug() << "(ServerConnection::iteratorClose)";
     quint32 id = 0;
-    stream >> id;
+    stream.readUnsignedInt32( id );
 
     QHash<quint32, StatementIterator>::iterator it1 = openStatementIterators.find( id );
     if ( it1 != openStatementIterators.end() ) {
         it1.value().close();
-        stream << it1.value().lastError();
+        stream.writeError( it1.value().lastError() );
         openStatementIterators.erase( it1 );
         return;
     }
@@ -753,7 +816,7 @@ void Soprano::Server::ServerConnection::Private::iteratorClose( QDataStream& str
     QHash<quint32, NodeIterator>::iterator it2 = openNodeIterators.find( id );
     if ( it2 != openNodeIterators.end() ) {
         it2.value().close();
-        stream << it2.value().lastError();
+        stream.writeError( it2.value().lastError() );
         openNodeIterators.erase( it2 );
         return;
     }
@@ -761,21 +824,23 @@ void Soprano::Server::ServerConnection::Private::iteratorClose( QDataStream& str
     QHash<quint32, QueryResultIterator>::iterator it3 = openQueryIterators.find( id );
     if ( it3 != openQueryIterators.end() ) {
         it3.value().close();
-        stream << it3.value().lastError();
+        stream.writeError( it3.value().lastError() );
         openQueryIterators.erase( it3 );
         return;
     }
 
-    stream << Error::Error( "Invalid iterator ID." );
+    stream.writeError( Error::Error( "Invalid iterator ID." ) );
     //qDebug() << "(ServerConnection::iteratorClose) done";
 }
 
 
-void Soprano::Server::ServerConnection::Private::queryIteratorType( QDataStream& stream )
+void Soprano::Server::ServerConnection::Private::queryIteratorType()
 {
+    DataStream stream( socket );
+
     //qDebug() << "(ServerConnection::queryIteratorType)";
     quint32 id = 0;
-    stream >> id;
+    stream.readUnsignedInt32( id );
 
     QHash<quint32, QueryResultIterator>::iterator it = openQueryIterators.find( id );
     if ( it != openQueryIterators.end() ) {
@@ -789,40 +854,48 @@ void Soprano::Server::ServerConnection::Private::queryIteratorType( QDataStream&
         else {
             type = 3;
         }
-        stream << type << it.value().lastError();
+        stream.writeUnsignedInt8( type );
+        stream.writeError( it.value().lastError() );
     }
     else {
-        stream << ( quint8 )0 << Error::Error( "Invalid iterator ID." );
+        stream.writeUnsignedInt8( 0 );
+        stream.writeError( Error::Error( "Invalid iterator ID." ) );
     }
     //qDebug() << "(ServerConnection::queryIteratorType) done";
 }
 
 
-void Soprano::Server::ServerConnection::Private::queryIteratorBoolValue( QDataStream& stream )
+void Soprano::Server::ServerConnection::Private::queryIteratorBoolValue()
 {
+    DataStream stream( socket );
+
     //qDebug() << "(ServerConnection::queryIteratorBoolValue)";
     quint32 id = 0;
-    stream >> id;
+    stream.readUnsignedInt32( id );
 
     QHash<quint32, QueryResultIterator>::iterator it = openQueryIterators.find( id );
     if ( it != openQueryIterators.end() ) {
-        stream << it.value().boolValue();
-        stream << it.value().lastError();
+        stream.writeBool( it.value().boolValue() );
+        stream.writeError( it.value().lastError() );
     }
     else {
-        stream << false << Error::Error( "Invalid iterator ID." );
+        stream.writeBool( false );
+        stream.writeError( Error::Error( "Invalid iterator ID." ) );
     }
     //qDebug() << "(ServerConnection::queryIteratorBoolValue) done";
 }
 
 
-void Soprano::Server::ServerConnection::Private::supportsProtocolVersion( QDataStream& stream )
+void Soprano::Server::ServerConnection::Private::supportsProtocolVersion()
 {
+    DataStream stream( socket );
+
     //qDebug() << "(ServerConnection::supportsProtocolVersion)";
     quint32 requestedVersion;
-    stream >> requestedVersion;
+    stream.readUnsignedInt32( requestedVersion );
 
-    stream << ( requestedVersion <= PROTOCOL_VERSION ? true : false );
+    // Since version 3 we are not backwards compatible anymore!
+    stream.writeBool( ( requestedVersion == PROTOCOL_VERSION ? true : false ) );
     //qDebug() << "(ServerConnection::supportsProtocolVersion) done";
 }
 

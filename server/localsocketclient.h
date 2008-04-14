@@ -72,7 +72,7 @@ namespace Soprano {
              * \return \p true if this client is connected to a server, \p false
              * otherwise.
              */
-            bool isConnected();
+            bool isConnected() const;
 
             /**
              * Creates a new Model instance that wraps a server model.
@@ -117,6 +117,8 @@ namespace Soprano {
         private:
             class Private;
             Private* const d;
+
+            Q_PRIVATE_SLOT( d, void _s_localSocketError( QLocalSocket::LocalSocketError ) )
         };
     }
 }

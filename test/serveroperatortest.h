@@ -29,14 +29,28 @@ class ServerOperatorTest : public QObject
     Q_OBJECT
 
 private Q_SLOTS:
+    void testInt32_data();
+    void testInt32();
+    void testUnsignedInt8_data();
+    void testUnsignedInt8();
+    void testUnsignedInt16_data();
+    void testUnsignedInt16();
+    void testUnsignedInt32_data();
+    void testUnsignedInt32();
+    void testBool_data();
+    void testBool();
+    void testString_data();
+    void testString();
+    void testUrl_data();
+    void testUrl();
     void testLocator_data();
     void testLocator();
     void testError_data();
     void testError();
     void testErrorCode_data();
     void testErrorCode();
-    void testBackendSetting_data();
-    void testBackendSetting();
+/*     void testBackendSetting_data(); */
+/*     void testBackendSetting(); */
     void testLiteralValue_data();
     void testLiteralValue();
     void testNode_data();

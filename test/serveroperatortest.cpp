@@ -20,14 +20,14 @@
  */
 
 #include "serveroperatortest.h"
-#include "../server/operators.h"
+#include "../server/datastream.h"
 
 #include "../soprano/soprano.h"
 
 #include <QtTest/QtTest>
 
 #include <QtCore/QByteArray>
-#include <QtCore/QDataStream>
+#include <QtCore/QBuffer>
 
 using namespace Soprano;
 
@@ -39,6 +39,211 @@ Q_DECLARE_METATYPE( Node )
 Q_DECLARE_METATYPE( Statement )
 Q_DECLARE_METATYPE( BindingSet )
 Q_DECLARE_METATYPE( BackendSetting )
+
+
+
+void ServerOperatorTest::testInt32_data()
+{
+    QTest::addColumn<qint32>( "original" );
+
+    QTest::newRow( "0" ) << qint32( 0 );
+    QTest::newRow( "42" ) << qint32( 42 );
+    QTest::newRow( "-42" ) << qint32( -42 );
+    QTest::newRow( "97876999" ) << qint32( 97876999 );
+    QTest::newRow( "-97876999" ) << qint32( -97876999 );
+}
+
+
+void ServerOperatorTest::testInt32()
+{
+    QFETCH(qint32, original);
+
+    QByteArray data;
+    QBuffer buffer( &data );
+    buffer.open( QIODevice::ReadWrite );
+    DataStream s( &buffer );
+
+    s.writeInt32( original );
+
+    qint32 copy;
+    buffer.seek( 0 );
+    QVERIFY( s.readInt32( copy ) );
+
+    QCOMPARE( original, copy );
+}
+
+
+void ServerOperatorTest::testUnsignedInt32_data()
+{
+    QTest::addColumn<quint32>( "original" );
+
+    QTest::newRow( "0" ) << quint32( 0 );
+    QTest::newRow( "42" ) << quint32( 42 );
+    QTest::newRow( "97876999" ) << quint32( 97876999 );
+}
+
+
+void ServerOperatorTest::testUnsignedInt32()
+{
+    QFETCH(quint32, original);
+
+    QByteArray data;
+    QBuffer buffer( &data );
+    buffer.open( QIODevice::ReadWrite );
+    DataStream s( &buffer );
+
+    s.writeUnsignedInt32( original );
+
+    quint32 copy;
+    buffer.seek( 0 );
+    QVERIFY( s.readUnsignedInt32( copy ) );
+
+    QCOMPARE( original, copy );
+}
+
+
+void ServerOperatorTest::testUnsignedInt16_data()
+{
+    QTest::addColumn<quint16>( "original" );
+
+    QTest::newRow( "0" ) << quint16( 0 );
+    QTest::newRow( "42" ) << quint16( 42 );
+    QTest::newRow( "97876999" ) << quint16( 97876999 );
+}
+
+
+void ServerOperatorTest::testUnsignedInt16()
+{
+    QFETCH(quint16, original);
+
+    QByteArray data;
+    QBuffer buffer( &data );
+    buffer.open( QIODevice::ReadWrite );
+    DataStream s( &buffer );
+
+    s.writeUnsignedInt16( original );
+
+    quint16 copy;
+    buffer.seek( 0 );
+    QVERIFY( s.readUnsignedInt16( copy ) );
+
+    QCOMPARE( original, copy );
+}
+
+
+void ServerOperatorTest::testUnsignedInt8_data()
+{
+    QTest::addColumn<quint8>( "original" );
+
+    QTest::newRow( "0" ) << quint8( 0 );
+    QTest::newRow( "42" ) << quint8( 42 );
+}
+
+
+void ServerOperatorTest::testUnsignedInt8()
+{
+    QFETCH(quint8, original);
+
+    QByteArray data;
+    QBuffer buffer( &data );
+    buffer.open( QIODevice::ReadWrite );
+    DataStream s( &buffer );
+
+    s.writeUnsignedInt8( original );
+
+    quint8 copy;
+    buffer.seek( 0 );
+    QVERIFY( s.readUnsignedInt8( copy ) );
+
+    QCOMPARE( original, copy );
+}
+
+
+void ServerOperatorTest::testBool_data()
+{
+    QTest::addColumn<bool>( "original" );
+
+    QTest::newRow( "true" ) << true;
+    QTest::newRow( "false" ) << false;
+}
+
+
+void ServerOperatorTest::testBool()
+{
+    QFETCH(bool, original);
+
+    QByteArray data;
+    QBuffer buffer( &data );
+    buffer.open( QIODevice::ReadWrite );
+    DataStream s( &buffer );
+
+    s.writeBool( original );
+
+    bool copy;
+    buffer.seek( 0 );
+    QVERIFY( s.readBool( copy ) );
+
+    QCOMPARE( original, copy );
+}
+
+
+void ServerOperatorTest::testString_data()
+{
+    QTest::addColumn<QString>( "original" );
+
+    QTest::newRow( "empty" ) << QString();
+    QTest::newRow( "length 0" ) << QString("");
+    QTest::newRow( "Hello World" ) << QString( "Hello World" );
+}
+
+
+void ServerOperatorTest::testString()
+{
+    QFETCH(QString, original);
+
+    QByteArray data;
+    QBuffer buffer( &data );
+    buffer.open( QIODevice::ReadWrite );
+    DataStream s( &buffer );
+
+    s.writeString( original );
+
+    QString copy;
+    buffer.seek( 0 );
+    QVERIFY( s.readString( copy ) );
+
+    QCOMPARE( original, copy );
+}
+
+
+void ServerOperatorTest::testUrl_data()
+{
+    QTest::addColumn<QUrl>( "original" );
+
+    QTest::newRow( "empty" ) << QUrl();
+    QTest::newRow( "http" ) << QUrl("http://soprano.sf.net");
+    QTest::newRow( "with spaces" ) << QUrl( "http://soprano.net/Hallo World" );
+    QTest::newRow( "invalid" ) << QUrl("I am not a URL");
+}
+
+
+void ServerOperatorTest::testUrl()
+{
+    QFETCH(QUrl, original);
+
+    QByteArray data;
+    QBuffer buffer( &data );
+    buffer.open( QIODevice::ReadWrite );
+    DataStream s( &buffer );
+
+    s.writeUrl( original );
+
+    QUrl copy;
+    buffer.seek( 0 );
+    QVERIFY( s.readUrl( copy ) );
+
+    QCOMPARE( original, copy );
+}
 
 
 void ServerOperatorTest::testLocator_data()
@@ -56,13 +261,16 @@ void ServerOperatorTest::testLocator()
     QFETCH(Error::Locator, original);
 
     QByteArray data;
-    QDataStream s( &data, QIODevice::WriteOnly );
+    QBuffer buffer( &data );
+    buffer.open( QIODevice::ReadWrite );
+    DataStream s( &buffer );
 
-    s << original;
+    s.writeLocator( original );
 
     Error::Locator copy;
-    QDataStream ss( data );
-    ss >> copy;
+    buffer.seek( 0 );
+    QVERIFY( s.readLocator( copy ) );
+
     QCOMPARE( original.line(), copy.line() );
     QCOMPARE( original.column(), copy.column() );
     QCOMPARE( original.byte(), copy.byte() );
@@ -88,14 +296,17 @@ void ServerOperatorTest::testError()
     QFETCH(Error::Error, error);
 
     QByteArray data;
-    QDataStream s( &data, QIODevice::WriteOnly );
+    QBuffer buffer( &data );
+    buffer.open( QIODevice::ReadWrite );
+    DataStream s( &buffer );
 
     // empty object
-    s << error;
+    s.writeError( error );
 
     Error::Error copy;
-    QDataStream ss( data );
-    ss >> copy;
+    buffer.seek( 0 );
+    QVERIFY( s.readError( copy ) );
+
     QCOMPARE( error, copy );
 }
 
@@ -117,47 +328,53 @@ void ServerOperatorTest::testErrorCode()
     QFETCH(Error::ErrorCode, errorCode);
 
     QByteArray data;
-    QDataStream s( &data, QIODevice::WriteOnly );
+    QBuffer buffer( &data );
+    buffer.open( QIODevice::ReadWrite );
+    DataStream s( &buffer );
 
-    s << errorCode;
+    QVERIFY( s.writeErrorCode( errorCode ) );
 
     Error::ErrorCode copy;
-    QDataStream ss( data );
-    ss >> copy;
+    buffer.seek( 0 );
+    QVERIFY( s.readErrorCode( copy ) );
+
     QCOMPARE( errorCode, copy );
 }
 
 
-void ServerOperatorTest::testBackendSetting_data()
-{
-    QTest::addColumn<BackendSetting>( "setting" );
+// void ServerOperatorTest::testBackendSetting_data()
+// {
+//     QTest::addColumn<BackendSetting>( "setting" );
 
-    QTest::newRow( "empty" ) << BackendSetting();
-    QTest::newRow( "memory" ) << BackendSetting( BackendOptionStorageMemory );
-    QTest::newRow( "inference" ) << BackendSetting( BackendOptionEnableInference );
-    QTest::newRow( "dir" ) << BackendSetting( BackendOptionStorageDir, "/somedir" );
-    QTest::newRow( "user-string" ) << BackendSetting( "user1", "user1value" );
-    QTest::newRow( "user-int" ) << BackendSetting( "user1", 42 );
-    QTest::newRow( "user-double" ) << BackendSetting( "user1", 42.42 );
-}
+//     QTest::newRow( "empty" ) << BackendSetting();
+//     QTest::newRow( "memory" ) << BackendSetting( BackendOptionStorageMemory );
+//     QTest::newRow( "inference" ) << BackendSetting( BackendOptionEnableInference );
+//     QTest::newRow( "dir" ) << BackendSetting( BackendOptionStorageDir, "/somedir" );
+//     QTest::newRow( "user-string" ) << BackendSetting( "user1", "user1value" );
+//     QTest::newRow( "user-int" ) << BackendSetting( "user1", 42 );
+//     QTest::newRow( "user-double" ) << BackendSetting( "user1", 42.42 );
+// }
 
 
-void ServerOperatorTest::testBackendSetting()
-{
-    QFETCH(BackendSetting, setting);
+// void ServerOperatorTest::testBackendSetting()
+// {
+//     QFETCH(BackendSetting, setting);
 
-    QByteArray data;
-    QDataStream s( &data, QIODevice::WriteOnly );
+//     QByteArray data;
+//     QBuffer buffer( &data );
+//     buffer.open( QIODevice::ReadWrite );
+//     DataStream s( &buffer );
 
-    s << setting;
+//     s.writeBackendSetting( setting );
 
-    BackendSetting copy;
-    QDataStream ss( data );
-    ss >> copy;
-    QCOMPARE( setting.option(), copy.option() );
-    QCOMPARE( setting.userOptionName(), copy.userOptionName() );
-    QCOMPARE( setting.value(), copy.value() );
-}
+//     BackendSetting copy;
+//     buffer.seek( 0 );
+//    QVERIFY( s.readBackendSetting( copy ) );
+
+//     QCOMPARE( setting.option(), copy.option() );
+//     QCOMPARE( setting.userOptionName(), copy.userOptionName() );
+//     QCOMPARE( setting.value(), copy.value() );
+// }
 
 
 void ServerOperatorTest::testLiteralValue_data()
@@ -168,6 +385,8 @@ void ServerOperatorTest::testLiteralValue_data()
     QTest::newRow( "int" ) << LiteralValue( 42 );
     QTest::newRow( "double" ) << LiteralValue( 42.42 );
     QTest::newRow( "string" ) << LiteralValue( "Hello World" );
+    QTest::newRow( "empty-string" ) << LiteralValue( QString() );
+    QTest::newRow( "big-string" ) << LiteralValue( QString( 1000000, 'X' ) );
     QTest::newRow( "userDataType" ) << LiteralValue::fromString( "Hello World", QUrl( "http://soprano.org/mytestType" ) );
 }
 
@@ -177,13 +396,16 @@ void ServerOperatorTest::testLiteralValue()
     QFETCH(LiteralValue, original);
 
     QByteArray data;
-    QDataStream s( &data, QIODevice::WriteOnly );
+    QBuffer buffer( &data );
+    buffer.open( QIODevice::ReadWrite );
+    DataStream s( &buffer );
 
-    s << original;
+    QVERIFY( s.writeLiteralValue( original ) );
 
     LiteralValue copy;
-    QDataStream ss( data );
-    ss >> copy;
+    buffer.seek( 0 );
+    QVERIFY( s.readLiteralValue( copy ) );
+
     QCOMPARE( original, copy );
 }
 
@@ -205,13 +427,16 @@ void ServerOperatorTest::testNode()
     QFETCH(Node, original);
 
     QByteArray data;
-    QDataStream s( &data, QIODevice::WriteOnly );
+    QBuffer buffer( &data );
+    buffer.open( QIODevice::ReadWrite );
+    DataStream s( &buffer );
 
-    s << original;
+    QVERIFY( s.writeNode( original ) );
 
     Node copy;
-    QDataStream ss( data );
-    ss >> copy;
+    buffer.seek( 0 );
+    QVERIFY( s.readNode( copy ) );
+
     QCOMPARE( original, copy );
 }
 
@@ -240,13 +465,16 @@ void ServerOperatorTest::testStatement()
     QFETCH(Statement, original);
 
     QByteArray data;
-    QDataStream s( &data, QIODevice::WriteOnly );
+    QBuffer buffer( &data );
+    buffer.open( QIODevice::ReadWrite );
+    DataStream s( &buffer );
 
-    s << original;
+    QVERIFY( s.writeStatement( original ) );
 
     Statement copy;
-    QDataStream ss( data );
-    ss >> copy;
+    buffer.seek( 0 );
+    QVERIFY( s.readStatement( copy ) );
+
     QCOMPARE( original, copy );
 }
 
@@ -269,13 +497,16 @@ void ServerOperatorTest::testBinding()
     QFETCH(BindingSet, original);
 
     QByteArray data;
-    QDataStream s( &data, QIODevice::WriteOnly );
+    QBuffer buffer( &data );
+    buffer.open( QIODevice::ReadWrite );
+    DataStream s( &buffer );
 
-    s << original;
+    QVERIFY( s.writeBindingSet( original ) );
 
     BindingSet copy;
-    QDataStream ss( data );
-    ss >> copy;
+    buffer.seek( 0 );
+    QVERIFY( s.readBindingSet( copy ) );
+
     foreach( QString name, original.bindingNames() ) {
         QVERIFY( copy.contains( name ) );
         QCOMPARE( original[name], copy[name] );

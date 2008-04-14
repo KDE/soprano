@@ -27,6 +27,9 @@
 #include <QDebug>
 
 
+Q_DECLARE_METATYPE( QAbstractSocket::SocketError )
+
+
 const quint16 Soprano::Client::TcpClient::DEFAULT_PORT = 5000;
 
 
@@ -42,9 +45,10 @@ Soprano::Client::TcpClient::TcpClient( QObject* parent )
     : QObject( parent ),
       d( new Private() )
 {
-    d->connection.connect( &d->socket );
+    qRegisterMetaType<QAbstractSocket::SocketError>();
     QObject::connect( &d->socket, SIGNAL(error(QAbstractSocket::SocketError)),
                       this, SLOT(slotError(QAbstractSocket::SocketError)) );
+    d->connection.connect( &d->socket );
 }
 
 

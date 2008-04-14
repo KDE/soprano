@@ -17,7 +17,7 @@ set(soprano_server_SRC
   serverconnection.h
   serverconnection.cpp
   randomgenerator.cpp
-  operators.cpp
+  datastream.cpp
   dbus/dbusutil.cpp
   dbus/dbusmodeladaptor.cpp
   dbus/dbusexportiterator.cpp
@@ -39,7 +39,7 @@ set(soprano_client_SRC
   clientstatementiteratorbackend.cpp
   clientnodeiteratorbackend.cpp
   clientqueryresultiteratorbackend.cpp
-  operators.cpp
+  datastream.cpp
   dbus/dbusutil.cpp
   dbus/dbusabstractinterface.cpp
   dbus/dbusmodelinterface.cpp

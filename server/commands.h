@@ -24,7 +24,12 @@
 
 #include <qglobal.h>
 
-#define PROTOCOL_VERSION 2
+// Chagelog:
+// Protocol version 3: 
+//     Soprano 2.1
+//     No changed commands but completely changed types streaming
+//     no usage of operators anymore
+#define PROTOCOL_VERSION 3
 
 namespace Soprano {
     namespace Server {

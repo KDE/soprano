@@ -211,6 +211,9 @@ namespace Soprano {
         private:
             class Private;
             Private* const d;
+
+            Q_PRIVATE_SLOT( d, void _s_localSocketError( QLocalSocket::LocalSocketError ) )
+            Q_PRIVATE_SLOT( d, void _s_tcpSocketError( QAbstractSocket::SocketError ) )
         };
     }
 }

@@ -26,19 +26,37 @@
 #include <QtCore/QDir>
 #include <QtNetwork/QLocalSocket>
 
+Q_DECLARE_METATYPE( QLocalSocket::LocalSocketError )
+Q_DECLARE_METATYPE( QAbstractSocket::SocketError )
+Q_DECLARE_METATYPE( QAbstractSocket::SocketState )
+
 
 class Soprano::Client::LocalSocketClient::Private
 {
 public:
     ClientConnection connection;
     QLocalSocket socket;
+
+    void _s_localSocketError( QLocalSocket::LocalSocketError );
 };
+
+
+void Soprano::Client::LocalSocketClient::Private::_s_localSocketError( QLocalSocket::LocalSocketError error )
+{
+    qDebug() << "local socket error:" << error;
+}
+
 
 
 Soprano::Client::LocalSocketClient::LocalSocketClient( QObject* parent )
     : QObject( parent ),
       d( new Private() )
 {
+    qRegisterMetaType<QLocalSocket::LocalSocketError>();
+    qRegisterMetaType<QAbstractSocket::SocketError>();
+    qRegisterMetaType<QAbstractSocket::SocketState>();
+    QObject::connect( &d->socket, SIGNAL( error( QLocalSocket::LocalSocketError ) ),
+                      this, SLOT( _s_localSocketError( QLocalSocket::LocalSocketError ) ) );
     d->connection.connect( &d->socket );
 }
 
@@ -80,7 +98,7 @@ bool Soprano::Client::LocalSocketClient::connect( const QString& name )
 }
 
 
-bool Soprano::Client::LocalSocketClient::isConnected()
+bool Soprano::Client::LocalSocketClient::isConnected() const
 {
     return d->socket.isValid();
 }

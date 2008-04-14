@@ -40,6 +40,10 @@
 #include <QtNetwork/QTcpSocket>
 
 
+Q_DECLARE_METATYPE( QLocalSocket::LocalSocketError )
+Q_DECLARE_METATYPE( QAbstractSocket::SocketError )
+
+
 const quint16 Soprano::Server::ServerCore::DEFAULT_PORT = 5000;
 
 
@@ -74,7 +78,23 @@ public:
         }
         return newSettings;
     }
+
+    void _s_localSocketError( QLocalSocket::LocalSocketError );
+    void _s_tcpSocketError( QAbstractSocket::SocketError );
 };
+
+
+void Soprano::Server::ServerCore::Private::_s_localSocketError( QLocalSocket::LocalSocketError error )
+{
+    qDebug() << "local socket error:" << error;
+}
+
+
+void Soprano::Server::ServerCore::Private::_s_tcpSocketError( QAbstractSocket::SocketError error )
+{
+    qDebug() << "tcp socket error:" << error;
+}
+
 
 
 Soprano::Server::ServerCore::ServerCore( QObject* parent )
@@ -83,6 +103,9 @@ Soprano::Server::ServerCore::ServerCore( QObject* parent )
 {
     // default backend
     d->backend = Soprano::usedBackend();
+
+    qRegisterMetaType<QLocalSocket::LocalSocketError>();
+    qRegisterMetaType<QAbstractSocket::SocketError>();
 }
 
 
@@ -285,7 +308,10 @@ void Soprano::Server::ServerCore::slotNewTcpConnection()
     ServerConnection* conn = new ServerConnection( this );
     d->connections.append( conn );
     connect( conn, SIGNAL(finished()), this, SLOT(serverConnectionFinished()));
-    conn->start( d->tcpServer->nextPendingConnection() );
+    QTcpSocket* socket = d->tcpServer->nextPendingConnection();
+    connect( socket, SIGNAL( error( QAbstractSocket::SocketError ) ),
+             this, SLOT( _s_tcpSocketError( QAbstractSocket::SocketError ) ) );
+    conn->start( socket );
 }
 
 
@@ -295,7 +321,10 @@ void Soprano::Server::ServerCore::slotNewSocketConnection()
     ServerConnection* conn = new ServerConnection( this );
     d->connections.append( conn );
     connect( conn, SIGNAL(finished()), this, SLOT(serverConnectionFinished()));
-    conn->start( d->socketServer->nextPendingConnection() );
+    QLocalSocket* socket = d->socketServer->nextPendingConnection();
+    connect( socket, SIGNAL( error( QLocalSocket::LocalSocketError ) ),
+             this, SLOT( _s_localSocketError( QLocalSocket::LocalSocketError ) ) );
+    conn->start( socket );
 }
 
 #include "servercore.moc"
