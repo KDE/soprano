@@ -506,7 +506,7 @@ Soprano::LiteralValue Soprano::LiteralValue::fromString( const QString& value, Q
     case QVariant::ByteArray:
         return LiteralValue( QByteArray::fromBase64( value.toAscii() ) );
     default:
-        qDebug() << "(Soprano::LiteralValue) unknown type: " << type << endl;
+        qDebug() << "(Soprano::LiteralValue) unknown type: " << type << "storing as string value." << endl;
         return LiteralValue( value );
     }
 }
