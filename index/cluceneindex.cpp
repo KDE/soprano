@@ -179,10 +179,6 @@ public:
         return 0;
     }
 
-    static bool isPropertyField( const TString& fieldName ) {
-        return ( idFieldName() != fieldName &&
-                 textFieldName() != fieldName );
-    }
 
     /**
      * A doc is empty if it only contains the fields id and text
@@ -191,7 +187,7 @@ public:
         int cnt = 0;
         lucene::document::DocumentFieldEnumeration* it = doc->fields();
         while ( it->hasMoreElements() ) {
-            lucene::document::Field* field = it->nextElement();
+            it->nextElement();
             ++cnt;
         }
         return cnt <= 2;
@@ -223,7 +219,7 @@ public:
                 lucene::document::DocumentFieldEnumeration* fields = oldDoc->fields();
                 while ( fields->hasMoreElements() ) {
                     lucene::document::Field* field = fields->nextElement();
-                    if ( Private::isPropertyField( TString( field->name(), true ) ) ) {
+                    if ( Index::isPropertyField( TString( field->name(), true ) ) ) {
                         docWrapper.addProperty( field->name(), field->stringValue() );
                     }
                 }

@@ -29,21 +29,21 @@
 
 namespace Soprano {
     namespace Error {
-    class Error;
+        class Error;
     }
 
     namespace Index {
         /**
-     * The name of the Document field holding the Resource identifier. The value
-     * stored in this field is either a URI or a BNode ID.
-     */
-    TString idFieldName();
+         * The name of the Document field holding the Resource identifier. The value
+         * stored in this field is either a URI or a BNode ID.
+         */
+        TString idFieldName();
 
         /**
          * The name of the Document field that holds the concatenated text of a
          * Resource.
          */
-    TString textFieldName();
+        TString textFieldName();
 
         /**
          * String used to prefix BNode IDs with so that we can distinguish BNode
@@ -52,7 +52,12 @@ namespace Soprano {
          */
         QString bnodeIdPrefix();
 
-    Error::Error exceptionToError( CLuceneError& );
+        Error::Error exceptionToError( CLuceneError& );
+
+        inline bool isPropertyField( const TString& fieldName ) {
+            return ( idFieldName() != fieldName &&
+                     textFieldName() != fieldName );
+        }
     }
 }
 
