@@ -113,7 +113,7 @@ QString writeComment( const QString& comment, int indent )
         s += "/**\n";
 
         QStringList paragraphs = comment.split( '\n', QString::KeepEmptyParts );
-        Q_FOREACH( QString paragraph, paragraphs ) {
+        Q_FOREACH( const QString &paragraph, paragraphs ) {
             s += createIndent( indent ) + " * ";
             QStringList words = paragraph.split( QRegExp("\\s"), QString::SkipEmptyParts );
             int cnt = 0;
@@ -270,7 +270,7 @@ int main( int argc, char *argv[] )
     // ----------------------------------------------------
     QMap<QString, QPair<QString, QString> > normalizedResources;
     QStringList done;
-    foreach( Node resource, allResources ) {
+    foreach( const Node &resource, allResources ) {
         QString uri = resource.uri().toString();
         if ( !normalizedResources.contains( uri ) ) {
             QString name = resource.uri().fragment();
@@ -286,7 +286,7 @@ int main( int argc, char *argv[] )
     }
 
     // extract comments
-    foreach( Node resource, allResources ) {
+    foreach( const Node &resource, allResources ) {
         StatementIterator it = model->listStatements( resource, Soprano::Vocabulary::RDFS::comment(), Node() );
         if ( it.next() ) {
             if ( normalizedResources.contains( resource.toString() ) ) {

@@ -74,7 +74,7 @@ Soprano::StorageModel* Soprano::Redland::BackendPlugin::createModel( const QList
     // for persistent stores we need an indentifier
     redlandOptions["name"] = "soprano";
 
-    Q_FOREACH( BackendSetting s, settings ) {
+    Q_FOREACH( const BackendSetting &s, settings ) {
         if ( s.option() == BackendOptionUser ) {
             redlandOptions[s.userOptionName()] = s.value().toString();
         }
@@ -139,7 +139,7 @@ bool Soprano::Redland::BackendPlugin::deleteModelData( const BackendSettings& se
 {
     QString path;
     QString name = "soprano";
-    Q_FOREACH( BackendSetting s, settings ) {
+    Q_FOREACH( const BackendSetting &s, settings ) {
         if ( s.option() == BackendOptionUser &&
             s.userOptionName() == "name" ) {
             name = s.value().toString();
@@ -159,7 +159,7 @@ bool Soprano::Redland::BackendPlugin::deleteModelData( const BackendSettings& se
     // is there a way to get the actual list of files?
     QDir dir( path );
     QStringList files = dir.entryList( QStringList() << ( name + "-*.db" ), QDir::Files );
-    foreach( QString file, files ) {
+    foreach( const QString &file, files ) {
         if ( !dir.remove( file ) ) {
             setError( "Failed to remove file '" + dir.filePath( file ), Error::ErrorUnknown );
             return false;

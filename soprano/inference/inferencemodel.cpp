@@ -267,7 +267,7 @@ QList<Soprano::Node> Soprano::Inference::InferenceModel::inferedGraphsForStateme
 
         // now sourceStatements should contain what our nice first query above returns
         // and we use a siplyfied version of the query above to redland won't get confused :(
-        Q_FOREACH( Node node, sourceStatements ) {
+        Q_FOREACH( const Node &node, sourceStatements ) {
             // Step 2: Check for which graph it is source statement
             QString query = QString( "SELECT ?g WHERE { "
                                      "?g <%1> <%2> . }" )

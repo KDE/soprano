@@ -85,7 +85,7 @@ namespace {
         QByteArray varData = qgetenv( var );
         if ( !varData.isEmpty() ) {
             QStringList d = QString::fromLocal8Bit( varData ).split( PATH_SEPARATOR );
-            Q_FOREACH( QString dir, d ) {
+            Q_FOREACH( const QString &dir, d ) {
                 dirs += QDir::fromNativeSeparators( dir );
             }
         }
@@ -121,7 +121,7 @@ namespace {
     QString findPluginLib( const Soprano::SopranoPluginFile& file )
     {
         QStringList libs = makeLibName( file.library() );
-        Q_FOREACH( QString lib, libs ) {
+        Q_FOREACH( const QString &lib, libs ) {
             if ( lib.startsWith( "/" ) ) {
                 return lib;
             }
@@ -268,11 +268,11 @@ void Soprano::PluginManager::loadAllPlugins()
     qDebug() << "(Soprano::PluginManager) loading all plugins";
 
     QStringList dirs = dataDirs();
-    Q_FOREACH( QString dir, dirs ) {
+    Q_FOREACH( const QString &dir, dirs ) {
         QDir pluginDir( dir + "/soprano/plugins" );
         qDebug() << "(Soprano::PluginManager) searching plugin file from " << pluginDir.absolutePath();
         QStringList pluginFiles = pluginDir.entryList( QStringList( QLatin1String( "*.desktop" ) ) );
-        Q_FOREACH( QString plugin, pluginFiles ) {
+        Q_FOREACH( const QString &plugin, pluginFiles ) {
             loadPlugin( pluginDir.absoluteFilePath( plugin ) );
         }
     }
