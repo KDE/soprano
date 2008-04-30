@@ -103,6 +103,11 @@ bool Soprano::Client::LocalSocketClient::isConnected() const
     return d->socket.isValid();
 }
 
+bool Soprano::Client::LocalSocketClient::isConnected()
+{
+    return d->socket.isValid();
+}
+
 
 void Soprano::Client::LocalSocketClient::disconnect()
 {
