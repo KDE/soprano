@@ -75,13 +75,6 @@ namespace Soprano {
             bool isConnected() const;
 
             /**
-             * Check if the client is connected to a server.
-             *
-             * @deprecated Use const version.
-             */
-            Q_DECL_DEPRECATED bool isConnected();
-
-            /**
              * Creates a new Model instance that wraps a server model.
              * %Client models are very light wrappers and creating them is
              * very fast.
