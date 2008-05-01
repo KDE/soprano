@@ -305,8 +305,11 @@ Soprano::Raptor::Parser::parseStream( QTextStream& stream,
 
     // start the atual parsing
     raptor_uri* raptorBaseUri = 0;
-    if ( !baseUri.toString().isEmpty() ) {
+    if ( baseUri.isValid() ) {
         raptorBaseUri = raptor_new_uri( (unsigned char *) baseUri.toString().toUtf8().data() );
+    }
+    else {
+        raptorBaseUri = raptor_new_uri( (unsigned char *) "http://soprano.sourceforge.net/dummyBaseUri" );
     }
 
     clearError();
