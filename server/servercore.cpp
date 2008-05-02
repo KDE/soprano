@@ -86,7 +86,9 @@ public:
 
 void Soprano::Server::ServerCore::Private::_s_localSocketError( QLocalSocket::LocalSocketError error )
 {
-    qDebug() << "local socket error:" << error;
+    if( error != QLocalSocket::PeerClosedError ) {
+        qDebug() << "local socket error:" << error;
+    }
 }
 
 
