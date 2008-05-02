@@ -1,6 +1,7 @@
 [Desktop Entry]
 Encoding=UTF-8
 X-Soprano-Library=libsoprano_sesame2backend
+X-Soprano-Plugin-Name=sesame2
 X-Soprano-Plugin-Author=Sebastian Trueg
 X-Soprano-Plugin-EMail=trueg@kde.org
 X-Soprano-Plugin-Website=http://soprano.sourceforge.net
