@@ -60,6 +60,7 @@ void Soprano::Index::CLuceneDocumentWrapper::addProperty( const TString& field, 
     //        2. Everything in the "text" or "content" or some other special field
 
     // FIXME: Do we really need to store the values? after all we have them in the RDF store anyway!
+    //        And if we have to store we could do it compressed using jstreams
     // store this predicate (YES, the CLucene API is that bad. We actually put in Fields allocated on the heap here!)
     d->document->add( *new Field( field.data(), text.data(),
 #ifdef CL_VERSION_19_OR_GREATER

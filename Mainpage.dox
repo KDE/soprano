@@ -296,6 +296,7 @@
 // DOXYGEN_SET_EXCLUDE += @topdir@/soprano/soprano/desktopfile.h
 // DOXYGEN_SET_EXCLUDE += @topdir@/soprano/soprano/inifile.h
 // DOXYGEN_SET_EXCLUDE += @topdir@/soprano/soprano/sopranopluginfile.h
+// DOXYGEN_SET_EXCLUDE += @topdir@/soprano/soprano/pluginstub.h
 // DOXYGEN_SET_EXCLUDE += @topdir@/soprano/soprano/util/mutexiteratorbase.h
 // DOXYGEN_SET_EXCLUDE += @topdir@/soprano/soprano/util/mutexnodeiteratorbackend.h
 // DOXYGEN_SET_EXCLUDE += @topdir@/soprano/soprano/util/mutexstatementiteratorbackend.h

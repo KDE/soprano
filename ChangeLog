@@ -21,7 +21,8 @@
 	  multithreaded anymore.
 	* New Backend method "deleteModelData"
 	* New AsyncModel to asyncroneously execute commands on any model.
-	
+	* The IndexFilterModel now allows to only index certain predicates and not actually store them
+
 2.0.1
 	* Fixed method statementCount in Sesame2 backend
 	* Redland backend: Always encode strings as xls:string rather than rdfs:Literal values to match the 

@@ -178,6 +178,49 @@ namespace Soprano {
              */
             void rebuildIndex();
 
+            /**
+             * Add a predicate which should only be indexed. This might be useful
+             * for very large literals whose value is of no interest but which
+             * should be searchable.
+             *
+             * \param predicate The predicate that should only be indexed
+             * but not stored in the underlying Model.
+             *
+             * \sa indexOnlyPredicates, setIndexOnlyPredicates
+             *
+             * \since 2.1
+             */
+            void addIndexOnlyPredicate( const QUrl& predicate );
+
+            /**
+             * Set the predicates that should only be indexed. This might be useful
+             * for very large literals whose value is of no interest but which
+             * should be searchable.
+             *
+             * \param predicates A list of predicates that should only be indexed
+             * but not stored in the underlying Model.
+             *
+             * \sa indexOnlyPredicates, addIndexOnlyPredicate
+             *
+             * \since 2.1
+             */
+            void setIndexOnlyPredicates( const QList<QUrl>& predicates );
+
+            /**
+             * The IndexFilterModel supports to not forward certain predicates to
+             * the parent Model but only index their value. This might be useful
+             * for very large literals whose value is of no interest but which
+             * should be searchable.
+             *
+             * \return A list of predicates that will only be indexed but not
+             * stored in the underlying Model.
+             *
+             * \sa addIndexOnlyPredicate, setIndexOnlyPredicates
+             *
+             * \since 2.1
+             */
+            QList<QUrl> indexOnlyPredicates() const;
+
         private:
             class Private;
             Private* const d;

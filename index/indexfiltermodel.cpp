@@ -24,11 +24,14 @@
 #include "queryhitwrapperresultiteratorbackend.h"
 #include "queryresultiterator.h"
 #include "statementiterator.h"
+#include "qurlhash.h"
 
 #include <CLucene.h>
 
 #include <QtCore/QThread>
+#include <QtCore/QSet>
 #include <QtCore/QDebug>
+
 
 class Soprano::Index::IndexFilterModel::Private
 {
@@ -43,6 +46,8 @@ public:
 
     bool deleteIndex;
     CLuceneIndex* index;
+
+    QSet<QUrl> indexOnlyPredicates;
 
     int transactionCacheSize;
     int transactionCacheId;
@@ -100,11 +105,18 @@ Soprano::Index::CLuceneIndex* Soprano::Index::IndexFilterModel::index() const
     return d->index;
 }
 
-Soprano::Error::ErrorCode Soprano::Index::IndexFilterModel::addStatement( const Soprano::Statement &statement )
+
+Soprano::Error::ErrorCode Soprano::Index::IndexFilterModel::addStatement( const Soprano::Statement& statement )
 {
 //    qDebug() << "IndexFilterModel::addStatement(" << statement << ") in thread " << QThread::currentThreadId();
-    if ( !FilterModel::containsStatement( statement ) ) {
-        Error::ErrorCode c = FilterModel::addStatement( statement );
+    bool store = !d->indexOnlyPredicates.contains( statement.predicate().uri() );
+
+    if ( !store ||
+         !FilterModel::containsStatement( statement ) ) {
+        Error::ErrorCode c = Error::ErrorNone;
+        if( store ) {
+            c = FilterModel::addStatement( statement );
+        }
         if ( c == Error::ErrorNone && statement.object().isLiteral() ) {
             d->startTransaction();
             c = d->index->addStatement( statement );
@@ -123,8 +135,9 @@ Soprano::Error::ErrorCode Soprano::Index::IndexFilterModel::addStatement( const 
 }
 
 
-Soprano::Error::ErrorCode Soprano::Index::IndexFilterModel::removeStatement( const Soprano::Statement &statement )
+Soprano::Error::ErrorCode Soprano::Index::IndexFilterModel::removeStatement( const Soprano::Statement& statement )
 {
+    // here we simply ignore the indexOnlyPredicates
     Error::ErrorCode c = FilterModel::removeStatement( statement );
     if ( c == Error::ErrorNone &&
          statement.object().isLiteral() ) {
@@ -139,8 +152,10 @@ Soprano::Error::ErrorCode Soprano::Index::IndexFilterModel::removeStatement( con
 }
 
 
-Soprano::Error::ErrorCode Soprano::Index::IndexFilterModel::removeAllStatements( const Soprano::Statement &statement )
+Soprano::Error::ErrorCode Soprano::Index::IndexFilterModel::removeAllStatements( const Soprano::Statement& statement )
 {
+    // here we simply ignore the indexOnlyPredicates
+
     // since we use backends that directly implement this method we don't know which
     // statements are actually removed (there is no signal for that)
     // so we have to check that up front
@@ -227,4 +242,23 @@ void Soprano::Index::IndexFilterModel::rebuildIndex()
 
         d->index->closeTransaction( id );
     }
+}
+
+
+
+void Soprano::Index::IndexFilterModel::addIndexOnlyPredicate( const QUrl& predicate )
+{
+    d->indexOnlyPredicates.insert( predicate );
+}
+
+
+void Soprano::Index::IndexFilterModel::setIndexOnlyPredicates( const QList<QUrl>& predicates )
+{
+    d->indexOnlyPredicates = predicates.toSet();
+}
+
+
+QList<QUrl> Soprano::Index::IndexFilterModel::indexOnlyPredicates() const
+{
+    return d->indexOnlyPredicates.toList();
 }
