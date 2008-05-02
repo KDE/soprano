@@ -34,8 +34,12 @@ int main( int argc, char *argv[] )
     }
 
     QString modelName = app.arguments()[1];
+    QString dbusService;
+    if ( argc > 2 ) {
+        dbusService = app.arguments()[2];
+    }
 
-    Soprano::Client::DBusClient client;
+    Soprano::Client::DBusClient client( dbusService );
     Soprano::Client::DBusModel* model = client.createModel( modelName );
     Soprano::ModelSignalSpy spy;
     spy.setModel( model );
