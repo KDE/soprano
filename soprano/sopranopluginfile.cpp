@@ -64,6 +64,12 @@ QString Soprano::SopranoPluginFile::library() const
 }
 
 
+QString Soprano::SopranoPluginFile::pluginName() const
+{
+    return readEntry( desktopEntryGroup(), QLatin1String( "X-Soprano-Plugin-Name" ) );
+}
+
+
 QString Soprano::SopranoPluginFile::pluginAuthor() const
 {
     return readEntry( desktopEntryGroup(), QLatin1String( "X-Soprano-Plugin-Author" ) );

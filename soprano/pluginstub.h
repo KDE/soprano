@@ -1,7 +1,7 @@
 /*
  * This file is part of Soprano Project.
  *
- * Copyright (C) 2007 Sebastian Trueg <trueg@kde.org>
+ * Copyright (C) 2008 Sebastian Trueg <trueg@kde.org>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -19,38 +19,50 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef _SOPRANO_SOPRANOPLUGIN_FILE_H_
-#define _SOPRANO_SOPRANOPLUGIN_FILE_H_
+#ifndef _SOPRANO_PLUGIN_INFO_H_
+#define _SOPRANO_PLUGIN_INFO_H_
 
-#include "desktopfile.h"
+#include <QtCore/QSharedDataPointer>
 
 namespace Soprano {
+
+    class Plugin;
+
     /**
-     * Wraps around a .sopranoplugin file.
-     *
-     * Very simple read-only class.
+     * A stub which will act as a small replacement 
+     * for the plugin until it is used.
      */
-    class SopranoPluginFile : public DesktopFile
+    class PluginStub
     {
     public:
-        SopranoPluginFile();
-        SopranoPluginFile( const QString& path );
-        ~SopranoPluginFile();
+        /**
+         * Create a new invalid instance.
+         */
+        PluginStub();
 
-        bool open( const QString& path );
+        PluginStub( const PluginStub& other );
 
-        QString library() const;
-        QString pluginName() const;
-        QString pluginAuthor() const;
-        QString pluginEmail() const;
-        QString pluginWebsite() const;
-        QString pluginLicense() const;
-        QString pluginVersion() const;
-        QString sopranoVersion() const;
+        /**
+         * Create a new plugin stub
+         */
+        PluginStub( const QString& name, const QString& libPath );
+
+        /**
+         * Destructor. Will unload the plugin if loaded.
+         */
+        ~PluginStub();
+
+        PluginStub& operator=( const PluginStub& other );
+
+        /**
+         * Get the plugin. Will try to load it if not
+         * already loaded.
+         */
+        Plugin* plugin();
 
     private:
         class Private;
-        Private* const d;
+        QExplicitlySharedDataPointer<Private> d;
     };
 }
 

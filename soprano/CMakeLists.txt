@@ -38,7 +38,7 @@ SET(soprano_SRCS
   serializer.cpp
   serializer.h
   pluginmanager.cpp
-  pluginmanager.h
+  pluginstub.cpp
   plugin.cpp
   backend.cpp
   backend.h
