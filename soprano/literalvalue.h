@@ -43,17 +43,17 @@ namespace Soprano
      * automatic type conversion. Other types are represented
      * as strings.
      *
-     * \li int (Vocabulary::XMLSchema::xmlsInt)
-     * \li qlonglong (Vocabulary::XMLSchema::xmlsLong)
+     * \li int (Vocabulary::XMLSchema::xsdInt)
+     * \li qlonglong (Vocabulary::XMLSchema::xsdLong)
      * \li unsigned int (Vocabulary::XMLSchema::unsignedInt)
      * \li qulonglong (Vocabulary::XMLSchema::unsignedLong)
      * \li bool (Vocabulary::XMLSchema::boolean)
-     * \li double (Vocabulary::XMLSchema::xmlsDouble)
+     * \li double (Vocabulary::XMLSchema::xsdDouble)
      * \li QString (Vocabulary::XMLSchema::string or Vocabulary::RDF::XMLLiteral)
      * \li QDate (Vocabulary::XMLSchema::date)
      * \li QTime (Vocabulary::XMLSchema::time)
      * \li QDateTime (Vocabulary::XMLSchema::dateTime)
-     * \li QByteArry (Vocabulary::XMLSchema::base64Binary)
+     * \li QByteArray (Vocabulary::XMLSchema::base64Binary)
      *
      * Literal values can be converted from strings via fromString().
      *

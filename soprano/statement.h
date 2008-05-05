@@ -40,6 +40,8 @@ namespace Soprano
      * A Statement is valid if subject, predicate, and object are valid. Invalid statements can, however,
      * be used in many methods such as Model::listStatements as wildwards.
      *
+     * \sa Node
+     *
      * \author Daniele Galdi <daniele.galdi@gmail.com><br>Sebastian Trueg <trueg@kde.org>
      */
     class SOPRANO_EXPORT Statement
@@ -54,13 +56,13 @@ namespace Soprano
         /**
          * Build a Statement with the given subject, predicate and object.
          *
-         * \param subject The subject.
+         * \param subject The subject (cannot be of type Node::LiteralNode)
          *
-         * \param predicate The predicate.
+         * \param predicate The predicate (has to be of type Node::ResourceNode or Node::EmptyNode)
          *
-         * \param object The object.
+         * \param object The object can be of either Node type.
          *
-         * \param context The context node.
+         * \param context The context node (has to be of type Node::ResourceNode or Node::EmptyNode)
          */
         Statement( const Node &subject, const Node &predicate, const Node &object, const Node &context = Node() );
 

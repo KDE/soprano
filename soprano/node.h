@@ -37,15 +37,28 @@ namespace Soprano
      *
      * \brief A Node represents one RDF resource.
      *
+     * Nodes are the cornerstone of RDF data in %Soprano. Four Nodes form one Statement and a Model
+     * is essentially a set of Statements.
+     *
+     * A Node can have one of four types: EmptyNode, ResourceNode, LiteralNode, and BlankNode.
+     * Resource nodes are identified through their URI (uri()), literal nodes have a LiteralValue (literal())
+     * and an optional language string (language()), and blank nodes have a string identifier.
+     *
+     * Empty nodes can be used as wildcards in methods such as Model::listStatements.
+     *
+     * \warning Be aware that string literals in %Soprano always have type
+     * xsd:string. There is no direct support for rdfs:Literal. Backend implementations
+     * should honour this restriction.
+     *
      * \author Daniele Galdi <daniele.galdi@gmail.com><br>Sebastian Trueg <trueg@kde.org>
      */
     class SOPRANO_EXPORT Node
     {
     public:
         enum Type {
-            EmptyNode    = 0, /**< An empty node, can be used as a placeholder in queries. */
-            ResourceNode = 1, /**< rdf:Resource (& rdf:Property) - has a URI */
-            LiteralNode  = 2, /**< rdf:Literal - has an XML string, language, XML space */
+            EmptyNode    = 0, /**< An empty node, can be used as a placeholder in commands like Model::listStatements. */
+            ResourceNode = 1, /**< A resource node has a URI which can be accessed via uri() */
+            LiteralNode  = 2, /**< A literal node has a literal value and an optional language. */
             BlankNode    = 3  /**< blank node has an identifier string */
         };
 
@@ -216,7 +229,11 @@ namespace Soprano
 
         //@{
         /**
+         * Converts the Node to a string.
+         *
          *\return A String representation of the Node.
+         *
+         * \sa LiteralValue::toString(), QUrl::toString()
          */
         QString toString() const;
         //@}
