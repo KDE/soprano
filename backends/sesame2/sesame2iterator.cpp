@@ -30,7 +30,8 @@ public:
     Private( Iterator* parent )
         : m_parent( parent ),
           m_IDhasNext( 0 ),
-          m_IDnext( 0 ) {
+          m_IDnext( 0 ),
+          m_IDclose( 0 ) {
     }
 
     jmethodID IDhasNext() {
@@ -49,11 +50,20 @@ public:
         return m_IDnext;
     }
 
+    jmethodID IDclose() {
+        if ( !m_IDclose ) {
+            m_IDclose = m_parent->getMethodID( "close", "()V" );
+            JNIWrapper::instance()->debugException();
+        }
+        return m_IDclose;
+    }
+
 private:
     Iterator* m_parent;
 
     jmethodID m_IDhasNext;
     jmethodID m_IDnext;
+    jmethodID m_IDclose;
 };
 
 
@@ -97,8 +107,6 @@ void Soprano::Sesame2::Iterator::close()
 {
     // close the result (if this is a closable it)
     if ( isInstanceOf( JNIWrapper::instance()->env()->FindClass( INFO_ADUNA_ITERATION_CLOSABLEITERATION ) ) ) {
-        if ( jmethodID closeID = getMethodID( "close", "()V" ) ) {
-            callVoidMethod( closeID );
-        }
+        callVoidMethod( d->IDclose() );
     }
 }

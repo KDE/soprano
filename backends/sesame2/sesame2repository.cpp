@@ -105,7 +105,9 @@ Soprano::Sesame2::RepositoryWrapper* Soprano::Sesame2::RepositoryWrapper::create
     }
 
     // create an instance of org.openrdf.repository.sail.SailRepository
-    JObjectRef repository = JNIWrapper::instance()->constructObject( ORG_OPENRDF_REPOSITORY_SAIL_SAILREPOSITORY, "(L"ORG_OPENRDF_SAIL_SAIL";)V", store.data() );
+    JObjectRef repository = JNIWrapper::instance()->constructObject( ORG_OPENRDF_REPOSITORY_SAIL_SAILREPOSITORY,
+                                                                     "(L"ORG_OPENRDF_SAIL_SAIL";)V",
+                                                                     store.data() );
     if ( !repository ) {
         return 0;
     }
@@ -157,7 +159,7 @@ Soprano::Sesame2::ValueFactory* Soprano::Sesame2::RepositoryWrapper::valueFactor
             JNIWrapper::instance()->debugException();
             return 0;
         }
-        d->valueFactory = new ValueFactory( valueFactory );
+        d->valueFactory = new ValueFactory( valueFactory.toGlobalRef() );
     }
 
     return d->valueFactory;
@@ -172,7 +174,7 @@ Soprano::Sesame2::RepositoryConnection* Soprano::Sesame2::RepositoryWrapper::rep
             JNIWrapper::instance()->debugException();
             return 0;
         }
-        d->repositoryConnection = new RepositoryConnection( repositoryConnection );
+        d->repositoryConnection = new RepositoryConnection( repositoryConnection.toGlobalRef() );
     }
 
     return d->repositoryConnection;
@@ -189,7 +191,7 @@ Soprano::Sesame2::SopranoWrapper* Soprano::Sesame2::RepositoryWrapper::sopranoWr
             JNIWrapper::instance()->debugException();
             return 0;
         }
-        d->sopranoWrapper = new SopranoWrapper( sopranoWrapper );
+        d->sopranoWrapper = new SopranoWrapper( sopranoWrapper.toGlobalRef() );
     }
 
     return d->sopranoWrapper;

@@ -25,15 +25,15 @@
 
 #include <QtCore/QDebug>
 #include <QtCore/QString>
+#include <QtCore/QSharedData>
 
 
-class JObjectRef::Private
+class JObjectRef::Private : public QSharedData
 {
 public:
     Private( jobject o = 0, bool g = false )
         : object( o ),
-          global( g ),
-          m_ref( 1 ) {
+          global( g ) {
     }
 
     ~Private() {
@@ -47,19 +47,8 @@ public:
         }
     }
 
-    int ref() {
-        return ++m_ref;
-    }
-
-    int unref() {
-        return --m_ref;
-    }
-
     jobject object;
     bool global;
-
-private:
-    int m_ref;
 };
 
 JObjectRef::JObjectRef()
@@ -77,39 +66,25 @@ JObjectRef::JObjectRef( jobject object )
 JObjectRef::JObjectRef( const JObjectRef& other )
 {
     d = other.d;
-    d->ref();
 }
 
 
 JObjectRef::~JObjectRef()
 {
-    if ( !d->unref() ) {
-        delete d;
-    }
 }
 
 
 JObjectRef& JObjectRef::operator=( const JObjectRef& other )
 {
-    if ( d != other.d ) {
-        if ( !d->unref() ) {
-            delete d;
-        }
-        d = other.d;
-        d->ref();
-    }
-
+    d = other.d;
     return *this;
 }
 
 
 JObjectRef& JObjectRef::operator=( jobject o )
 {
-    if ( !d->unref() ) {
-        delete d;
-    }
-    d = new Private( o );
-    d->ref();
+    d->object = o;
+    d->global = false;
     return *this;
 }
 
@@ -245,6 +220,7 @@ QByteArray JStringRef::toAscii() const
             Q_ASSERT( chars[i]>>8 == 0 );
             a[i] = ( char )chars[i];
         }
+        JNIWrapper::instance()->env()->ReleaseStringChars( JStringRef::data(), chars );
     }
     return a;
 }

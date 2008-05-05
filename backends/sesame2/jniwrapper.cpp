@@ -128,7 +128,7 @@ JObjectRef JNIWrapper::constructObject( const char* className,  const char* cons
     static const char* constructorName = "<init>";
     static const char* defaultConstructorSig = "()V";
 
-    jclass clazz = env()->FindClass( className );
+    JClassRef clazz = env()->FindClass( className );
     if ( !clazz ) {
         debugException();
         return 0;
@@ -145,7 +145,7 @@ JObjectRef JNIWrapper::constructObject( const char* className,  const char* cons
     va_list args;
     va_start( args, constructorSig );
 
-    JObjectRef newObject = env()->NewObjectV( clazz, constructorId, args );
+    JObjectRef newObject = env()->NewObjectV( clazz.data(), constructorId, args );
 
     va_end( args );
 
@@ -175,7 +175,7 @@ bool JNIWrapper::exceptionOccured()
 
 Soprano::Error::Error JNIWrapper::convertAndClearException()
 {
-    jthrowable exception = env()->ExceptionOccurred();
+    JObjectRef exception = env()->ExceptionOccurred();
     if ( exception ) {
         env()->ExceptionDescribe();
         JNIObjectWrapper exWr( exception );

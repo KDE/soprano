@@ -153,17 +153,19 @@ JObjectRef Soprano::Sesame2::ValueFactory::convertNode( const Node& node )
     case Node::LiteralNode:
         // FIXME: is it more performant to create the instances directly from the values instead of strings?
         if ( node.literal().isString() && !node.language().isEmpty() ) {
+            JStringRef val( node.toString() );
+            JStringRef lang( node.language() );
             return callObjectMethod( d->IDcreateLiteralWithLang(),
-                                     JStringRef( node.toString() ).data(),
-                                     JStringRef( node.language() ).data() );
+                                     val.data(),
+                                     lang.data() );
         }
         else{
             JStringRef ns( node.toString() );
             JStringRef dtus( node.dataType().toEncoded() );
-            jobject dataTypeUri = callObjectMethod( d->IDcreateURI(), dtus.data() );
+            JObjectRef dataTypeUri = callObjectMethod( d->IDcreateURI(), dtus.data() );
             return callObjectMethod( d->IDcreateLiteralWithDataType(),
                                      ns.data(),
-                                     dataTypeUri );
+                                     dataTypeUri.data() );
         }
 
     default:

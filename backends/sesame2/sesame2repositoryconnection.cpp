@@ -159,7 +159,7 @@ Soprano::Sesame2::RepositoryConnection::~RepositoryConnection()
 
 JObjectRef Soprano::Sesame2::RepositoryConnection::getContextIDs()
 {
-    return callObjectMethod( d->IDgetContextIDs() );
+    return callObjectMethod( d->IDgetContextIDs() ).toGlobalRef();
 }
 
 
@@ -173,42 +173,42 @@ void Soprano::Sesame2::RepositoryConnection::addStatement( const JObjectRef& sta
 
 JObjectRef Soprano::Sesame2::RepositoryConnection::getStatements( const JObjectRef& subject, const JObjectRef& predicate, const JObjectRef& object, const JObjectRef& context )
 {
-    jobjectArray contexts = JNIWrapper::instance()->env()->NewObjectArray( context ? 1 : 0,
-                                                                           d->classResource(),
-                                                                           context );
-    return callObjectMethod( d->IDgetStatements(), subject.data(), predicate.data(), object.data(), true, contexts );
+    JObjectRef contexts = JNIWrapper::instance()->env()->NewObjectArray( context ? 1 : 0,
+                                                                         d->classResource(),
+                                                                         context );
+    return callObjectMethod( d->IDgetStatements(), subject.data(), predicate.data(), object.data(), true, contexts.data() ).toGlobalRef();
 }
 
 
 bool Soprano::Sesame2::RepositoryConnection::hasStatement( const JObjectRef& subject, const JObjectRef& predicate, const JObjectRef& object, const JObjectRef& context )
 {
-    jobjectArray contexts = JNIWrapper::instance()->env()->NewObjectArray( context ? 1 : 0,
-                                                                           d->classResource(),
-                                                                           context );
-    return callBooleanMethod( d->IDhasStatement(), subject.data(), predicate.data(), object.data(), true, contexts );
+    JObjectRef contexts = JNIWrapper::instance()->env()->NewObjectArray( context ? 1 : 0,
+                                                                         d->classResource(),
+                                                                         context );
+    return callBooleanMethod( d->IDhasStatement(), subject.data(), predicate.data(), object.data(), true, contexts.data() );
 }
 
 
 void Soprano::Sesame2::RepositoryConnection::remove( const JObjectRef& subject, const JObjectRef& predicate, const JObjectRef& object, const JObjectRef& context )
 {
-    jobjectArray contexts = JNIWrapper::instance()->env()->NewObjectArray( context ? 1 : 0,
-                                                                           d->classResource(),
-                                                                           context );
-    callVoidMethod( d->IDremove(), subject.data(), predicate.data(), object.data(), contexts );
+    JObjectRef contexts = JNIWrapper::instance()->env()->NewObjectArray( context ? 1 : 0,
+                                                                         d->classResource(),
+                                                                         context );
+    callVoidMethod( d->IDremove(), subject.data(), predicate.data(), object.data(), contexts.data() );
 }
 
 
 void Soprano::Sesame2::RepositoryConnection::remove( const JObjectRef& statement )
 {
-    jobjectArray contexts = JNIWrapper::instance()->env()->NewObjectArray( 0, d->classResource(), 0 );
-    callVoidMethod( d->IDremoveStatement(), statement.data(), contexts );
+    JObjectRef contexts = JNIWrapper::instance()->env()->NewObjectArray( 0, d->classResource(), 0 );
+    callVoidMethod( d->IDremoveStatement(), statement.data(), contexts.data() );
 }
 
 
 long Soprano::Sesame2::RepositoryConnection::size()
 {
-    jobjectArray contexts = JNIWrapper::instance()->env()->NewObjectArray( 0, d->classResource(), 0 );
-    return callLongMethod( d->IDsize(), contexts );
+    JObjectRef contexts = JNIWrapper::instance()->env()->NewObjectArray( 0, d->classResource(), 0 );
+    return callLongMethod( d->IDsize(), contexts.data() );
 }
 
 
@@ -221,7 +221,7 @@ bool Soprano::Sesame2::RepositoryConnection::isEmpty()
 JObjectRef Soprano::Sesame2::RepositoryConnection::prepareQuery( const JObjectRef& queryLang, const JStringRef& queryString )
 {
     // prepare the query
-    return callObjectMethod( d->IDprepareQuery(), queryLang.data(), queryString.data() );
+    return callObjectMethod( d->IDprepareQuery(), queryLang.data(), queryString.data() ).toGlobalRef();
 }
 
 

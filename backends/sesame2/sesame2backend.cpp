@@ -82,7 +82,7 @@ Soprano::StorageModel* Soprano::Sesame2::BackendPlugin::createModel( const QList
     QString path;
     bool memory = false;
 
-    // FIXME: support inferecen option
+    // FIXME: support inference option
 
     Q_FOREACH( BackendSetting s, settings ) {
         if ( s.option() == BackendOptionUser ) {

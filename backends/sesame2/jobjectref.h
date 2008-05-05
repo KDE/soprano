@@ -23,7 +23,6 @@
 #define _JOBJECT_REF_H_
 
 #include <QtCore/QSharedDataPointer>
-#include <QtCore/QSharedData>
 
 #include <jni.h>
 
@@ -53,7 +52,7 @@ public:
 
 private:
     class Private;
-    Private* d;
+    QExplicitlySharedDataPointer<Private> d;
 };
 
 

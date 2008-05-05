@@ -30,28 +30,6 @@
 #include <QtCore/QDebug>
 
 
-class ClassCache
-{
-public:
-    ClassCache() {
-        classURI = JNIWrapper::instance()->env()->FindClass( ORG_OPENRDF_MODEL_URI );
-        classBNode = JNIWrapper::instance()->env()->FindClass( ORG_OPENRDF_MODEL_BNODE );
-        classLiteral = JNIWrapper::instance()->env()->FindClass( ORG_OPENRDF_MODEL_LITERAL );
-
-        Q_ASSERT( classURI );
-        Q_ASSERT( classBNode );
-        Q_ASSERT( classLiteral );
-    }
-
-    JClassRef classURI;
-    JClassRef classBNode;
-    JClassRef classLiteral;
-};
-
-Q_GLOBAL_STATIC( ClassCache, classCache )
-
-
-
 QUrl Soprano::Sesame2::convertURI( const JObjectRef& uri )
 {
     JNIObjectWrapper uriWrapper( uri );
@@ -64,18 +42,22 @@ Soprano::Node Soprano::Sesame2::convertNode( const JObjectRef& resource )
 {
     JNIObjectWrapper resourceWrapper( resource );
 
+    JClassRef classURI = JNIWrapper::instance()->env()->FindClass( ORG_OPENRDF_MODEL_URI );
+    JClassRef classBNode = JNIWrapper::instance()->env()->FindClass( ORG_OPENRDF_MODEL_BNODE );
+    JClassRef classLiteral = JNIWrapper::instance()->env()->FindClass( ORG_OPENRDF_MODEL_LITERAL );
+
     if ( !resource ) {
         // empty node
         return Node();
     }
-    else if ( JNIWrapper::instance()->env()->IsInstanceOf( resource, classCache()->classURI ) ) {
+    else if ( JNIWrapper::instance()->env()->IsInstanceOf( resource, classURI ) ) {
         return convertURI( resource );
     }
-    else if ( JNIWrapper::instance()->env()->IsInstanceOf( resource, classCache()->classBNode ) ) {
+    else if ( JNIWrapper::instance()->env()->IsInstanceOf( resource, classBNode ) ) {
         JStringRef uri = resourceWrapper.callObjectMethod( resourceWrapper.getMethodID( "getID", "()L"JAVA_LANG_STRING";" ) );
         return Node( uri.toQString() );
     }
-    else if ( JNIWrapper::instance()->env()->IsInstanceOf( resource, classCache()->classLiteral ) ) {
+    else if ( JNIWrapper::instance()->env()->IsInstanceOf( resource, classLiteral ) ) {
         JStringRef value = resourceWrapper.callObjectMethod( resourceWrapper.getMethodID( "getLabel", "()L"JAVA_LANG_STRING";" ) );
         JStringRef lang = resourceWrapper.callObjectMethod( resourceWrapper.getMethodID( "getLanguage", "()L"JAVA_LANG_STRING";" ) );
         JObjectRef dataType = resourceWrapper.callObjectMethod( resourceWrapper.getMethodID( "getDatatype", "()L"ORG_OPENRDF_MODEL_URI";" ) );
@@ -96,8 +78,6 @@ Soprano::Node Soprano::Sesame2::convertNode( const JObjectRef& resource )
 
 Soprano::Statement Soprano::Sesame2::convertStatement( const JObjectRef& o )
 {
-    Q_ASSERT( JNIWrapper::instance()->env()->IsInstanceOf( o, JNIWrapper::instance()->env()->FindClass( ORG_OPENRDF_MODEL_STATEMENT ) ) );
-
     JNIObjectWrapper statementWrapper( o );
 
     JObjectRef subject = statementWrapper.callObjectMethod( statementWrapper.getMethodID( "getSubject", "()L"ORG_OPENRDF_MODEL_RESOURCE";" ) );
