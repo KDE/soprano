@@ -190,6 +190,7 @@ public:
             it->nextElement();
             ++cnt;
         }
+        delete it;
         return cnt <= 2;
     }
 
@@ -671,6 +672,7 @@ void Soprano::Index::CLuceneIndex::dump( QTextStream& s ) const
             }
             s << endl;
             _CLDELETE( e );
+            _CLDELETE( doc );
         }
 
         s << flush;

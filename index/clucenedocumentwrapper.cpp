@@ -105,6 +105,8 @@ void Soprano::Index::CLuceneDocumentWrapper::removeProperty( const TString& fiel
                 addProperty( field, values[i] );
             }
         }
+
+        delete [] values;
     }
 
     // step 2: remove the field from the text index
