@@ -542,6 +542,7 @@ QVariant::Type Soprano::LiteralValue::typeFromDataTypeUri( const QUrl& dataTypeU
         s_xsdTypes.insert( Vocabulary::XMLSchema::unsignedLong(), QVariant::ULongLong );
         s_xsdTypes.insert( Vocabulary::XMLSchema::boolean(), QVariant::Bool );
         s_xsdTypes.insert( Vocabulary::XMLSchema::xsdDouble(), QVariant::Double );
+        s_xsdTypes.insert( Vocabulary::XMLSchema::xsdFloat(), QVariant::Double );
         s_xsdTypes.insert( Vocabulary::XMLSchema::string(), QVariant::String );
         s_xsdTypes.insert( Vocabulary::XMLSchema::date(), QVariant::Date );
         s_xsdTypes.insert( Vocabulary::XMLSchema::time(), QVariant::Time );

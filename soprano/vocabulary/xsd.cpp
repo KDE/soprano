@@ -39,6 +39,7 @@ public:
           xsdUnsignedLong( QUrl::fromEncoded( "http://www.w3.org/2001/XMLSchema#unsignedLong", QUrl::StrictMode ) ),
           xsdBoolean( QUrl::fromEncoded( "http://www.w3.org/2001/XMLSchema#boolean", QUrl::StrictMode ) ),
           xsdDouble( QUrl::fromEncoded( "http://www.w3.org/2001/XMLSchema#double", QUrl::StrictMode ) ),
+          xsdFloat( QUrl::fromEncoded( "http://www.w3.org/2001/XMLSchema#float", QUrl::StrictMode ) ),
           xsdString( QUrl::fromEncoded( "http://www.w3.org/2001/XMLSchema#string", QUrl::StrictMode ) ),
           xsdDate( QUrl::fromEncoded( "http://www.w3.org/2001/XMLSchema#date", QUrl::StrictMode ) ),
           xsdTime( QUrl::fromEncoded( "http://www.w3.org/2001/XMLSchema#time", QUrl::StrictMode ) ),
@@ -59,6 +60,7 @@ public:
     QUrl xsdUnsignedLong;
     QUrl xsdBoolean;
     QUrl xsdDouble;
+    QUrl xsdFloat;
     QUrl xsdString;
     QUrl xsdDate;
     QUrl xsdTime;
@@ -145,6 +147,12 @@ QUrl Soprano::Vocabulary::XMLSchema::string()
 QUrl Soprano::Vocabulary::XMLSchema::xsdDouble()
 {
     return xsd()->xsdDouble;
+}
+
+
+QUrl Soprano::Vocabulary::XMLSchema::xsdFloat()
+{
+    return xsd()->xsdFloat;
 }
 
 

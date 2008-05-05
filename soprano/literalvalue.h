@@ -48,7 +48,7 @@ namespace Soprano
      * \li unsigned int (Vocabulary::XMLSchema::unsignedInt)
      * \li qulonglong (Vocabulary::XMLSchema::unsignedLong)
      * \li bool (Vocabulary::XMLSchema::boolean)
-     * \li double (Vocabulary::XMLSchema::xsdDouble)
+     * \li double and float (Vocabulary::XMLSchema::xsdDouble) (float values are always converted to double)
      * \li QString (Vocabulary::XMLSchema::string or Vocabulary::RDF::XMLLiteral)
      * \li QDate (Vocabulary::XMLSchema::date)
      * \li QTime (Vocabulary::XMLSchema::time)

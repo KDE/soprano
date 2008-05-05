@@ -43,6 +43,7 @@ namespace Soprano {
             SOPRANO_EXPORT QUrl unsignedShort();
             SOPRANO_EXPORT QUrl unsignedLong();
             SOPRANO_EXPORT QUrl string();
+            SOPRANO_EXPORT QUrl xsdFloat();
             SOPRANO_EXPORT QUrl xsdDouble();
             SOPRANO_EXPORT QUrl boolean();
             SOPRANO_EXPORT QUrl date();
