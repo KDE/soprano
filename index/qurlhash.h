@@ -23,6 +23,7 @@
 #define _QURL_HASH_H_
 
 #include <QtCore/QUrl>
+#include <QtCore/QHash>
 
 inline uint qHash( const QUrl& url )
 {
