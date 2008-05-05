@@ -229,6 +229,7 @@ Soprano::QueryResultIterator Soprano::Redland::RedlandModel::executeQuery( const
 
     librdf_query_results *res = librdf_model_query_execute( d->model, q );
     if ( !res ) {
+        librdf_free_query( q );
         setError( d->world->lastError() );
         d->readWriteLock.unlock();
         return QueryResultIterator();
