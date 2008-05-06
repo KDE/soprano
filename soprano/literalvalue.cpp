@@ -40,7 +40,8 @@ inline uint qHash( const QUrl& url )
 class Soprano::LiteralValue::Private : public QSharedData
 {
 public:
-    Private() {
+    Private()
+        : stringCacheValid( false ) {
     }
 
     Private( const QVariant& v )
