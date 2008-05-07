@@ -50,12 +50,8 @@ void Soprano::Util::AsyncModelPrivate::removeIterator( AsyncIteratorBase* it )
 
 void Soprano::Util::AsyncModelPrivate::enqueueCommand( Command* command )
 {
-    if ( command->type() == Command::WriteCommand ) {
-        writeCommandQueue.enqueue( command );
-    }
-    else {
-        readCommandQueue.enqueue( command );
-    }
+    commandQueue.append( command );
+
     // it is important to not call _s_executeNextCommand directly to let
     // the client the time to connect to the resultReady signal
     QTimer::singleShot( 0, m_model, SLOT( _s_executeNextCommand() ) );
@@ -64,21 +60,20 @@ void Soprano::Util::AsyncModelPrivate::enqueueCommand( Command* command )
 
 void Soprano::Util::AsyncModelPrivate::_s_executeNextCommand()
 {
-    // we always prefer write commands
-    if ( openIterators.isEmpty() &&
-         !writeCommandQueue.isEmpty() ) {
-        Command* command = writeCommandQueue.dequeue();
-        command->execute( m_model );
-        delete command;
-    }
-    else if( !readCommandQueue.isEmpty() ) {
-        Command* command = readCommandQueue.dequeue();
-        command->execute( m_model );
-        delete command;
+    for ( QLinkedList<Command*>::iterator it = commandQueue.begin();
+          it != commandQueue.end(); ++it ) {
+        Command* c = *it;
+        if ( openIterators.isEmpty() ||
+             c->type() == Command::ReadCommand ) {
+            c->execute( m_model );
+            commandQueue.erase( it );
+            delete c;
+            break;
+        }
     }
 
     // let's see if there are more commands to be executed
-    if ( !writeCommandQueue.isEmpty() || !readCommandQueue.isEmpty() ) {
+    if ( !commandQueue.isEmpty()) {
         QTimer::singleShot( 0, m_model, SLOT( _s_executeNextCommand() ) );
     }
 }

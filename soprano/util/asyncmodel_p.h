@@ -27,7 +27,7 @@
 #include "asynciteratorbackend.h"
 #include "iteratorbackend.h"
 
-#include <QtCore/QQueue>
+#include <QtCore/QLinkedList>
 
 
 namespace Soprano {
@@ -45,8 +45,7 @@ namespace Soprano {
                 }
             }
 
-            QQueue<Command*> writeCommandQueue;
-            QQueue<Command*> readCommandQueue;
+            QLinkedList<Command*> commandQueue;
 
             QList<AsyncIteratorBase*> openIterators;
 
