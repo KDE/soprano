@@ -262,10 +262,6 @@ public:
             delete( doc );
         }
 
-        // write all changes back to disk
-        getIndexWriter()->optimize();
-        closeWriter();
-
         documentCache.clear();
     }
 };
