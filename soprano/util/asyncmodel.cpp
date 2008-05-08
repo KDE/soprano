@@ -68,13 +68,13 @@ void Soprano::Util::AsyncModelPrivate::_s_executeNextCommand()
             c->execute( m_model );
             commandQueue.erase( it );
             delete c;
-            break;
-        }
-    }
 
-    // let's see if there are more commands to be executed
-    if ( !commandQueue.isEmpty()) {
-        QTimer::singleShot( 0, m_model, SLOT( _s_executeNextCommand() ) );
+            // let's see if there are more commands to be executed
+            if ( !commandQueue.isEmpty() ) {
+                QTimer::singleShot( 0, m_model, SLOT( _s_executeNextCommand() ) );
+            }
+            return;
+        }
     }
 }
 
