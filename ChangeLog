@@ -22,6 +22,7 @@
 	* New Backend method "deleteModelData"
 	* New AsyncModel to asyncroneously execute commands on any model.
 	* The IndexFilterModel now allows to only index certain predicates and not actually store them
+	* Sesame2 updated to 2.1.2
 
 2.0.1
 	* Fixed method statementCount in Sesame2 backend
