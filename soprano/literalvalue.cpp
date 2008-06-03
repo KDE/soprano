@@ -353,37 +353,37 @@ bool Soprano::LiteralValue::isByteArray() const
 
 int Soprano::LiteralValue::toInt() const
 {
-    return d->value.value<int>();
+    return d->value.toInt();
 }
 
 
 qlonglong Soprano::LiteralValue::toInt64() const
 {
-    return d->value.value<qlonglong>();
+    return d->value.toLongLong();
 }
 
 
 uint Soprano::LiteralValue::toUnsignedInt() const
 {
-    return d->value.value<uint>();
+    return d->value.toUInt();
 }
 
 
 qulonglong Soprano::LiteralValue::toUnsignedInt64() const
 {
-    return d->value.value<qulonglong>();
+    return d->value.toULongLong();
 }
 
 
 bool Soprano::LiteralValue::toBool() const
 {
-    return d->value.value<bool>();
+    return d->value.toBool();
 }
 
 
 double Soprano::LiteralValue::toDouble() const
 {
-    return d->value.value<double>();
+    return d->value.toDouble();
 }
 
 
@@ -425,25 +425,43 @@ QString Soprano::LiteralValue::toString() const
 
 QDate Soprano::LiteralValue::toDate() const
 {
-    return d->value.value<QDate>();
+    if ( isDate() ) {
+        // QVariant::toDate does use the simple ISO format
+        return d->value.toDate();
+    }
+    else {
+        return DateTime::fromDateString( toString() );
+    }
 }
 
 
 QTime Soprano::LiteralValue::toTime() const
 {
-    return d->value.value<QTime>();
+    if ( isTime() ) {
+        // QVariant::toTime does use the simple ISO format
+        return d->value.toTime();
+    }
+    else {
+        return DateTime::fromTimeString( toString() );
+    }
 }
 
 
 QDateTime Soprano::LiteralValue::toDateTime() const
 {
-    return d->value.value<QDateTime>();
+    if ( isDateTime() ) {
+        // QVariant::toDateTime does use the simple ISO format
+        return d->value.toDateTime();
+    }
+    else {
+        return DateTime::fromDateTimeString( toString() );
+    }
 }
 
 
 QByteArray Soprano::LiteralValue::toByteArray() const
 {
-    return d->value.value<QByteArray>();
+    return d->value.toByteArray();
 }
 
 
