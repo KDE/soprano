@@ -111,7 +111,7 @@ namespace {
     {
         QStringList libs = makeLibName( file.library() );
         Q_FOREACH( const QString &lib, libs ) {
-            if ( lib.startsWith( "/" ) ) {
+            if ( lib.startsWith( '/' ) ) {
                 return lib;
             }
             else {
