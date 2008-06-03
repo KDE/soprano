@@ -207,7 +207,7 @@ QString Soprano::DateTime::toString( const QTime& t )
     if( t.msec() > 0 ) {
         frac.sprintf( ".%03d", t.msec() );
         // remove trailing zeros
-        while( frac.endsWith( "0" ) )
+        while( frac.endsWith( '0' ) )
             frac.truncate( frac.length() -1 );
     }
 
