@@ -155,7 +155,7 @@ QString Soprano::Inference::Rule::createSparqlQuery( bool bindStatement ) const
         }
     }
 
-    query += "}";
+    query += '}';
 
     return query;
 }
