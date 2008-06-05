@@ -33,6 +33,7 @@
 #include "storagemodel.h"
 #include "filtermodel.h"
 #include "parser.h"
+#include "serializer.h"
 #include "backend.h"
 #include "pluginmanager.h"
 #include "error.h"
