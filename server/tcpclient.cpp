@@ -33,11 +33,62 @@ Q_DECLARE_METATYPE( QAbstractSocket::SocketError )
 const quint16 Soprano::Client::TcpClient::DEFAULT_PORT = 5000;
 
 
+namespace Soprano {
+    namespace Client {
+        class TcpClientConnection : public ClientConnection
+        {
+        public:
+            TcpClientConnection( const QHostAddress& address, int port, QObject* parent );
+            ~TcpClientConnection();
+
+        protected:
+            QIODevice* newConnection();
+
+        private:
+            QHostAddress m_address;
+            int m_port;
+        };
+
+        TcpClientConnection::TcpClientConnection( const QHostAddress& address, int port, QObject* parent )
+            : ClientConnection( parent ),
+              m_address( address ),
+              m_port( port )
+        {
+        }
+
+        TcpClientConnection::~TcpClientConnection()
+        {
+        }
+
+        QIODevice* TcpClientConnection::newConnection()
+        {
+            clearError();
+
+            QTcpSocket* socket = new QTcpSocket;
+            socket->connectToHost( m_address, m_port );
+            if ( socket->waitForConnected() ) {
+                QObject::connect( socket, SIGNAL(error(QAbstractSocket::SocketError)),
+                                  parent(), SLOT(slotError(QAbstractSocket::SocketError)) );
+                return socket;
+            }
+            else {
+                setError( socket->errorString() );
+                delete socket;
+                return 0;
+            }
+        }
+    }
+}
+
+
 class Soprano::Client::TcpClient::Private
 {
 public:
-    ClientConnection connection;
-    QTcpSocket socket;
+    Private()
+        : connection( 0 ) {
+    }
+
+    TcpClientConnection* connection;
 };
 
 
@@ -46,9 +97,6 @@ Soprano::Client::TcpClient::TcpClient( QObject* parent )
       d( new Private() )
 {
     qRegisterMetaType<QAbstractSocket::SocketError>();
-    QObject::connect( &d->socket, SIGNAL(error(QAbstractSocket::SocketError)),
-                      this, SLOT(slotError(QAbstractSocket::SocketError)) );
-    d->connection.connect( &d->socket );
 }
 
 
@@ -61,21 +109,14 @@ Soprano::Client::TcpClient::~TcpClient()
 
 bool Soprano::Client::TcpClient::connect( const QHostAddress& address, int port )
 {
-    if ( !d->socket.isValid() ) {
-        d->socket.abort();
-        d->socket.connectToHost( address, port );
-        if ( !d->socket.waitForConnected() ) {
-            setError( d->socket.errorString() );
-            return false;
+    if ( !d->connection ) {
+        d->connection = new TcpClientConnection( address, port, this );
+        if ( d->connection->checkProtocolVersion() ) {
+            return true;
         }
         else {
-            if ( !d->connection.checkProtocolVersion() ) {
-                disconnect();
-                return false;
-            }
-            else {
-                return true;
-            }
+            disconnect();
+            return false;
         }
     }
     else {
@@ -87,34 +128,44 @@ bool Soprano::Client::TcpClient::connect( const QHostAddress& address, int port 
 
 bool Soprano::Client::TcpClient::isConnected()
 {
-    return d->socket.isValid();
+    return d->connection != 0;
 }
 
 
 void Soprano::Client::TcpClient::disconnect()
 {
-    d->socket.abort();
+    delete d->connection;
+    d->connection = 0;
 }
 
 
 Soprano::Model* Soprano::Client::TcpClient::createModel( const QString& name, const QList<BackendSetting>& settings )
 {
-    int modelId = d->connection.createModel( name, settings );
-    setError( d->connection.lastError() );
-    if ( modelId > 0 ) {
-        StorageModel* model = new ClientModel( 0, modelId, &d->connection );
-        return model;
+    if ( d->connection ) {
+        int modelId = d->connection->createModel( name, settings );
+        setError( d->connection->lastError() );
+        if ( modelId > 0 ) {
+            StorageModel* model = new ClientModel( 0, modelId, d->connection );
+            return model;
+        }
     }
     else {
-        return 0;
+        setError( "Not connected" );
     }
+
+    return 0;
 }
 
 
 void Soprano::Client::TcpClient::removeModel( const QString& name )
 {
-    d->connection.removeModel( name );
-    setError( d->connection.lastError() );
+    if ( d->connection ) {
+        d->connection->removeModel( name );
+        setError( d->connection->lastError() );
+    }
+    else {
+        setError( "Not connected" );
+    }
 }
 
 

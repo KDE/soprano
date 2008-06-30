@@ -30,6 +30,8 @@
 #include <QtNetwork/QHostAddress>
 
 
+class QIODevice;
+
 namespace Soprano {
 
     class Node;
@@ -44,10 +46,8 @@ namespace Soprano {
 
         public:
             ClientConnection( QObject* parent = 0 );
-            ~ClientConnection();
+            virtual ~ClientConnection();
 
-            void connect( QIODevice* );
-        
             // Backend methods
             /**
              * Create a new Model and return its ID.
@@ -82,7 +82,19 @@ namespace Soprano {
 
             bool checkProtocolVersion();
 
+        protected:
+            /**
+             * Creates a new IODevice for communication.
+             * ClientConnection will create one for each thread.
+             */
+            virtual QIODevice* newConnection() = 0;
+
+        private Q_SLOTS:
+            void slotThreadFinished();
+
         private:
+            QIODevice* socket();
+
             class Private;
             Private* const d;
         };

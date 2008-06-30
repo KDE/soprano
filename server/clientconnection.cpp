@@ -30,11 +30,12 @@
 #include "bindingset.h"
 #include "backend.h"
 
-#include <QtNetwork/QTcpSocket>
+#include <QtCore/QIODevice>
 #include <QtCore/QThread>
 #include <QtCore/QMutex>
 #include <QtCore/QMutexLocker>
 #include <QtCore/QTime>
+#include <QtCore/QHash>
 
 
 using namespace Soprano::Server;
@@ -46,11 +47,8 @@ namespace {
 class Soprano::Client::ClientConnection::Private
 {
 public:
-    Private()
-        : socket( 0 ) {
-    }
-
-    QIODevice* socket;
+    QHash<QThread*, QIODevice*> socketHash;
+    QMutex socketMutex;
     QMutex mutex;
 };
 
@@ -64,13 +62,40 @@ Soprano::Client::ClientConnection::ClientConnection( QObject* parent )
 
 Soprano::Client::ClientConnection::~ClientConnection()
 {
+    qDeleteAll( d->socketHash );
     delete d;
 }
 
 
-void Soprano::Client::ClientConnection::connect( QIODevice* dev )
+QIODevice* Soprano::Client::ClientConnection::socket()
 {
-    d->socket = dev;
+    QMutexLocker lock( &d->socketMutex );
+
+    QHash<QThread*, QIODevice*>::iterator it = d->socketHash.find( QThread::currentThread() );
+    if ( it != d->socketHash.end() ) {
+        return *it;
+    }
+    else if ( QIODevice* socket = newConnection() ) {
+        d->socketHash.insert( QThread::currentThread(), socket );
+        connect( QThread::currentThread(), SIGNAL( finished() ),
+                 this, SLOT( slotThreadFinished() ) );
+        return socket;
+    }
+
+    return 0;
+}
+
+
+void Soprano::Client::ClientConnection::slotThreadFinished()
+{
+    QThread* thread = qobject_cast<QThread*>( sender() );
+    if ( thread ) {
+        QHash<QThread*, QIODevice*>::iterator it = d->socketHash.find( thread );
+        if ( it != d->socketHash.end() ) {
+            delete *it;
+            d->socketHash.erase( it );
+        }
+    }
 }
 
 
@@ -79,13 +104,13 @@ int Soprano::Client::ClientConnection::createModel( const QString& name, const Q
     QMutexLocker lock( &d->mutex );
     //qDebug() << this << QTime::currentTime().toString( "hh:mm:ss.zzz" ) << QThread::currentThreadId() << "(ClientConnection::createModel)";
 
-    DataStream stream( d->socket );
+    DataStream stream( socket() );
 
     stream.writeUnsignedInt16( COMMAND_CREATE_MODEL );
     stream.writeString( name );
     Q_UNUSED( settings );
 
-    if ( !d->socket->waitForReadyRead(s_defaultTimeout) ) {
+    if ( !socket()->waitForReadyRead(s_defaultTimeout) ) {
         setError( "Command timed out." );
         return 0;
     }
@@ -107,12 +132,12 @@ void Soprano::Client::ClientConnection::removeModel( const QString& name )
     QMutexLocker lock( &d->mutex );
     //qDebug() << this << QTime::currentTime().toString( "hh:mm:ss.zzz" ) << QThread::currentThreadId() << "(ClientConnection::removeModel)";
 
-    DataStream stream( d->socket );
+    DataStream stream( socket() );
 
     stream.writeUnsignedInt16( COMMAND_REMOVE_MODEL );
     stream.writeString( name );
 
-    if ( !d->socket->waitForReadyRead(s_defaultTimeout) ) {
+    if ( !socket()->waitForReadyRead(s_defaultTimeout) ) {
         setError( "Command timed out." );
         return;
     }
@@ -131,11 +156,11 @@ Soprano::BackendFeatures Soprano::Client::ClientConnection::supportedFeatures()
     QMutexLocker lock( &d->mutex );
     //qDebug() << this << QTime::currentTime().toString( "hh:mm:ss.zzz" ) << QThread::currentThreadId() << "(ClientConnection::supportedFeatures)";
 
-    DataStream stream( d->socket );
+    DataStream stream( socket() );
 
     stream.writeUnsignedInt16( COMMAND_SUPPORTED_FEATURES );
 
-    if ( !d->socket->waitForReadyRead(s_defaultTimeout) ) {
+    if ( !socket()->waitForReadyRead(s_defaultTimeout) ) {
         setError( "Command timed out." );
         return 0;
     }
@@ -157,13 +182,13 @@ Soprano::Error::ErrorCode Soprano::Client::ClientConnection::addStatement( int m
     QMutexLocker lock( &d->mutex );
     //qDebug() << this << QTime::currentTime().toString( "hh:mm:ss.zzz" ) << QThread::currentThreadId() << "(ClientConnection::addStatement)";
 
-    DataStream stream( d->socket );
+    DataStream stream( socket() );
 
     stream.writeUnsignedInt16( COMMAND_MODEL_ADD_STATEMENT );
     stream.writeUnsignedInt32( ( quint32 )modelId );
     stream.writeStatement( statement );
 
-    if ( !d->socket->waitForReadyRead(s_defaultTimeout) ) {
+    if ( !socket()->waitForReadyRead(s_defaultTimeout) ) {
         setError( "Command timed out." );
         return Error::ErrorUnknown;
     }
@@ -184,12 +209,12 @@ int Soprano::Client::ClientConnection::listContexts( int modelId )
     QMutexLocker lock( &d->mutex );
     //qDebug() << this << QTime::currentTime().toString( "hh:mm:ss.zzz" ) << QThread::currentThreadId() << "(ClientConnection::listContexts)";
 
-    DataStream stream( d->socket );
+    DataStream stream( socket() );
 
     stream.writeUnsignedInt16( COMMAND_MODEL_LIST_CONTEXTS );
     stream.writeUnsignedInt32( ( quint32 )modelId );
 
-    if ( !d->socket->waitForReadyRead(s_defaultTimeout) ) {
+    if ( !socket()->waitForReadyRead(s_defaultTimeout) ) {
         setError( "Command timed out." );
         return Error::ErrorUnknown;
     }
@@ -210,7 +235,7 @@ int Soprano::Client::ClientConnection::executeQuery( int modelId, const QString 
     QMutexLocker lock( &d->mutex );
     //qDebug() << this << QTime::currentTime().toString( "hh:mm:ss.zzz" ) << QThread::currentThreadId() << "(ClientConnection::executeQuery)";
 
-    DataStream stream( d->socket );
+    DataStream stream( socket() );
 
     stream.writeUnsignedInt16( COMMAND_MODEL_QUERY );
     stream.writeUnsignedInt32( ( quint32 )modelId );
@@ -218,7 +243,7 @@ int Soprano::Client::ClientConnection::executeQuery( int modelId, const QString 
     stream.writeUnsignedInt16( ( quint16 )type );
     stream.writeString( userQueryLanguage );
 
-    if ( !d->socket->waitForReadyRead(s_defaultTimeout) ) {
+    if ( !socket()->waitForReadyRead(s_defaultTimeout) ) {
         setError( "Command timed out." );
         return Error::ErrorUnknown;
     }
@@ -239,13 +264,13 @@ int Soprano::Client::ClientConnection::listStatements( int modelId, const Statem
     QMutexLocker lock( &d->mutex );
     //qDebug() << this << QTime::currentTime().toString( "hh:mm:ss.zzz" ) << QThread::currentThreadId() << "(ClientConnection::listStatements)";
 
-    DataStream stream( d->socket );
+    DataStream stream( socket() );
 
     stream.writeUnsignedInt16( COMMAND_MODEL_LIST_STATEMENTS );
     stream.writeUnsignedInt32( ( quint32 )modelId );
     stream.writeStatement( partial );
 
-    if ( !d->socket->waitForReadyRead(s_defaultTimeout) ) {
+    if ( !socket()->waitForReadyRead(s_defaultTimeout) ) {
         setError( "Command timed out." );
         return Error::ErrorUnknown;
     }
@@ -266,13 +291,13 @@ Soprano::Error::ErrorCode Soprano::Client::ClientConnection::removeAllStatements
     QMutexLocker lock( &d->mutex );
     //qDebug() << this << QTime::currentTime().toString( "hh:mm:ss.zzz" ) << QThread::currentThreadId() << "(ClientConnection::removeAllStatements)";
 
-    DataStream stream( d->socket );
+    DataStream stream( socket() );
 
     stream.writeUnsignedInt16( COMMAND_MODEL_REMOVE_ALL_STATEMENTS );
     stream.writeUnsignedInt32( ( quint32 )modelId );
     stream.writeStatement( statement );
 
-    if ( !d->socket->waitForReadyRead(s_defaultTimeout) ) {
+    if ( !socket()->waitForReadyRead(s_defaultTimeout) ) {
         setError( "Command timed out." );
         return Error::ErrorUnknown;
     }
@@ -293,13 +318,13 @@ Soprano::Error::ErrorCode Soprano::Client::ClientConnection::removeStatement( in
     QMutexLocker lock( &d->mutex );
     //qDebug() << this << QTime::currentTime().toString( "hh:mm:ss.zzz" ) << QThread::currentThreadId() << "(ClientConnection::removeStatement)";
 
-    DataStream stream( d->socket );
+    DataStream stream( socket() );
 
     stream.writeUnsignedInt16( COMMAND_MODEL_REMOVE_STATEMENT );
     stream.writeUnsignedInt32( ( quint32 )modelId );
     stream.writeStatement( statement );
 
-    if ( !d->socket->waitForReadyRead(s_defaultTimeout) ) {
+    if ( !socket()->waitForReadyRead(s_defaultTimeout) ) {
         setError( "Command timed out." );
         return Error::ErrorUnknown;
     }
@@ -320,12 +345,12 @@ int Soprano::Client::ClientConnection::statementCount( int modelId )
     QMutexLocker lock( &d->mutex );
     //qDebug() << this << QTime::currentTime().toString( "hh:mm:ss.zzz" ) << QThread::currentThreadId() << "(ClientConnection::statementCount)";
 
-    DataStream stream( d->socket );
+    DataStream stream( socket() );
 
     stream.writeUnsignedInt16( COMMAND_MODEL_STATEMENT_COUNT );
     stream.writeUnsignedInt32( ( quint32 )modelId );
 
-    if ( !d->socket->waitForReadyRead(s_defaultTimeout) ) {
+    if ( !socket()->waitForReadyRead(s_defaultTimeout) ) {
         setError( "Command timed out." );
         return Error::ErrorUnknown;
     }
@@ -346,13 +371,13 @@ bool Soprano::Client::ClientConnection::containsStatement( int modelId, const St
     QMutexLocker lock( &d->mutex );
     //qDebug() << this << QTime::currentTime().toString( "hh:mm:ss.zzz" ) << QThread::currentThreadId() << "(ClientConnection::containsStatement)";
 
-    DataStream stream( d->socket );
+    DataStream stream( socket() );
 
     stream.writeUnsignedInt16( COMMAND_MODEL_CONTAINS_STATEMENT );
     stream.writeUnsignedInt32( ( quint32 )modelId );
     stream.writeStatement( statement );
 
-    if ( !d->socket->waitForReadyRead(s_defaultTimeout) ) {
+    if ( !socket()->waitForReadyRead(s_defaultTimeout) ) {
         setError( "Command timed out." );
         return false;
     }
@@ -373,13 +398,13 @@ bool Soprano::Client::ClientConnection::containsAnyStatement( int modelId, const
     QMutexLocker lock( &d->mutex );
     //qDebug() << this << QTime::currentTime().toString( "hh:mm:ss.zzz" ) << QThread::currentThreadId() << "(ClientConnection::containsAnyStatement)";
 
-    DataStream stream( d->socket );
+    DataStream stream( socket() );
 
     stream.writeUnsignedInt16( COMMAND_MODEL_CONTAINS_ANY_STATEMENT );
     stream.writeUnsignedInt32( ( quint32 )modelId );
     stream.writeStatement( statement );
 
-    if ( !d->socket->waitForReadyRead(s_defaultTimeout) ) {
+    if ( !socket()->waitForReadyRead(s_defaultTimeout) ) {
         setError( "Command timed out." );
         return false;
     }
@@ -400,12 +425,12 @@ bool Soprano::Client::ClientConnection::isEmpty( int modelId )
     QMutexLocker lock( &d->mutex );
     //qDebug() << this << QTime::currentTime().toString( "hh:mm:ss.zzz" ) << QThread::currentThreadId() << "(ClientConnection::isEmpty)";
 
-    DataStream stream( d->socket );
+    DataStream stream( socket() );
 
     stream.writeUnsignedInt16( COMMAND_MODEL_IS_EMPTY );
     stream.writeUnsignedInt32( ( quint32 )modelId );
 
-    if ( !d->socket->waitForReadyRead(s_defaultTimeout) ) {
+    if ( !socket()->waitForReadyRead(s_defaultTimeout) ) {
         setError( "Command timed out." );
         return false;
     }
@@ -426,12 +451,12 @@ Soprano::Node Soprano::Client::ClientConnection::createBlankNode( int modelId )
     QMutexLocker lock( &d->mutex );
     //qDebug() << this << QTime::currentTime().toString( "hh:mm:ss.zzz" ) << QThread::currentThreadId() << "(ClientConnection::createBlankNode)";
 
-    DataStream stream( d->socket );
+    DataStream stream( socket() );
 
     stream.writeUnsignedInt16( COMMAND_MODEL_CREATE_BLANK_NODE );
     stream.writeUnsignedInt32( ( quint32 )modelId );
 
-    if ( !d->socket->waitForReadyRead(s_defaultTimeout) ) {
+    if ( !socket()->waitForReadyRead(s_defaultTimeout) ) {
         setError( "Command timed out." );
         return Node();
     }
@@ -452,12 +477,12 @@ bool Soprano::Client::ClientConnection::iteratorNext( int id )
     QMutexLocker lock( &d->mutex );
     //qDebug() << this << QTime::currentTime().toString( "hh:mm:ss.zzz" ) << QThread::currentThreadId() << "(ClientConnection::iteratorNext)";
 
-    DataStream stream( d->socket );
+    DataStream stream( socket() );
 
     stream.writeUnsignedInt16( COMMAND_ITERATOR_NEXT );
     stream.writeUnsignedInt32( ( quint32 )id );
 
-    if ( !d->socket->waitForReadyRead(s_defaultTimeout) ) {
+    if ( !socket()->waitForReadyRead(s_defaultTimeout) ) {
         setError( "Command timed out." );
         return false;
     }
@@ -478,12 +503,12 @@ Soprano::Node Soprano::Client::ClientConnection::nodeIteratorCurrent( int id )
     QMutexLocker lock( &d->mutex );
     //qDebug() << this << QTime::currentTime().toString( "hh:mm:ss.zzz" ) << QThread::currentThreadId() << "(ClientConnection::nodeIteratorCurrent)";
 
-    DataStream stream( d->socket );
+    DataStream stream( socket() );
 
     stream.writeUnsignedInt16( COMMAND_ITERATOR_CURRENT_NODE );
     stream.writeUnsignedInt32( ( quint32 )id );
 
-    if ( !d->socket->waitForReadyRead(s_defaultTimeout) ) {
+    if ( !socket()->waitForReadyRead(s_defaultTimeout) ) {
         setError( "Command timed out." );
         return Node();
     }
@@ -504,12 +529,12 @@ Soprano::Statement Soprano::Client::ClientConnection::statementIteratorCurrent( 
     QMutexLocker lock( &d->mutex );
     //qDebug() << this << QTime::currentTime().toString( "hh:mm:ss.zzz" ) << QThread::currentThreadId() << "(ClientConnection::statementIteratorCurrent)";
 
-    DataStream stream( d->socket );
+    DataStream stream( socket() );
 
     stream.writeUnsignedInt16( COMMAND_ITERATOR_CURRENT_STATEMENT );
     stream.writeUnsignedInt32( ( quint32 )id );
 
-    if ( !d->socket->waitForReadyRead(s_defaultTimeout) ) {
+    if ( !socket()->waitForReadyRead(s_defaultTimeout) ) {
         setError( "Command timed out." );
         return Statement();
     }
@@ -530,12 +555,12 @@ Soprano::BindingSet Soprano::Client::ClientConnection::queryIteratorCurrent( int
     QMutexLocker lock( &d->mutex );
     //qDebug() << this << QTime::currentTime().toString( "hh:mm:ss.zzz" ) << QThread::currentThreadId() << "(ClientConnection::queryIteratorCurrent)";
 
-    DataStream stream( d->socket );
+    DataStream stream( socket() );
 
     stream.writeUnsignedInt16( COMMAND_ITERATOR_CURRENT_BINDINGSET );
     stream.writeUnsignedInt32( ( quint32 )id );
 
-    if ( !d->socket->waitForReadyRead(s_defaultTimeout) ) {
+    if ( !socket()->waitForReadyRead(s_defaultTimeout) ) {
         setError( "Command timed out." );
         return BindingSet();
     }
@@ -556,12 +581,12 @@ Soprano::Statement Soprano::Client::ClientConnection::queryIteratorCurrentStatem
     QMutexLocker lock( &d->mutex );
     //qDebug() << this << QTime::currentTime().toString( "hh:mm:ss.zzz" ) << QThread::currentThreadId() << "(ClientConnection::queryIteratorCurrentStatement)";
 
-    DataStream stream( d->socket );
+    DataStream stream( socket() );
 
     stream.writeUnsignedInt16( COMMAND_ITERATOR_CURRENT_STATEMENT );
     stream.writeUnsignedInt32( ( quint32 )id );
 
-    if ( !d->socket->waitForReadyRead(s_defaultTimeout) ) {
+    if ( !socket()->waitForReadyRead(s_defaultTimeout) ) {
         setError( "Command timed out." );
         return Statement();
     }
@@ -581,12 +606,12 @@ int Soprano::Client::ClientConnection::queryIteratorType( int id )
     QMutexLocker lock( &d->mutex );
     //qDebug() << this << QTime::currentTime().toString( "hh:mm:ss.zzz" ) << QThread::currentThreadId() << "(ClientConnection::queryIteratorType)";
 
-    DataStream stream( d->socket );
+    DataStream stream( socket() );
 
     stream.writeUnsignedInt16( COMMAND_ITERATOR_QUERY_TYPE );
     stream.writeUnsignedInt32( ( quint32 )id );
 
-    if ( !d->socket->waitForReadyRead(s_defaultTimeout) ) {
+    if ( !socket()->waitForReadyRead(s_defaultTimeout) ) {
         setError( "Command timed out." );
         return 0;
     }
@@ -607,12 +632,12 @@ bool Soprano::Client::ClientConnection::queryIteratorBoolValue( int id )
     QMutexLocker lock( &d->mutex );
     //qDebug() << this << QTime::currentTime().toString( "hh:mm:ss.zzz" ) << QThread::currentThreadId() << "(ClientConnection::queryIteratorBoolValue)";
 
-    DataStream stream( d->socket );
+    DataStream stream( socket() );
 
     stream.writeUnsignedInt16( COMMAND_ITERATOR_QUERY_BOOL_VALUE );
     stream.writeUnsignedInt32( ( quint32 )id );
 
-    if ( !d->socket->waitForReadyRead(s_defaultTimeout) ) {
+    if ( !socket()->waitForReadyRead(s_defaultTimeout) ) {
         setError( "Command timed out." );
         return false;
     }
@@ -632,12 +657,12 @@ void Soprano::Client::ClientConnection::iteratorClose( int id )
     QMutexLocker lock( &d->mutex );
     //qDebug() << this << QTime::currentTime().toString( "hh:mm:ss.zzz" ) << QThread::currentThreadId() << "(ClientConnection::iteratorClose)";
 
-    DataStream stream( d->socket );
+    DataStream stream( socket() );
 
     stream.writeUnsignedInt16( COMMAND_ITERATOR_CLOSE );
     stream.writeUnsignedInt32( ( quint32 )id );
 
-    if ( !d->socket->waitForReadyRead(s_defaultTimeout) ) {
+    if ( !socket()->waitForReadyRead(s_defaultTimeout) ) {
         setError( "Command timed out." );
         return;
     }
@@ -654,13 +679,13 @@ bool Soprano::Client::ClientConnection::checkProtocolVersion()
 {
     QMutexLocker lock( &d->mutex );
 
-    DataStream stream( d->socket );
+    DataStream stream( socket() );
 
     stream.writeUnsignedInt16( COMMAND_SUPPORTS_PROTOCOL_VERSION );
     stream.writeUnsignedInt32( ( quint32 )PROTOCOL_VERSION );
 
     // wait for a reply, but not forever, in case we are connected to something unknown
-    if ( !d->socket->waitForReadyRead(s_defaultTimeout) ) {
+    if ( !socket()->waitForReadyRead(s_defaultTimeout) ) {
         setError( "Command timed out." );
         return false;
     }

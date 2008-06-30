@@ -24,18 +24,71 @@
 #include "clientmodel.h"
 
 #include <QtCore/QDir>
+#include <QtCore/QThread>
 #include <QtNetwork/QLocalSocket>
 
 Q_DECLARE_METATYPE( QLocalSocket::LocalSocketError )
 Q_DECLARE_METATYPE( QAbstractSocket::SocketError )
 Q_DECLARE_METATYPE( QAbstractSocket::SocketState )
 
+namespace Soprano {
+    namespace Client {
+        class LocalSocketClientConnection : public ClientConnection
+        {
+        public:
+            LocalSocketClientConnection( const QString& path, QObject* parent );
+            ~LocalSocketClientConnection();
+
+        protected:
+            QIODevice* newConnection();
+
+        private:
+            QString m_socketPath;
+        };
+
+        LocalSocketClientConnection::LocalSocketClientConnection( const QString& path, QObject* parent )
+            : ClientConnection( parent ),
+              m_socketPath( path )
+        {
+        }
+
+        LocalSocketClientConnection::~LocalSocketClientConnection()
+        {
+        }
+
+        QIODevice* LocalSocketClientConnection::newConnection()
+        {
+            clearError();
+            QString path( m_socketPath );
+            if ( path.isEmpty() ) {
+                path = QDir::homePath() + QLatin1String( "/.soprano/socket" );
+            }
+
+            QLocalSocket* socket = new QLocalSocket;
+            socket->connectToServer( path, QIODevice::ReadWrite );
+            if ( socket->waitForConnected() ) {
+                QObject::connect( socket, SIGNAL( error( QLocalSocket::LocalSocketError ) ),
+                                  parent(), SLOT( _s_localSocketError( QLocalSocket::LocalSocketError ) ) );
+                return socket;
+            }
+            else {
+                setError( socket->errorString() );
+                delete socket;
+                return 0;
+            }
+        }
+    }
+}
+
 
 class Soprano::Client::LocalSocketClient::Private
 {
 public:
-    ClientConnection connection;
-    QLocalSocket socket;
+    Private()
+        : connection( 0 ) {
+    }
+
+    LocalSocketClientConnection* connection;
 
     void _s_localSocketError( QLocalSocket::LocalSocketError );
 };
@@ -55,9 +108,6 @@ Soprano::Client::LocalSocketClient::LocalSocketClient( QObject* parent )
     qRegisterMetaType<QLocalSocket::LocalSocketError>();
     qRegisterMetaType<QAbstractSocket::SocketError>();
     qRegisterMetaType<QAbstractSocket::SocketState>();
-    QObject::connect( &d->socket, SIGNAL( error( QLocalSocket::LocalSocketError ) ),
-                      this, SLOT( _s_localSocketError( QLocalSocket::LocalSocketError ) ) );
-    d->connection.connect( &d->socket );
 }
 
 
@@ -70,25 +120,14 @@ Soprano::Client::LocalSocketClient::~LocalSocketClient()
 
 bool Soprano::Client::LocalSocketClient::connect( const QString& name )
 {
-    if ( !d->socket.isValid() ) {
-        QString path( name );
-        if ( path.isEmpty() ) {
-            path = QDir::homePath() + QLatin1String( "/.soprano/socket" );
-        }
-
-        d->socket.connectToServer( path, QIODevice::ReadWrite );
-        if ( !d->socket.waitForConnected() ) {
-            setError( d->socket.errorString() );
-            return false;
+    if ( !d->connection ) {
+        d->connection = new LocalSocketClientConnection( name, this );
+        if ( d->connection->checkProtocolVersion() ) {
+            return true;
         }
         else {
-            if ( !d->connection.checkProtocolVersion() ) {
-                disconnect();
-                return false;
-            }
-            else {
-                return true;
-            }
+            disconnect();
+            return false;
         }
     }
     else {
@@ -100,34 +139,44 @@ bool Soprano::Client::LocalSocketClient::connect( const QString& name )
 
 bool Soprano::Client::LocalSocketClient::isConnected() const
 {
-    return d->socket.isValid();
+    return d->connection != 0;
 }
 
 
 void Soprano::Client::LocalSocketClient::disconnect()
 {
-    d->socket.close();
+    delete d->connection;
+    d->connection = 0;
 }
 
 
 Soprano::Model* Soprano::Client::LocalSocketClient::createModel( const QString& name, const QList<BackendSetting>& settings )
 {
-    int modelId = d->connection.createModel( name, settings );
-    setError( d->connection.lastError() );
-    if ( modelId > 0 ) {
-        StorageModel* model = new ClientModel( 0, modelId, &d->connection );
-        return model;
+    if ( d->connection ) {
+        int modelId = d->connection->createModel( name, settings );
+        setError( d->connection->lastError() );
+        if ( modelId > 0 ) {
+            StorageModel* model = new ClientModel( 0, modelId, d->connection );
+            return model;
+        }
     }
     else {
-        return 0;
+        setError( "Not connected" );
     }
+
+    return 0;
 }
 
 
 void Soprano::Client::LocalSocketClient::removeModel( const QString& name )
 {
-    d->connection.removeModel( name );
-    setError( d->connection.lastError() );
+    if ( d->connection ) {
+        d->connection->removeModel( name );
+        setError( d->connection->lastError() );
+    }
+    else {
+        setError( "Not connected" );
+    }
 }
 
 #include "localsocketclient.moc"
