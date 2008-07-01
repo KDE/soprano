@@ -1,15 +1,22 @@
 /*
+ * This file is part of Soprano Project.
  *
- * $Id: sourceheader 511311 2006-02-19 14:51:05Z trueg $
+ * Copyright (C) 2007-2008 Sebastian Trueg <trueg@kde.org>
  *
- * This file is part of the Nepomuk KDE project.
- * Copyright (C) 2006-2007 Sebastian Trueg <trueg@kde.org>
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Library General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- * See the file "COPYING" for the exact licensing terms.
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Library General Public License for more details.
+ *
+ * You should have received a copy of the GNU Library General Public License
+ * along with this library; see the file COPYING.LIB.  If not, write to
+ * the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
+ * Boston, MA 02110-1301, USA.
  */
 
 #include "parsertest.h"
@@ -91,6 +98,32 @@ void ParserTest::testParser()
 //             Q_FOREACH( Statement s, testStatements ) {
 //                 QVERIFY( all.contains( s ) );
 //            }
+        }
+    }
+}
+
+
+void ParserTest::testEncoding()
+{
+    // FIXME: provide test data for all supported encodings (no big problem so far since we only have the raptor parser)
+
+    // parse both files, same content, different encodings and compare the results
+    const QString utf8File = SOPRANO_TEST_DATA_DIR"/rdf_xml-testdata-utf8.rdf";
+    const QString isoFile = SOPRANO_TEST_DATA_DIR"/rdf_xml-testdata-iso8859.rdf";
+
+    const Soprano::Parser* parser = PluginManager::instance()->discoverParserForSerialization( SerializationRdfXml );
+    if ( parser ) {
+        QList<Statement> utf8Statements = parser->parseFile( utf8File, QUrl(), SerializationRdfXml ).allStatements();
+        QList<Statement> isoStatements = parser->parseFile( isoFile, QUrl(), SerializationRdfXml ).allStatements();
+
+        // brute force comparision, time is not an issue, no need to get inventive. ;)
+        foreach( const Statement& s, utf8Statements ) {
+            if ( !isoStatements.contains( s ) ) qDebug() << s;
+            QVERIFY( isoStatements.contains( s ) );
+        }
+        foreach( const Statement& s, isoStatements ) {
+            if ( !utf8Statements.contains( s ) ) qDebug() << s;
+            QVERIFY( utf8Statements.contains( s ) );
         }
     }
 }

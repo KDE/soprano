@@ -47,6 +47,7 @@ private Q_SLOTS:
     void testRemoveStatementsSingle();
     void testRemoveStatementsMulti();
     void testPerformInference();
+    void testPerformInferenceMulti();
     void testClearInference();
     void testPerformance();
     void testRuleParser_data();

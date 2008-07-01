@@ -1,7 +1,7 @@
-/* 
+/*
  * This file is part of Soprano Project.
  *
- * Copyright (C) 2007-2008 Sebastian Trueg <strueg@mandriva.com>
+ * Copyright (C) 2008 Sebastian Trueg <trueg@kde.org>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -19,21 +19,31 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef SOPRANO_PARSER_TEST_H
-#define SOPRANO_PARSER_TEST_H
+#ifndef _LOCALSOCKET_MULTITHREAD_TEST_H_
+#define _LOCALSOCKET_MULTITHREAD_TEST_H_
 
-#include <QtCore/QObject>
+#include "multithreadingtest.h"
 
+namespace Soprano {
+    class Model;
+    namespace Client {
+        class LocalSocketClient;
+    }
+}
 
-class ParserTest: public QObject
+class LocalSocketMultiThreadingTest : public MultiThreadingTest
 {
     Q_OBJECT
 
-private Q_SLOTS:
-    void init();
-    void testParser_data();
-    void testParser();
-    void testEncoding();
+public:
+    LocalSocketMultiThreadingTest();
+
+protected:
+    virtual Soprano::Model* createModel();
+
+private:
+    Soprano::Client::LocalSocketClient* m_client;
+    int m_modelCounter;
 };
 
 #endif

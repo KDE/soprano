@@ -200,6 +200,53 @@ void InferenceModelTest::testPerformInference()
 }
 
 
+void InferenceModelTest::testPerformInferenceMulti()
+{
+    // F -> E -> D -> C -> B -> A
+    Statement fe( QUrl( "http://soprano.sf.net/test#F" ), Vocabulary::RDFS::subClassOf(), QUrl( "http://soprano.sf.net/test#E" ) );
+    Statement ed( QUrl( "http://soprano.sf.net/test#E" ), Vocabulary::RDFS::subClassOf(), QUrl( "http://soprano.sf.net/test#D" ) );
+    Statement dc( QUrl( "http://soprano.sf.net/test#D" ), Vocabulary::RDFS::subClassOf(), QUrl( "http://soprano.sf.net/test#C" ) );
+    Statement cb( QUrl( "http://soprano.sf.net/test#C" ), Vocabulary::RDFS::subClassOf(), QUrl( "http://soprano.sf.net/test#B" ) );
+    Statement ba( QUrl( "http://soprano.sf.net/test#B" ), Vocabulary::RDFS::subClassOf(), QUrl( "http://soprano.sf.net/test#A" ) );
+
+    // X -> B
+    // X -> A
+    Statement xb( QUrl( "http://soprano.sf.net/test#X" ), Vocabulary::RDFS::subClassOf(), QUrl( "http://soprano.sf.net/test#C" ) );
+    Statement xa( QUrl( "http://soprano.sf.net/test#X" ), Vocabulary::RDFS::subClassOf(), QUrl( "http://soprano.sf.net/test#A" ) );
+
+    // we throw them all in adn check the inference afterwards
+    m_model->addStatement( fe );
+    m_model->addStatement( ed );
+    m_model->addStatement( dc );
+    m_model->addStatement( cb );
+    m_model->addStatement( ba );
+    m_model->addStatement( xa );
+    m_model->addStatement( xb );
+
+    m_infModel->performInference();
+
+    // now check that we have all the inferred statements
+    QVERIFY( m_model->containsAnyStatement( Statement( QUrl( "http://soprano.sf.net/test#F" ), Vocabulary::RDFS::subClassOf(), QUrl( "http://soprano.sf.net/test#A" ) ) ) );
+    QVERIFY( m_model->containsAnyStatement( Statement( QUrl( "http://soprano.sf.net/test#F" ), Vocabulary::RDFS::subClassOf(), QUrl( "http://soprano.sf.net/test#B" ) ) ) );
+    QVERIFY( m_model->containsAnyStatement( Statement( QUrl( "http://soprano.sf.net/test#F" ), Vocabulary::RDFS::subClassOf(), QUrl( "http://soprano.sf.net/test#C" ) ) ) );
+    QVERIFY( m_model->containsAnyStatement( Statement( QUrl( "http://soprano.sf.net/test#F" ), Vocabulary::RDFS::subClassOf(), QUrl( "http://soprano.sf.net/test#D" ) ) ) );
+
+    QVERIFY( m_model->containsAnyStatement( Statement( QUrl( "http://soprano.sf.net/test#E" ), Vocabulary::RDFS::subClassOf(), QUrl( "http://soprano.sf.net/test#A" ) ) ) );
+    QVERIFY( m_model->containsAnyStatement( Statement( QUrl( "http://soprano.sf.net/test#E" ), Vocabulary::RDFS::subClassOf(), QUrl( "http://soprano.sf.net/test#B" ) ) ) );
+    QVERIFY( m_model->containsAnyStatement( Statement( QUrl( "http://soprano.sf.net/test#E" ), Vocabulary::RDFS::subClassOf(), QUrl( "http://soprano.sf.net/test#C" ) ) ) );
+
+    QVERIFY( m_model->containsAnyStatement( Statement( QUrl( "http://soprano.sf.net/test#D" ), Vocabulary::RDFS::subClassOf(), QUrl( "http://soprano.sf.net/test#A" ) ) ) );
+    QVERIFY( m_model->containsAnyStatement( Statement( QUrl( "http://soprano.sf.net/test#D" ), Vocabulary::RDFS::subClassOf(), QUrl( "http://soprano.sf.net/test#B" ) ) ) );
+
+    QVERIFY( m_model->containsAnyStatement( Statement( QUrl( "http://soprano.sf.net/test#C" ), Vocabulary::RDFS::subClassOf(), QUrl( "http://soprano.sf.net/test#A" ) ) ) );
+
+    QVERIFY( m_model->containsAnyStatement( Statement( QUrl( "http://soprano.sf.net/test#X" ), Vocabulary::RDFS::subClassOf(), QUrl( "http://soprano.sf.net/test#B" ) ) ) );
+
+    QTextStream s( stderr );
+    PluginManager::instance()->discoverSerializerForSerialization( SerializationNQuads )->serialize( m_model->listStatements(), s, SerializationNQuads );
+}
+
+
 void InferenceModelTest::testPerformance()
 {
     // F -> E -> D -> C -> B -> A

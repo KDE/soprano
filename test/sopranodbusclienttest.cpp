@@ -33,7 +33,7 @@ using namespace Soprano::Client;
 
 void SopranoDBusClientTest::initTestCase()
 {
-    m_client = new DBusClient();
+    m_client = new DBusClient;
     m_modelCnt = 0;
 }
 
