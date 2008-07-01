@@ -324,16 +324,34 @@ Soprano::Raptor::Parser::parseStream( QTextStream& stream,
         return StatementIterator();
     }
 
-    static const int bufSize = 100;
-    while ( !stream.atEnd() ) {
-        QString buf = stream.read( bufSize );
-        QByteArray utf8Data = buf.toUtf8();
-        if ( raptor_parse_chunk( parser, ( const unsigned char* )utf8Data.data(), utf8Data.length(), 0 ) ) {
-            raptor_free_parser( parser );
-            if ( raptorBaseUri ) {
-                raptor_free_uri( raptorBaseUri );
+    static const int bufSize = 1024;
+
+    // if possible let raptor do the decoding
+    if ( QIODevice* dev = stream.device() ) {
+        QByteArray buf( bufSize, 0 );
+        while ( !dev->atEnd() ) {
+            qint64 r = dev->read( buf.data(), buf.size() );
+            if ( r <= 0 ||
+                 raptor_parse_chunk( parser, ( const unsigned char* )buf.data(), r, 0 ) ) {
+                raptor_free_parser( parser );
+                if ( raptorBaseUri ) {
+                    raptor_free_uri( raptorBaseUri );
+                }
+                return StatementIterator();
             }
-            return StatementIterator();
+        }
+    }
+    else {
+        while ( !stream.atEnd() ) {
+            QString buf = stream.read( bufSize );
+            QByteArray utf8Data = buf.toUtf8();
+            if ( raptor_parse_chunk( parser, ( const unsigned char* )utf8Data.data(), utf8Data.length(), 0 ) ) {
+                raptor_free_parser( parser );
+                if ( raptorBaseUri ) {
+                    raptor_free_uri( raptorBaseUri );
+                }
+                return StatementIterator();
+            }
         }
     }
     raptor_parse_chunk( parser, 0, 0, 1 );
