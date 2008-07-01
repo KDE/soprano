@@ -677,4 +677,10 @@ bool Soprano::Client::ClientConnection::checkProtocolVersion()
     return reply;
 }
 
+
+bool Soprano::Client::ClientConnection::testConnection()
+{
+    return socket() != 0;
+}
+
 #include "clientconnection.moc"

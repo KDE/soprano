@@ -111,7 +111,8 @@ bool Soprano::Client::TcpClient::connect( const QHostAddress& address, int port 
 {
     if ( !d->connection ) {
         d->connection = new TcpClientConnection( address, port, this );
-        if ( d->connection->checkProtocolVersion() ) {
+        if ( d->connection->testConnection() &&
+             d->connection->checkProtocolVersion() ) {
             return true;
         }
         else {

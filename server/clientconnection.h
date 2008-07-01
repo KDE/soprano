@@ -82,6 +82,8 @@ namespace Soprano {
 
             bool checkProtocolVersion();
 
+            bool testConnection();
+
         protected:
             /**
              * Creates a new IODevice for communication.
