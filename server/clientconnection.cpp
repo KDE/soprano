@@ -49,7 +49,6 @@ class Soprano::Client::ClientConnection::Private
 public:
     QHash<QThread*, QIODevice*> socketHash;
     QMutex socketMutex;
-    QMutex mutex;
 };
 
 
@@ -101,7 +100,6 @@ void Soprano::Client::ClientConnection::slotThreadFinished()
 
 int Soprano::Client::ClientConnection::createModel( const QString& name, const QList<BackendSetting>& settings )
 {
-    QMutexLocker lock( &d->mutex );
     //qDebug() << this << QTime::currentTime().toString( "hh:mm:ss.zzz" ) << QThread::currentThreadId() << "(ClientConnection::createModel)";
 
     DataStream stream( socket() );
@@ -129,7 +127,6 @@ int Soprano::Client::ClientConnection::createModel( const QString& name, const Q
 
 void Soprano::Client::ClientConnection::removeModel( const QString& name )
 {
-    QMutexLocker lock( &d->mutex );
     //qDebug() << this << QTime::currentTime().toString( "hh:mm:ss.zzz" ) << QThread::currentThreadId() << "(ClientConnection::removeModel)";
 
     DataStream stream( socket() );
@@ -153,7 +150,6 @@ void Soprano::Client::ClientConnection::removeModel( const QString& name )
 
 Soprano::BackendFeatures Soprano::Client::ClientConnection::supportedFeatures()
 {
-    QMutexLocker lock( &d->mutex );
     //qDebug() << this << QTime::currentTime().toString( "hh:mm:ss.zzz" ) << QThread::currentThreadId() << "(ClientConnection::supportedFeatures)";
 
     DataStream stream( socket() );
@@ -179,7 +175,6 @@ Soprano::BackendFeatures Soprano::Client::ClientConnection::supportedFeatures()
 
 Soprano::Error::ErrorCode Soprano::Client::ClientConnection::addStatement( int modelId, const Statement &statement )
 {
-    QMutexLocker lock( &d->mutex );
     //qDebug() << this << QTime::currentTime().toString( "hh:mm:ss.zzz" ) << QThread::currentThreadId() << "(ClientConnection::addStatement)";
 
     DataStream stream( socket() );
@@ -206,7 +201,6 @@ Soprano::Error::ErrorCode Soprano::Client::ClientConnection::addStatement( int m
 
 int Soprano::Client::ClientConnection::listContexts( int modelId )
 {
-    QMutexLocker lock( &d->mutex );
     //qDebug() << this << QTime::currentTime().toString( "hh:mm:ss.zzz" ) << QThread::currentThreadId() << "(ClientConnection::listContexts)";
 
     DataStream stream( socket() );
@@ -232,7 +226,6 @@ int Soprano::Client::ClientConnection::listContexts( int modelId )
 
 int Soprano::Client::ClientConnection::executeQuery( int modelId, const QString &query, Query::QueryLanguage type, const QString& userQueryLanguage )
 {
-    QMutexLocker lock( &d->mutex );
     //qDebug() << this << QTime::currentTime().toString( "hh:mm:ss.zzz" ) << QThread::currentThreadId() << "(ClientConnection::executeQuery)";
 
     DataStream stream( socket() );
@@ -261,7 +254,6 @@ int Soprano::Client::ClientConnection::executeQuery( int modelId, const QString 
 
 int Soprano::Client::ClientConnection::listStatements( int modelId, const Statement &partial )
 {
-    QMutexLocker lock( &d->mutex );
     //qDebug() << this << QTime::currentTime().toString( "hh:mm:ss.zzz" ) << QThread::currentThreadId() << "(ClientConnection::listStatements)";
 
     DataStream stream( socket() );
@@ -288,7 +280,6 @@ int Soprano::Client::ClientConnection::listStatements( int modelId, const Statem
 
 Soprano::Error::ErrorCode Soprano::Client::ClientConnection::removeAllStatements( int modelId, const Statement &statement )
 {
-    QMutexLocker lock( &d->mutex );
     //qDebug() << this << QTime::currentTime().toString( "hh:mm:ss.zzz" ) << QThread::currentThreadId() << "(ClientConnection::removeAllStatements)";
 
     DataStream stream( socket() );
@@ -315,7 +306,6 @@ Soprano::Error::ErrorCode Soprano::Client::ClientConnection::removeAllStatements
 
 Soprano::Error::ErrorCode Soprano::Client::ClientConnection::removeStatement( int modelId, const Statement &statement )
 {
-    QMutexLocker lock( &d->mutex );
     //qDebug() << this << QTime::currentTime().toString( "hh:mm:ss.zzz" ) << QThread::currentThreadId() << "(ClientConnection::removeStatement)";
 
     DataStream stream( socket() );
@@ -342,7 +332,6 @@ Soprano::Error::ErrorCode Soprano::Client::ClientConnection::removeStatement( in
 
 int Soprano::Client::ClientConnection::statementCount( int modelId )
 {
-    QMutexLocker lock( &d->mutex );
     //qDebug() << this << QTime::currentTime().toString( "hh:mm:ss.zzz" ) << QThread::currentThreadId() << "(ClientConnection::statementCount)";
 
     DataStream stream( socket() );
@@ -368,7 +357,6 @@ int Soprano::Client::ClientConnection::statementCount( int modelId )
 
 bool Soprano::Client::ClientConnection::containsStatement( int modelId, const Statement &statement )
 {
-    QMutexLocker lock( &d->mutex );
     //qDebug() << this << QTime::currentTime().toString( "hh:mm:ss.zzz" ) << QThread::currentThreadId() << "(ClientConnection::containsStatement)";
 
     DataStream stream( socket() );
@@ -395,7 +383,6 @@ bool Soprano::Client::ClientConnection::containsStatement( int modelId, const St
 
 bool Soprano::Client::ClientConnection::containsAnyStatement( int modelId, const Statement &statement )
 {
-    QMutexLocker lock( &d->mutex );
     //qDebug() << this << QTime::currentTime().toString( "hh:mm:ss.zzz" ) << QThread::currentThreadId() << "(ClientConnection::containsAnyStatement)";
 
     DataStream stream( socket() );
@@ -422,7 +409,6 @@ bool Soprano::Client::ClientConnection::containsAnyStatement( int modelId, const
 
 bool Soprano::Client::ClientConnection::isEmpty( int modelId )
 {
-    QMutexLocker lock( &d->mutex );
     //qDebug() << this << QTime::currentTime().toString( "hh:mm:ss.zzz" ) << QThread::currentThreadId() << "(ClientConnection::isEmpty)";
 
     DataStream stream( socket() );
@@ -448,7 +434,6 @@ bool Soprano::Client::ClientConnection::isEmpty( int modelId )
 
 Soprano::Node Soprano::Client::ClientConnection::createBlankNode( int modelId )
 {
-    QMutexLocker lock( &d->mutex );
     //qDebug() << this << QTime::currentTime().toString( "hh:mm:ss.zzz" ) << QThread::currentThreadId() << "(ClientConnection::createBlankNode)";
 
     DataStream stream( socket() );
@@ -474,7 +459,6 @@ Soprano::Node Soprano::Client::ClientConnection::createBlankNode( int modelId )
 
 bool Soprano::Client::ClientConnection::iteratorNext( int id )
 {
-    QMutexLocker lock( &d->mutex );
     //qDebug() << this << QTime::currentTime().toString( "hh:mm:ss.zzz" ) << QThread::currentThreadId() << "(ClientConnection::iteratorNext)";
 
     DataStream stream( socket() );
@@ -500,7 +484,6 @@ bool Soprano::Client::ClientConnection::iteratorNext( int id )
 
 Soprano::Node Soprano::Client::ClientConnection::nodeIteratorCurrent( int id )
 {
-    QMutexLocker lock( &d->mutex );
     //qDebug() << this << QTime::currentTime().toString( "hh:mm:ss.zzz" ) << QThread::currentThreadId() << "(ClientConnection::nodeIteratorCurrent)";
 
     DataStream stream( socket() );
@@ -526,7 +509,6 @@ Soprano::Node Soprano::Client::ClientConnection::nodeIteratorCurrent( int id )
 
 Soprano::Statement Soprano::Client::ClientConnection::statementIteratorCurrent( int id )
 {
-    QMutexLocker lock( &d->mutex );
     //qDebug() << this << QTime::currentTime().toString( "hh:mm:ss.zzz" ) << QThread::currentThreadId() << "(ClientConnection::statementIteratorCurrent)";
 
     DataStream stream( socket() );
@@ -552,7 +534,6 @@ Soprano::Statement Soprano::Client::ClientConnection::statementIteratorCurrent( 
 
 Soprano::BindingSet Soprano::Client::ClientConnection::queryIteratorCurrent( int id )
 {
-    QMutexLocker lock( &d->mutex );
     //qDebug() << this << QTime::currentTime().toString( "hh:mm:ss.zzz" ) << QThread::currentThreadId() << "(ClientConnection::queryIteratorCurrent)";
 
     DataStream stream( socket() );
@@ -578,7 +559,6 @@ Soprano::BindingSet Soprano::Client::ClientConnection::queryIteratorCurrent( int
 
 Soprano::Statement Soprano::Client::ClientConnection::queryIteratorCurrentStatement( int id )
 {
-    QMutexLocker lock( &d->mutex );
     //qDebug() << this << QTime::currentTime().toString( "hh:mm:ss.zzz" ) << QThread::currentThreadId() << "(ClientConnection::queryIteratorCurrentStatement)";
 
     DataStream stream( socket() );
@@ -603,7 +583,6 @@ Soprano::Statement Soprano::Client::ClientConnection::queryIteratorCurrentStatem
 
 int Soprano::Client::ClientConnection::queryIteratorType( int id )
 {
-    QMutexLocker lock( &d->mutex );
     //qDebug() << this << QTime::currentTime().toString( "hh:mm:ss.zzz" ) << QThread::currentThreadId() << "(ClientConnection::queryIteratorType)";
 
     DataStream stream( socket() );
@@ -629,7 +608,6 @@ int Soprano::Client::ClientConnection::queryIteratorType( int id )
 
 bool Soprano::Client::ClientConnection::queryIteratorBoolValue( int id )
 {
-    QMutexLocker lock( &d->mutex );
     //qDebug() << this << QTime::currentTime().toString( "hh:mm:ss.zzz" ) << QThread::currentThreadId() << "(ClientConnection::queryIteratorBoolValue)";
 
     DataStream stream( socket() );
@@ -654,7 +632,6 @@ bool Soprano::Client::ClientConnection::queryIteratorBoolValue( int id )
 
 void Soprano::Client::ClientConnection::iteratorClose( int id )
 {
-    QMutexLocker lock( &d->mutex );
     //qDebug() << this << QTime::currentTime().toString( "hh:mm:ss.zzz" ) << QThread::currentThreadId() << "(ClientConnection::iteratorClose)";
 
     DataStream stream( socket() );
@@ -677,8 +654,6 @@ void Soprano::Client::ClientConnection::iteratorClose( int id )
 
 bool Soprano::Client::ClientConnection::checkProtocolVersion()
 {
-    QMutexLocker lock( &d->mutex );
-
     DataStream stream( socket() );
 
     stream.writeUnsignedInt16( COMMAND_SUPPORTS_PROTOCOL_VERSION );

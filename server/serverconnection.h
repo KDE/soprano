@@ -36,6 +36,7 @@ namespace Soprano {
     namespace Server {
 
         class ServerCore;
+        class ModelPool;
 
         class ServerConnection : public QObject
         {
@@ -48,7 +49,7 @@ namespace Soprano {
              * \param core The ServerCore that maintains all Models.
              * \param socket The connection socket.
              */
-            ServerConnection( ServerCore* core );
+            ServerConnection( ModelPool* pool, ServerCore* core );
             ~ServerConnection();
 
             void close();

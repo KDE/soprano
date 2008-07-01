@@ -44,6 +44,9 @@ namespace Soprano {
          * The %Soprano server supports more than one way of communication. Beside D-Bus (see
          * DBusClient) it can be contacted via a local socket.
          *
+         * Models creates by this client are thread-safe and provide faster access to the server
+         * than D-Bus communication.
+         *
          * \warning The LocalSocketClient does not support signals. Thus, the models created
          * by it will not emit signals such as Model::statementAdded.
          *

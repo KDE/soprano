@@ -16,6 +16,7 @@ set(soprano_server_SRC
   servercore.cpp
   serverconnection.h
   serverconnection.cpp
+  modelpool.cpp
   randomgenerator.cpp
   datastream.cpp
   dbus/dbusutil.cpp

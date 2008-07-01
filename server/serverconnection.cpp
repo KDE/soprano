@@ -26,6 +26,7 @@
 #include "socketdevice.h"
 #include "asyncmodel.h"
 #include "datastream.h"
+#include "modelpool.h"
 
 #include "queryresultiterator.h"
 #include "node.h"
@@ -55,10 +56,9 @@ class Soprano::Server::ServerConnection::Private
 {
 public:
     ServerCore* core;
+    ModelPool* modelPool;
     QIODevice* socket;
 
-    QHash<quint32, Model*> modelIdMap;
-    QHash<QString, quint32> modelNameMap;
     QHash<quint32, StatementIterator> openStatementIterators;
     QHash<quint32, NodeIterator> openNodeIterators;
     QHash<quint32, QueryResultIterator> openQueryIterators;
@@ -104,13 +104,14 @@ public:
 
 // do NOT use core as parent. Otherwise ~QObject will crash us
 // when we shut down the connections gracefully in ~ServerCore
-Soprano::Server::ServerConnection::ServerConnection( ServerCore* core )
+Soprano::Server::ServerConnection::ServerConnection( ModelPool* pool, ServerCore* core )
     : QObject( 0 ),
       d( new Private() )
 {
     d->q = this;
 
     d->core = core;
+    d->modelPool = pool;
     d->socket = 0;
 }
 
@@ -287,10 +288,7 @@ Soprano::Model* Soprano::Server::ServerConnection::Private::getModel()
 
     quint32 id = 0;
     if ( stream.readUnsignedInt32( id ) ) {
-        QHash<quint32, Model*>::iterator it = modelIdMap.find( id );
-        if ( it != modelIdMap.end() ) {
-            return *it;
-        }
+        return modelPool->modelById( id );
     }
     return 0;
 }
@@ -301,8 +299,7 @@ quint32 Soprano::Server::ServerConnection::Private::generateUniqueId()
     quint32 id = 0;
     do {
         id = RandomGenerator::instance()->randomInt();
-    } while ( modelIdMap.contains( id ) ||
-              openStatementIterators.contains( id ) ||
+    } while ( openStatementIterators.contains( id ) ||
               openNodeIterators.contains( id ) ||
               openQueryIterators.contains( id ) );
     return id;
@@ -345,21 +342,7 @@ void Soprano::Server::ServerConnection::Private::createModel()
 
     // for now we ignore the settings
 
-    quint32 id = 0;
-
-    // see if we already have that model
-    QHash<QString, quint32>::const_iterator it = modelNameMap.find( name );
-    if ( it != modelNameMap.end() ) {
-        id = *it;
-    }
-    else {
-        Model* model = core->model( name );
-        if ( model ) {
-            id = generateUniqueId();
-            modelIdMap.insert( id, model );
-            modelNameMap.insert( name, id );
-        }
-    }
+    quint32 id = modelPool->idForModelName( name );
 
     stream.writeUnsignedInt32( id );
     stream.writeError( Error::Error() );
@@ -377,9 +360,7 @@ void Soprano::Server::ServerConnection::Private::removeModel()
     QString name;
     stream.readString( name );
 
-    modelIdMap.remove( modelNameMap[name] );
-    modelNameMap.remove( name );
-
+    modelPool->removeModel( name );
     core->removeModel( name );
 
     stream.writeError( Error::Error() );

@@ -22,6 +22,7 @@
 #include "servercore.h"
 #include "serverconnection.h"
 #include "dbus/dbusserveradaptor.h"
+#include "modelpool.h"
 
 #include "soprano-server-config.h"
 
@@ -67,6 +68,9 @@ public:
     QTcpServer* tcpServer;
     QLocalServer* socketServer;
 
+    // bridge between ServerCore and ServerConnection
+    ModelPool* modelPool;
+
     BackendSettings createBackendSettings( const QString& name ) {
         BackendSettings newSettings = settings;
         for ( BackendSettings::iterator it = newSettings.begin();
@@ -105,6 +109,7 @@ Soprano::Server::ServerCore::ServerCore( QObject* parent )
 {
     // default backend
     d->backend = Soprano::usedBackend();
+    d->modelPool = new ModelPool( this );
 
     qRegisterMetaType<QLocalSocket::LocalSocketError>();
     qRegisterMetaType<QAbstractSocket::SocketError>();
@@ -115,6 +120,7 @@ Soprano::Server::ServerCore::~ServerCore()
 {
     qDeleteAll( d->connections );
     qDeleteAll( d->models );
+    delete d->modelPool;
     delete d;
 }
 
@@ -307,7 +313,7 @@ QStringList Soprano::Server::ServerCore::allModels() const
 void Soprano::Server::ServerCore::slotNewTcpConnection()
 {
     qDebug() << "(ServerCore) new tcp connection.";
-    ServerConnection* conn = new ServerConnection( this );
+    ServerConnection* conn = new ServerConnection( d->modelPool, this );
     d->connections.append( conn );
     connect( conn, SIGNAL(finished()), this, SLOT(serverConnectionFinished()));
     QTcpSocket* socket = d->tcpServer->nextPendingConnection();
@@ -320,7 +326,7 @@ void Soprano::Server::ServerCore::slotNewTcpConnection()
 void Soprano::Server::ServerCore::slotNewSocketConnection()
 {
     qDebug() << "(ServerCore) new socket connection.";
-    ServerConnection* conn = new ServerConnection( this );
+    ServerConnection* conn = new ServerConnection( d->modelPool, this );
     d->connections.append( conn );
     connect( conn, SIGNAL(finished()), this, SLOT(serverConnectionFinished()));
     QLocalSocket* socket = d->socketServer->nextPendingConnection();
