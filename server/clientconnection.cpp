@@ -77,7 +77,8 @@ QIODevice* Soprano::Client::ClientConnection::socket()
     else if ( QIODevice* socket = newConnection() ) {
         d->socketHash.insert( QThread::currentThread(), socket );
         connect( QThread::currentThread(), SIGNAL( finished() ),
-                 this, SLOT( slotThreadFinished() ) );
+                 this, SLOT( slotThreadFinished() ),
+                 Qt::DirectConnection );
         return socket;
     }
 
