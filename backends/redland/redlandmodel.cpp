@@ -184,6 +184,7 @@ Soprano::NodeIterator Soprano::Redland::RedlandModel::listContexts() const
     return it;
 }
 
+
 bool Soprano::Redland::RedlandModel::containsAnyStatement( const Statement &statement ) const
 {
     clearError();
@@ -234,8 +235,6 @@ Soprano::QueryResultIterator Soprano::Redland::RedlandModel::executeQuery( const
         d->readWriteLock.unlock();
         return QueryResultIterator();
     }
-
-    librdf_free_query( q );
 
     // we do not unlock d->readWriteLock here. That is done once the iterator closes
     RedlandQueryResult* result = new RedlandQueryResult( this, res );
