@@ -571,7 +571,7 @@ Soprano::Iterator<Soprano::Index::QueryHit> Soprano::Index::CLuceneIndex::search
         }
     }
     else {
-        setError( "Query object is null" );
+        setError( "Invalid CLucene query" );
         return Iterator<QueryHit>();
     }
 }
