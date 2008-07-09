@@ -349,47 +349,52 @@ int Soprano::Inference::InferenceModel::inferRule( const Rule& rule, bool recurs
         Statement inferedStatement = rule.bindEffect( *it );
 
         // we only add infered statements if they are not already present (in any named graph, aka. context)
-        if ( !parentModel()->containsAnyStatement( inferedStatement ) ) {
-            ++inferedStatementsCount;
+        if ( inferedStatement.isValid() ) {
+            if( !parentModel()->containsAnyStatement( inferedStatement ) ) {
+                ++inferedStatementsCount;
 
-            QUrl inferenceGraphUrl = createRandomUri();
+                QUrl inferenceGraphUrl = createRandomUri();
 
-            // write the actual infered statement
-            inferedStatement.setContext( inferenceGraphUrl );
-            parentModel()->addStatement( inferedStatement );
+                // write the actual infered statement
+                inferedStatement.setContext( inferenceGraphUrl );
+                parentModel()->addStatement( inferedStatement );
 
-            // write the metadata about the new inference graph into the inference metadata graph
-            // type of the new graph is sil:InferenceGraph
-            parentModel()->addStatement( Statement( inferenceGraphUrl,
-                                                    Vocabulary::RDF::type(),
-                                                    Vocabulary::SIL::InferenceGraph(),
-                                                    Vocabulary::SIL::InferenceMetaData() ) );
+                // write the metadata about the new inference graph into the inference metadata graph
+                // type of the new graph is sil:InferenceGraph
+                parentModel()->addStatement( Statement( inferenceGraphUrl,
+                                                        Vocabulary::RDF::type(),
+                                                        Vocabulary::SIL::InferenceGraph(),
+                                                        Vocabulary::SIL::InferenceMetaData() ) );
 
-            // add sourceStatements
-            QList<Statement> sourceStatements = rule.bindPreconditions( *it );
-            for ( QList<Statement>::const_iterator it = sourceStatements.constBegin();
-                  it != sourceStatements.constEnd(); ++it ) {
-                const Statement& sourceStatement = *it;
+                // add sourceStatements
+                QList<Statement> sourceStatements = rule.bindPreconditions( *it );
+                for ( QList<Statement>::const_iterator it = sourceStatements.constBegin();
+                      it != sourceStatements.constEnd(); ++it ) {
+                    const Statement& sourceStatement = *it;
 
-                if ( d->compressedStatements ) {
-                    // remember the statement through a checksum (well, not really a checksum for now ;)
-                    parentModel()->addStatement( Statement( inferenceGraphUrl,
-                                                            Vocabulary::SIL::sourceStatement(),
-                                                            compressStatement( sourceStatement ),
-                                                            Vocabulary::SIL::InferenceMetaData() ) );
+                    if ( d->compressedStatements ) {
+                        // remember the statement through a checksum (well, not really a checksum for now ;)
+                        parentModel()->addStatement( Statement( inferenceGraphUrl,
+                                                                Vocabulary::SIL::sourceStatement(),
+                                                                compressStatement( sourceStatement ),
+                                                                Vocabulary::SIL::InferenceMetaData() ) );
+                    }
+                    else {
+                        // remember the source statement as a source for our graph
+                        parentModel()->addStatement( Statement( inferenceGraphUrl,
+                                                                Vocabulary::SIL::sourceStatement(),
+                                                                storeUncompressedSourceStatement( sourceStatement ),
+                                                                Vocabulary::SIL::InferenceMetaData() ) );
+                    }
                 }
-                else {
-                    // remember the source statement as a source for our graph
-                    parentModel()->addStatement( Statement( inferenceGraphUrl,
-                                                            Vocabulary::SIL::sourceStatement(),
-                                                            storeUncompressedSourceStatement( sourceStatement ),
-                                                            Vocabulary::SIL::InferenceMetaData() ) );
+
+                if ( recurse ) {
+                    inferedStatementsCount += inferStatement( inferedStatement, true );
                 }
             }
-
-            if ( recurse ) {
-                inferedStatementsCount += inferStatement( inferedStatement, true );
-            }
+        }
+        else {
+            qDebug() << "Inferred statement is invalid (this is no error):" << inferedStatement;
         }
     }
 
