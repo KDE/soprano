@@ -614,8 +614,8 @@ int main( int argc, char *argv[] )
                 n4 = parseNode( args.arg( 4 ) );
             }
 
-            if ( !n1.isResource() && !n1.isEmpty() ) {
-                errStream << "Subject needs to be a resource node." << endl;
+            if ( n1.isLiteral() ) {
+                errStream << "Subject needs to be a resource or blank node." << endl;
                 delete model;
                 return 1;
             }
