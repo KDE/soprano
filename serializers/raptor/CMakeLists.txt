@@ -7,8 +7,16 @@ include_directories(
   ${soprano_core_SOURCE_DIR}
   ${soprano_raptor_serializer_BINARY_DIR}
   ${REDLAND_INCLUDE_DIR}
-  ${RASQAL_INCLUDE_DIR}
+  ${RAPTOR_INCLUDE_DIR}
 )
+
+include(CheckFunctionExists)
+set(CMAKE_REQUIRED_INCLUDES ${RAPTOR_INCLUDE_DIR})
+set(CMAKE_REQUIRED_LIBRARIES ${RAPTOR_LIBRARIES})
+check_function_exists( raptor_new_iostream_from_handler2 HAVE_IOSTREAM_HANDLER2 )
+if(HAVE_IOSTREAM_HANDLER2)
+  add_definitions(-DHAVE_IOSTREAM_HANDLER2)
+endif(HAVE_IOSTREAM_HANDLER2)
 
 set(raptor_serializer_SRC
   raptorserializer.cpp

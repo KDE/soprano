@@ -200,6 +200,20 @@ bool Soprano::Raptor::Serializer::serialize( StatementIterator it,
 
     bool success = true;
 
+#ifdef HAVE_IOSTREAM_HANDLER2
+    raptor_iostream_handler2 raptorStreamHandler = {
+        2,
+        0,
+        0,
+        raptorIOStreamWriteByte,
+        raptorIOStreamWriteBytes,
+        0,
+        0,
+        0
+    };
+    raptor_iostream* raptorStream = raptor_new_iostream_from_handler2( &stream,
+                                                                       &raptorStreamHandler );
+#else
     raptor_iostream_handler raptorStreamHandler = {
         0,
         0,
@@ -209,6 +223,7 @@ bool Soprano::Raptor::Serializer::serialize( StatementIterator it,
     };
     raptor_iostream* raptorStream = raptor_new_iostream_from_handler( &stream,
                                                                       &raptorStreamHandler );
+#endif
 
     if ( !raptorStream ) {
         qDebug() << "(Soprano::Raptor::Serializer) failed to create Raptor stream.";
@@ -236,11 +251,8 @@ bool Soprano::Raptor::Serializer::serialize( StatementIterator it,
         return false;
     }
 
-    librdf_uri* baseUri = librdf_new_uri( world.worldPtr(),
-                                          ( const unsigned char* )"http://soprano.org/FIXME/WhyDoesRaptorNeedABaseUri" );
-
     if ( librdf_serializer_serialize_stream_to_iostream( serializer,
-                                                         baseUri,
+                                                         0,
                                                          rdfStream,
                                                          raptorStream ) ) {
         qDebug() << "(Soprano::Raptor::Serializer) serialization failed.";
@@ -248,7 +260,6 @@ bool Soprano::Raptor::Serializer::serialize( StatementIterator it,
         success = false;
     }
 
-    librdf_free_uri( baseUri );
     librdf_free_stream( rdfStream );
     librdf_free_serializer( serializer );
 
