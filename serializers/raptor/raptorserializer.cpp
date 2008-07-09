@@ -80,7 +80,12 @@ int raptorIOStreamWriteByte( void* data, const int byte )
 {
     QTextStream* s = reinterpret_cast<QTextStream*>( data );
     // an int is not a byte. Strange raptor API!
-    ( *s ) << ( char )byte;
+    if( s->device() ) {
+        s->device()->putChar( (char)byte );
+    }
+    else {
+        ( *s ) << ( char )byte;
+    }
     return 0;
 }
 
@@ -92,8 +97,13 @@ int raptorIOStreamWriteBytes( void* data, const void* ptr, size_t size, size_t n
     switch( size ) {
     case 1: {
         const char* p = reinterpret_cast<const char*>( ptr );
-        for ( unsigned int i = 0; i < nmemb; ++i ) {
-            ( *s ) << p[i];
+        if( s->device() ) {
+            s->device()->write( p, nmemb );
+        }
+        else {
+            for ( unsigned int i = 0; i < nmemb; ++i ) {
+                raptorIOStreamWriteByte( data, p[i] );
+            }
         }
         break;
     }
@@ -165,7 +175,7 @@ bool Soprano::Raptor::Serializer::serialize( StatementIterator it,
     librdf_serializer* serializer = 0;
     if ( serialization == SerializationRdfXml ) {
         serializer = librdf_new_serializer( world.worldPtr(),
-                                            "rdfxml",
+                                            "rdfxml-abbrev", // we always want the abbreviated xmlrdf
                                             0,
                                             0 );
     }
@@ -227,7 +237,7 @@ bool Soprano::Raptor::Serializer::serialize( StatementIterator it,
     }
 
     librdf_uri* baseUri = librdf_new_uri( world.worldPtr(),
-                                          ( const unsigned char* )"http://soprano.org/FIXME/WeNeedABaseUriParameter" );
+                                          ( const unsigned char* )"http://soprano.org/FIXME/WhyDoesRaptorNeedABaseUri" );
 
     if ( librdf_serializer_serialize_stream_to_iostream( serializer,
                                                          baseUri,
