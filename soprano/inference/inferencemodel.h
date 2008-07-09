@@ -105,6 +105,10 @@ namespace Soprano {
              * is necessary call performInference() after adding the new rules.
              */
             void setRules( const QList<Rule>& rules );
+
+            using FilterModel::addStatement;
+            using FilterModel::removeStatement;
+            using FilterModel::removeAllStatements;
         
         public Q_SLOTS:
             /**

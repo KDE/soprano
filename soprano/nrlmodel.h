@@ -88,6 +88,8 @@ namespace Soprano {
          */
         Error::ErrorCode addStatement( const Statement& s );
 
+        using FilterModel::addStatement;
+
     private:
         class Private;
         Private* const d;

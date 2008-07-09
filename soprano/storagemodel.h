@@ -90,6 +90,10 @@ namespace Soprano {
          * \return The backend that was used to create this model.
          */
         const Backend* backend() const;
+
+        using Model::removeAllStatements;
+        using Model::containsStatement;
+        using Model::containsAnyStatement;
         
     protected:
         /**

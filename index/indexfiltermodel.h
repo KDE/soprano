@@ -221,6 +221,10 @@ namespace Soprano {
              */
             QList<QUrl> indexOnlyPredicates() const;
 
+            using FilterModel::addStatement;
+            using FilterModel::removeStatement;
+            using FilterModel::removeAllStatements;
+
         private:
             class Private;
             Private* const d;

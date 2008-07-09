@@ -106,6 +106,13 @@ namespace Soprano {
             bool containsAnyStatement( const Statement &statement ) const;
             Node createBlankNode();
 
+            using StorageModel::addStatement;
+            using StorageModel::removeStatement;
+            using StorageModel::removeAllStatements;
+            using StorageModel::listStatements;
+            using StorageModel::containsStatement;
+            using StorageModel::containsAnyStatement;
+
         private:
             class Private;
             Private* const d;

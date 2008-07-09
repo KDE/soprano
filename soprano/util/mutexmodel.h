@@ -100,6 +100,13 @@ namespace Soprano {
             bool isEmpty() const;
             int statementCount() const;
 
+            using FilterModel::addStatement;
+            using FilterModel::removeStatement;
+            using FilterModel::removeAllStatements;
+            using FilterModel::listStatements;
+            using FilterModel::containsStatement;
+            using FilterModel::containsAnyStatement;
+
         private:
             void removeIterator( MutexIteratorBase* it ) const;
 

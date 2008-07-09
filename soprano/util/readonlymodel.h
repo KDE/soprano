@@ -116,6 +116,13 @@ namespace Soprano {
              */
             Node createBlankNode();
 
+            using Model::addStatement;
+            using Model::removeStatement;
+            using Model::removeAllStatements;
+            using Model::listStatements;
+            using Model::containsStatement;
+            using Model::containsAnyStatement;
+
         private:
             class Private;
             Private* const d;
