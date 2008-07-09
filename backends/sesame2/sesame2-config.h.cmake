@@ -1,1 +1,1 @@
-#define SESAME2_CLASSPATH "${CMAKE_INSTALL_PREFIX}/share/soprano/sesame2/openrdf-sesame-2.1.2-onejar.jar:${CMAKE_INSTALL_PREFIX}/share/soprano/sesame2/slf4j-api-1.5.0.jar:${CMAKE_INSTALL_PREFIX}/share/soprano/sesame2/slf4j-simple-1.5.0.jar:${CMAKE_INSTALL_PREFIX}/share/soprano/sesame2/"
+#define SESAME2_CLASSPATH "${CMAKE_INSTALL_PREFIX}/share/soprano/sesame2/openrdf-sesame-2.1.2-onejar.jar:${CMAKE_INSTALL_PREFIX}/share/soprano/sesame2/slf4j-api-1.5.2.jar:${CMAKE_INSTALL_PREFIX}/share/soprano/sesame2/slf4j-simple-1.5.2.jar:${CMAKE_INSTALL_PREFIX}/share/soprano/sesame2/"
