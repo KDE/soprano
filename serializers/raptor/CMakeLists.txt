@@ -7,6 +7,7 @@ include_directories(
   ${soprano_core_SOURCE_DIR}
   ${soprano_raptor_serializer_BINARY_DIR}
   ${REDLAND_INCLUDE_DIR}
+  ${RASQAL_INCLUDE_DIR}
   ${RAPTOR_INCLUDE_DIR}
 )
 
