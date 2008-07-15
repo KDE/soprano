@@ -61,7 +61,7 @@ namespace Soprano {
      * }
      * \endcode
      *
-     * Also, Iterators have to be closed.
+     * Iterators have to be closed.
      * This can either be achieved by deleting the iterator, finishing it (next() does return \p false),
      * or calling close(). Before that other operations on the Model may block.
      *
