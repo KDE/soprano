@@ -138,6 +138,12 @@ QString writeComment( const QString& comment, int indent )
 }
 
 
+QString normalizeName( const QString& name )
+{
+    // TODO: add more invalid characters here
+    return QString( name ).replace( '-', QString() );
+}
+
 
 int main( int argc, char *argv[] )
 {
@@ -306,10 +312,10 @@ int main( int argc, char *argv[] )
     QUrl namespaceUri( normalizedResources.begin().key() );
     if ( namespaceUri.hasFragment() ) {
         namespaceUri.setFragment( QString() );
-        ontoNamespace = namespaceUri.toString() + "#";
+        ontoNamespace = namespaceUri.toString() + '#';
     }
     else {
-        ontoNamespace = namespaceUri.toString().section( "/", 0, -2 ) + "/";
+        ontoNamespace = namespaceUri.toString().section( "/", 0, -2 ) + '/';
     }
     qDebug() << "namespace: " << ontoNamespace;
     // ----------------------------------------------------
@@ -352,7 +358,7 @@ int main( int argc, char *argv[] )
     for( QMap<QString, QPair<QString, QString> >::const_iterator it = normalizedResources.begin();
          it != normalizedResources.end(); ++it ) {
         QString uri = it.key();
-        QString name = it.value().first;
+        QString name = normalizeName( it.value().first );
         QString comment = it.value().second;
 
         if ( comment.isEmpty() ) {
@@ -401,7 +407,7 @@ int main( int argc, char *argv[] )
     for( QMap<QString, QPair<QString, QString> >::const_iterator it = normalizedResources.begin();
          it != normalizedResources.end(); ++it ) {
         QString uri = it.key();
-        QString name = it.value().first;
+        QString name = normalizeName( it.value().first );
 
         sourceStream << createIndent( 2 ) << "  " << className.toLower() << "_" << name << "( QUrl::fromEncoded( \"" << uri << "\", QUrl::StrictMode ) )";
 
