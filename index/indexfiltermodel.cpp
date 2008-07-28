@@ -262,3 +262,9 @@ QList<QUrl> Soprano::Index::IndexFilterModel::indexOnlyPredicates() const
 {
     return d->indexOnlyPredicates.toList();
 }
+
+
+void Soprano::Index::IndexFilterModel::optimizeIndex()
+{
+    d->index->optimize();
+}

@@ -694,3 +694,9 @@ void Soprano::Index::CLuceneIndex::clear()
     }
     d->closeReader();
 }
+
+
+void Soprano::Index::CLuceneIndex::optimize()
+{
+    d->getIndexWriter()->optimize();
+}

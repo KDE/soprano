@@ -244,6 +244,14 @@ namespace Soprano {
              * \since 2.1
              */
             void clear();
+
+            /**
+             * Optimize the index for search. This makes sense after adding or
+             * removing a large number of statements.
+             *
+             * \since 2.2
+             */
+            void optimize();
             //@}
 
         private:

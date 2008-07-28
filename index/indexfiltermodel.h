@@ -179,6 +179,16 @@ namespace Soprano {
             void rebuildIndex();
 
             /**
+             * Optimize the index for search. This makes sense after adding or
+             * removing a large number of statements.
+             *
+             * \sa CLuceneIndex::optimize
+             *
+             * \since 2.2
+             */
+            void optimizeIndex();
+
+            /**
              * Add a predicate which should only be indexed. This might be useful
              * for very large literals whose value is of no interest but which
              * should be searchable.
