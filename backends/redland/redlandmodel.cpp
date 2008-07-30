@@ -438,22 +438,6 @@ int Soprano::Redland::RedlandModel::statementCount() const
     return size;
 }
 
-Soprano::Error::ErrorCode Soprano::Redland::RedlandModel::write( QTextStream &os ) const
-{
-    MultiMutexReadLocker lock( &d->readWriteLock );
-
-    clearError();
-
-    if ( unsigned char *serialized = librdf_model_to_string( d->model, 0, 0, 0, 0  ) ) {
-        os << ( const char* )serialized;
-        free( serialized );
-        return Error::ErrorNone;
-    }
-    else {
-        setError( d->world->lastError() );
-        return Error::ErrorUnknown;
-    }
-}
 
 Soprano::Node Soprano::Redland::RedlandModel::createBlankNode()
 {

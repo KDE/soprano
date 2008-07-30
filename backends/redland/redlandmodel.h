@@ -72,8 +72,6 @@ namespace Soprano {
 
             int statementCount() const;
 
-            Error::ErrorCode write( QTextStream &os ) const;
-
             Node createBlankNode();
 
         private:
