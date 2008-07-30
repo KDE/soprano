@@ -1,0 +1,17 @@
+The Soprano Sesame2 backend comes with the binary jars
+of Sesame2 and Slf4j. This simplifies the installation a
+lot since most Linux distributions do not ship Sesame2 yet.
+
+To limit the size of the Soprano source package the Sesame2
+and Slf4j sources are not bundled but can be downloaded from
+the following locations:
+
+slf4j-1.5.2.tar.gz
+  http://www.slf4j.org/dist/slf4j-1.5.2.tar.gz
+
+The Sesame2 sources are not bundled. They can be retrieved 
+from the Aduna SVN server:
+  http://repo.aduna-software.org/svn/org.openrdf/sesame/tags/2.1.3/
+
+
+Sebastian Trueg <trueg@kde.org>               30. July 2008
