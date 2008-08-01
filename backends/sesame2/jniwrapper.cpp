@@ -66,12 +66,14 @@ JNIWrapper* JNIWrapper::instance()
     if ( !s_instance ) {
         // prepare the VM options
         JavaVMInitArgs vmArgs;
-        JavaVMOption vmOptions[2];
+        JavaVMOption vmOptions[4];
         vmOptions[0].optionString = ( char* )"-Djava.class.path="SESAME2_CLASSPATH;
         vmOptions[1].optionString = ( char* )"-verbose:jni,gc,class";
+        vmOptions[2].optionString = ( char* )"-Xms256m";
+        vmOptions[3].optionString = ( char* )"-Xmx256m";
         vmArgs.version = JNI_VERSION_1_4;
         vmArgs.options = vmOptions;
-        vmArgs.nOptions = 2;
+        vmArgs.nOptions = 4;
 
         // create the VM
         JavaVM* jvm = 0;
