@@ -31,6 +31,8 @@ namespace Soprano
 {
     /**
      * Different types of RDF serialization.
+     *
+     * \sa serializationMimeType, mimeTypeToSerialization
      */
     // FIXME: what about the used charsets? Should we and if so, how should we include them?
     // FIXME: SerializationUnknown and SerializationUser should become the same, i.e. one should become deprecated

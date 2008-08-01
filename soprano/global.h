@@ -70,7 +70,7 @@ namespace Soprano {
      *  should never ignore settings but rather return 0 if an option is not supported. Backends can,
      * however, define their own default settings.
      *
-     * \sa Model, Backend::createModel
+     * \sa Model, Backend::createModel, BackendSetting
      */
     SOPRANO_EXPORT Model* createModel( const QList<BackendSetting>& settings = QList<BackendSetting>() );
 }
