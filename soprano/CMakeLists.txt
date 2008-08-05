@@ -91,6 +91,7 @@ SET(soprano_SRCS
   util/signalcachemodel.cpp
   util/readonlymodel.cpp
   util/asyncmodel.cpp
+  util/asyncresult.cpp
   util/asynccommand.cpp
   util/asynciteratorbackend.cpp
   )
@@ -166,4 +167,5 @@ INSTALL(FILES
   util/signalcachemodel.h
   util/readonlymodel.h
   util/asyncmodel.h
+  util/asyncresult.h
   DESTINATION include/soprano)
