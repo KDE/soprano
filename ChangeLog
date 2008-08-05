@@ -1,3 +1,7 @@
+2.2
+	* The AsyncModel now has a "real" asyncroneous mode which uses multiple threads to execute the
+	  commands.
+
 2.1
 	* SignalCacheModel to restrict the number of emitted statementsAdded and statementsRemoved signals
 	  in a certain timeframe.

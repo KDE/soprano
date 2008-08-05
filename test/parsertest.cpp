@@ -84,6 +84,14 @@ void ParserTest::testParser()
                 QVERIFY( all.contains( s ) );
             }
 
+            QFile file( filename );
+            file.open( QIODevice::ReadOnly );
+            QByteArray data = file.readAll();
+            QTextStream bs( data );
+            it = parser->parseStream( bs, QUrl("http://soprano.sf.net/testdata/"), serialization );
+            all = it.allStatements();
+            QCOMPARE( all.count(), testStatements.count() );
+
             // test serialization
 //             it = SimpleStatementIterator( testStatements );
 //             QString serializedData;

@@ -29,69 +29,139 @@
 
 namespace Soprano {
     namespace Util {
-        class AsyncQueryResultIteratorBackend : public QueryResultIteratorBackend, public AsyncIteratorBase
+        class AsyncQueryResultIteratorBackend : public QueryResultIteratorBackend, public AsyncIteratorBase<Soprano::BindingSet>
         {
         public:
             AsyncQueryResultIteratorBackend( AsyncModelPrivate* d, const QueryResultIterator& it )
-                : AsyncIteratorBase( d ),
-                  m_iterator( it ) {
+                : AsyncIteratorBase<BindingSet>( d, it ),
+                m_iterator( it ) {
+            }
+
+            // called in work thread
+            void initWorkThread() {
+                m_isGraph = m_iterator.isGraph();
+                m_isBinding = m_iterator.isBinding();
+                m_isBool = m_iterator.isBool();
+                if( m_isBool ) {
+                    m_boolVal = m_iterator.boolValue();
+                    m_iterator.close();
+                }
             }
 
             bool next() {
-                return m_iterator.next();
+                return AsyncIteratorBase<BindingSet>::getNext();
             }
             
             BindingSet current() const {
-                return m_iterator.current();
+                return AsyncIteratorBase<BindingSet>::getCurrent();
             }
             
             Statement currentStatement() const {
-                return m_iterator.currentStatement();
+                if( AsyncIteratorHandle::modelPrivate() && AsyncIteratorHandle::modelPrivate()->mode == AsyncModel::SingleThreaded )
+                    return m_iterator.currentStatement();
+                else
+                    return m_currentStatement;
             }
 
             Node binding( const QString& name ) const {
-                return m_iterator.binding( name );
+                if( AsyncIteratorHandle::modelPrivate() && AsyncIteratorHandle::modelPrivate()->mode == AsyncModel::SingleThreaded )
+                    return m_iterator.binding( name );
+                else
+                    return current()[ name ];
             }
 
             Node binding( int offset ) const {
-                return m_iterator.binding( offset );
+                if( AsyncIteratorHandle::modelPrivate() && AsyncIteratorHandle::modelPrivate()->mode == AsyncModel::SingleThreaded )
+                    return m_iterator.binding( offset );
+                else
+                    return current()[ offset ];
             }
 
             int bindingCount() const {
-                return m_iterator.bindingCount();
+                if( AsyncIteratorHandle::modelPrivate() && AsyncIteratorHandle::modelPrivate()->mode == AsyncModel::SingleThreaded )
+                    return m_iterator.bindingCount();
+                else
+                    return current().count();
             }
 
             QStringList bindingNames() const {
-                return m_iterator.bindingNames();
+                if( AsyncIteratorHandle::modelPrivate() && AsyncIteratorHandle::modelPrivate()->mode == AsyncModel::SingleThreaded )
+                    return m_iterator.bindingNames();
+                else
+                    return current().bindingNames();
             }
 
             bool isGraph() const {
-                return m_iterator.isGraph();
+                if( AsyncIteratorHandle::modelPrivate() && AsyncIteratorHandle::modelPrivate()->mode == AsyncModel::SingleThreaded )
+                    return m_iterator.isGraph();
+                else
+                    return m_isGraph;
             }
 
             bool isBinding() const {
-                return m_iterator.isBinding();
+                if( AsyncIteratorHandle::modelPrivate() && AsyncIteratorHandle::modelPrivate()->mode == AsyncModel::SingleThreaded )
+                    return m_iterator.isBinding();
+                else
+                    return m_isBinding;
             }
 
             bool isBool() const {
-                return m_iterator.isBool();
+                if( AsyncIteratorHandle::modelPrivate() && AsyncIteratorHandle::modelPrivate()->mode == AsyncModel::SingleThreaded )
+                    return m_iterator.isBool();
+                else
+                    return m_isBool;
             }
 
             bool boolValue() const {
-                return m_iterator.boolValue();
+                if( AsyncIteratorHandle::modelPrivate() && AsyncIteratorHandle::modelPrivate()->mode == AsyncModel::SingleThreaded )
+                    return m_iterator.boolValue();
+                else
+                    return m_boolVal;
             }
 
             void close() {
-                m_iterator.close();
-                remove();
+                AsyncIteratorBase<BindingSet>::closeIterator();
             }
 
             Error::Error lastError() const {
-                return m_iterator.lastError();
+                if( AsyncIteratorHandle::modelPrivate() && AsyncIteratorHandle::modelPrivate()->mode == AsyncModel::SingleThreaded )
+                    return m_iterator.lastError();
+                else
+                    return AsyncIteratorBase<BindingSet>::m_error;
             }
 
         private:
+            void enqueueCurrent() {
+                if( isGraph() )
+                    m_statementCache.enqueue( m_iterator.currentStatement() );
+                else if( isBinding() )
+                    AsyncIteratorBase<BindingSet>::enqueueCurrent();
+            }
+
+            void dequeueFirst() {
+                if( isGraph() )
+                    m_currentStatement = m_statementCache.dequeue();
+                else if( isBinding() )
+                    AsyncIteratorBase<BindingSet>::dequeueFirst();
+            }
+
+            int cacheFillState() const {
+                if( isGraph() )
+                    return m_statementCache.size();
+                else if( isBinding() )
+                    return AsyncIteratorBase<BindingSet>::cacheFillState();
+                else
+                    return 0;
+            }
+
             QueryResultIterator m_iterator;
+            bool m_isGraph;
+            bool m_isBinding;
+            bool m_isBool;
+            bool m_boolVal;
+
+            QQueue<Statement> m_statementCache;
+            Statement m_currentStatement;
         };
     }
 }

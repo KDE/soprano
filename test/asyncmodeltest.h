@@ -1,7 +1,7 @@
-/*
+/* 
  * This file is part of Soprano Project.
  *
- * Copyright (C) 2008 Sebastian Trueg <trueg@kde.org>
+ * Copyright (C) 2008 Sebastian Trueg <strueg@mandriva.com>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -19,36 +19,34 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#include "asynciteratorbackend.h"
-#include "asyncmodel_p.h"
+#ifndef SOPRANO_ASYNC_MODEL_TEST_H
+#define SOPRANO_ASYNC_MODEL_TEST_H
+
+#include <QtCore/QObject>
+
+#include "asyncmodel.h"
+#include "statement.h"
 
 
-Soprano::Util::AsyncIteratorHandle::AsyncIteratorHandle( AsyncModelPrivate* d )
-    : m_asyncModelPrivate( d )
+class AsyncModelTest: public QObject
 {
-    if ( d->mode == AsyncModel::SingleThreaded ) {
-        m_asyncModelPrivate->addIterator( this );
-    }
-}
+    Q_OBJECT
 
+private Q_SLOTS:
+    void initTestCase();
+    void testAddStatement();
+    void testCountStatements();
+    void testListStatements();
+    void testSelectQuery();
+    void testConstructQuery();
+    void testAskQuery();
+    void testListAndAdd();
+    void testMultiAdd();
 
-Soprano::Util::AsyncIteratorHandle::~AsyncIteratorHandle()
-{
-    remove();
-}
+private:
+    Soprano::Util::AsyncModel* m_asyncModel;
+    Soprano::Statement m_s1;
+    Soprano::Statement m_s2;
+};
 
-
-void Soprano::Util::AsyncIteratorHandle::setModelGone()
-{
-    m_asyncModelPrivate = 0;
-}
-
-
-void Soprano::Util::AsyncIteratorHandle::remove()
-{
-    if ( m_asyncModelPrivate ) {
-        if ( m_asyncModelPrivate->mode == AsyncModel::SingleThreaded )
-            m_asyncModelPrivate->removeIterator( this );
-        m_asyncModelPrivate = 0;
-    }
-}
+#endif

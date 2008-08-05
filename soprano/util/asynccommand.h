@@ -22,6 +22,8 @@
 #ifndef _SOPRANO_UTIL_ASYNC_COMMAND_H_
 #define _SOPRANO_UTIL_ASYNC_COMMAND_H_
 
+#include <QtCore/QRunnable>
+
 #include "asyncmodel.h"
 #include "statement.h"
 #include "node.h"
@@ -37,7 +39,7 @@ namespace Soprano {
 
         class AsyncModelPrivate;
 
-        class Command
+        class Command : public QRunnable
         {
         public:
             enum Type {
@@ -45,14 +47,21 @@ namespace Soprano {
                 WriteCommand
             };
 
-            Command( Type type );
+            Command( AsyncResult* result, Model* model, Type type );
             virtual ~Command();
 
             Type type() const { return m_type; }
+            AsyncResult* result() const { return m_result; }
+            Model* model() const { return m_model; }
 
-            virtual void execute( Model* ) = 0;
+            virtual void execute() = 0;
+
+            // reimplemented from QRunnable
+            void run() { execute(); }
 
         private:
+            AsyncResult* m_result;
+            Model* m_model;
             Type m_type;
         };
 
@@ -60,24 +69,18 @@ namespace Soprano {
         class StatementCountCommand : public Command
         {
         public:
-            StatementCountCommand( AsyncResult* result );
+            StatementCountCommand( AsyncResult* result, Model* model );
 
-            void execute( Model* );
-
-        private:
-            AsyncResult* m_result;
+            void execute();
         };
 
 
         class IsEmptyCommand : public Command
         {
         public:
-            IsEmptyCommand( AsyncResult* result );
+            IsEmptyCommand( AsyncResult* result, Model* model );
 
-            void execute( Model* );
-
-        private:
-            AsyncResult* m_result;
+            void execute();
         };
 
 
@@ -86,86 +89,71 @@ namespace Soprano {
         public:
             virtual ~StatementCommand() {}
 
-            Statement statement() const { return m_statement; }
+            Statement statement() const { return m_statements.first(); }
+            QList<Statement> statements() const { return m_statements; }
 
         protected:
-            StatementCommand( const Statement&, Type type );
+            StatementCommand( AsyncResult* result, Model* model, const Statement&, Type type );
+            StatementCommand( AsyncResult* result, Model* model, const QList<Statement>&, Type type );
 
         private:
-            Statement m_statement;
+            QList<Statement> m_statements;
         };
 
 
         class AddStatementCommand : public StatementCommand
         {
         public:
-            AddStatementCommand( AsyncResult* result, const Statement& );
+            AddStatementCommand( AsyncResult* result, Model* model, const QList<Statement>& );
 
-            void execute( Model* );
-
-        private:
-            AsyncResult* m_result;
+            void execute();
         };
 
 
         class RemoveStatementCommand : public StatementCommand
         {
         public:
-            RemoveStatementCommand( AsyncResult* result, const Statement& );
+            RemoveStatementCommand( AsyncResult* result, Model* model, const QList<Statement>& );
 
-            void execute( Model* );
-
-        private:
-            AsyncResult* m_result;
+            void execute();
         };
 
 
         class RemoveAllStatementsCommand : public StatementCommand
         {
         public:
-            RemoveAllStatementsCommand( AsyncResult* result, const Statement& );
+            RemoveAllStatementsCommand( AsyncResult* result, Model* model, const Statement& );
 
-            void execute( Model* );
-
-        private:
-            AsyncResult* m_result;
+            void execute();
         };
 
 
         class ContainsStatementCommand : public StatementCommand
         {
         public:
-            ContainsStatementCommand( AsyncResult* result, const Statement& );
+            ContainsStatementCommand( AsyncResult* result, Model* model, const Statement& );
 
-            void execute( Model* );
-
-        private:
-            AsyncResult* m_result;
+            void execute();
         };
 
 
         class ContainsAnyStatementCommand : public StatementCommand
         {
         public:
-            ContainsAnyStatementCommand( AsyncResult* result, const Statement& );
+            ContainsAnyStatementCommand( AsyncResult* result, Model* model, const Statement& );
 
-            void execute( Model* );
-
-        private:
-            AsyncResult* m_result;
+            void execute();
         };
 
 
         class ListStatementsCommand : public StatementCommand
         {
         public:
-            ListStatementsCommand( AsyncModelPrivate*, AsyncResult* result, const Statement& );
+            ListStatementsCommand( AsyncModelPrivate*, AsyncResult* result, Model* model, const Statement& );
 
-            void execute( Model* );
+            void execute();
 
         private:
-            AsyncResult* m_result;
-
             AsyncModelPrivate* m_asyncModelPrivate;
         };
 
@@ -173,13 +161,11 @@ namespace Soprano {
         class ListContextsCommand : public Command
         {
         public:
-            ListContextsCommand( AsyncModelPrivate*, AsyncResult* result );
+            ListContextsCommand( AsyncModelPrivate*, AsyncResult* result, Model* model );
 
-            void execute( Model* );
+            void execute();
 
         private:
-            AsyncResult* m_result;
-
             AsyncModelPrivate* m_asyncModelPrivate;
         };
 
@@ -187,13 +173,11 @@ namespace Soprano {
         class ExecuteQueryCommand : public Command
         {
         public:
-            ExecuteQueryCommand( AsyncModelPrivate*, AsyncResult* result, const QString&, Query::QueryLanguage lang, const QString& userQueryLang );
+            ExecuteQueryCommand( AsyncModelPrivate*, AsyncResult* result, Model* model, const QString&, Query::QueryLanguage lang, const QString& userQueryLang );
 
-            void execute( Model* );
+            void execute();
 
         private:
-            AsyncResult* m_result;
-
             QString m_query;
             Query::QueryLanguage m_queryLanguage;
             QString m_userQueryLanguage;
@@ -205,12 +189,9 @@ namespace Soprano {
         class CreateBlankNodeCommand : public Command
         {
         public:
-            CreateBlankNodeCommand( AsyncResult* result );
+            CreateBlankNodeCommand( AsyncResult* result, Model* model );
 
-            void execute( Model* );
-
-        private:
-            AsyncResult* m_result;
+            void execute();
         };
     }
 }

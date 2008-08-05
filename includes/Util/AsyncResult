@@ -1,1 +1,1 @@
-#include "../../soprano/asyncmodel.h"
+#include "../../soprano/asyncresult.h"

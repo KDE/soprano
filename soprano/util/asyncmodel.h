@@ -23,6 +23,8 @@
 #define _SOPRANO_ASYNC_MODEL_H_
 
 #include "filtermodel.h"
+#include "asyncresult.h" // backwards comp when AsyncResult was defined in this header
+
 #include "soprano_export.h"
 
 
@@ -36,67 +38,6 @@ namespace Soprano {
 
     namespace Util {
 
-        class AsyncModel;
-
-        /**
-         * \class AsyncResult asyncmodel.h Soprano/Util/AsyncResult
-         *
-         * \brief A delayed result as returned by AsyncModel.
-         *
-         * \author Sebastian Trueg <trueg@kde.org>
-         *
-         * \since 2.1
-         */
-        class SOPRANO_EXPORT AsyncResult : public QObject, public Error::ErrorCache
-        {
-            Q_OBJECT
-
-        Q_SIGNALS:
-            /**
-             * Emitted once the async operation is completed
-             * and the result can be read.
-             *
-             * The result will delete itself.
-             */
-            void resultReady( Soprano::Util::AsyncResult* );
-
-        public:
-            /**
-             * The result of the async operation. Its type is dependent
-             * on the operation (for example Error::ErrorCode for 
-             * AsyncModel::addStatementAsync or StatementIterator for 
-             * AsyncModel::listStatementsAsync). Types may need to be
-             * registered with Q_DECLARE_METATYPE.
-             *
-             * Use Error::ErrorCache::lastError() to check
-             * for error details.
-             *
-             * This value is not ready before resultReady()
-             * as been emitted.
-             */
-            QVariant value() const { return m_result; }
-
-            /** \cond internal_asyncresult_members */
-            /**
-             * Internal method. Do not call.
-             */
-            void setResult( const QVariant& result, const Error::Error& error ) {
-                m_result = result;
-                setError( error );
-                emit resultReady( this );
-                deleteLater();
-            }
-            /** \endcond */
-
-        private:
-            AsyncResult()
-                : QObject( 0 ) {}
-
-            QVariant m_result;
-
-            friend class AsyncModel;
-        };
-
         class AsyncModelPrivate;
 
         /**
@@ -105,8 +46,12 @@ namespace Soprano {
          * \brief Filter model that allows to perform operations
          * asyncroneously.
          *
-         * The main purpose is to protect a Model against deadlocks
-         * in a single threaded situation.
+         * AsyncModel has two modes: AsyncModel::SingleThreaded and AsyncModel::MultiThreaded.
+         * The main purpose of the AsyncModel::SingleThreaded mode is to protect a
+         * Model against deadlocks in a single threaded situation.
+         *
+         * AsyncModel::MultiThreaded mode provides real asyncroneous execution of
+         * Model commands.
          *
          * Usage:
          * \code
@@ -137,6 +82,46 @@ namespace Soprano {
             ~AsyncModel();
 
             /**
+             * The mode of the model, single vs. multi threaded execution.
+             *
+             * \since 2.2
+             */
+            enum AsyncModelMode {
+                /**
+                 * The model uses a single thread. Thus, commands are executed in the
+                 * same thread but no two commands will ever block each other.
+                 * This is the default mode for historical reasons.
+                 */
+                SingleThreaded,
+
+                /**
+                 * The model uses multiple threads through QThreadPool.
+                 * Commands are executed in parallel.
+                 * Be aware that the parent model needs to be thread-safe.
+                 */
+                MultiThreaded
+            };
+
+            /**
+             * Set the mode to be used. For historical reasons the default mode is
+             * SingleThreaded.
+             *
+             * \sa mode
+             *
+             * \since 2.2
+             */
+            void setMode( AsyncModelMode mode );
+
+            /**
+             * The mode used by this model.
+             *
+             * \sa setMode
+             *
+             * \since 2.2
+             */
+            AsyncModelMode mode() const;
+            
+            /**
              * Asyncroneously add the Statement to the Model.
              *
              * \param statement The Statement to add.
@@ -147,6 +132,20 @@ namespace Soprano {
              * object which will signal when the result is ready.
              */
             AsyncResult* addStatementAsync( const Statement& statement );
+
+            /**
+             * \overload
+             *
+             * \since 2.2
+             */
+            AsyncResult* addStatementAsync( const Node& subject, const Node& predicate, const Node& object, const Node& context = Node() );
+
+            /**
+             * \overload
+             *
+             * \since 2.2
+             */
+            AsyncResult* addStatementsAsync( const QList<Statement>& statements );
 
             /**
              * Asyncroneously remove one statement. For removing statements
@@ -163,6 +162,20 @@ namespace Soprano {
             AsyncResult* removeStatementAsync( const Statement& statement );
 
             /**
+             * \overload
+             *
+             * \since 2.2
+             */
+            AsyncResult* removeStatementAsync( const Node& subject, const Node& predicate, const Node& object, const Node& context = Node() );
+
+            /**
+             * \overload
+             *
+             * \since 2.2
+             */
+            AsyncResult* removeStatementsAsync( const QList<Statement>& statements );
+
+            /**
              * Asyncroneously remove all statements that match the partial statement.
              * For removing one specific statement see removeStatement().
              *
@@ -175,6 +188,13 @@ namespace Soprano {
              * object which will signal when the result is ready.
              */
             AsyncResult* removeAllStatementsAsync( const Statement& statement );
+
+            /**
+             * \overload
+             *
+             * \since 2.2
+             */
+            AsyncResult* removeAllStatementsAsync( const Node& subject, const Node& predicate, const Node& object, const Node& context = Node() );
 
             /**
              * Asyncroneously check if the Model does contain any Statement.
@@ -208,6 +228,22 @@ namespace Soprano {
              * object which will signal when the result is ready.
              */
             AsyncResult* listStatementsAsync( const Statement& statement ) const;
+
+            /**
+             * \overload
+             *
+             * \since 2.2
+             */
+            AsyncResult* listStatementsAsync( const Node& subject, const Node& predicate, const Node& object, const Node& context = Node() ) const;
+
+            /**
+             * \overload
+             *
+             * Lists all statements in the Model asyncroneously.
+             *
+             * \since 2.2
+             */
+            AsyncResult* listStatementsAsync() const;
 
             /**
              * Asyncroneously list all contexts in the model, i.e. all named graphs.
@@ -256,6 +292,13 @@ namespace Soprano {
             AsyncResult* containsStatementAsync( const Statement& statement ) const;
 
             /**
+             * \overload
+             *
+             * \since 2.2
+             */
+            AsyncResult* containsStatementAsync( const Node& subject, const Node& predicate, const Node& object, const Node& context = Node() ) const;
+
+            /**
              * Asyncroneously check if the model contains certain statements.
              *
              * \param statement A partially defined statement that serves as
@@ -269,6 +312,13 @@ namespace Soprano {
             AsyncResult* containsAnyStatementAsync( const Statement& statement ) const;
 
             /**
+             * \overload
+             *
+             * \since 2.2
+             */
+            AsyncResult* containsAnyStatementAsync( const Node& subject, const Node& predicate, const Node& object, const Node& context = Node() ) const;
+
+            /**
              * Asyncroneously create a new blank node with a unique identifier.
              *
              * \sa createBlankNode
@@ -277,6 +327,13 @@ namespace Soprano {
              * object which will signal when the result is ready.
              */
             AsyncResult* createBlankNodeAsync();
+
+            using FilterModel::addStatement;
+            using FilterModel::removeStatement;
+            using FilterModel::removeAllStatements;
+            using FilterModel::listStatements;
+            using FilterModel::containsStatement;
+            using FilterModel::containsAnyStatement;
 
         private:
             AsyncModelPrivate* const d;

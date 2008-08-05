@@ -1,7 +1,7 @@
 /*
  * This file is part of Soprano Project.
  *
- * Copyright (C) 2008 Sebastian Trueg <trueg@kde.org>
+ * Copyright (C) 2008 Sebastian Trueg <strueg@mandriva.com>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -19,44 +19,36 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef _SOPRANO_ASYNC_MODEL_PRIVATE_H_
-#define _SOPRANO_ASYNC_MODEL_PRIVATE_H_
+#ifndef _SOPRANO_ASYNC_RESULT_WAITER_H_
+#define _SOPRANO_ASYNC_RESULT_WAITER_H_
 
-#include "asyncmodel.h"
-#include "asynccommand.h"
-#include "iteratorbackend.h"
+#include <QtCore/QObject>
 
-#include <QtCore/QLinkedList>
-
+class QVariant;
 
 namespace Soprano {
     namespace Util {
 
-        class AsyncIteratorHandle;
+        class AsyncResult;
 
-        class AsyncModelPrivate
+        class AsyncResultWaiter : public QObject
         {
+            Q_OBJECT
+
         public:
-            AsyncModelPrivate( AsyncModel* parent );
-            ~AsyncModelPrivate();
+            ~AsyncResultWaiter();
 
-            AsyncModel::AsyncModelMode mode;
+            static QVariant waitForResult( AsyncResult* result );
 
-            QLinkedList<Command*> commandQueue;
-
-            // only used for single threaded mode
-            QList<AsyncIteratorHandle*> openIterators;
-
-            void addIterator( AsyncIteratorHandle* );
-            void removeIterator( AsyncIteratorHandle* );
-            void enqueueCommand( Command* );
-
-            void _s_executeNextCommand();
+        private Q_SLOTS:
+            void slotResultReady( Soprano::Util::AsyncResult* );
 
         private:
-            AsyncModel* m_model;
+            AsyncResultWaiter();
+
+            class Private;
+            Private* const d;
         };
     }
 }
-
 #endif

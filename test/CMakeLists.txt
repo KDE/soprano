@@ -191,3 +191,9 @@ target_link_libraries(sopranodbussignalspy sopranoclient ${QT_QTCORE_LIBRARY})
 qt4_automoc(serveroperatortest.cpp)
 add_executable(serveroperatortest serveroperatortest.cpp ../server/datastream.cpp)
 target_link_libraries(serveroperatortest soprano ${QT_QTCORE_LIBRARY} ${QT_QTTEST_LIBRARY})
+
+# async model test
+set(asyncmodeltest_SRC asyncresultwaiter.cpp asyncmodeltest.cpp)
+qt4_automoc(${asyncmodeltest_SRC})
+add_executable(asyncmodeltest ${asyncmodeltest_SRC})
+target_link_libraries(asyncmodeltest soprano ${QT_QTCORE_LIBRARY} ${QT_QTTEST_LIBRARY})
