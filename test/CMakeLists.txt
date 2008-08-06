@@ -101,7 +101,7 @@ add_test(inferencemodeltest ${EXECUTABLE_OUTPUT_PATH}/inferencemodeltest)
 #target_link_libraries(queryapitest soprano ${QT_QTCORE_LIBRARY} ${QT_QTTEST_LIBRARY})
 #add_test(queryapitest ${EXECUTABLE_OUTPUT_PATH}/queryapitest)
 
-if(JNI_1_6_FOUND)
+if(JNI_1_4_FOUND)
   # Sesame2 model tests
   qt4_automoc(sesame2backendtest sesame2backendtest.cpp)
   add_executable(sesame2backendtest sesame2backendtest.cpp)
@@ -112,7 +112,7 @@ if(JNI_1_6_FOUND)
   add_executable(sesame2multithreadtest sesame2multithreadtest.cpp)
   target_link_libraries(sesame2multithreadtest soprano multithreadingtest ${QT_QTCORE_LIBRARY} ${QT_QTTEST_LIBRARY})
   add_test(sesame2multithreadtest ${EXECUTABLE_OUTPUT_PATH}/sesame2multithreadtest)
-endif(JNI_1_6_FOUND)
+endif(JNI_1_4_FOUND)
 
 # parser test
 qt4_automoc(parsertest parsertest.cpp)

@@ -4,6 +4,6 @@ if(REDLAND_FOUND)
   add_subdirectory(redland)
 endif(REDLAND_FOUND)
 
-if(JNI_1_6_FOUND)
+if(JNI_1_4_FOUND)
   add_subdirectory(sesame2)
-endif(JNI_1_6_FOUND)
+endif(JNI_1_4_FOUND)
