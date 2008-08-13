@@ -41,7 +41,7 @@ namespace Soprano {
             BackendPlugin();
             ~BackendPlugin();
 
-            StorageModel* createModel( const QList<BackendSetting>& settings = QList<BackendSetting>() ) const;
+            StorageModel* createModel( const BackendSettings& settings = BackendSettings() ) const;
 
             bool deleteModelData( const BackendSettings& settings ) const;
 

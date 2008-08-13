@@ -63,7 +63,7 @@ bool Soprano::Sesame2::BackendPlugin::isAvailable() const
 }
 
 
-Soprano::StorageModel* Soprano::Sesame2::BackendPlugin::createModel( const QList<BackendSetting>& settings ) const
+Soprano::StorageModel* Soprano::Sesame2::BackendPlugin::createModel( const BackendSettings& settings ) const
 {
     m_mutex.lock();
     if ( !m_jniWrapper ) {
