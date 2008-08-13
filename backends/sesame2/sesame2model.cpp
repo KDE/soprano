@@ -86,7 +86,7 @@ Soprano::Error::ErrorCode Soprano::Sesame2::Model::addStatement( const Statement
         }
         d->repository->repositoryConnection()->addStatement( sesameStatement );
         if ( JNIWrapper::instance()->exceptionOccured() ) {
-            qDebug() << "(Soprano::Sesame2::Model::addStatements) failed.";
+            qDebug() << "(Soprano::Sesame2::Model::addStatements) failed to add statement" << statement;
             setError( JNIWrapper::instance()->convertAndClearException() );
             d->readWriteLock.unlock();
             return Error::ErrorUnknown;

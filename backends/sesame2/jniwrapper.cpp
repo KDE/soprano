@@ -69,8 +69,8 @@ JNIWrapper* JNIWrapper::instance()
         JavaVMOption vmOptions[4];
         vmOptions[0].optionString = ( char* )"-Djava.class.path="SESAME2_CLASSPATH;
         vmOptions[1].optionString = ( char* )"-verbose:jni,gc,class";
-        vmOptions[2].optionString = ( char* )"-Xms256m";
-        vmOptions[3].optionString = ( char* )"-Xmx256m";
+        vmOptions[2].optionString = ( char* )"-Xms128m";
+        vmOptions[3].optionString = ( char* )"-Xmx128m";
         vmArgs.version = JNI_VERSION_1_4;
         vmArgs.options = vmOptions;
         vmArgs.nOptions = 4;
@@ -119,6 +119,7 @@ void JNIWrapper::slotThreadFinished()
     QObject* o = sender();
     if ( o == QThread::currentThread() ) {
         qDebug() << "Detaching thread" << QThread::currentThread();
+        // commented since it makes soprano crash
 //        d->jvm->DetachCurrentThread();
         d->jniEnvMap.remove( QThread::currentThread() );
     }

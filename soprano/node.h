@@ -306,4 +306,6 @@ SOPRANO_EXPORT QDebug operator<<( QDebug s, const Soprano::Node& );
  */
 SOPRANO_EXPORT QTextStream& operator<<( QTextStream& s, const Soprano::Node& );
 
+Q_DECLARE_TYPEINFO(Soprano::Node, Q_MOVABLE_TYPE);
+
 #endif // SOPRANO_NODE_H

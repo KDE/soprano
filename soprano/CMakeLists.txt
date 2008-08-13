@@ -80,6 +80,7 @@ SET(soprano_SRCS
   inifile.cpp
   desktopfile.cpp
   sopranopluginfile.cpp
+  transaction.cpp
   util/extreadwritelock.cpp
   util/mutexmodel.cpp
   util/mutexstatementiteratorbackend.cpp
@@ -94,6 +95,9 @@ SET(soprano_SRCS
   util/asyncresult.cpp
   util/asynccommand.cpp
   util/asynciteratorbackend.cpp
+  util/simpletransactionmodel.cpp
+  util/simpletransaction.cpp
+  util/simpletransactionstatementiteratorbackend.cpp
   )
 
 qt4_automoc(${soprano_SRCS})
@@ -103,8 +107,8 @@ ADD_LIBRARY(soprano SHARED ${soprano_SRCS})
 TARGET_LINK_LIBRARIES(soprano ${QT_QTCORE_LIBRARY})
 
 set_target_properties(soprano PROPERTIES
-  VERSION 4.1.0
-  SOVERSION 4
+  VERSION 5.0.0
+  SOVERSION 5
   DEFINE_SYMBOL MAKE_SOPRANO_LIB
   INSTALL_NAME_DIR ${LIB_DESTINATION}
   )
@@ -141,6 +145,7 @@ INSTALL(FILES
   sopranotypes.h
   iterator.h
   iteratorbackend.h
+  transaction.h
   vocabulary/rdf.h
   vocabulary/rdfs.h
   vocabulary/xsd.h
@@ -168,4 +173,5 @@ INSTALL(FILES
   util/readonlymodel.h
   util/asyncmodel.h
   util/asyncresult.h
+  util/simpletransactionmodel.h
   DESTINATION include/soprano)

@@ -33,21 +33,12 @@ SopranodCore::~SopranodCore()
 }
 
 
-Soprano::Model* SopranodCore::createModel( const QList<Soprano::BackendSetting>& settings )
+Soprano::Model* SopranodCore::createModel( const Soprano::BackendSettings& settings ) const
 {
 #ifdef SOPRANO_BUILD_INDEX_LIB
     if ( m_withIndex ) {
         if ( Soprano::Model* m = ServerCore::createModel( settings ) ) {
-            QString dir;
-            for ( QList<Soprano::BackendSetting>::const_iterator it = settings.begin();
-                  it != settings.end(); ++it ) {
-                const Soprano::BackendSetting& setting = *it;
-                if ( setting.option() == Soprano::BackendOptionStorageDir ) {
-                    dir = setting.value().toString() + "/index";
-                    break;
-                }
-            }
-
+            QString dir = settings.value( Soprano::BackendOptionStorageDir ).toString() + "/index";
             Soprano::Index::CLuceneIndex* index = new Soprano::Index::CLuceneIndex();
             QDir().mkpath( dir );
             if ( !index->open( dir, true ) ) {

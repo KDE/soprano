@@ -28,7 +28,7 @@
 
 #include <QtCore/QObject>
 
-class QTextStream;
+class QIODevice;
 
 
 namespace Soprano
@@ -51,10 +51,10 @@ namespace Soprano
      * Soprano::Serializer* s = Soprano::PluginManager::instance()->discoverSerializerForSerialization( Soprano::SerializationRdfXml );
      * \endcode
      *
-     * Then serializing RDF data is done in a single method call which writes the serialized data to a QTextStream:
+     * Then serializing RDF data is done in a single method call which writes the serialized data to a QDataStream:
      *
      * \code
-     * QTextStream stream( stdout );
+     * QDataStream stream( stdout );
      * s->serialize( model->listStatements(), stream, Soprano::SerializationRdfXml );
      * \endcode
      *
@@ -103,7 +103,7 @@ namespace Soprano
          * Serialize a list of statements.
          *
          * \param it An iterator containing the statements to be serialized.
-         * \param stream The stream the serialized data should be written to.
+         * \param device The device the serialized data should be written to.
          * \param serialization The encoding to be used.
          * \param userSerialization If serialization is set to Soprano::SerializationUser this parameter specifies the
          *       serialization to use. It allows the extension of the %Soprano Serializer interface with new
@@ -111,7 +111,9 @@ namespace Soprano
          *
          * \return \p true if the %serialization was successful,  false otherwise.
          */
-        virtual bool serialize( StatementIterator it, QTextStream& stream, RdfSerialization serialization, const QString& userSerialization = QString() ) const = 0;
+        virtual bool serialize( StatementIterator it, QIODevice* device, RdfSerialization serialization, const QString& userSerialization = QString() ) const = 0;
+
+        // TODO: serializeToString, serializeToFile
 
     protected:
         Serializer( const QString& name );
@@ -122,7 +124,7 @@ namespace Soprano
     };
 }
 
-Q_DECLARE_INTERFACE(Soprano::Serializer, "org.soprano.plugins.Serializer/1.0")
+Q_DECLARE_INTERFACE(Soprano::Serializer, "org.soprano.plugins.Serializer/2.0")
 
 #endif
 

@@ -56,7 +56,7 @@ Soprano::Redland::BackendPlugin::BackendPlugin()
 }
 
 
-Soprano::StorageModel* Soprano::Redland::BackendPlugin::createModel( const QList<BackendSetting>& settings ) const
+Soprano::StorageModel* Soprano::Redland::BackendPlugin::createModel( const BackendSettings& settings ) const
 {
     QMutexLocker lock( &m_mutex );
 

@@ -1,7 +1,7 @@
 /* 
  * This file is part of Soprano Project
  *
- * Copyright (C) 2007 Sebastian Trueg <trueg@kde.org>
+ * Copyright (C) 2007-2008 Sebastian Trueg <trueg@kde.org>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -33,23 +33,23 @@
 namespace Soprano {
     class NQuadSerializer : public QObject, public Soprano::Serializer
     {
-    Q_OBJECT
-    Q_INTERFACES(Soprano::Serializer)
+        Q_OBJECT
+        Q_INTERFACES(Soprano::Serializer)
 
     public:
-    NQuadSerializer();
-    ~NQuadSerializer();
+        NQuadSerializer();
+        ~NQuadSerializer();
 
-    RdfSerializations supportedSerializations() const;
+        RdfSerializations supportedSerializations() const;
 
-    bool serialize( StatementIterator it, 
-            QTextStream& stream, 
-            RdfSerialization serialization,
-            const QString& userSerialization = QString() ) const;
+        bool serialize( StatementIterator it, 
+                        QIODevice* stream, 
+                        RdfSerialization serialization,
+                        const QString& userSerialization = QString() ) const;
 
     private:
-    void serializeStatement( const Statement& s, QTextStream& stream ) const;
-    void serializeNode( const Node& node, QTextStream& stream ) const;
+        void serializeStatement( const Statement& s, QTextStream& stream ) const;
+        void serializeNode( const Node& node, QTextStream& stream ) const;
     };
 }
 

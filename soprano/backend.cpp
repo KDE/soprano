@@ -107,6 +107,95 @@ void Soprano::BackendSetting::setValue( const QVariant& value )
 }
 
 
+Soprano::BackendSettings::BackendSettings()
+    : QList<BackendSetting>()
+{
+}
+
+
+Soprano::BackendSettings::BackendSettings( const BackendSettings& other )
+    : QList<BackendSetting>( other )
+{
+}
+
+
+Soprano::BackendSettings::BackendSettings( const BackendSetting& setting )
+    : QList<BackendSetting>()
+{
+    append( setting );
+}
+
+
+Soprano::BackendSettings::BackendSettings( const QList<BackendSetting>& settings )
+    : QList<BackendSetting>( settings )
+{
+}
+
+
+bool Soprano::BackendSettings::hasOption( BackendOption option, const QString& userOptionName ) const
+{
+    QList<Soprano::BackendSetting>::const_iterator end = constEnd();
+    for ( QList<Soprano::BackendSetting>::const_iterator it = constBegin(); it != end; ++it ) {
+        const Soprano::BackendSetting& setting = *it;
+        if ( setting.option() == option ) {
+            if ( option == BackendOptionUser ) {
+                if ( setting.userOptionName() == userOptionName )
+                    return true;
+            }
+            else {
+                return true;
+            }
+        }
+    }
+    return false;
+}
+
+
+Soprano::BackendSetting& Soprano::BackendSettings::setting( BackendOption option, const QString& userOptionName )
+{
+    QList<Soprano::BackendSetting>::iterator end = this->end();
+    for ( QList<Soprano::BackendSetting>::iterator it = begin(); it != end; ++it ) {
+        Soprano::BackendSetting& setting = *it;
+        if ( setting.option() == option ) {
+            if ( option == BackendOptionUser ) {
+                if ( setting.userOptionName() == userOptionName )
+                    return setting;
+            }
+            else {
+                return setting;
+            }
+        }
+    }
+    static BackendSetting s_dummy;
+    return s_dummy;
+}
+
+
+Soprano::BackendSetting Soprano::BackendSettings::setting( BackendOption option, const QString& userOptionName ) const
+{
+    QList<Soprano::BackendSetting>::const_iterator end = constEnd();
+    for ( QList<Soprano::BackendSetting>::const_iterator it = constBegin(); it != end; ++it ) {
+        const Soprano::BackendSetting& setting = *it;
+        if ( setting.option() == option ) {
+            if ( option == BackendOptionUser ) {
+                if ( setting.userOptionName() == userOptionName )
+                    return setting;
+            }
+            else {
+                return setting;
+            }
+        }
+    }
+    return BackendSetting();
+}
+
+
+QVariant Soprano::BackendSettings::value( BackendOption option, const QString& userOptionName ) const
+{
+    return setting( option, userOptionName ).value();
+}
+
+
 class Soprano::Backend::Private
 {
 public:

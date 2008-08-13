@@ -2,7 +2,7 @@
  * This file is part of Soprano Project
  *
  * Copyright (C) 2006 Duncan Mac-Vicar <duncan@kde.org>
- * Copyright (C) 2007 Sebastian Trueg <trueg@kde.org>
+ * Copyright (C) 2007-2008 Sebastian Trueg <trueg@kde.org>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -34,38 +34,30 @@
 
 namespace Soprano {
     namespace Raptor {
-    class Parser : public QObject, public Soprano::Parser
-    {
-        Q_OBJECT
-        Q_INTERFACES(Soprano::Parser)
+        class Parser : public QObject, public Soprano::Parser
+        {
+            Q_OBJECT
+            Q_INTERFACES(Soprano::Parser)
 
-    public:
-        Parser();
-        ~Parser();
+        public:
+            Parser();
+            ~Parser();
 
-        RdfSerializations supportedSerializations() const;
+            RdfSerializations supportedSerializations() const;
 
-        StatementIterator parseFile( const QString& filename, 
-                     const QUrl& baseUri, 
-                     RdfSerialization serialization,
-                     const QString& userSerialization = QString() ) const;
-        StatementIterator parseString( const QString& data, 
-                       const QUrl& baseUri, 
-                       RdfSerialization serialization,
-                       const QString& userSerialization = QString() ) const;
-        StatementIterator parseStream( QTextStream&, 
-                       const QUrl& baseUri, 
-                       RdfSerialization serialization,
-                       const QString& userSerialization = QString() ) const;
+            StatementIterator parse( QIODevice*, 
+                                     const QUrl& baseUri, 
+                                     RdfSerialization serialization,
+                                     const QString& userSerialization = QString() ) const;
 
-        void setError( const Soprano::Error::Error& error ) const;
+            void setError( const Soprano::Error::Error& error ) const;
 
-    private:
-        raptor_parser* createParser( RdfSerialization serialization,
-                     const QString& userSerialization = QString() ) const;
+        private:
+            raptor_parser* createParser( RdfSerialization serialization,
+                                         const QString& userSerialization = QString() ) const;
 
-        mutable QMutex m_mutex;
-    };
+            mutable QMutex m_mutex;
+        };
     }
 }
 

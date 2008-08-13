@@ -34,31 +34,19 @@ class Soprano::Model::Private
 public:
 };
 
+
 Soprano::Model::Model()
     : QObject( 0 ),
-      Error::ErrorCache(),
-      d( new Private() )
-{
-}
-
-Soprano::Model::~Model()
-{
-    delete d;
-}
-
-// private no-op constructor not meant to be used
-Soprano::Model::Model( const Model& )
-    : QObject(),
       Error::ErrorCache(),
       d( 0 )
 {
 }
 
 
-// private no-op operator not meant to be used
-Soprano::Model& Soprano::Model::operator=( const Model& )
+Soprano::Model::~Model()
 {
-    return *this;
+    // enable once d-pointer is used
+//    delete d;
 }
 
 
@@ -161,6 +149,13 @@ Soprano::Error::ErrorCode Soprano::Model::write( QTextStream &os ) const
         os << *it << endl;
     }
     return Error::ErrorNone;
+}
+
+
+Soprano::Transaction* Soprano::Model::startTransaction()
+{
+    setError( "No transaction support in default Model.", Error::ErrorNotSupported );
+    return 0;
 }
 
 #include "model.moc"

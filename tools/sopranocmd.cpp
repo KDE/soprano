@@ -171,9 +171,7 @@ static bool exportFile( Soprano::StatementIterator data, const QString& fileName
             return false;
         }
 
-        QTextStream s( &file );
-
-        if ( serializer->serialize( data, s, Soprano::mimeTypeToSerialization( serialization ), serialization ) ) {
+        if ( serializer->serialize( data, &file, Soprano::mimeTypeToSerialization( serialization ), serialization ) ) {
             QTextStream s( stdout );
             s << "Successfully exported model." << endl;
             return true;

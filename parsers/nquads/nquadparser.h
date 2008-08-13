@@ -1,7 +1,7 @@
 /* 
  * This file is part of Soprano Project
  *
- * Copyright (C) 2007 Sebastian Trueg <trueg@kde.org>
+ * Copyright (C) 2007-2008 Sebastian Trueg <trueg@kde.org>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -33,23 +33,23 @@
 namespace Soprano {
     class NQuadParser : public QObject, public Soprano::Parser
     {
-    Q_OBJECT
+        Q_OBJECT
         Q_INTERFACES(Soprano::Parser)
         
     public:
-    NQuadParser();
-    ~NQuadParser();
+        NQuadParser();
+        ~NQuadParser();
 
-    RdfSerializations supportedSerializations() const;
+        RdfSerializations supportedSerializations() const;
 
-    StatementIterator parseStream( QTextStream&, 
-                       const QUrl& baseUri, 
-                       RdfSerialization serialization,
-                       const QString& userSerialization = QString() ) const;
+        StatementIterator parse( QIODevice*, 
+                                 const QUrl& baseUri, 
+                                 RdfSerialization serialization,
+                                 const QString& userSerialization = QString() ) const;
 
     private:
-    Soprano::Statement parseLine( const QString& line, int row ) const;
-    Soprano::Node parseNode( const QString& s, int& offset ) const;
+        Soprano::Statement parseLine( const QString& line, int row ) const;
+        Soprano::Node parseNode( const QString& s, int& offset ) const;
     };
 }
 

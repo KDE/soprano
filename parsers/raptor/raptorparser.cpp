@@ -3,7 +3,7 @@
  * This file is part of Soprano Project
  *
  * Copyright (C) 2006 Duncan Mac-Vicar <duncan@kde.org>
- * Copyright (C) 2007 Sebastian Trueg <trueg@kde.org>
+ * Copyright (C) 2007-2008 Sebastian Trueg <trueg@kde.org>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -34,7 +34,7 @@
 #include <QtCore/QUrl>
 #include <QtCore/QFile>
 #include <QtCore/QtPlugin>
-#include <QtCore/QTextStream>
+#include <QtCore/QIODevice>
 #include <QtCore/QDebug>
 #include <QtCore/QLatin1String>
 #include <QtCore/QMutexLocker>
@@ -210,81 +210,11 @@ raptor_parser* Soprano::Raptor::Parser::createParser( RdfSerialization serializa
 }
 
 
-Soprano::StatementIterator Soprano::Raptor::Parser::parseFile( const QString& filename,
-                                                               const QUrl& baseUri,
-                                                               RdfSerialization serialization,
-                                                               const QString& userSerialization ) const
-{
-    QFile f( filename );
-    if ( f.open( QIODevice::ReadOnly ) ) {
-        QTextStream s( &f );
-        return parseStream( s, baseUri, serialization, userSerialization );
-    }
-    else {
-        setError( QString( "Could not open file %1 for reading." ).arg( filename ) );
-        return StatementIterator();
-    }
-
-//     clearError();
-
-//     raptor_parser* parser = createParser( serialization, userSerialization );
-//     if ( !parser ) {
-//         return StatementIterator();
-//     }
-
-//     // prepare the container for the parsed data
-//     QList<Statement> statements;
-//     raptor_set_statement_handler( parser, &statements, raptorTriplesHandler );
-
-//     // start the atual parsing
-//     QUrl uri( QUrl::fromLocalFile( filename ) );
-//     if ( uri.scheme().isEmpty() ) {
-//         // we need to help the stupid librdf file url handling
-//         uri.setScheme("file");
-//     }
-//     raptor_uri* raptorBaseUri = 0;
-//     if ( !baseUri.toString().isEmpty() ) {
-//         raptorBaseUri = raptor_new_uri( (unsigned char *) baseUri.toString().toUtf8().data() );
-//     }
-//     raptor_uri* raptorUri = raptor_new_uri( (unsigned char *) uri.toString().toUtf8().data() );
-//     if ( !raptorUri ) {
-//         setError( QLatin1String( "Internal: Failed to create raptor_uri instance for '%1'" ).arg( uri ) );
-//         return StatementIterator();
-//     }
-
-//     int r = raptor_parse_uri( parser, raptorUri, raptorBaseUri );
-
-//     raptor_free_parser( parser );
-//     raptor_free_uri( raptorUri );
-//     if ( raptorBaseUri ) {
-//         raptor_free_uri( raptorBaseUri );
-//     }
-
-//     if ( r == 0 ) {
-//         return SimpleStatementIterator( statements );
-//     }
-//     else {
-//         return StatementIterator();
-//     }
-}
-
-
-Soprano::StatementIterator Soprano::Raptor::Parser::parseString( const QString& data,
-                                                                 const QUrl& baseUri,
-                                                                 RdfSerialization serialization,
-                                                                 const QString& userSerialization ) const
-{
-    QString buf( data );
-    QTextStream s( &buf );
-    return parseStream( s, baseUri, serialization, userSerialization );
-}
-
-
 Soprano::StatementIterator
-Soprano::Raptor::Parser::parseStream( QTextStream& stream,
-                                      const QUrl& baseUri,
-                                      RdfSerialization serialization,
-                                      const QString& userSerialization ) const
+Soprano::Raptor::Parser::parse( QIODevice* device,
+                                const QUrl& baseUri,
+                                RdfSerialization serialization,
+                                const QString& userSerialization ) const
 {
     QMutexLocker lock( &m_mutex );
     RaptorInitHelper raptorInitHelper;
@@ -326,32 +256,15 @@ Soprano::Raptor::Parser::parseStream( QTextStream& stream,
 
     static const int bufSize = 1024;
 
-    // if possible let raptor do the decoding
-    if ( QIODevice* dev = stream.device() ) {
-        QByteArray buf( bufSize, 0 );
-        while ( !dev->atEnd() ) {
-            qint64 r = dev->read( buf.data(), buf.size() );
-            if ( r <= 0 ||
-                 raptor_parse_chunk( parser, ( const unsigned char* )buf.data(), r, 0 ) ) {
-                raptor_free_parser( parser );
-                if ( raptorBaseUri ) {
-                    raptor_free_uri( raptorBaseUri );
-                }
-                return StatementIterator();
+    QByteArray buf( bufSize, 0 );
+    while ( !device->atEnd() ) {
+        qint64 r = device->read( buf.data(), buf.length() );
+        if ( raptor_parse_chunk( parser, ( const unsigned char* )buf.data(), r, 0 ) ) {
+            raptor_free_parser( parser );
+            if ( raptorBaseUri ) {
+                raptor_free_uri( raptorBaseUri );
             }
-        }
-    }
-    else {
-        while ( !stream.atEnd() ) {
-            QString buf = stream.read( bufSize );
-            QByteArray utf8Data = buf.toUtf8();
-            if ( raptor_parse_chunk( parser, ( const unsigned char* )utf8Data.data(), utf8Data.length(), 0 ) ) {
-                raptor_free_parser( parser );
-                if ( raptorBaseUri ) {
-                    raptor_free_uri( raptorBaseUri );
-                }
-                return StatementIterator();
-            }
+            return StatementIterator();
         }
     }
     raptor_parse_chunk( parser, 0, 0, 1 );

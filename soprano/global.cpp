@@ -58,7 +58,7 @@ const Soprano::Backend* Soprano::usedBackend()
 }
 
 
-Soprano::Model* Soprano::createModel( const QList<BackendSetting>& settings )
+Soprano::Model* Soprano::createModel( const BackendSettings& settings )
 {
     initSoprano();
 

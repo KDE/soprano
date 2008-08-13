@@ -72,7 +72,7 @@ namespace Soprano {
      *
      * \sa Model, Backend::createModel, BackendSetting
      */
-    SOPRANO_EXPORT Model* createModel( const QList<BackendSetting>& settings = QList<BackendSetting>() );
+    SOPRANO_EXPORT Model* createModel( const BackendSettings& settings = BackendSettings() );
 }
 
 #endif // SOPRANO_H

@@ -40,6 +40,7 @@ namespace Soprano
     class Statement;
     class StatementIterator;
     class NodeIterator;
+    class Transaction;
     namespace Query {
         class Query;
     }
@@ -324,7 +325,18 @@ namespace Soprano
          */
         virtual Node createBlankNode() = 0;
         //@}
-    
+
+        //@{
+        /**
+         * Start a new transaction.
+         *
+         * The default implementation returns 0 and sets a standard error.
+         *
+         * \since 3.0
+         */
+        virtual Transaction* startTransaction();
+        //@}
+        
     Q_SIGNALS:
         /**
          * Emitted when new statements have been added to the model.
@@ -361,12 +373,6 @@ namespace Soprano
         Model();
 
     private:
-        /**
-         * Model instances are not meant to be copied.
-         */
-        Model( const Model& );
-        Model& operator=( const Model& );
-
         class Private;
         Private* const d;
     };

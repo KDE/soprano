@@ -29,7 +29,7 @@
 
 #include <QtCore/QObject>
 
-class QTextStream;
+class QIODevice;
 class QUrl;
 
 
@@ -104,10 +104,25 @@ namespace Soprano
         bool supportsSerialization( RdfSerialization s, const QString& userSerialization = QString() ) const;
 
         /**
+         * Read a serialized RDF model from an io device,
+         * using the supplied baseURI to resolve any relative URI references.
+         *
+         * \param device The device to read the serialized RDF data from.
+         * \param baseUri The base URI to be used for relative references.
+         * \param serialization The serialization used for the string data from the stream.
+         * \param userSerialization If serialization is set to Soprano::SerializationUser this parameter specifies the
+         *       serialization to use. It allows the extension of the %Soprano Parser interface with new
+         *       RDF serializations that are not officially supported by %Soprano.
+         *
+         * \return An iterator that iterates over the result statements.
+         */ 
+        virtual StatementIterator parse( QIODevice* device, const QUrl& baseUri, RdfSerialization serialization, const QString& userSerialization = QString() ) const = 0;
+
+        /**
          * Parse an RDF model which has been serialized in a file,
          * using the supplied baseURI to resolve any relative URI references.
          *
-         * The default implementation simply calls parseStream() on an opened
+         * The default implementation simply calls parse() on an opened
          * QFile instance.
          *
          * \param filename The name (path) of the file to parse
@@ -125,9 +140,9 @@ namespace Soprano
          * Parse an RDF model which has been serialized into a string,
          * using the supplied baseURI to resolve any relative URI references.
          *
-         * The default implementation simply calls parseStream().
+         * The default implementation simply calls parse() on a QBuffer.
          *
-         * \param data The serialized RDF string.
+         * \param data The serialized RDF data.
          * \param baseUri The base URI to be used for relative references.
          * \param serialization The serialization used for the string data.
          * \param userSerialization If serialization is set to Soprano::SerializationUser this parameter specifies the
@@ -136,22 +151,7 @@ namespace Soprano
          *
          * \return An iterator that iterates over the result statements.
          */
-        virtual StatementIterator parseString( const QString& data, const QUrl& baseUri, RdfSerialization serialization, const QString& userSerialization = QString() ) const;
-
-        /**
-         * Read a serialized RDF model from a test stream,
-         * using the supplied baseURI to resolve any relative URI references.
-         *
-         * \param stream The text stream to read the serialized RDF data from.
-         * \param baseUri The base URI to be used for relative references.
-         * \param serialization The serialization used for the string data from the stream.
-         * \param userSerialization If serialization is set to Soprano::SerializationUser this parameter specifies the
-         *       serialization to use. It allows the extension of the %Soprano Parser interface with new
-         *       RDF serializations that are not officially supported by %Soprano.
-         *
-         * \return An iterator that iterates over the result statements.
-         */ 
-        virtual StatementIterator parseStream( QTextStream& stream, const QUrl& baseUri, RdfSerialization serialization, const QString& userSerialization = QString() ) const = 0;
+        virtual StatementIterator parseString( const QByteArray& data, const QUrl& baseUri, RdfSerialization serialization, const QString& userSerialization = QString() ) const;
 
     protected:
         Parser( const QString& name );
@@ -162,7 +162,7 @@ namespace Soprano
     };
 }
 
-Q_DECLARE_INTERFACE(Soprano::Parser, "org.soprano.plugins.Parser/1.0")
+Q_DECLARE_INTERFACE(Soprano::Parser, "org.soprano.plugins.Parser/2.0")
 
 #endif // SOPRANO_PARSER_H
 

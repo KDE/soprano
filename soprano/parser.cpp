@@ -22,7 +22,7 @@
 #include "parser.h"
 #include "statementiterator.h"
 
-#include <QtCore/QTextStream>
+#include <QtCore/QBuffer>
 #include <QtCore/QFile>
 #include <QtCore/QUrl>
 #include <QtCore/QStringList>
@@ -51,8 +51,7 @@ Soprano::StatementIterator Soprano::Parser::parseFile( const QString& filename, 
 {
     QFile f( filename );
     if ( f.open( QIODevice::ReadOnly | QIODevice::Text ) ) {
-        QTextStream s( &f );
-        return parseStream( s, baseUri, serialization, userSerialization );
+        return parse( &f, baseUri, serialization, userSerialization );
     }
     else {
         qDebug() << "(Soprano::Parser) unable to open file " << filename;
@@ -61,11 +60,11 @@ Soprano::StatementIterator Soprano::Parser::parseFile( const QString& filename, 
 }
 
 
-Soprano::StatementIterator Soprano::Parser::parseString( const QString& data, const QUrl& baseUri, RdfSerialization serialization, const QString& userSerialization ) const
+Soprano::StatementIterator Soprano::Parser::parseString( const QByteArray& data, const QUrl& baseUri, RdfSerialization serialization, const QString& userSerialization ) const
 {
-    QString buffer( data );
-    QTextStream s( &buffer, QIODevice::ReadOnly );
-    return parseStream( s, baseUri, serialization, userSerialization );
+    QByteArray bufData( data );
+    QBuffer buf( &bufData );
+    return parse( &buf, baseUri, serialization, userSerialization );
 }
 
 

@@ -1,7 +1,7 @@
 /* 
  * This file is part of Soprano Project.
  *
- * Copyright (C) 2007-2008 Sebastian Trueg <trueg@kde.org>
+ * Copyright (C) 2008 Sebastian Trueg <trueg@kde.org>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -19,41 +19,28 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef _SESAME2_STORE_BACKEND_H_
-#define _SESAME2_STORE_BACKEND_H_
-
-#include "backend.h"
+#ifndef _SOPRANO_TRANSACTION_TEST_H_
+#define _SOPRANO_TRANSACTION_TEST_H_
 
 #include <QtCore/QObject>
-#include <QtCore/QMutex>
-
-
-class JNIWrapper;
 
 namespace Soprano {
-    namespace Sesame2 {
-        class BackendPlugin : public QObject, public Soprano::Backend
-        {
-            Q_OBJECT
-            Q_INTERFACES(Soprano::Backend)
-
-        public:
-            BackendPlugin();
-            ~BackendPlugin();
-
-            StorageModel* createModel( const BackendSettings& settings = BackendSettings() ) const;
-
-            bool deleteModelData( const BackendSettings& settings ) const;
-
-            BackendFeatures supportedFeatures() const;
-
-            bool isAvailable() const;
-
-        private:
-            mutable JNIWrapper* m_jniWrapper;
-            mutable QMutex m_mutex;
-        };
-    }
+    class Model;
 }
+
+class TransactionTest : public QObject
+{
+    Q_OBJECT
+
+private Q_SLOTS:
+    void testStartTransaction();
+    void testAddStatement();
+    void testRemoveStatement();
+    void testListStatements();
+
+protected:
+    virtual Soprano::Model* createModel() = 0;
+    virtual void deleteModel( Soprano::Model* );
+};
 
 #endif

@@ -14,6 +14,7 @@ install(FILES
   Backend
   BindingSet
   BackendSetting
+  BackendSettings
   BackendOption
   BackendFeature
   RdfSerialization
@@ -27,6 +28,7 @@ install(FILES
   StorageModel
   Global
   Version
+  Transaction
   DESTINATION
   include/Soprano)
 

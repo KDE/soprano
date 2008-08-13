@@ -2,7 +2,7 @@
  * This file is part of Soprano Project
  *
  * Copyright (C) 2006 Duncan Mac-Vicar <duncan@kde.org>
- * Copyright (C) 2007 Sebastian Trueg <trueg@kde.org>
+ * Copyright (C) 2007-2008 Sebastian Trueg <trueg@kde.org>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -44,7 +44,7 @@ namespace Soprano {
             QStringList supportedUserSerializations() const;
 
             bool serialize( StatementIterator it, 
-                            QTextStream& stream, 
+                            QIODevice*, 
                             RdfSerialization serialization,
                             const QString& userSerialization = QString() ) const;
         };

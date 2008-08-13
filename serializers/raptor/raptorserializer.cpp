@@ -2,7 +2,7 @@
  * This file is part of Soprano Project
  *
  * Copyright (C) 2006 Duncan Mac-Vicar <duncan@kde.org>
- * Copyright (C) 2007 Sebastian Trueg <trueg@kde.org>
+ * Copyright (C) 2007-2008 Sebastian Trueg <trueg@kde.org>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -31,7 +31,6 @@
 
 #include <QtCore/QUrl>
 #include <QtCore/QtPlugin>
-#include <QtCore/QTextStream>
 #include <QtCore/QDebug>
 
 
@@ -78,32 +77,26 @@ QStringList Soprano::Raptor::Serializer::supportedUserSerializations() const
 
 int raptorIOStreamWriteByte( void* data, const int byte )
 {
-    QTextStream* s = reinterpret_cast<QTextStream*>( data );
+    QIODevice* s = reinterpret_cast<QIODevice*>( data );
     // an int is not a byte. Strange raptor API!
-    if( s->device() ) {
-        s->device()->putChar( (char)byte );
-    }
-    else {
-        ( *s ) << ( char )byte;
-    }
-    return 0;
+    return( s->putChar( static_cast<const char>( byte ) ) ? 0 : -1 );
 }
 
 
 int raptorIOStreamWriteBytes( void* data, const void* ptr, size_t size, size_t nmemb )
 {
     // the raptor API is very weird. But it seems that ATM raptor only uses size == 1
-    QTextStream* s = reinterpret_cast<QTextStream*>( data );
+    QIODevice* s = reinterpret_cast<QIODevice*>( data );
     switch( size ) {
     case 1: {
         const char* p = reinterpret_cast<const char*>( ptr );
-        if( s->device() ) {
-            s->device()->write( p, nmemb );
-        }
-        else {
-            for ( unsigned int i = 0; i < nmemb; ++i ) {
-                raptorIOStreamWriteByte( data, p[i] );
-            }
+        size_t written = 0;
+        while ( written < nmemb ) {
+            qint64 r = s->write( p+written, nmemb-written );
+            if ( r < 0 )
+                return -1;
+            else
+                written += r;
         }
         break;
     }
@@ -164,7 +157,7 @@ void streamFinished( void* )
 
 
 bool Soprano::Raptor::Serializer::serialize( StatementIterator it,
-                                             QTextStream& stream,
+                                             QIODevice* device,
                                              RdfSerialization serialization,
                                              const QString& userSerialization ) const
 {
@@ -211,7 +204,7 @@ bool Soprano::Raptor::Serializer::serialize( StatementIterator it,
         0,
         0
     };
-    raptor_iostream* raptorStream = raptor_new_iostream_from_handler2( &stream,
+    raptor_iostream* raptorStream = raptor_new_iostream_from_handler2( device,
                                                                        &raptorStreamHandler );
 #else
     raptor_iostream_handler raptorStreamHandler = {
@@ -221,7 +214,7 @@ bool Soprano::Raptor::Serializer::serialize( StatementIterator it,
         raptorIOStreamWriteBytes,
         0
     };
-    raptor_iostream* raptorStream = raptor_new_iostream_from_handler( &stream,
+    raptor_iostream* raptorStream = raptor_new_iostream_from_handler( device,
                                                                       &raptorStreamHandler );
 #endif
 

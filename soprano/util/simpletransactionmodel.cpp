@@ -1,8 +1,7 @@
-/* 
- * This file is part of Soprano Project
+/*
+ * This file is part of Soprano Project.
  *
- * Copyright (C) 2006 Daniele Galdi <daniele.galdi@gmail.com>
- * Copyright (C) 2007 Sebastian Trueg <trueg@kde.org>
+ * Copyright (C) 2008 Sebastian Trueg <trueg@kde.org>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -20,30 +19,33 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#include "global.h"
-//#include "query.h"
-#include "queryresultiterator.h"
-#include "node.h"
-#include "nodeiterator.h"
-#include "literalvalue.h"
-#include "statement.h"
-#include "statementiterator.h"
-#include "simplestatementiterator.h"
-#include "model.h"
-#include "storagemodel.h"
-#include "filtermodel.h"
-#include "parser.h"
-#include "serializer.h"
-#include "backend.h"
-#include "pluginmanager.h"
-#include "error.h"
-#include "locator.h"
-#include "bindingset.h"
-#include "version.h"
-#include "sopranotypes.h"
-#include "vocabulary.h"
-#include "dummymodel.h"
-#include "mutexmodel.h"
-#include "asyncmodel.h"
-#include "transaction.h"
 #include "simpletransactionmodel.h"
+#include "simpletransactionmodel_p.h"
+#include "simpletransaction.h"
+
+
+Soprano::Util::SimpleTransactionModel::SimpleTransactionModel( Model* parent )
+    : FilterModel( parent ),
+      d( new SimpleTransactionModelPrivate() )
+{
+    d->model = this;
+}
+
+
+Soprano::Util::SimpleTransactionModel::~SimpleTransactionModel()
+{
+    foreach( SimpleTransaction* st, d->openTransactions ) {
+        st->invalidate();
+    }
+    delete d;
+}
+
+
+Soprano::Transaction* Soprano::Util::SimpleTransactionModel::startTransaction()
+{
+    SimpleTransaction* t = new SimpleTransaction( d );
+    d->openTransactions.append( t );
+    return t;
+}
+
+#include "simpletransactionmodel.moc"
