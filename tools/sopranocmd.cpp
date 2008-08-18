@@ -33,37 +33,13 @@
 
 using namespace Soprano;
 
-static void printStatementList( Soprano::StatementIterator it )
-{
-    QTextStream outStream( stdout );
-    int cnt = 0;
-    while ( it.next() ) {
-        outStream << *it << endl;
-        ++cnt;
-    }
-    if ( it.lastError() ) {
-        outStream << "Error occured: " << it.lastError() << endl;
-    }
-    outStream << "Total results: " << cnt << endl;
-}
-
-
-static void printQueryResult( Soprano::QueryResultIterator it )
-{
-    QTextStream outStream( stdout );
-    if ( it.isBool() ) {
-        outStream << it.boolValue() << endl;
-    }
-    else {
-        bool graph = it.isGraph();
+namespace {
+    void printStatementList( Soprano::StatementIterator it )
+    {
+        QTextStream outStream( stdout );
         int cnt = 0;
         while ( it.next() ) {
-            if ( graph ) {
-                outStream << it.currentStatement() << endl;
-            }
-            else {
-                outStream << *it << endl;
-            }
+            outStream << *it << endl;
             ++cnt;
         }
         if ( it.lastError() ) {
@@ -71,153 +47,194 @@ static void printQueryResult( Soprano::QueryResultIterator it )
         }
         outStream << "Total results: " << cnt << endl;
     }
-}
 
-static Soprano::Node parseNode( const QString& s )
-{
-    if ( s.isEmpty() ) {
-        return Soprano::Node();
-    }
-    else if ( s[0] == '<' && s[s.length()-1] == '>' ) {
-        return Soprano::Node( QUrl( s.mid( 1, s.length()-2 ) ) );
-    }
-    else if ( s[0] == '_' && s.length() > 2 && s[1] == ':' ) {
-        return Soprano::Node::createBlankNode( s.mid( 2 ) );
-    }
-    else if ( s[0] == '"' ) {
-        QString value = s;
-        QString literalType;
-        int pos = s.indexOf( "\"^^<" );
-        if ( pos > 0 ) {
-            literalType = s.mid( pos + 4, s.length() - pos - 5 );
-            value = s.mid( 1, pos-1 );
+
+    void printQueryResult( Soprano::QueryResultIterator it )
+    {
+        QTextStream outStream( stdout );
+        if ( it.isBool() ) {
+            outStream << it.boolValue() << endl;
         }
         else {
-            value = s.mid( 1, s.length()-1 );
-        }
-        return Soprano::LiteralValue::fromString( value, QUrl( literalType ) );
-    }
-    else {
-        // we only check for integer and double here
-        bool ok = false;
-        int val = s.toInt( &ok );
-        if ( ok ) {
-            return Soprano::LiteralValue( val );
-        }
-        double dVal = s.toDouble( &ok );
-        if ( ok ) {
-            return Soprano::LiteralValue( dVal );
-        }
-        else {
-            return Soprano::LiteralValue( s );
-        }
-    }
-}
-
-
-static int importFile( Soprano::Model* model, const QString& fileName, const QString& serialization )
-{
-    const Soprano::Parser* parser = Soprano::PluginManager::instance()->discoverParserForSerialization( Soprano::mimeTypeToSerialization( serialization ), serialization );
-
-    if ( parser ) {
-
-        Soprano::StatementIterator it = parser->parseFile( fileName,
-                                                           QUrl("http://dummybaseuri.org" ),
-                                                           Soprano::mimeTypeToSerialization( serialization ), serialization );
-
-        if ( parser->lastError() ) {
-            QTextStream s( stderr );
-            s << "Parsing failed: " << parser->lastError() << endl;
-            delete model;
-            return 2;
-        }
-
-        int cnt = 0;
-        while ( it.next() ) {
-            if ( model->addStatement( *it ) == Soprano::Error::ErrorNone ) {
+            bool graph = it.isGraph();
+            int cnt = 0;
+            while ( it.next() ) {
+                if ( graph ) {
+                    outStream << it.currentStatement() << endl;
+                }
+                else {
+                    outStream << *it << endl;
+                }
                 ++cnt;
             }
+            if ( it.lastError() ) {
+                outStream << "Error occured: " << it.lastError() << endl;
+            }
+            outStream << "Total results: " << cnt << endl;
+        }
+    }
+
+    QUrl parseUri( const QString& s ) {
+        // try to be a little smart about user input
+        if ( s.contains( '%' ) ) {
+            QByteArray b = s.toAscii();
+            if ( !b.isEmpty() ) {
+                return QUrl::fromEncoded( b );
+            }
+        }
+        return QUrl( s );
+    }
+
+    Soprano::Node parseNode( const QString& s )
+    {
+        if ( s.isEmpty() ) {
+            return Soprano::Node();
+        }
+        else if ( s[0] == '<' && s[s.length()-1] == '>' ) {
+            return Soprano::Node( parseUri( s.mid( 1, s.length()-2 ) ) );
+        }
+        else if ( s[0] == '_' && s.length() > 2 && s[1] == ':' ) {
+            return Soprano::Node::createBlankNode( s.mid( 2 ) );
+        }
+        else if ( s[0] == '"' ) {
+            QString value = s;
+            QString literalType;
+            int pos = s.indexOf( "\"^^<" );
+            if ( pos > 0 ) {
+                literalType = s.mid( pos + 4, s.length() - pos - 5 );
+                value = s.mid( 1, pos-1 );
+            }
             else {
+                value = s.mid( 1, s.length()-1 );
+            }
+            return Soprano::LiteralValue::fromString( value, QUrl( literalType ) );
+        }
+        else {
+            // we only check for integer and double here
+            bool ok = false;
+            int val = s.toInt( &ok );
+            if ( ok ) {
+                return Soprano::LiteralValue( val );
+            }
+            double dVal = s.toDouble( &ok );
+            if ( ok ) {
+                return Soprano::LiteralValue( dVal );
+            }
+            else {
+                return Soprano::LiteralValue( s );
+            }
+        }
+    }
+
+
+    int importFile( Soprano::Model* model, const QString& fileName, const QString& serialization )
+    {
+        const Soprano::Parser* parser = Soprano::PluginManager::instance()->discoverParserForSerialization( Soprano::mimeTypeToSerialization( serialization ), serialization );
+
+        if ( parser ) {
+
+            Soprano::StatementIterator it = parser->parseFile( fileName,
+                                                               QUrl("http://dummybaseuri.org" ),
+                                                               Soprano::mimeTypeToSerialization( serialization ), serialization );
+
+            if ( parser->lastError() ) {
                 QTextStream s( stderr );
-                s << "Failed to import statement " << *it << ": " << model->lastError() << endl;
+                s << "Parsing failed: " << parser->lastError() << endl;
                 delete model;
                 return 2;
             }
-        }
 
-        QTextStream s( stdout );
-        s << "Imported " << cnt << " statements." << endl;
-        delete model;
-        return 0;
-    }
-    else {
-        QTextStream s( stderr );
-        s << "Could not find parser plugin for serialization " << serialization << endl;
-        delete model;
-        return 1;
-    }
-}
+            int cnt = 0;
+            while ( it.next() ) {
+                if ( model->addStatement( *it ) == Soprano::Error::ErrorNone ) {
+                    ++cnt;
+                }
+                else {
+                    QTextStream s( stderr );
+                    s << "Failed to import statement " << *it << ": " << model->lastError() << endl;
+                    delete model;
+                    return 2;
+                }
+            }
 
-
-static bool exportFile( Soprano::StatementIterator data, const QString& fileName, const QString& serialization )
-{
-    const Soprano::Serializer* serializer = Soprano::PluginManager::instance()->discoverSerializerForSerialization( Soprano::mimeTypeToSerialization( serialization ), serialization );
-
-    if ( serializer ) {
-        QFile file( fileName );
-        if ( !file.open( QIODevice::WriteOnly ) ) {
-            QTextStream s( stderr );
-            s << "Could not open file for writing: " << fileName << endl;
-            return false;
-        }
-
-        QTextStream s( &file );
-
-        if ( serializer->serialize( data, s, Soprano::mimeTypeToSerialization( serialization ), serialization ) ) {
             QTextStream s( stdout );
-            s << "Successfully exported model." << endl;
-            return true;
+            s << "Imported " << cnt << " statements." << endl;
+            delete model;
+            return 0;
         }
         else {
             QTextStream s( stderr );
-            s << "Failed to export statements: " << serializer->lastError() << endl;
+            s << "Could not find parser plugin for serialization " << serialization << endl;
+            delete model;
+            return 1;
+        }
+    }
+
+
+    bool exportFile( Soprano::StatementIterator data, const QString& fileName, const QString& serialization )
+    {
+        const Soprano::Serializer* serializer = Soprano::PluginManager::instance()->discoverSerializerForSerialization( Soprano::mimeTypeToSerialization( serialization ), serialization );
+
+        if ( serializer ) {
+            QFile file( fileName );
+            if ( !file.open( QIODevice::WriteOnly ) ) {
+                QTextStream s( stderr );
+                s << "Could not open file for writing: " << fileName << endl;
+                return false;
+            }
+
+            QTextStream s( &file );
+
+            if ( serializer->serialize( data, s, Soprano::mimeTypeToSerialization( serialization ), serialization ) ) {
+                QTextStream s( stdout );
+                s << "Successfully exported model." << endl;
+                return true;
+            }
+            else {
+                QTextStream s( stderr );
+                s << "Failed to export statements: " << serializer->lastError() << endl;
+                return false;
+            }
+        }
+        else {
+            QTextStream s( stderr );
+            s << "Could not find serializer plugin for serialization " << serialization << endl;
             return false;
         }
     }
-    else {
-        QTextStream s( stderr );
-        s << "Could not find serializer plugin for serialization " << serialization << endl;
-        return false;
-    }
-}
 
 
 
-class CmdLineArgs
-{
-public:
-    static bool parseCmdLine( CmdLineArgs& a, const QStringList& args, const QHash<QString, bool>& allowed ) {
-        int i = 1;
-        bool optionParsing = true;
-        QTextStream errStream(stderr);
-        while ( i < args.count() ) {
-            if ( args[i].startsWith( "--" ) ) {
-                if ( !optionParsing ) {
-                    return false;
-                }
-
-                QString name = args[i].mid( 2 );
-                if ( name.length() == 0 ) {
-                    return false;
-                }
-
-                if ( allowed.contains( name ) ) {
-                    if ( !allowed[name] ) {
-                        a.m_options.append( name );
+    class CmdLineArgs
+    {
+    public:
+        static bool parseCmdLine( CmdLineArgs& a, const QStringList& args, const QHash<QString, bool>& allowed ) {
+            int i = 1;
+            bool optionParsing = true;
+            QTextStream errStream(stderr);
+            while ( i < args.count() ) {
+                if ( args[i].startsWith( "--" ) ) {
+                    if ( !optionParsing ) {
+                        return false;
                     }
-                    else if ( i+1 < args.count() ) {
-                        if ( !args[i+1].startsWith( "--" ) ) {
-                            a.m_settings[name] = args[++i];
+
+                    QString name = args[i].mid( 2 );
+                    if ( name.length() == 0 ) {
+                        return false;
+                    }
+
+                    if ( allowed.contains( name ) ) {
+                        if ( !allowed[name] ) {
+                            a.m_options.append( name );
+                        }
+                        else if ( i+1 < args.count() ) {
+                            if ( !args[i+1].startsWith( "--" ) ) {
+                                a.m_settings[name] = args[++i];
+                            }
+                            else {
+                                errStream << "Missing parameter: " << name << endl << endl;
+                                return false;
+                            }
                         }
                         else {
                             errStream << "Missing parameter: " << name << endl << endl;
@@ -225,157 +242,153 @@ public:
                         }
                     }
                     else {
-                        errStream << "Missing parameter: " << name << endl << endl;
+                        errStream << "Invalid option: " << name << endl << endl;
                         return false;
                     }
                 }
                 else {
-                    errStream << "Invalid option: " << name << endl << endl;
-                    return false;
+                    optionParsing = false;
+
+                    a.m_args.append( args[i] );
                 }
+
+                ++i;
+            }
+
+            return true;
+        }
+
+        bool hasSetting( const QString& name ) const {
+            return m_settings.contains( name );
+        }
+
+        QString getSetting( const QString& name, const QString& defaultValue = QString() ) const {
+            if ( m_settings.contains( name ) ) {
+                return m_settings[name];
             }
             else {
-                optionParsing = false;
-
-                a.m_args.append( args[i] );
+                return defaultValue;
             }
-
-            ++i;
         }
 
-        return true;
-    }
-
-    bool hasSetting( const QString& name ) const {
-        return m_settings.contains( name );
-    }
-
-    QString getSetting( const QString& name, const QString& defaultValue = QString() ) const {
-        if ( m_settings.contains( name ) ) {
-            return m_settings[name];
+        bool optionSet( const QString& name ) const {
+            return m_options.contains( name );
         }
-        else {
-            return defaultValue;
+
+        int count() const {
+            return m_args.count();
         }
-    }
 
-    bool optionSet( const QString& name ) const {
-        return m_options.contains( name );
-    }
+        QString operator[]( int i ) const {
+            return m_args[i];
+        }
 
-    int count() const {
-        return m_args.count();
-    }
+        QString arg( int i ) const {
+            return m_args[i];
+        }
 
-    QString operator[]( int i ) const {
-        return m_args[i];
-    }
-
-    QString arg( int i ) const {
-        return m_args[i];
-    }
-
-private:
-    QHash<QString, QString> m_settings;
-    QStringList m_args;
-    QStringList m_options;
-};
+    private:
+        QHash<QString, QString> m_settings;
+        QStringList m_args;
+        QStringList m_options;
+    };
 
 
-int version()
-{
-    QTextStream s( stdout );
-    s << "sopranocmd " << Soprano::versionString() << endl;
-    s << "   Copyright (C) 2007-2008 Sebastian Trueg <trueg@kde.org>" << endl;
-    s << "   This program is free software; you can redistribute it and/or modify" << endl
-      << "   it under the terms of the GNU General Public License as published by" << endl
-      << "   the Free Software Foundation; either version 2 of the License, or" << endl
-      << "   (at your option) any later version." << endl;
+    int version()
+    {
+        QTextStream s( stdout );
+        s << "sopranocmd " << Soprano::versionString() << endl;
+        s << "   Copyright (C) 2007-2008 Sebastian Trueg <trueg@kde.org>" << endl;
+        s << "   This program is free software; you can redistribute it and/or modify" << endl
+          << "   it under the terms of the GNU General Public License as published by" << endl
+          << "   the Free Software Foundation; either version 2 of the License, or" << endl
+          << "   (at your option) any later version." << endl;
 
-    return 0;
-}
-
-QStringList backendNames()
-{
-    QStringList names;
-    QList<const Backend*> backends = PluginManager::instance()->allBackends();
-    Q_FOREACH( const Backend* backend, backends ) {
-        names << backend->pluginName();
-    }
-    return names;
-}
-
-int usage( const QString& error = QString() )
-{
-    version();
-
-    QTextStream s( stdout );
-    s << endl;
-    s << "Usage:" << endl
-      << "   sopranocmd --backend [--dir <storagedir>] [--serialization <s>] <command> [<parameters>]" << endl
-      << "   sopranocmd --port <port> [--host <host>] --model <name> [--serialization <s>] <command> [<parameters>]" << endl
-      << "   sopranocmd --socket <socketpath>  --model <name> [--serialization <s>] <command> [<parameters>]" << endl
-      << "   sopranocmd --dbus <dbusservice> --model <name> [--serialization <s>] <command> [<parameters>]" << endl
-      << endl
-      << "   --version           Print version information." << endl
-      << endl
-      << "   --help              Print this help." << endl
-      << endl
-      << "   --model <name>      The name of the Soprano model to perform the command on." << endl
-      << "                       (only applicable when querying against the Soprano server.)" << endl
-      << endl
-      << "   --backend           The backend to use when accessing a storage directly and not via the Soprano server." << endl
-      << "                       Possible backends are:" << endl
-      << "                       " << backendNames().join( ", " ) << endl
-      << endl
-      << "   --dir               The storage directory. This only applies when specifying the backend. Defaults" << endl
-      << "                       to current directory." << endl
-      << endl
-      << "   --dbus <service>    Contact the soprano server through D-Bus running on the specified service." << endl
-      << endl
-      << "   --port <port>       Specify the port the Soprano server is running on." << endl
-      << "                       (only applicable when querying against the Soprano server.)" << endl
-      << endl
-      << "   --host <host>       Specify the host the Soprano server is running on (defaults to localhost)." << endl
-      << "                       (only applicable when querying against the Soprano server.)" << endl
-      << endl
-      << "   --socket <path>     Specify the path to the local socket the Soprano server is running on." << endl
-      << "                       (only applicable when querying against the Soprano server.)" << endl
-      << endl
-      << "   --serialization <s> The serialization used for commands 'export' and 'import'. Defaults to 'application/x-nquads'." << endl
-      << "                       (only applicable with the mentioned commands.)" << endl
-      << "                       (be aware that Soprano can understand simple string identifiers such as 'trig' or 'n-triples'." << endl
-      << "                       There is no need to know the exact mimetype.)" << endl
-      << endl
-      << "   --querylang <lang>  The query language used for query commands. Defaults to 'SPARQL'" << endl
-      << endl
-      << "   <command>           The command to perform. Can be one of 'add', 'remove', 'list', 'query', 'import', or 'export'." << endl << endl
-      << "   <parameters>        The parameters to the command." << endl
-      << "                       - For command 'query' this is a SPARQL query string." << endl
-      << "                       - For commands 'add' and 'remove' this is a list of 3 or 4 RDF node definitions." << endl
-      << "                       - For command 'list' this is an optional list of one to four node definitions." << endl
-      << "                       - For commands 'import' and 'export' this is a local file name to either parse or write to." << endl
-      << "                         For command 'export' an optional second parameter before the filename can define a construct" << endl
-      << "                         query to only select a subset to export." << endl << endl;
-
-    s << "   Nodes are defined in an N-Triples-like notation:" << endl
-      << "   - Resouce nodes are defined in angle brackets." << endl
-      << "     Example: <http://www.test.org#A>" << endl
-      << "   - Blank nodes are defined as \"_:\" followed by their identifier." << endl
-      << "     Example: _:a" << endl
-      << "   - Literal nodes are defined as a combination of their string value and their datatype URI" << endl
-      << "     or as a simple literal string:" << endl
-      << "     Examples: \"Hello World\"^^<http://www.w3.org/2001/XMLSchema#string>" << endl
-      << "               42" << endl
-      << "               0.7" << endl
-      << "   - An empty string evaluates to an empy node (\"\" does the trick)" << endl;
-
-    if ( !error.isEmpty() ) {
-        s << endl << error << endl;
         return 0;
     }
-    else {
-        return 1;
+
+    QStringList backendNames()
+    {
+        QStringList names;
+        QList<const Backend*> backends = PluginManager::instance()->allBackends();
+        Q_FOREACH( const Backend* backend, backends ) {
+            names << backend->pluginName();
+        }
+        return names;
+    }
+
+    int usage( const QString& error = QString() )
+    {
+        version();
+
+        QTextStream s( stdout );
+        s << endl;
+        s << "Usage:" << endl
+          << "   sopranocmd --backend [--dir <storagedir>] [--serialization <s>] <command> [<parameters>]" << endl
+          << "   sopranocmd --port <port> [--host <host>] --model <name> [--serialization <s>] <command> [<parameters>]" << endl
+          << "   sopranocmd --socket <socketpath>  --model <name> [--serialization <s>] <command> [<parameters>]" << endl
+          << "   sopranocmd --dbus <dbusservice> --model <name> [--serialization <s>] <command> [<parameters>]" << endl
+          << endl
+          << "   --version           Print version information." << endl
+          << endl
+          << "   --help              Print this help." << endl
+          << endl
+          << "   --model <name>      The name of the Soprano model to perform the command on." << endl
+          << "                       (only applicable when querying against the Soprano server.)" << endl
+          << endl
+          << "   --backend           The backend to use when accessing a storage directly and not via the Soprano server." << endl
+          << "                       Possible backends are:" << endl
+          << "                       " << backendNames().join( ", " ) << endl
+          << endl
+          << "   --dir               The storage directory. This only applies when specifying the backend. Defaults" << endl
+          << "                       to current directory." << endl
+          << endl
+          << "   --dbus <service>    Contact the soprano server through D-Bus running on the specified service." << endl
+          << endl
+          << "   --port <port>       Specify the port the Soprano server is running on." << endl
+          << "                       (only applicable when querying against the Soprano server.)" << endl
+          << endl
+          << "   --host <host>       Specify the host the Soprano server is running on (defaults to localhost)." << endl
+          << "                       (only applicable when querying against the Soprano server.)" << endl
+          << endl
+          << "   --socket <path>     Specify the path to the local socket the Soprano server is running on." << endl
+          << "                       (only applicable when querying against the Soprano server.)" << endl
+          << endl
+          << "   --serialization <s> The serialization used for commands 'export' and 'import'. Defaults to 'application/x-nquads'." << endl
+          << "                       (only applicable with the mentioned commands.)" << endl
+          << "                       (be aware that Soprano can understand simple string identifiers such as 'trig' or 'n-triples'." << endl
+          << "                       There is no need to know the exact mimetype.)" << endl
+          << endl
+          << "   --querylang <lang>  The query language used for query commands. Defaults to 'SPARQL'" << endl
+          << endl
+          << "   <command>           The command to perform. Can be one of 'add', 'remove', 'list', 'query', 'import', or 'export'." << endl << endl
+          << "   <parameters>        The parameters to the command." << endl
+          << "                       - For command 'query' this is a SPARQL query string." << endl
+          << "                       - For commands 'add' and 'remove' this is a list of 3 or 4 RDF node definitions." << endl
+          << "                       - For command 'list' this is an optional list of one to four node definitions." << endl
+          << "                       - For commands 'import' and 'export' this is a local file name to either parse or write to." << endl
+          << "                         For command 'export' an optional second parameter before the filename can define a construct" << endl
+          << "                         query to only select a subset to export." << endl << endl;
+
+        s << "   Nodes are defined in an N-Triples-like notation:" << endl
+          << "   - Resouce nodes are defined in angle brackets." << endl
+          << "     Example: <http://www.test.org#A>" << endl
+          << "   - Blank nodes are defined as \"_:\" followed by their identifier." << endl
+          << "     Example: _:a" << endl
+          << "   - Literal nodes are defined as a combination of their string value and their datatype URI" << endl
+          << "     or as a simple literal string:" << endl
+          << "     Examples: \"Hello World\"^^<http://www.w3.org/2001/XMLSchema#string>" << endl
+          << "               42" << endl
+          << "               0.7" << endl
+          << "   - An empty string evaluates to an empy node (\"\" does the trick)" << endl;
+
+        if ( !error.isEmpty() ) {
+            s << endl << error << endl;
+            return 0;
+        }
+        else {
+            return 1;
+        }
     }
 }
 
