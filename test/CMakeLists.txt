@@ -135,7 +135,7 @@ if(SOPRANO_BUILD_INDEX_LIB)
   # TString test
   qt4_automoc(tstringtest tstringtest.cpp)
   add_executable(tstringtest tstringtest.cpp stringpool.cpp ../index/tstring.cpp)
-  target_link_libraries(tstringtest ${QT_QTCORE_LIBRARY} ${QT_QTTEST_LIBRARY})
+  target_link_libraries(tstringtest ${QT_QTCORE_LIBRARY} ${QT_QTTEST_LIBRARY} ${CLUCENE_LIBRARY})
   add_test(tstringtest ${EXECUTABLE_OUTPUT_PATH}/tstringtest)
 
   qt4_automoc(cluceneindextest cluceneindextest.cpp)
