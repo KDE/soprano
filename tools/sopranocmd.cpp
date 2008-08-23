@@ -30,6 +30,7 @@
 #include "../server/localsocketclient.h"
 #include "../server/dbus/dbusclient.h"
 #include "../server/dbus/dbusmodel.h"
+#include "../server/sparql/sparqlmodel.h"
 
 using namespace Soprano;
 
@@ -53,7 +54,7 @@ namespace {
     {
         QTextStream outStream( stdout );
         if ( it.isBool() ) {
-            outStream << it.boolValue() << endl;
+            outStream << ( it.boolValue() ? "true" : "false" ) << endl;
         }
         else {
             bool graph = it.isGraph();
@@ -328,6 +329,7 @@ namespace {
           << "   sopranocmd --port <port> [--host <host>] --model <name> [--serialization <s>] <command> [<parameters>]" << endl
           << "   sopranocmd --socket <socketpath>  --model <name> [--serialization <s>] <command> [<parameters>]" << endl
           << "   sopranocmd --dbus <dbusservice> --model <name> [--serialization <s>] <command> [<parameters>]" << endl
+          << "   sopranocmd --sparql <sparql end point> [--port <port> [--serialization <s>] <command> [<parameters>]" << endl
           << endl
           << "   --version           Print version information." << endl
           << endl
@@ -346,13 +348,15 @@ namespace {
           << "   --dbus <service>    Contact the soprano server through D-Bus running on the specified service." << endl
           << endl
           << "   --port <port>       Specify the port the Soprano server is running on." << endl
-          << "                       (only applicable when querying against the Soprano server.)" << endl
+          << "                       (only applicable when querying against the Soprano server or a sparql endpoint.)" << endl
           << endl
           << "   --host <host>       Specify the host the Soprano server is running on (defaults to localhost)." << endl
           << "                       (only applicable when querying against the Soprano server.)" << endl
           << endl
           << "   --socket <path>     Specify the path to the local socket the Soprano server is running on." << endl
           << "                       (only applicable when querying against the Soprano server.)" << endl
+          << endl
+          << "   --sparql <endpoint> Specify the remote Http sparql endpoint to use." << endl
           << endl
           << "   --serialization <s> The serialization used for commands 'export' and 'import'. Defaults to 'application/x-nquads'." << endl
           << "                       (only applicable with the mentioned commands.)" << endl
@@ -407,6 +411,7 @@ int main( int argc, char *argv[] )
     allowedCmdLineArgs.insert( "host", true );
     allowedCmdLineArgs.insert( "socket", true );
     allowedCmdLineArgs.insert( "dbus", true );
+    allowedCmdLineArgs.insert( "sparql", true );
     allowedCmdLineArgs.insert( "serialization", true );
     allowedCmdLineArgs.insert( "querylang", true );
 
@@ -427,6 +432,7 @@ int main( int argc, char *argv[] )
              args.hasSetting( "dbus" ) ||
              args.hasSetting( "host" ) ||
              args.hasSetting( "socket" ) ||
+             args.hasSetting( "sparql" ) ||
              args.hasSetting( "model" ) ) {
             return usage( "Cannot mix server parameters with --backend." );
         }
@@ -442,7 +448,9 @@ int main( int argc, char *argv[] )
     QString command;
     QString modelName = args.getSetting( "model" );
 
-    if ( modelName.isEmpty() && backendName.isEmpty() ) {
+    if ( modelName.isEmpty() &&
+         backendName.isEmpty() &&
+         !args.hasSetting( "sparql" ) ) {
         return usage( "No model name specified." );
     }
 
@@ -452,7 +460,17 @@ int main( int argc, char *argv[] )
     Soprano::Client::LocalSocketClient* localSocketClient = 0;
     Soprano::Model* model = 0;
     if ( backendName.isEmpty() ) {
-        if ( args.hasSetting( "port" ) ) {
+        if ( args.hasSetting( "sparql" ) ) {
+            QString sparqlEndPoint = args.getSetting( "sparql" );
+            quint16 port = 80;
+            if ( args.hasSetting( "port" ) ) {
+                port = args.getSetting( "port" ).toInt();
+            }
+            Soprano::Client::SparqlModel* sm = new Soprano::Client::SparqlModel( sparqlEndPoint, port );
+            sm->setHost( sparqlEndPoint, port );
+            model = sm;
+        }
+        else if ( args.hasSetting( "port" ) ) {
             QHostAddress host = QHostAddress::LocalHost;
             quint16 port = Soprano::Client::TcpClient::DEFAULT_PORT;
             port = args.getSetting( "port" ).toInt();
