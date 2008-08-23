@@ -21,10 +21,8 @@ set(soprano_server_SRC
   datastream.cpp
   dbus/dbusutil.cpp
   dbus/dbusmodeladaptor.cpp
-  dbus/dbustransactionadaptor.cpp
   dbus/dbusexportiterator.cpp
   dbus/dbusexportmodel.cpp
-  dbus/dbusexporttransaction.cpp
   dbus/dbusstatementiteratoradaptor.cpp
   dbus/dbusnodeiteratoradaptor.cpp
   dbus/dbusqueryresultiteratoradaptor.cpp
