@@ -6,5 +6,6 @@ install(FILES
   DBusStatementIterator
   DBusNodeIterator
   DBusQueryResultIterator
+  SparqlModel
   DESTINATION
   include/Soprano/Client)

@@ -21,8 +21,10 @@ set(soprano_server_SRC
   datastream.cpp
   dbus/dbusutil.cpp
   dbus/dbusmodeladaptor.cpp
+  dbus/dbustransactionadaptor.cpp
   dbus/dbusexportiterator.cpp
   dbus/dbusexportmodel.cpp
+  dbus/dbusexporttransaction.cpp
   dbus/dbusstatementiteratoradaptor.cpp
   dbus/dbusnodeiteratoradaptor.cpp
   dbus/dbusqueryresultiteratoradaptor.cpp
@@ -57,6 +59,10 @@ set(soprano_client_SRC
   dbus/dbusstatementiterator.cpp
   dbus/dbusnodeiterator.cpp
   dbus/dbusqueryresultiterator.cpp
+  sparql/sparqlmodel.cpp
+  sparql/sparqlqueryresult.cpp
+  sparql/synchonoussparqlprotocol.cpp
+  sparql/sparqlxmlresultparser.cpp
 )
 
 configure_file(soprano-server-config.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/soprano-server-config.h)
@@ -95,18 +101,19 @@ set_target_properties(sopranoclient PROPERTIES
 
 target_link_libraries(
   sopranoserver
+  soprano
   ${QT_QTCORE_LIBRARY}
   ${QT_QTNETWORK_LIBRARY}
   ${QT_QTDBUS_LIBRARY}
-  soprano
 )
 
 target_link_libraries(
   sopranoclient
+  soprano
   ${QT_QTCORE_LIBRARY}
   ${QT_QTNETWORK_LIBRARY}
   ${QT_QTDBUS_LIBRARY}
-  soprano
+  ${QT_QTXML_LIBRARY}
 )
 
 #target_link_libraries(
@@ -148,3 +155,4 @@ install(
 )
 
 add_subdirectory(dbus)
+add_subdirectory(sparql)
