@@ -21,6 +21,9 @@
  * Apart from storage %Soprano provides a system for RDF parser and serializer plugins. For more details on parsing
  * or serializing RDF data see the Soprano::Parser and Soprano::Serializer classes.
  *
+ * %Soprano comes with a builtin Server and Client implementations allowing to build remote repositories quickly.
+ * Soprano::Client::SparqlModel provides a client to arbitrary <a href="http://www.w3.org/TR/rdf-sparql-protocol/">SPARQL (SPARQL Protocol and RDF Query Language)</a>
+ * Http services.
  *
  * \section quickstart Quickstart
  *
@@ -62,7 +65,8 @@
  * \li \ref soprano_misc
  * \li \ref soprano_error_handling
  * \li \ref soprano_writing_plugins
- * \li \ref soprano_server
+ * \li \ref Soprano::Server
+ * \li \ref Soprano::Client
  */
 
 

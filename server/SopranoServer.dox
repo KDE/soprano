@@ -1,7 +1,8 @@
 /**
- * \page soprano_server Soprano Server
+ * \namespace Soprano::Server
  *
- * %Soprano provides simple server and client librarys which allow for remote access to %Soprano models.
+ * %Soprano provides simple server and client librarys which allow for remote access to %Soprano models. See the
+ * Client module for convinience classes to connect to the %Soprano %Server.
  *
  * \sa \ref soprano_server_dbus, \ref soprano_server_protocol, Soprano::Server, Soprano::Client
  */
@@ -261,16 +262,17 @@
  * FIXME...
  */
 
-/**
- * \namespace Soprano::Server
- *
- * \sa \ref soprano_server_dbus, \ref soprano_server, Soprano::Client
- */
 
 /**
  * \namespace Soprano::Client
  *
- * The server clients have the following restrictions:
+ * The Client module provides classes to connect to remote RDF sources, most important the %Soprano Server which
+ * can be connected via DBus, a local socket, or TCP (see below).
+ * Apart from the %Soprano %Server, arbitrary SPARQL Http services can be connected via SparqlModel.
+ *
+ * \section soprano_server_client_details Overview of the Soprano Server clients
+ *
+ * The %Soprano Server clients have the following restrictions:
  *
  * <b>TCP %Client:</b> (TcpClient)
  * \li No signals are emitted (Model::statementsAdded() and Model::statementsRemoved())
@@ -295,5 +297,5 @@
  * to combine both: use the local socket communication for fast commands and create a D-Bus connection only for the
  * signals.
  *
- * \sa \ref soprano_server, \ref soprano_server_dbus, Soprano::Server
+ * \sa \ref Soprano::Server, \ref soprano_server_dbus
  */

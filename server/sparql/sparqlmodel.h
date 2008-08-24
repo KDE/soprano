@@ -64,7 +64,7 @@ namespace Soprano {
             SparqlModel( const QString& host = QString(),
                          quint16 port = 80,
                          const QString& user = QString(),
-                         const QString& passwd = QString() );
+                         const QString& password = QString() );
 
             /**
              * Destructor.
@@ -78,7 +78,7 @@ namespace Soprano {
              * \param port The port on which to connect the host (most
              *        Http services run on port 80.
              */
-            void setHost( const QString& hostname, quint16 port = 80 );
+            void setHost( const QString& host, quint16 port = 80 );
 
             /**
              * Set the user name and password to access the host.
@@ -87,7 +87,7 @@ namespace Soprano {
              *        anonymous access.
              * \param password The password for \p user in case the host
              */
-            void setUser( const QString& userName, const QString& password = QString() );
+            void setUser( const QString& user, const QString& password = QString() );
 
             /**
              * Add a statement to the remote model.
