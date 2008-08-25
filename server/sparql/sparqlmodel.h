@@ -45,7 +45,7 @@ namespace Soprano {
          *
          * \since 2.2
          */
-        class SOPRANO_EXPORT SparqlModel : public Soprano::Model
+        class SOPRANO_CLIENT_EXPORT SparqlModel : public Soprano::Model
         {
             Q_OBJECT
 
