@@ -14,6 +14,7 @@ install(FILES
   Backend
   BindingSet
   BackendSetting
+  BackendSettings
   BackendOption
   BackendFeature
   RdfSerialization
@@ -23,10 +24,12 @@ install(FILES
   PluginManager
   Plugin
   Serializer
-  RdfSchemaWrapper
+  RdfSchemaModel
   StorageModel
   Global
   Version
+  Transaction
+  TransactionFactory
   DESTINATION
   include/Soprano)
 

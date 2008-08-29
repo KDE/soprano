@@ -122,8 +122,11 @@ QString Soprano::Inference::NodePattern::createSparqlNodePattern( const BindingS
                 return QString( "\"%1\"^^<%2>" ).arg( d->node.toString() ).arg( d->node.dataType().toString() );
             }
         }
+        else if( d->node.isResource() ) {
+            return '<' + QString::fromAscii( d->node.uri().toEncoded() ) + '>';
+        }
         else {
-            return '<' + d->node.toString() + '>';
+            return "_:" + d->node.toString();
         }
     }
 }

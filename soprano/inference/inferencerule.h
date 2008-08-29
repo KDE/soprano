@@ -77,7 +77,11 @@ namespace Soprano {
             /**
              * Check if a statement matches any of the statement patterns
              * in this rule.
+             *
              * \return true if statement matches any of the patterns, false otherwise.
+             * Be aware that createSparqlQuery() might still return an empty string
+             * since it does perform some aditional optimization checks based on the
+             * bound statement.
              */
             bool match( const Statement& statement ) const;
 
@@ -94,10 +98,20 @@ namespace Soprano {
             void bindToStatement( const Statement& statement );
 
             /**
+             * \return The statement set ia bindToStatement() or
+             * an invalid one if none was set.
+             */
+            Statement boundToStatement() const;
+
+            /**
              * Create a SPARQL query that retrieves all resources matching this rule.
+             *
              * \param bindVariables If true and a valid binding statement is set the query
              * will be bound to this statement resulting in a UNION query of all possible
              * bindings.
+             *
+             * \return A full SPARQL query or an empty string if this rule does not apply
+             * to the statement set via bindToStatement.
              *
              * \sa bindToStatement
              */

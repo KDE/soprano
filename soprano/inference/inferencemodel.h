@@ -112,7 +112,7 @@ namespace Soprano {
         
         public Q_SLOTS:
             /**
-             * Normally inferencing is done one new statements are added to the model or
+             * Normally inferencing is done once new statements are added to the model or
              * statements are removed. This method performs inferencing on the whole model.
              * It is useful for initializing a model that already contains statements or
              * update the model if it has been modified bypassing this filter model.

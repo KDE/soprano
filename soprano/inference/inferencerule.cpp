@@ -92,6 +92,12 @@ void Soprano::Inference::Rule::bindToStatement( const Statement& statement )
 }
 
 
+Soprano::Statement Soprano::Inference::Rule::boundToStatement() const
+{
+    return d->bindingStatement;
+}
+
+
 bool Soprano::Inference::Rule::match( const Statement& statement ) const
 {
     for ( QList<StatementPattern>::const_iterator it = d->preconditions.constBegin();
@@ -106,7 +112,7 @@ bool Soprano::Inference::Rule::match( const Statement& statement ) const
 
 QString Soprano::Inference::Rule::createSparqlQuery( bool bindStatement ) const
 {
-    QString query = "SELECT * WHERE { ";
+    QString query;
 
     if ( !bindStatement || !d->bindingStatement.isValid() ) {
         for ( QList<StatementPattern>::const_iterator it = d->preconditions.constBegin();
@@ -143,6 +149,42 @@ QString Soprano::Inference::Rule::createSparqlQuery( bool bindStatement ) const
                     }
                 }
 
+                // ensure that we do not query for statements that cannot be valid anyway
+                // because the current bindings already render the effect invalid
+                if ( d->effect.subjectPattern().isVariable() &&
+                     bindings.contains( d->effect.subjectPattern().variableName() ) &&
+                     bindings[d->effect.subjectPattern().variableName()].isLiteral() ) {
+                    continue;
+                }
+                if ( d->effect.predicatePattern().isVariable() &&
+                     bindings.contains( d->effect.predicatePattern().variableName() ) &&
+                     !bindings[d->effect.predicatePattern().variableName()].isResource() ) {
+                    continue;
+                }
+
+                // ========================================================================================
+                // The following code is deactivated but kept for informational purposes:
+                // the aditional filters make sure we never get invalid statements in InferenceModel::inferRule
+                // but the computational overhead of applying the filter in the Model overshadows
+                // the overhead of enumerating and checking invalid statements.
+#if 0
+                // optimize the query by filtering useless results, i.e. those that
+                // would create invalid statements by applying the effect
+                QStringList filters;
+                if ( d->effect.subjectPattern().isVariable() &&
+                     !bindings.contains( d->effect.subjectPattern().variableName() ) ) {
+                    filters += QString( "!isLiteral(?%1)" ).arg( d->effect.subjectPattern().variableName() );
+                }
+                if ( d->effect.predicatePattern().isVariable() &&
+                     !bindings.contains( d->effect.predicatePattern().variableName() ) ) {
+                    filters += QString( "isURI(?%1)" ).arg( d->effect.predicatePattern().variableName() );
+                }
+                if ( !filters.isEmpty() ) {
+                    subQuery += QString( "FILTER( %1 ) . " ).arg( filters.join( " && " ) );
+                }
+#endif
+                // ========================================================================================
+
                 subQueries.append( subQuery );
             }
         }
@@ -150,12 +192,14 @@ QString Soprano::Inference::Rule::createSparqlQuery( bool bindStatement ) const
         if ( subQueries.count() > 1 ) {
             query += "{ " + subQueries.join( " } UNION { " ) + " }";
         }
-        else {
+        else if( subQueries.count() > 0 ) {
             query += subQueries[0];
         }
     }
 
-    query += '}';
+    if ( !query.isEmpty() ) {
+        query = "SELECT * WHERE { " + query + '}';
+    }
 
     return query;
 }
@@ -223,6 +267,7 @@ Soprano::BindingSet Soprano::Inference::Rule::mergeBindingStatement( const Bindi
             bs.insert( pattern.objectPattern().variableName(), d->bindingStatement.object() );
         }
     }
+
     return bs;
 }
 
@@ -261,5 +306,9 @@ QDebug operator<<( QDebug s, const Soprano::Inference::Rule& rule )
             s.nospace() << ", ";
         }
     }
-    return s.nospace() << " -> " << rule.effect() << "]";
+    s.nospace() << " -> " << rule.effect() << "]";
+    if ( rule.boundToStatement().isValid() ) {
+        s.nospace() << " (bound to statement " << rule.boundToStatement() << ")";
+    }
+    return s;
 }

@@ -25,6 +25,7 @@
 #include "bindingset.h"
 
 #include <QtCore/QDebug>
+#include <QtCore/QStringList>
 
 
 class Soprano::Inference::StatementPattern::Private : public QSharedData

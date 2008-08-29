@@ -1,6 +1,6 @@
 install(FILES
   InferenceModel
-  InferenceRuleSet
+  RuleSet
   Rule
   NodePattern
   StatementPattern
