@@ -104,6 +104,7 @@ Soprano::Server::DBusExportIterator::DBusExportIterator( QueryResultIterator it,
 
 Soprano::Server::DBusExportIterator::~DBusExportIterator()
 {
+    delete d;
 }
 
 
