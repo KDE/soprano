@@ -46,6 +46,10 @@ uint Soprano::qHash( const Soprano::Node& node )
     return qHash( node.toString() );
 }
 
+uint qHash( const Soprano::Node& node )
+{
+    return qHash( node.toString() );
+}
 
 class Soprano::Index::CLuceneIndex::Private
 {
