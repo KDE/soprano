@@ -196,8 +196,8 @@ namespace Soprano {
             Private* const d;
         };
     }
-}
 
-uint qHash( const Soprano::Node& node );
+    uint qHash( const Soprano::Node& node );
+}
 
 #endif
