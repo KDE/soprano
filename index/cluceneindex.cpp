@@ -41,14 +41,9 @@
 // indexwriter needs to be closed for deletion
 // indexreader needs to be closed after usage of writer
 
-uint Soprano::qHash( const Soprano::Node& node )
+uint qHash(  const Soprano::Node& node )
 {
-    return qHash( node.toString() );
-}
-
-uint qHash( const Soprano::Node& node )
-{
-    return qHash( node.toString() );
+    return qHash(  node.toString() );
 }
 
 class Soprano::Index::CLuceneIndex::Private

@@ -37,6 +37,10 @@
 
 // FIXME: add error handling!
 
+uint qHash(  const Soprano::Node& node )
+{
+    return qHash(  node.toString() );
+}
 
 static Soprano::Node compressStatement( const Soprano::Statement& statement )
 {
@@ -65,7 +69,7 @@ static QUrl createRandomUri()
 // -----------------------------------------------------------------------------------------------------------------------
 #include <QSet>
 #include "statementiterator.h"
-uint Soprano::qHash( const Soprano::Node& node )
+uint qHash( const Soprano::Node& node )
 {
     return qHash( node.toString() );
 }
