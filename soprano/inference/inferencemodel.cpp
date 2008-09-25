@@ -37,11 +37,6 @@
 
 // FIXME: add error handling!
 
-uint qHash(  const Soprano::Node& node )
-{
-    return qHash(  node.toString() );
-}
-
 static Soprano::Node compressStatement( const Soprano::Statement& statement )
 {
     // There should be some method Statement::toXXXString for this
@@ -69,11 +64,6 @@ static QUrl createRandomUri()
 // -----------------------------------------------------------------------------------------------------------------------
 #include <QSet>
 #include "statementiterator.h"
-uint qHash( const Soprano::Node& node )
-{
-    return qHash( node.toString() );
-}
-
 uint qHash( const Soprano::Node& node )
 {
     return qHash( node.toString() );
