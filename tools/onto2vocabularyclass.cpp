@@ -80,7 +80,7 @@ int usage( const QString& error = QString() )
     QTextStream s( stderr );
     s << endl;
     s << "Usage:" << endl
-      << "   onto2vocabularyclass --name <name> --encoding <encoding> [--namespace <ns>] [--no-visibility-export] <ontologyfile>" << endl;
+      << "   onto2vocabularyclass --name <name> --encoding <encoding> [--namespace <ns>] [--export-module <module>] [--no-visibility-export] <ontologyfile>" << endl;
 
     if ( !error.isEmpty() ) {
         s << endl << error << endl;
@@ -154,6 +154,7 @@ int main( int argc, char *argv[] )
     QString className;
     QString namespaceName;
     QString encoding;
+    QString exportModule = "soprano";
     bool visibilityExport = true;
     int i = 1;
     while ( i < args.count() ) {
@@ -179,6 +180,15 @@ int main( int argc, char *argv[] )
             ++i;
             if ( i < args.count() ) {
                 namespaceName = args[i];
+            }
+            else {
+                return usage();
+            }
+        }
+        else if ( args[i] == "--export-module" ) {
+            ++i;
+            if ( i < args.count() ) {
+                exportModule = args[i];
             }
             else {
                 return usage();
@@ -331,7 +341,7 @@ int main( int argc, char *argv[] )
     headerStream << "#include <QtCore/QUrl>" << endl;
 
     if ( visibilityExport )
-        headerStream << "#include \"soprano_export.h\"" << endl;
+        headerStream << QString( "#include \"%1_export.h\"").arg(exportModule.toLower()) << endl;
     headerStream << endl;
 
     int indent = 0;
@@ -352,7 +362,7 @@ int main( int argc, char *argv[] )
 
     headerStream << createIndent( indent );
     if ( visibilityExport )
-        headerStream << "SOPRANO_EXPORT ";
+        headerStream << QString( "%1_EXPORT " ).arg(exportModule.toUpper());
     headerStream << "QUrl " << className.toLower() << "Namespace();" << endl << endl;
 
     for( QMap<QString, QPair<QString, QString> >::const_iterator it = normalizedResources.begin();
@@ -369,7 +379,7 @@ int main( int argc, char *argv[] )
         }
         headerStream << createIndent( indent );
         if ( visibilityExport )
-            headerStream << "SOPRANO_EXPORT ";
+            headerStream << QString( "%1_EXPORT " ).arg(exportModule.toUpper());
         headerStream << "QUrl " << name << "();" << endl;
 
         ++it;
