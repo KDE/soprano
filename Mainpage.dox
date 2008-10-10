@@ -67,6 +67,7 @@
  * \li \ref soprano_writing_plugins
  * \li \ref Soprano::Server
  * \li \ref Soprano::Client
+ * \li \ref soprano_devel_tools
  */
 
 
@@ -269,6 +270,45 @@
  * never uses any resource from the RDF namespace no memory will be allocated for its
  * members.
  */
+
+/**
+ * \page soprano_devel_tools %Soprano Development Tools
+ *
+ * %Soprano provides two small tools that can make the life of a developer easier.
+ *
+ * \section sopranocmd sopranocmd
+ *
+ * sopranocmd is a simple command line client to access %Soprano repositories or the \ref Soprano::Server.
+ * sopranocmd's usage is rather simple. It provides a comprehensive help message which can be accessed via:
+ *
+ * \code
+ * sopranocmd --help
+ * \endcode
+ *
+ *
+ * \section onto2vocabularyclass onto2vocabularyclass
+ *
+ * onto2vocabularyclass is a small tool which creates C++ namespaces for ontologies such as Soprano::Vocabulary::RDF
+ * or Soprano::Vocabulary::NRL. Usage is as follows:
+ *
+ * \code
+ * onto2vocabularyclass --name <name> --encoding <encoding> [--namespace <ns>] [--export-module <module>|--no-visibility-export] <ontologyfile>
+ * \endcode
+ *
+ * The value pf \p --name is use as the name of the generated namespace (the RDF in Soprano::Vocabulary::RDF).
+ *
+ * The optional value of \p --namespace is used as the surrounding namespace (the Soprano::Vocabulary in Soprano::Vocabulary::RDF).
+ * If none is specified the global namespace is used.
+ *
+ * The value of \p --encoding specifies the encoding of the ontologyfile used for parsing.
+ *
+ * For historical reasons by default the %Soprano visibility macro SOPRANO_EXPORT is used. This can be
+ * changed by specifying the visibility export module through \p --export-module or disabling visibility
+ * all together with \p --no-visibility-export. The latter is useful if the namespace is not part of a public
+ * API. When using the \p --export-module parameter the value is used to generate the macro (<module>_EXPORT)
+ * and to generate the include file (<module>_export.h) which has to exist and define the macro.
+ */
+
 
 // DOXYGEN_VERSION=2.0.96
 // DOXYGEN_NAME=Soprano
