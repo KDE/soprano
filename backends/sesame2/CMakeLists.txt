@@ -7,8 +7,7 @@ include_directories(
   ${soprano_core_SOURCE_DIR}
   ${soprano_core_BINARY_DIR}
   ${soprano_sesame2_BINARY_DIR}
-  ${JAVA_INCLUDE_PATH}
-  ${JAVA_INCLUDE_PATH2}
+  ${JNI_INCLUDE_DIRS}
   )
 
 configure_file(sesame2-config.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/sesame2-config.h)
