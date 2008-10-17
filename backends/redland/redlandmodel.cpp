@@ -122,17 +122,21 @@ Soprano::Error::ErrorCode Soprano::Redland::RedlandModel::addStatement( const St
     d->readWriteLock.lockForWrite();
 
     librdf_statement* redlandStatement = d->world->createStatement( statement );
-    if ( !redlandStatement ) {
-        setError( d->world->lastError( Error::Error( "Could not convert redland statement",
+    if ( !redlandStatement ||
+         !librdf_statement_get_subject( redlandStatement ) ||
+         !librdf_statement_get_predicate( redlandStatement ) ||
+         !librdf_statement_get_object( redlandStatement ) ) {
+        setError( d->world->lastError( Error::Error( "Could not convert to redland statement",
                                                      Error::ErrorInvalidArgument ) ) );
         d->readWriteLock.unlock();
         return Error::ErrorInvalidArgument;
     }
 
     if ( statement.context().isEmpty() ) {
-        if ( librdf_model_add_statement( d->model, redlandStatement ) ) {
+        if ( int r = librdf_model_add_statement( d->model, redlandStatement ) ) {
             d->world->freeStatement( redlandStatement );
-            setError( d->world->lastError() );
+            setError( d->world->lastError( Error::Error( QString( "Failed to add statement. Redland error code %1." ).arg( r ),
+                                                         Error::ErrorUnknown ) ) );
             d->readWriteLock.unlock();
             return Error::ErrorUnknown;
         }
@@ -143,7 +147,7 @@ Soprano::Error::ErrorCode Soprano::Redland::RedlandModel::addStatement( const St
             d->world->freeStatement( redlandStatement );
             d->world->freeNode( redlandContext );
             setError( d->world->lastError( Error::Error( "Failed to add statement",
-                                                                       Error::ErrorUnknown ) ) );
+                                                         Error::ErrorUnknown ) ) );
             d->readWriteLock.unlock();
             return Error::ErrorUnknown;
         }

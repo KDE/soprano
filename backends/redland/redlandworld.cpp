@@ -143,7 +143,7 @@ librdf_world* Soprano::Redland::World::worldPtr() const
 }
 
 
-librdf_node *Soprano::Redland::World::createNode( const Node &node )
+librdf_node *Soprano::Redland::World::createNode( const Node& node )
 {
     librdf_world *world = worldPtr();
 
@@ -157,7 +157,9 @@ librdf_node *Soprano::Redland::World::createNode( const Node &node )
         return librdf_new_node_from_typed_literal( world,
                                                    (unsigned char *)node.literal().toString().toUtf8().data(),
                                                    node.language().toUtf8().data(),
-                                                   librdf_new_uri( world, (const unsigned char*)node.dataType().toEncoded().data() ) );
+                                                   node.language().isEmpty() // redland does only handle non-empty lang values for rdfs:Literal
+                                                   ? librdf_new_uri( world, (const unsigned char*)node.dataType().toEncoded().data() )
+                                                   : 0 );
     }
 
     return 0;
@@ -209,7 +211,7 @@ Soprano::Statement Soprano::Redland::World::createStatement( librdf_statement *s
     librdf_node *predicate = librdf_statement_get_predicate( st );
     librdf_node *object = librdf_statement_get_object( st );
 
-    return Soprano::Statement( createNode( subject), createNode( predicate), createNode( object ) );
+    return Soprano::Statement( createNode( subject ), createNode( predicate ), createNode( object ) );
 }
 
 void Soprano::Redland::World::freeNode( librdf_node* node )
