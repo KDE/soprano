@@ -231,11 +231,24 @@ namespace Soprano
         /**
          * Converts the Node to a string.
          *
-         *\return A String representation of the Node.
+         * \return A String representation of the Node, suitable for storage,
+         * not really suitable for user readable strings.
          *
-         * \sa LiteralValue::toString(), QUrl::toString()
+         * \sa LiteralValue::toString(), QUrl::toString(), toN3()
          */
         QString toString() const;
+
+        /**
+         * Convert a Node into N3 notation to be used in SPARQL graph patterns.
+         *
+         * \return A string representing the node in N3 encoding or an empty
+         * string for invalid nodes.
+         *
+         * \sa toString()
+         *
+         * \since 2.2
+         */
+        QString toN3() const;
         //@}
         
         /**
@@ -288,6 +301,35 @@ namespace Soprano
          * was empty.
          */
         static Node createLiteralNode( const LiteralValue& value, const QString& language );
+#if 0
+        /**
+         * \since 2.2
+         */
+        enum ParseMode {
+            /**
+             * Forces the N3 parser to be very strict. URIs need to be properly encoded
+             * and literals properly escaped.
+             *
+             * \sa QUrl::StrictMode
+             */
+            ParseModeStrict,
+
+            /**
+             * A more relaxed mode. Plain strings are treated as literals, URIs may contain
+             * spaces.
+             *
+             * \sa QUrl::TolerantMode
+             */
+            ParseModeTolerant
+        };
+
+        /**
+         * Create a Node from its N3 string representation.
+         *
+         * \since 2.2
+         */
+        static Node fromN3( const QString& s, ParseMode = ParseModeStrict );
+#endif
 
     private:
         class NodeData;
@@ -303,6 +345,8 @@ SOPRANO_EXPORT QDebug operator<<( QDebug s, const Soprano::Node& );
 /**
  * Default Soprano::Node stream operator. The operator serializes the Node
  * based on the N-Triples standard, except that it uses Unicode strings.
+ *
+ * \sa Soprano::Node::toN3()
  */
 SOPRANO_EXPORT QTextStream& operator<<( QTextStream& s, const Soprano::Node& );
 

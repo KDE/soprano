@@ -41,6 +41,10 @@ public:
     virtual QString toString() const {
         return QString();
     }
+
+    virtual QString toN3() const {
+        return QString();
+    }
 };
 
 class Soprano::Node::ResourceNodeData : public NodeData
@@ -56,6 +60,10 @@ public:
     QString toString() const {
         return uri.toString();
     }
+
+    QString toN3() const {
+        return '<' + QString::fromAscii( uri.toEncoded() ) + '>';
+    }
 };
 
 class Soprano::Node::BNodeData : public NodeData
@@ -70,6 +78,10 @@ public:
 
     QString toString() const {
         return identifier;
+    }
+
+    QString toN3() const {
+        return "_:" + identifier;
     }
 };
 
@@ -87,6 +99,16 @@ public:
 
     QString toString() const {
         return value.toString();
+    }
+
+    QString toN3() const {
+        if( !language.isEmpty() ) {
+            return '\"' + toString().replace( '\"', "\\\"" ) + "\"@" + language;
+        }
+        else {
+            return QString( "\"%1\"^^<%2>" )
+                .arg( toString().replace( '\"', "\\\"" ), QString::fromAscii( value.dataTypeUri().toEncoded() ) );
+        }
     }
 };
 
@@ -222,6 +244,11 @@ QString Soprano::Node::toString() const
     return d->toString();
 }
 
+QString Soprano::Node::toN3() const
+{
+    return d->toN3();
+}
+
 Soprano::Node& Soprano::Node::operator=( const Node& other )
 {
     d = other.d;
@@ -352,23 +379,8 @@ QDebug operator<<( QDebug s, const Soprano::Node& n )
     case Soprano::Node::EmptyNode:
         s.nospace() << "(empty)";
         break;
-//     case Soprano::Soprano::Node::BlankNode:
-//         s.nospace() << "(blank)";
-//         break;
-    case Soprano::Node::LiteralNode:
-        s.nospace() << '\"' << n.literal() << "\"";
-        if ( n.literal().isString() && !n.language().isEmpty() ) {
-            s.nospace() << "@" << n.language();
-        }
-        else {
-            s.nospace() << "^^<" << n.literal().dataTypeUri().toString() << '>';
-        }
-        break;
-    case Soprano::Node::BlankNode:
-        s.nospace() << "_:" << n.identifier();
-        break;
     default:
-        s.nospace() << n.uri().toString();
+        s.nospace() << n.toN3();
         break;
     }
     return s;
@@ -381,26 +393,8 @@ QTextStream& operator<<( QTextStream& s, const Soprano::Node& n )
     case Soprano::Node::EmptyNode:
         s << "(empty)";
         break;
-//     case Soprano::Soprano::Node::BlankNode:
-//         s.nospace() << "(blank)";
-//         break;
-    case Soprano::Node::LiteralNode:
-        s << '\"' << n.literal().toString() << "\"";
-        if ( n.literal().isString() && !n.language().isEmpty() ) {
-            s << "@" << n.language();
-        }
-        else {
-            s << "^^<" << n.literal().dataTypeUri().toString() << '>';
-        }
-        break;
-    case Soprano::Node::BlankNode:
-        s << "_:" << n.identifier();
-        break;
     default:
-        s << '<' << n.uri().toString() << '>';
-        if ( n.isBlank() ) {
-            s << " (blank)";
-        }
+        s << n.toN3();
         break;
     }
     return s;
