@@ -525,7 +525,7 @@ Soprano::LiteralValue Soprano::LiteralValue::fromString( const QString& value, Q
     case QVariant::ByteArray:
         return LiteralValue( QByteArray::fromBase64( value.toAscii() ) );
     default:
-        qDebug() << "(Soprano::LiteralValue) unknown type: " << type << "storing as string value." << endl;
+//        qDebug() << "(Soprano::LiteralValue) unknown type: " << type << "storing as string value." << endl;
         return LiteralValue( value );
     }
 }
@@ -575,7 +575,7 @@ QVariant::Type Soprano::LiteralValue::typeFromDataTypeUri( const QUrl& dataTypeU
         return it.value();
     }
     else {
-        qDebug() << "(Soprano::LiteralValue) unknown literal type uri:" << dataTypeUri;
+//        qDebug() << "(Soprano::LiteralValue) unknown literal type uri:" << dataTypeUri;
         return QVariant::Invalid;
     }
 }
