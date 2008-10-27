@@ -244,7 +244,7 @@ void Soprano::Index::IndexFilterModel::rebuildIndex()
         Node res = it.binding( "r" );
 
         // and re-add all the literal statements and those in forceIndexPredicates (we can savely ignore the context here)
-        QStringList filters("isLiteral(?o)");
+        QStringList filters("(isLiteral(?o) && str(?o)!='')");
         foreach( const QUrl& p, d->forceIndexPredicates ) {
             filters << QString("?p = %1").arg(Soprano::Node(p).toN3());
         }
@@ -253,9 +253,7 @@ void Soprano::Index::IndexFilterModel::rebuildIndex()
                                                              .arg( filters.join( " || " ) ),
                                                              Query::QueryLanguageSparql );
         while ( it2.next() ) {
-            Statement s( res, it2.binding( "p" ), it2.binding( "o" ) );
-            if ( d->indexStatement( s ) )
-                d->index->addStatement( s );
+            d->index->addStatement( Statement( res, it2.binding( "p" ), it2.binding( "o" ) ) );
         }
 
         d->index->closeTransaction( id );
