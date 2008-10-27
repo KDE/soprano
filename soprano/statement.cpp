@@ -25,9 +25,7 @@
 #include <QtCore/QDebug>
 
 
-using namespace Soprano;
-
-class Statement::Private : public QSharedData
+class Soprano::Statement::Private : public QSharedData
 {
 public:
     Node subject;
@@ -36,17 +34,17 @@ public:
     Node context;
 };
 
-Statement::Statement()
+Soprano::Statement::Statement()
 {
     d = new Private;
 }
 
-Statement::Statement( const Statement &other )
+Soprano::Statement::Statement( const Statement &other )
 {
     d = other.d;
 }
 
-Statement::Statement( const Node &subject, const Node &predicate, const Node &object, const Node &context)
+Soprano::Statement::Statement( const Node &subject, const Node &predicate, const Node &object, const Node &context)
 {
     d = new Private;
     d->subject = subject;
@@ -55,17 +53,17 @@ Statement::Statement( const Node &subject, const Node &predicate, const Node &ob
     d->context = context;
 }
 
-Statement::~Statement()
+Soprano::Statement::~Statement()
 {
 }
 
-Statement& Statement::operator=( const Statement& other )
+Soprano::Statement& Soprano::Statement::operator=( const Statement& other )
 {
     d = other.d;
     return *this;
 }
 
-bool Statement::operator==( const Statement& other ) const
+bool Soprano::Statement::operator==( const Statement& other ) const
 {
     return ( d->subject == other.subject() &&
              d->predicate == other.predicate() &&
@@ -73,7 +71,7 @@ bool Statement::operator==( const Statement& other ) const
              d->context == other.context() );
 }
 
-bool Statement::operator!=( const Statement& other ) const
+bool Soprano::Statement::operator!=( const Statement& other ) const
 {
     return ( d->subject != other.subject() ||
              d->predicate != other.predicate() ||
@@ -81,7 +79,7 @@ bool Statement::operator!=( const Statement& other ) const
              d->context != other.context() );
 }
 
-bool Statement::matches( const Statement& other ) const
+bool Soprano::Statement::matches( const Statement& other ) const
 {
     return ( d->subject.matches( other.subject() ) &&
              d->predicate.matches( other.predicate() ) &&
@@ -89,51 +87,51 @@ bool Statement::matches( const Statement& other ) const
              d->context.matches( other.context() ) );
 }
 
-void Statement::setSubject( const Node &subject )
+void Soprano::Statement::setSubject( const Node &subject )
 {
     // d->detach() is called automatically
     d->subject = subject;
 }
 
-Node Statement::subject() const
+Soprano::Node Soprano::Statement::subject() const
 {
     return d->subject;
 }
 
-void Statement::setPredicate( const Node &predicate )
+void Soprano::Statement::setPredicate( const Node &predicate )
 {
     // d->detach() is called automatically
     d->predicate = predicate;
 }
 
-Node Statement::predicate() const
+Soprano::Node Soprano::Statement::predicate() const
 {
     return d->predicate;
 }
 
-void Statement::setObject( const Node &object )
+void Soprano::Statement::setObject( const Node &object )
 {
     // d->detach() is called automatically
     d->object = object;
 }
 
-Node Statement::object() const
+Soprano::Node Soprano::Statement::object() const
 {
     return d->object;
 }
 
-void Statement::setContext( const Node &context )
+void Soprano::Statement::setContext( const Node &context )
 {
     // d->detach() is called automatically
     d->context = context;
 }
 
-Node Statement::context() const
+Soprano::Node Soprano::Statement::context() const
 {
     return d->context;
 }
 
-bool Statement::isValid() const
+bool Soprano::Statement::isValid() const
 {
     bool valid = ( ( d->subject.isResource() || d->subject.isBlank() ) &&
                    d->predicate.isResource() &&
