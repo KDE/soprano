@@ -151,7 +151,7 @@ public:
 
     QString getId( const Soprano::Node& node ) {
         if ( node.isResource() ) {
-            return node.toString();
+            return QString::fromAscii( node.uri().toEncoded() );
         }
         else if ( node.isBlank() ) {
             return bnodeIdPrefix() + node.toString();
@@ -220,7 +220,7 @@ public:
                 while ( fields->hasMoreElements() ) {
                     lucene::document::Field* field = fields->nextElement();
                     if ( Index::isPropertyField( TString( field->name(), true ) ) ) {
-                        docWrapper.addProperty( field->name(), field->stringValue() );
+                        docWrapper.addProperty( field->name(), field->stringValue(), !field->isIndexed() );
                     }
                 }
                 delete( fields );
@@ -430,17 +430,18 @@ Soprano::Error::ErrorCode Soprano::Index::CLuceneIndex::addStatement( const Sopr
 //    qDebug() << "CLuceneIndex::addStatement in thread " << QThread::currentThreadId();
     QMutexLocker lock( &d->mutex );
 
-    if ( !statement.object().isLiteral() ) {
-        qDebug() << "(Soprano::Index::CLuceneIndex::addStatement) only adding statements with literal object type.";
-        setError( "Only indexing of literal objects supported." );
+    clearError();
+
+    QString field = QString::fromAscii( statement.predicate().uri().toEncoded() );
+    QString text = statement.object().isResource()
+                   ? QString::fromAscii( statement.object().uri().toEncoded() )
+                   : statement.object().toString();
+
+    if( text.isEmpty() ) {
+        setError( "Cannot index object nodes that convert to an empty string." );
 //        qDebug() << "CLuceneIndex::addStatement done in thread " << QThread::currentThreadId();
         return Error::ErrorUnknown;
     }
-
-    clearError();
-
-    QString field = statement.predicate().toString();
-    QString text = statement.object().toString();
 
     bool success = true;
 
@@ -448,7 +449,7 @@ Soprano::Error::ErrorCode Soprano::Index::CLuceneIndex::addStatement( const Sopr
         lucene::document::Document* document = d->getDocument( statement.subject() );
         if ( document ) {
             CLuceneDocumentWrapper docWrapper( document );
-            docWrapper.addProperty( field, text );
+            docWrapper.addProperty( field, text, statement.object().isResource() );
             if ( d->transactionID == 0 ) {
                 d->commit();
             }
@@ -474,13 +475,6 @@ Soprano::Error::ErrorCode Soprano::Index::CLuceneIndex::removeStatement( const S
 //    qDebug() << "CLuceneIndex::removeStatement in thread " << QThread::currentThreadId();
     QMutexLocker lock( &d->mutex );
 
-    if ( !statement.object().isLiteral() ) {
-        qDebug() << "(Soprano::Index::CLuceneIndex::removeStatement) only adding statements with literal object type.";
-        setError( Error::Error( "Only indexing of literal objects supported." ) );
-//        qDebug() << "CLuceneIndex::removeStatement done in thread " << QThread::currentThreadId();
-        return Error::ErrorUnknown;
-    }
-
     clearError();
 
     // just for speed
@@ -491,11 +485,20 @@ Soprano::Error::ErrorCode Soprano::Index::CLuceneIndex::removeStatement( const S
 
     bool success = false;
 
+    QString field = QString::fromAscii( statement.predicate().uri().toEncoded() );
+    QString text = statement.object().isResource()
+                   ? QString::fromAscii( statement.object().uri().toEncoded() )
+                   : statement.object().toString();
+
+    if( text.isEmpty() ) {
+        return Error::ErrorNone;
+    }
+
     try {
         lucene::document::Document* document = d->getDocument( statement.subject() );
         if ( document ) {
             CLuceneDocumentWrapper docWrapper( document );
-            docWrapper.removeProperty( statement.predicate().toString(), statement.object().toString() );
+            docWrapper.removeProperty( field, text, statement.object().isResource() );
             if ( d->transactionID == 0 ) {
                 d->commit();
             }

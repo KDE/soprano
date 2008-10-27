@@ -1,7 +1,7 @@
 /*
  * This file is part of Soprano Project.
  *
- * Copyright (C) 2007 Sebastian Trueg <trueg@kde.org>
+ * Copyright (C) 2007-2008 Sebastian Trueg <trueg@kde.org>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -45,6 +45,7 @@ namespace Soprano {
 
         class CLuceneIndex;
         class QueryResult;
+        class IndexFilterModelPrivate;
 
         /**
          * \class IndexFilterModel indexfiltermodel.h Soprano/Index/IndexFilterModel
@@ -95,6 +96,8 @@ namespace Soprano {
              * Adds a new statement.
              *
              * This will index the statement and then forward the call to the parent model.
+             * Normally only statements with literal objects are indexed. An exception
+             * are those statements with predicates that are set via setForceIndexPredicates.
              */
             Soprano::Error::ErrorCode addStatement( const Soprano::Statement &statement );
 
@@ -231,13 +234,106 @@ namespace Soprano {
              */
             QList<QUrl> indexOnlyPredicates() const;
 
+            /**
+             * Add a predicate which should be indexed even if the object is a resource.
+             * See setForceIndexPredicates for a detailed explanation.
+             *
+             * \param predicate The predicate that should be indexed
+             * in any case.
+             *
+             * \sa forceIndexPredicates, setForceIndexPredicates
+             *
+             * \since 2.2
+             */
+            void addForceIndexPredicate( const QUrl& predicate );
+
+            /**
+             * Normally only statements with a literal object are indexed when added
+             * thorugh addStatement. In some cases however, it is useful to also index 
+             * resource objects.
+             *
+             * Statement with a resource object (a URI) and a predicate that matches
+             * one of the force index predicates, are converted to strings using
+             * QUrl::toEncoded and added to the index non-tokenized. Thus, the resources
+             * will be searchable directly via a 'field:uri' query but not via the
+             * default search  field.
+             *
+             * A typical and very useful predicate is Vocabulary::RDF::type(). 
+             * This allows to restrict the type of resources in lucene queries:
+             *
+             * \code
+             * model->executeQuery( QString( "foobar AND %1:%2" )
+             *                      .arg( encodeUriForLuceneQuery( RDF::type() ) )
+             *                      .arg( encodeUriForLuceneQuery( myType ) ),
+             *                      Query::QueryLanguageUser,
+             *                      "lucene" );
+             * \endcode
+             *
+             * \param predicates The predicates that should be indexed
+             * in any case.
+             *
+             * \sa forceIndexPredicates, addForceIndexPredicate
+             *
+             * \since 2.2
+             */
+            void setForceIndexPredicates( const QList<QUrl>& predicates );
+
+            /**
+             * See setForceIndexPredicates for a detailed explanation.
+             *
+             * \return A list of predicates that will be indexed even if the object
+             * is not a literal.
+             *
+             * \sa addForceIndexPredicate, setForceIndexPredicates
+             *
+             * \since 2.2
+             */
+            QList<QUrl> forceIndexPredicates() const;
+
+            /**
+             * Encodes a string to be used in a lucene query. String values
+             * may contain characters that are reserved in lucene queries.
+             * These are property escaped by this method.
+             *
+             * This method converts an arbitrary string into a string that can be used
+             * in a lucene query.
+             *
+             * \param value The string to be encoded.
+             *
+             * \return An encoded and escaped string representation of the 
+             * provided string.
+             *
+             * \sa encodeUriForLuceneQuery
+             *
+             * \since 2.2
+             */
+            static QString encodeStringForLuceneQuery( const QString& value );
+
+            /**
+             * Encodes a URI to be used in a lucene query. URIs often contain
+             * characters that are reserved in lucene queries and, thus, need
+             * to be escaped. In addition, the URIs are encoded by the index
+             * model for storage in clucene.
+             *
+             * This method converts a URI into a string that can be used
+             * in a lucene query.
+             *
+             * \param uri The URI to be encoded.
+             *
+             * \return An encoded and escaped string representation of the URI.
+             *
+             * \sa encodeStringForLuceneQuery
+             *
+             * \since 2.2
+             */
+            static QString encodeUriForLuceneQuery( const QUrl& uri );
+
             using FilterModel::addStatement;
             using FilterModel::removeStatement;
             using FilterModel::removeAllStatements;
 
         private:
-            class Private;
-            Private* const d;
+            IndexFilterModelPrivate* const d;
         };
     }
 }

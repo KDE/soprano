@@ -48,8 +48,8 @@ namespace Soprano {
             CLuceneDocumentWrapper( lucene::document::Document* );
             ~CLuceneDocumentWrapper();
 
-            void addProperty( const TString& field, const TString& text );
-            void removeProperty( const TString& field, const TString& text );
+            void addProperty( const TString& field, const TString& text, bool isUri );
+            void removeProperty( const TString& field, const TString& text, bool isUri );
     
             /**
              * Checks whether a field occurs with a specified value in a Document.

@@ -53,7 +53,7 @@ Soprano::Index::CLuceneDocumentWrapper::~CLuceneDocumentWrapper()
 
 using lucene::document::Field;
 
-void Soprano::Index::CLuceneDocumentWrapper::addProperty( const TString& field, const TString& text )
+void Soprano::Index::CLuceneDocumentWrapper::addProperty( const TString& field, const TString& text, bool isUri )
 {
     // FIXME: I think we should only index (and never store) the following:
     //        1. The predicate/literal combination itself
@@ -64,9 +64,11 @@ void Soprano::Index::CLuceneDocumentWrapper::addProperty( const TString& field, 
     // store this predicate (YES, the CLucene API is that bad. We actually put in Fields allocated on the heap here!)
     d->document->add( *new Field( field.data(), text.data(),
 #ifdef CL_VERSION_19_OR_GREATER
-                                  Field::STORE_YES|Field::INDEX_TOKENIZED|Field::TERMVECTOR_NO
+                                  isUri
+                                  ? Field::STORE_YES|Field::INDEX_UNTOKENIZED|Field::TERMVECTOR_NO
+                                  : Field::STORE_YES|Field::INDEX_TOKENIZED|Field::TERMVECTOR_NO
 #else
-                                  true, true, true
+                                  true /*store*/, true/*index*/, isUri /*tokenize*/
 #endif
                           ) );
 
@@ -77,18 +79,20 @@ void Soprano::Index::CLuceneDocumentWrapper::addProperty( const TString& field, 
     // means loss of information).
     //
     // (YES, the CLucene API is that bad. We actually put in Fields allocated on the heap here!)
-    d->document->add( *new Field( textFieldName().data(), text.data(),
+    if( !isUri ) {
+        d->document->add( *new Field( textFieldName().data(), text.data(),
 #ifdef CL_VERSION_19_OR_GREATER
-                                  Field::STORE_NO|Field::INDEX_TOKENIZED|Field::TERMVECTOR_NO
+                                      Field::STORE_NO|Field::INDEX_TOKENIZED|Field::TERMVECTOR_NO
 #else
-                                  false, true, true
+                                      false, true, true
 #endif
-                          ) );
+                              ) );
+    }
 
 }
 
 
-void Soprano::Index::CLuceneDocumentWrapper::removeProperty( const TString& field, const TString& text )
+void Soprano::Index::CLuceneDocumentWrapper::removeProperty( const TString& field, const TString& text, bool isUri )
 {
     // clucene does not allow to remove a specific field/value combination. Thus,
     // we have to do a little hackling and re-add everything except our property (could we maybe just get these from the RDF model?)
@@ -102,7 +106,9 @@ void Soprano::Index::CLuceneDocumentWrapper::removeProperty( const TString& fiel
         for ( int i = 0; values[i]; ++i ) {
             TString value( values[i], true );
             if ( value != text ) {
-                addProperty( field, values[i] );
+                // FIXME: using isUri here means that for one field isUri is always the same.
+                // While this in theory is correct there might still be invalid data in Soprano
+                addProperty( field, values[i], isUri );
             }
         }
 
@@ -110,22 +116,24 @@ void Soprano::Index::CLuceneDocumentWrapper::removeProperty( const TString& fiel
     }
 
     // step 2: remove the field from the text index
-    d->document->removeFields( textFieldName().data() );
+    if( !isUri ) {
+        d->document->removeFields( textFieldName().data() );
 
-    lucene::document::DocumentFieldEnumeration* e = d->document->fields();
-    while ( e->hasMoreElements() ) {
-        lucene::document::Field* field = e->nextElement();
-        if ( isPropertyField( TString( field->name(), true ) ) ) {
-            d->document->add( *new Field( textFieldName().data(), field->stringValue(),
+        lucene::document::DocumentFieldEnumeration* e = d->document->fields();
+        while ( e->hasMoreElements() ) {
+            lucene::document::Field* field = e->nextElement();
+            if ( isPropertyField( TString( field->name(), true ) ) ) {
+                d->document->add( *new Field( textFieldName().data(), field->stringValue(),
 #ifdef CL_VERSION_19_OR_GREATER
-                                          Field::STORE_NO|Field::INDEX_TOKENIZED|Field::TERMVECTOR_NO
+                                              Field::STORE_NO|Field::INDEX_TOKENIZED|Field::TERMVECTOR_NO
 #else
-                                          false, true, true
+                                              false, true, true
 #endif
-                                  ) );
+                                      ) );
+            }
         }
+        _CLDELETE( e );
     }
-    _CLDELETE( e );
 }
 
 

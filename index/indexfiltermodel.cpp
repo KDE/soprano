@@ -1,7 +1,7 @@
 /*
  * This file is part of Soprano Project.
  *
- * Copyright (C) 2007 Sebastian Trueg <trueg@kde.org>
+ * Copyright (C) 2007-2008 Sebastian Trueg <trueg@kde.org>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -20,6 +20,7 @@
  */
 
 #include "indexfiltermodel.h"
+#include "indexfiltermodel_p.h"
 #include "cluceneindex.h"
 #include "queryhitwrapperresultiteratorbackend.h"
 #include "queryresultiterator.h"
@@ -30,51 +31,58 @@
 
 #include <QtCore/QThread>
 #include <QtCore/QSet>
+#include <QtCore/QRegExp>
 #include <QtCore/QDebug>
 
 
-class Soprano::Index::IndexFilterModel::Private
+Soprano::Index::IndexFilterModelPrivate::IndexFilterModelPrivate()
+    : deleteIndex( false ),
+      index( 0 ),
+      transactionCacheSize( 1 ),
+      transactionCacheId( 0 ),
+      transactionCacheCount( 0 )
 {
-public:
-    Private()
-        : deleteIndex( false ),
-          index( 0 ),
-          transactionCacheSize( 1 ),
-          transactionCacheId( 0 ),
-          transactionCacheCount( 0 ) {
+}
+
+
+void Soprano::Index::IndexFilterModelPrivate::startTransaction()
+{
+    if ( transactionCacheSize > 1 && !transactionCacheId ) {
+        transactionCacheId = index->startTransaction();
+        transactionCacheCount = 0;
     }
 
-    bool deleteIndex;
-    CLuceneIndex* index;
+    ++transactionCacheCount;
+}
 
-    QSet<QUrl> indexOnlyPredicates;
 
-    int transactionCacheSize;
-    int transactionCacheId;
-    int transactionCacheCount;
-
-    void startTransaction() {
-        if ( transactionCacheSize > 1 && !transactionCacheId ) {
-            transactionCacheId = index->startTransaction();
-            transactionCacheCount = 0;
-        }
-
-        ++transactionCacheCount;
+void Soprano::Index::IndexFilterModelPrivate::closeTransaction()
+{
+    if ( transactionCacheCount >= transactionCacheSize && transactionCacheId ) {
+        index->closeTransaction( transactionCacheId );
+        transactionCacheCount = 0;
+        transactionCacheId = 0;
     }
+}
 
-    void closeTransaction() {
-        if ( transactionCacheCount >= transactionCacheSize && transactionCacheId ) {
-            index->closeTransaction( transactionCacheId );
-            transactionCacheCount = 0;
-            transactionCacheId = 0;
-        }
-    }
-};
+
+bool Soprano::Index::IndexFilterModelPrivate::storeStatement( const Statement& statement ) const
+{
+    return !indexOnlyPredicates.contains( statement.predicate().uri() );
+}
+
+
+bool Soprano::Index::IndexFilterModelPrivate::indexStatement( const Statement& statement ) const
+{
+    return statement.object().isLiteral() || forceIndexPredicates.contains( statement.predicate().uri() );
+}
+
+
 
 
 Soprano::Index::IndexFilterModel::IndexFilterModel( const QString& dir, Soprano::Model* model )
     : FilterModel( model ),
-      d( new Private() )
+      d( new IndexFilterModelPrivate() )
 {
     d->index = new CLuceneIndex();
     d->index->open( dir );
@@ -84,7 +92,7 @@ Soprano::Index::IndexFilterModel::IndexFilterModel( const QString& dir, Soprano:
 
 Soprano::Index::IndexFilterModel::IndexFilterModel( CLuceneIndex* index, Soprano::Model* model )
     : FilterModel( model ),
-      d( new Private() )
+      d( new IndexFilterModelPrivate() )
 {
     d->index = index;
     d->deleteIndex = false;
@@ -109,7 +117,7 @@ Soprano::Index::CLuceneIndex* Soprano::Index::IndexFilterModel::index() const
 Soprano::Error::ErrorCode Soprano::Index::IndexFilterModel::addStatement( const Soprano::Statement& statement )
 {
 //    qDebug() << "IndexFilterModel::addStatement(" << statement << ") in thread " << QThread::currentThreadId();
-    bool store = !d->indexOnlyPredicates.contains( statement.predicate().uri() );
+    bool store = d->storeStatement( statement );
 
     if ( !store ||
          !FilterModel::containsStatement( statement ) ) {
@@ -117,7 +125,10 @@ Soprano::Error::ErrorCode Soprano::Index::IndexFilterModel::addStatement( const 
         if( store ) {
             c = FilterModel::addStatement( statement );
         }
-        if ( c == Error::ErrorNone && statement.object().isLiteral() ) {
+
+        bool index = d->indexStatement( statement );
+
+        if ( c == Error::ErrorNone && index ) {
             d->startTransaction();
             c = d->index->addStatement( statement );
             d->closeTransaction();
@@ -140,7 +151,7 @@ Soprano::Error::ErrorCode Soprano::Index::IndexFilterModel::removeStatement( con
     // here we simply ignore the indexOnlyPredicates
     Error::ErrorCode c = FilterModel::removeStatement( statement );
     if ( c == Error::ErrorNone &&
-         statement.object().isLiteral() ) {
+         d->indexStatement( statement ) ) {
         d->startTransaction();
         c = d->index->removeStatement( statement );
         d->closeTransaction();
@@ -163,7 +174,7 @@ Soprano::Error::ErrorCode Soprano::Index::IndexFilterModel::removeAllStatements(
     Soprano::StatementIterator it = parentModel()->listStatements( statement );
     while ( it.next() ) {
         Statement s = *it;
-        if ( s.object().isLiteral() ) {
+        if ( d->indexStatement( s ) ) {
             d->startTransaction();
             Error::ErrorCode c = d->index->removeStatement( *it );
             d->closeTransaction();
@@ -224,17 +235,22 @@ void Soprano::Index::IndexFilterModel::rebuildIndex()
     // rebuild the index
     // -----------------------------
 
-    // select all resources that have literal statements
-    QueryResultIterator it = FilterModel::executeQuery( "select distinct ?r where { ?r ?p ?o . FILTER(isLiteral(?o)) . }",
+    // select all resources
+    QueryResultIterator it = FilterModel::executeQuery( "select distinct ?r where { ?r ?p ?o . }",
                                                         Query::QueryLanguageSparql );
 
     while ( it.next() ) {
         int id = d->index->startTransaction();
         Node res = it.binding( "r" );
 
-        // and re-add all the literal statements (we can savely ignore the context here)
-        QueryResultIterator it2 = FilterModel::executeQuery( QString( "select distinct ?p ?o where { <%1> ?p ?o . FILTER(isLiteral(?o)) . }" )
-                                                             .arg( QString::fromAscii( res.uri().toEncoded() ) ),
+        // and re-add all the literal statements and those in forceIndexPredicates (we can savely ignore the context here)
+        QStringList filters("isLiteral(?o)");
+        foreach( const QUrl& p, d->forceIndexPredicates ) {
+            filters << QString("?p = %1").arg(Soprano::Node(p).toN3());
+        }
+        QueryResultIterator it2 = FilterModel::executeQuery( QString( "select distinct ?p ?o where { %1 ?p ?o . FILTER(%2) . }" )
+                                                             .arg( res.toN3() )
+                                                             .arg( filters.join( " || " ) ),
                                                              Query::QueryLanguageSparql );
         while ( it2.next() ) {
             d->index->addStatement( Statement( res, it2.binding( "p" ), it2.binding( "o" ) ) );
@@ -264,7 +280,42 @@ QList<QUrl> Soprano::Index::IndexFilterModel::indexOnlyPredicates() const
 }
 
 
+void Soprano::Index::IndexFilterModel::addForceIndexPredicate( const QUrl& predicate )
+{
+    d->forceIndexPredicates.insert( predicate );
+}
+
+
+void Soprano::Index::IndexFilterModel::setForceIndexPredicates( const QList<QUrl>& predicates )
+{
+    d->forceIndexPredicates = predicates.toSet();
+}
+
+
+QList<QUrl> Soprano::Index::IndexFilterModel::forceIndexPredicates() const
+{
+    return d->forceIndexPredicates.toList();
+}
+
+
 void Soprano::Index::IndexFilterModel::optimizeIndex()
 {
     d->index->optimize();
+}
+
+
+QString Soprano::Index::IndexFilterModel::encodeStringForLuceneQuery( const QString& s )
+{
+    /* Chars to escape: + - && || ! ( ) { } [ ] ^ " ~  : \ */
+
+    static QRegExp rx( "([\\-" + QRegExp::escape( "+&|!(){}[]^\"~:\\" ) + "])" );
+    QString es( s );
+    es.replace( rx, "\\\\1" );
+    return es;
+}
+
+
+QString Soprano::Index::IndexFilterModel::encodeUriForLuceneQuery( const QUrl& uri )
+{
+    return encodeStringForLuceneQuery( QString::fromAscii( uri.toEncoded() ) );
 }
