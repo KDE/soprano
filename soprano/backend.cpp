@@ -107,6 +107,64 @@ void Soprano::BackendSetting::setValue( const QVariant& value )
 }
 
 
+bool Soprano::isOptionInSettings( const BackendSettings& settings, BackendOption option, const QString& userOptionName )
+{
+    QList<Soprano::BackendSetting>::const_iterator end = settings.constEnd();
+    for ( QList<Soprano::BackendSetting>::const_iterator it = settings.constBegin(); it != end; ++it ) {
+        const Soprano::BackendSetting& setting = *it;
+        if ( setting.option() == option ) {
+            if ( option == BackendOptionUser ) {
+                if ( setting.userOptionName() == userOptionName )
+                    return true;
+            }
+            else {
+                return true;
+            }
+        }
+    }
+    return false;
+}
+
+
+Soprano::BackendSetting& Soprano::settingInSettings( BackendSettings& settings, BackendOption option, const QString& userOptionName )
+{
+    QList<Soprano::BackendSetting>::iterator end = settings.end();
+    for ( QList<Soprano::BackendSetting>::iterator it = settings.begin(); it != end; ++it ) {
+        Soprano::BackendSetting& setting = *it;
+        if ( setting.option() == option ) {
+            if ( option == BackendOptionUser ) {
+                if ( setting.userOptionName() == userOptionName )
+                    return setting;
+            }
+            else {
+                return setting;
+            }
+        }
+    }
+    static BackendSetting s_dummy;
+    return s_dummy;
+}
+
+
+QVariant Soprano::valueInSettings( const BackendSettings& settings, BackendOption option, const QString& userOptionName )
+{
+    QList<Soprano::BackendSetting>::const_iterator end = settings.constEnd();
+    for ( QList<Soprano::BackendSetting>::const_iterator it = settings.constBegin(); it != end; ++it ) {
+        const Soprano::BackendSetting& setting = *it;
+        if ( setting.option() == option ) {
+            if ( option == BackendOptionUser ) {
+                if ( setting.userOptionName() == userOptionName )
+                    return setting.value();
+            }
+            else {
+                return setting.value();
+            }
+        }
+    }
+    return QVariant();
+}
+
+
 class Soprano::Backend::Private
 {
 public:

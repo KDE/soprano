@@ -45,7 +45,7 @@ namespace Soprano
      * value from Soprano::BackendOption or a user defined string value that depends on the Backend implementation. In the 
      * latter case option has to be set to Soprano::BackendOptionUser.
      *
-     * \sa Backend::createModel()
+     * \sa Backend::createModel(), BackendSettings, isOptionInSettings, settingInSettings, valueInSettings
      *
      * \author Sebastian Trueg <trueg@kde.org>
      */
@@ -114,7 +114,56 @@ namespace Soprano
         QSharedDataPointer<Private> d;
     };
 
+    /**
+     * List of BackendSetting.
+     *
+     * \sa isOptionInSettings, settingInSettings, valueInSettings
+     */
     typedef QList<BackendSetting> BackendSettings;
+
+    /**
+     * Check if a certain option is defined in a list of BackendSettings.
+     *
+     * \param settings The list to check.
+     * \param option The option to check.
+     * \param userOptionName If \p option is Soprano::BackendOptionUser, this
+     * defines the user option to be checked.
+     *
+     * \return \p true if the option is defined.
+     *
+     * \since 2.2
+     */
+    SOPRANO_EXPORT bool isOptionInSettings( const BackendSettings& settings, BackendOption option, const QString& userOptionName = QString() );
+
+    /**
+     * Get a setting from the set, allowing to modify it.
+     *
+     * \param settings The list to check.
+     * \param option The option to extract.
+     * \param userOptionName If \p option is Soprano::BackendOptionUser, this
+     * defines the user option to be extracted.
+     *
+     * \return The extracted setting.
+     *
+     * \since 2.2
+     */
+    SOPRANO_EXPORT BackendSetting& settingInSettings( BackendSettings& settings, BackendOption option, const QString& userOptionName = QString() );
+
+    /**
+     * Retrieve the value of an option.
+     *
+     * \param settings The list to check.
+     * \param option The option to retrieve.
+     * \param userOptionName If \p option is Soprano::BackendOptionUser, this
+     * defines the user option to be retrieved.
+     *
+     * \return The value of the specified option or an invalid variant if the set
+     * does not contain the option.
+     *
+     * \since 2.2
+     */
+    SOPRANO_EXPORT QVariant valueInSettings( const BackendSettings& settings, BackendOption option, const QString& userOptionName = QString() );
+
 
     /**
      * \class Backend backend.h Soprano/Backend
