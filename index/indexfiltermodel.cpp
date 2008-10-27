@@ -253,7 +253,9 @@ void Soprano::Index::IndexFilterModel::rebuildIndex()
                                                              .arg( filters.join( " || " ) ),
                                                              Query::QueryLanguageSparql );
         while ( it2.next() ) {
-            d->index->addStatement( Statement( res, it2.binding( "p" ), it2.binding( "o" ) ) );
+            Statement s( res, it2.binding( "p" ), it2.binding( "o" ) );
+            if ( d->indexStatement( s ) )
+                d->index->addStatement( s );
         }
 
         d->index->closeTransaction( id );
