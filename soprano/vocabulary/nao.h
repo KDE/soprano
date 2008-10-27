@@ -33,6 +33,14 @@ namespace Soprano {
             SOPRANO_EXPORT QUrl naoNamespace();
 
             /**
+             * http://www.semanticdesktop.org/ontologies/2007/08/15/nao#FreeDesktopIcon 
+             * 
+             * Represents a desktop icon as defined in the FreeDesktop Icon 
+             * Naming Standard 
+             */
+            SOPRANO_EXPORT QUrl FreeDesktopIcon();
+
+            /**
              * http://www.semanticdesktop.org/ontologies/2007/08/15/nao#Party 
              * 
              * Represents a single or a group of individuals 
@@ -148,6 +156,14 @@ namespace Soprano {
             SOPRANO_EXPORT QUrl hasTopic();
 
             /**
+             * http://www.semanticdesktop.org/ontologies/2007/08/15/nao#iconName 
+             * 
+             * Defines a name for a FreeDesktop Icon as defined in the FreeDesktop 
+             * Icon Naming Standard 
+             */
+            SOPRANO_EXPORT QUrl iconName();
+
+            /**
              * http://www.semanticdesktop.org/ontologies/2007/08/15/nao#identifier 
              * 
              * Defines a generic identifier for a resource 
@@ -194,7 +210,8 @@ namespace Soprano {
             /**
              * http://www.semanticdesktop.org/ontologies/2007/08/15/nao#numericRating 
              * 
-             * Annotation for a resource in the form of a numeric decimal rating 
+             * Annotation for a resource in the form of a numeric rating, allowed 
+             * values are between 1 and 10 whereas 0 is interpreted as not set 
              */
             SOPRANO_EXPORT QUrl numericRating();
 
@@ -204,6 +221,13 @@ namespace Soprano {
              * Defines a personal string identifier for a resource 
              */
             SOPRANO_EXPORT QUrl personalIdentifier();
+
+            /**
+             * http://www.semanticdesktop.org/ontologies/2007/08/15/nao#pluralPrefLabel 
+             * 
+             * The plural form of the preferred label for a resource 
+             */
+            SOPRANO_EXPORT QUrl pluralPrefLabel();
 
             /**
              * http://www.semanticdesktop.org/ontologies/2007/08/15/nao#prefLabel 
@@ -225,6 +249,23 @@ namespace Soprano {
              * Annotation for a resource in the form of an unrestricted rating 
              */
             SOPRANO_EXPORT QUrl rating();
+
+            /**
+             * http://www.semanticdesktop.org/ontologies/2007/08/15/nao#score 
+             * 
+             * An authorative score for an item valued between 0 and 1 
+             */
+            SOPRANO_EXPORT QUrl score();
+
+            /**
+             * http://www.semanticdesktop.org/ontologies/2007/08/15/nao#scoreParameter 
+             * 
+             * A marker property to mark selected properties which are input 
+             * to a mathematical algorithm to generate scores for resources. 
+             * Properties are marked by being defined as subproperties of 
+             * this property 
+             */
+            SOPRANO_EXPORT QUrl scoreParameter();
 
             /**
              * http://www.semanticdesktop.org/ontologies/2007/08/15/nao#serializationLanguage 

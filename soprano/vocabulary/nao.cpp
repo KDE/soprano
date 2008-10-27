@@ -25,6 +25,7 @@ class NaoPrivate
 public:
     NaoPrivate()
         : nao_namespace( QUrl::fromEncoded( "http://www.semanticdesktop.org/ontologies/2007/08/15/nao#", QUrl::StrictMode ) ),
+          nao_FreeDesktopIcon( QUrl::fromEncoded( "http://www.semanticdesktop.org/ontologies/2007/08/15/nao#FreeDesktopIcon", QUrl::StrictMode ) ),
           nao_Party( QUrl::fromEncoded( "http://www.semanticdesktop.org/ontologies/2007/08/15/nao#Party", QUrl::StrictMode ) ),
           nao_Symbol( QUrl::fromEncoded( "http://www.semanticdesktop.org/ontologies/2007/08/15/nao#Symbol", QUrl::StrictMode ) ),
           nao_Tag( QUrl::fromEncoded( "http://www.semanticdesktop.org/ontologies/2007/08/15/nao#Tag", QUrl::StrictMode ) ),
@@ -41,6 +42,7 @@ public:
           nao_hasSymbol( QUrl::fromEncoded( "http://www.semanticdesktop.org/ontologies/2007/08/15/nao#hasSymbol", QUrl::StrictMode ) ),
           nao_hasTag( QUrl::fromEncoded( "http://www.semanticdesktop.org/ontologies/2007/08/15/nao#hasTag", QUrl::StrictMode ) ),
           nao_hasTopic( QUrl::fromEncoded( "http://www.semanticdesktop.org/ontologies/2007/08/15/nao#hasTopic", QUrl::StrictMode ) ),
+          nao_iconName( QUrl::fromEncoded( "http://www.semanticdesktop.org/ontologies/2007/08/15/nao#iconName", QUrl::StrictMode ) ),
           nao_identifier( QUrl::fromEncoded( "http://www.semanticdesktop.org/ontologies/2007/08/15/nao#identifier", QUrl::StrictMode ) ),
           nao_isRelated( QUrl::fromEncoded( "http://www.semanticdesktop.org/ontologies/2007/08/15/nao#isRelated", QUrl::StrictMode ) ),
           nao_isTagFor( QUrl::fromEncoded( "http://www.semanticdesktop.org/ontologies/2007/08/15/nao#isTagFor", QUrl::StrictMode ) ),
@@ -49,15 +51,19 @@ public:
           nao_modified( QUrl::fromEncoded( "http://www.semanticdesktop.org/ontologies/2007/08/15/nao#modified", QUrl::StrictMode ) ),
           nao_numericRating( QUrl::fromEncoded( "http://www.semanticdesktop.org/ontologies/2007/08/15/nao#numericRating", QUrl::StrictMode ) ),
           nao_personalIdentifier( QUrl::fromEncoded( "http://www.semanticdesktop.org/ontologies/2007/08/15/nao#personalIdentifier", QUrl::StrictMode ) ),
+          nao_pluralPrefLabel( QUrl::fromEncoded( "http://www.semanticdesktop.org/ontologies/2007/08/15/nao#pluralPrefLabel", QUrl::StrictMode ) ),
           nao_prefLabel( QUrl::fromEncoded( "http://www.semanticdesktop.org/ontologies/2007/08/15/nao#prefLabel", QUrl::StrictMode ) ),
           nao_prefSymbol( QUrl::fromEncoded( "http://www.semanticdesktop.org/ontologies/2007/08/15/nao#prefSymbol", QUrl::StrictMode ) ),
           nao_rating( QUrl::fromEncoded( "http://www.semanticdesktop.org/ontologies/2007/08/15/nao#rating", QUrl::StrictMode ) ),
+          nao_score( QUrl::fromEncoded( "http://www.semanticdesktop.org/ontologies/2007/08/15/nao#score", QUrl::StrictMode ) ),
+          nao_scoreParameter( QUrl::fromEncoded( "http://www.semanticdesktop.org/ontologies/2007/08/15/nao#scoreParameter", QUrl::StrictMode ) ),
           nao_serializationLanguage( QUrl::fromEncoded( "http://www.semanticdesktop.org/ontologies/2007/08/15/nao#serializationLanguage", QUrl::StrictMode ) ),
           nao_status( QUrl::fromEncoded( "http://www.semanticdesktop.org/ontologies/2007/08/15/nao#status", QUrl::StrictMode ) ),
           nao_version( QUrl::fromEncoded( "http://www.semanticdesktop.org/ontologies/2007/08/15/nao#version", QUrl::StrictMode ) ) {
     }
 
     QUrl nao_namespace;
+    QUrl nao_FreeDesktopIcon;
     QUrl nao_Party;
     QUrl nao_Symbol;
     QUrl nao_Tag;
@@ -74,6 +80,7 @@ public:
     QUrl nao_hasSymbol;
     QUrl nao_hasTag;
     QUrl nao_hasTopic;
+    QUrl nao_iconName;
     QUrl nao_identifier;
     QUrl nao_isRelated;
     QUrl nao_isTagFor;
@@ -82,9 +89,12 @@ public:
     QUrl nao_modified;
     QUrl nao_numericRating;
     QUrl nao_personalIdentifier;
+    QUrl nao_pluralPrefLabel;
     QUrl nao_prefLabel;
     QUrl nao_prefSymbol;
     QUrl nao_rating;
+    QUrl nao_score;
+    QUrl nao_scoreParameter;
     QUrl nao_serializationLanguage;
     QUrl nao_status;
     QUrl nao_version;
@@ -95,6 +105,11 @@ Q_GLOBAL_STATIC( NaoPrivate, s_nao )
 QUrl Soprano::Vocabulary::NAO::naoNamespace()
 {
     return s_nao()->nao_namespace;
+}
+
+QUrl Soprano::Vocabulary::NAO::FreeDesktopIcon()
+{
+    return s_nao()->nao_FreeDesktopIcon;
 }
 
 QUrl Soprano::Vocabulary::NAO::Party()
@@ -177,6 +192,11 @@ QUrl Soprano::Vocabulary::NAO::hasTopic()
     return s_nao()->nao_hasTopic;
 }
 
+QUrl Soprano::Vocabulary::NAO::iconName()
+{
+    return s_nao()->nao_iconName;
+}
+
 QUrl Soprano::Vocabulary::NAO::identifier()
 {
     return s_nao()->nao_identifier;
@@ -217,6 +237,11 @@ QUrl Soprano::Vocabulary::NAO::personalIdentifier()
     return s_nao()->nao_personalIdentifier;
 }
 
+QUrl Soprano::Vocabulary::NAO::pluralPrefLabel()
+{
+    return s_nao()->nao_pluralPrefLabel;
+}
+
 QUrl Soprano::Vocabulary::NAO::prefLabel()
 {
     return s_nao()->nao_prefLabel;
@@ -230,6 +255,16 @@ QUrl Soprano::Vocabulary::NAO::prefSymbol()
 QUrl Soprano::Vocabulary::NAO::rating()
 {
     return s_nao()->nao_rating;
+}
+
+QUrl Soprano::Vocabulary::NAO::score()
+{
+    return s_nao()->nao_score;
+}
+
+QUrl Soprano::Vocabulary::NAO::scoreParameter()
+{
+    return s_nao()->nao_scoreParameter;
 }
 
 QUrl Soprano::Vocabulary::NAO::serializationLanguage()
