@@ -2,7 +2,7 @@
  * This file is part of Soprano Project.
  *
  * Copyright (C) 2006 Daniele Galdi <daniele.galdi@gmail.com>
- * Copyright (C) 2007 Sebastian Trueg <trueg@kde.org>
+ * Copyright (C) 2007-2008 Sebastian Trueg <trueg@kde.org>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -48,29 +48,65 @@ namespace Soprano {
     public:
         virtual ~QueryResultIteratorBackend();
 
+        /**
+         * For internal reasons each backend implementation needs to always
+         * return \p true for boolean results.
+         *
+         * \sa QueryResultIterator::next
+         */
         virtual bool next() = 0;
 
         /**
-         * Constructs the BindingSet using binding() and bindingNames()
+         * The default implementation constructs the
+         * BindingSet using binding() and bindingNames()
+         *
+         * \sa QueryResultIterator::current
          */
         virtual BindingSet current() const;
 
+        /**
+         * \sa QueryResultIterator::currentStatement
+         */
         virtual Statement currentStatement() const = 0;
 
-        virtual Node binding( const QString &name ) const = 0;
+        /**
+         * \sa QueryResultIterator::binding(const QString&)
+         */
+        virtual Node binding( const QString& name ) const = 0;
 
+        /**
+         * \sa QueryResultIterator::binding(int)
+         */
         virtual Node binding( int offset ) const = 0;
 
+        /**
+         * \sa QueryResultIterator::bindingCount
+         */
         virtual int bindingCount() const = 0;
 
+        /**
+         * \sa QueryResultIterator::bindingNames
+         */
         virtual QStringList bindingNames() const = 0;
 
+        /**
+         * \sa QueryResultIterator::isGraph
+         */
         virtual bool isGraph() const = 0;
 
+        /**
+         * \sa QueryResultIterator::isBinding
+         */
         virtual bool isBinding() const = 0;
 
+        /**
+         * \sa QueryResultIterator::isBool
+         */
         virtual bool isBool() const = 0;
 
+        /**
+         * \sa QueryResultIterator::boolValue
+         */
         virtual bool boolValue() const = 0;
 
     protected:
