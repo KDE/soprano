@@ -33,7 +33,6 @@
 #include <QtCore/QThread>
 
 
-
 JNIWrapper* JNIWrapper::s_instance = 0;
 
 class JNIWrapper::Private
@@ -119,6 +118,7 @@ void JNIWrapper::slotThreadFinished()
     QObject* o = sender();
     if ( o == QThread::currentThread() ) {
         qDebug() << "Detaching thread" << QThread::currentThread();
+        // commented since it makes soprano crash
 //        d->jvm->DetachCurrentThread();
         d->jniEnvMap.remove( QThread::currentThread() );
     }
