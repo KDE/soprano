@@ -305,8 +305,8 @@
  * For historical reasons by default the %Soprano visibility macro SOPRANO_EXPORT is used. This can be
  * changed by specifying the visibility export module through \p --export-module or disabling visibility
  * all together with \p --no-visibility-export. The latter is useful if the namespace is not part of a public
- * API. When using the \p --export-module parameter the value is used to generate the macro (<module>_EXPORT)
- * and to generate the include file (<module>_export.h) which has to exist and define the macro.
+ * API. When using the \p --export-module parameter the value is used to generate the macro (&lt;module&gt;_EXPORT)
+ * and to generate the include file (&lt;module&gt;_export.h) which has to exist and define the macro.
  */
 
 
