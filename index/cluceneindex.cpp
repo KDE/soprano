@@ -690,11 +690,16 @@ QString Soprano::Index::CLuceneIndex::defaultSearchField()
 
 void Soprano::Index::CLuceneIndex::clear()
 {
-    int numDocs = d->getIndexReader()->numDocs();
-    for ( int i = 0; i < numDocs; ++i ) {
-        d->getIndexReader()->deleteDocument( i );
+    try {
+        int numDocs = d->getIndexReader()->numDocs();
+        for ( int i = 0; i < numDocs; ++i ) {
+            d->getIndexReader()->deleteDocument( i );
+        }
+        d->closeReader();
     }
-    d->closeReader();
+    catch( CLuceneError& err ) {
+        setError( exceptionToError( err ) );
+    }
 }
 
 
