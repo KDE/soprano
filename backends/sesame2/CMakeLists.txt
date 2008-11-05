@@ -1,5 +1,9 @@
 project(soprano_sesame2)
 
+if("${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION}.${CMAKE_PATCH_VERSION}" VERSION_LESS "2.6.2")
+   set(JNI_INCLUDE_DIRS "${JAVA_INCLUDE_PATH} ${JAVA_INCLUDE_PATH2}")
+endif("${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION}.${CMAKE_PATCH_VERSION}" VERSION_LESS "2.6.2")
+
 include_directories(
   ${QT_QTCORE_INCLUDE_DIR}
   ${soprano_SOURCE_DIR}
@@ -7,8 +11,6 @@ include_directories(
   ${soprano_core_SOURCE_DIR}
   ${soprano_core_BINARY_DIR}
   ${soprano_sesame2_BINARY_DIR}
-  ${JAVA_INCLUDE_PATH}
-  ${JAVA_INCLUDE_PATH2}
   ${JNI_INCLUDE_DIRS}
 )
 
