@@ -66,7 +66,7 @@ namespace {
             return Soprano::Node( id.mid( Soprano::Index::bnodeIdPrefix().length() ) );
         }
         else {
-            return Soprano::Node( QUrl( id ) );
+            return Soprano::Node( QUrl::fromEncoded( id.toAscii() ) );
         }
     }
 }
