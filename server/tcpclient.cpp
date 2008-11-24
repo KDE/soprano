@@ -43,6 +43,7 @@ namespace Soprano {
 
         protected:
             QIODevice* newConnection();
+            bool isConnected( QIODevice* );
 
         private:
             QHostAddress m_address;
@@ -76,6 +77,10 @@ namespace Soprano {
                 delete socket;
                 return 0;
             }
+        }
+
+        bool isConnected( QIODevice* device ) {
+            return( static_cast<QTcpSocket*>( device )->state() == QAbstractSocket::ConnectedState );
         }
     }
 }

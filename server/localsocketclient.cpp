@@ -41,6 +41,7 @@ namespace Soprano {
 
         protected:
             QIODevice* newConnection();
+            bool isConnected( QIODevice* );
 
         private:
             QString m_socketPath;
@@ -76,6 +77,10 @@ namespace Soprano {
                 delete socket;
                 return 0;
             }
+        }
+
+        bool LocalSocketClientConnection::isConnected( QIODevice* device ) {
+            return( static_cast<QLocalSocket*>( device )->state() == QLocalSocket::ConnectedState );
         }
     }
 }
