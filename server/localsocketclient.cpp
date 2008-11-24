@@ -145,7 +145,7 @@ bool Soprano::Client::LocalSocketClient::connect( const QString& name )
 
 bool Soprano::Client::LocalSocketClient::isConnected() const
 {
-    return d->connection != 0;
+    return d->connection ? d->connection->testConnection() : false;
 }
 
 

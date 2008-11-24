@@ -134,7 +134,7 @@ bool Soprano::Client::TcpClient::connect( const QHostAddress& address, int port 
 
 bool Soprano::Client::TcpClient::isConnected()
 {
-    return d->connection != 0;
+    return d->connection ? d->connection->testConnection() : false;
 }
 
 
