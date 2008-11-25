@@ -286,7 +286,7 @@ void MultiThreadingTest::testNodeIterator()
     // now wait little to give the threads some time to mess things up (in case we have a bug)
     QTime t;
     t.start();
-    while ( t.elapsed() < 200 );
+    while ( t.elapsed() < 200 ) {};
 
     // now check the iterators, it should contain exactly those contexts that were in the
     // model when we called listContexts

@@ -39,16 +39,16 @@ using namespace Soprano;
 using namespace Soprano::Index;
 
 
-static QUrl createRandomUri()
+/*static QUrl createRandomUri()
 {
     // FIXME: check if the uri already exists
     QString uid = QUuid::createUuid().toString();
     uid = uid.mid( 1, uid.length()-2 );
     return QUrl( "http://soprano.org/test#" + uid );
-}
+}*/
 
 
-static QList<Statement> createTestData( const Statement& s, int num )
+/*static QList<Statement> createTestData( const Statement& s, int num )
 {
     QList<Statement> sl;
     for( int i = 0; i < num; ++i ) {
@@ -58,7 +58,7 @@ static QList<Statement> createTestData( const Statement& s, int num )
                               s.context() ) );
     }
     return sl;
-}
+}*/
 
 
 void IndexTest::init()

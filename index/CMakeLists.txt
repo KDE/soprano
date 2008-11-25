@@ -1,3 +1,5 @@
+cmake_policy(SET CMP0003 NEW)
+
 project(sopranoindex)
 
 include_directories(

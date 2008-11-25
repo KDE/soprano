@@ -386,6 +386,7 @@ Soprano::Error::ErrorCode Soprano::Client::SparqlModel::removeStatement( const S
 
 Soprano::Error::ErrorCode Soprano::Client::SparqlModel::removeAllStatements( const Statement& statement )
 {
+    Q_UNUSED(statement);
     setError( "No removeAllStatements support.", Error::ErrorNotSupported );
     return Error::ErrorNotSupported;
 }
