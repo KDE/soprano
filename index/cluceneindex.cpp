@@ -195,7 +195,7 @@ public:
 
     lucene::document::Document* getDocument( const Node& resource ) {
         // check if the resource is already cached
-        QHash<Node, lucene::document::Document*>::const_iterator it = documentCache.find( resource );
+        QHash<Node, lucene::document::Document*>::const_iterator it = documentCache.constFind( resource );
         if ( it != documentCache.constEnd() ) {
             return *it;
         }

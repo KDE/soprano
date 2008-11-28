@@ -79,8 +79,8 @@ quint32 Soprano::Server::ModelPool::idForModelName( const QString& name )
 {
     quint32 id = 0;
 
-    QHash<QString, quint32>::const_iterator it = d->modelNameMap.find( name );
-    if ( it != d->modelNameMap.end() ) {
+    QHash<QString, quint32>::const_iterator it = d->modelNameMap.constFind( name );
+    if ( it != d->modelNameMap.constEnd() ) {
         id = *it;
     }
     else {

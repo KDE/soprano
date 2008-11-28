@@ -78,7 +78,7 @@ namespace {
 QString Soprano::Server::DBusServerAdaptor::createModel( const QString& name, const QDBusMessage& m )
 {
     // handle method call org.soprano.Server.createModel
-    QHash<QString, DBusExportModel*>::const_iterator it = d->modelDBusObjectPaths.find( name );
+    QHash<QString, DBusExportModel*>::const_iterator it = d->modelDBusObjectPaths.constFind( name );
     if ( it != d->modelDBusObjectPaths.constEnd() ) {
         return it.value()->dbusObjectPath();
     }

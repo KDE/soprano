@@ -570,8 +570,8 @@ QVariant::Type Soprano::LiteralValue::typeFromDataTypeUri( const QUrl& dataTypeU
         s_xsdTypes.insert( Vocabulary::RDF::XMLLiteral(), QVariant::String );
     }
 
-    QHash<QUrl, QVariant::Type>::const_iterator it = s_xsdTypes.find( dataTypeUri );
-    if ( it != s_xsdTypes.end() ) {
+    QHash<QUrl, QVariant::Type>::const_iterator it = s_xsdTypes.constFind( dataTypeUri );
+    if ( it != s_xsdTypes.constEnd() ) {
         return it.value();
     }
     else {

@@ -151,7 +151,7 @@ QList<Soprano::BackendSetting> Soprano::Server::ServerCore::backendSettings() co
 
 Soprano::Model* Soprano::Server::ServerCore::model( const QString& name )
 {
-    QHash<QString, Model*>::const_iterator it = d->models.find( name );
+    QHash<QString, Model*>::const_iterator it = d->models.constFind( name );
     if ( it == d->models.constEnd() ) {
         QList<BackendSetting> settings = d->createBackendSettings( name );
         for ( QList<BackendSetting>::iterator it = settings.begin();

@@ -319,7 +319,7 @@ int main( int argc, char *argv[] )
 
     // We simplify and take it as granted that all resources have the same NS
     QString ontoNamespace;
-    QUrl namespaceUri( normalizedResources.begin().key() );
+    QUrl namespaceUri( normalizedResources.constBegin().key() );
     if ( namespaceUri.hasFragment() ) {
         namespaceUri.setFragment( QString() );
         ontoNamespace = namespaceUri.toString() + '#';
@@ -365,8 +365,8 @@ int main( int argc, char *argv[] )
         headerStream << QString( "%1_EXPORT " ).arg(exportModule.toUpper());
     headerStream << "QUrl " << className.toLower() << "Namespace();" << endl << endl;
 
-    for( QMap<QString, QPair<QString, QString> >::const_iterator it = normalizedResources.begin();
-         it != normalizedResources.end(); ++it ) {
+    for( QMap<QString, QPair<QString, QString> >::const_iterator it = normalizedResources.constBegin();
+         it != normalizedResources.constEnd(); ++it ) {
         QString uri = it.key();
         QString name = normalizeName( it.value().first );
         QString comment = it.value().second;
@@ -383,7 +383,7 @@ int main( int argc, char *argv[] )
         headerStream << "QUrl " << name << "();" << endl;
 
         ++it;
-        if ( it != normalizedResources.end() ) {
+        if ( it != normalizedResources.constEnd() ) {
             headerStream << endl;
         }
         --it;
@@ -414,15 +414,15 @@ int main( int argc, char *argv[] )
 
     sourceStream << className.toLower() << "_namespace( QUrl::fromEncoded( \"" << ontoNamespace << "\", QUrl::StrictMode ) )," << endl;
 
-    for( QMap<QString, QPair<QString, QString> >::const_iterator it = normalizedResources.begin();
-         it != normalizedResources.end(); ++it ) {
+    for( QMap<QString, QPair<QString, QString> >::const_iterator it = normalizedResources.constBegin();
+         it != normalizedResources.constEnd(); ++it ) {
         QString uri = it.key();
         QString name = normalizeName( it.value().first );
 
         sourceStream << createIndent( 2 ) << "  " << className.toLower() << "_" << name << "( QUrl::fromEncoded( \"" << uri << "\", QUrl::StrictMode ) )";
 
         ++it;
-        if ( it != normalizedResources.end() ) {
+        if ( it != normalizedResources.constEnd() ) {
             sourceStream << "," << endl;
         }
         --it;
@@ -433,8 +433,8 @@ int main( int argc, char *argv[] )
 
     sourceStream << createIndent( 1 ) << "QUrl " << className.toLower() << "_namespace;" << endl;
 
-    for( QMap<QString, QPair<QString, QString> >::const_iterator it = normalizedResources.begin();
-         it != normalizedResources.end(); ++it ) {
+    for( QMap<QString, QPair<QString, QString> >::const_iterator it = normalizedResources.constBegin();
+         it != normalizedResources.constEnd(); ++it ) {
         QString name = it.value().first;
         sourceStream << createIndent( 1 ) << "QUrl " << className.toLower() << "_" << name << ";" << endl;
     }
@@ -451,8 +451,8 @@ int main( int argc, char *argv[] )
                  << createIndent( 1 ) << "return " << singletonName << "()->" << className.toLower() << "_namespace;" << endl
                  << "}" << endl << endl;
 
-    for( QMap<QString, QPair<QString, QString> >::const_iterator it = normalizedResources.begin();
-         it != normalizedResources.end(); ++it ) {
+    for( QMap<QString, QPair<QString, QString> >::const_iterator it = normalizedResources.constBegin();
+         it != normalizedResources.constEnd(); ++it ) {
         QString name = it.value().first;
 
         sourceStream << "QUrl ";
@@ -467,7 +467,7 @@ int main( int argc, char *argv[] )
                      << "}" << endl;
 
         ++it;
-        if ( it != normalizedResources.end() ) {
+        if ( it != normalizedResources.constEnd() ) {
             sourceStream << endl;
         }
         --it;
