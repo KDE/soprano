@@ -38,20 +38,15 @@ qt4_automoc(${sesame2_backend_SRC})
 
 add_library(soprano_sesame2backend SHARED ${sesame2_backend_SRC})
 
-TARGET_LINK_LIBRARIES(soprano_sesame2backend soprano ${JAVA_JVM_LIBRARY})
+target_link_libraries(soprano_sesame2backend soprano ${JAVA_JVM_LIBRARY})
 
-set_target_properties(soprano_sesame2backend
-  PROPERTIES
-  INSTALL_RPATH_USE_LINK_PATH true
-)
-
-INSTALL(TARGETS soprano_sesame2backend
+install(TARGETS soprano_sesame2backend
   LIBRARY DESTINATION ${LIB_DESTINATION}/soprano
   RUNTIME DESTINATION bin/soprano
   ARCHIVE DESTINATION lib/soprano
   )
 
-INSTALL(FILES
+install(FILES
   openrdf-sesame-2.1.4-onejar.jar
   slf4j-api-1.5.5.jar
   slf4j-simple-1.5.5.jar
@@ -61,7 +56,7 @@ INSTALL(FILES
 
 configure_file(sesame2backend.desktop.cmake ${CMAKE_CURRENT_BINARY_DIR}/sesame2backend.desktop)
 
-INSTALL(FILES
+install(FILES
   ${CMAKE_CURRENT_BINARY_DIR}/sesame2backend.desktop
   DESTINATION share/soprano/plugins
   )

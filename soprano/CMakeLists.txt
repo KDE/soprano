@@ -1,10 +1,5 @@
 project(soprano_core)
 
-if (APPLE)
- set(CMAKE_INSTALL_NAME_DIR ${LIB_INSTALL_DIR})
- set(CMAKE_BUILD_WITH_INSTALL_RPATH TRUE)
-endif (APPLE)
-
 include_directories(
   ${soprano_SOURCE_DIR}
   ${soprano_core_BINARY_DIR}
@@ -19,7 +14,7 @@ include_directories(
 configure_file(soprano-config.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/soprano-config.h)
 configure_file(version.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/version.h)
 
-SET(soprano_SRCS
+set(soprano_SRCS
   queryresultiterator.cpp
   queryresultiterator.h
   queryresultiteratorbackend.cpp
@@ -98,9 +93,9 @@ SET(soprano_SRCS
 
 qt4_automoc(${soprano_SRCS})
 
-ADD_LIBRARY(soprano SHARED ${soprano_SRCS})
+add_library(soprano SHARED ${soprano_SRCS})
 
-TARGET_LINK_LIBRARIES(soprano ${QT_QTCORE_LIBRARY})
+target_link_libraries(soprano ${QT_QTCORE_LIBRARY})
 
 set_target_properties(soprano PROPERTIES
   VERSION 4.1.0
@@ -109,13 +104,13 @@ set_target_properties(soprano PROPERTIES
   INSTALL_NAME_DIR ${LIB_DESTINATION}
   )
 
-INSTALL(TARGETS soprano
+install(TARGETS soprano
   LIBRARY DESTINATION ${LIB_DESTINATION}
   RUNTIME DESTINATION bin
   ARCHIVE DESTINATION lib
   )
 
-INSTALL(FILES
+install(FILES
   parser.h
   queryresultiterator.h
   queryresultiteratorbackend.h
