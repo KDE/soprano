@@ -21,14 +21,13 @@
 
 #include "clientstatementiteratorbackend.h"
 #include "clientconnection.h"
-#include "clientmodel.h"
+#include "clientmodelbase.h"
 
 #include "statement.h"
 
 
-Soprano::Client::ClientStatementIteratorBackend::ClientStatementIteratorBackend( int itId, ClientModel* client )
-    : m_iteratorId( itId ),
-      m_model( client )
+Soprano::Client::ClientStatementIteratorBackend::ClientStatementIteratorBackend( int itId, const ClientModelBase* client )
+    : ClientIteratorBase( itId, client)
 {
 }
 
@@ -41,9 +40,9 @@ Soprano::Client::ClientStatementIteratorBackend::~ClientStatementIteratorBackend
 
 bool Soprano::Client::ClientStatementIteratorBackend::next()
 {
-    if ( m_model ) {
-        bool r = m_model->client()->iteratorNext( m_iteratorId );
-        setError( m_model->client()->lastError() );
+    if ( modelBase() ) {
+        bool r = modelBase()->connection()->iteratorNext( iteratorId() );
+        setError( modelBase()->connection()->lastError() );
         return r;
     }
     else {
@@ -55,9 +54,9 @@ bool Soprano::Client::ClientStatementIteratorBackend::next()
 
 Soprano::Statement Soprano::Client::ClientStatementIteratorBackend::current() const
 {
-    if ( m_model ) {
-        Statement s = m_model->client()->statementIteratorCurrent( m_iteratorId );
-        setError( m_model->client()->lastError() );
+    if ( modelBase() ) {
+        Statement s = modelBase()->connection()->statementIteratorCurrent( iteratorId() );
+        setError( modelBase()->connection()->lastError() );
         return s;
     }
     else {
@@ -69,11 +68,6 @@ Soprano::Statement Soprano::Client::ClientStatementIteratorBackend::current() co
 
 void Soprano::Client::ClientStatementIteratorBackend::close()
 {
-    if ( m_model ) {
-        m_model->closeIterator( m_iteratorId );
-        setError( m_model->lastError() );
-    }
-    else {
-        setError( "Connection to server closed." );
-    }
+    closeIterator();
+    clearError();
 }

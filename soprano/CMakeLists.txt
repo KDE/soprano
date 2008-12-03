@@ -21,43 +21,34 @@ configure_file(version.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/version.h)
 
 SET(soprano_SRCS
   queryresultiterator.cpp
-  queryresultiterator.h
   queryresultiteratorbackend.cpp
-  queryresultiteratorbackend.h
   node.cpp
-  node.h
   statement.cpp
-  statement.h
   statementiterator.cpp
-  statementiterator.h
   nodeiterator.cpp
   model.cpp
-  model.h
   parser.cpp
-  parser.h
+  parser2.cpp
   serializer.cpp
-  serializer.h
+  serializer2.cpp
   pluginmanager.cpp
   pluginstub.cpp
   plugin.cpp
   backend.cpp
-  backend.h
   global.cpp
   error.cpp
-  error.h
   literalvalue.cpp
-  literalvalue.h
   locator.cpp
-  locator.h
   datetime.cpp
   version.cpp
-  filtermodel.h
   filtermodel.cpp
-  storagemodel.h
+  filtertransaction.cpp
   storagemodel.cpp
   rdfschemamodel.cpp
   bindingset.cpp
   sopranotypes.cpp
+  transaction.cpp
+  transactionfactory.cpp
   vocabulary/rdf.cpp
   vocabulary/rdfs.cpp
   vocabulary/xsd.cpp
@@ -65,15 +56,11 @@ SET(soprano_SRCS
   vocabulary/nao.cpp
   vocabulary/xesam.cpp
   vocabulary/owl.cpp
-  query/query.cpp
-  query/queryparser.cpp
-  query/queryserializer.cpp
   inference/nodepattern.cpp
   inference/statementpattern.cpp
   inference/inferencerule.cpp
   inference/inferenceruleset.cpp
   inference/sil.cpp
-  inference/inferencemodel.h
   inference/inferencemodel.cpp
   inference/inferenceruleparser.cpp
   nrlmodel.cpp
@@ -94,6 +81,9 @@ SET(soprano_SRCS
   util/asyncresult.cpp
   util/asynccommand.cpp
   util/asynciteratorbackend.cpp
+  util/simpletransactionmodel.cpp
+  util/simpletransaction.cpp
+  util/simpletransactionstatementiteratorbackend.cpp
   )
 
 qt4_automoc(${soprano_SRCS})
@@ -103,7 +93,7 @@ ADD_LIBRARY(soprano SHARED ${soprano_SRCS})
 TARGET_LINK_LIBRARIES(soprano ${QT_QTCORE_LIBRARY})
 
 set_target_properties(soprano PROPERTIES
-  VERSION 4.1.0
+  VERSION 4.2.0
   SOVERSION 4
   DEFINE_SYMBOL MAKE_SOPRANO_LIB
   INSTALL_NAME_DIR ${LIB_DESTINATION}
@@ -117,6 +107,7 @@ INSTALL(TARGETS soprano
 
 INSTALL(FILES
   parser.h
+  parser2.h
   queryresultiterator.h
   queryresultiteratorbackend.h
   node.h
@@ -125,6 +116,7 @@ INSTALL(FILES
   nodeiterator.h
   model.h
   filtermodel.h
+  filtertransaction.h
   storagemodel.h
   plugin.h
   pluginmanager.h
@@ -138,9 +130,13 @@ INSTALL(FILES
   rdfschemamodel.h
   bindingset.h
   serializer.h
+  serializer2.h
   sopranotypes.h
+  sopranomacros.h
   iterator.h
   iteratorbackend.h
+  transaction.h
+  transactionfactory.h
   vocabulary/rdf.h
   vocabulary/rdfs.h
   vocabulary/xsd.h
@@ -168,4 +164,5 @@ INSTALL(FILES
   util/readonlymodel.h
   util/asyncmodel.h
   util/asyncresult.h
+  util/simpletransactionmodel.h
   DESTINATION include/soprano)

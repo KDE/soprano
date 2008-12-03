@@ -25,6 +25,7 @@
 #include "plugin.h"
 #include "soprano_export.h"
 #include "sopranotypes.h"
+#include "sopranomacros.h"
 #include "error.h"
 
 #include <QtCore/QObject>
@@ -38,119 +39,26 @@ namespace Soprano
     class StatementIterator;
 
     /**
+     * \deprecated
+     *
      * \class Parser parser.h Soprano/Parser
      *
-     * \brief Soprano::Parser defines the interface for a Soprano RDF parser plugin.
+     * \brief Replaced by Parser2
      *
-     * Each parser plugin may support multiple RDF serializations (supportedSerializations()).
-     *
-     *
-     * \section Usage
-     *
-     * Using a Parser is straightforward. One starts by getting a plugin that supports the requested
-     * RDF data serialization:
-     *
-     * \code
-     * Soprano::Parser* p = Soprano::PluginManager::instance()->discoverParserForSerialization( Soprano::SerializationRdfXml );
-     * \endcode
-     *
-     * Then parsing RDF data is done in a single method call resulting in a StatementIterator over
-     * the resulting graph (since parsers may support multiple serializations one always needs to
-     * provide the serialization type unless a parser plugin support autodetection).
-     *
-     * \code
-     * Soprano::StatementIterator it = p->parseFile( "myrdffile.rdf", Soprano::SerializationRdfXml );
-     * \endcode
-     *
-     * \sa \ref soprano_writing_plugins
+     * In %Soprano 2.2 Parser has been deprecated in favor of Parser2. Parser is kept around
+     * for binary compatibility.
      *
      * \author Daniele Galdi <daniele.galdi@gmail.com><br>Sebastian Trueg <trueg@kde.org>
      */
-    class SOPRANO_EXPORT Parser : public Plugin, public Error::ErrorCache
+    class SOPRANO_DEPRECATED SOPRANO_EXPORT Parser : public Plugin, public Error::ErrorCache
     {
     public:
         virtual ~Parser();
-
-        /**
-         * The serialiazation types supported by this parser.
-         * \return A combination of Soprano::RdfSerialization types. If
-         * the list contains Soprano::SerializationUser the parser 
-         * supports additional RDF serialiazations not
-         * officially supported by %Soprano.
-         */
         virtual RdfSerializations supportedSerializations() const = 0;
-
-        /**
-         * A parser can support additional RDF serializations that are not defined in Soprano::RdfSerialization.
-         * In that case supportedSerializations() has to include Soprano::SerializationUser.
-         *
-         * The default implementation returns an empty list.
-         *
-         * \return A list of supported user RDF serializations.
-         */
         virtual QStringList supportedUserSerializations() const;
-
-        /**
-         * Check if a plugin supports a specific serialization.
-         *
-         * \param s The requested serialization.
-         * \param userSerialization If serialization is set to Soprano::SerializationUser this parameter specifies the
-         *       requested serialization. It allows the extension of the %Soprano Parser interface with new
-         *       RDF serializations that are not officially supported by %Soprano.
-         *
-         * \return \p true if the parser is able to parse RDF data encoded
-         * in serialization s, \p false otherwise.
-         */
         bool supportsSerialization( RdfSerialization s, const QString& userSerialization = QString() ) const;
-
-        /**
-         * Parse an RDF model which has been serialized in a file,
-         * using the supplied baseURI to resolve any relative URI references.
-         *
-         * The default implementation simply calls parseStream() on an opened
-         * QFile instance.
-         *
-         * \param filename The name (path) of the file to parse
-         * \param baseUri The base URI to be used for relative references.
-         * \param serialization The serialization used in the file.
-         * \param userSerialization If serialization is set to Soprano::SerializationUser this parameter specifies the
-         *       serialization to use. It allows the extension of the %Soprano Parser interface with new
-         *       RDF serializations that are not officially supported by %Soprano.
-         *
-         * \return An iterator that iterates over the result statements.
-         */
         virtual StatementIterator parseFile( const QString& filename, const QUrl& baseUri, RdfSerialization serialization, const QString& userSerialization = QString() ) const;
-
-        /**
-         * Parse an RDF model which has been serialized into a string,
-         * using the supplied baseURI to resolve any relative URI references.
-         *
-         * The default implementation simply calls parseStream().
-         *
-         * \param data The serialized RDF string.
-         * \param baseUri The base URI to be used for relative references.
-         * \param serialization The serialization used for the string data.
-         * \param userSerialization If serialization is set to Soprano::SerializationUser this parameter specifies the
-         *       serialization to use. It allows the extension of the %Soprano Parser interface with new
-         *       RDF serializations that are not officially supported by %Soprano.
-         *
-         * \return An iterator that iterates over the result statements.
-         */
         virtual StatementIterator parseString( const QString& data, const QUrl& baseUri, RdfSerialization serialization, const QString& userSerialization = QString() ) const;
-
-        /**
-         * Read a serialized RDF model from a test stream,
-         * using the supplied baseURI to resolve any relative URI references.
-         *
-         * \param stream The text stream to read the serialized RDF data from.
-         * \param baseUri The base URI to be used for relative references.
-         * \param serialization The serialization used for the string data from the stream.
-         * \param userSerialization If serialization is set to Soprano::SerializationUser this parameter specifies the
-         *       serialization to use. It allows the extension of the %Soprano Parser interface with new
-         *       RDF serializations that are not officially supported by %Soprano.
-         *
-         * \return An iterator that iterates over the result statements.
-         */ 
         virtual StatementIterator parseStream( QTextStream& stream, const QUrl& baseUri, RdfSerialization serialization, const QString& userSerialization = QString() ) const = 0;
 
     protected:

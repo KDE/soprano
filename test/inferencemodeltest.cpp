@@ -242,8 +242,8 @@ void InferenceModelTest::testPerformInferenceMulti()
 
     QVERIFY( m_model->containsAnyStatement( Statement( QUrl( "http://soprano.sf.net/test#X" ), Vocabulary::RDFS::subClassOf(), QUrl( "http://soprano.sf.net/test#B" ) ) ) );
 
-    QTextStream s( stderr );
-    PluginManager::instance()->discoverSerializerForSerialization( SerializationNQuads )->serialize( m_model->listStatements(), s, SerializationNQuads );
+    QTextStream s( stdout );
+    m_model->write( s );
 }
 
 

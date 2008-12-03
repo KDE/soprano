@@ -24,6 +24,7 @@
 #include "randomgenerator.h"
 
 #include "model.h"
+#include "transaction.h"
 
 #include <QtCore/QHash>
 
@@ -34,6 +35,7 @@ public:
     ServerCore* core;
 
     QHash<quint32, Model*> modelIdMap;
+    QHash<quint32, Transaction*> transactionIdMap;
     QHash<QString, quint32> modelNameMap;
 
     quint32 generateUniqueId() {
@@ -55,6 +57,7 @@ Soprano::Server::ModelPool::ModelPool( ServerCore* core )
 
 Soprano::Server::ModelPool::~ModelPool()
 {
+    qDeleteAll( d->transactionIdMap );
     delete d;
 }
 
@@ -100,4 +103,36 @@ void Soprano::Server::ModelPool::removeModel( const QString& name )
 {
     d->modelIdMap.remove( d->modelNameMap[name] );
     d->modelNameMap.remove( name );
+}
+
+
+quint32 Soprano::Server::ModelPool::insertTransaction( Transaction* t )
+{
+    quint32 id = d->generateUniqueId();
+    d->modelIdMap.insert( id, t );
+    d->transactionIdMap.insert( id, t );
+    return id;
+}
+
+
+Soprano::Transaction* Soprano::Server::ModelPool::transactionById( quint32 id ) const
+{
+    QHash<quint32, Transaction*>::iterator it = d->transactionIdMap.find( id );
+    if ( it != d->transactionIdMap.end() ) {
+        return *it;
+    }
+    return 0;
+}
+
+
+bool Soprano::Server::ModelPool::deleteTransaction( quint32 id )
+{
+    QHash<quint32, Transaction*>::iterator it = d->transactionIdMap.find( id );
+    if ( it != d->transactionIdMap.end() ) {
+        delete it.value();
+        d->transactionIdMap.erase( it );
+        d->modelIdMap.remove( id );
+        return true;
+    }
+    return false;
 }

@@ -23,6 +23,7 @@
 #define _SOPRANO_SERVER_CLIENT_MODEL_H_
 
 #include "storagemodel.h"
+#include "clientmodelbase.h"
 
 #include <QtCore/QList>
 #include <QtCore/QPointer>
@@ -32,7 +33,7 @@
 
 namespace Soprano {
     namespace Client {
-        class ClientModel : public StorageModel
+        class ClientModel : public StorageModel, public ClientModelBase
         {
             Q_OBJECT
 
@@ -50,14 +51,10 @@ namespace Soprano {
             bool containsStatement( const Statement &statement ) const;
             bool containsAnyStatement( const Statement &statement ) const;
             Node createBlankNode();
-
-            void closeIterator( int id ) const;
-
-            ClientConnection* client() const { return m_client; }
+            bool isEmpty() const;
 
         private:
             int m_modelId;
-            mutable QList<int> m_openIterators;
             QPointer<ClientConnection> m_client;
         };
     }

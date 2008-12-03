@@ -1,9 +1,6 @@
 /*
- *
- * $Id: sourceheader 511311 2006-02-19 14:51:05Z trueg $
- *
  * This file is part of the Soprano project.
- * Copyright (C) 2007 Sebastian Trueg <trueg@kde.org>
+ * Copyright (C) 2007-2008 Sebastian Trueg <trueg@kde.org>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,7 +22,7 @@
 #include "../soprano/nodeiterator.h"
 #include "../soprano/version.h"
 #include "../soprano/pluginmanager.h"
-#include "../soprano/parser.h"
+#include "../soprano/parser2.h"
 #include "../soprano/node.h"
 #include "../soprano/model.h"
 #include "../soprano/global.h"
@@ -221,7 +218,7 @@ int main( int argc, char *argv[] )
         return 1;
     }
 
-    const Parser* parser = PluginManager::instance()->discoverParserForSerialization( mimeTypeToSerialization( encoding ), encoding );
+    const Parser2* parser = PluginManager::instance()->discoverParser2ForSerialization( mimeTypeToSerialization( encoding ), encoding );
     if ( !parser ) {
         QTextStream s( stderr );
         s << "Could not find parser plugin for encoding " << encoding << endl;

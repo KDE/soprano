@@ -19,11 +19,14 @@ install(FILES
   BackendFeature
   RdfSerialization
   FilterModel
+  FilterTransaction
   LiteralValue
   Parser
+  Parser2
   PluginManager
   Plugin
   Serializer
+  Serializer2
   RdfSchemaModel
   StorageModel
   Global

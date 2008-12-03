@@ -27,6 +27,7 @@
 namespace Soprano {
 
     class Model;
+    class Transaction;
 
     namespace Server {
 
@@ -67,6 +68,21 @@ namespace Soprano {
              * delete it or remove it from the core.
              */
             void removeModel( const QString& name );
+
+            /**
+             * inserts a transaction into the pool.
+             * Transactions are special models without
+             * a name. They can be accessed throuh 
+             * modelById and transactionById
+             */
+            quint32 insertTransaction( Transaction* t );
+
+            Transaction* transactionById( quint32 id ) const;
+
+            /**
+             * \return false if no Transaction for id could be found.
+             */
+            bool deleteTransaction( quint32 id );
 
         private:
             class Private;

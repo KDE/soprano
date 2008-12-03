@@ -103,7 +103,8 @@ INPUT                  = ${soprano_SOURCE_DIR}/soprano \
                          ${soprano_SOURCE_DIR}/server/dbus/dbusmodel.h \
                          ${soprano_SOURCE_DIR}/server/dbus/dbusstatementiterator.h \
                          ${soprano_SOURCE_DIR}/server/dbus/dbusnodeiterator.h \
-                         ${soprano_SOURCE_DIR}/server/dbus/dbusqueryresultiterator.h
+                         ${soprano_SOURCE_DIR}/server/dbus/dbusqueryresultiterator.h \
+                         ${soprano_SOURCE_DIR}/server/sparql/sparqlmodel.h
 #                         ${soprano_SOURCE_DIR}/soprano/query
 INPUT_ENCODING         = UTF-8
 FILE_PATTERNS          = *.h
@@ -121,7 +122,10 @@ EXCLUDE                = ${soprano_SOURCE_DIR}/soprano/datetime.h \
                          ${soprano_SOURCE_DIR}/soprano/util/asyncmodel_p.h \
                          ${soprano_SOURCE_DIR}/soprano/util/asynciteratorbackend.h \
                          ${soprano_SOURCE_DIR}/soprano/util/asyncqueryresultiteratorbackend.h \
-                         ${soprano_SOURCE_DIR}/soprano/util/extreadwritelock.h
+                         ${soprano_SOURCE_DIR}/soprano/util/extreadwritelock.h \
+                         ${soprano_SOURCE_DIR}/soprano/util/simpletransactionstatementiteratorbackend.h \
+                         ${soprano_SOURCE_DIR}/soprano/util/simpletransactionmodel_p.h \
+                         ${soprano_SOURCE_DIR}/soprano/util/simpletransaction.h
 EXCLUDE_SYMLINKS       = NO
 EXCLUDE_PATTERNS       = 
 EXCLUDE_SYMBOLS        = 

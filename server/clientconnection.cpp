@@ -458,6 +458,28 @@ Soprano::Node Soprano::Client::ClientConnection::createBlankNode( int modelId )
 }
 
 
+int Soprano::Client::ClientConnection::startTransaction( int modelId )
+{
+    DataStream stream( socket() );
+
+    stream.writeUnsignedInt16( COMMAND_MODEL_START_TRANSACTION );
+    stream.writeUnsignedInt32( ( quint32 )modelId );
+
+    if ( !socket()->waitForReadyRead(s_defaultTimeout) ) {
+        setError( "Command timed out." );
+        return Error::ErrorUnknown;
+    }
+
+    quint32 id;
+    Error::Error error;
+    stream.readUnsignedInt32( id );
+    stream.readError( error );
+
+    setError( error );
+    return id;
+}
+
+
 bool Soprano::Client::ClientConnection::iteratorNext( int id )
 {
     //qDebug() << this << QTime::currentTime().toString( "hh:mm:ss.zzz" ) << QThread::currentThreadId() << "(ClientConnection::iteratorNext)";
@@ -650,6 +672,69 @@ void Soprano::Client::ClientConnection::iteratorClose( int id )
 
     setError( error );
     //qDebug() << this << QTime::currentTime().toString( "hh:mm:ss.zzz" ) << QThread::currentThreadId() << "(ClientConnection::iteratorClose) end";
+}
+
+
+Soprano::Error::ErrorCode Soprano::Client::ClientConnection::commit( int id )
+{
+    DataStream stream( socket() );
+
+    stream.writeUnsignedInt16( COMMAND_TRANSACTION_COMMIT );
+    stream.writeUnsignedInt32( ( quint32 )id );
+
+    if ( !socket()->waitForReadyRead(s_defaultTimeout) ) {
+        setError( "Command timed out." );
+        return Error::ErrorUnknown;
+    }
+
+    Error::ErrorCode ec;
+    Error::Error error;
+    stream.readErrorCode( ec );
+    stream.readError( error );
+
+    setError( error );
+    return ec;
+}
+
+
+Soprano::Error::ErrorCode Soprano::Client::ClientConnection::rollback( int id )
+{
+    DataStream stream( socket() );
+
+    stream.writeUnsignedInt16( COMMAND_TRANSACTION_ROLLBACK );
+    stream.writeUnsignedInt32( ( quint32 )id );
+
+    if ( !socket()->waitForReadyRead(s_defaultTimeout) ) {
+        setError( "Command timed out." );
+        return Error::ErrorUnknown;
+    }
+
+    Error::ErrorCode ec;
+    Error::Error error;
+    stream.readErrorCode( ec );
+    stream.readError( error );
+
+    setError( error );
+    return ec;
+}
+
+
+void Soprano::Client::ClientConnection::closeTransaction( int id )
+{
+    DataStream stream( socket() );
+
+    stream.writeUnsignedInt16( COMMAND_TRANSACTION_CLOSE );
+    stream.writeUnsignedInt32( ( quint32 )id );
+
+    if ( !socket()->waitForReadyRead(s_defaultTimeout) ) {
+        setError( "Command timed out." );
+        return;
+    }
+
+    Error::Error error;
+    stream.readError( error );
+
+    setError( error );
 }
 
 

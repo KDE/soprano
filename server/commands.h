@@ -24,12 +24,20 @@
 
 #include <qglobal.h>
 
-// Chagelog:
-// Protocol version 3: 
+//
+// ChangeLog:
+// ==========
+// Protocol version 3:
 //     Soprano 2.1
 //     No changed commands but completely changed types streaming
 //     no usage of operators anymore
-#define PROTOCOL_VERSION 3
+//
+// Protocol version 4:
+//     Soprano 2.2
+//     Added Transaction support (transactions are handled like normal models)
+//     Fully backwards compatible
+//
+#define PROTOCOL_VERSION 4
 
 namespace Soprano {
     namespace Server {
@@ -55,6 +63,12 @@ namespace Soprano {
         const quint16 COMMAND_SUPPORTS_PROTOCOL_VERSION = 0x20;
         const quint16 COMMAND_MODEL_CREATE_BLANK_NODE = 0x21;
         const quint16 COMMAND_REMOVE_MODEL = 0x22;
+
+        // Protocol version 4 commands
+        const quint16 COMMAND_MODEL_START_TRANSACTION = 0x23;
+        const quint16 COMMAND_TRANSACTION_COMMIT = 0x24;
+        const quint16 COMMAND_TRANSACTION_ROLLBACK = 0x25;
+        const quint16 COMMAND_TRANSACTION_CLOSE = 0x26;
     }
 }
 

@@ -57,6 +57,7 @@ namespace Soprano {
                 return callWithArgumentListAndBigTimeout(mode, QLatin1String("addStatement"), argumentList);
             }
 
+
             inline QDBusReply<bool> containsAnyStatement( const Soprano::Statement& statement, QDBus::CallMode mode = QDBus::Block )
             {
                 QList<QVariant> argumentList;
@@ -121,6 +122,12 @@ namespace Soprano {
             {
                 QList<QVariant> argumentList;
                 return callWithArgumentListAndBigTimeout(mode, QLatin1String("statementCount"), argumentList);
+            }
+
+            inline QDBusReply<QString> startTransaction( QDBus::CallMode mode = QDBus::Block )
+            {
+                QList<QVariant> argumentList;
+                return callWithArgumentListAndBigTimeout(mode, QLatin1String("startTransaction"), argumentList);
             }
 
         Q_SIGNALS:

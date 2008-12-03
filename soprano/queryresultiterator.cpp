@@ -126,35 +126,38 @@ bool Soprano::QueryResultIterator::boolValue() const
 }
 
 
-class QueryResultStatementIteratorBackend : public Soprano::IteratorBackend<Soprano::Statement>
-{
-public:
-    QueryResultStatementIteratorBackend( const Soprano::QueryResultIterator& r )
-        : m_result( r ) {
-    }
+namespace {
+    class QueryResultStatementIteratorBackend : public Soprano::IteratorBackend<Soprano::Statement>
+    {
+    public:
+        QueryResultStatementIteratorBackend( const Soprano::QueryResultIterator& r )
+            : m_result( r ) {
+        }
 
-    ~QueryResultStatementIteratorBackend() {
-    }
+        ~QueryResultStatementIteratorBackend() {
+        }
 
-    bool next() {
-        return m_result.next();
-    }
+        bool next() {
+            return m_result.next();
+        }
 
-    Soprano::Statement current() const {
-        return m_result.currentStatement();
-    }
+        Soprano::Statement current() const {
+            return m_result.currentStatement();
+        }
 
-    void close() {
-        m_result.close();
-    }
+        void close() {
+            m_result.close();
+        }
 
-    Soprano::Error::Error lastError() const {
-        return m_result.lastError();
-    }
+        Soprano::Error::Error lastError() const {
+            return m_result.lastError();
+        }
 
-private:
-    Soprano::QueryResultIterator m_result;
-};
+    private:
+        Soprano::QueryResultIterator m_result;
+    };
+}
+
 
 Soprano::StatementIterator Soprano::QueryResultIterator::iterateStatements() const
 {
@@ -162,47 +165,49 @@ Soprano::StatementIterator Soprano::QueryResultIterator::iterateStatements() con
 }
 
 
-
-class BindingNodeIteratorBackend : public Soprano::IteratorBackend<Soprano::Node>
-{
-public:
-    BindingNodeIteratorBackend( const Soprano::QueryResultIterator& it, const QString& name )
-        : m_it( it ),
-          m_bindingName( name ),
-          m_bindingOffset( -1 ) {
-    }
-
-    BindingNodeIteratorBackend( const Soprano::QueryResultIterator& it, int binding )
-        : m_it( it ),
-          m_bindingOffset( binding ) {
-    }
-
-    bool next() {
-        return m_it.next();
-    }
-
-    Soprano::Node current() const {
-        if ( m_bindingOffset != -1 ) {
-            return m_it.binding( m_bindingOffset );
+namespace {
+    class BindingNodeIteratorBackend : public Soprano::IteratorBackend<Soprano::Node>
+    {
+    public:
+        BindingNodeIteratorBackend( const Soprano::QueryResultIterator& it, const QString& name )
+            : m_it( it ),
+              m_bindingName( name ),
+              m_bindingOffset( -1 ) {
         }
-        else {
-            return m_it.binding( m_bindingName );
+
+        BindingNodeIteratorBackend( const Soprano::QueryResultIterator& it, int binding )
+            : m_it( it ),
+              m_bindingOffset( binding ) {
         }
-    }
 
-    void close() {
-        m_it.close();
-    }
+        bool next() {
+            return m_it.next();
+        }
 
-    Soprano::Error::Error lastError() const {
-        return m_it.lastError();
-    }
+        Soprano::Node current() const {
+            if ( m_bindingOffset != -1 ) {
+                return m_it.binding( m_bindingOffset );
+            }
+            else {
+                return m_it.binding( m_bindingName );
+            }
+        }
 
-private:
-    Soprano::QueryResultIterator m_it;
-    QString m_bindingName;
-    int m_bindingOffset;
-};
+        void close() {
+            m_it.close();
+        }
+
+        Soprano::Error::Error lastError() const {
+            return m_it.lastError();
+        }
+
+    private:
+        Soprano::QueryResultIterator m_it;
+        QString m_bindingName;
+        int m_bindingOffset;
+    };
+}
+
 
 Soprano::NodeIterator Soprano::QueryResultIterator::iterateBindings( const QString& variableName ) const
 {
@@ -213,4 +218,75 @@ Soprano::NodeIterator Soprano::QueryResultIterator::iterateBindings( const QStri
 Soprano::NodeIterator Soprano::QueryResultIterator::iterateBindings( int offset ) const
 {
     return new BindingNodeIteratorBackend( *this, offset );
+}
+
+
+namespace {
+    class QueryResultStatementConstructIteratorBackend : public Soprano::IteratorBackend<Soprano::Statement>
+    {
+    public:
+        QueryResultStatementConstructIteratorBackend( const Soprano::QueryResultIterator& r, const Soprano::Statement& s,
+                                             const QString& sb, const QString& pb, const QString& ob, const QString& cb )
+            : m_result( r ),
+              m_templateStatement(s),
+              m_subjectBinding( sb ),
+              m_predicateBinding( pb ),
+              m_objectBinding( ob ),
+              m_contextBinding( cb ) {
+        }
+
+        ~QueryResultStatementConstructIteratorBackend() {
+        }
+
+        bool next() {
+            return m_result.next();
+        }
+
+        Soprano::Statement current() const {
+            Soprano::Statement s( m_templateStatement );
+
+            if( !m_contextBinding.isEmpty() ) {
+                s.setContext( m_result.binding( m_contextBinding ) );
+            }
+
+            if( !m_subjectBinding.isEmpty() ) {
+                s.setSubject( m_result.binding( m_subjectBinding ) );
+            }
+
+            if( !m_predicateBinding.isEmpty() ) {
+                s.setPredicate( m_result.binding( m_predicateBinding ) );
+            }
+            if( !m_objectBinding.isEmpty() ) {
+                s.setObject( m_result.binding( m_objectBinding ) );
+            }
+
+            return s;
+        }
+
+        void close() {
+            m_result.close();
+        }
+
+        Soprano::Error::Error lastError() const {
+            return m_result.lastError();
+        }
+
+    private:
+        Soprano::QueryResultIterator m_result;
+        Soprano::Statement m_templateStatement;
+        QString m_subjectBinding;
+        QString m_predicateBinding;
+        QString m_objectBinding;
+        QString m_contextBinding;
+    };
+}
+
+
+Soprano::StatementIterator Soprano::QueryResultIterator::iterateStatementsFromBindings( const QString& subjectBindingName,
+                                                                                        const QString& predicateBindingName,
+                                                                                        const QString& objectBindingName,
+                                                                                        const QString& contextBindingName,
+                                                                                        const Statement& statementTemplate ) const
+{
+    return new QueryResultStatementConstructIteratorBackend( *this, statementTemplate, subjectBindingName, predicateBindingName, objectBindingName, contextBindingName );
 }

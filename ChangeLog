@@ -1,7 +1,10 @@
 2.2
+	* New transaction API: Model::startTransaction and Transaction
 	* The AsyncModel now has a "real" asyncroneous mode which uses multiple threads to execute the
 	  commands.
-
+	* New class Soprano::Client::SparqlModel which provides aclient to http Sparql endpoints.
+	* Added method Node::toN3 to easily build SPARQL queries without having to encode nodes all the time.
+	
 2.1
 	* SignalCacheModel to restrict the number of emitted statementsAdded and statementsRemoved signals
 	  in a certain timeframe.

@@ -1,7 +1,7 @@
 /*
  * This file is part of Soprano Project.
  *
- * Copyright (C) 2007 Sebastian Trueg <trueg@kde.org>
+ * Copyright (C) 2007-2008 Sebastian Trueg <trueg@kde.org>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -25,14 +25,46 @@
 #include "dbusclientnodeiteratorbackend.h"
 #include "dbusclientstatementiteratorbackend.h"
 #include "dbusclientqueryresultiteratorbackend.h"
+#include "dbustransaction.h"
 
 #include "backend.h"
 #include "error.h"
 #include "nodeiterator.h"
 #include "statementiterator.h"
 #include "queryresultiterator.h"
+#include "transactionfactory.h"
 
 #include <QDebug>
+
+namespace Soprano {
+    namespace Client {
+        class DBusModelTransactionFactory : public TransactionFactory
+        {
+        public:
+            DBusModelTransactionFactory( DBusModel* model, DBusModelInterface* interface )
+                : m_model( model ),
+                  m_interface( interface ) {
+            }
+
+            Transaction* startTransaction() {
+                QDBusReply<QString> reply = m_interface->startTransaction( m_model->asyncCalls() ? QDBus::BlockWithGui : QDBus::Block );
+                setError( DBus::convertError( reply.error() ) );
+                if ( reply.isValid() ) {
+                    DBusTransaction* t = new DBusTransaction( m_model, m_interface->service(), reply.value() );
+                    t->setAsyncCalls( m_model->asyncCalls() );
+                    return t;
+                }
+                else {
+                    return 0;
+                }
+            }
+
+        private:
+            DBusModel* m_model;
+            DBusModelInterface* m_interface;
+        };
+    }
+}
 
 class Soprano::Client::DBusModel::Private
 {
@@ -56,6 +88,8 @@ Soprano::Client::DBusModel::DBusModel( const QString& serviceName, const QString
              this, SIGNAL( statementAdded(const Soprano::Statement&) ) );
     connect( d->interface, SIGNAL( statementRemoved(const Soprano::Statement&) ),
              this, SIGNAL( statementRemoved(const Soprano::Statement&) ) );
+
+    setTransactionFactory( new DBusModelTransactionFactory( this, d->interface ) );
 }
 
 

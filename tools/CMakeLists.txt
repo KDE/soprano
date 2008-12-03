@@ -9,10 +9,6 @@ include_directories(
   ${soprano_SOURCE_DIR}
 )
 
-set(sopranocmd_SRC
-  sopranocmd.cpp
-)
-
 add_executable(sopranocmd sopranocmd.cpp)
 
 add_executable(onto2vocabularyclass onto2vocabularyclass.cpp)

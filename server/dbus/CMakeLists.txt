@@ -24,6 +24,7 @@ install(
 install(
   FILES
   org.soprano.Model.xml
+  org.soprano.Transaction.xml
   org.soprano.NodeIterator.xml
   org.soprano.QueryResultIterator.xml
   org.soprano.Server.xml

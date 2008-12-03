@@ -35,7 +35,7 @@ namespace Soprano {
          * used to provide a quick success status check in methods
          * such as Model::addStatement().
          *
-         * \sa Error::Error::code()
+         * \sa Error::Error::code(), errorMessage(), convertErrorCode()
          */
         enum ErrorCode {
             ErrorNone = 0x0,             /**< No error occured, i.e. success. */
@@ -44,6 +44,7 @@ namespace Soprano {
             ErrorNotSupported = 0x2,     /**< Error indicating that a certain functionality is not supported. */
             ErrorParsingFailed = 0x3,    /**< Parsing a query or an RDF serialization failed. */
             ErrorPermissionDenied = 0x4, /**< Permission is denied. \since 2.1 */
+            ErrorInvalidOperation = 0x5, /**< The operation was not allowed in the current context. \since 2.2 */
             ErrorUnknown = 0x1000        /**< An unknown error occured. */
         };
 
@@ -141,7 +142,7 @@ namespace Soprano {
              * ErrorUnknown + librdf_log_message_code()
              * \endcode
              *
-             * \sa ErrorCode
+             * \sa ErrorCode, convertErrorCode()
              */
             int code() const;
 

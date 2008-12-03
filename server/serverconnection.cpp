@@ -1,7 +1,7 @@
 /*
  * This file is part of Soprano Project.
  *
- * Copyright (C) 2007 Sebastian Trueg <trueg@kde.org>
+ * Copyright (C) 2007-2008 Sebastian Trueg <trueg@kde.org>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -27,6 +27,7 @@
 #include "asyncmodel.h"
 #include "datastream.h"
 #include "modelpool.h"
+#include "transaction.h"
 
 #include "queryresultiterator.h"
 #include "node.h"
@@ -71,6 +72,7 @@ public:
     quint32 mapIterator( const StatementIterator& it );
     quint32 mapIterator( const NodeIterator& it );
     quint32 mapIterator( const QueryResultIterator& it );
+    quint32 mapTransaction( Transaction* t );
 
     void supportsProtocolVersion();
 
@@ -88,6 +90,11 @@ public:
     void isEmpty();
     void query();
     void createBlankNode();
+    void startTransaction();
+
+    void transactionCommit();
+    void transactionRollback();
+    void transactionClose();
 
     void iteratorNext();
     void statementIteratorCurrent();
@@ -234,6 +241,22 @@ void Soprano::Server::ServerConnection::Private::_s_readNextCommand()
         createBlankNode();
         break;
 
+    case COMMAND_MODEL_START_TRANSACTION:
+        startTransaction();
+        break;
+
+    case COMMAND_TRANSACTION_COMMIT:
+        transactionCommit();
+        break;
+
+    case COMMAND_TRANSACTION_ROLLBACK:
+        transactionRollback();
+        break;
+
+    case COMMAND_TRANSACTION_CLOSE:
+        transactionClose();
+        break;
+
     default:
         // FIXME: handle an error
         // for now we just close the connection on error.
@@ -263,13 +286,16 @@ void Soprano::Server::ServerConnection::Private::_s_resultReady( Util::AsyncResu
         stream.writeNode( value.value<Node>() );
     }
     else if ( value.userType() == qMetaTypeId<StatementIterator>() ) {
-        stream.writeUnsignedInt32( mapIterator( value.value<StatementIterator>() ) );
+        StatementIterator it = value.value<StatementIterator>();
+        stream.writeUnsignedInt32( it.isValid() ? mapIterator( it ) : quint32(0) );
     }
     else if ( value.userType() == qMetaTypeId<NodeIterator>() ) {
-        stream.writeUnsignedInt32( mapIterator( value.value<NodeIterator>() ) );
+        NodeIterator it = value.value<NodeIterator>();
+        stream.writeUnsignedInt32( it.isValid() ? mapIterator( it ) : quint32(0) );
     }
     else if ( value.userType() == qMetaTypeId<QueryResultIterator>() ) {
-        stream.writeUnsignedInt32( mapIterator( value.value<QueryResultIterator>() ) );
+        QueryResultIterator it = value.value<QueryResultIterator>();
+        stream.writeUnsignedInt32( it.isValid() ? mapIterator( it ) : quint32(0) );
     }
     else if ( value.userType() == qMetaTypeId<Error::ErrorCode>() ) {
         stream.writeErrorCode( value.value<Error::ErrorCode>() );
@@ -327,6 +353,12 @@ quint32 Soprano::Server::ServerConnection::Private::mapIterator( const QueryResu
     quint32 id = generateUniqueId();
     openQueryIterators.insert( id, it );
     return id;
+}
+
+
+quint32 Soprano::Server::ServerConnection::Private::mapTransaction( Transaction* t )
+{
+    return modelPool->insertTransaction( t );
 }
 
 
@@ -486,7 +518,7 @@ void Soprano::Server::ServerConnection::Private::listStatements()
         }
         else {
             StatementIterator it = model->listStatements( s );
-            stream.writeUnsignedInt32( mapIterator( it ) );
+            stream.writeUnsignedInt32( it.isValid() ? mapIterator( it ) : quint32(0) );
             stream.writeError( model->lastError() );
         }
     }
@@ -564,7 +596,7 @@ void Soprano::Server::ServerConnection::Private::listContexts()
         }
         else {
             NodeIterator it = model->listContexts();
-            stream.writeUnsignedInt32( mapIterator( it ) );
+            stream.writeUnsignedInt32( it.isValid() ? mapIterator( it ) : quint32(0) );
             stream.writeError( model->lastError() );
         }
     }
@@ -594,7 +626,7 @@ void Soprano::Server::ServerConnection::Private::query()
         }
         else {
             QueryResultIterator it = model->executeQuery( queryString, ( Query::QueryLanguage )queryLang, userLang );
-            stream.writeUnsignedInt32( mapIterator( it ) );
+            stream.writeUnsignedInt32( it.isValid() ? mapIterator( it ) : quint32(0) );
             stream.writeError( model->lastError() );
         }
     }
@@ -668,6 +700,83 @@ void Soprano::Server::ServerConnection::Private::createBlankNode()
     else {
         stream.writeNode( Node() );
         stream.writeError( Error::Error( "Invalid model id" ) );
+    }
+}
+
+
+void Soprano::Server::ServerConnection::Private::startTransaction()
+{
+    DataStream stream( socket );
+
+    Model* model = getModel();
+    if ( model ) {
+        Transaction* t = model->startTransaction();
+        if( t ) {
+            // a transaction needs to be mapped as model, too
+            quint32 id = mapTransaction( t );
+
+            stream.writeUnsignedInt32( id );
+        }
+        else {
+            stream.writeUnsignedInt32( 0 );
+        }
+        stream.writeUnsignedInt32( model->lastError() );
+    }
+    else {
+        stream.writeUnsignedInt32( 0 );
+        stream.writeError( Error::Error( "Invalid model id" ) );
+    }
+}
+
+
+void Soprano::Server::ServerConnection::Private::transactionCommit()
+{
+    DataStream stream( socket );
+
+    quint32 id = 0;
+    stream.readUnsignedInt32( id );
+
+    if ( Transaction* t = modelPool->transactionById( id ) ) {
+        stream.writeErrorCode( t->commit() );
+        stream.writeError( t->lastError() );
+    }
+    else {
+        stream.writeErrorCode( Error::ErrorInvalidArgument );
+        stream.writeError( Error::Error( "Invalid transaction id" ) );
+    }
+}
+
+
+void Soprano::Server::ServerConnection::Private::transactionRollback()
+{
+    DataStream stream( socket );
+
+    quint32 id = 0;
+    stream.readUnsignedInt32( id );
+
+    if ( Transaction* t = modelPool->transactionById( id ) ) {
+        stream.writeErrorCode( t->rollback() );
+        stream.writeError( t->lastError() );
+    }
+    else {
+        stream.writeErrorCode( Error::ErrorInvalidArgument );
+        stream.writeError( Error::Error( "Invalid transaction id" ) );
+    }
+}
+
+
+void Soprano::Server::ServerConnection::Private::transactionClose()
+{
+    DataStream stream( socket );
+
+    quint32 id = 0;
+    stream.readUnsignedInt32( id );
+
+    if ( modelPool->deleteTransaction( id ) ) {
+        stream.writeError( Error::Error() );
+    }
+    else {
+        stream.writeError( Error::Error( "Invalid transaction id" ) );
     }
 }
 

@@ -1,9 +1,6 @@
 /*
- *
- * $Id: sourceheader 511311 2006-02-19 14:51:05Z trueg $
- *
  * This file is part of the Soprano project.
- * Copyright (C) 2007 Sebastian Trueg <trueg@kde.org>
+ * Copyright (C) 2007-2008 Sebastian Trueg <trueg@kde.org>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,7 +20,7 @@
 #include "../soprano/queryresultiterator.h"
 #include "../soprano/version.h"
 #include "../soprano/pluginmanager.h"
-#include "../soprano/parser.h"
+#include "../soprano/parser2.h"
 #include "../soprano/serializer.h"
 
 #include "../server/tcpclient.h"
@@ -130,7 +127,7 @@ namespace {
 
     int importFile( Soprano::Model* model, const QString& fileName, const QString& serialization )
     {
-        const Soprano::Parser* parser = Soprano::PluginManager::instance()->discoverParserForSerialization( Soprano::mimeTypeToSerialization( serialization ), serialization );
+        const Soprano::Parser2* parser = Soprano::PluginManager::instance()->discoverParser2ForSerialization( Soprano::mimeTypeToSerialization( serialization ), serialization );
 
         if ( parser ) {
 

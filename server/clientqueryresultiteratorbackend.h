@@ -23,6 +23,7 @@
 #define _SOPRANO_SERVER_CLIENT_QUERYRESULT_ITERATOR_H_
 
 #include "queryresultiteratorbackend.h"
+#include "clientiteratorbase.h"
 
 #include <QtCore/QPointer>
 
@@ -32,12 +33,12 @@ namespace Soprano
 
     namespace Client {
 
-        class ClientModel;
+        class ClientModelBase;
 
-        class ClientQueryResultIteratorBackend: public Soprano::QueryResultIteratorBackend
+        class ClientQueryResultIteratorBackend: public Soprano::QueryResultIteratorBackend, public ClientIteratorBase
         {
         public:
-            ClientQueryResultIteratorBackend( int itId, ClientModel* client );
+            ClientQueryResultIteratorBackend( int itId, const ClientModelBase* client );
             ~ClientQueryResultIteratorBackend();
 
             bool next();
@@ -52,10 +53,6 @@ namespace Soprano
             bool isBinding() const;
             bool isBool() const;
             bool boolValue() const;
-
-        private:
-            int m_iteratorId;
-            QPointer<ClientModel> m_model;
         };
     }
 }

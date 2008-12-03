@@ -269,9 +269,9 @@ QList<Soprano::Node> Soprano::Inference::InferenceModel::inferedGraphsForStateme
         Q_FOREACH( const Node &node, sourceStatements ) {
             // Step 2: Check for which graph it is source statement
             QString query = QString( "SELECT ?g WHERE { "
-                                     "?g <%1> <%2> . }" )
+                                     "?g <%1> %2 . }" )
                             .arg( Vocabulary::SIL::sourceStatement().toString() )
-                            .arg( node.toString() );
+                            .arg( node.toN3() );
 
             QueryResultIterator it2 = parentModel()->executeQuery( query, Query::QueryLanguageSparql );
             while ( it2.next() ) {

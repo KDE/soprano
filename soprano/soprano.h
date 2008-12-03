@@ -45,3 +45,5 @@
 #include "dummymodel.h"
 #include "mutexmodel.h"
 #include "asyncmodel.h"
+#include "transaction.h"
+#include "simpletransactionmodel.h"

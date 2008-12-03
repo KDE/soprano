@@ -59,6 +59,14 @@ namespace Soprano {
         virtual bool isAvailable() const;
 
     protected:
+        /**
+         * Constructor.
+         *
+         * \param name The name of the plugin. This is an internally used
+         * name to identify the plugin.
+         *
+         * \sa Plugin(const QString&)
+         */
         Plugin( const QString& name );
 
     private:

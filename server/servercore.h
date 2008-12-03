@@ -26,13 +26,11 @@
 
 #include "error.h"
 #include "soprano_export.h"
-
+#include "backend.h"
 
 namespace Soprano {
 
-    class Backend;
     class Model;
-    class BackendSetting;
 
     namespace Server {
         /**
@@ -97,14 +95,14 @@ namespace Soprano {
              *
              * \param settings The settings to use for new Models.
              */
-            void setBackendSettings( const QList<BackendSetting>& settings );
+            void setBackendSettings( const BackendSettings& settings );
 
             /**
              * Retrieve the backend settings configured via setBackendSettings().
              *
              * \return A list of BackendSetting objects.
              */
-            QList<BackendSetting> backendSettings() const;
+            BackendSettings backendSettings() const;
 
             /**
              * Get or create Model with the specific name.
@@ -205,8 +203,7 @@ namespace Soprano {
              *
              * \return A newly create Model.
              */
-            // FIXME: 3.0: this method should be const
-            virtual Model* createModel( const QList<BackendSetting>& settings );
+            virtual Model* createModel( const BackendSettings& settings );
 
         private:
             class Private;

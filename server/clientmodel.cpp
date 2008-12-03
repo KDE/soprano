@@ -1,7 +1,7 @@
 /*
  * This file is part of Soprano Project.
  *
- * Copyright (C) 2007 Sebastian Trueg <trueg@kde.org>
+ * Copyright (C) 2007-2008 Sebastian Trueg <trueg@kde.org>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -20,6 +20,7 @@
  */
 
 #include "clientmodel.h"
+#include "clienttransaction.h"
 #include "clientconnection.h"
 #include "clientnodeiteratorbackend.h"
 #include "clientstatementiteratorbackend.h"
@@ -30,21 +31,67 @@
 #include "nodeiterator.h"
 #include "statementiterator.h"
 #include "queryresultiterator.h"
+#include "transactionfactory.h"
+
+namespace Soprano {
+    namespace Client {
+        class ClientModelTransactionFactory : public TransactionFactory
+        {
+        public:
+            ClientModelTransactionFactory( ClientModel* model, int modelId )
+                : m_model( model ),
+                  m_modelId( modelId ) {
+            }
+
+            ~ClientModelTransactionFactory() {
+                for ( int i = 0; i < m_openTransactions.count(); ++i ) {
+                    m_model->connection()->closeTransaction( m_openTransactions[i] );
+                }
+            }
+
+            /**
+             * called by ClientTransaction on delete
+             */
+            void closeTransaction( int id ) {
+                if ( m_openTransactions.contains( id ) ) {
+                    m_model->connection()->closeTransaction( id );
+                    m_openTransactions.removeAll( id );
+                    setError( m_model->connection()->lastError() );
+                }
+            }
+
+            Transaction* startTransaction() {
+                int id = m_model->connection()->startTransaction( m_modelId );
+                setError( m_model->connection()->lastError() );
+                if ( id > 0 ) {
+                    ClientTransaction* t = new ClientTransaction( id, m_model );
+                    m_openTransactions.append( id );
+                    return t;
+                }
+                return 0;
+            }
+
+        private:
+            ClientModel* m_model;
+            int m_modelId;
+            QList<quint32> m_openTransactions;
+        };
+    }
+}
 
 
 Soprano::Client::ClientModel::ClientModel( const Backend* backend, int modelId, ClientConnection* client )
     : StorageModel( backend ),
+      ClientModelBase( client ),
       m_modelId( modelId ),
       m_client( client )
 {
+    setTransactionFactory( new ClientModelTransactionFactory( this, modelId ) );
 }
 
 
 Soprano::Client::ClientModel::~ClientModel()
 {
-    for ( int i = 0; i < m_openIterators.count(); ++i ) {
-        m_client->iteratorClose( m_openIterators[i] );
-    }
 }
 
 
@@ -66,16 +113,13 @@ Soprano::NodeIterator Soprano::Client::ClientModel::listContexts() const
 {
     if ( m_client ) {
         int itId = m_client->listContexts( m_modelId );
-        if ( itId > 0 ) {
-            m_openIterators.append( itId );
-        }
         setError( m_client->lastError() );
-        if ( lastError() ) {
-            return NodeIterator();
+        if ( itId > 0 ) {
+            ClientNodeIteratorBackend* it = new ClientNodeIteratorBackend( itId, this );
+            addIterator( it );
+            return it;
         }
-        else {
-            return new ClientNodeIteratorBackend( itId, const_cast<ClientModel*>( this ) );
-        }
+        return NodeIterator();
     }
     else {
         setError( "Not connected to server." );
@@ -88,16 +132,13 @@ Soprano::QueryResultIterator Soprano::Client::ClientModel::executeQuery( const Q
 {
     if ( m_client ) {
         int itId = m_client->executeQuery( m_modelId, query, language, userQueryLanguage );
-        if ( itId > 0 ) {
-            m_openIterators.append( itId );
-        }
         setError( m_client->lastError() );
-        if ( lastError() ) {
-            return QueryResultIterator();
+        if ( itId > 0 ) {
+            ClientQueryResultIteratorBackend* it = new ClientQueryResultIteratorBackend( itId, this );
+            addIterator( it );
+            return it;
         }
-        else {
-            return new ClientQueryResultIteratorBackend( itId, const_cast<ClientModel*>( this ) );
-        }
+        return QueryResultIterator();
     }
     else {
         setError( "Not connected to server." );
@@ -110,16 +151,13 @@ Soprano::StatementIterator Soprano::Client::ClientModel::listStatements( const S
 {
     if ( m_client ) {
         int itId = m_client->listStatements( m_modelId, partial );
-        if ( itId > 0 ) {
-            m_openIterators.append( itId );
-        }
         setError( m_client->lastError() );
-        if ( lastError() ) {
-            return StatementIterator();
+        if ( itId > 0 ) {
+            ClientStatementIteratorBackend* it = new ClientStatementIteratorBackend( itId, this );
+            addIterator( it );
+            return it;
         }
-        else {
-            return new ClientStatementIteratorBackend( itId, const_cast<ClientModel*>( this ) );
-        }
+        return StatementIterator();
     }
     else {
         setError( "Not connected to server." );
@@ -212,18 +250,16 @@ Soprano::Node Soprano::Client::ClientModel::createBlankNode()
 }
 
 
-void Soprano::Client::ClientModel::closeIterator( int id ) const
+bool Soprano::Client::ClientModel::isEmpty() const
 {
     if ( m_client ) {
-        clearError();
-        if ( m_openIterators.contains( id ) ) {
-            m_client->iteratorClose( id );
-            m_openIterators.removeAll( id );
-            setError( m_client->lastError() );
-        }
+        bool r = m_client->isEmpty( m_modelId );
+        setError( m_client->lastError() );
+        return r;
     }
     else {
         setError( "Not connected to server." );
+        return false;
     }
 }
 

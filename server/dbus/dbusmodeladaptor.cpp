@@ -27,6 +27,7 @@
 #include "dbusqueryresultiteratoradaptor.h"
 #include "dbusoperators.h"
 #include "dbusexportmodel.h"
+#include "dbusexporttransaction.h"
 #include "statementiterator.h"
 #include "nodeiterator.h"
 #include "queryresultiterator.h"
@@ -57,6 +58,7 @@ class Soprano::Server::DBusModelAdaptor::Private
 public:
     Private( DBusModelAdaptor* parent )
         : m_iteratorCount( 0 ),
+          m_transactionCount( 0 ),
           q( parent ) {
     }
 
@@ -69,14 +71,20 @@ public:
         return QString( "%1/iterator%2" ).arg( model->dbusObjectPath() ).arg( ++m_iteratorCount );
     }
 
+    QString createUniqueTransactionDBusObjectPath() {
+        return QString( "%1/transaction%2" ).arg( model->dbusObjectPath() ).arg( ++m_transactionCount );
+    }
+
     QString registerIterator( const StatementIterator& it, const QString& service );
     QString registerIterator( const NodeIterator& it, const QString& service );
     QString registerIterator( const QueryResultIterator& it, const QString& service );
+    QString registerTransaction( Transaction* t, const QString& service );
 
     void _s_delayedResultReady( Soprano::Util::AsyncResult* );
 
 private:
     int m_iteratorCount;
+    int m_transactionCount;
     DBusModelAdaptor* q;
 };
 
@@ -107,6 +115,15 @@ QString Soprano::Server::DBusModelAdaptor::Private::registerIterator( const Quer
     itW->setDeleteOnClose( true );
     QString objectPath = createUniqueIteratorDBusObjectPath();
     itW->registerIterator( objectPath, service );
+    return objectPath;
+}
+
+
+QString Soprano::Server::DBusModelAdaptor::Private::registerTransaction( Transaction* t, const QString& service )
+{
+    DBusExportTransaction* exportTransaction = new DBusExportTransaction( t );
+    QString objectPath = createUniqueTransactionDBusObjectPath();
+    exportTransaction->registerTransaction( objectPath, service );
     return objectPath;
 }
 
@@ -427,6 +444,21 @@ int Soprano::Server::DBusModelAdaptor::statementCount( const QDBusMessage& m )
             DBus::sendErrorReply( m, d->model->lastError() );
         }
         return cnt;
+    }
+}
+
+
+QString Soprano::Server::DBusModelAdaptor::startTransaction( const QDBusMessage& m )
+{
+    // handle method call org.soprano.Model.startTransaction
+    Transaction* transaction = d->model->startTransaction();
+    if ( transaction ) {
+        qDebug() << "Created transaction" << transaction;
+        return d->registerTransaction( transaction, m.service() );
+    }
+    else {
+        DBus::sendErrorReply( m, d->model->lastError() );
+        return QString();
     }
 }
 

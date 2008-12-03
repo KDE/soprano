@@ -21,8 +21,10 @@ set(soprano_server_SRC
   datastream.cpp
   dbus/dbusutil.cpp
   dbus/dbusmodeladaptor.cpp
+  dbus/dbustransactionadaptor.cpp
   dbus/dbusexportiterator.cpp
   dbus/dbusexportmodel.cpp
+  dbus/dbusexporttransaction.cpp
   dbus/dbusstatementiteratoradaptor.cpp
   dbus/dbusnodeiteratoradaptor.cpp
   dbus/dbusqueryresultiteratoradaptor.cpp
@@ -37,6 +39,9 @@ set(soprano_client_SRC
   clientconnection.h
   clientconnection.cpp
   clientmodel.cpp
+  clientmodelbase.cpp
+  clientiteratorbase.cpp
+  clienttransaction.cpp
   clientstatementiteratorbackend.cpp
   clientnodeiteratorbackend.cpp
   clientqueryresultiteratorbackend.cpp
@@ -44,12 +49,14 @@ set(soprano_client_SRC
   dbus/dbusutil.cpp
   dbus/dbusabstractinterface.cpp
   dbus/dbusmodelinterface.cpp
+  dbus/dbustransactioninterface.cpp
   dbus/dbusstatementiteratorinterface.cpp
   dbus/dbusnodeiteratorinterface.cpp
   dbus/dbusqueryresultiteratorinterface.cpp
   dbus/dbusserverinterface.cpp
   dbus/dbusclient.cpp
   dbus/dbusmodel.cpp
+  dbus/dbustransaction.cpp
   dbus/dbusclientnodeiteratorbackend.cpp
   dbus/dbusclientstatementiteratorbackend.cpp
   dbus/dbusclientqueryresultiteratorbackend.cpp

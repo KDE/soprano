@@ -88,6 +88,9 @@ namespace Soprano {
                         "      <arg direction=\"out\" type=\"(isss)\" name=\"node\" />\n"
                         "      <annotation value=\"Soprano::Node\" name=\"com.trolltech.QtDBus.QtTypeName.Out0\" />\n"
                         "    </method>\n"
+                        "    <method name=\"startTransaction\" >\n"
+                        "      <arg direction=\"out\" type=\"s\" name=\"transaction\" />\n"
+                        "    </method>\n"
                         "    <signal name=\"statementsAdded\" />\n"
                         "    <signal name=\"statementsRemoved\" />\n"
                         "    <signal name=\"statementAdded\">\n"
@@ -116,6 +119,7 @@ namespace Soprano {
             int removeAllStatements( const Soprano::Statement& statement, const QDBusMessage& m );
             int removeStatement( const Soprano::Statement& statement, const QDBusMessage& m );
             int statementCount( const QDBusMessage& m );
+            QString startTransaction( const QDBusMessage& m );
 
         Q_SIGNALS:
             void statementsAdded();

@@ -24,7 +24,6 @@
 #include "queryresultiterator.h"
 #include "statementiterator.h"
 #include "nodeiterator.h"
-#include "query/query.h"
 
 #include <QtCore/QList>
 
@@ -95,12 +94,6 @@ Soprano::Error::ErrorCode Soprano::FilterModel::addStatement( const Statement &s
 }
 
 
-Soprano::Error::ErrorCode Soprano::FilterModel::addStatement( const Node& subject, const Node& predicate, const Node& object, const Node& context )
-{
-    return Model::addStatement( subject, predicate, object, context );
-}
-
-
 bool Soprano::FilterModel::isEmpty() const
 {
     Q_ASSERT( d->parent );
@@ -128,24 +121,12 @@ bool Soprano::FilterModel::containsStatement( const Statement &statement ) const
 }
 
 
-bool Soprano::FilterModel::containsStatement( const Node& subject, const Node& predicate, const Node& object, const Node& context ) const
-{
-    return Model::containsStatement( subject, predicate, object, context );
-}
-
-
 bool Soprano::FilterModel::containsAnyStatement( const Statement &statement ) const
 {
     Q_ASSERT( d->parent );
     bool b = d->parent->containsAnyStatement( statement );
     setError( d->parent->lastError() );
     return b;
-}
-
-
-bool Soprano::FilterModel::containsAnyStatement( const Node& subject, const Node& predicate, const Node& object, const Node& context ) const
-{
-    return Model::containsAnyStatement( subject, predicate, object, context );
 }
 
 
@@ -176,12 +157,6 @@ Soprano::StatementIterator Soprano::FilterModel::listStatements( const Statement
 }
 
 
-Soprano::StatementIterator Soprano::FilterModel::listStatements( const Node& subject, const Node& predicate, const Node& object, const Node& context ) const
-{
-    return Model::listStatements( subject, predicate, object, context );
-}
-
-
 Soprano::Error::ErrorCode Soprano::FilterModel::removeStatement( const Statement &statement )
 {
     Q_ASSERT( d->parent );
@@ -191,24 +166,12 @@ Soprano::Error::ErrorCode Soprano::FilterModel::removeStatement( const Statement
 }
 
 
-Soprano::Error::ErrorCode Soprano::FilterModel::removeStatement( const Node& subject, const Node& predicate, const Node& object, const Node& context )
-{
-    return Model::removeStatement( subject, predicate, object, context );
-}
-
-
 Soprano::Error::ErrorCode Soprano::FilterModel::removeAllStatements( const Statement &statement )
 {
     Q_ASSERT( d->parent );
     Error::ErrorCode c = d->parent->removeAllStatements( statement );
     setError( d->parent->lastError() );
     return c;
-}
-
-
-Soprano::Error::ErrorCode Soprano::FilterModel::removeAllStatements( const Node& subject, const Node& predicate, const Node& object, const Node& context )
-{
-    return Model::removeAllStatements( subject, predicate, object, context );
 }
 
 

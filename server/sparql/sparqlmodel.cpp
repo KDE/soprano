@@ -28,32 +28,14 @@
 #include "statementiterator.h"
 #include "nodeiterator.h"
 #include "sopranotypes.h"
-#include "parser.h"
+#include "parser2.h"
 #include "pluginmanager.h"
 
 #include <QtCore/QDebug>
 
 
-// FIXME: how about a method in Node that creates the SPARQL representation (or is called N3)?
 
 namespace {
-    QString nodeToN3( const Soprano::Node& node )
-    {
-        if ( node.isLiteral() ) {
-            Soprano::LiteralValue v = node.literal();
-            return QString( "\"%1\"^^<%2>" ).arg( v.toString() ).arg( v.dataTypeUri().toString() );
-        }
-        else if ( node.isResource() ) {
-            return QString( "<%1>" ).arg( QString::fromAscii( node.uri().toEncoded() ) );
-        }
-        else if ( node.isBlank() ) {
-            return "_:" + node.identifier();
-        }
-        else {
-            return QString();
-        }
-    }
-
     QString statementToConstructGraphPattern( const Soprano::Statement& s, bool withContext = false )
     {
         QString query;
@@ -61,7 +43,7 @@ namespace {
         if ( withContext ) {
             query += "graph { ";
             if ( s.context().isValid() ) {
-                query += "<" + QString::fromAscii( s.context().uri().toEncoded() ) + ">";
+                query += s.context().toN3();
             }
             else {
                 query += "?g";
@@ -70,21 +52,21 @@ namespace {
         }
 
         if ( s.subject().isValid() ) {
-            query += nodeToN3( s.subject() ) + ' ';
+            query += s.subject().toN3() + ' ';
         }
         else {
             query += "?s ";
         }
 
         if ( s.predicate().isValid() ) {
-            query += nodeToN3( s.predicate() ) + ' ';
+            query += s.predicate().toN3() + ' ';
         }
         else {
             query += "?p ";
         }
 
         if ( s.object().isValid() ) {
-            query += nodeToN3( s.object() );
+            query += s.object().toN3();
         }
         else {
             query += "?o";
@@ -107,9 +89,9 @@ public:
 
 
 Soprano::Client::SparqlModel::SparqlModel( const QString& endpoint,
-                               quint16 port,
-                               const QString& user,
-                               const QString& password )
+                                           quint16 port,
+                                           const QString& user,
+                                           const QString& password )
     : Soprano::Model(),
       d( new Private() )
 {
@@ -190,8 +172,22 @@ Soprano::NodeIterator Soprano::Client::SparqlModel::listContexts() const
 
 bool Soprano::Client::SparqlModel::containsStatement( const Statement& statement ) const
 {
-    // FIXME: fail on invalid statements and somehow handle the default context
-    QString query = QString( "ask { %1 }" ).arg( statementToConstructGraphPattern( statement, true ) );
+    // fail on invalid statements
+    if ( !statement.isValid() ) {
+        setError( "Cannot call containsStatement on invalid statements", Error::ErrorInvalidArgument );
+        return false;
+    }
+
+    QString query;
+    if ( statement.context().isValid() ) {
+        query = QString( "ask { %1 }" ).arg( statementToConstructGraphPattern( statement, true ) );
+    }
+    else {
+        // an empty context means the default context, i.e. no context set
+        query = QString( "ask { %1 . OPTIONAL { %2 } . FILTER(!bound(?g)) . }" )
+                .arg( statementToConstructGraphPattern( statement, false ) )
+                .arg( statementToConstructGraphPattern( statement, true ) );
+    }
     return executeQuery( query, Query::QueryLanguageSparql ).boolValue();
 }
 
@@ -287,8 +283,8 @@ Soprano::QueryResultIterator Soprano::Client::SparqlModel::executeQuery( const Q
             }
 
             // try parsing it as graph
-            else if ( const Soprano::Parser* parser = PluginManager::instance()->discoverParserForSerialization( SerializationRdfXml ) ) {
-                StatementIterator it = parser->parseString( QString( response ), QUrl(), SerializationRdfXml );
+            else if ( const Soprano::Parser2* parser = PluginManager::instance()->discoverParser2ForSerialization( SerializationRdfXml ) ) {
+                StatementIterator it = parser->parseString( response, QUrl(), SerializationRdfXml );
                 if ( it.isValid() ) {
                     // graph result
                     return new StatementIteratorQueryResultBackend( it );
@@ -308,64 +304,17 @@ Soprano::QueryResultIterator Soprano::Client::SparqlModel::executeQuery( const Q
 }
 
 
-namespace {
-    class QueryResultStatementIteratorBackend : public Soprano::IteratorBackend<Soprano::Statement>
-    {
-    public:
-        QueryResultStatementIteratorBackend( const Soprano::QueryResultIterator& r, const Soprano::Statement& s )
-            : m_result( r ),
-              m_statement(s) {
-        }
-
-        ~QueryResultStatementIteratorBackend() {
-        }
-
-        bool next() {
-            return m_result.next();
-        }
-
-        Soprano::Statement current() const {
-            Soprano::Statement s( m_statement );
-
-            if( !s.context().isValid() ) {
-                s.setContext( m_result.binding("g") );
-            }
-
-            if( !s.subject().isValid()) {
-                s.setSubject( m_result.binding("s") );
-            }
-
-            if( !s.predicate().isValid()) {
-                s.setPredicate( m_result.binding("p") );
-            }
-            if( !s.object().isValid()) {
-                s.setObject( m_result.binding("o") );
-            }
-
-            return s;
-        }
-
-        void close() {
-            m_result.close();
-        }
-
-        Soprano::Error::Error lastError() const {
-            return m_result.lastError();
-        }
-
-    private:
-        Soprano::QueryResultIterator m_result;
-        Soprano::Statement m_statement;
-    };
-}
-
-
 Soprano::StatementIterator Soprano::Client::SparqlModel::listStatements( const Statement& partial ) const
 {
+    // we cannot use a construct query due to missing graph support
     QString query = QString( "select * where { %1 }" ).arg( statementToConstructGraphPattern( partial, true ) );
     qDebug() << "List Statements Query" << query;
-    QueryResultIterator r = executeQuery( query, Query::QueryLanguageSparql );
-    return Soprano::StatementIterator( new QueryResultStatementIteratorBackend( r, partial ) );
+    return executeQuery( query, Query::QueryLanguageSparql )
+        .iterateStatementsFromBindings( partial.subject().isValid() ? QString() : QString( 's' ),
+                                        partial.predicate().isValid() ? QString() : QString( 'p' ),
+                                        partial.object().isValid() ? QString() : QString( 'o' ),
+                                        partial.context().isValid() ? QString() : QString( 'g' ),
+                                        partial );
 }
 
 

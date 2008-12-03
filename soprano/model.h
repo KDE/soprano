@@ -40,6 +40,8 @@ namespace Soprano
     class Statement;
     class StatementIterator;
     class NodeIterator;
+    class Transaction;
+    class TransactionFactory;
     namespace Query {
         class Query;
     }
@@ -51,13 +53,15 @@ namespace Soprano
      * collection of RDF quadruples, i.e statements.
      *
      * Model itself is just an interface for numerous implementations. There are basically
-     * two types of Models in %Soprano:
+     * three types of Models in %Soprano:
      *
      * \li StorageModel is the base class for Model implementations that actually store RDF quadruples.
      *     StorageModels are created transparently by %Soprano backend plugins: Backend::createModel()
      * \li FilterModel is the base class for all filter models. FilterModels can be stacked on top of
      *     a StorageModel to perform arbitrary tasks like inference or actual content filtering. An
      *     important FilterModel is Inference::InferenceModel.
+     * \li Transaction represents a transaction on another Model, started via Model::startTransaction
+     *     and allows to atomicly perform a set of operations on a Model.
      *
      * The simplest way to create a memory Model is to use the default Backend:
      *
@@ -103,6 +107,9 @@ namespace Soprano
          * Add the Statement to the Model.
          *
          * \param statement The Statement to add.
+         *
+         * \return Error::ErrorNone on success and an error code if statement was invalid or an error
+         * occured. Check Error::ErrorCache::lastError for detailed error information.
          */
         virtual Error::ErrorCode addStatement( const Statement &statement ) = 0;
 
@@ -114,7 +121,7 @@ namespace Soprano
         /**
          * \overload
          */
-        Error::ErrorCode addStatements( const QList<Statement> &statements );
+        Error::ErrorCode addStatements( const QList<Statement>& statements );
         //@}
 
         //@{
@@ -124,9 +131,9 @@ namespace Soprano
          * \param statement The statement that should be removed. This has to be a valid statement.
          *
          * \return Error::ErrorNone on success and an error code if statement was invalid or an error
-         * occured.
+         * occured. Check Error::ErrorCache::lastError for detailed error information.
          */
-        virtual Error::ErrorCode removeStatement( const Statement &statement ) = 0;
+        virtual Error::ErrorCode removeStatement( const Statement& statement ) = 0;
 
         /**
          * \overload
@@ -134,13 +141,21 @@ namespace Soprano
         Error::ErrorCode removeStatement( const Node& subject, const Node& predicate, const Node& object, const Node& context = Node() );
 
         /**
+         * \overload
+         */
+        Error::ErrorCode removeStatements( const QList<Statement> &statements );
+
+        /**
          * Remove all statements that match the partial statement. For removing
          * one specific statement see removeStatement().
          *
          * \param statement A possible partially defined statement that serves as
          * a filter for all statements that should be removed.
+         *
+         * \return Error::ErrorNone on success and an error code if statement was invalid or an error
+         * occured. Check Error::ErrorCache::lastError for detailed error information.
          */
-        virtual Error::ErrorCode removeAllStatements( const Statement &statement ) = 0;
+        virtual Error::ErrorCode removeAllStatements( const Statement& statement ) = 0;
 
         /**
          * \overload
@@ -149,21 +164,27 @@ namespace Soprano
          * \param predicate The predicate node to match. Can be empty as a wildcard.
          * \param object The object node to match. Can be empty as a wildcard.
          * \param context The context node to match. Can be empty as a wildcard.
+         *
+         * \return Error::ErrorNone on success and an error code if statement was invalid or an error
+         * occured. Check Error::ErrorCache::lastError for detailed error information.
          */
         Error::ErrorCode removeAllStatements( const Node& subject, const Node& predicate, const Node& object, const Node& context = Node() );
 
         /**
-         * Convenience method which removes all %statements in statements.
-         */
-        Error::ErrorCode removeStatements( const QList<Statement> &statements );
-
-        /**
          * Convenience method that removes all statements in the context.
+         *
+         * \param context The context (named graph) to remove.
+         *
+         * \return Error::ErrorNone on success and an error code if statement was invalid or an error
+         * occured. Check Error::ErrorCache::lastError for detailed error information.
          */
-        Error::ErrorCode removeContext( const Node& );
+        Error::ErrorCode removeContext( const Node& context );
 
         /**
          * Convenience method that clear the Model of all statements
+         *
+         * \return Error::ErrorNone on success and an error code if statement was invalid or an error
+         * occured. Check Error::ErrorCache::lastError for detailed error information.
          */
         Error::ErrorCode removeAllStatements();
         //@}
@@ -324,7 +345,25 @@ namespace Soprano
          */
         virtual Node createBlankNode() = 0;
         //@}
-    
+
+        //@{
+        /**
+         * Start a new transaction.
+         *
+         * This method is not virtual to ensure binary compatibility with
+         * %Soprano 2.1. Reimplementations of Model should use Model::setTransactionFactory
+         * to provide Transaction support.
+         *
+         * \return A new Transaction object if the Model does support transactions.
+         * The caller needs to take care of deletion.
+         *
+         * \sa TransactionFactory::startTransaction, setTransactionFactory
+         *
+         * \since 2.2
+         */
+        Transaction* startTransaction();
+        //@}
+        
     Q_SIGNALS:
         /**
          * Emitted when new statements have been added to the model.
@@ -359,6 +398,17 @@ namespace Soprano
 
     protected:
         Model();
+
+        /**
+         * Set the transaction factory to use for creating Transactions
+         * in startTransaction. This is a temporary method introduced
+         * to ensure binary compatibility with %Soprano 2.1.
+         *
+         * %Model will take ownership of \p factory.
+         *
+         * \since 2.2
+         */
+        void setTransactionFactory( TransactionFactory* factory );
 
     private:
         /**

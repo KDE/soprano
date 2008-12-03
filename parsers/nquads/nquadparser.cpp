@@ -1,7 +1,7 @@
 /*
  * This file is part of Soprano Project
  *
- * Copyright (C) 2007 Sebastian Trueg <trueg@kde.org>
+ * Copyright (C) 2007-2008 Sebastian Trueg <trueg@kde.org>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -38,7 +38,7 @@ Q_EXPORT_PLUGIN2(soprano_nquadparser, Soprano::NQuadParser)
 
 Soprano::NQuadParser::NQuadParser()
     : QObject(),
-      Parser( "nquads" )
+      Parser2( "nquads" )
 {
 }
 
@@ -54,10 +54,10 @@ Soprano::RdfSerializations Soprano::NQuadParser::supportedSerializations() const
 }
 
 
-Soprano::StatementIterator Soprano::NQuadParser::parseStream( QTextStream& stream,
-                                                              const QUrl& baseUri,
-                                                              RdfSerialization serialization,
-                                                              const QString& userSerialization ) const
+Soprano::StatementIterator Soprano::NQuadParser::parse( QIODevice* device,
+                                                        const QUrl& baseUri,
+                                                        RdfSerialization serialization,
+                                                        const QString& userSerialization ) const
 {
     Q_UNUSED( baseUri );
 
@@ -67,6 +67,7 @@ Soprano::StatementIterator Soprano::NQuadParser::parseStream( QTextStream& strea
         QList<Statement> sl; // IMPROVEME: it would be better to let an iterator parse step by step
         QString line;
         int row = 1;
+        QTextStream stream( device );
         while ( !( line = stream.readLine() ).isNull() ) {
             // skip comments
             if ( !line.startsWith( '#' ) ) {
@@ -262,7 +263,7 @@ Soprano::Node Soprano::NQuadParser::parseNode( const QString& s, int& offset ) c
                     int langEnd = s.indexOf( QRegExp( "\\s" ), literalEndPos+1 );
                     if ( langEnd > 0 ) {
                         QString lang = s.mid( literalEndPos+2, langEnd-literalEndPos-2 );
-                        node = Node( LiteralValue( value ), lang );
+                        node = Node( LiteralValue::fromString( value, QUrl() ), lang );
 
                         offset = langEnd;
                     }

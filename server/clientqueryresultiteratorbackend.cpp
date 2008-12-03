@@ -27,9 +27,8 @@
 #include "statement.h"
 
 
-Soprano::Client::ClientQueryResultIteratorBackend::ClientQueryResultIteratorBackend( int itId, ClientModel* client )
-    : m_iteratorId( itId ),
-      m_model( client )
+Soprano::Client::ClientQueryResultIteratorBackend::ClientQueryResultIteratorBackend( int itId, const ClientModelBase* client )
+    : ClientIteratorBase( itId, client)
 {
 }
 
@@ -42,9 +41,9 @@ Soprano::Client::ClientQueryResultIteratorBackend::~ClientQueryResultIteratorBac
 
 bool Soprano::Client::ClientQueryResultIteratorBackend::next()
 {
-    if ( m_model ) {
-        bool r = m_model->client()->iteratorNext( m_iteratorId );
-        setError( m_model->client()->lastError() );
+    if ( modelBase() ) {
+        bool r = modelBase()->connection()->iteratorNext( iteratorId() );
+        setError( modelBase()->connection()->lastError() );
         return r;
     }
     else {
@@ -56,9 +55,9 @@ bool Soprano::Client::ClientQueryResultIteratorBackend::next()
 
 Soprano::BindingSet Soprano::Client::ClientQueryResultIteratorBackend::current() const
 {
-    if ( m_model ) {
-        BindingSet s = m_model->client()->queryIteratorCurrent( m_iteratorId );
-        setError( m_model->client()->lastError() );
+    if ( modelBase() ) {
+        BindingSet s = modelBase()->connection()->queryIteratorCurrent( iteratorId() );
+        setError( modelBase()->connection()->lastError() );
         return s;
     }
     else {
@@ -70,21 +69,16 @@ Soprano::BindingSet Soprano::Client::ClientQueryResultIteratorBackend::current()
 
 void Soprano::Client::ClientQueryResultIteratorBackend::close()
 {
-    if ( m_model ) {
-        m_model->closeIterator( m_iteratorId );
-        setError( m_model->client()->lastError() );
-    }
-    else {
-        setError( "Connection to server closed." );
-    }
+    closeIterator();
+    clearError();
 }
 
 
 Soprano::Statement Soprano::Client::ClientQueryResultIteratorBackend::currentStatement() const
 {
-    if ( m_model ) {
-        Statement s = m_model->client()->queryIteratorCurrentStatement( m_iteratorId );
-        setError( m_model->client()->lastError() );
+    if ( modelBase() ) {
+        Statement s = modelBase()->connection()->queryIteratorCurrentStatement( iteratorId() );
+        setError( modelBase()->connection()->lastError() );
         return s;
     }
     else {
@@ -124,9 +118,9 @@ QStringList Soprano::Client::ClientQueryResultIteratorBackend::bindingNames() co
 
 bool Soprano::Client::ClientQueryResultIteratorBackend::isGraph() const
 {
-    if ( m_model ) {
-        bool r = m_model->client()->queryIteratorType( m_iteratorId ) == 1;
-        setError( m_model->client()->lastError() );
+    if ( modelBase() ) {
+        bool r = modelBase()->connection()->queryIteratorType( iteratorId() ) == 1;
+        setError( modelBase()->connection()->lastError() );
         return r;
     }
     else {
@@ -138,9 +132,9 @@ bool Soprano::Client::ClientQueryResultIteratorBackend::isGraph() const
 
 bool Soprano::Client::ClientQueryResultIteratorBackend::isBinding() const
 {
-    if ( m_model ) {
-        bool r = m_model->client()->queryIteratorType( m_iteratorId ) == 3;
-        setError( m_model->client()->lastError() );
+    if ( modelBase() ) {
+        bool r = modelBase()->connection()->queryIteratorType( iteratorId() ) == 3;
+        setError( modelBase()->connection()->lastError() );
         return r;
     }
     else {
@@ -152,9 +146,9 @@ bool Soprano::Client::ClientQueryResultIteratorBackend::isBinding() const
 
 bool Soprano::Client::ClientQueryResultIteratorBackend::isBool() const
 {
-    if ( m_model ) {
-        bool r = m_model->client()->queryIteratorType( m_iteratorId ) == 2;
-        setError( m_model->client()->lastError() );
+    if ( modelBase() ) {
+        bool r = modelBase()->connection()->queryIteratorType( iteratorId() ) == 2;
+        setError( modelBase()->connection()->lastError() );
         return r;
     }
     else {
@@ -166,9 +160,9 @@ bool Soprano::Client::ClientQueryResultIteratorBackend::isBool() const
 
 bool Soprano::Client::ClientQueryResultIteratorBackend::boolValue() const
 {
-    if ( m_model ) {
-        bool r = m_model->client()->queryIteratorBoolValue( m_iteratorId );
-        setError( m_model->lastError() );
+    if ( modelBase() ) {
+        bool r = modelBase()->connection()->queryIteratorBoolValue( iteratorId() );
+        setError( modelBase()->connection()->lastError() );
         return r;
     }
     else {

@@ -23,9 +23,9 @@
 #include "pluginstub.h"
 #include "backend.h"
 #include "parser.h"
+#include "parser2.h"
 #include "serializer.h"
-#include "query/queryparser.h"
-#include "query/queryserializer.h"
+#include "serializer2.h"
 #include "soprano-config.h"
 #include "sopranopluginfile.h"
 #include "version.h"
@@ -148,8 +148,6 @@ public:
     QHash<QString, PluginStub> backends;
     QHash<QString, PluginStub> parsers;
     QHash<QString, PluginStub> serializers;
-    QHash<QString, PluginStub> queryParsers;
-    QHash<QString, PluginStub> querySerializers;
 };
 
 
@@ -163,6 +161,13 @@ Soprano::PluginManager::PluginManager( QObject* parent )
 Soprano::PluginManager::~PluginManager()
 {
     delete d;
+}
+
+
+bool Soprano::PluginManager::backendAvailable( const QString& name )
+{
+    loadAllPlugins();
+    return d->backends.contains( name );
 }
 
 
@@ -191,12 +196,30 @@ const Soprano::Backend* Soprano::PluginManager::discoverBackendByFeatures( Backe
 }
 
 
+bool Soprano::PluginManager::parserAvailable( const QString& name )
+{
+    loadAllPlugins();
+    return d->parsers.contains( name );
+}
+
+
 const Soprano::Parser* Soprano::PluginManager::discoverParserByName( const QString& name )
 {
     loadAllPlugins();
     QHash<QString, PluginStub>::iterator it = d->parsers.find( name );
     if( it != d->parsers.end() )
         return dynamic_cast<Parser*>( it->plugin() );
+    else
+        return 0;
+}
+
+
+const Soprano::Parser2* Soprano::PluginManager::discoverParser2ByName( const QString& name )
+{
+    loadAllPlugins();
+    QHash<QString, PluginStub>::iterator it = d->parsers.find( name );
+    if( it != d->parsers.end() )
+        return dynamic_cast<Parser2*>( it->plugin() );
     else
         return 0;
 }
@@ -216,6 +239,27 @@ const Soprano::Parser* Soprano::PluginManager::discoverParserForSerialization( R
 }
 
 
+const Soprano::Parser2* Soprano::PluginManager::discoverParser2ForSerialization( RdfSerialization serialization, const QString& userSerialization )
+{
+    loadAllPlugins();
+    for( QHash<QString, PluginStub>::iterator it = d->parsers.begin(); it != d->parsers.end(); ++it ) {
+        if( const Parser2* p = dynamic_cast<Parser2*>( it->plugin() ) ) {
+            if( p->supportsSerialization( serialization, userSerialization ) ) {
+                return p;
+            }
+        }
+    }
+    return 0;
+}
+
+
+bool Soprano::PluginManager::serializerAvailable( const QString& name )
+{
+    loadAllPlugins();
+    return d->serializers.contains( name );
+}
+
+
 const Soprano::Serializer* Soprano::PluginManager::discoverSerializerByName( const QString& name )
 {
     loadAllPlugins();
@@ -227,11 +271,36 @@ const Soprano::Serializer* Soprano::PluginManager::discoverSerializerByName( con
 }
 
 
+const Soprano::Serializer2* Soprano::PluginManager::discoverSerializer2ByName( const QString& name )
+{
+    loadAllPlugins();
+    QHash<QString, PluginStub>::iterator it = d->serializers.find( name );
+    if( it != d->serializers.end() )
+        return dynamic_cast<Serializer2*>( it->plugin() );
+    else
+        return 0;
+}
+
+
 const Soprano::Serializer* Soprano::PluginManager::discoverSerializerForSerialization( RdfSerialization serialization, const QString& userSerialization )
 {
     loadAllPlugins();
     for( QHash<QString, PluginStub>::iterator it = d->serializers.begin(); it != d->serializers.end(); ++it ) {
         if( const Serializer* p = dynamic_cast<Serializer*>( it->plugin() ) ) {
+            if( p->supportsSerialization( serialization, userSerialization ) ) {
+                return p;
+            }
+        }
+    }
+    return 0;
+}
+
+
+const Soprano::Serializer2* Soprano::PluginManager::discoverSerializer2ForSerialization( RdfSerialization serialization, const QString& userSerialization )
+{
+    loadAllPlugins();
+    for( QHash<QString, PluginStub>::iterator it = d->serializers.begin(); it != d->serializers.end(); ++it ) {
+        if( const Serializer2* p = dynamic_cast<Serializer2*>( it->plugin() ) ) {
             if( p->supportsSerialization( serialization, userSerialization ) ) {
                 return p;
             }
@@ -269,6 +338,20 @@ QList<const Soprano::Parser*> Soprano::PluginManager::allParsers()
 }
 
 
+QList<const Soprano::Parser2*> Soprano::PluginManager::allParser2s()
+{
+    loadAllPlugins();
+    QList<const Parser2*> pl;
+    for ( QHash<QString, PluginStub>::iterator it = d->parsers.begin();
+          it != d->parsers.end(); ++it ) {
+        if( const Parser2* p = dynamic_cast<Parser2*>( it->plugin() ) ) {
+            pl.append( p );
+        }
+    }
+    return pl;
+}
+
+
 QList<const Soprano::Serializer*> Soprano::PluginManager::allSerializers()
 {
     loadAllPlugins();
@@ -276,6 +359,20 @@ QList<const Soprano::Serializer*> Soprano::PluginManager::allSerializers()
     for ( QHash<QString, PluginStub>::iterator it = d->serializers.begin();
           it != d->serializers.end(); ++it ) {
         if( const Serializer* p = dynamic_cast<Serializer*>( it->plugin() ) ) {
+            pl.append( p );
+        }
+    }
+    return pl;
+}
+
+
+QList<const Soprano::Serializer2*> Soprano::PluginManager::allSerializer2s()
+{
+    loadAllPlugins();
+    QList<const Serializer2*> pl;
+    for ( QHash<QString, PluginStub>::iterator it = d->serializers.begin();
+          it != d->serializers.end(); ++it ) {
+        if( const Serializer2* p = dynamic_cast<Serializer2*>( it->plugin() ) ) {
             pl.append( p );
         }
     }
@@ -345,18 +442,6 @@ void Soprano::PluginManager::loadPlugin( const QString& path )
                 if ( !d->serializers.contains( name ) ) {
                     qDebug() << "(Soprano::PluginManager) found serializer plugin " << name;
                     d->serializers.insert( name, plugin );
-                }
-            }
-            else if( type.contains( "Soprano/QueryParser" ) ) {
-                if ( !d->queryParsers.contains( name ) ) {
-                    qDebug() << "(Soprano::PluginManager) found query parser plugin " << name;
-                    d->queryParsers.insert( name, plugin );
-                }
-            }
-            else if( type.contains( "Soprano/QuerySerializer" ) ) {
-                if ( !d->querySerializers.contains( name ) ) {
-                    qDebug() << "(Soprano::PluginManager) found query serializer plugin " << name;
-                    d->querySerializers.insert( name, plugin );
                 }
             }
             else {

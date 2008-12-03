@@ -25,6 +25,8 @@
 #include "node.h"
 #include "statement.h"
 #include "statementiterator.h"
+#include "transaction.h"
+#include "transactionfactory.h"
 
 #include <QtCore/QList>
 
@@ -32,7 +34,13 @@
 class Soprano::Model::Private
 {
 public:
+    Private()
+        : transactionFactory( 0 ) {
+    }
+
+    TransactionFactory* transactionFactory;
 };
+
 
 Soprano::Model::Model()
     : QObject( 0 ),
@@ -41,10 +49,13 @@ Soprano::Model::Model()
 {
 }
 
+
 Soprano::Model::~Model()
 {
+    delete d->transactionFactory;
     delete d;
 }
+
 
 // private no-op constructor not meant to be used
 Soprano::Model::Model( const Model& )
@@ -161,6 +172,30 @@ Soprano::Error::ErrorCode Soprano::Model::write( QTextStream &os ) const
         os << *it << endl;
     }
     return Error::ErrorNone;
+}
+
+
+void Soprano::Model::setTransactionFactory( TransactionFactory* factory )
+{
+    if ( d->transactionFactory &&
+         d->transactionFactory != factory ) {
+        delete d->transactionFactory;
+    }
+    d->transactionFactory = factory;
+}
+
+
+Soprano::Transaction* Soprano::Model::startTransaction()
+{
+    if ( d->transactionFactory ) {
+        Transaction* t = d->transactionFactory->startTransaction();
+        setError( d->transactionFactory->lastError() );
+        return t;
+    }
+    else {
+        setError( "No transaction support in default Model.", Error::ErrorNotSupported );
+        return 0;
+    }
 }
 
 #include "model.moc"

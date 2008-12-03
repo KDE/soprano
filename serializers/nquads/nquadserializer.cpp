@@ -1,7 +1,7 @@
 /*
  * This file is part of Soprano Project
  *
- * Copyright (C) 2007 Sebastian Trueg <trueg@kde.org>
+ * Copyright (C) 2007-2008 Sebastian Trueg <trueg@kde.org>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -28,13 +28,14 @@
 
 
 #include <QtCore/QtPlugin>
+#include <QtCore/QTextStream>
 
 
 Q_EXPORT_PLUGIN2(soprano_nquadserializer, Soprano::NQuadSerializer)
 
 Soprano::NQuadSerializer::NQuadSerializer()
     : QObject(),
-      Serializer( "nquads" )
+      Serializer2( "nquads" )
 {
 }
 
@@ -51,12 +52,13 @@ Soprano::RdfSerializations Soprano::NQuadSerializer::supportedSerializations() c
 
 
 bool Soprano::NQuadSerializer::serialize( StatementIterator it,
-                                          QTextStream& stream,
+                                          QIODevice* device,
                                           RdfSerialization serialization,
                                           const QString& userSerialization ) const
 {
     clearError();
 
+    QTextStream stream( device );
     if ( serialization == SerializationNQuads ) {
         while ( it.next() ) {
             serializeStatement( *it, stream );

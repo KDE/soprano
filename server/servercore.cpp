@@ -73,12 +73,9 @@ public:
 
     BackendSettings createBackendSettings( const QString& name ) {
         BackendSettings newSettings = settings;
-        for ( BackendSettings::iterator it = newSettings.begin();
-              it != newSettings.end(); ++it ) {
-            BackendSetting& setting = *it;
-            if ( setting.option() == BackendOptionStorageDir ) {
-                setting.setValue( setting.value().toString() + '/' + name );
-            }
+        if ( isOptionInSettings( newSettings, BackendOptionStorageDir ) ) {
+            BackendSetting& setting = settingInSettings( newSettings, BackendOptionStorageDir );
+            setting.setValue( setting.value().toString() + '/' + name );
         }
         return newSettings;
     }
@@ -137,13 +134,13 @@ const Soprano::Backend* Soprano::Server::ServerCore::backend() const
 }
 
 
-void Soprano::Server::ServerCore::setBackendSettings( const QList<BackendSetting>& settings )
+void Soprano::Server::ServerCore::setBackendSettings( const BackendSettings& settings )
 {
     d->settings = settings;
 }
 
 
-QList<Soprano::BackendSetting> Soprano::Server::ServerCore::backendSettings() const
+Soprano::BackendSettings Soprano::Server::ServerCore::backendSettings() const
 {
     return d->settings;
 }
@@ -153,14 +150,9 @@ Soprano::Model* Soprano::Server::ServerCore::model( const QString& name )
 {
     QHash<QString, Model*>::const_iterator it = d->models.constFind( name );
     if ( it == d->models.constEnd() ) {
-        QList<BackendSetting> settings = d->createBackendSettings( name );
-        for ( QList<BackendSetting>::iterator it = settings.begin();
-              it != settings.end(); ++it ) {
-            BackendSetting& setting = *it;
-            if ( setting.option() == BackendOptionStorageDir ) {
-                QDir().mkpath( setting.value().toString() );
-                break;
-            }
+        BackendSettings settings = d->createBackendSettings( name );
+        if ( isOptionInSettings( settings, BackendOptionStorageDir ) ) {
+            QDir().mkpath( valueInSettings( settings, BackendOptionStorageDir ).toString() );
         }
 
         Model* model = createModel( settings );
@@ -194,17 +186,12 @@ void Soprano::Server::ServerCore::removeModel( const QString& name )
         // delete the model, removing any cached data
         delete model;
 
-        // remove the data on disk
-        backend()->deleteModelData( d->createBackendSettings( name ) );
+        if ( isOptionInSettings( d->settings, BackendOptionStorageDir ) ) {
+            // remove the data on disk
+            backend()->deleteModelData( d->createBackendSettings( name ) );
 
-        // remove the dir which should now be empty
-        for ( QList<BackendSetting>::iterator it = d->settings.begin();
-              it != d->settings.end(); ++it ) {
-            BackendSetting& setting = *it;
-            if ( setting.option() == BackendOptionStorageDir ) {
-                QDir( setting.value().toString() ).rmdir( name );
-                break;
-            }
+            // remove the dir which should now be empty
+            QDir( valueInSettings( d->settings, BackendOptionStorageDir ).toString() ).rmdir( name );
         }
     }
 }
@@ -288,7 +275,7 @@ void Soprano::Server::ServerCore::serverConnectionFinished()
 }
 
 
-Soprano::Model* Soprano::Server::ServerCore::createModel( const QList<BackendSetting>& settings )
+Soprano::Model* Soprano::Server::ServerCore::createModel( const BackendSettings& settings )
 {
     Model* m = backend()->createModel( settings );
     if ( m ) {

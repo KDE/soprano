@@ -22,7 +22,7 @@
 #include "parsertest.h"
 #include "config-testdata.h"
 
-#include "parser.h"
+#include "parser2.h"
 #include "pluginmanager.h"
 #include "statementiterator.h"
 #include "simplestatementiterator.h"
@@ -64,11 +64,11 @@ void ParserTest::testParser()
     QFETCH( QString, filename );
     QFETCH( bool, withContext );
 
-    QList<const Parser*> parsers = PluginManager::instance()->allParsers();
+    QList<const Parser2*> parsers = PluginManager::instance()->allParser2s();
 
     QList<Statement> testStatements = testData( withContext );
 
-    Q_FOREACH( const Parser* parser, parsers ) {
+    Q_FOREACH( const Parser2* parser, parsers ) {
         if ( parser->supportsSerialization( serialization ) ) {
             // test parsing
             StatementIterator it = parser->parseFile( filename, QUrl("http://soprano.sf.net/testdata/"), serialization );
@@ -84,11 +84,7 @@ void ParserTest::testParser()
                 QVERIFY( all.contains( s ) );
             }
 
-            QFile file( filename );
-            file.open( QIODevice::ReadOnly );
-            QByteArray data = file.readAll();
-            QTextStream bs( data );
-            it = parser->parseStream( bs, QUrl("http://soprano.sf.net/testdata/"), serialization );
+            it = parser->parseFile( filename, QUrl("http://soprano.sf.net/testdata/"), serialization );
             all = it.allStatements();
             QCOMPARE( all.count(), testStatements.count() );
 
@@ -119,7 +115,7 @@ void ParserTest::testEncoding()
     const QString utf8File = SOPRANO_TEST_DATA_DIR"/rdf_xml-testdata-utf8.rdf";
     const QString isoFile = SOPRANO_TEST_DATA_DIR"/rdf_xml-testdata-iso8859.rdf";
 
-    const Soprano::Parser* parser = PluginManager::instance()->discoverParserForSerialization( SerializationRdfXml );
+    const Soprano::Parser2* parser = PluginManager::instance()->discoverParser2ForSerialization( SerializationRdfXml );
     if ( parser ) {
         QList<Statement> utf8Statements = parser->parseFile( utf8File, QUrl(), SerializationRdfXml ).allStatements();
         QList<Statement> isoStatements = parser->parseFile( isoFile, QUrl(), SerializationRdfXml ).allStatements();

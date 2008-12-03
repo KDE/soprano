@@ -23,6 +23,7 @@
 #define _SOPRANO_SERVER_CLIENT_NODE_ITERATOR_H_
 
 #include "iteratorbackend.h"
+#include "clientiteratorbase.h"
 
 #include <QtCore/QPointer>
 
@@ -32,21 +33,17 @@ namespace Soprano
 
     namespace Client {
 
-        class ClientModel;
+        class ClientModelBase;
 
-        class ClientNodeIteratorBackend: public Soprano::IteratorBackend<Node>
+        class ClientNodeIteratorBackend: public Soprano::IteratorBackend<Node>, public ClientIteratorBase
         {
         public:
-            ClientNodeIteratorBackend( int itId, ClientModel* model );
+            ClientNodeIteratorBackend( int itId, const ClientModelBase* model );
             ~ClientNodeIteratorBackend();
 
             bool next();
             Soprano::Node current() const;
             void close();
-
-        private:
-            int m_iteratorId;
-            QPointer<ClientModel> m_model;
         };
     }
 }

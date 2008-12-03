@@ -68,6 +68,7 @@ namespace Soprano {
             bool containsStatement( int modelId, const Statement &statement );
             bool containsAnyStatement( int modelId, const Statement &statement );
             Node createBlankNode( int modelId );
+            int startTransaction( int modelId );
 
             // Iterator methods
             bool iteratorNext( int id );
@@ -79,6 +80,11 @@ namespace Soprano {
             bool queryIteratorBoolValue( int id );
 
             void iteratorClose( int id );
+
+            // Transaction methods
+            Error::ErrorCode commit( int id );
+            Error::ErrorCode rollback( int id );
+            void closeTransaction( int id );
 
             bool checkProtocolVersion();
 

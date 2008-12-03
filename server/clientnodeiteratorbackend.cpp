@@ -21,14 +21,13 @@
 
 #include "clientnodeiteratorbackend.h"
 #include "clientconnection.h"
-#include "clientmodel.h"
+#include "clientmodelbase.h"
 
 #include "node.h"
 
 
-Soprano::Client::ClientNodeIteratorBackend::ClientNodeIteratorBackend( int itId, ClientModel* client )
-    : m_iteratorId( itId ),
-      m_model( client )
+Soprano::Client::ClientNodeIteratorBackend::ClientNodeIteratorBackend( int itId, const ClientModelBase* client )
+    : ClientIteratorBase( itId, client)
 {
 }
 
@@ -41,9 +40,9 @@ Soprano::Client::ClientNodeIteratorBackend::~ClientNodeIteratorBackend()
 
 bool Soprano::Client::ClientNodeIteratorBackend::next()
 {
-    if ( m_model ) {
-        bool r = m_model->client()->iteratorNext( m_iteratorId );
-        setError( m_model->client()->lastError() );
+    if ( modelBase() ) {
+        bool r = modelBase()->connection()->iteratorNext( iteratorId() );
+        setError( modelBase()->connection()->lastError() );
         return r;
     }
     else {
@@ -55,9 +54,9 @@ bool Soprano::Client::ClientNodeIteratorBackend::next()
 
 Soprano::Node Soprano::Client::ClientNodeIteratorBackend::current() const
 {
-    if ( m_model ) {
-        Node s = m_model->client()->nodeIteratorCurrent( m_iteratorId );
-        setError( m_model->client()->lastError() );
+    if ( modelBase() ) {
+        Node s = modelBase()->connection()->nodeIteratorCurrent( iteratorId() );
+        setError( modelBase()->connection()->lastError() );
         return s;
     }
     else {
@@ -69,11 +68,5 @@ Soprano::Node Soprano::Client::ClientNodeIteratorBackend::current() const
 
 void Soprano::Client::ClientNodeIteratorBackend::close()
 {
-    if ( m_model ) {
-        m_model->closeIterator( m_iteratorId );
-        setError( m_model->lastError() );
-    }
-    else {
-        setError( "Connection to server closed." );
-    }
+    closeIterator();
 }

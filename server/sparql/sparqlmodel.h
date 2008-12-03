@@ -41,7 +41,7 @@ namespace Soprano {
          * call the well known Model methods like Model::executeQuery to work with the remote
          * repository.
          *
-         * \author Rajeev J Sebastian <rajeev.sebastian@gmail.com>, Sebastian Trueg <trueg@kde.org>
+         * \author Rajeev J Sebastian <rajeev.sebastian@gmail.com><br>Sebastian Trueg <trueg@kde.org>
          *
          * \since 2.2
          */
@@ -71,6 +71,7 @@ namespace Soprano {
              */
             ~SparqlModel();
 
+            //@{
             /**
              * Set the host to connect to.
              *
@@ -88,7 +89,9 @@ namespace Soprano {
              * \param password The password for \p user in case the host
              */
             void setUser( const QString& user, const QString& password = QString() );
+            //@}
 
+            //@{
             /**
              * Add a statement to the remote model.
              *
@@ -129,12 +132,10 @@ namespace Soprano {
              * occured. Check Error::ErrorCache::lastError for detailed error information.
              */
             Error::ErrorCode removeAllStatements( const Statement& statement );
+            //@}
 
-            NodeIterator listContexts() const;
-
-            bool containsStatement( const Statement& statement ) const;
-
-            bool containsAnyStatement( const Statement& statement ) const;
+            //@{
+            Soprano::StatementIterator listStatements( const Statement& partial ) const;
 
             /**
              * Execute a query on the SPARQL endpoint.
@@ -152,8 +153,15 @@ namespace Soprano {
                                                        const QString& userQueryLanguage = QString() ) const;
 
 
-            Soprano::StatementIterator listStatements( const Statement& partial ) const;
 
+            NodeIterator listContexts() const;
+
+            bool containsStatement( const Statement& statement ) const;
+
+            bool containsAnyStatement( const Statement& statement ) const;
+            //@}
+
+            //@{
             /**
              * Retrieving the number of statements is not supported by the SparqlModel.
              *
@@ -167,6 +175,7 @@ namespace Soprano {
              * \return false
              */
             bool isEmpty() const;
+            //@}
 
             /**
              * Creation of blank nodes is not supported by the SparqlModel.

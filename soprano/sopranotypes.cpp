@@ -78,6 +78,8 @@ Soprano::RdfSerialization Soprano::mimeTypeToSerialization( const QString& mimet
         return SerializationTrig;
     }
     else if ( mimetype == "application/x-nquads" ||
+              mimetype == "application/rdf+n4" ||
+              mimetype == "text/rdf+n4" ||
               mimetype.toLower() == "nquads" ||
               mimetype.toLower() == "n-quads" ) {
         return SerializationNQuads;

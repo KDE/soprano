@@ -27,7 +27,7 @@ public:
     ~SopranodCore();
 
 private:
-    Soprano::Model* createModel( const QList<Soprano::BackendSetting>& settings );
+    Soprano::Model* createModel( const Soprano::BackendSettings& settings );
 
     bool m_withIndex;
     QHash<QString, Soprano::Model*> m_models;
