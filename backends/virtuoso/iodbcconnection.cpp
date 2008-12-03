@@ -31,11 +31,6 @@
 #include <QtCore/QList>
 #include <QtCore/QPointer>
 
-#include <sql.h>
-#include <sqlext.h>
-#include <sqlucode.h>
-#include <iodbcext.h>
-
 
 class Soprano::IODBCConnection::Private
 {

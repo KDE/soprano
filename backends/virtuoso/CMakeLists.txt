@@ -1,4 +1,4 @@
-project(soprano_tools)
+project(virtuoso)
 
 include_directories(
   ${soprano_core_SOURCE_DIR}
@@ -8,6 +8,7 @@ include_directories(
   ${soprano_core_BINARY_DIR}
   ${QT_INCLUDES}
   ${soprano_SOURCE_DIR}
+  ${virtuoso_BINARY_DIR}
   /usr/include/iodbc
 )
 

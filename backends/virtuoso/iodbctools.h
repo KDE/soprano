@@ -23,6 +23,10 @@
 #define _SOPRANO_IODBC_TOOLS_H_
 
 #include <sql.h>
+#include <sqlext.h>
+#include <sqlucode.h>
+#include <iodbcext.h>
+
 #include "error.h"
 
 #define TEXT(x)   	(SQLWCHAR *) L##x

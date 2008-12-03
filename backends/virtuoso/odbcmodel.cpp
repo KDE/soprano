@@ -240,6 +240,9 @@ int Soprano::OdbcModel::statementCount() const
 
 Soprano::Node Soprano::OdbcModel::createBlankNode()
 {
+#warning OdbcModel::createBlankNode not implemented
+    setError( "createBlankNode not supported by the Virtuoso backend", Error::ErrorNotSupported );
+    return Node();
 }
 
 
@@ -247,6 +250,12 @@ Soprano::QueryResultIterator Soprano::OdbcModel::executeQuery( const QString& qu
                                                                Query::QueryLanguage language,
                                                                const QString& userQueryLanguage ) const
 {
+    if ( language != Soprano::Query::QueryLanguageSparql ) {
+        setError( Error::Error( QString( "Unsupported query language %1." )
+                                .arg( Query::queryLanguageToString( language, userQueryLanguage ) ) ) );
+        return QueryResultIterator();
+    }
+
     IODBCStatementHandler* hdl = d->connection.execute( "sparql " + query );
     if ( hdl ) {
         clearError();

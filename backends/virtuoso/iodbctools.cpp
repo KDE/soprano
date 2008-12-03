@@ -25,9 +25,9 @@
 
 Soprano::Error::Error Soprano::IODBC::convertSqlError( SQLSMALLINT handleType, SQLHANDLE handle )
 {
-    SQLCHAR buf[513];
+    SQLTCHAR buf[513];
     buf[512] = 0;
-    SQLCHAR sqlstate[15];
+    SQLTCHAR sqlstate[15];
     SQLINTEGER nativeError = 0;
     SQLSMALLINT len = 0;
 
@@ -43,6 +43,6 @@ Soprano::Error::Error Soprano::IODBC::convertSqlError( SQLSMALLINT handleType, S
         return Soprano::Error::Error( "Failed to retrieve error information from iODBC" );
     }
     else {
-        return Soprano::Error::Error( "iODBC Error: " + QString::fromLatin1( reinterpret_cast<const char*>( buf ), len ) );
+        return Soprano::Error::Error( "iODBC Error: " + QString::fromWCharArray( buf, len ) );
     }
 }

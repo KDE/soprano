@@ -38,12 +38,6 @@
 #include <QtCore/QDebug>
 
 
-#include <sql.h>
-#include <sqlext.h>
-#include <sqlucode.h>
-#include <iodbcext.h>
-
-
 /******************* Virtuoso defines *******************/
 
 #define DV_LONG_INT 189
@@ -269,7 +263,6 @@ QStringList Soprano::IODBCStatementHandler::resultColumns()
             colName[50] = 0;
             SQLSMALLINT colType;
             SQLULEN colPrecision;
-            SQLLEN colIndicator;
             SQLSMALLINT colScale;
             SQLSMALLINT colNullable;
             if ( SQLDescribeCol( d->m_hstmt,
