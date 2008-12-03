@@ -49,6 +49,7 @@ SET(soprano_SRCS
   sopranotypes.cpp
   transaction.cpp
   transactionfactory.cpp
+  sopranotools.cpp
   vocabulary/rdf.cpp
   vocabulary/rdfs.cpp
   vocabulary/xsd.cpp

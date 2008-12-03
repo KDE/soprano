@@ -79,7 +79,11 @@ namespace Soprano
         BackendOptionStorageMemory = 0x1,   /**< A boolean option, if set means that the Model should be a pure memory model which does not store any data on disk. Only backend supporting Soprano::BackendFeatureStorageMemory can handle this option. Other backends should return 0 if this option is specified in createModel() */
         BackendOptionEnableInference = 0x2, /**< A boolean option, if set means that the Model should have inference enabled. FIXME: but what kind of inference? RDFS only? rule-based? */
         BackendOptionStorageDir = 0x4,      /**< A key/value option that states the directory where the model should actually store the data. */
-        BackendOptionUser = 0x1000           /**< Additional options can be supported through user options which are identified by a string key in BackendSetting::userSettingName. */
+        BackendOptionHost = 0x8,            /**< A string option defining a host to connect to (IP address or domain name). \since 2.2 */
+        BackendOptionPort = 0x10,           /**< An integer option defining the port on which to connect the host. \since 2.2 */
+        BackendOptionUsername = 0x20,       /**< A string option optionally defining the username. \since 2.2 */
+        BackendOptionPassword = 0x40,       /**< A string option optionally defining the password. \since 2.2 */
+        BackendOptionUser = 0x1000          /**< Additional options can be supported through user options which are identified by a string key in BackendSetting::userSettingName. */
     };
     Q_DECLARE_FLAGS( BackendOptions, BackendOption )
 
