@@ -19,19 +19,19 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef _SOPRANO_ODBC_MODEL_H_
-#define _SOPRANO_ODBC_MODEL_H_
+#ifndef _SOPRANO_IODBC_MODEL_H_
+#define _SOPRANO_IODBC_MODEL_H_
 
 #include "storagemodel.h"
 
 namespace Soprano {
-    class OdbcModel : public StorageModel
+    class IODBCModel : public StorageModel
     {
         Q_OBJECT
 
     public:
-        OdbcModel();
-        ~OdbcModel();
+        IODBCModel();
+        ~IODBCModel();
 
         bool connect( const QString& name );
         bool isConnected() const;

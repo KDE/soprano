@@ -19,7 +19,7 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#include "odbcmodel.h"
+#include "iodbcmodel.h"
 #include "iodbcqueryiteratorbackend.h"
 #include "iodbcstatementhandler.h"
 #include "soprano.h"
@@ -78,39 +78,39 @@ namespace {
 }
 
 
-class Soprano::OdbcModel::Private
+class Soprano::IODBCModel::Private
 {
 public:
     IODBCConnection connection;
 };
 
 
-Soprano::OdbcModel::OdbcModel()
+Soprano::IODBCModel::IODBCModel()
     : StorageModel(0),
       d( new Private() )
 {
 }
 
 
-Soprano::OdbcModel::~OdbcModel()
+Soprano::IODBCModel::~IODBCModel()
 {
     delete d;
 }
 
 
-bool Soprano::OdbcModel::connect( const QString& name )
+bool Soprano::IODBCModel::connect( const QString& name )
 {
     return d->connection.connect( name );
 }
 
 
-bool Soprano::OdbcModel::isConnected() const
+bool Soprano::IODBCModel::isConnected() const
 {
     return d->connection.isConnected();
 }
 
 
-Soprano::Error::ErrorCode Soprano::OdbcModel::addStatement( const Statement &statement )
+Soprano::Error::ErrorCode Soprano::IODBCModel::addStatement( const Statement &statement )
 {
     if( !statement.isValid() ) {
         setError( "Cannot add invalid statement.", Error::ErrorInvalidArgument );
@@ -137,13 +137,13 @@ Soprano::Error::ErrorCode Soprano::OdbcModel::addStatement( const Statement &sta
 }
 
 
-Soprano::NodeIterator Soprano::OdbcModel::listContexts() const
+Soprano::NodeIterator Soprano::IODBCModel::listContexts() const
 {
     return executeQuery( "select distinct ?c where { graph ?c { ?r ?p ?o . } }", Query::QueryLanguageSparql ).iterateBindings( 0 );
 }
 
 
-bool Soprano::OdbcModel::containsStatement( const Statement& statement ) const
+bool Soprano::IODBCModel::containsStatement( const Statement& statement ) const
 {
     // fail on invalid statements
     if ( !statement.isValid() ) {
@@ -165,14 +165,14 @@ bool Soprano::OdbcModel::containsStatement( const Statement& statement ) const
 }
 
 
-bool Soprano::OdbcModel::containsAnyStatement( const Statement &statement ) const
+bool Soprano::IODBCModel::containsAnyStatement( const Statement &statement ) const
 {
     QString query = QString( "ask { %1 }" ).arg( statementToConstructGraphPattern( statement, true ) );
     return executeQuery( query, Query::QueryLanguageSparql ).boolValue();
 }
 
 
-Soprano::StatementIterator Soprano::OdbcModel::listStatements( const Statement& partial ) const
+Soprano::StatementIterator Soprano::IODBCModel::listStatements( const Statement& partial ) const
 {
     // we cannot use a construct query due to missing graph support
     QString query = QString( "select * where { %1 }" ).arg( statementToConstructGraphPattern( partial, true ) );
@@ -186,7 +186,7 @@ Soprano::StatementIterator Soprano::OdbcModel::listStatements( const Statement& 
 }
 
 
-Soprano::Error::ErrorCode Soprano::OdbcModel::removeStatement( const Statement& statement )
+Soprano::Error::ErrorCode Soprano::IODBCModel::removeStatement( const Statement& statement )
 {
     if ( !statement.isValid() ) {
         setError( "Cannot remove invalid statement.", Error::ErrorInvalidArgument );
@@ -205,7 +205,7 @@ Soprano::Error::ErrorCode Soprano::OdbcModel::removeStatement( const Statement& 
 }
 
 
-Soprano::Error::ErrorCode Soprano::OdbcModel::removeAllStatements( const Statement& statement )
+Soprano::Error::ErrorCode Soprano::IODBCModel::removeAllStatements( const Statement& statement )
 {
     if ( statement.context().isValid() &&
          !statement.subject().isValid() &&
@@ -226,7 +226,7 @@ Soprano::Error::ErrorCode Soprano::OdbcModel::removeAllStatements( const Stateme
 }
 
 
-int Soprano::OdbcModel::statementCount() const
+int Soprano::IODBCModel::statementCount() const
 {
     QueryResultIterator it = executeQuery( "select count(*) where { graph ?g { ?s ?p ?o . } }" );
     if ( it.next() ) {
@@ -238,17 +238,17 @@ int Soprano::OdbcModel::statementCount() const
 }
 
 
-Soprano::Node Soprano::OdbcModel::createBlankNode()
+Soprano::Node Soprano::IODBCModel::createBlankNode()
 {
-#warning OdbcModel::createBlankNode not implemented
+#warning IODBCModel::createBlankNode not implemented
     setError( "createBlankNode not supported by the Virtuoso backend", Error::ErrorNotSupported );
     return Node();
 }
 
 
-Soprano::QueryResultIterator Soprano::OdbcModel::executeQuery( const QString& query,
-                                                               Query::QueryLanguage language,
-                                                               const QString& userQueryLanguage ) const
+Soprano::QueryResultIterator Soprano::IODBCModel::executeQuery( const QString& query,
+                                                                Query::QueryLanguage language,
+                                                                const QString& userQueryLanguage ) const
 {
     if ( language != Soprano::Query::QueryLanguageSparql ) {
         setError( Error::Error( QString( "Unsupported query language %1." )
@@ -267,4 +267,4 @@ Soprano::QueryResultIterator Soprano::OdbcModel::executeQuery( const QString& qu
     }
 }
 
-#include "odbcmodel.moc"
+#include "iodbcmodel.moc"

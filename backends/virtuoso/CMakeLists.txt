@@ -21,7 +21,7 @@ set(SRC
   iodbcqueryiteratorbackend.cpp
   iodbcstatementhandler.cpp
   iodbctools.cpp
-  odbcmodel.cpp
+  iodbcmodel.cpp
 )
 
 qt4_automoc(${SRC})
