@@ -108,7 +108,12 @@ namespace {
             return Soprano::LiteralValue::fromString( value, QUrl( literalType ) );
         }
         else {
-            // we only check for integer and double here
+            // we only check for boolean, integer and double here
+            if ( s.toLower() == "false" )
+                return Soprano::LiteralValue( false );
+            else if ( s.toLower() == "true" )
+                return Soprano::LiteralValue( true );
+
             bool ok = false;
             int val = s.toInt( &ok );
             if ( ok ) {
@@ -456,14 +461,13 @@ int main( int argc, char *argv[] )
     Soprano::Model* model = 0;
     if ( backendName.isEmpty() ) {
         if ( args.hasSetting( "sparql" ) ) {
-            QString sparqlEndPoint = args.getSetting( "sparql" );
+            QUrl sparqlEndPoint = args.getSetting( "sparql" );
             quint16 port = 80;
             if ( args.hasSetting( "port" ) ) {
                 port = args.getSetting( "port" ).toInt();
             }
-            Soprano::Client::SparqlModel* sm = new Soprano::Client::SparqlModel( sparqlEndPoint, port );
-            sm->setHost( sparqlEndPoint, port );
-            model = sm;
+            model = new Soprano::Client::SparqlModel( sparqlEndPoint.host(), port,
+                                                      sparqlEndPoint.userName(), sparqlEndPoint.password() );
         }
         else if ( args.hasSetting( "port" ) ) {
             QHostAddress host = QHostAddress::LocalHost;
