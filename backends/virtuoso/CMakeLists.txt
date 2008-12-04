@@ -16,7 +16,6 @@ include_directories(
 add_definitions(-DUNICODE)
 
 set(SRC
-  test.cpp
   iodbcconnection.cpp
   iodbcqueryiteratorbackend.cpp
   iodbcstatementhandler.cpp
@@ -27,15 +26,6 @@ set(SRC
 )
 
 qt4_automoc(${SRC})
-
-add_executable(odbctest ${SRC})
-
-target_link_libraries(
-  odbctest
-  ${QT_QTCORE_LIBRARY}
-  soprano
-  ${IODBC_LIBRARIES}
-)
 
 add_library(soprano_virtuosobackend SHARED ${SRC})
 

@@ -130,6 +130,13 @@ namespace Soprano {
          */
         void insert( const QString& name, const Node& value );
 
+        /**
+         * Clear the set, i.e. remove all bindings.
+         *
+         * \since 2.2
+         */
+        void clear();
+
     private:
         class Private;
         QSharedDataPointer<Private> d;

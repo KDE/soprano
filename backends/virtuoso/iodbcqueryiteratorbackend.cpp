@@ -21,6 +21,7 @@
 
 #include "iodbcqueryiteratorbackend.h"
 #include "iodbcstatementhandler.h"
+#include "iodbctools.h"
 #include "statement.h"
 #include "statementiterator.h"
 #include "nodeiterator.h"
@@ -29,6 +30,8 @@
 #include "node.h"
 
 #include <QtCore/QHash>
+#include <QtCore/QVector>
+#include <QtCore/QBitArray>
 #include <QtCore/QStringList>
 #include <QtCore/QPointer>
 
@@ -39,6 +42,9 @@ public:
     QPointer<IODBCStatementHandler> handler;
     QStringList bindingNames;
     QHash<QString, int> bindingIndexHash;
+
+    QVector<Node> bindingCache;
+    QBitArray bindingCachedFlags;
 };
 
 
@@ -51,6 +57,8 @@ Soprano::IODBCQueryResultIteratorBackend::IODBCQueryResultIteratorBackend( IODBC
     for ( int i = 0; i < d->bindingNames.count(); ++i ) {
         d->bindingIndexHash.insert( d->bindingNames[i], i );
     }
+    d->bindingCachedFlags = QBitArray( d->bindingNames.count(), false );
+    d->bindingCache.resize( d->bindingNames.count() );
 }
 
 
@@ -63,6 +71,10 @@ Soprano::IODBCQueryResultIteratorBackend::~IODBCQueryResultIteratorBackend()
 
 bool Soprano::IODBCQueryResultIteratorBackend::next()
 {
+    // reset cache
+    d->bindingCachedFlags.fill( false );
+
+    // ask statement handler for cursor scroll
     return d->handler ? d->handler->fetchScroll() : false;
 }
 
@@ -88,8 +100,14 @@ Soprano::Node Soprano::IODBCQueryResultIteratorBackend::binding( const QString& 
 
 Soprano::Node Soprano::IODBCQueryResultIteratorBackend::binding( int offset ) const
 {
-    // FIXME: should we cache this?
-    return d->handler ? d->handler->getData( offset+1 ) : Node();
+    if ( d->handler && offset < bindingCount() && offset >= 0 ) {
+        if ( !d->bindingCachedFlags[offset] ) {
+            d->bindingCache[offset] = d->handler->getData( offset+1 );
+            d->bindingCachedFlags.setBit( offset );
+        }
+        return d->bindingCache[offset];
+    }
+    return Node();
 }
 
 

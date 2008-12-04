@@ -55,7 +55,7 @@
 QTime Soprano::DateTime::fromTimeString( const QString& s )
 {
     // ensure the format
-    if( s.length() < 9 ||
+    if( s.length() < 8 ||
         s[2] != ':' ||
         s[5] != ':' ) {
         qDebug() << Q_FUNC_INFO << " invalid formatted time string: " << s << endl;
@@ -86,7 +86,7 @@ QTime Soprano::DateTime::fromTimeString( const QString& s )
 
     // parse the fraction of seconds
     int z = 0;
-    if( s[8] == '.' || s[8] == ',' ) {
+    if( s.length() > 8 && ( s[8] == '.' || s[8] == ',' ) ) {
         ++pos;
         while( s.length() > pos && s[pos].isDigit() )
             ++pos;
@@ -100,52 +100,50 @@ QTime Soprano::DateTime::fromTimeString( const QString& s )
     // finally create the time object
     QTime t( hh, mm, ss, z );
 
-    if ( pos >= s.length() ) {
-        qDebug() << Q_FUNC_INFO << " invalid formatted time string: " << s << endl;
-        return QTime();
-    }
-
-    // parse the timezone
-    if( s[pos] == 'Z' ) {
-        return t;
-    }
-    else {
-        if( s.length() != pos+6 ) {
-            qDebug() << Q_FUNC_INFO << " invalid formatted timezone string: " << s << endl;
+    if ( pos < s.length() ) {
+        // parse the timezone
+        if( s[pos] == 'Z' && s.length() > pos ) {
+            qDebug() << Q_FUNC_INFO << " invalid formatted time string: " << s << endl;
             return QTime();
         }
+        else if ( s[pos] != 'Z' ) {
+            if( s.length() != pos+6 ) {
+                qDebug() << Q_FUNC_INFO << " invalid formatted timezone string: " << s << endl;
+                return QTime();
+            }
 
-        bool add = true;
-        if( s[pos] == '+' )
-            add = true;
-        else if( s[pos] == '-' )
-            add = false;
-        else {
-            qDebug() << Q_FUNC_INFO << " invalid formatted timezone string: " << s << endl;
-            return QTime();
+            bool add = true;
+            if( s[pos] == '+' )
+                add = true;
+            else if( s[pos] == '-' )
+                add = false;
+            else {
+                qDebug() << Q_FUNC_INFO << " invalid formatted timezone string: " << s << endl;
+                return QTime();
+            }
+
+            ++pos;
+
+            hh = s.mid(pos, 2).toInt( &ok );
+            if( !ok ) {
+                qDebug() << Q_FUNC_INFO << " invalid formatted timezone string: " << s << endl;
+                return QTime();
+            }
+
+            pos += 3;
+
+            mm = s.mid(pos, 2).toInt( &ok );
+            if( !ok ) {
+                qDebug() << Q_FUNC_INFO << " invalid formatted timezone string: " << s << endl;
+                return QTime();
+            }
+
+            int secs = 60*( 60*hh + mm );
+            if( add )
+                return t.addSecs( -1*secs );
+            else
+                return t.addSecs( secs );
         }
-
-        ++pos;
-
-        hh = s.mid(pos, 2).toInt( &ok );
-        if( !ok ) {
-            qDebug() << Q_FUNC_INFO << " invalid formatted timezone string: " << s << endl;
-            return QTime();
-        }
-
-        pos += 3;
-
-        mm = s.mid(pos, 2).toInt( &ok );
-        if( !ok ) {
-            qDebug() << Q_FUNC_INFO << " invalid formatted timezone string: " << s << endl;
-            return QTime();
-        }
-
-        int secs = 60*( 60*hh + mm );
-        if( add )
-            return t.addSecs( -1*secs );
-        else
-            return t.addSecs( secs );
     }
 
     return t;

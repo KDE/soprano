@@ -165,6 +165,9 @@ void SopranoModelTest::testListStatements()
 {
     QVERIFY( m_model != 0 );
 
+    // we do not want the normal test statements
+    m_model->removeAllStatements();
+
     QList<Statement> statements;
     Node resource_1( QUrl("http://soprano.sf.net#list:resource1") );
     Node resource_2( QUrl("http://soprano.sf.net#list:resource2") );
@@ -267,10 +270,12 @@ void SopranoModelTest::testListStatements()
     while( it4.next() ) {
         ++cnt;
         Statement st = *it4;
+        if ( !statements.contains( st ) )
+            qDebug() << st;
         QVERIFY( statements.contains( st ) || st == m_st1 || st == m_st2 || st == m_st3 || st == m_st4 );
     }
 
-    QCOMPARE( cnt, 124 );
+    QCOMPARE( cnt, 120 );
 }
 
 void SopranoModelTest::testListStatementsWithContext()
@@ -548,7 +553,7 @@ void SopranoModelTest::testQuery()
         ++cnt;
     }
 
-    QVERIFY( cnt == 4 );
+    QCOMPARE( cnt, 4 );
 
     // test bindings
     rs1 = m_model->executeQuery( sparql, Query::QueryLanguageSparql );
@@ -865,6 +870,7 @@ void SopranoModelTest::testLiteralTypes()
 
     StatementIterator it = m_model->listStatements( Statement( sub, predicate, Node() ) );
     QVERIFY( it.next() );
+    qDebug() << literal << it.current().object().literal();
     QCOMPARE( it.current().object().literal(), literal );
     it.close();
 }

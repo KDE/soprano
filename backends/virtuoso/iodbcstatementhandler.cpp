@@ -343,9 +343,6 @@ Soprano::Node Soprano::IODBCStatementHandler::getData( int colNum )
             return Node();
         }
 
-//         qDebug() << "flag:" << flag;
-//         qDebug() << "data:" << ( const char* )data;
-
         switch (dvtype) {
         case DV_STRING: {
             if (flag) {

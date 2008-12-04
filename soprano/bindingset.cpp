@@ -116,6 +116,12 @@ void Soprano::BindingSet::insert( const QString& name, const Node& value )
 }
 
 
+void Soprano::BindingSet::clear()
+{
+    *this = BindingSet();
+}
+
+
 QDebug operator<<( QDebug s, const Soprano::BindingSet& b )
 {
     QStringList n = b.bindingNames();

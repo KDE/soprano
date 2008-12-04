@@ -24,6 +24,7 @@
 #include "iodbcstatementhandler.h"
 #include "soprano.h"
 #include "iodbcconnection.h"
+#include "iodbctools.h"
 
 #include <QtCore/QDebug>
 #include <QtCore/QDir>
@@ -85,8 +86,8 @@ public:
 };
 
 
-Soprano::IODBCModel::IODBCModel()
-    : StorageModel(0),
+Soprano::IODBCModel::IODBCModel( const Backend* b )
+    : StorageModel(b),
       d( new Private() )
 {
 }
@@ -110,25 +111,26 @@ bool Soprano::IODBCModel::isConnected() const
 }
 
 
-Soprano::Error::ErrorCode Soprano::IODBCModel::addStatement( const Statement &statement )
+Soprano::Error::ErrorCode Soprano::IODBCModel::addStatement( const Statement& statement )
 {
     if( !statement.isValid() ) {
         setError( "Cannot add invalid statement.", Error::ErrorInvalidArgument );
         return Error::ErrorInvalidArgument;
     }
 
-    // FIXME: what if the context is not defined?
-    if ( !statement.context().isValid() ) {
-        setError( "No support for the default context.", Error::ErrorInvalidArgument );
-        return Error::ErrorInvalidArgument;
+    Statement s( statement );
+    if ( !s.context().isValid() ) {
+        s.setContext( IODBC::defaultGraph() );
     }
 
     QString insert = QString("insert into %1")
-                     .arg( statementToConstructGraphPattern( statement, true ) );
+                     .arg( statementToConstructGraphPattern( s, true ) );
+    qDebug() << "addStatement query:" << insert;
     QueryResultIterator it = executeQuery( insert );
 
     // on success a single binding is returned which contains a string (FIXME: is this always the case?)
     if ( it.next() ) {
+        qDebug() << it.binding( 0 ).toString();
         return Error::ErrorNone;
     }
     else {
@@ -139,7 +141,12 @@ Soprano::Error::ErrorCode Soprano::IODBCModel::addStatement( const Statement &st
 
 Soprano::NodeIterator Soprano::IODBCModel::listContexts() const
 {
-    return executeQuery( "select distinct ?c where { graph ?c { ?r ?p ?o . } }", Query::QueryLanguageSparql ).iterateBindings( 0 );
+    return executeQuery( QString( "select distinct ?g where { "
+                                  "graph ?g { ?s ?p ?o . } . "
+                                  "FILTER(?g != %1 && ?g != %2) . }" )
+                         .arg( Node( IODBC::openlinkVirtualGraph() ).toN3() )
+                         .arg( Node( IODBC::defaultGraph() ).toN3() ) )
+        .iterateBindings( 0 );
 }
 
 
@@ -151,31 +158,44 @@ bool Soprano::IODBCModel::containsStatement( const Statement& statement ) const
         return false;
     }
 
-    QString query;
-    if ( statement.context().isValid() ) {
-        query = QString( "ask { %1 }" ).arg( statementToConstructGraphPattern( statement, true ) );
+    Statement s( statement );
+    if ( !statement.context().isValid() )
+        s.setContext( IODBC::defaultGraph() );
+    QString query = QString( "ask { %1 }" ).arg( statementToConstructGraphPattern( s, true ) );
+    qDebug() << "containsStatement query" << query;
+    // FIXME: once the ask queries are fixed, use the code below:
+//    return executeQuery( query, Query::QueryLanguageSparql ).boolValue();
+    if ( IODBCStatementHandler* sh = d->connection.execute( "sparql " + query ) ) {
+        bool b = sh->fetchScroll();
+        delete sh;
+        return b;
     }
-    else {
-        // an empty context means the default context, i.e. no context set
-        query = QString( "ask { %1 . OPTIONAL { %2 } . FILTER(!bound(?g)) . }" )
-                .arg( statementToConstructGraphPattern( statement, false ) )
-                .arg( statementToConstructGraphPattern( statement, true ) );
-    }
-    return executeQuery( query, Query::QueryLanguageSparql ).boolValue();
+    return false;
 }
 
 
 bool Soprano::IODBCModel::containsAnyStatement( const Statement &statement ) const
 {
     QString query = QString( "ask { %1 }" ).arg( statementToConstructGraphPattern( statement, true ) );
-    return executeQuery( query, Query::QueryLanguageSparql ).boolValue();
+    // FIXME: once the ask queries are fixed, use the code below:
+//    return executeQuery( query, Query::QueryLanguageSparql ).boolValue();
+    if ( IODBCStatementHandler* sh = d->connection.execute( "sparql " + query ) ) {
+        bool b = sh->fetchScroll();
+        delete sh;
+        return b;
+    }
+    return false;
 }
 
 
 Soprano::StatementIterator Soprano::IODBCModel::listStatements( const Statement& partial ) const
 {
     // we cannot use a construct query due to missing graph support
-    QString query = QString( "select * where { %1 }" ).arg( statementToConstructGraphPattern( partial, true ) );
+    QString query = QString( "select * where { %1 ." ).arg( statementToConstructGraphPattern( partial, true ) );
+    if ( !partial.context().isValid() )
+        query += QString( " FILTER(?g != %1) }" ).arg( Node( IODBC::openlinkVirtualGraph() ).toN3() );
+    else
+        query += '}';
     qDebug() << "List Statements Query" << query;
     return executeQuery( query, Query::QueryLanguageSparql )
         .iterateStatementsFromBindings( partial.subject().isValid() ? QString() : QString( 's' ),
@@ -193,13 +213,19 @@ Soprano::Error::ErrorCode Soprano::IODBCModel::removeStatement( const Statement&
         return Error::ErrorInvalidArgument;
     }
 
-    if ( !statement.context().isValid() ) {
-        setError( "No support for the default context.", Error::ErrorInvalidArgument );
+    Statement s( statement );
+    if ( !s.context().isValid() ) {
+        s.setContext( IODBC::defaultGraph() );
+    }
+    else if ( s.context().uri() == IODBC::openlinkVirtualGraph() ) {
+        setError( "Cannot remove statements from the virtual openlink graph. Virtuoso would not like that.", Error::ErrorInvalidArgument );
         return Error::ErrorInvalidArgument;
     }
 
-    executeQuery( QString( "delete from %1" )
-                  .arg( statementToConstructGraphPattern( statement, true ) ) );
+    QString query = QString( "delete from %1" )
+                    .arg( statementToConstructGraphPattern( s, true ) );
+    qDebug() << "removeStatement query:" << query;
+    executeQuery( query );
 
     return Error::convertErrorCode( lastError().code() );
 }
@@ -207,21 +233,47 @@ Soprano::Error::ErrorCode Soprano::IODBCModel::removeStatement( const Statement&
 
 Soprano::Error::ErrorCode Soprano::IODBCModel::removeAllStatements( const Statement& statement )
 {
-    if ( statement.context().isValid() &&
-         !statement.subject().isValid() &&
-         !statement.predicate().isValid() &&
-         !statement.object().isValid() ) {
-        // Virtuoso docu says this might be faster
-        executeQuery( QString( "clear graph %1" ).arg( statement.context().toN3() ) );
+    if ( statement.context().isValid() ) {
+        if ( statement.context().uri() == IODBC::openlinkVirtualGraph() ) {
+            setError( "Cannot remove statements from the virtual openlink graph. Virtuoso would not like that.", Error::ErrorInvalidArgument );
+            return Error::ErrorInvalidArgument;
+        }
+
+        QString query;
+        if ( !statement.subject().isValid() &&
+             !statement.predicate().isValid() &&
+             !statement.object().isValid() ) {
+            // Virtuoso docu says this might be faster
+            query = QString( "clear graph %1" ).arg( statement.context().toN3() );
+        }
+        else {
+            query = QString( "delete from %1 { %2 } where { %3 }" )
+                    .arg( statement.context().toN3() )
+                    .arg( statementToConstructGraphPattern( statement, false ) )
+                    .arg( statementToConstructGraphPattern( statement, true ) );
+
+        }
+        qDebug() << "removeAllStatements query:" << query;
+        executeQuery( query );
         return Error::convertErrorCode( lastError().code() );
     }
     else {
-        executeQuery( QString( "delete from %1 { ?s ?p ?o } where { ?s ?p ?o . %2 }" )
-                      .arg( statement.context().toN3() )
-                      .arg( statementToConstructGraphPattern( statement, statement.context().isValid() ) ) );
-
-        return Error::convertErrorCode( lastError().code() );
-
+//         if ( IODBCStatementHandler* sh = d->connection.execute( "delete from RDF_QUAD wheresparql " + query ) ) {
+//             bool b = sh->fetchScroll();
+//             delete sh;
+//             return b;
+//         }
+        // FIXME: do this in a fancy way, maybe an inner sql query or something
+        QList<Node> allContexts = listContexts().allNodes();
+        allContexts << Node( IODBC::defaultGraph() );
+        foreach( const Node& node, allContexts ) {
+            Statement s( statement );
+            s.setContext( node );
+            Error::ErrorCode c = removeAllStatements( s );
+            if ( c != Error::ErrorNone )
+                return c;
+        }
+        return Error::ErrorNone;
     }
 }
 

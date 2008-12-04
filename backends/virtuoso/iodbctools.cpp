@@ -23,6 +23,11 @@
 
 #include <QtCore/QString>
 
+// we have no support for a real default/empty graph, thus we fake one, hoping that nobody will ever use this otherwise
+static const char* s_defaultGraph = "http://soprano.sourceforge.net/virtuosobackend#defaultGraph";
+static const char* s_openlinkVirtualGraph = "http://www.openlinksw.com/schemas/virtrdf#";
+
+
 Soprano::Error::Error Soprano::IODBC::convertSqlError( SQLSMALLINT handleType, SQLHANDLE handle )
 {
     SQLTCHAR buf[513];
@@ -45,4 +50,16 @@ Soprano::Error::Error Soprano::IODBC::convertSqlError( SQLSMALLINT handleType, S
     else {
         return Soprano::Error::Error( "iODBC Error: " + QString::fromWCharArray( buf, len ) );
     }
+}
+
+
+QUrl Soprano::IODBC::defaultGraph()
+{
+    return QUrl::fromEncoded( s_defaultGraph, QUrl::StrictMode );
+}
+
+
+QUrl Soprano::IODBC::openlinkVirtualGraph()
+{
+    return QUrl::fromEncoded( s_openlinkVirtualGraph, QUrl::StrictMode );
 }

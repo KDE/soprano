@@ -66,7 +66,7 @@ Soprano::StorageModel* Soprano::Virtuoso::BackendPlugin::createModel( const Back
     QString connectString = QString( "host=%1;port=%2;uid=%3;pwd=%4;driver=%5" )
                             .arg( host, QString::number( port ), uid, pwd, driverPath );
 
-    IODBCModel* model = new IODBCModel();
+    IODBCModel* model = new IODBCModel( this );
     if ( model->connect( connectString ) ) {
         clearError();
         return model;

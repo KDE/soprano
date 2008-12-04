@@ -30,7 +30,7 @@ namespace Soprano {
         Q_OBJECT
 
     public:
-        IODBCModel();
+        IODBCModel( const Backend* );
         ~IODBCModel();
 
         bool connect( const QString& name );

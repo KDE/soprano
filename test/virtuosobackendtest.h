@@ -19,26 +19,22 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef _SOPRANO_IODBC_TOOLS_H_
-#define _SOPRANO_IODBC_TOOLS_H_
+#ifndef _SOPRANO_VIRTUOSO_BACKEND_TEST_H_
+#define _SOPRANO_VIRTUOSO_BACKEND_TEST_H_
 
-#include <iodbc/sql.h>
-#include <iodbc/sqlext.h>
-#include <iodbc/sqlucode.h>
-#include <iodbc/iodbcext.h>
-
-#include <QtCore/QUrl>
-
-#include "error.h"
-
-#define TEXT(x)   	(SQLWCHAR *) L##x
+#include "SopranoModelTest.h"
 
 namespace Soprano {
-    namespace IODBC {
-        Soprano::Error::Error convertSqlError( SQLSMALLINT handleType, SQLHANDLE handle );
-        QUrl defaultGraph();
-        QUrl openlinkVirtualGraph();
-    }
+
+    class Model;
+
+    class VirtuosoBackendTest : public SopranoModelTest
+    {
+        Q_OBJECT
+
+    protected:
+        virtual Soprano::Model* createModel();
+    };
 }
 
 #endif
