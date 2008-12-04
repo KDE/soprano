@@ -8,4 +8,6 @@ if(JNI_1_4_FOUND)
   add_subdirectory(sesame2)
 endif(JNI_1_4_FOUND)
 
-add_subdirectory(virtuoso)
+if(IODBC_FOUND)
+  add_subdirectory(virtuoso)
+endif(IODBC_FOUND)

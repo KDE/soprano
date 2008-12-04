@@ -425,9 +425,7 @@ int main( int argc, char *argv[] )
     }
 
     if ( args.hasSetting( "backend" ) ) {
-        if ( args.hasSetting( "port" ) ||
-             args.hasSetting( "dbus" ) ||
-             args.hasSetting( "host" ) ||
+        if ( args.hasSetting( "dbus" ) ||
              args.hasSetting( "socket" ) ||
              args.hasSetting( "sparql" ) ||
              args.hasSetting( "model" ) ) {
@@ -533,6 +531,10 @@ int main( int argc, char *argv[] )
         }
         QList<BackendSetting> settings;
         settings.append( BackendSetting( BackendOptionStorageDir, dir ) );
+        if ( args.hasSetting( "port" ) )
+            settings.append( BackendSetting( BackendOptionPort, args.getSetting( "port" ).toInt() ) );
+        if ( args.hasSetting( "host" ) )
+            settings.append( BackendSetting( BackendOptionHost, args.getSetting( "host" ) ) );
         if ( !( model = backend->createModel( settings ) ) ) {
             errStream << "Failed to create Model: " << backend->lastError() << endl;
             return 2;

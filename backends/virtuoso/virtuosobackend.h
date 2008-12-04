@@ -45,6 +45,7 @@ namespace Soprano {
             bool isAvailable() const;
 
         private:
+            QString findVirtuosoDriver() const;
         };
     }
 }

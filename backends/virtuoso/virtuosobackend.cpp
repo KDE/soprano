@@ -20,9 +20,16 @@
  */
 
 #include "virtuosobackend.h"
+#include "iodbcmodel.h"
+#include "sopranotools.h"
+
+#include <QtCore/QDebug>
+#include <QtCore/QtPlugin>
+
+Q_EXPORT_PLUGIN2(soprano_virtuosobackend, Soprano::Virtuoso::BackendPlugin)
 
 Soprano::Virtuoso::BackendPlugin::BackendPlugin()
-    : Backend()
+    : Backend( "virtuosobackend" )
 {
 }
 
@@ -34,13 +41,49 @@ Soprano::Virtuoso::BackendPlugin::~BackendPlugin()
 
 Soprano::StorageModel* Soprano::Virtuoso::BackendPlugin::createModel( const BackendSettings& settings ) const
 {
-    // TODO: get the static instance of the virtuoso server and create or open a database
+    // for now we only support connecting to a running virtuoso instance
+    QString host = valueInSettings( settings, BackendOptionHost ).toString();
+    int port = valueInSettings( settings, BackendOptionPort ).toInt();
+    QString uid = valueInSettings( settings, BackendOptionUsername ).toString();
+    QString pwd = valueInSettings( settings, BackendOptionPassword ).toString();
+
+    if ( host.isEmpty() || port == 0 ) {
+        setError( "Need host and port to connect to Virtuoso server.", Error::ErrorInvalidArgument );
+        return 0;
+    }
+
+    if ( uid.isEmpty() )
+        uid = "dba";
+    if ( pwd.isEmpty() )
+        pwd = "dba";
+
+    QString driverPath = findVirtuosoDriver();
+    if ( driverPath.isEmpty() ) {
+        setError( "Could not find Virtuoso ODBC driver" );
+        return 0;
+    }
+
+    QString connectString = QString( "host=%1;port=%2;uid=%3;pwd=%4;driver=%5" )
+                            .arg( host, QString::number( port ), uid, pwd, driverPath );
+
+    IODBCModel* model = new IODBCModel();
+    if ( model->connect( connectString ) ) {
+        clearError();
+        return model;
+    }
+    else {
+        setError( model->lastError() );
+        delete model;
+        return 0;
+    }
 }
 
 
 bool Soprano::Virtuoso::BackendPlugin::deleteModelData( const BackendSettings& settings ) const
 {
-
+    Q_UNUSED( settings );
+    setError( "deleting model data not supported yet!" );
+    return false;
 }
 
 
@@ -57,7 +100,13 @@ Soprano::BackendFeatures Soprano::Virtuoso::BackendPlugin::supportedFeatures() c
 
 bool Soprano::Virtuoso::BackendPlugin::isAvailable() const
 {
-    // TODO: check if virtuoso is installed
+    return !findVirtuosoDriver().isEmpty();
+}
+
+
+QString Soprano::Virtuoso::BackendPlugin::findVirtuosoDriver() const
+{
+    return Soprano::findLibraryPath( "virtodbc" );
 }
 
 #include "virtuosobackend.moc"

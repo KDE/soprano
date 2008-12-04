@@ -22,10 +22,10 @@
 #ifndef _SOPRANO_IODBC_TOOLS_H_
 #define _SOPRANO_IODBC_TOOLS_H_
 
-#include <sql.h>
-#include <sqlext.h>
-#include <sqlucode.h>
-#include <iodbcext.h>
+#include <iodbc/sql.h>
+#include <iodbc/sqlext.h>
+#include <iodbc/sqlucode.h>
+#include <iodbc/iodbcext.h>
 
 #include "error.h"
 

@@ -4,12 +4,17 @@
 #include "soprano.h"
 
 #include "iodbcmodel.h"
+#include "virtuosobackend.h"
 
 using namespace Soprano;
 
 int main( int argc, char** argv )
 {
     QCoreApplication app( argc, argv );
+
+    Soprano::Virtuoso::BackendPlugin bp;
+    bp.isAvailable();
+
     IODBCModel model;
     if ( !model.connect( "host=localhost:1111;uid=dba;pwd=dba;driver=/usr/local/lib/virtodbc.so;" ) ) {
         qDebug() << "Failed to connect to db";

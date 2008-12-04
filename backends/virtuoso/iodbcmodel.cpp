@@ -38,7 +38,7 @@ namespace {
         QString query;
 
         if ( withContext ) {
-            query += "graph { ";
+            query += "graph ";
             if ( s.context().isValid() ) {
                 query += s.context().toN3();
             }

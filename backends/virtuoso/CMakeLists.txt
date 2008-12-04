@@ -9,7 +9,7 @@ include_directories(
   ${QT_INCLUDES}
   ${soprano_SOURCE_DIR}
   ${virtuoso_BINARY_DIR}
-  /usr/include/iodbc
+  ${IODBC_INCLUDE_DIR}
 )
 
 # enable unicode in iODBC
@@ -22,6 +22,8 @@ set(SRC
   iodbcstatementhandler.cpp
   iodbctools.cpp
   iodbcmodel.cpp
+  virtuosobackend.cpp
+  ${soprano_core_SOURCE_DIR}/sopranotools.cpp
 )
 
 qt4_automoc(${SRC})
@@ -32,5 +34,24 @@ target_link_libraries(
   odbctest
   ${QT_QTCORE_LIBRARY}
   soprano
-  iodbc
+  ${IODBC_LIBRARIES}
 )
+
+add_library(soprano_virtuosobackend SHARED ${SRC})
+
+target_link_libraries(soprano_virtuosobackend
+  soprano
+  ${IODBC_LIBRARIES})
+
+install(TARGETS soprano_virtuosobackend
+  LIBRARY DESTINATION ${LIB_DESTINATION}/soprano
+  RUNTIME DESTINATION bin/soprano
+  ARCHIVE DESTINATION lib/soprano
+  )
+
+configure_file(virtuosobackend.desktop.cmake ${CMAKE_CURRENT_BINARY_DIR}/virtuosobackend.desktop)
+
+install(FILES
+  ${CMAKE_CURRENT_BINARY_DIR}/virtuosobackend.desktop
+  DESTINATION share/soprano/plugins
+  )
