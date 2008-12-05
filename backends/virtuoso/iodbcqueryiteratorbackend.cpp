@@ -28,12 +28,16 @@
 #include "queryresultiterator.h"
 #include "literalvalue.h"
 #include "node.h"
+#include "statementiterator.h"
+#include "parser.h"
+#include "pluginmanager.h"
 
 #include <QtCore/QHash>
 #include <QtCore/QVector>
 #include <QtCore/QBitArray>
 #include <QtCore/QStringList>
 #include <QtCore/QPointer>
+#include <QtCore/QDebug>
 
 
 class Soprano::IODBCQueryResultIteratorBackend::Private
@@ -45,6 +49,12 @@ public:
 
     QVector<Node> bindingCache;
     QBitArray bindingCachedFlags;
+
+    bool isGraphResult;
+    bool isAskQueryResult;
+    bool askResult;
+
+    StatementIterator graphIterator;
 };
 
 
@@ -52,6 +62,7 @@ Soprano::IODBCQueryResultIteratorBackend::IODBCQueryResultIteratorBackend( IODBC
     : QueryResultIteratorBackend(),
       d( new Private() )
 {
+    // cache binding names
     d->handler = hdl;
     d->bindingNames = hdl->resultColumns();
     for ( int i = 0; i < d->bindingNames.count(); ++i ) {
@@ -59,6 +70,31 @@ Soprano::IODBCQueryResultIteratorBackend::IODBCQueryResultIteratorBackend( IODBC
     }
     d->bindingCachedFlags = QBitArray( d->bindingNames.count(), false );
     d->bindingCache.resize( d->bindingNames.count() );
+
+    // handle ask and graph results the hacky way
+    d->isGraphResult = ( d->bindingNames.count() == 1 &&
+                         d->bindingNames[0] == "callret-0" );
+    d->askResult = false;
+    d->isAskQueryResult = ( d->bindingNames.count() == 1 &&
+                            d->bindingNames[0] == "__ASK_RETVAL" );
+    if ( d->isAskQueryResult ) {
+        // cache the result
+        // virtuoso returns an empty result set for false boolean results
+        // otherwise a single row is returned
+        d->askResult = d->handler->fetchScroll();
+    }
+    else if ( d->isGraphResult ) {
+        // parse the data
+        if ( d->handler->fetchScroll() ) {
+            if ( const Parser* parser = PluginManager::instance()->discoverParserForSerialization( SerializationTurtle ) ) {
+                QString data = d->handler->getData( 1 ).toString();
+                d->graphIterator = parser->parseString( data, QUrl(), SerializationTurtle );
+            }
+            else {
+                setError( "Failed to load Turtle parser for graph data from Virtuoso server" );
+            }
+        }
+    }
 }
 
 
@@ -71,18 +107,25 @@ Soprano::IODBCQueryResultIteratorBackend::~IODBCQueryResultIteratorBackend()
 
 bool Soprano::IODBCQueryResultIteratorBackend::next()
 {
-    // reset cache
-    d->bindingCachedFlags.fill( false );
+    if ( d->isAskQueryResult ) {
+        return true;
+    }
+    else if ( d->isGraphResult ) {
+        return d->graphIterator.next();
+    }
+    else {
+        // reset cache
+        d->bindingCachedFlags.fill( false );
 
-    // ask statement handler for cursor scroll
-    return d->handler ? d->handler->fetchScroll() : false;
+        // ask statement handler for cursor scroll
+        return d->handler ? d->handler->fetchScroll() : false;
+    }
 }
 
 
 Soprano::Statement Soprano::IODBCQueryResultIteratorBackend::currentStatement() const
 {
-#warning FIXME: IODBCQueryResultIteratorBackend::currentStatement
-    return Statement();
+    return d->graphIterator.current();
 }
 
 
@@ -125,29 +168,25 @@ QStringList Soprano::IODBCQueryResultIteratorBackend::bindingNames() const
 
 bool Soprano::IODBCQueryResultIteratorBackend::isGraph() const
 {
-#warning FIXME: IODBCQueryResultIteratorBackend::isGraph
-    return false;
+    return d->isGraphResult;
 }
 
 
 bool Soprano::IODBCQueryResultIteratorBackend::isBinding() const
 {
-#warning FIXME: IODBCQueryResultIteratorBackend::isBinding
-    return true;
+    return !d->isAskQueryResult && !d->isGraphResult;
 }
 
 
 bool Soprano::IODBCQueryResultIteratorBackend::isBool() const
 {
-#warning FIXME: IODBCQueryResultIteratorBackend::isBool
-    return false;
+    return d->isAskQueryResult;
 }
 
 
 bool Soprano::IODBCQueryResultIteratorBackend::boolValue() const
 {
-#warning FIXME: IODBCQueryResultIteratorBackend::boolValue
-    return false;
+    return d->askResult;
 }
 
 
