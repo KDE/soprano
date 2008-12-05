@@ -102,7 +102,7 @@ QTime Soprano::DateTime::fromTimeString( const QString& s )
 
     if ( pos < s.length() ) {
         // parse the timezone
-        if( s[pos] == 'Z' && s.length() > pos ) {
+        if( s[pos] == 'Z' && s.length() > pos+1 ) {
             qDebug() << Q_FUNC_INFO << " invalid formatted time string: " << s << endl;
             return QTime();
         }
