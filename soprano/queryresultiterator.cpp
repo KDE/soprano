@@ -78,6 +78,18 @@ QList<Soprano::BindingSet> Soprano::QueryResultIterator::allBindings()
 }
 
 
+Soprano::Node Soprano::QueryResultIterator::operator[]( int offset ) const
+{
+    return binding( offset );
+}
+
+
+Soprano::Node Soprano::QueryResultIterator::operator[]( const QString name ) const
+{
+    return binding( name );
+}
+
+
 Soprano::Node Soprano::QueryResultIterator::binding( const QString &name ) const
 {
     return ( backend() ? dynamic_cast<QueryResultIteratorBackend*>( backend() )->binding( name ) : Node() );
