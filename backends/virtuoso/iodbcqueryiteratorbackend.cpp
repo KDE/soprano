@@ -108,7 +108,7 @@ Soprano::IODBCQueryResultIteratorBackend::~IODBCQueryResultIteratorBackend()
 bool Soprano::IODBCQueryResultIteratorBackend::next()
 {
     if ( d->isAskQueryResult ) {
-        return true;
+        return d->handler != 0;
     }
     else if ( d->isGraphResult ) {
         return d->graphIterator.next();
@@ -146,6 +146,9 @@ Soprano::Node Soprano::IODBCQueryResultIteratorBackend::binding( int offset ) co
     if ( d->handler && offset < bindingCount() && offset >= 0 ) {
         if ( !d->bindingCachedFlags[offset] ) {
             d->bindingCache[offset] = d->handler->getData( offset+1 );
+            // convert the default graph back to the empty graph (hacky but should work in most situations)
+            if ( d->bindingCache[offset] == IODBC::defaultGraph() )
+                d->bindingCache[offset] = Node();
             d->bindingCachedFlags.setBit( offset );
         }
         return d->bindingCache[offset];
@@ -192,6 +195,7 @@ bool Soprano::IODBCQueryResultIteratorBackend::boolValue() const
 
 void Soprano::IODBCQueryResultIteratorBackend::close()
 {
+    d->graphIterator.close();
     delete d->handler;
     d->handler = 0;
 }
