@@ -1,1 +1,1 @@
-#include "../../sparql/sparqlmodel.h"
+#include "../../soprano/sparqlmodel.h"
