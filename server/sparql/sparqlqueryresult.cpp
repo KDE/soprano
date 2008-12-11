@@ -107,7 +107,7 @@ Soprano::Node Soprano::Client::SparqlQueryResult::binding( const QString& name )
 Soprano::Node Soprano::Client::SparqlQueryResult::binding( int offset ) const
 {
     if ( m_currentResultIndex < m_result.results().resultList().count() ) {
-        if( offset < bindingCount() ) {
+        if( offset >= 0 && offset < bindingCount() ) {
             return bindingToNode( m_result.results().resultList()[m_currentResultIndex].bindingList().at(offset) );
         }
         else {
