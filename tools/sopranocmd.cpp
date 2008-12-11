@@ -466,6 +466,9 @@ int main( int argc, char *argv[] )
             if ( args.hasSetting( "port" ) ) {
                 port = args.getSetting( "port" ).toInt();
             }
+            else if ( sparqlEndPoint.port() != -1 ) {
+                port = sparqlEndPoint.port();
+            }
             model = new Soprano::Client::SparqlModel( sparqlEndPoint.host(), port,
                                                       sparqlEndPoint.userName(), sparqlEndPoint.password() );
         }
