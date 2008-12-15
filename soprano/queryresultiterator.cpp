@@ -78,6 +78,18 @@ QList<Soprano::BindingSet> Soprano::QueryResultIterator::allBindings()
 }
 
 
+Soprano::Node Soprano::QueryResultIterator::operator[]( int offset ) const
+{
+    return binding( offset );
+}
+
+
+Soprano::Node Soprano::QueryResultIterator::operator[]( const QString name ) const
+{
+    return binding( name );
+}
+
+
 Soprano::Node Soprano::QueryResultIterator::binding( const QString &name ) const
 {
     return ( backend() ? dynamic_cast<QueryResultIteratorBackend*>( backend() )->binding( name ) : Node() );
@@ -126,35 +138,38 @@ bool Soprano::QueryResultIterator::boolValue() const
 }
 
 
-class QueryResultStatementIteratorBackend : public Soprano::IteratorBackend<Soprano::Statement>
-{
-public:
-    QueryResultStatementIteratorBackend( const Soprano::QueryResultIterator& r )
-        : m_result( r ) {
-    }
+namespace {
+    class QueryResultStatementIteratorBackend : public Soprano::IteratorBackend<Soprano::Statement>
+    {
+    public:
+        QueryResultStatementIteratorBackend( const Soprano::QueryResultIterator& r )
+            : m_result( r ) {
+        }
 
-    ~QueryResultStatementIteratorBackend() {
-    }
+        ~QueryResultStatementIteratorBackend() {
+        }
 
-    bool next() {
-        return m_result.next();
-    }
+        bool next() {
+            return m_result.next();
+        }
 
-    Soprano::Statement current() const {
-        return m_result.currentStatement();
-    }
+        Soprano::Statement current() const {
+            return m_result.currentStatement();
+        }
 
-    void close() {
-        m_result.close();
-    }
+        void close() {
+            m_result.close();
+        }
 
-    Soprano::Error::Error lastError() const {
-        return m_result.lastError();
-    }
+        Soprano::Error::Error lastError() const {
+            return m_result.lastError();
+        }
 
-private:
-    Soprano::QueryResultIterator m_result;
-};
+    private:
+        Soprano::QueryResultIterator m_result;
+    };
+}
+
 
 Soprano::StatementIterator Soprano::QueryResultIterator::iterateStatements() const
 {
@@ -162,47 +177,49 @@ Soprano::StatementIterator Soprano::QueryResultIterator::iterateStatements() con
 }
 
 
-
-class BindingNodeIteratorBackend : public Soprano::IteratorBackend<Soprano::Node>
-{
-public:
-    BindingNodeIteratorBackend( const Soprano::QueryResultIterator& it, const QString& name )
-        : m_it( it ),
-          m_bindingName( name ),
-          m_bindingOffset( -1 ) {
-    }
-
-    BindingNodeIteratorBackend( const Soprano::QueryResultIterator& it, int binding )
-        : m_it( it ),
-          m_bindingOffset( binding ) {
-    }
-
-    bool next() {
-        return m_it.next();
-    }
-
-    Soprano::Node current() const {
-        if ( m_bindingOffset != -1 ) {
-            return m_it.binding( m_bindingOffset );
+namespace {
+    class BindingNodeIteratorBackend : public Soprano::IteratorBackend<Soprano::Node>
+    {
+    public:
+        BindingNodeIteratorBackend( const Soprano::QueryResultIterator& it, const QString& name )
+            : m_it( it ),
+              m_bindingName( name ),
+              m_bindingOffset( -1 ) {
         }
-        else {
-            return m_it.binding( m_bindingName );
+
+        BindingNodeIteratorBackend( const Soprano::QueryResultIterator& it, int binding )
+            : m_it( it ),
+              m_bindingOffset( binding ) {
         }
-    }
 
-    void close() {
-        m_it.close();
-    }
+        bool next() {
+            return m_it.next();
+        }
 
-    Soprano::Error::Error lastError() const {
-        return m_it.lastError();
-    }
+        Soprano::Node current() const {
+            if ( m_bindingOffset != -1 ) {
+                return m_it.binding( m_bindingOffset );
+            }
+            else {
+                return m_it.binding( m_bindingName );
+            }
+        }
 
-private:
-    Soprano::QueryResultIterator m_it;
-    QString m_bindingName;
-    int m_bindingOffset;
-};
+        void close() {
+            m_it.close();
+        }
+
+        Soprano::Error::Error lastError() const {
+            return m_it.lastError();
+        }
+
+    private:
+        Soprano::QueryResultIterator m_it;
+        QString m_bindingName;
+        int m_bindingOffset;
+    };
+}
+
 
 Soprano::NodeIterator Soprano::QueryResultIterator::iterateBindings( const QString& variableName ) const
 {

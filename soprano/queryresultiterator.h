@@ -161,6 +161,34 @@ namespace Soprano {
 
         //@{
         /**
+         * Get the current binding for a variable by index.
+         *
+         * \param offset The index of the requested variable.
+         *
+         * This is equivalent to binding(int) const.
+         *
+         * \return The binding for the requested variable or and invalid
+         * node if offset is out of bounds, i.e. bigger or equal to bindingCount().
+         *
+         * \since 2.2
+         */
+        Node operator[]( int offset ) const;
+
+        /**
+         * Get the current binding for a variable.
+         *
+         * \param name The name of the requested variable.
+         *
+         * This is equivalent to binding(const QString&) const.
+         *
+         * \return The binding for the requested variable or and invalid
+         * node if the bindings do not contain the variable.
+         *
+         * \since 2.2
+         */
+        Node operator[]( const QString name ) const;
+
+        /**
          * Get the current binding for a variable.
          *
          * \param name The name of the requested variable.
