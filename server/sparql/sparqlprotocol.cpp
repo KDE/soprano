@@ -29,16 +29,26 @@
 #include <QtCore/QBuffer>
 #include <QtCore/QDebug>
 #include <QtCore/QEventLoop>
+#include <QtCore/QPointer>
 
 
 Soprano::Client::SynchronousSparqlProtocol::SynchronousSparqlProtocol( QObject* parent )
-    : QHttp( parent )
+    : QHttp( parent ),
+      m_loop( 0 )
 {
 }
 
 
 Soprano::Client::SynchronousSparqlProtocol::~SynchronousSparqlProtocol()
 {
+    cancel();
+}
+
+
+void Soprano::Client::SynchronousSparqlProtocol::cancel()
+{
+    if ( m_loop )
+        m_loop->exit();
 }
 
 
@@ -59,14 +69,17 @@ QByteArray Soprano::Client::SynchronousSparqlProtocol::query( const QString& que
     QUrl url = QUrl( "/sparql" );
     url.addQueryItem( "query", queryS );
 
+    qDebug() << Q_FUNC_INFO << url;
+
     QBuffer buffer;
     get( url.toEncoded(), &buffer );
+
     wait();
 
     QHttpResponseHeader h = lastResponse();
 
     if( h.statusCode() != 200 ){
-        setError( errorString() );
+        setError( QString( "Server did respond with %2 (%3)" ).arg( h.statusCode() ).arg( errorString() ) );
         return QByteArray();
     }
 
@@ -81,5 +94,7 @@ void Soprano::Client::SynchronousSparqlProtocol::wait()
 {
     QEventLoop loop;
     loop.connect( this, SIGNAL(done(bool)), &loop, SLOT(quit()) );
+    m_loop = &loop;
     loop.exec( QEventLoop::ExcludeUserInputEvents );
+    m_loop = 0;
 }

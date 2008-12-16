@@ -27,6 +27,7 @@
 #include <soprano/error.h>
 #include <QtNetwork/QHttp>
 
+class QEventLoop;
 
 namespace Soprano {
     namespace Client {
@@ -45,8 +46,12 @@ namespace Soprano {
              */
             QByteArray query(const QString& query);
 
+            void cancel();
+
         private:
             void wait();
+
+            QEventLoop* m_loop;
         };
     }
 }
