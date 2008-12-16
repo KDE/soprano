@@ -168,14 +168,20 @@ namespace Soprano {
             class Boolean
             {
             public:
+                Boolean()
+                    : mIsValid(false),
+                    mValue(false) {}
+
                 /**
                    Parse XML object from DOM element.
                 */
                 static Boolean parseElement( const QDomElement &element, bool *ok );
                 QString writeElement();
 
-                bool value() { return this->mValue; }
+                bool isValid() const { return mIsValid; }
+                bool value() const { return this->mValue; }
             private:
+                bool mIsValid;
                 bool mValue;
             };
 

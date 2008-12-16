@@ -408,6 +408,7 @@ namespace Soprano {
 
 
                 if ( ok ) *ok = true;
+                result.mIsValid = true;
                 return result;
             }
 
