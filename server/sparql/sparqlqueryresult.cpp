@@ -88,13 +88,16 @@ Soprano::Statement Soprano::Client::SparqlQueryResult::currentStatement() const
 
 Soprano::Node Soprano::Client::SparqlQueryResult::binding( const QString& name ) const
 {
-    if ( m_currentResultIndex < m_result.results().resultList().count() ) {
+    if ( m_currentResultIndex != -1 && m_currentResultIndex < m_result.results().resultList().count() ) {
         foreach ( const SparqlParser::Binding& b, m_result.results().resultList()[m_currentResultIndex].bindingList() ) {
             if( b.name() == name ) {
                 return bindingToNode( b );
             }
         }
-        setError( QString::fromLatin1( "Invalid binding name: %1" ).arg( name ), Error::ErrorInvalidArgument );
+        // non set optional bindings would not be found, too, although it would not be an error
+        if ( !m_bindingNames.contains( name ) ) {
+            setError( QString::fromLatin1( "Invalid binding name: %1" ).arg( name ), Error::ErrorInvalidArgument );
+        }
     }
     else {
         setError( QString::fromLatin1( "Invalid iterator." ) );
@@ -106,13 +109,9 @@ Soprano::Node Soprano::Client::SparqlQueryResult::binding( const QString& name )
 
 Soprano::Node Soprano::Client::SparqlQueryResult::binding( int offset ) const
 {
-    if ( m_currentResultIndex < m_result.results().resultList().count() ) {
-        if( offset < bindingCount() ) {
-            return bindingToNode( m_result.results().resultList()[m_currentResultIndex].bindingList().at(offset) );
-        }
-        else {
-            setError( QString::fromLatin1( "Invalid binding offset: %1" ).arg( offset ), Error::ErrorInvalidArgument );
-        }
+    if( offset >= 0 && offset < bindingCount() ) {
+        // optional bindings are simply left out when not set. Thus, we cannot access the binding list by offset
+        return binding( m_bindingNames[offset] );
     }
     else {
         setError( QString::fromLatin1( "Invalid iterator." ) );
@@ -142,13 +141,13 @@ bool Soprano::Client::SparqlQueryResult::isGraph() const
 
 bool Soprano::Client::SparqlQueryResult::isBinding() const
 {
-    return !m_result.results().resultList().isEmpty();
+    return !isBool();
 }
 
 
 bool Soprano::Client::SparqlQueryResult::isBool() const
 {
-    return !isBinding();
+    return m_result.boolean().isValid();
 }
 
 
