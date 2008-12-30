@@ -1,5 +1,8 @@
 project(soprano_tests)
 
+# QTEST_MAIN is using QApplication when QT_GUI_LIB is defined
+remove_definitions(-DQT_GUI_LIB)
+
 include_directories(
   ${soprano_SOURCE_DIR}
   ${soprano_BINARY_DIR}

@@ -19,6 +19,8 @@ endif(WIN32)
 
 set(QT_MIN_VERSION "4.4.0")
 find_package(Qt4 REQUIRED) 
+# properly set up compile flags (QT_DEBUG/QT_NO_DEBUG, ...)
+include(${QT_USE_FILE})
 
 find_package(Redland)
 
