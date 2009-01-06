@@ -190,7 +190,7 @@
  * [Desktop Entry]
  * Encoding=UTF-8
  * X-Soprano-Library=libsoprano_mybackend
- * X-Soprano-Version=2.1
+ * X-Soprano-Version=2.2
  * Type=Service
  * ServiceTypes=Soprano/Backend
  * Name=MyBackend
