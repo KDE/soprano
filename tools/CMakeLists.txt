@@ -2,15 +2,12 @@ project(soprano_tools)
 
 include_directories(
   ${soprano_core_SOURCE_DIR}
+  ${soprano_core_SOURCE_DIR}/util
   ${soprano_core_SOURCE_DIR}/query
   ${soprano_core_SOURCE_DIR}/vocabulary
   ${soprano_core_BINARY_DIR}
   ${QT_INCLUDES}
   ${soprano_SOURCE_DIR}
-)
-
-set(sopranocmd_SRC
-  sopranocmd.cpp
 )
 
 add_executable(sopranocmd sopranocmd.cpp)
