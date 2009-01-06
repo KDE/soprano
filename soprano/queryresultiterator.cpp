@@ -2,7 +2,7 @@
  * This file is part of Soprano Project.
  *
  * Copyright (C) 2006 Daniele Galdi <daniele.galdi@gmail.com>
- * Copyright (C) 2007 Sebastian Trueg <trueg@kde.org>
+ * Copyright (C) 2007-2009 Sebastian Trueg <trueg@kde.org>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -230,4 +230,75 @@ Soprano::NodeIterator Soprano::QueryResultIterator::iterateBindings( const QStri
 Soprano::NodeIterator Soprano::QueryResultIterator::iterateBindings( int offset ) const
 {
     return new BindingNodeIteratorBackend( *this, offset );
+}
+
+
+namespace {
+    class QueryResultStatementConstructIteratorBackend : public Soprano::IteratorBackend<Soprano::Statement>
+    {
+    public:
+        QueryResultStatementConstructIteratorBackend( const Soprano::QueryResultIterator& r, const Soprano::Statement& s,
+                                             const QString& sb, const QString& pb, const QString& ob, const QString& cb )
+            : m_result( r ),
+              m_templateStatement(s),
+              m_subjectBinding( sb ),
+              m_predicateBinding( pb ),
+              m_objectBinding( ob ),
+              m_contextBinding( cb ) {
+        }
+
+        ~QueryResultStatementConstructIteratorBackend() {
+        }
+
+        bool next() {
+            return m_result.next();
+        }
+
+        Soprano::Statement current() const {
+            Soprano::Statement s( m_templateStatement );
+
+            if( !m_contextBinding.isEmpty() ) {
+                s.setContext( m_result.binding( m_contextBinding ) );
+            }
+
+            if( !m_subjectBinding.isEmpty() ) {
+                s.setSubject( m_result.binding( m_subjectBinding ) );
+            }
+
+            if( !m_predicateBinding.isEmpty() ) {
+                s.setPredicate( m_result.binding( m_predicateBinding ) );
+            }
+            if( !m_objectBinding.isEmpty() ) {
+                s.setObject( m_result.binding( m_objectBinding ) );
+            }
+
+            return s;
+        }
+
+        void close() {
+            m_result.close();
+        }
+
+        Soprano::Error::Error lastError() const {
+            return m_result.lastError();
+        }
+
+    private:
+        Soprano::QueryResultIterator m_result;
+        Soprano::Statement m_templateStatement;
+        QString m_subjectBinding;
+        QString m_predicateBinding;
+        QString m_objectBinding;
+        QString m_contextBinding;
+    };
+}
+
+
+Soprano::StatementIterator Soprano::QueryResultIterator::iterateStatementsFromBindings( const QString& subjectBindingName,
+                                                                                        const QString& predicateBindingName,
+                                                                                        const QString& objectBindingName,
+                                                                                        const QString& contextBindingName,
+                                                                                        const Statement& statementTemplate ) const
+{
+    return new QueryResultStatementConstructIteratorBackend( *this, statementTemplate, subjectBindingName, predicateBindingName, objectBindingName, contextBindingName );
 }

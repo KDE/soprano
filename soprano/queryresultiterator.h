@@ -2,7 +2,7 @@
  * This file is part of Soprano Project.
  *
  * Copyright (C) 2006 Daniele Galdi <daniele.galdi@gmail.com>
- * Copyright (C) 2007 Sebastian Trueg <trueg@kde.org>
+ * Copyright (C) 2007-2009 Sebastian Trueg <trueg@kde.org>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -25,6 +25,7 @@
 
 #include "iterator.h"
 #include "bindingset.h"
+#include "statement.h"
 #include "soprano_export.h"
 
 #include <QtCore/QString>
@@ -36,7 +37,6 @@ namespace Soprano {
     class Node;
     class NodeIterator;
     class QueryResultIteratorBackend;
-    class Statement;
     class StatementIterator;
     class BindingSet;
 
@@ -303,6 +303,42 @@ namespace Soprano {
          * if offset is out of bounds, i.e. bigger or equal to bindingCount().
          */
         NodeIterator iterateBindings( int offset ) const;
+
+        /**
+         * Convenience method that creates an iterator over statements constructed from the values of the 
+         * provided bindings.
+         *
+         * The typical usage would be with a query as follows:
+         *
+         * \code
+         * Soprano::StatementIterator it =
+         *     model->executeQuery( "select * where { graph ?c { ?s ?p ?o . } }" )
+         *     .iterateStatementsFromBindings( "s", "p", "o", "c" );
+         * \endcode
+         *
+         * \param subjectBindingName The name of the binding that will be used to set the subject of the 
+         * constructed statements.
+         * \param predicateBindingName The name of the binding that will be used to set the predicate of the 
+         * constructed statements.
+         * \param objectBindingName The name of the binding that will be used to set the object of the 
+         * constructed statements.
+         * \param contextBindingName The name of the binding that will be used to set the context of the 
+         * constructed statements.
+         * \param templateStatement If any of the provided binding names is empty the corresponding nodes
+         * in the resulting statements will be filled by templateStatement.
+         *
+         * \warning The new iterator is just a wrapper around this one. Thus, changing it will also
+         * change this one.
+         *
+         * \return A wrapper iterator over statements constructed from the specified bindings.
+         *
+         * \since 2.2
+         */
+        StatementIterator iterateStatementsFromBindings( const QString& subjectBindingName, 
+                                                         const QString& predicateBindingName, 
+                                                         const QString& objectBindingName, 
+                                                         const QString& contextBindingName = QString(),
+                                                         const Statement& templateStatement = Statement() ) const;
         //@}
     };
 }
