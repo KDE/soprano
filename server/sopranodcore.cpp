@@ -38,16 +38,7 @@ Soprano::Model* SopranodCore::createModel( const QList<Soprano::BackendSetting>&
 #ifdef SOPRANO_BUILD_INDEX_LIB
     if ( m_withIndex ) {
         if ( Soprano::Model* m = ServerCore::createModel( settings ) ) {
-            QString dir;
-            for ( QList<Soprano::BackendSetting>::const_iterator it = settings.begin();
-                  it != settings.end(); ++it ) {
-                const Soprano::BackendSetting& setting = *it;
-                if ( setting.option() == Soprano::BackendOptionStorageDir ) {
-                    dir = setting.value().toString() + "/index";
-                    break;
-                }
-            }
-
+            QString dir = valueInSettings( settings, Soprano::BackendOptionStorageDir ).toString() + "/index";
             Soprano::Index::CLuceneIndex* index = new Soprano::Index::CLuceneIndex();
             QDir().mkpath( dir );
             if ( !index->open( dir, true ) ) {
@@ -56,8 +47,8 @@ Soprano::Model* SopranodCore::createModel( const QList<Soprano::BackendSetting>&
                 return 0;
             }
             Soprano::Index::IndexFilterModel* indexModel = new Soprano::Index::IndexFilterModel( index, m );
-            connect( m, SIGNAL( destroyed( QObject* ) ), indexModel, SLOT( deleteLater() ) );
-            // FIXME: memleak: the index is never deleted
+            indexModel->setParent( m );
+            // FIXME: memory leak: index is never deleted
             return indexModel;
         }
     }
