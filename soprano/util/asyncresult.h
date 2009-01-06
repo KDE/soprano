@@ -1,7 +1,7 @@
 /* 
  * This file is part of Soprano Project.
  *
- * Copyright (C) 2008 Sebastian Trueg <trueg@kde.org>
+ * Copyright (C) 2008-2009 Sebastian Trueg <trueg@kde.org>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -63,6 +63,13 @@ namespace Soprano {
             void resultReady( Soprano::Util::AsyncResult* );
 
         public:
+            /**
+             * Constructor method to ensure binary compatibility.
+             *
+             * \since 2.2
+             */
+            static AsyncResult* createResult();
+
             ~AsyncResult();
 
             /**
@@ -140,27 +147,8 @@ namespace Soprano {
             /**
              * Internal method. Do not call.
              */
-            void setResult( const QVariant& result, const Error::Error& error ) {
-                m_result = result;
-                setError( error );
-                emit emitReady();
-            }
-
-        Q_SIGNALS:
-#ifndef Q_MOC_RUN
-        private: // don't tell moc, but this signal is in fact private
-#endif
-            /**
-             * Private signal used internally.
-             */
-            void emitReady();
+            void setResult( const QVariant& result, const Error::Error& error );
             /** \endcond */
-
-        private Q_SLOTS:
-            void slotEmitReady() {
-                emit resultReady( this );
-                delete this;
-            }
 
         private:
             AsyncResult();
