@@ -143,12 +143,11 @@ namespace Soprano {
              */
             Node node() const;
 
-            /** \cond internal_asyncresult_members */
             /**
-             * Internal method. Do not call.
+             * Sets the final result and emits the resultReady signal. This method
+             * should never be called by clients.
              */
             void setResult( const QVariant& result, const Error::Error& error );
-            /** \endcond */
 
         private:
             AsyncResult();
