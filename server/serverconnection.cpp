@@ -489,7 +489,7 @@ void Soprano::Server::ServerConnection::Private::listStatements()
         }
         else {
             StatementIterator it = model->listStatements( s );
-            stream.writeUnsignedInt32( mapIterator( it ) );
+            stream.writeUnsignedInt32( it.isValid() ? mapIterator( it ) : quint32(0) );
             stream.writeError( model->lastError() );
         }
     }
@@ -567,7 +567,7 @@ void Soprano::Server::ServerConnection::Private::listContexts()
         }
         else {
             NodeIterator it = model->listContexts();
-            stream.writeUnsignedInt32( mapIterator( it ) );
+            stream.writeUnsignedInt32( it.isValid() ? mapIterator( it ) : quint32(0) );
             stream.writeError( model->lastError() );
         }
     }
@@ -597,7 +597,7 @@ void Soprano::Server::ServerConnection::Private::query()
         }
         else {
             QueryResultIterator it = model->executeQuery( queryString, ( Query::QueryLanguage )queryLang, userLang );
-            stream.writeUnsignedInt32( mapIterator( it ) );
+            stream.writeUnsignedInt32( it.isValid() ? mapIterator( it ) : quint32(0) );
             stream.writeError( model->lastError() );
         }
     }
