@@ -263,13 +263,16 @@ void Soprano::Server::ServerConnection::Private::_s_resultReady( Util::AsyncResu
         stream.writeNode( value.value<Node>() );
     }
     else if ( value.userType() == qMetaTypeId<StatementIterator>() ) {
-        stream.writeUnsignedInt32( mapIterator( value.value<StatementIterator>() ) );
+        StatementIterator it = value.value<StatementIterator>();
+        stream.writeUnsignedInt32( it.isValid() ? mapIterator( it ) : quint32(0) );
     }
     else if ( value.userType() == qMetaTypeId<NodeIterator>() ) {
-        stream.writeUnsignedInt32( mapIterator( value.value<NodeIterator>() ) );
+        NodeIterator it = value.value<NodeIterator>();
+        stream.writeUnsignedInt32( it.isValid() ? mapIterator( it ) : quint32(0) );
     }
     else if ( value.userType() == qMetaTypeId<QueryResultIterator>() ) {
-        stream.writeUnsignedInt32( mapIterator( value.value<QueryResultIterator>() ) );
+        QueryResultIterator it = value.value<QueryResultIterator>();
+        stream.writeUnsignedInt32( it.isValid() ? mapIterator( it ) : quint32(0) );
     }
     else if ( value.userType() == qMetaTypeId<Error::ErrorCode>() ) {
         stream.writeErrorCode( value.value<Error::ErrorCode>() );
