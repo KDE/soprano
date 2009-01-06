@@ -59,7 +59,7 @@ set(soprano_client_SRC
   dbus/dbusqueryresultiterator.cpp
   sparql/sparqlmodel.cpp
   sparql/sparqlqueryresult.cpp
-  sparql/synchonoussparqlprotocol.cpp
+  sparql/sparqlprotocol.cpp
   sparql/sparqlxmlresultparser.cpp
 )
 

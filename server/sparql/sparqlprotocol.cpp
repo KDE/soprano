@@ -20,7 +20,7 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#include "synchonoussparqlprotocol.h"
+#include "sparqlprotocol.h"
 
 #include <QtCore/QString>
 #include <QtCore/QUrl>
@@ -32,69 +32,110 @@
 #include <QtCore/QPointer>
 
 
-Soprano::Client::SynchronousSparqlProtocol::SynchronousSparqlProtocol( QObject* parent )
-    : QHttp( parent ),
-      m_loop( 0 )
+Soprano::Client::SparqlProtocol::SparqlProtocol( QObject* parent )
+    : QHttp( parent )
 {
+    connect( this, SIGNAL( requestFinished( int, bool ) ),
+             this, SLOT( slotRequestFinished( int, bool ) ) );
 }
 
 
-Soprano::Client::SynchronousSparqlProtocol::~SynchronousSparqlProtocol()
+Soprano::Client::SparqlProtocol::~SparqlProtocol()
 {
     cancel();
 }
 
 
-void Soprano::Client::SynchronousSparqlProtocol::cancel()
+void Soprano::Client::SparqlProtocol::cancel()
 {
-    if ( m_loop )
-        m_loop->exit();
+    QHttp::abort();
+    foreach( QEventLoop* loop, m_loops ) {
+        loop->exit();
+    }
 }
 
 
-void Soprano::Client::SynchronousSparqlProtocol::setHost( const QString& hostname, quint16 port )
+void Soprano::Client::SparqlProtocol::setHost( const QString& hostname, quint16 port )
 {
     QHttp::setHost( hostname, port );
 }
 
 
-void Soprano::Client::SynchronousSparqlProtocol::setUser( const QString& userName, const QString& password )
+void Soprano::Client::SparqlProtocol::setUser( const QString& userName, const QString& password )
 {
     QHttp::setUser( userName, password );
 }
 
 
-QByteArray Soprano::Client::SynchronousSparqlProtocol::query( const QString& queryS )
+int Soprano::Client::SparqlProtocol::query( const QString& queryS )
 {
     QUrl url = QUrl( "/sparql" );
     url.addQueryItem( "query", queryS );
 
-    qDebug() << Q_FUNC_INFO << url;
+    QBuffer* buffer = new QBuffer();
+    int id = get( url.toEncoded(), buffer );
+    m_resultsData[id] = buffer;
 
-    QBuffer buffer;
-    get( url.toEncoded(), &buffer );
+    qDebug() << Q_FUNC_INFO << url << id;
 
-    wait();
+    return id;
+}
 
-    QHttpResponseHeader h = lastResponse();
 
-    if( h.statusCode() != 200 ){
-        setError( QString( "Server did respond with %2 (%3)" ).arg( h.statusCode() ).arg( errorString() ) );
-        return QByteArray();
+QByteArray Soprano::Client::SparqlProtocol::blockingQuery( const QString& queryString )
+{
+    int id = query( queryString );
+    waitForRequest( id );
+
+    QByteArray data;
+    if ( !m_results[id] ) {
+        data = m_resultsData[id]->data();
     }
 
-//    qDebug() << buffer.data();
+    m_results.remove( id );
+    delete m_resultsData[id];
+    m_resultsData.remove( id );
 
-    clearError();
-    return buffer.data();
+    qDebug() << Q_FUNC_INFO << data;
+
+    return data;
 }
 
 
-void Soprano::Client::SynchronousSparqlProtocol::wait()
+void Soprano::Client::SparqlProtocol::waitForRequest( int id )
 {
     QEventLoop loop;
-    loop.connect( this, SIGNAL(done(bool)), &loop, SLOT(quit()) );
-    m_loop = &loop;
+    m_loops[id] = &loop;
     loop.exec( QEventLoop::ExcludeUserInputEvents );
-    m_loop = 0;
+    m_loops.remove( id );
 }
+
+
+void Soprano::Client::SparqlProtocol::slotRequestFinished( int id, bool error )
+{
+    qDebug() << Q_FUNC_INFO << id << error;
+
+    // we ignore all the other requests such as setting the user and so on
+    if ( m_resultsData.contains( id ) ) {
+        QHttpResponseHeader h = lastResponse();
+        if( h.statusCode() != 200 ){
+            setError( QString( "Server did respond with %2 (%3)" ).arg( h.statusCode() ).arg( errorString() ) );
+            qDebug() << m_resultsData[id]->data();
+            error = true;
+        }
+
+        if ( m_loops.contains( id ) ) {
+            m_loops[id]->quit();
+            m_loops.remove( id );
+            m_results[id] = error;
+        }
+        else {
+            emit requestFinished( id, error, m_resultsData[id]->data() );
+            m_results.remove( id );
+            delete m_resultsData[id];
+            m_resultsData.remove( id );
+        }
+    }
+}
+
+#include "sparqlprotocol.moc"

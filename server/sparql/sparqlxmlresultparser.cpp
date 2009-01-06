@@ -696,12 +696,12 @@ namespace Soprano {
                 return c;
             }
 
-            Sparql Sparql::parseByteArray( QByteArray* bytes, bool *ok )
+            Sparql Sparql::parseByteArray( const QByteArray& bytes, bool *ok )
             {
                 QString errorMsg;
                 int errorLine, errorCol;
                 QDomDocument doc;
-                if ( !doc.setContent( *bytes, false, &errorMsg, &errorLine, &errorCol ) ) {
+                if ( !doc.setContent( bytes, false, &errorMsg, &errorLine, &errorCol ) ) {
                     //kError()() << errorMsg << " at " << errorLine << "," << errorCol;
                     if ( ok ) *ok = false;
                     return Sparql();

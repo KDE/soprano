@@ -254,7 +254,7 @@ namespace Soprano {
                 static Sparql parseElement( const QDomElement &element, bool *ok );
                 QString writeElement();
                 static Sparql parseFile( const QString &filename, bool *ok );
-                static Sparql parseByteArray( QByteArray* array, bool *ok );
+                static Sparql parseByteArray( const QByteArray& array, bool *ok );
                 bool writeFile( const QString &filename );
 
             private:

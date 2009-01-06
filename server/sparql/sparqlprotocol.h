@@ -26,16 +26,20 @@
 
 #include <soprano/error.h>
 #include <QtNetwork/QHttp>
+#include <QtCore/QHash>
 
 class QEventLoop;
+class QBuffer;
 
 namespace Soprano {
     namespace Client {
-        class SynchronousSparqlProtocol : protected QHttp, public Soprano::Error::ErrorCache
+        class SparqlProtocol : protected QHttp, public Soprano::Error::ErrorCache
         {
+            Q_OBJECT
+
         public:
-            SynchronousSparqlProtocol( QObject* parent = 0 );
-            ~SynchronousSparqlProtocol();
+            SparqlProtocol( QObject* parent = 0 );
+            ~SparqlProtocol();
 
             void setHost( const QString& hostname, quint16 port = 8889 );
             void setUser( const QString& userName, const QString& password = QString() );
@@ -44,14 +48,25 @@ namespace Soprano {
              * \returns the response data. An emtpy QByteArray
              * on error. Check lastError() for details.
              */
-            QByteArray query(const QString& query);
+            QByteArray blockingQuery( const QString& query );
 
+            int query( const QString& query );
+
+        Q_SIGNALS:
+            void requestFinished( int id, bool error, const QByteArray& data );
+
+        public Q_SLOTS:
             void cancel();
 
-        private:
-            void wait();
+        private Q_SLOTS:
+            void slotRequestFinished( int id, bool error );
 
-            QEventLoop* m_loop;
+        private:
+            void waitForRequest( int id );
+
+            QHash<int, QEventLoop*> m_loops;
+            QHash<int, bool> m_results;
+            QHash<int, QBuffer*> m_resultsData;
         };
     }
 }
