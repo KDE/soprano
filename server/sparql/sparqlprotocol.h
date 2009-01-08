@@ -33,7 +33,7 @@ class QBuffer;
 
 namespace Soprano {
     namespace Client {
-        class SparqlProtocol : protected QHttp, public Soprano::Error::ErrorCache
+        class SparqlProtocol : public QHttp, public Soprano::Error::ErrorCache
         {
             Q_OBJECT
 
