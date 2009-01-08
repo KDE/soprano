@@ -103,7 +103,8 @@ INPUT                  = ${soprano_SOURCE_DIR}/soprano \
                          ${soprano_SOURCE_DIR}/server/dbus/dbusmodel.h \
                          ${soprano_SOURCE_DIR}/server/dbus/dbusstatementiterator.h \
                          ${soprano_SOURCE_DIR}/server/dbus/dbusnodeiterator.h \
-                         ${soprano_SOURCE_DIR}/server/dbus/dbusqueryresultiterator.h
+                         ${soprano_SOURCE_DIR}/server/dbus/dbusqueryresultiterator.h \
+                         ${soprano_SOURCE_DIR}/server/sparql/sparqlmodel.h
 #                         ${soprano_SOURCE_DIR}/soprano/query
 INPUT_ENCODING         = UTF-8
 FILE_PATTERNS          = *.h
