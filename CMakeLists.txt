@@ -4,7 +4,7 @@ project(soprano)
 # (if they would be forced into the cache. you still could only change them here, Alex)
 set(CMAKE_SOPRANO_VERSION_MAJOR 2)
 set(CMAKE_SOPRANO_VERSION_MINOR 1)
-set(CMAKE_SOPRANO_VERSION_RELEASE 65)
+set(CMAKE_SOPRANO_VERSION_RELEASE 66)
 set(CMAKE_SOPRANO_VERSION_STRING "${CMAKE_SOPRANO_VERSION_MAJOR}.${CMAKE_SOPRANO_VERSION_MINOR}.${CMAKE_SOPRANO_VERSION_RELEASE}")
 
 enable_testing()
