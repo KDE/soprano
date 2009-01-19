@@ -1,13 +1,19 @@
 2.2
 	* The AsyncModel now has a "real" asyncroneous mode which uses multiple threads to execute the
 	  commands.
-        * New class Soprano::Client::SparqlModel which provides aclient to http Sparql endpoints.
+        * New class Soprano::Client::SparqlModel which provides a client to http Sparql endpoints.
         * Added method Node::toN3 to easily build SPARQL queries without having to encode nodes all the time.
         * New convinience method QueryResultIterator::iterateStatementsFromBindings
 	* Added convinience methods to handle BackendSettings.
 	* Added operator[] to QueryResultIterator to easily access bindings
 	* Added parameters influencing the visibility to onto2vocabularyclass
 	* Soprano::Node now comes with definitions of qHash for both Node and QUrl
+	* Sesame2 updated to 2.1.4
+	* The IndexFilterModel can now optionally index specific URIs (IndexFilterModel::setForceIndexPredicates)
+	* Added method IndexFilterModel::optimizeIndex which optimizes the clucene index on disk
+	* Added method IndexFilterModel::encodeUriForLuceneQuery which encodes/escapes a URI so it can be used
+	  as a field in a clucene query.
+	* SPARQL endpoint query support in sopranocmd
 
 2.1
 	* SignalCacheModel to restrict the number of emitted statementsAdded and statementsRemoved signals

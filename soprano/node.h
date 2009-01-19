@@ -301,35 +301,6 @@ namespace Soprano
          * was empty.
          */
         static Node createLiteralNode( const LiteralValue& value, const QString& language );
-#if 0
-        /**
-         * \since 2.2
-         */
-        enum ParseMode {
-            /**
-             * Forces the N3 parser to be very strict. URIs need to be properly encoded
-             * and literals properly escaped.
-             *
-             * \sa QUrl::StrictMode
-             */
-            ParseModeStrict,
-
-            /**
-             * A more relaxed mode. Plain strings are treated as literals, URIs may contain
-             * spaces.
-             *
-             * \sa QUrl::TolerantMode
-             */
-            ParseModeTolerant
-        };
-
-        /**
-         * Create a Node from its N3 string representation.
-         *
-         * \since 2.2
-         */
-        static Node fromN3( const QString& s, ParseMode = ParseModeStrict );
-#endif
 
     private:
         class NodeData;
