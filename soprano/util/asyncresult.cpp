@@ -57,7 +57,14 @@ void Soprano::Util::AsyncResult::setResult( const QVariant& result, const Error:
     m_result = result;
     setError( error );
     // ensure that results are delivered in the calling thread
-    QMetaObject::invokeMethod( this, "resultReady", Qt::QueuedConnection, Q_ARG( Soprano::Util::AsyncResult*, this ) );
+    QMetaObject::invokeMethod( this, "slotResultReady", Qt::QueuedConnection );
+}
+
+
+void Soprano::Util::AsyncResult::slotResultReady()
+{
+    emit resultReady( this );
+    delete this;
 }
 
 

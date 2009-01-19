@@ -149,6 +149,9 @@ namespace Soprano {
              */
             void setResult( const QVariant& result, const Error::Error& error );
 
+        private Q_SLOTS:
+            void slotResultReady();
+
         private:
             AsyncResult();
 
