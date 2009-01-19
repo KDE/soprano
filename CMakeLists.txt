@@ -1,5 +1,7 @@
 project(soprano) 
 
+cmake_minimum_required(VERSION 2.6.2)
+
 # Soprano version numbers
 # (if they would be forced into the cache. you still could only change them here, Alex)
 set(CMAKE_SOPRANO_VERSION_MAJOR 2)
