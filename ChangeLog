@@ -7,7 +7,8 @@
 	* Added convinience methods to handle BackendSettings.
 	* Added operator[] to QueryResultIterator to easily access bindings
 	* Added parameters influencing the visibility to onto2vocabularyclass
-	
+	* Soprano::Node now comes with definitions of qHash for both Node and QUrl
+
 2.1
 	* SignalCacheModel to restrict the number of emitted statementsAdded and statementsRemoved signals
 	  in a certain timeframe.
