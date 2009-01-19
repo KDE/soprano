@@ -27,12 +27,9 @@
 
 class QUrl;
 
-uint qHash( const Soprano::Node& node );
-
 namespace Soprano {
 
     class Statement;
-    using ::qHash;
 
     namespace Inference {
 

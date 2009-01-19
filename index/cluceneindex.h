@@ -1,7 +1,7 @@
 /*
  * This file is part of Soprano Project.
  *
- * Copyright (C) 2007 Sebastian Trueg <trueg@kde.org>
+ * Copyright (C) 2007-2009 Sebastian Trueg <trueg@kde.org>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -45,11 +45,7 @@ namespace lucene {
     }
 }
 
-uint qHash( const Soprano::Node& node );
-
 namespace Soprano {
-
-    using ::qHash;
 
     namespace Index {
 
