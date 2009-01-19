@@ -39,6 +39,8 @@ public:
           nao_engineeringTool( QUrl::fromEncoded( "http://www.semanticdesktop.org/ontologies/2007/08/15/nao#engineeringTool", QUrl::StrictMode ) ),
           nao_hasDefaultNamespace( QUrl::fromEncoded( "http://www.semanticdesktop.org/ontologies/2007/08/15/nao#hasDefaultNamespace", QUrl::StrictMode ) ),
           nao_hasDefaultNamespaceAbbreviation( QUrl::fromEncoded( "http://www.semanticdesktop.org/ontologies/2007/08/15/nao#hasDefaultNamespaceAbbreviation", QUrl::StrictMode ) ),
+          nao_hasSubResource( QUrl::fromEncoded( "http://www.semanticdesktop.org/ontologies/2007/08/15/nao#hasSubResource", QUrl::StrictMode ) ),
+          nao_hasSuperResource( QUrl::fromEncoded( "http://www.semanticdesktop.org/ontologies/2007/08/15/nao#hasSuperResource", QUrl::StrictMode ) ),
           nao_hasSymbol( QUrl::fromEncoded( "http://www.semanticdesktop.org/ontologies/2007/08/15/nao#hasSymbol", QUrl::StrictMode ) ),
           nao_hasTag( QUrl::fromEncoded( "http://www.semanticdesktop.org/ontologies/2007/08/15/nao#hasTag", QUrl::StrictMode ) ),
           nao_hasTopic( QUrl::fromEncoded( "http://www.semanticdesktop.org/ontologies/2007/08/15/nao#hasTopic", QUrl::StrictMode ) ),
@@ -77,6 +79,8 @@ public:
     QUrl nao_engineeringTool;
     QUrl nao_hasDefaultNamespace;
     QUrl nao_hasDefaultNamespaceAbbreviation;
+    QUrl nao_hasSubResource;
+    QUrl nao_hasSuperResource;
     QUrl nao_hasSymbol;
     QUrl nao_hasTag;
     QUrl nao_hasTopic;
@@ -175,6 +179,16 @@ QUrl Soprano::Vocabulary::NAO::hasDefaultNamespace()
 QUrl Soprano::Vocabulary::NAO::hasDefaultNamespaceAbbreviation()
 {
     return s_nao()->nao_hasDefaultNamespaceAbbreviation;
+}
+
+QUrl Soprano::Vocabulary::NAO::hasSubResource()
+{
+    return s_nao()->nao_hasSubResource;
+}
+
+QUrl Soprano::Vocabulary::NAO::hasSuperResource()
+{
+    return s_nao()->nao_hasSuperResource;
 }
 
 QUrl Soprano::Vocabulary::NAO::hasSymbol()

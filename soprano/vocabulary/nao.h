@@ -134,6 +134,22 @@ namespace Soprano {
             SOPRANO_EXPORT QUrl hasDefaultNamespaceAbbreviation();
 
             /**
+             * http://www.semanticdesktop.org/ontologies/2007/08/15/nao#hasSubResource 
+             * 
+             * Defines a relationship between a resource and one or more sub 
+             * resources 
+             */
+            SOPRANO_EXPORT QUrl hasSubResource();
+
+            /**
+             * http://www.semanticdesktop.org/ontologies/2007/08/15/nao#hasSuperResource 
+             * 
+             * Defines a relationship between a resource and one or more super 
+             * resources 
+             */
+            SOPRANO_EXPORT QUrl hasSuperResource();
+
+            /**
              * http://www.semanticdesktop.org/ontologies/2007/08/15/nao#hasSymbol 
              * 
              * Annotation for a resource in the form of a symbol representation 
@@ -210,8 +226,9 @@ namespace Soprano {
             /**
              * http://www.semanticdesktop.org/ontologies/2007/08/15/nao#numericRating 
              * 
-             * Annotation for a resource in the form of a numeric rating, allowed 
-             * values are between 1 and 10 whereas 0 is interpreted as not set 
+             * Annotation for a resource in the form of a numeric rating (float 
+             * value), allowed values are between 1 and 10 whereas 0 is interpreted 
+             * as not set 
              */
             SOPRANO_EXPORT QUrl numericRating();
 
