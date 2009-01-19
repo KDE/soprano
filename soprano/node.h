@@ -2,7 +2,7 @@
  * This file is part of Soprano Project.
  *
  * Copyright (C) 2006-2007 Daniele Galdi <daniele.galdi@gmail.com>
- * Copyright (C) 2007 Sebastian Trueg <trueg@kde.org>
+ * Copyright (C) 2007-2009 Sebastian Trueg <trueg@kde.org>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -338,6 +338,8 @@ namespace Soprano
         class LiteralNodeData;
         QSharedDataPointer<NodeData> d;
     };
+
+    SOPRANO_EXPORT uint qHash( const Node& node );
 }
 
 SOPRANO_EXPORT QDebug operator<<( QDebug s, const Soprano::Node& );
@@ -349,5 +351,7 @@ SOPRANO_EXPORT QDebug operator<<( QDebug s, const Soprano::Node& );
  * \sa Soprano::Node::toN3()
  */
 SOPRANO_EXPORT QTextStream& operator<<( QTextStream& s, const Soprano::Node& );
+
+SOPRANO_EXPORT uint qHash( const QUrl& url );
 
 #endif // SOPRANO_NODE_H
