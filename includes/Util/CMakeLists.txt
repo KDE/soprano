@@ -7,6 +7,5 @@ install(FILES
   ReadOnlyModel
   AsyncModel
   AsyncResult
-  SimpleTransactionModel
   DESTINATION
   include/Soprano/Util)

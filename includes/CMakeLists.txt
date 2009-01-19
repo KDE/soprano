@@ -28,8 +28,6 @@ install(FILES
   StorageModel
   Global
   Version
-  Transaction
-  TransactionFactory
   DESTINATION
   include/Soprano)
 
