@@ -172,9 +172,9 @@ namespace Soprano {
              * \return an AsyncResult with result type QueryResultIterator
              * object which will signal when the result is ready.
              */
-            const Util::AsyncResult* executeQueryAsync( const QString& query, 
-                                                        Query::QueryLanguage language, 
-                                                        const QString& userQueryLanguage = QString() ) const;
+            Soprano::Util::AsyncResult* executeQueryAsync( const QString& query, 
+                                                           Query::QueryLanguage language, 
+                                                           const QString& userQueryLanguage = QString() ) const;
 
             NodeIterator listContexts() const;
 

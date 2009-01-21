@@ -383,9 +383,9 @@ Soprano::Node Soprano::Client::SparqlModel::createBlankNode()
 }
 
 
-const Soprano::Util::AsyncResult* Soprano::Client::SparqlModel::executeQueryAsync( const QString& query,
-                                                                                   Query::QueryLanguage language,
-                                                                                   const QString& userQueryLanguage ) const
+Soprano::Util::AsyncResult* Soprano::Client::SparqlModel::executeQueryAsync( const QString& query,
+                                                                             Query::QueryLanguage language,
+                                                                             const QString& userQueryLanguage ) const
 {
     Util::AsyncResult* result = Util::AsyncResult::createResult();
     Command cmd;
