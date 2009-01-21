@@ -31,7 +31,7 @@
 #include <QtCore/QSharedData>
 
 
-inline uint qHash( const QUrl& url )
+static inline uint qHash( const QUrl& url )
 {
     return qHash( url.toString() );
 }
