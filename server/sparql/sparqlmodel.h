@@ -173,7 +173,7 @@ namespace Soprano {
              * object which will signal when the result is ready.
              */
             Soprano::Util::AsyncResult* executeQueryAsync( const QString& query, 
-                                                           Query::QueryLanguage language, 
+                                                           Query::QueryLanguage language = Query::QueryLanguageSparql, 
                                                            const QString& userQueryLanguage = QString() ) const;
 
             NodeIterator listContexts() const;
