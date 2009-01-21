@@ -32,7 +32,7 @@ QDBusArgument& operator<<( QDBusArgument& arg, const Soprano::Node& node )
     else {
         arg << node.toString();
     }
-    arg << node.language() << node.dataType().toString();
+    arg << node.language() << QString::fromAscii( node.dataType().toEncoded() );
     arg.endStructure();
     return arg;
 }
@@ -45,7 +45,7 @@ const QDBusArgument& operator>>( const QDBusArgument& arg, Soprano::Node& node )
     QString value, language, dataTypeUri;
     arg >> type >> value >> language >> dataTypeUri;
     if ( type == Soprano::Node::LiteralNode ) {
-        node = Soprano::Node( Soprano::LiteralValue::fromString( value, dataTypeUri ), language );
+        node = Soprano::Node( Soprano::LiteralValue::fromString( value, QUrl::fromEncoded( dataTypeUri.toAscii() ) ), language );
     }
     else if ( type == Soprano::Node::ResourceNode ) {
         node = Soprano::Node( QUrl::fromEncoded( value.toAscii() ) );
