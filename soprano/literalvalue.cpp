@@ -23,18 +23,13 @@
 #include "datetime.h"
 #include "xsd.h"
 #include "rdf.h"
+#include "node.h" // for qHash(QUrl)
 
 #include <QtCore/QUrl>
 #include <QtCore/QString>
 #include <QtCore/QHash>
 #include <QtCore/QDebug>
 #include <QtCore/QSharedData>
-
-
-static inline uint qHash( const QUrl& url )
-{
-    return qHash( url.toString() );
-}
 
 
 class Soprano::LiteralValue::Private : public QSharedData
