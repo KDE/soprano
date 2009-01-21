@@ -125,6 +125,13 @@
  * listStatements returns the path of a D-Bus object exporting the org.soprano.StatementIterator interface, and
  * executeQuery returns the path of a D-Bus object exporting the org.soprano.QueryResultIterator interface.
  *
+ * The D-Bus interface to the Soprano::Model obviously needs to encode Soprano::Node instances. A Soprano::Node is encoded as follows:
+ * \li The Node type as defined in Soprano::Node::Type: 0 - empty node, 1 - resource node, 2 - literal node, 3 - blank node
+ * \li A string representation of the Node (the encoded URI for resource nodes, the identifier for blank nodes, and the
+ *     literal value for literal nodes)
+ * \li The language code (non-empty only for literal nodes)
+ * \li The encoded datatype URI (non-empty only for literal nodes)
+ *
  *
  * \section soprano_server_dbus_node_iterator_interface org.soprano.NodeIterator
  *
