@@ -1,0 +1,73 @@
+2.2
+	* The AsyncModel now has a "real" asyncroneous mode which uses multiple threads to execute the
+	  commands.
+        * New class Soprano::Client::SparqlModel which provides a client to http Sparql endpoints.
+        * Added method Node::toN3 to easily build SPARQL queries without having to encode nodes all the time.
+        * New convinience method QueryResultIterator::iterateStatementsFromBindings
+	* Added convinience methods to handle BackendSettings.
+	* Added operator[] to QueryResultIterator to easily access bindings
+	* Added parameters influencing the visibility to onto2vocabularyclass
+	* Soprano::Node now comes with definitions of qHash for both Node and QUrl
+	* Sesame2 updated to 2.1.4
+	* The IndexFilterModel can now optionally index specific URIs (IndexFilterModel::setForceIndexPredicates)
+	* Added method IndexFilterModel::optimizeIndex which optimizes the clucene index on disk
+	* Added method IndexFilterModel::encodeUriForLuceneQuery which encodes/escapes a URI so it can be used
+	  as a field in a clucene query.
+	* SPARQL endpoint query support in sopranocmd
+
+2.1
+	* SignalCacheModel to restrict the number of emitted statementsAdded and statementsRemoved signals
+	  in a certain timeframe.
+	* Raptor serializer now supports all raptor serializer factory names which are mapped to Soprano
+	  user serialization types.
+	* Changed mimetype of N-Triples to "application/n-triples"
+	* New filter model DBusExportModel which exports a single Model via D-Bus.
+	* The onto2vocabularyclass tool is now installed by default.
+	* New sopranocmd feature: export only part of a model based on a SPARQL construct query.
+	* Added OWL Lite resource instances for easy access to OWL Lite members
+	* Finer grained control over the D-Bus server components:
+	  Soprano::Server::DBusExportModel exports a single model
+	  Soprano::Server::DBusExportIterator exports a single iterator
+	* Finer grained access to objects exported via D-Bus:
+	  the Soprano::Client::DBusXXXIterator classes provide thin wrappers around Soprano iterators
+	  exported via D-Bus
+	* New method IndexFilterModel::rebuildIndex to rebuild the complete index.
+	* New filter model ReadOnlyModel which does exactly what its name suggests: it blocks all writing operations.
+	* The unix socket client has been replaced be the LocalSocketClient based on the QLocalSocket which was
+	  introduced in QT 4.4. As a result of the design on QLocalServer and QLocalSocket the server is not
+	  multithreaded anymore.
+	* New Backend method "deleteModelData"
+	* New AsyncModel to asyncroneously execute commands on any model.
+	* The IndexFilterModel now allows to only index certain predicates and not actually store them
+	* Sesame2 updated to 2.1.2
+
+2.0.1
+	* Fixed method statementCount in Sesame2 backend
+	* Redland backend: Always encode strings as xls:string rather than rdfs:Literal values to match the 
+	  Soprano guidelines.
+	* Always set a dummy base URI in the raptor serializer
+	* Fixed formatting of dateTime values.
+	* Fixed NRL namespace
+	* Fixed NAO namespace
+	* Fixed plugin loading on MAC OS/X
+
+2.0
+	* LiteralValue is not derived from QVariant anymore but uses it internally
+	* ResultSet renamed to QueryResultIterator
+	* Fixed const'ness of many methods
+	* Changed StatementIterator layout to match QueryResultIterator's layout using next() and current() methods.
+	* Added vocabulary namespaces for usage of shared QUrl values for RDF/S and XML Schema URIs.
+	* Added FilterModel class
+	* Added RDF/S wrapper methods for easy access to RDF/S resource statements (RDFSchemaWrapper)
+	* Added "apidox" build target for building the Soprano API documentation.
+	* Added simple inferencing model based on rule files including a rule file parser.
+	* Added an index filter model which creates a CLucene index of all literal statements.
+	* Support for binary data in RDF literals encoded as base64 in LiteralValue
+	* Added Vocabulary namespace containing basic ontology URIs such as RDF, RDFS, XML Schema, and NRL
+	* TriG parser through raptor >= 1.4.16
+	* NQuads (trivial extension of NTriples) parser and serializer
+	* Soprano server library and simple daemon including D-Bus interface.
+	* sopranocmd tool which allows to control the soprano server as well as work on the data directly
+	  through the backends.
+	* Working SPARQL ASK queries with rasqal >= 0.9.15
+	

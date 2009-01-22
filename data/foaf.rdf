@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<rdf:RDF
+	xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+	xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+	xmlns:foaf="http://xmlns.com/foaf/0.1/"
+	xmlns:bio="http://purl.org/vocab/bio/0.1/">
+<foaf:Person>
+<foaf:name>Neil Turner</foaf:name>
+<foaf:title>Mr</foaf:title>
+<foaf:firstName>Neil</foaf:firstName>
+<foaf:surname>Turner</foaf:surname>
+<foaf:nick>totalxsive</foaf:nick>
+<foaf:img rdf:resource="http://www.livejournal.com/userpic/42200688/3344113" />
+<foaf:mbox_sha1sum>c624e9dc3903cc66918d31f78ae6b4f344677fab</foaf:mbox_sha1sum>
+<foaf:icqChatID>149181635</foaf:icqChatID>
+<foaf:homepage rdf:resource="http://www.neilturner.me.uk/"/>
+<foaf:depiction rdf:resource="http://www.neilturner.me.uk/photos/totalxsive.jpg"/>
+<bio:olb>A 21-year-old student from York, UK, in the latter stages of studying for a Computing degree at the University of Bradford.</bio:olb>
+<foaf:schoolHomepage rdf:resource="http://www.brad.ac.uk/"/>
+<foaf:schoolHomepage rdf:resource="http://www.yorkcollege.ac.uk/"/>
+<foaf:knows>
+<foaf:Person>
+<foaf:name>Ben</foaf:name>
+<foaf:mbox_sha1sum>a6707acc31550cdf9ed9fbaead1af914d0df805d</foaf:mbox_sha1sum>
+<rdfs:seeAlso rdf:resource="http://www.benhammersley.com/benfoaf.rdf"/></foaf:Person></foaf:knows>
+<foaf:knows>
+<foaf:Person>
+<foaf:name>Meredith</foaf:name>
+<foaf:mbox_sha1sum>5786f3436500ef214894efceb2f824477cb90c30</foaf:mbox_sha1sum>
+<rdfs:seeAlso rdf:resource="http://www.amanita.net/foaf.rdf"/></foaf:Person></foaf:knows>
+<foaf:knows>
+<foaf:Person>
+<foaf:name>Mark</foaf:name>
+<foaf:mbox_sha1sum>85d089d9dc87139d5542aa4ee2822bf65e56b55e</foaf:mbox_sha1sum>
+<rdfs:seeAlso rdf:resource="http://diveintomark.org/public/foaf.rdf"/></foaf:Person></foaf:knows>
+<foaf:knows><foaf:Person>
+<foaf:name>Daisy</foaf:name>
+<foaf:mbox_sha1sum>085872ba0e38fd1c20bde3063d7ae1b7b86f691c</foaf:mbox_sha1sum>
+<rdfs:seeAlso rdf:resource="http://chasingdaisy.typepad.com/foaf.rdf"/></foaf:Person></foaf:knows></foaf:Person>
+</rdf:RDF>

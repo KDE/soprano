@@ -1,0 +1,1 @@
+#cmakedefine SOPRANO_BUILD_INDEX_LIB

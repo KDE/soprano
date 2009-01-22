@@ -1,0 +1,43 @@
+project(soprano_includes)
+
+install(FILES
+  Soprano
+  Model
+  Statement
+  Node
+  StatementIterator
+  NodeIterator
+  Iterator
+  QueryResultIterator
+  QueryResultIteratorBackend
+  IteratorBackend
+  Backend
+  BindingSet
+  BackendSetting
+  BackendSettings
+  BackendOption
+  BackendFeature
+  RdfSerialization
+  FilterModel
+  LiteralValue
+  Parser
+  PluginManager
+  Plugin
+  Serializer
+  RdfSchemaModel
+  StorageModel
+  Global
+  Version
+  DESTINATION
+  include/Soprano)
+
+add_subdirectory(Error)
+add_subdirectory(Server)
+add_subdirectory(Client)
+add_subdirectory(Inference)
+add_subdirectory(Query)
+add_subdirectory(Vocabulary)
+add_subdirectory(Util)
+if(SOPRANO_BUILD_INDEX_LIB)
+  add_subdirectory(Index)
+endif(SOPRANO_BUILD_INDEX_LIB)

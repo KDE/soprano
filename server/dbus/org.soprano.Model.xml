@@ -1,0 +1,65 @@
+<!DOCTYPE node PUBLIC "-//freedesktop//DTD D-BUS Object Introspection 1.0//EN"
+         "http://www.freedesktop.org/standards/dbus/1.0/introspect.dtd">
+<node>
+  <interface name="org.soprano.Model">
+    <method name="addStatement">
+      <arg name="statement" type="((isss)(isss)(isss)(isss))" direction="in" />
+      <arg name="errorCode" type="i" direction="out" />
+      <annotation name="com.trolltech.QtDBus.QtTypeName.In0" value="Soprano::Statement" />
+    </method>
+    <method name="removeStatement">
+      <arg name="statement" type="((isss)(isss)(isss)(isss))" direction="in" />
+      <arg name="errorCode" type="i" direction="out" />
+      <annotation name="com.trolltech.QtDBus.QtTypeName.In0" value="Soprano::Statement" />
+    </method>
+    <method name="removeAllStatements">
+      <arg name="statement" type="((isss)(isss)(isss)(isss))" direction="in" />
+      <arg name="errorCode" type="i" direction="out" />
+      <annotation name="com.trolltech.QtDBus.QtTypeName.In0" value="Soprano::Statement" />
+    </method>
+    <method name="containsStatement">
+      <arg name="statement" type="((isss)(isss)(isss)(isss))" direction="in" />
+      <arg name="reply" type="b" direction="out" />
+      <annotation name="com.trolltech.QtDBus.QtTypeName.In0" value="Soprano::Statement" />
+    </method>
+    <method name="containsAnyStatement">
+      <arg name="statement" type="((isss)(isss)(isss)(isss))" direction="in" />
+      <arg name="reply" type="b" direction="out" />
+      <annotation name="com.trolltech.QtDBus.QtTypeName.In0" value="Soprano::Statement" />
+    </method>
+    <method name="listStatements">
+      <arg name="statement" type="((isss)(isss)(isss)(isss))" direction="in" />
+      <arg name="iterator" type="s" direction="out" />
+      <annotation name="com.trolltech.QtDBus.QtTypeName.In0" value="Soprano::Statement" />
+    </method>
+    <method name="listContexts">
+      <arg name="iterator" type="s" direction="out" />
+    </method>
+    <method name="statementCount">
+      <arg name="count" type="i" direction="out" />
+    </method>
+    <method name="isEmpty">
+      <arg name="reply" type="b" direction="out" />
+    </method>
+    <method name="executeQuery">
+      <arg name="query" type="s" direction="in" />
+      <arg name="queryLang" type="i" direction="in" />
+      <arg name="userQueryLang" type="s" direction="in" />
+      <arg name="iterator" type="s" direction="out" />
+    </method>
+    <method name="createBlankNode">
+      <arg name="node" type="(isss)" direction="out" />
+      <annotation name="com.trolltech.QtDBus.QtTypeName.Out0" value="Soprano::Node" />
+    </method>
+    <signal name="statementsAdded" />
+    <signal name="statementsRemoved" />
+    <signal name="statementAdded">
+      <arg name="statement" type="((isss)(isss)(isss)(isss))" />
+      <annotation name="com.trolltech.QtDBus.QtTypeName.In0" value="Soprano::Statement" />
+    </signal>
+    <signal name="statementRemoved">
+      <arg name="statement" type="((isss)(isss)(isss)(isss))" />
+      <annotation name="com.trolltech.QtDBus.QtTypeName.In0" value="Soprano::Statement" />
+    </signal>
+  </interface>
+</node>

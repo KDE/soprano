@@ -1,0 +1,28 @@
+<?xml version="1.0"?>
+
+<rdf:RDF
+  xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" 
+  xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+  xmlns:test="http://soprano.sf.net/test#">
+
+<rdf:Description
+ rdf:about="http://soprano.sf.net/testdata/Soprano">
+<rdfs:label>Soprano</rdfs:label>
+<rdfs:comment>Soprano (formally known as QRDF) is a QT4 wrapper library for RDF storage, parsing, and querying</rdfs:comment>
+<test:author rdf:resource="http://soprano.sf.net/testdata/DanieleGaldi"/>
+<test:author rdf:resource="http://soprano.sf.net/testdata/SebastianTrueg"/>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://soprano.sf.net/testdata/DanieleGaldi">
+<test:name>Daniele Galdi</test:name>
+<test:email>daniele.galdi@gmail.com</test:email>
+<test:location>Rome, Italy</test:location>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://soprano.sf.net/testdata/SebastianTrueg">
+<test:name>Sebastian Trueg</test:name>
+<test:email>trueg@kde.org</test:email>
+<test:location>Freiburg, Germany</test:location>
+</rdf:Description>
+
+</rdf:RDF>

@@ -1,0 +1,24 @@
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix nrl: <http://www.semanticdesktop.org/ontologies/2007/08/15/nrl#> .
+@prefix test: <http://soprano.sf.net/test#> .
+@prefix : <http://soprano.sf.net/testdata/> .
+
+:main { <http://soprano.sf.net/testdata/Soprano>
+	    rdfs:label "Soprano";
+	    rdfs:comment "Soprano (formally known as QRDF) is a QT4 wrapper library for RDF storage, parsing, and querying";
+	    test:author <http://soprano.sf.net/testdata/DanieleGaldi>, <http://soprano.sf.net/testdata/SebastianTrueg> . }
+
+:galdi { <http://soprano.sf.net/testdata/DanieleGaldi>
+	    test:name "Daniele Galdi";
+	    test:email "daniele.galdi@gmail.com";
+	    test:location "Rome, Italy" . }
+
+:trueg { <http://soprano.sf.net/testdata/SebastianTrueg>
+	    test:name "Sebastian Trueg";
+	    test:email "trueg@kde.org";
+	    test:location "Freiburg, Germany" . }
+
+{ :main rdf:type nrl:GraphMetadata .
+	:galdi rdf:type nrl:GraphMetadata .
+	:trueg rdf:type nrl:GraphMetadata . }

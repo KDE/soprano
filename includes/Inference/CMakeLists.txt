@@ -1,0 +1,10 @@
+install(FILES
+  InferenceModel
+  RuleSet
+  Rule
+  NodePattern
+  StatementPattern
+  RuleParser
+  StandardRuleSet
+  DESTINATION
+  include/Soprano/Inference)

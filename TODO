@@ -1,0 +1,22 @@
+Soprano 2 TODO List
+
+Add here what you want to add in Soprano
+
+* threaded async inference: run inference in a different thread to make add and remove calls return quickly (as an option which can be configured)
+* some reference counting in the inference model to properly handle removal of statements
+* copy the types of the source statement's graph to the inference graph
+* Add error handling to server/clientconnection.cpp and server/serverconnection.cpp (disconnect on read or write error)
+
+Soprano 3:
+* make Soprano::Backend::createModel non-virtual and let it call a virtual protected method. Then remove the Backend* paramter
+  from the StorageModel constructor and have Backend set the Backend and the BackendSettings in Backend::createModel
+* Make Soprano::Server::ServerCore::createModel const.
+* Add transaction API including BackendFeature FeatureTransactionSupport:
+  Model::startTransaction
+  Model::commit
+  Model::rollback
+  (Only question: Can we support multiple transactions at the same time?)
+  Idea: Create a transaction FilterModel that allows to have transactions on any backend in memory. Problem: queries!
+* Use QDbusObjectPath as return value for models and iterators in the DBus inteface
+* Make BackendSettings a class which provides method to lookup a value
+* Use Q_DECLARE_TYPEINFO(Node, Q_MOVABLE_TYPE) for Node and Statement, will break BC in 2.x
