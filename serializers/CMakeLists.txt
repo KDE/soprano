@@ -1,8 +1,10 @@
 project(soprano_parsers)
 
 if(WIN32)
-  set(REDLAND_VERSION "1.0.3")
-  message(STATUS "Windows currently oly has Redland version 1.0.3")
+  if(NOT REDLAND_VERSION)
+    set(REDLAND_VERSION "1.0.3")
+    message(STATUS "Windows currently oly has Redland version 1.0.3")
+  endif(NOT REDLAND_VERSION)
 endif(WIN32)
 
 if(REDLAND_FOUND AND REDLAND_VERSION STRGREATER "1.0.5")

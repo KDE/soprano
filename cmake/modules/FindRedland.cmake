@@ -150,51 +150,26 @@ INCLUDE(MacroEnsureVersion)
     endif(RASQAL_VERSION)
   endif(RASQAL_CONFIG)
 
-  # now a hack for win32 (only?)
-  # soprano only includes <redland.h> instead <redland/redland.h>
-  if(WIN32)
-    find_path(REDLAND_INCLUDE_DIR_TMP redland/redland.h
-      PATHS
-      ${_REDLANDIncDir}
-    )
-    if(REDLAND_INCLUDE_DIR_TMP)
-      set(REDLAND_INCLUDE_DIR ${REDLAND_INCLUDE_DIR_TMP}/redland CACHE PATH "Path to a file.")
-    endif(REDLAND_INCLUDE_DIR_TMP)
-
-    find_path(RASQAL_INCLUDE_DIR_TMP redland/rasqal.h
-      PATHS
-      ${redland_INCLUDE_DIRS}
-    )
-    if(RASQAL_INCLUDE_DIR_TMP)
-      set(RASQAL_INCLUDE_DIR ${RASQAL_INCLUDE_DIR_TMP}/redland CACHE PATH "Path to a file.")
-    endif(RASQAL_INCLUDE_DIR_TMP)
-
-    find_path(RAPTOR_INCLUDE_DIR_TMP redland/raptor.h
-      PATHS
-      ${redland_INCLUDE_DIRS}
-    )
-    if(RAPTOR_INCLUDE_DIR_TMP)
-      set(RAPTOR_INCLUDE_DIR ${RAPTOR_INCLUDE_DIR_TMP}/redland CACHE PATH "Path to a file.")
-    endif(RAPTOR_INCLUDE_DIR_TMP)
-  else(WIN32)
-    find_path(REDLAND_INCLUDE_DIR redland.h
-      PATHS
-      ${redland_INCLUDE_DIRS}
-      /usr/X11/include
-    )
-    find_path(RASQAL_INCLUDE_DIR rasqal.h
-      PATHS
-      ${redland_INCLUDE_DIRS}
-      ${rasqal_INCLUDE_DIRS}
-      /usr/X11/include
-    )
-    find_path(RAPTOR_INCLUDE_DIR raptor.h
-      PATHS
-      ${redland_INCLUDE_DIRS}
-      ${raptor_INCLUDE_DIRS}
-      /usr/X11/include
-    )
-  endif(WIN32)
+  find_path(REDLAND_INCLUDE_DIR redland.h
+    PATHS
+    ${redland_INCLUDE_DIRS}
+    /usr/X11/include
+    PATH_SUFFIXES redland
+  )
+  find_path(RASQAL_INCLUDE_DIR rasqal.h
+    PATHS
+    ${redland_INCLUDE_DIRS}
+    ${rasqal_INCLUDE_DIRS}
+    /usr/X11/include
+    PATH_SUFFIXES redland
+  )
+  find_path(RAPTOR_INCLUDE_DIR raptor.h
+    PATHS
+    ${redland_INCLUDE_DIRS}
+    ${raptor_INCLUDE_DIRS}
+    /usr/X11/include
+    PATH_SUFFIXES redland
+  )
 
   find_library(REDLAND_LIBRARIES NAMES rdf librdf
     PATHS
