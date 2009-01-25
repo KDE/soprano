@@ -24,6 +24,7 @@
 
 #include "filtermodel.h"
 #include "node.h"
+#include "soprano_export.h"
 
 namespace Soprano {
 
@@ -42,7 +43,7 @@ namespace Soprano {
      *
      * \author Sebastian Trueg <trueg@kde.org>
      */
-    class RdfSchemaModel : public FilterModel
+    class SOPRANO_EXPORT RdfSchemaModel : public FilterModel
     {
     public:
         /**

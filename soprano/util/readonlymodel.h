@@ -23,6 +23,7 @@
 #define _SOPRANO_READ_ONLY_MODEL_H_
 
 #include "model.h"
+#include "soprano_export.h"
 
 namespace Soprano {
     namespace Util {
@@ -39,7 +40,7 @@ namespace Soprano {
          *
          * \since 2.1
          */
-        class ReadOnlyModel : public Model
+        class SOPRANO_EXPORT ReadOnlyModel : public Model
         {
             Q_OBJECT
 
