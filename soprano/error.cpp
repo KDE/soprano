@@ -1,7 +1,7 @@
 /*
  * This file is part of Soprano Project.
  *
- * Copyright (C) 2007 Sebastian Trueg <trueg@kde.org>
+ * Copyright (C) 2007-2009 Sebastian Trueg <trueg@kde.org>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -49,7 +49,7 @@ namespace Soprano {
 
 
 Soprano::Error::Error::Error()
-    : d( new ErrorData() )
+    : d( 0 )
 {
 }
 
@@ -89,13 +89,13 @@ Soprano::Error::Error& Soprano::Error::Error::operator=( const Error& other )
 
 QString Soprano::Error::Error::message() const
 {
-    return d->message;
+    return d ? d->message : QString();
 }
 
 
 int Soprano::Error::Error::code() const
 {
-    return d->code;
+    return d ? d->code : ErrorNone;
 }
 
 
@@ -127,7 +127,7 @@ Soprano::Error::ParserError Soprano::Error::Error::toParserError() const
 
 
 Soprano::Error::ParserError::ParserError()
-    : Error( new ParserErrorData() )
+    : Error( 0 )
 {
 }
 
