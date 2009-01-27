@@ -366,9 +366,14 @@ Soprano::Error::ErrorCode Soprano::Client::SparqlModel::removeAllStatements( con
         return removeStatement( statement );
     }
     else {
-        Q_UNUSED(statement);
-        setError( "No removeAllStatements support.", Error::ErrorNotSupported );
-        return Error::ErrorNotSupported;
+        // the iterator does not block writes, so there is no need to use a list
+        StatementIterator it = listStatements( statement );
+        while ( it.next() ) {
+            Error::ErrorCode ec = removeStatement( *it );
+            if ( ec )
+                return ec;
+        }
+        return Error::ErrorNone;
     }
 }
 
