@@ -1,4 +1,4 @@
-Soprano 2.1
+Soprano 2.2
 ===========
 
 Soprano (formally known as QRDF) is a library which provides a nice Qt
@@ -17,6 +17,7 @@ Soprano has the following features:
   - nQuads
 * A server and client lib which allows a simple remote
   Soprano server.
+* SPARQL http enpoint support
 * Simple sopranod server application.
 * Simple command line tool to perform commands on models in
   a Soprano server (sopranocmd)

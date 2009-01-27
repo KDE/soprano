@@ -272,7 +272,7 @@ void MultiThreadingTest::testNodeIterator()
 {
     QFETCH( TestingThread*, thread );
 
-    Model* model = PluginManager::instance()->discoverBackendByName( "sesame2" )->createModel();
+    Model* model = createModel();
     QVERIFY( model != 0 );
 
     // add some testdata with the same context

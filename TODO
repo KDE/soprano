@@ -20,3 +20,5 @@ Soprano 3:
 * Use QDbusObjectPath as return value for models and iterators in the DBus inteface
 * Make BackendSettings a class which provides method to lookup a value
 * Use Q_DECLARE_TYPEINFO(Node, Q_MOVABLE_TYPE) for Node and Statement, will break BC in 2.x
+* Make Statement destructor non-virtual
+
