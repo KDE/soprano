@@ -33,7 +33,8 @@
 
 
 Soprano::Client::SparqlProtocol::SparqlProtocol( QObject* parent )
-    : QHttp( parent )
+    : QHttp( parent ),
+      m_path( QLatin1String( "/sparql" ) )
 {
     connect( this, SIGNAL( requestFinished( int, bool ) ),
              this, SLOT( slotRequestFinished( int, bool ) ) );
@@ -67,9 +68,15 @@ void Soprano::Client::SparqlProtocol::setUser( const QString& userName, const QS
 }
 
 
+void Soprano::Client::SparqlProtocol::setPath( const QString& path )
+{
+    m_path = path;
+}
+
+
 int Soprano::Client::SparqlProtocol::query( const QString& queryS )
 {
-    QUrl url = QUrl( "/sparql" );
+    QUrl url = QUrl( m_path );
     url.addQueryItem( "query", queryS );
 
     QBuffer* buffer = new QBuffer();

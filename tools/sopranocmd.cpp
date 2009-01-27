@@ -467,12 +467,15 @@ int main( int argc, char *argv[] )
     if ( backendName.isEmpty() ) {
         if ( args.hasSetting( "sparql" ) ) {
             QUrl sparqlEndPoint = args.getSetting( "sparql" );
-            quint16 port = 80;
+            quint16 port = sparqlEndPoint.port( 80 );
             if ( args.hasSetting( "port" ) ) {
                 port = args.getSetting( "port" ).toInt();
             }
-            model = new Soprano::Client::SparqlModel( sparqlEndPoint.host(), port,
-                                                      sparqlEndPoint.userName(), sparqlEndPoint.password() );
+            Soprano::Client::SparqlModel* sparqlModel = new Soprano::Client::SparqlModel( sparqlEndPoint.host(), port,
+                                                                                          sparqlEndPoint.userName(), sparqlEndPoint.password() );
+            if ( !sparqlEndPoint.path().isEmpty() )
+                sparqlModel->setPath( sparqlEndPoint.path() );
+            model = sparqlModel;
         }
         else if ( args.hasSetting( "port" ) ) {
             QHostAddress host = QHostAddress::LocalHost;

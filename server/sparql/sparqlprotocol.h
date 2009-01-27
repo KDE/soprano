@@ -45,6 +45,12 @@ namespace Soprano {
             void setUser( const QString& userName, const QString& password = QString() );
 
             /**
+             * For historical reasons the default path is set to "/sparql".
+             * This method allows to change that.
+             */
+            void setPath( const QString& path );
+
+            /**
              * \returns the response data. An emtpy QByteArray
              * on error. Check lastError() for details.
              */
@@ -67,6 +73,7 @@ namespace Soprano {
             QHash<int, QEventLoop*> m_loops;
             QHash<int, bool> m_results;
             QHash<int, QBuffer*> m_resultsData;
+            QString m_path;
         };
     }
 }

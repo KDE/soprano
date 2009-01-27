@@ -226,6 +226,12 @@ void Soprano::Client::SparqlModel::setUser( const QString& userName, const QStri
 }
 
 
+void Soprano::Client::SparqlModel::setPath( const QString& path )
+{
+    d->client->setPath( path );
+}
+
+
 // QString Soprano::Client::SparqlModel::host() const
 // {
 //     return
@@ -356,9 +362,14 @@ Soprano::Error::ErrorCode Soprano::Client::SparqlModel::removeStatement( const S
 
 Soprano::Error::ErrorCode Soprano::Client::SparqlModel::removeAllStatements( const Statement& statement )
 {
-    Q_UNUSED(statement);
-    setError( "No removeAllStatements support.", Error::ErrorNotSupported );
-    return Error::ErrorNotSupported;
+    if ( statement.isValid() && statement.context().isValid() ) {
+        return removeStatement( statement );
+    }
+    else {
+        Q_UNUSED(statement);
+        setError( "No removeAllStatements support.", Error::ErrorNotSupported );
+        return Error::ErrorNotSupported;
+    }
 }
 
 

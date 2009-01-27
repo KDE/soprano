@@ -6,7 +6,7 @@ cmake_minimum_required(VERSION 2.6.2)
 # (if they would be forced into the cache. you still could only change them here, Alex)
 set(CMAKE_SOPRANO_VERSION_MAJOR 2)
 set(CMAKE_SOPRANO_VERSION_MINOR 2)
-set(CMAKE_SOPRANO_VERSION_RELEASE 0)
+set(CMAKE_SOPRANO_VERSION_RELEASE 60)
 set(CMAKE_SOPRANO_VERSION_STRING "${CMAKE_SOPRANO_VERSION_MAJOR}.${CMAKE_SOPRANO_VERSION_MINOR}.${CMAKE_SOPRANO_VERSION_RELEASE}")
 
 enable_testing()
