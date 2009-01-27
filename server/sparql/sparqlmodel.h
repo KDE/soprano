@@ -94,6 +94,15 @@ namespace Soprano {
              * \param password The password for \p user in case the host
              */
             void setUser( const QString& user, const QString& password = QString() );
+
+            /**
+             * Set the path to where the SPARQL endpoint is exposed on the server.
+             *
+             * For historical reasons the default path is set to "/sparql".
+             *
+             * \since 2.2.1
+             */
+            void setPath( const QString& path );
             //@}
 
             //@{
