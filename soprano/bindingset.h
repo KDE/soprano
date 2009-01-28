@@ -130,6 +130,20 @@ namespace Soprano {
          */
         void insert( const QString& name, const Node& value );
 
+        /**
+         * Replaces a value in the binding set.
+         *
+         * \since 2.3
+         */
+        void replace( int offset, const Node& value );
+
+        /**
+         * Replaces a value in the binding set.
+         *
+         * \since 2.3
+         */
+        void replace( const QString& name, const Node& value );
+
     private:
         class Private;
         QSharedDataPointer<Private> d;

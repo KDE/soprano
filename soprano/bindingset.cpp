@@ -24,6 +24,7 @@
 
 #include <QtCore/QHash>
 #include <QtCore/QStringList>
+#include <QtCore/QVector>
 #include <QtCore/QSharedData>
 #include <QtCore/QDebug>
 #include <QtCore/QTextStream>
@@ -32,8 +33,9 @@
 class Soprano::BindingSet::Private : public QSharedData
 {
 public:
-    QHash<QString, Node> bindingMap;
+    QHash<QString, int> bindingMap;
     QStringList names;
+    QVector<Soprano::Node> values;
 };
 
 
@@ -69,7 +71,7 @@ QStringList Soprano::BindingSet::bindingNames() const
 
 Soprano::Node Soprano::BindingSet::operator[]( int offset ) const
 {
-    return d->bindingMap[d->names[offset]];
+    return d->values[offset];
 }
 
 
@@ -81,15 +83,15 @@ Soprano::Node Soprano::BindingSet::operator[]( const QString name ) const
 
 Soprano::Node Soprano::BindingSet::value( int offset ) const
 {
-    return d->bindingMap[d->names[offset]];
+    return d->values[offset];
 }
 
 
 Soprano::Node Soprano::BindingSet::value( const QString& name ) const
 {
-    QHash<QString, Node>::const_iterator it = d->bindingMap.find( name );
+    QHash<QString, int>::const_iterator it = d->bindingMap.find( name );
     if ( it != d->bindingMap.constEnd() ) {
-        return *it;
+        return d->values[*it];
     }
     else {
         return Node();
@@ -112,9 +114,26 @@ int Soprano::BindingSet::count() const
 void Soprano::BindingSet::insert( const QString& name, const Node& value )
 {
     d->names.append( name );
-    d->bindingMap.insert( name, value );
+    d->bindingMap.insert( name, d->values.size() );
+    d->values.append( value );
 }
 
+void Soprano::BindingSet::replace( int offset, const Node& value )
+{
+    Q_ASSERT(offset >= 0);
+    Q_ASSERT(offset < d->values.size());
+
+    d->values[offset] = value;
+}
+
+void Soprano::BindingSet::replace( const QString& name, const Node& value )
+{
+    QHash<QString, int>::const_iterator it( d->bindingMap.constFind(name) );
+    Q_ASSERT( it != d->bindingMap.constEnd() );
+    if ( it != d->bindingMap.constEnd() ) {
+        replace( *it, value );
+    }
+}
 
 QDebug operator<<( QDebug s, const Soprano::BindingSet& b )
 {
