@@ -1,3 +1,6 @@
+2.2.2
+	* Properly clear the error in the SparqlModel
+
 2.2.1
 	* Added removeAllStatements support in SparqlModel (by iterating over all statements)
 	* Added SparqlModel::setPath to override the previously hard-coded query path
