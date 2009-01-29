@@ -130,6 +130,9 @@ void Soprano::Client::SparqlProtocol::slotRequestFinished( int id, bool error )
             qDebug() << m_resultsData[id]->data();
             error = true;
         }
+        else {
+            clearError();
+        }
 
         if ( m_loops.contains( id ) ) {
             m_loops[id]->quit();
