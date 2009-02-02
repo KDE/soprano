@@ -169,6 +169,7 @@ add_executable(sopranodsocketclienttest sopranodsocketclienttest.cpp)
 target_link_libraries(sopranodsocketclienttest sopranomodeltest sopranoclient ${QT_QTCORE_LIBRARY} ${QT_QTTEST_LIBRARY} ${QT_QTNETWORK_LIBRARY})
 add_test(sopranodsocketclienttest ${EXECUTABLE_OUTPUT_PATH}/sopranodclienttest)
 
+if(HAVE_DBUS)
 qt4_automoc(sopranodbusclienttest sopranodbusclienttest.cpp)
 add_executable(sopranodbusclienttest sopranodbusclienttest.cpp)
 target_link_libraries(sopranodbusclienttest sopranomodeltest sopranoclient ${QT_QTCORE_LIBRARY} ${QT_QTTEST_LIBRARY} ${QT_QTNETWORK_LIBRARY})
@@ -179,16 +180,17 @@ add_executable(sopranodbusmultithreadtest sopranodbusmultithreadtest.cpp)
 target_link_libraries(sopranodbusmultithreadtest soprano sopranoclient multithreadingtest ${QT_QTCORE_LIBRARY} ${QT_QTTEST_LIBRARY})
 add_test(sopranodbusmultithreadtest ${EXECUTABLE_OUTPUT_PATH}/sopranodbusmultithreadtest)
 
+# Signal spy
+qt4_automoc(sopranodbussignalspy modelsignalspy.cpp)
+add_executable(sopranodbussignalspy modelsignalspy.cpp sopranodbussignalspy.cpp)
+target_link_libraries(sopranodbussignalspy sopranoclient ${QT_QTCORE_LIBRARY})
+endif(HAVE_DBUS)
+
 # NRL Model test
 qt4_automoc(nrlmodeltest nrlmodeltest.cpp)
 add_executable(nrlmodeltest nrlmodeltest.cpp)
 target_link_libraries(nrlmodeltest soprano ${QT_QTCORE_LIBRARY} ${QT_QTTEST_LIBRARY})
 add_test(nrlmodeltest ${EXECUTABLE_OUTPUT_PATH}/nrlmodeltest)
-
-# Signal spy
-qt4_automoc(sopranodbussignalspy modelsignalspy.cpp)
-add_executable(sopranodbussignalspy modelsignalspy.cpp sopranodbussignalspy.cpp)
-target_link_libraries(sopranodbussignalspy sopranoclient ${QT_QTCORE_LIBRARY})
 
 # Server QDataStream operators
 qt4_automoc(serveroperatortest.cpp)

@@ -21,7 +21,9 @@
 
 #include "servercore.h"
 #include "serverconnection.h"
+#ifdef HAVE_DBUS
 #include "dbus/dbusserveradaptor.h"
+#endif
 #include "modelpool.h"
 
 #include "soprano-server-config.h"
@@ -52,9 +54,12 @@ class Soprano::Server::ServerCore::Private
 {
 public:
     Private()
-        : dbusAdaptor( 0 ),
-          tcpServer( 0 ),
-          socketServer( 0 )
+        :
+#ifdef HAVE_DBUS
+        dbusAdaptor( 0 ),
+#endif
+        tcpServer( 0 ),
+        socketServer( 0 )
     {}
 
     const Backend* backend;
@@ -63,7 +68,9 @@ public:
     QHash<QString, Model*> models;
     QList<ServerConnection*> connections;
 
+#ifdef HAVE_DBUS
     DBusServerAdaptor* dbusAdaptor;
+#endif
 
     QTcpServer* tcpServer;
     QLocalServer* socketServer;
@@ -253,6 +260,7 @@ bool Soprano::Server::ServerCore::start( const QString& name )
 }
 
 
+#ifdef HAVE_DBUS
 void Soprano::Server::ServerCore::registerAsDBusObject( const QString& objectPath )
 {
     if ( !d->dbusAdaptor ) {
@@ -265,6 +273,7 @@ void Soprano::Server::ServerCore::registerAsDBusObject( const QString& objectPat
         QDBusConnection::sessionBus().registerObject( path, this );
     }
 }
+#endif
 
 
 void Soprano::Server::ServerCore::serverConnectionFinished()

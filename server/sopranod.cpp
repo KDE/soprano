@@ -20,7 +20,9 @@
 #include "backend.h"
 #include "pluginmanager.h"
 #include "version.h"
+#ifdef HAVE_DBUS
 #include "dbus/dbusserveradaptor.h"
+#endif
 #include "lockfile.h"
 #include "sopranodcore.h"
 
@@ -28,7 +30,6 @@
 
 #include "soprano-server-config.h"
 
-#define VERSION "1.7"
 
 namespace {
 #ifndef Q_OS_WIN
@@ -47,7 +48,7 @@ namespace {
 int usage()
 {
     QTextStream s( stderr );
-    s << "sopranod " << VERSION << " (using Soprano " << Soprano::versionString() << ")" << endl;
+    s << "sopranod " << Soprano::versionString() << endl;
     s << "   Copyright (C) 2007 Sebastian Trueg <trueg@kde.org>" << endl;
     s << "   This program is free software; you can redistribute it and/or modify" << endl
       << "   it under the terms of the GNU General Public License as published by" << endl
@@ -143,8 +144,10 @@ int main( int argc, char** argv )
     SopranodCore* core = new SopranodCore( withIndex, &app );
     core->setBackendSettings( settings );
 
+#ifdef HAVE_DBUS
     QDBusConnection::sessionBus().registerService( "org.soprano.Server" );
     core->registerAsDBusObject();
+#endif
 
     if ( !backendName.isEmpty() ) {
         const Soprano::Backend* backend = Soprano::PluginManager::instance()->discoverBackendByName( backendName );

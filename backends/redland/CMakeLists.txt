@@ -14,6 +14,7 @@ include_directories(
   ${soprano_redland_BINARY_DIR}
   ${REDLAND_INCLUDE_DIR}
   ${RASQAL_INCLUDE_DIR}
+  ${RAPTOR_INCLUDE_DIR}
   )
 
 set(redland_core_SRC

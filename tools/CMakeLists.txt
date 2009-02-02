@@ -6,9 +6,12 @@ include_directories(
   ${soprano_core_SOURCE_DIR}/query
   ${soprano_core_SOURCE_DIR}/vocabulary
   ${soprano_core_BINARY_DIR}
+  ${soprano_tools_BINARY_DIR}
   ${QT_INCLUDES}
   ${soprano_SOURCE_DIR}
 )
+
+configure_file(soprano-tools-config.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/soprano-tools-config.h)
 
 add_executable(sopranocmd sopranocmd.cpp)
 

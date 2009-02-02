@@ -6,7 +6,7 @@ cmake_minimum_required(VERSION 2.6.2)
 # (if they would be forced into the cache. you still could only change them here, Alex)
 set(CMAKE_SOPRANO_VERSION_MAJOR 2)
 set(CMAKE_SOPRANO_VERSION_MINOR 2)
-set(CMAKE_SOPRANO_VERSION_RELEASE 60)
+set(CMAKE_SOPRANO_VERSION_RELEASE 61)
 set(CMAKE_SOPRANO_VERSION_STRING "${CMAKE_SOPRANO_VERSION_MAJOR}.${CMAKE_SOPRANO_VERSION_MINOR}.${CMAKE_SOPRANO_VERSION_RELEASE}")
 
 enable_testing()
@@ -49,6 +49,8 @@ else(JAVA_INCLUDE_PATH AND JAVA_JVM_LIBRARY)
     message("Make sure JAVA_HOME is set")
   endif("$ENV{JAVA_HOME}" STREQUAL "")
 endif(JAVA_INCLUDE_PATH AND JAVA_JVM_LIBRARY)
+
+set(HAVE_DBUS ${QT_QTDBUS_FOUND})
 
 
 ##################  setup install directories  ################################
@@ -156,6 +158,10 @@ if(CLucene_FOUND)
   message("   * The CLucene-based full-text search index library")
 endif(CLucene_FOUND)
 
+if(HAVE_DBUS)
+  message("   * D-Bus server/client support")
+endif(HAVE_DBUS)
+
 
 message("")
 message("-- Soprano Components that will NOT be built:")
@@ -177,5 +183,9 @@ endif(NOT REDLAND_FOUND OR REDLAND_VERSION STRLESS "1.0.6")
 if(NOT CLucene_FOUND)
   message("   * The CLucene-based full-text search index library")
 endif(NOT CLucene_FOUND)
+
+if(NOT HAVE_DBUS)
+  message("   * D-Bus server/client support")
+endif(NOT HAVE_DBUS)
 
 message("---------------------------------------------------------------------------------------")
