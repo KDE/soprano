@@ -260,9 +260,9 @@ bool Soprano::Server::ServerCore::start( const QString& name )
 }
 
 
-#ifdef HAVE_DBUS
 void Soprano::Server::ServerCore::registerAsDBusObject( const QString& objectPath )
 {
+#ifdef HAVE_DBUS
     if ( !d->dbusAdaptor ) {
         QString path( objectPath );
         if ( path.isEmpty() ) {
@@ -272,8 +272,10 @@ void Soprano::Server::ServerCore::registerAsDBusObject( const QString& objectPat
         d->dbusAdaptor = new Soprano::Server::DBusServerAdaptor( this, path );
         QDBusConnection::sessionBus().registerObject( path, this );
     }
-}
+#else
+    qFatal() << "Soprano has been built without D-Bus support!";
 #endif
+}
 
 
 void Soprano::Server::ServerCore::serverConnectionFinished()

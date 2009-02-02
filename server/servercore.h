@@ -26,7 +26,6 @@
 
 #include "error.h"
 #include "soprano_export.h"
-#include "soprano-server-config.h"
 
 namespace Soprano {
 
@@ -177,7 +176,6 @@ namespace Soprano {
              */
             quint16 serverPort() const;
 
-#ifdef HAVE_DBUS
             /**
              * Register the ServerCore as a DBus object. The process needs to be registered
              * as a DBus service before (QDBusConnection::registerService()).
@@ -186,9 +184,10 @@ namespace Soprano {
              * the default path will be used (/org/soprano/Server).
              *
              * Use Client::DBusClient to connect.
+             *
+             * In case Soprano is compiled without D-Bus support this method does nothing.
              */
             void registerAsDBusObject( const QString& objectPath = QString() );
-#endif
 
         private Q_SLOTS:
             void slotNewTcpConnection();
