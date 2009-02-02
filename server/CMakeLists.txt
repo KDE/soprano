@@ -170,7 +170,6 @@ install(
   servercore.h
   tcpclient.h
   localsocketclient.h
-  ${CMAKE_CURRENT_BINARY_DIR}/soprano-server-config.h
   DESTINATION include/soprano
 )
 
