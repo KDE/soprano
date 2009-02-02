@@ -19,17 +19,22 @@
 #include <QtCore/QList>
 #include <QtCore/QDir>
 
+#include "soprano-tools-config.h"
+
 #include "../soprano/statementiterator.h"
 #include "../soprano/queryresultiterator.h"
 #include "../soprano/version.h"
 #include "../soprano/pluginmanager.h"
 #include "../soprano/parser.h"
 #include "../soprano/serializer.h"
+#include "../soprano/storagemodel.h"
 
 #include "../server/tcpclient.h"
 #include "../server/localsocketclient.h"
+#ifdef HAVE_DBUS
 #include "../server/dbus/dbusclient.h"
 #include "../server/dbus/dbusmodel.h"
+#endif
 #include "../server/sparql/sparqlmodel.h"
 
 using namespace Soprano;
@@ -333,7 +338,9 @@ namespace {
           << "   sopranocmd --backend [--dir <storagedir>] [--serialization <s>] <command> [<parameters>]" << endl
           << "   sopranocmd --port <port> [--host <host>] --model <name> [--serialization <s>] <command> [<parameters>]" << endl
           << "   sopranocmd --socket <socketpath>  --model <name> [--serialization <s>] <command> [<parameters>]" << endl
+#ifdef HAVE_DBUS
           << "   sopranocmd --dbus <dbusservice> --model <name> [--serialization <s>] <command> [<parameters>]" << endl
+#endif
           << "   sopranocmd --sparql <sparql end point> [--port <port> [--serialization <s>] <command> [<parameters>]" << endl
           << endl
           << "   --version           Print version information." << endl
@@ -350,8 +357,10 @@ namespace {
           << "   --dir               The storage directory. This only applies when specifying the backend. Defaults" << endl
           << "                       to current directory." << endl
           << endl
+#ifdef HAVE_DBUS
           << "   --dbus <service>    Contact the soprano server through D-Bus running on the specified service." << endl
           << endl
+#endif
           << "   --port <port>       Specify the port the Soprano server is running on." << endl
           << "                       (only applicable when querying against the Soprano server or a sparql endpoint.)" << endl
           << endl
@@ -415,7 +424,9 @@ int main( int argc, char *argv[] )
     allowedCmdLineArgs.insert( "port", true );
     allowedCmdLineArgs.insert( "host", true );
     allowedCmdLineArgs.insert( "socket", true );
+#ifdef HAVE_DBUS
     allowedCmdLineArgs.insert( "dbus", true );
+#endif
     allowedCmdLineArgs.insert( "sparql", true );
     allowedCmdLineArgs.insert( "serialization", true );
     allowedCmdLineArgs.insert( "querylang", true );
@@ -461,7 +472,9 @@ int main( int argc, char *argv[] )
 
     QTextStream errStream(stderr);
     Soprano::Client::TcpClient* tcpClient = 0;
+#ifdef HAVE_DBUS
     Soprano::Client::DBusClient* dbusClient = 0;
+#endif
     Soprano::Client::LocalSocketClient* localSocketClient = 0;
     Soprano::Model* model = 0;
     if ( backendName.isEmpty() ) {
@@ -512,6 +525,7 @@ int main( int argc, char *argv[] )
                 return 2;
             }
         }
+#ifdef HAVE_DBUS
         else if ( args.hasSetting( "dbus" ) ) {
             QString dbusService = args.getSetting( "dbus" );
             dbusClient = new Soprano::Client::DBusClient( dbusService );
@@ -526,6 +540,7 @@ int main( int argc, char *argv[] )
                 return 2;
             }
         }
+#endif
         else {
             errStream << "Please specify a backend to be used or details on how to contact" << endl
                       << "a soprano server." << endl;

@@ -19,15 +19,6 @@ set(soprano_server_SRC
   modelpool.cpp
   randomgenerator.cpp
   datastream.cpp
-  dbus/dbusutil.cpp
-  dbus/dbusmodeladaptor.cpp
-  dbus/dbusexportiterator.cpp
-  dbus/dbusexportmodel.cpp
-  dbus/dbusstatementiteratoradaptor.cpp
-  dbus/dbusnodeiteratoradaptor.cpp
-  dbus/dbusqueryresultiteratoradaptor.cpp
-  dbus/dbusserveradaptor.cpp
-  dbus/dbusoperators.cpp
 )
 
 set(soprano_client_SRC
@@ -41,27 +32,46 @@ set(soprano_client_SRC
   clientnodeiteratorbackend.cpp
   clientqueryresultiteratorbackend.cpp
   datastream.cpp
-  dbus/dbusutil.cpp
-  dbus/dbusabstractinterface.cpp
-  dbus/dbusmodelinterface.cpp
-  dbus/dbusstatementiteratorinterface.cpp
-  dbus/dbusnodeiteratorinterface.cpp
-  dbus/dbusqueryresultiteratorinterface.cpp
-  dbus/dbusserverinterface.cpp
-  dbus/dbusclient.cpp
-  dbus/dbusmodel.cpp
-  dbus/dbusclientnodeiteratorbackend.cpp
-  dbus/dbusclientstatementiteratorbackend.cpp
-  dbus/dbusclientqueryresultiteratorbackend.cpp
-  dbus/dbusoperators.cpp
-  dbus/dbusstatementiterator.cpp
-  dbus/dbusnodeiterator.cpp
-  dbus/dbusqueryresultiterator.cpp
   sparql/sparqlmodel.cpp
   sparql/sparqlqueryresult.cpp
   sparql/sparqlprotocol.cpp
   sparql/sparqlxmlresultparser.cpp
 )
+
+if(HAVE_DBUS)
+  set(soprano_server_SRC
+    ${soprano_server_SRC}
+    dbus/dbusutil.cpp
+    dbus/dbusmodeladaptor.cpp
+    dbus/dbusexportiterator.cpp
+    dbus/dbusexportmodel.cpp
+    dbus/dbusstatementiteratoradaptor.cpp
+    dbus/dbusnodeiteratoradaptor.cpp
+    dbus/dbusqueryresultiteratoradaptor.cpp
+    dbus/dbusserveradaptor.cpp
+    dbus/dbusoperators.cpp
+    )
+
+  set(soprano_client_SRC
+    ${soprano_client_SRC}
+    dbus/dbusutil.cpp
+    dbus/dbusabstractinterface.cpp
+    dbus/dbusmodelinterface.cpp
+    dbus/dbusstatementiteratorinterface.cpp
+    dbus/dbusnodeiteratorinterface.cpp
+    dbus/dbusqueryresultiteratorinterface.cpp
+    dbus/dbusserverinterface.cpp
+    dbus/dbusclient.cpp
+    dbus/dbusmodel.cpp
+    dbus/dbusclientnodeiteratorbackend.cpp
+    dbus/dbusclientstatementiteratorbackend.cpp
+    dbus/dbusclientqueryresultiteratorbackend.cpp
+    dbus/dbusoperators.cpp
+    dbus/dbusstatementiterator.cpp
+    dbus/dbusnodeiterator.cpp
+    dbus/dbusqueryresultiterator.cpp
+    )
+endif(HAVE_DBUS)
 
 configure_file(soprano-server-config.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/soprano-server-config.h)
 
@@ -97,22 +107,33 @@ set_target_properties(sopranoclient PROPERTIES
   INSTALL_NAME_DIR ${LIB_DESTINATION}
 )
 
+
 target_link_libraries(
   sopranoserver
   soprano
   ${QT_QTCORE_LIBRARY}
   ${QT_QTNETWORK_LIBRARY}
-  ${QT_QTDBUS_LIBRARY}
 )
+if(HAVE_DBUS)
+  target_link_libraries(
+    sopranoserver
+    ${QT_QTDBUS_LIBRARY})
+endif(HAVE_DBUS)
+
 
 target_link_libraries(
   sopranoclient
   soprano
   ${QT_QTCORE_LIBRARY}
   ${QT_QTNETWORK_LIBRARY}
-  ${QT_QTDBUS_LIBRARY}
   ${QT_QTXML_LIBRARY}
 )
+if(HAVE_DBUS)
+  target_link_libraries(
+    sopranoclient
+    ${QT_QTDBUS_LIBRARY})
+endif(HAVE_DBUS)
+
 
 #target_link_libraries(
 #  soprano_serverclientbackend
@@ -152,5 +173,7 @@ install(
   DESTINATION include/soprano
 )
 
-add_subdirectory(dbus)
 add_subdirectory(sparql)
+if(HAVE_DBUS)
+  add_subdirectory(dbus)
+endif(HAVE_DBUS)

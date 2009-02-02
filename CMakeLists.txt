@@ -50,6 +50,8 @@ else(JAVA_INCLUDE_PATH AND JAVA_JVM_LIBRARY)
   endif("$ENV{JAVA_HOME}" STREQUAL "")
 endif(JAVA_INCLUDE_PATH AND JAVA_JVM_LIBRARY)
 
+set(HAVE_DBUS ${QT_QTDBUS_FOUND})
+
 
 ##################  setup install directories  ################################
 set (LIB_SUFFIX "" CACHE STRING "Define suffix of directory name (32/64)" )
@@ -156,6 +158,10 @@ if(CLucene_FOUND)
   message("   * The CLucene-based full-text search index library")
 endif(CLucene_FOUND)
 
+if(HAVE_DBUS)
+  message("   * D-Bus server/client support")
+endif(HAVE_DBUS)
+
 
 message("")
 message("-- Soprano Components that will NOT be built:")
@@ -177,5 +183,9 @@ endif(NOT REDLAND_FOUND OR REDLAND_VERSION STRLESS "1.0.6")
 if(NOT CLucene_FOUND)
   message("   * The CLucene-based full-text search index library")
 endif(NOT CLucene_FOUND)
+
+if(NOT HAVE_DBUS)
+  message("   * D-Bus server/client support")
+endif(NOT HAVE_DBUS)
 
 message("---------------------------------------------------------------------------------------")

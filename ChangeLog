@@ -1,5 +1,7 @@
 2.2.2
 	* Properly clear the error in the SparqlModel
+	* Made all D-Bus dependant parts optional for successful compilation on Windows.
+	* Redland include dir fix.
 
 2.2.1
 	* Added removeAllStatements support in SparqlModel (by iterating over all statements)
@@ -22,6 +24,9 @@
 	  as a field in a clucene query.
 	* SPARQL endpoint query support in sopranocmd
 	* Performace improvements
+
+2.1.2
+        * Better URI encoding in DBus communication, fixes problems with some special characters in URIs.
 
 2.1
 	* SignalCacheModel to restrict the number of emitted statementsAdded and statementsRemoved signals
