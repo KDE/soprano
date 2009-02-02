@@ -1,1 +1,1 @@
-#cmakedefine HAVE_DBUS
+#cmakedefine BUILD_DBUS_SUPPORT

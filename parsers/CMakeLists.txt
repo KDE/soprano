@@ -1,7 +1,7 @@
 project(soprano_parsers)
 
-if(REDLAND_FOUND)
+if(BUILD_RAPTOR_PARSER)
   add_subdirectory(raptor)
-endif(REDLAND_FOUND)
+endif(BUILD_RAPTOR_PARSER)
 
 add_subdirectory(nquads)

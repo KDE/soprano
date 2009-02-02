@@ -38,7 +38,7 @@ set(soprano_client_SRC
   sparql/sparqlxmlresultparser.cpp
 )
 
-if(HAVE_DBUS)
+if(BUILD_DBUS_SUPPORT)
   set(soprano_server_SRC
     ${soprano_server_SRC}
     dbus/dbusutil.cpp
@@ -71,7 +71,7 @@ if(HAVE_DBUS)
     dbus/dbusnodeiterator.cpp
     dbus/dbusqueryresultiterator.cpp
     )
-endif(HAVE_DBUS)
+endif(BUILD_DBUS_SUPPORT)
 
 configure_file(soprano-server-config.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/soprano-server-config.h)
 
@@ -114,11 +114,11 @@ target_link_libraries(
   ${QT_QTCORE_LIBRARY}
   ${QT_QTNETWORK_LIBRARY}
 )
-if(HAVE_DBUS)
+if(BUILD_DBUS_SUPPORT)
   target_link_libraries(
     sopranoserver
     ${QT_QTDBUS_LIBRARY})
-endif(HAVE_DBUS)
+endif(BUILD_DBUS_SUPPORT)
 
 
 target_link_libraries(
@@ -128,11 +128,11 @@ target_link_libraries(
   ${QT_QTNETWORK_LIBRARY}
   ${QT_QTXML_LIBRARY}
 )
-if(HAVE_DBUS)
+if(BUILD_DBUS_SUPPORT)
   target_link_libraries(
     sopranoclient
     ${QT_QTDBUS_LIBRARY})
-endif(HAVE_DBUS)
+endif(BUILD_DBUS_SUPPORT)
 
 
 #target_link_libraries(
@@ -174,6 +174,6 @@ install(
 )
 
 add_subdirectory(sparql)
-if(HAVE_DBUS)
+if(BUILD_DBUS_SUPPORT)
   add_subdirectory(dbus)
-endif(HAVE_DBUS)
+endif(BUILD_DBUS_SUPPORT)

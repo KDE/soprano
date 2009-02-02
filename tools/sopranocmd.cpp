@@ -31,7 +31,7 @@
 
 #include "../server/tcpclient.h"
 #include "../server/localsocketclient.h"
-#ifdef HAVE_DBUS
+#ifdef BUILD_DBUS_SUPPORT
 #include "../server/dbus/dbusclient.h"
 #include "../server/dbus/dbusmodel.h"
 #endif
@@ -338,7 +338,7 @@ namespace {
           << "   sopranocmd --backend [--dir <storagedir>] [--serialization <s>] <command> [<parameters>]" << endl
           << "   sopranocmd --port <port> [--host <host>] --model <name> [--serialization <s>] <command> [<parameters>]" << endl
           << "   sopranocmd --socket <socketpath>  --model <name> [--serialization <s>] <command> [<parameters>]" << endl
-#ifdef HAVE_DBUS
+#ifdef BUILD_DBUS_SUPPORT
           << "   sopranocmd --dbus <dbusservice> --model <name> [--serialization <s>] <command> [<parameters>]" << endl
 #endif
           << "   sopranocmd --sparql <sparql end point> [--port <port> [--serialization <s>] <command> [<parameters>]" << endl
@@ -357,7 +357,7 @@ namespace {
           << "   --dir               The storage directory. This only applies when specifying the backend. Defaults" << endl
           << "                       to current directory." << endl
           << endl
-#ifdef HAVE_DBUS
+#ifdef BUILD_DBUS_SUPPORT
           << "   --dbus <service>    Contact the soprano server through D-Bus running on the specified service." << endl
           << endl
 #endif
@@ -424,7 +424,7 @@ int main( int argc, char *argv[] )
     allowedCmdLineArgs.insert( "port", true );
     allowedCmdLineArgs.insert( "host", true );
     allowedCmdLineArgs.insert( "socket", true );
-#ifdef HAVE_DBUS
+#ifdef BUILD_DBUS_SUPPORT
     allowedCmdLineArgs.insert( "dbus", true );
 #endif
     allowedCmdLineArgs.insert( "sparql", true );
@@ -472,7 +472,7 @@ int main( int argc, char *argv[] )
 
     QTextStream errStream(stderr);
     Soprano::Client::TcpClient* tcpClient = 0;
-#ifdef HAVE_DBUS
+#ifdef BUILD_DBUS_SUPPORT
     Soprano::Client::DBusClient* dbusClient = 0;
 #endif
     Soprano::Client::LocalSocketClient* localSocketClient = 0;
@@ -525,7 +525,7 @@ int main( int argc, char *argv[] )
                 return 2;
             }
         }
-#ifdef HAVE_DBUS
+#ifdef BUILD_DBUS_SUPPORT
         else if ( args.hasSetting( "dbus" ) ) {
             QString dbusService = args.getSetting( "dbus" );
             dbusClient = new Soprano::Client::DBusClient( dbusService );
