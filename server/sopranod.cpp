@@ -20,9 +20,6 @@
 #include "backend.h"
 #include "pluginmanager.h"
 #include "version.h"
-#ifdef HAVE_DBUS
-#include "dbus/dbusserveradaptor.h"
-#endif
 #include "lockfile.h"
 #include "sopranodcore.h"
 
@@ -30,6 +27,9 @@
 
 #include "soprano-server-config.h"
 
+#ifdef HAVE_DBUS
+#include "dbus/dbusserveradaptor.h"
+#endif
 
 namespace {
 #ifndef Q_OS_WIN

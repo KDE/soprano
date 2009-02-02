@@ -21,12 +21,13 @@
 
 #include "servercore.h"
 #include "serverconnection.h"
-#ifdef HAVE_DBUS
-#include "dbus/dbusserveradaptor.h"
-#endif
 #include "modelpool.h"
 
 #include "soprano-server-config.h"
+
+#ifdef HAVE_DBUS
+#include "dbus/dbusserveradaptor.h"
+#endif
 
 #include "backend.h"
 #include "storagemodel.h"
