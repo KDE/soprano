@@ -1,7 +1,7 @@
 /*
  * This file is part of Soprano Project.
  *
- * Copyright (C) 2007 Sebastian Trueg <trueg@kde.org>
+ * Copyright (C) 2007-2009 Sebastian Trueg <trueg@kde.org>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -10,25 +10,24 @@
  * See the file "COPYING" for the exact licensing terms.
  */
 
+#include "servercore.h"
+#include "soprano-server-config.h"
+#include "backend.h"
+#include "pluginmanager.h"
+#include "version.h"
+#ifdef BUILD_DBUS_SUPPORT
+#include "dbus/dbusserveradaptor.h"
+#endif
+#include "lockfile.h"
+#include "sopranodcore.h"
+
 #include <QtCore/QCoreApplication>
 #include <QtCore/QTextStream>
 #include <QtCore/QStringList>
 #include <QtCore/QFile>
 #include <QtCore/QDir>
 
-#include "servercore.h"
-#include "backend.h"
-#include "pluginmanager.h"
-#include "version.h"
-#ifdef HAVE_DBUS
-#include "dbus/dbusserveradaptor.h"
-#endif
-#include "lockfile.h"
-#include "sopranodcore.h"
-
 #include <signal.h>
-
-#include "soprano-server-config.h"
 
 
 namespace {
@@ -57,7 +56,7 @@ int usage()
     s << endl;
     s << "Usage:" << endl
       << "   sopranod [--backend <name>] [--storagedir <dir>] [--port <port>]"
-#ifdef SOPRANO_BUILD_INDEX_LIB
+#ifdef BUILD_CLUCENE_INDEX
            " [--with-index]"
 #endif
       << endl;
@@ -116,7 +115,7 @@ int main( int argc, char** argv )
                 return usage();
             }
         }
-#ifdef SOPRANO_BUILD_INDEX_LIB
+#ifdef BUILD_CLUCENE_INDEX
         else if ( args[i] == "--with-index" ) {
             withIndex = true;
         }
@@ -144,7 +143,7 @@ int main( int argc, char** argv )
     SopranodCore* core = new SopranodCore( withIndex, &app );
     core->setBackendSettings( settings );
 
-#ifdef HAVE_DBUS
+#ifdef BUILD_DBUS_SUPPORT
     QDBusConnection::sessionBus().registerService( "org.soprano.Server" );
     core->registerAsDBusObject();
 #endif

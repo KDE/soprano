@@ -1,2 +1,2 @@
-#cmakedefine SOPRANO_BUILD_INDEX_LIB
-#cmakedefine HAVE_DBUS
+#cmakedefine BUILD_CLUCENE_INDEX
+#cmakedefine BUILD_DBUS_SUPPORT

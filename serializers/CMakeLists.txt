@@ -1,19 +1,7 @@
 project(soprano_parsers)
 
-if(WIN32)
-  if(NOT REDLAND_VERSION)
-    set(REDLAND_VERSION "1.0.3")
-    message(STATUS "Windows currently oly has Redland version 1.0.3")
-  endif(NOT REDLAND_VERSION)
-endif(WIN32)
-
-if(REDLAND_FOUND AND REDLAND_VERSION STRGREATER "1.0.5")
+if(BUILD_RAPTOR_SERIALIZER)
   add_subdirectory(raptor)
-else(REDLAND_FOUND AND REDLAND_VERSION STRGREATER "1.0.5")
-  if(REDLAND_FOUND)
-    message(STATUS "Redland version less than 1.0.6: ${redland_VERSION}")
-    message(STATUS "The redland serializer plugin will not be built!")
-  endif(REDLAND_FOUND)
-endif(REDLAND_FOUND AND REDLAND_VERSION STRGREATER "1.0.5")
+endif(BUILD_RAPTOR_SERIALIZER)
 
 add_subdirectory(nquads)
