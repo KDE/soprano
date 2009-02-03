@@ -9,6 +9,7 @@
 	  - CLucene full text index
 	  - D-Bus integration
 	  - Apidox generation
+	* Less use of dynamic_cast
 
 2.2.1
 	* Added removeAllStatements support in SparqlModel (by iterating over all statements)
