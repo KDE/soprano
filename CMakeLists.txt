@@ -18,7 +18,8 @@ option(SOPRANO_DISABLE_REDLAND_BACKEND "Disable the compilation of the redland b
 option(SOPRANO_DISABLE_SESAME2_BACKEND "Disable the compilation of the sesame2 backend")
 option(SOPRANO_DISABLE_CLUCENE_INDEX "Disable the compilation of the clucene-based full-text index")
 option(SOPRANO_DISABLE_RAPTOR_PARSER "Disable the compilation of the raptor parser and serializer plugins (provides most Soprano parsers and serializers)")
-option(SOPRANO_DISABLE_DBUS "Disable the D-Bus integration)")
+option(SOPRANO_DISABLE_DBUS "Disable the D-Bus integration")
+option(SOPRANO_BUILD_API_DOCS "Build the Soprano API documentation")
 
 if(SOPRANO_BUILD_TESTS)
   enable_testing()
@@ -157,22 +158,24 @@ endif(NOT WIN32)
 
 
 ##################  apidox ################################
-find_package(Doxygen)
+if(SOPRANO_BUILD_API_DOCS)
+  find_package(Doxygen)
 
-if(DOXYGEN_EXECUTABLE)
-  configure_file(${soprano_SOURCE_DIR}/Doxyfile.cmake ${soprano_BINARY_DIR}/Doxyfile)
+  if(DOXYGEN_EXECUTABLE)
+    configure_file(${soprano_SOURCE_DIR}/Doxyfile.cmake ${soprano_BINARY_DIR}/Doxyfile)
 
-  if(EXISTS ${QT_DOC_DIR}/html)
-    set(QTDOCS "${QT_DOC_DIR}/html")
-  else(EXISTS ${QT_DOC_DIR}/html)
-    set(QTDOCS "http://doc.trolltech.com/4.3/")
-  endif(EXISTS ${QT_DOC_DIR}/html)
+    if(EXISTS ${QT_DOC_DIR}/html)
+      set(QTDOCS "${QT_DOC_DIR}/html")
+    else(EXISTS ${QT_DOC_DIR}/html)
+      set(QTDOCS "http://doc.trolltech.com/4.3/")
+    endif(EXISTS ${QT_DOC_DIR}/html)
 
-  add_custom_target(
-    apidox
-    COMMAND ${DOXYGEN_EXECUTABLE} Doxyfile
-    COMMAND docs/html/installdox -l qt4.tag@${QTDOCS} docs/html/*.html)
-endif(DOXYGEN_EXECUTABLE)
+    add_custom_target(
+      apidox ALL
+      COMMAND ${DOXYGEN_EXECUTABLE} Doxyfile
+      COMMAND docs/html/installdox -l qt4.tag@${QTDOCS} docs/html/*.html)
+  endif(DOXYGEN_EXECUTABLE)
+endif(SOPRANO_BUILD_API_DOCS)
 
 
 ##################  status messages ################################

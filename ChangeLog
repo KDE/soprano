@@ -2,7 +2,13 @@
 	* Properly clear the error in the SparqlModel
 	* Made all D-Bus dependant parts optional for successful compilation on Windows.
 	* Redland include dir fix.
-	* New cmake options to manually disable all optional components.
+	* New cmake options to manually disable all optional components:
+	  - Redland backend
+	  - Sesame2 backend
+	  - Raptor parser/serializer
+	  - CLucene full text index
+	  - D-Bus integration
+	  - Apidox generation
 
 2.2.1
 	* Added removeAllStatements support in SparqlModel (by iterating over all statements)
