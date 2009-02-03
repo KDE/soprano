@@ -189,8 +189,8 @@ Soprano::Node::Type Soprano::Node::type() const
 
 QUrl Soprano::Node::uri() const
 {
-    if ( const ResourceNodeData* rnd = dynamic_cast<const ResourceNodeData*>( d.constData() ) ) {
-        return rnd->uri;
+    if ( isResource() ) {
+        return static_cast<const ResourceNodeData*>( d.constData() )->uri;
     }
     else {
         return QUrl();
@@ -200,8 +200,8 @@ QUrl Soprano::Node::uri() const
 
 QString Soprano::Node::identifier() const
 {
-    if ( const BNodeData* bnd = dynamic_cast<const BNodeData*>( d.constData() ) ) {
-        return bnd->identifier;
+    if ( isBlank() ) {
+        return static_cast<const BNodeData*>( d.constData() )->identifier;
     }
     else {
         return QString();
@@ -211,8 +211,8 @@ QString Soprano::Node::identifier() const
 
 Soprano::LiteralValue Soprano::Node::literal() const
 {
-    if ( const LiteralNodeData* lnd = dynamic_cast<const LiteralNodeData*>( d.constData() ) ) {
-        return lnd->value;
+    if ( isLiteral() ) {
+        return static_cast<const LiteralNodeData*>( d.constData() )->value;
     }
     else {
         return LiteralValue();
@@ -221,8 +221,8 @@ Soprano::LiteralValue Soprano::Node::literal() const
 
 QUrl Soprano::Node::dataType() const
 {
-    if ( const LiteralNodeData* lnd = dynamic_cast<const LiteralNodeData*>( d.constData() ) ) {
-        return lnd->value.dataTypeUri();
+    if ( isLiteral() ) {
+        return static_cast<const LiteralNodeData*>( d.constData() )->value.dataTypeUri();
     }
     else {
         return QUrl();
@@ -231,8 +231,8 @@ QUrl Soprano::Node::dataType() const
 
 QString Soprano::Node::language() const
 {
-    if ( const LiteralNodeData* lnd = dynamic_cast<const LiteralNodeData*>( d.constData() ) ) {
-        return lnd->language;
+    if ( isLiteral() ) {
+        return static_cast<const LiteralNodeData*>( d.constData() )->language;
     }
     else {
         return QString();
@@ -284,18 +284,18 @@ bool Soprano::Node::operator==( const Node& other ) const
     }
     else if ( type() != EmptyNode ) {
         if ( d->type == ResourceNode ) {
-            return(  dynamic_cast<const ResourceNodeData*>( d.constData() )->uri ==
-                     dynamic_cast<const ResourceNodeData*>( other.d.constData() )->uri );
+            return(  static_cast<const ResourceNodeData*>( d.constData() )->uri ==
+                     static_cast<const ResourceNodeData*>( other.d.constData() )->uri );
         }
         else if ( d->type == BlankNode ) {
-            return( dynamic_cast<const BNodeData*>( d.constData() )->identifier ==
-                    dynamic_cast<const BNodeData*>( other.d.constData() )->identifier );
+            return( static_cast<const BNodeData*>( d.constData() )->identifier ==
+                    static_cast<const BNodeData*>( other.d.constData() )->identifier );
         }
         else if ( d->type == LiteralNode ) {
-            return ( dynamic_cast<const LiteralNodeData*>( d.constData() )->value ==
-                     dynamic_cast<const LiteralNodeData*>( other.d.constData() )->value &&
-                     dynamic_cast<const LiteralNodeData*>( d.constData() )->language ==
-                     dynamic_cast<const LiteralNodeData*>( other.d.constData() )->language );
+            return ( static_cast<const LiteralNodeData*>( d.constData() )->value ==
+                     static_cast<const LiteralNodeData*>( other.d.constData() )->value &&
+                     static_cast<const LiteralNodeData*>( d.constData() )->language ==
+                     static_cast<const LiteralNodeData*>( other.d.constData() )->language );
         }
     }
 
@@ -310,18 +310,18 @@ bool Soprano::Node::operator!=( const Node& other ) const
     }
 
     else if ( type() == ResourceNode ) {
-        return(  dynamic_cast<const ResourceNodeData*>( d.constData() )->uri
-                 != dynamic_cast<const ResourceNodeData*>( other.d.constData() )->uri );
+        return(  static_cast<const ResourceNodeData*>( d.constData() )->uri
+                 != static_cast<const ResourceNodeData*>( other.d.constData() )->uri );
     }
     else if ( type() == BlankNode ) {
-        return( dynamic_cast<const BNodeData*>( d.constData() )->identifier !=
-                dynamic_cast<const BNodeData*>( other.d.constData() )->identifier );
+        return( static_cast<const BNodeData*>( d.constData() )->identifier !=
+                static_cast<const BNodeData*>( other.d.constData() )->identifier );
     }
     else if ( type() == LiteralNode ) {
-        return ( dynamic_cast<const LiteralNodeData*>( d.constData() )->value !=
-                 dynamic_cast<const LiteralNodeData*>( other.d.constData() )->value ||
-                 dynamic_cast<const LiteralNodeData*>( d.constData() )->language !=
-                 dynamic_cast<const LiteralNodeData*>( other.d.constData() )->language );
+        return ( static_cast<const LiteralNodeData*>( d.constData() )->value !=
+                 static_cast<const LiteralNodeData*>( other.d.constData() )->value ||
+                 static_cast<const LiteralNodeData*>( d.constData() )->language !=
+                 static_cast<const LiteralNodeData*>( other.d.constData() )->language );
     }
     else {
         // empty nodes are always equal

@@ -62,7 +62,7 @@ Soprano::QueryResultIterator& Soprano::QueryResultIterator::operator=( const Que
 
 Soprano::Statement Soprano::QueryResultIterator::currentStatement() const
 {
-    return ( backend() ? dynamic_cast<QueryResultIteratorBackend*>( backend() )->currentStatement() : Statement() );
+    return ( backend() ? static_cast<QueryResultIteratorBackend*>( backend() )->currentStatement() : Statement() );
 }
 
 
@@ -92,49 +92,49 @@ Soprano::Node Soprano::QueryResultIterator::operator[]( const QString name ) con
 
 Soprano::Node Soprano::QueryResultIterator::binding( const QString &name ) const
 {
-    return ( backend() ? dynamic_cast<QueryResultIteratorBackend*>( backend() )->binding( name ) : Node() );
+    return ( backend() ? static_cast<QueryResultIteratorBackend*>( backend() )->binding( name ) : Node() );
 }
 
 
 Soprano::Node Soprano::QueryResultIterator::binding( int offset ) const
 {
-    return ( backend() ? dynamic_cast<QueryResultIteratorBackend*>( backend() )->binding( offset ) : Node() );
+    return ( backend() ? static_cast<QueryResultIteratorBackend*>( backend() )->binding( offset ) : Node() );
 }
 
 
 int Soprano::QueryResultIterator::bindingCount() const
 {
-    return ( backend() ? dynamic_cast<QueryResultIteratorBackend*>( backend() )->bindingCount() : 0 );
+    return ( backend() ? static_cast<QueryResultIteratorBackend*>( backend() )->bindingCount() : 0 );
 }
 
 
 QStringList Soprano::QueryResultIterator::bindingNames() const
 {
-    return ( backend() ? dynamic_cast<QueryResultIteratorBackend*>( backend() )->bindingNames() : QStringList() );
+    return ( backend() ? static_cast<QueryResultIteratorBackend*>( backend() )->bindingNames() : QStringList() );
 }
 
 
 bool Soprano::QueryResultIterator::isGraph() const
 {
-    return ( backend() ? dynamic_cast<QueryResultIteratorBackend*>( backend() )->isGraph() : false );
+    return ( backend() ? static_cast<QueryResultIteratorBackend*>( backend() )->isGraph() : false );
 }
 
 
 bool Soprano::QueryResultIterator::isBinding() const
 {
-    return ( backend() ? dynamic_cast<QueryResultIteratorBackend*>( backend() )->isBinding() : false );
+    return ( backend() ? static_cast<QueryResultIteratorBackend*>( backend() )->isBinding() : false );
 }
 
 
 bool Soprano::QueryResultIterator::isBool() const
 {
-    return ( backend() ? dynamic_cast<QueryResultIteratorBackend*>( backend() )->isBool() : false );
+    return ( backend() ? static_cast<QueryResultIteratorBackend*>( backend() )->isBool() : false );
 }
 
 
 bool Soprano::QueryResultIterator::boolValue() const
 {
-    return ( backend() ? dynamic_cast<QueryResultIteratorBackend*>( backend() )->boolValue() : false );
+    return ( backend() ? static_cast<QueryResultIteratorBackend*>( backend() )->boolValue() : false );
 }
 
 
