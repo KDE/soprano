@@ -169,7 +169,7 @@ QString Soprano::IODBCStatementHandler::Private::getLang( short key )
     long ind = 0;
     rc = SQLBindParameter( hstmt, 1, SQL_PARAM_INPUT, SQL_C_SSHORT, SQL_SMALLINT, 0, 0, &key, 0, &ind );
     if ( SQL_SUCCEEDED(rc) ) {
-        rc = SQLExecDirect( hstmt, TEXT("select RL_ID from DB.DBA.RDF_LANGUAGE where RL_TWOBYTE=?" ), SQL_NTS );
+        rc = SQLExecDirect( hstmt, ( SQLCHAR* )"select RL_ID from DB.DBA.RDF_LANGUAGE where RL_TWOBYTE=?", SQL_NTS );
         if ( SQL_SUCCEEDED(rc) ) {
             rc = SQLFetch( hstmt );
             if ( SQL_SUCCEEDED(rc) ) {
@@ -210,7 +210,7 @@ QUrl Soprano::IODBCStatementHandler::Private::getType( short key )
     long ind;
     rc = SQLBindParameter( hstmt, 1, SQL_PARAM_INPUT, SQL_C_SSHORT, SQL_SMALLINT, 0, 0, &key, 0, &ind);
     if ( SQL_SUCCEEDED(rc) ) {
-        rc = SQLExecDirect( hstmt, TEXT("select RDT_QNAME from DB.DBA.RDF_DATATYPE where RDT_TWOBYTE=?"), SQL_NTS );
+        rc = SQLExecDirect( hstmt, ( SQLCHAR* )"select RDT_QNAME from DB.DBA.RDF_DATATYPE where RDT_TWOBYTE=?", SQL_NTS );
         if ( SQL_SUCCEEDED(rc) ) {
             rc = SQLFetch( hstmt );
             if ( SQL_SUCCEEDED(rc) ) {
@@ -274,7 +274,7 @@ QStringList Soprano::IODBCStatementHandler::resultColumns()
                                  &colPrecision,
                                  &colScale,
                                  &colNullable) == SQL_SUCCESS ) {
-                cols.append( QString::fromWCharArray( colName ) );
+                cols.append( QString::fromLatin1( ( const char* )colName ) );
             }
             else {
                 setError( IODBC::convertSqlError( SQL_HANDLE_STMT, d->m_hstmt ) );
@@ -366,7 +366,17 @@ Soprano::Node Soprano::IODBCStatementHandler::getData( int colNum )
         case DV_RDF: {
             QUrl type = d->getType( l_type );
             QString lang = d->getLang( l_lang );
-            node = Node( LiteralValue::fromString( QString::fromUtf8( reinterpret_cast<const char*>( data ) ), type ), lang );
+            if ( type == IODBC::fakeBooleanType() ) {
+                node = Node( LiteralValue( length > 0 ) );
+            }
+            else {
+                if ( type == IODBC::fakeDateTimeType() ) // forcing virtuoso to store as typed string for now
+                    type = Soprano::Vocabulary::XMLSchema::dateTime();
+                else if ( type == IODBC::fakeTimeType() )
+                    type = Soprano::Vocabulary::XMLSchema::time();
+
+                node = Node( LiteralValue::fromString( QString::fromUtf8( reinterpret_cast<const char*>( data ) ), type ), lang );
+            }
             break;
         }
         case DV_LONG_INT: /* integer */
@@ -389,6 +399,7 @@ Soprano::Node Soprano::IODBCStatementHandler::getData( int colNum )
         case DV_DATE:
         case DV_TIME:
         case DV_DATETIME: {
+            qDebug() << "datetime data:" << ( const char* )data;
             QUrl type;
             switch( dv_dt_type ) {
             case DT_TYPE_DATE:
@@ -401,7 +412,10 @@ Soprano::Node Soprano::IODBCStatementHandler::getData( int colNum )
                 type = Vocabulary::XMLSchema::dateTime();
                 break;
             }
-            node = LiteralValue::fromString( QString::fromUtf8( reinterpret_cast<const char*>( data ) ), type );
+            QString dts = QString::fromUtf8( reinterpret_cast<const char*>( data ) );
+            // FIXME: make Virtuoso return correct values
+            dts.replace( ' ', 'T' );
+            node = LiteralValue::fromString( dts, type );
             break;
         }
         case DV_IRI_ID:

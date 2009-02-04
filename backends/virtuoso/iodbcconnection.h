@@ -42,6 +42,7 @@ namespace Soprano {
         bool isConnected() const;
         void close();
 
+        Error::ErrorCode executeCommand( const QString& command );
         IODBCStatementHandler* execute( const QString& request );
 
     private:

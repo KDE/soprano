@@ -106,7 +106,7 @@ bool Soprano::Virtuoso::BackendPlugin::isAvailable() const
 
 QString Soprano::Virtuoso::BackendPlugin::findVirtuosoDriver() const
 {
-    return Soprano::findLibraryPath( "virtodbc" );
+    return Soprano::findLibraryPath( "virtodbc_r" );
 }
 
 #include "virtuosobackend.moc"

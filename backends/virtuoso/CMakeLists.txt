@@ -13,7 +13,7 @@ include_directories(
 )
 
 # enable unicode in iODBC
-add_definitions(-DUNICODE)
+#add_definitions(-DUNICODE)
 
 set(SRC
   iodbcconnection.cpp

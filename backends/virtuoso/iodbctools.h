@@ -31,13 +31,14 @@
 
 #include "error.h"
 
-#define TEXT(x)   	(SQLWCHAR *) L##x
-
 namespace Soprano {
     namespace IODBC {
         Soprano::Error::Error convertSqlError( SQLSMALLINT handleType, SQLHANDLE handle );
         QUrl defaultGraph();
         QUrl openlinkVirtualGraph();
+        QUrl fakeDateTimeType();
+        QUrl fakeTimeType();
+        QUrl fakeBooleanType();
     }
 }
 

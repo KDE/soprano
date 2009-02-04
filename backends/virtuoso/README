@@ -20,3 +20,12 @@ There are some hacks in this backend:
   added at startup, an empty database already contains roughly 1200 statements in one
   named graph. The backend filters out this one graph in all methods except for executeQuery.
   We would need a full featured query parser to augment the query to ignore the one graph.
+
+* Virtuoso does not make a distinction between boolean and integer (actually all signed and
+  unsigned decimals are integer). Thus, we introduced a fake datatype and in iodbcmodel.cpp
+  boolean literals are converted to literals using the fake datatype: a non-empty string 
+  means true while an empty string means false. This is converted back in iodbcstatementhandler.cpp
+
+* The same hack used for boolean values is used for dataTime and time until we find out why Virtuoso
+  looses the fractions of seconds. This also means that queries which compare datetime or time values
+  will not work as expected.

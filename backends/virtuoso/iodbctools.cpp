@@ -24,7 +24,7 @@
 #include <QtCore/QString>
 
 // we have no support for a real default/empty graph, thus we fake one, hoping that nobody will ever use this otherwise
-static const char* s_defaultGraph = "http://soprano.sourceforge.net/virtuosobackend#defaultGraph";
+static const char* s_defaultGraph = "sopranofakes:/DEFAULTGRAPH";
 static const char* s_openlinkVirtualGraph = "http://www.openlinksw.com/schemas/virtrdf#";
 
 
@@ -36,19 +36,25 @@ Soprano::Error::Error Soprano::IODBC::convertSqlError( SQLSMALLINT handleType, S
     SQLINTEGER nativeError = 0;
     SQLSMALLINT len = 0;
 
-    SQLRETURN sts = SQLGetDiagRec( handleType,
-                                   handle,
-                                   1,
-                                   sqlstate,
-                                   &nativeError,
-                                   buf,
-                                   512,
-                                   &len );
-    if ( !SQL_SUCCEEDED(sts) ) {
+    // find last error
+    Error::Error err;
+    int i = 0;
+    while ( SQL_SUCCEEDED( SQLGetDiagRec( handleType,
+                                          handle,
+                                          ++i,
+                                          sqlstate,
+                                          &nativeError,
+                                          buf,
+                                          512,
+                                          &len ) ) ) {
+        err = Soprano::Error::Error( "iODBC Error: " + QString::fromLatin1( ( const char* )buf, len ) );
+    }
+
+    if ( !err ) {
         return Soprano::Error::Error( "Failed to retrieve error information from iODBC" );
     }
     else {
-        return Soprano::Error::Error( "iODBC Error: " + QString::fromWCharArray( buf, len ) );
+        return err;
     }
 }
 
@@ -62,4 +68,22 @@ QUrl Soprano::IODBC::defaultGraph()
 QUrl Soprano::IODBC::openlinkVirtualGraph()
 {
     return QUrl::fromEncoded( s_openlinkVirtualGraph, QUrl::StrictMode );
+}
+
+
+QUrl Soprano::IODBC::fakeDateTimeType()
+{
+    return QUrl::fromEncoded( "sopranofakes:/dateTimeHackUntilVirtuosoProblemIsResolved", QUrl::StrictMode );
+}
+
+
+QUrl Soprano::IODBC::fakeTimeType()
+{
+    return QUrl::fromEncoded( "sopranofakes:/timeHackUntilVirtuosoProblemIsResolved", QUrl::StrictMode );
+}
+
+
+QUrl Soprano::IODBC::fakeBooleanType()
+{
+    return QUrl::fromEncoded( "sopranofakes:/booleanHackUntilVirtuosoProblemIsResolved", QUrl::StrictMode );
 }
