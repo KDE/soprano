@@ -229,9 +229,6 @@ template<typename T> void Soprano::Iterator<T>::close()
         cd->backend->close();
         setError( cd->backend->lastError() );
     }
-    else {
-        setError( QString::fromLatin1( "Invalid iterator." ) );
-    }
 }
 
 template<typename T> bool Soprano::Iterator<T>::next()
@@ -279,10 +276,12 @@ template<typename T> bool Soprano::Iterator<T>::isValid() const
 template<typename T> QList<T> Soprano::Iterator<T>::allElements()
 {
     QList<T> sl;
-    while ( next() ) {
-        sl.append( current() );
+    if( isValid() ) {
+        while ( next() ) {
+            sl.append( current() );
+        }
+        close();
     }
-    close();
     return sl;
 }
 /** \endcond */
