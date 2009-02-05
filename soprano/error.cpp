@@ -41,6 +41,10 @@ namespace Soprano {
             virtual ~ErrorData() {
             }
 
+            virtual bool isParserError() const {
+                return false;
+            }
+
             QString message;
             int code;
         };
@@ -109,6 +113,10 @@ namespace Soprano {
                   locator( loc ) {
             }
 
+            bool isParserError() const {
+                return true;
+            }
+
             Locator locator;
         };
     }
@@ -116,7 +124,7 @@ namespace Soprano {
 
 bool Soprano::Error::Error::isParserError() const
 {
-    return dynamic_cast<const ParserErrorData*>( d.constData() ) != 0;
+    return d->isParserError();
 }
 
 
@@ -158,9 +166,8 @@ Soprano::Error::ParserError& Soprano::Error::ParserError::operator=( const Error
 
 Soprano::Error::Locator Soprano::Error::ParserError::locator() const
 {
-    const ParserErrorData* data = dynamic_cast<const ParserErrorData*>( d.constData() );
-    if ( data ) {
-        return data->locator;
+    if ( isParserError() ) {
+        return static_cast<const ParserErrorData*>( d.constData() )->locator;
     }
     else {
         return Locator();
