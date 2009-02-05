@@ -124,7 +124,7 @@ namespace Soprano {
 
 bool Soprano::Error::Error::isParserError() const
 {
-    return d->isParserError();
+    return d ? d->isParserError() : false;
 }
 
 
