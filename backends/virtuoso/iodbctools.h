@@ -24,7 +24,7 @@
 
 #include <iodbc/sql.h>
 #include <iodbc/sqlext.h>
-#include <iodbc/sqlucode.h>
+//#include <iodbc/sqlucode.h>
 #include <iodbc/iodbcext.h>
 
 #include <QtCore/QUrl>

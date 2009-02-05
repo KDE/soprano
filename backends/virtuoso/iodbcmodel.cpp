@@ -1,7 +1,7 @@
 /*
  * This file is part of Soprano Project
  *
- * Copyright (C) 2008 Sebastian Trueg <trueg@kde.org>
+ * Copyright (C) 2008-2009 Sebastian Trueg <trueg@kde.org>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -34,6 +34,21 @@
 
 // FIXME: this (and some code below) is copied from SparqlModel.
 namespace {
+    QString prepareUrlForSqlCommand( const QUrl& url ) {
+        return QString::fromAscii( url.toEncoded() ).replace( '\'', "\\\'" ).replace( '\"', "\\\"" );
+    }
+
+    QString nodeToN3( const Soprano::Node& node ) {
+        if ( node.isResource() ) {
+            QString encoded = node.toN3();
+            encoded.replace( '\'', "%27" );
+            return encoded;
+        }
+        else {
+            return node.toN3();
+        }
+    }
+
     QString statementToConstructGraphPattern( const Soprano::Statement& s, bool withContext = false )
     {
         QString query;
@@ -41,7 +56,7 @@ namespace {
         if ( withContext ) {
             query += "graph ";
             if ( s.context().isValid() ) {
-                query += s.context().toN3();
+                query += nodeToN3( s.context() );
             }
             else {
                 query += "?g";
@@ -50,14 +65,14 @@ namespace {
         }
 
         if ( s.subject().isValid() ) {
-            query += s.subject().toN3() + ' ';
+            query += nodeToN3( s.subject() ) + ' ';
         }
         else {
             query += "?s ";
         }
 
         if ( s.predicate().isValid() ) {
-            query += s.predicate().toN3() + ' ';
+            query += nodeToN3( s.predicate() ) + ' ';
         }
         else {
             query += "?p ";
@@ -73,7 +88,7 @@ namespace {
                 query += Soprano::Node( Soprano::LiteralValue::fromString( s.object().literal().toBool() ? QString( QLatin1String( "1" ) ) : QString(),
                                                                            Soprano::IODBC::fakeBooleanType() ) ).toN3();
             else
-                query += s.object().toN3();
+                query += nodeToN3( s.object() );
         }
         else {
             query += "?o";
@@ -85,6 +100,42 @@ namespace {
 
         return query;
     }
+
+#if 0
+    QString odbcFormatLiteral( const Soprano::LiteralValue& value ) {
+        if ( value.isDate() ) {
+            return QString( "{d '%1'}" ).arg( value.toString() );
+        }
+
+        else if ( value.isTime() ) {
+            QString ts = value.toString();
+            ts.chop( 1 ); // remove the timezone 'Z'
+            return QString( "{t '%1'}" ).arg( ts );
+        }
+
+        else if ( value.isDateTime() ) {
+            QString dts = value.toString();
+            dts.replace( 'T', ' ' );
+            dts.chop( 1 ); // remove the timezone 'Z'
+            return QString( "{ts '%1'}" ).arg( dts );
+        }
+
+        else if ( value.isString() ) {
+            return QString( "'%1'" ).arg( value.toString() );
+        }
+
+        else if ( value.isByteArray() ) {
+            // FIXME
+            Q_ASSERT( 0 );
+            return QString();
+        }
+
+        else {
+            // numbers
+            return value.toString();
+        }
+    }
+#endif
 }
 
 
@@ -137,15 +188,15 @@ Soprano::Error::ErrorCode Soprano::IODBCModel::addStatement( const Statement& st
         s.setContext( IODBC::defaultGraph() );
     }
 
-#if 0
     QString insert;
+#if 0
     // resource objects
     if ( s.object().isResource() ) {
         insert = QString( "DB.DBA.RDF_QUAD_URI('%1','%2','%3','%4')" )
-                 .arg( QString::fromAscii( s.context().uri().toEncoded() ) )
-                 .arg( QString::fromAscii( s.subject().uri().toEncoded() ) )
-                 .arg( QString::fromAscii( s.predicate().uri().toEncoded() ) )
-                 .arg( QString::fromAscii( s.object().uri().toEncoded() ) );
+                 .arg( prepareUrlForSqlCommand( s.context().uri() ) )
+                 .arg( prepareUrlForSqlCommand( s.subject().uri() ) )
+                 .arg( prepareUrlForSqlCommand( s.predicate().uri() ) )
+                 .arg( prepareUrlForSqlCommand( s.object().uri() ) );
     }
 
     // literal objects
@@ -162,7 +213,7 @@ Soprano::Error::ErrorCode Soprano::IODBCModel::addStatement( const Statement& st
                      .arg( QString::fromAscii( s.object().literal().dataTypeUri().toEncoded() ) )
                      .arg( s.object().language() );
         }
-        else {
+        else if ( s.object().literal().isString() ) {
             // FIXME: properly format numbers and datetime
             insert = QString( "DB.DBA.RDF_QUAD_URI_L('%1','%2','%3','%4')" )
                      .arg( QString::fromAscii( s.context().uri().toEncoded() ) )
@@ -175,10 +226,16 @@ Soprano::Error::ErrorCode Soprano::IODBCModel::addStatement( const Statement& st
         setError( "No support for inserting blank nodes!", Error::ErrorInvalidArgument );
         return Error::ErrorInvalidArgument;
     }
+#endif
 
+    // FIXME: do this like above
+    if ( insert.isEmpty() ) {
+        insert = QString("sparql insert into %1")
+                 .arg( statementToConstructGraphPattern( s, true ) );
+    }
+    qDebug() << "addStatement query:" << insert;
     if ( d->connection.executeCommand( insert ) == Error::ErrorNone ) {
         clearError();
-        delete hdl;
 
         // FIXME: can this be done with SQL/RDF views?
         emit statementAdded( statement );
@@ -188,22 +245,6 @@ Soprano::Error::ErrorCode Soprano::IODBCModel::addStatement( const Statement& st
     }
     else {
         setError( d->connection.lastError() );
-        return Error::ErrorUnknown;
-    }
-#endif
-
-    QString insert = QString("insert into %1")
-                     .arg( statementToConstructGraphPattern( s, true ) );
-    qDebug() << "addStatement query:" << insert;
-    if ( d->connection.executeCommand( "sparql " + insert ) == Error::ErrorNone ) {
-
-        // FIXME: can this be done with SQL/RDF views?
-        emit statementAdded( statement );
-        emit statementsAdded();
-
-        return Error::ErrorNone;
-    }
-    else {
         return Error::convertErrorCode( lastError().code() );
     }
 }
@@ -211,7 +252,7 @@ Soprano::Error::ErrorCode Soprano::IODBCModel::addStatement( const Statement& st
 
 Soprano::NodeIterator Soprano::IODBCModel::listContexts() const
 {
-    qDebug() << Q_FUNC_INFO;
+//    qDebug() << Q_FUNC_INFO;
 
     return executeQuery( QString( "select distinct ?g where { "
                                   "graph ?g { ?s ?p ?o . } . "
@@ -224,7 +265,7 @@ Soprano::NodeIterator Soprano::IODBCModel::listContexts() const
 
 bool Soprano::IODBCModel::containsStatement( const Statement& statement ) const
 {
-    qDebug() << Q_FUNC_INFO << statement;
+//    qDebug() << Q_FUNC_INFO << statement;
 
     // fail on invalid statements
     if ( !statement.isValid() ) {
@@ -236,7 +277,7 @@ bool Soprano::IODBCModel::containsStatement( const Statement& statement ) const
     if ( !statement.context().isValid() )
         s.setContext( IODBC::defaultGraph() );
     QString query = QString( "ask { %1 }" ).arg( statementToConstructGraphPattern( s, true ) );
-    qDebug() << "containsStatement query" << query;
+//    qDebug() << "containsStatement query" << query;
     return executeQuery( query, Query::QueryLanguageSparql ).boolValue();
 //     if ( IODBCStatementHandler* sh = d->connection.execute( "sparql " + query ) ) {
 //         bool b = sh->fetchScroll();
@@ -249,7 +290,7 @@ bool Soprano::IODBCModel::containsStatement( const Statement& statement ) const
 
 bool Soprano::IODBCModel::containsAnyStatement( const Statement &statement ) const
 {
-    qDebug() << Q_FUNC_INFO << statement;
+//    qDebug() << Q_FUNC_INFO << statement;
 
     QString query = QString( "ask { %1 }" ).arg( statementToConstructGraphPattern( statement, true ) );
 //     if ( IODBCStatementHandler* sh = d->connection.execute( "sparql " + query ) ) {
@@ -264,7 +305,7 @@ bool Soprano::IODBCModel::containsAnyStatement( const Statement &statement ) con
 
 Soprano::StatementIterator Soprano::IODBCModel::listStatements( const Statement& partial ) const
 {
-    qDebug() << Q_FUNC_INFO << partial;
+//    qDebug() << Q_FUNC_INFO << partial;
 
     // we cannot use a construct query due to missing graph support
     QString query = QString( "select * where { %1 ." ).arg( statementToConstructGraphPattern( partial, true ) );
@@ -272,7 +313,7 @@ Soprano::StatementIterator Soprano::IODBCModel::listStatements( const Statement&
         query += QString( " FILTER(?g != %1) }" ).arg( Node( IODBC::openlinkVirtualGraph() ).toN3() );
     else
         query += '}';
-    qDebug() << "List Statements Query" << query;
+//    qDebug() << "List Statements Query" << query;
     return executeQuery( query, Query::QueryLanguageSparql )
         .iterateStatementsFromBindings( partial.subject().isValid() ? QString() : QString( 's' ),
                                         partial.predicate().isValid() ? QString() : QString( 'p' ),
@@ -284,7 +325,7 @@ Soprano::StatementIterator Soprano::IODBCModel::listStatements( const Statement&
 
 Soprano::Error::ErrorCode Soprano::IODBCModel::removeStatement( const Statement& statement )
 {
-    qDebug() << Q_FUNC_INFO << statement;
+//    qDebug() << Q_FUNC_INFO << statement;
 
     if ( !statement.isValid() ) {
         setError( "Cannot remove invalid statement.", Error::ErrorInvalidArgument );
@@ -302,7 +343,7 @@ Soprano::Error::ErrorCode Soprano::IODBCModel::removeStatement( const Statement&
 
     QString query = QString( "delete from %1" )
                     .arg( statementToConstructGraphPattern( s, true ) );
-    qDebug() << "removeStatement query:" << query;
+//    qDebug() << "removeStatement query:" << query;
     if ( d->connection.executeCommand( "sparql " + query ) == Error::ErrorNone ) {
         // FIXME: can this be done with SQL/RDF views?
         emit statementRemoved( statement );
@@ -315,7 +356,7 @@ Soprano::Error::ErrorCode Soprano::IODBCModel::removeStatement( const Statement&
 
 Soprano::Error::ErrorCode Soprano::IODBCModel::removeAllStatements( const Statement& statement )
 {
-    qDebug() << Q_FUNC_INFO << statement;
+//    qDebug() << Q_FUNC_INFO << statement;
 
     if ( statement.context().isValid() ) {
         if ( statement.context().uri() == IODBC::openlinkVirtualGraph() ) {
@@ -337,7 +378,7 @@ Soprano::Error::ErrorCode Soprano::IODBCModel::removeAllStatements( const Statem
                     .arg( statementToConstructGraphPattern( statement, true ) );
 
         }
-        qDebug() << "removeAllStatements query:" << query;
+//        qDebug() << "removeAllStatements query:" << query;
         if ( d->connection.executeCommand( "sparql " + query ) == Error::ErrorNone ) {
             // FIXME: can this be done with SQL/RDF views?
             emit statementsRemoved();
@@ -370,7 +411,7 @@ Soprano::Error::ErrorCode Soprano::IODBCModel::removeAllStatements( const Statem
 
 int Soprano::IODBCModel::statementCount() const
 {
-    qDebug() << Q_FUNC_INFO;
+//    qDebug() << Q_FUNC_INFO;
 
     QueryResultIterator it = executeQuery( QString( "select count(*) where { "
                                                     "graph ?g { ?s ?p ?o . } . "
@@ -396,7 +437,7 @@ Soprano::QueryResultIterator Soprano::IODBCModel::executeQuery( const QString& q
                                                                 Query::QueryLanguage language,
                                                                 const QString& userQueryLanguage ) const
 {
-    qDebug() << Q_FUNC_INFO << query;
+//    qDebug() << Q_FUNC_INFO << query;
 
     if ( language != Soprano::Query::QueryLanguageSparql ) {
         setError( Error::Error( QString( "Unsupported query language %1." )

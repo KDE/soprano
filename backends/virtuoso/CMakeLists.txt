@@ -12,9 +12,6 @@ include_directories(
   ${IODBC_INCLUDE_DIR}
 )
 
-# enable unicode in iODBC
-#add_definitions(-DUNICODE)
-
 set(SRC
   iodbcconnection.cpp
   iodbcqueryiteratorbackend.cpp

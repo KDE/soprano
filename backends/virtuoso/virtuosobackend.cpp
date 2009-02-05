@@ -1,7 +1,7 @@
 /*
  * This file is part of Soprano Project
  *
- * Copyright (C) 2008 Sebastian Trueg <trueg@kde.org>
+ * Copyright (C) 2008-2009 Sebastian Trueg <trueg@kde.org>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -47,11 +47,15 @@ Soprano::StorageModel* Soprano::Virtuoso::BackendPlugin::createModel( const Back
     QString uid = valueInSettings( settings, BackendOptionUsername ).toString();
     QString pwd = valueInSettings( settings, BackendOptionPassword ).toString();
 
-    if ( host.isEmpty() || port == 0 ) {
-        setError( "Need host and port to connect to Virtuoso server.", Error::ErrorInvalidArgument );
-        return 0;
-    }
+//     if ( host.isEmpty() || port == 0 ) {
+//         setError( "Need host and port to connect to Virtuoso server.", Error::ErrorInvalidArgument );
+//         return 0;
+//     }
 
+    if ( host.isEmpty() )
+        host = "localhost";
+    if ( port == 0 )
+        port = 1111;
     if ( uid.isEmpty() )
         uid = "dba";
     if ( pwd.isEmpty() )
