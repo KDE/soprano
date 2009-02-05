@@ -230,5 +230,6 @@ QString Soprano::DateTime::toString( const QDate& d )
 
 QString Soprano::DateTime::toString( const QDateTime& dt )
 {
-    return toString( dt.date() ) + 'T' + toString( dt.toUTC().time() );
+    QDateTime utc = dt.toUTC();
+    return toString( utc.date() ) + 'T' + toString( utc.time() );
 }
