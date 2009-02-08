@@ -80,7 +80,7 @@ namespace Soprano {
         }
 
         bool TcpClientConnection::isConnected( QIODevice* device ) {
-            return( static_cast<QTcpSocket*>( device )->state() == QAbstractSocket::ConnectedState );
+            return device ? ( static_cast<QTcpSocket*>( device )->state() == QAbstractSocket::ConnectedState ) : false;
         }
     }
 }

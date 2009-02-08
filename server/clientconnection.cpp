@@ -681,7 +681,8 @@ bool Soprano::Client::ClientConnection::checkProtocolVersion()
 
 bool Soprano::Client::ClientConnection::testConnection()
 {
-    return isConnected( socket() );
+    QIODevice* s = socket();
+    return s ? isConnected( s ) : false; 
 }
 
 #include "clientconnection.moc"
