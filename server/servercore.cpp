@@ -183,7 +183,7 @@ void Soprano::Server::ServerCore::removeModel( const QString& name )
     clearError();
 
     QHash<QString, Model*>::iterator it = d->models.find( name );
-    if ( it == d->models.constEnd() ) {
+    if ( it == d->models.end() ) {
         setError( QString( "Could not find model with name %1" ).arg( name ) );
     }
     else {
