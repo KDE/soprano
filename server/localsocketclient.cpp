@@ -80,10 +80,7 @@ namespace Soprano {
         }
 
         bool LocalSocketClientConnection::isConnected( QIODevice* device ) {
-    	    if (!device)
-    		return false;
-    	    else	
-                return( static_cast<QLocalSocket*>( device )->state() == QLocalSocket::ConnectedState );
+            return( device ? static_cast<QLocalSocket*>( device )->state() == QLocalSocket::ConnectedState : false );
         }
     }
 }
