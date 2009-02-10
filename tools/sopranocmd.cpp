@@ -182,21 +182,12 @@ namespace {
     }
 
 
-    bool exportFile( Soprano::StatementIterator data, const QString& fileName, const QString& serialization )
+    bool serializeData( Soprano::StatementIterator data, QTextStream& stream, const QString& serialization )
     {
         const Soprano::Serializer* serializer = Soprano::PluginManager::instance()->discoverSerializerForSerialization( Soprano::mimeTypeToSerialization( serialization ), serialization );
 
         if ( serializer ) {
-            QFile file( fileName );
-            if ( !file.open( QIODevice::WriteOnly ) ) {
-                QTextStream s( stderr );
-                s << "Could not open file for writing: " << fileName << endl;
-                return false;
-            }
-
-            QTextStream s( &file );
-
-            if ( serializer->serialize( data, s, Soprano::mimeTypeToSerialization( serialization ), serialization ) ) {
+            if ( serializer->serialize( data, stream, Soprano::mimeTypeToSerialization( serialization ), serialization ) ) {
                 QTextStream s( stdout );
                 s << "Successfully exported model." << endl;
                 return true;
@@ -211,6 +202,21 @@ namespace {
             QTextStream s( stderr );
             s << "Could not find serializer plugin for serialization " << serialization << endl;
             return false;
+        }
+    }
+
+
+    bool exportFile( Soprano::StatementIterator data, const QString& fileName, const QString& serialization )
+    {
+        QFile file( fileName );
+        if ( !file.open( QIODevice::WriteOnly ) ) {
+            QTextStream s( stderr );
+            s << "Could not open file for writing: " << fileName << endl;
+            return false;
+        }
+        else {
+            QTextStream stream( &file );
+            return serializeData( data, stream, serialization );
         }
     }
 
@@ -373,7 +379,7 @@ namespace {
           << "   --sparql <endpoint> Specify the remote Http sparql endpoint to use." << endl
           << endl
           << "   --serialization <s> The serialization used for commands 'export' and 'import'. Defaults to 'application/x-nquads'." << endl
-          << "                       (only applicable with the mentioned commands.)" << endl
+          << "                       (can also be used to change the output format of construct and describe queries.)" << endl
           << "                       (be aware that Soprano can understand simple string identifiers such as 'trig' or 'n-triples'." << endl
           << "                       There is no need to know the exact mimetype.)" << endl
           << endl
@@ -444,9 +450,7 @@ int main( int argc, char *argv[] )
     }
 
     if ( args.hasSetting( "backend" ) ) {
-        if ( args.hasSetting( "port" ) ||
-             args.hasSetting( "dbus" ) ||
-             args.hasSetting( "host" ) ||
+        if ( args.hasSetting( "dbus" ) ||
              args.hasSetting( "socket" ) ||
              args.hasSetting( "sparql" ) ||
              args.hasSetting( "model" ) ) {
@@ -463,6 +467,7 @@ int main( int argc, char *argv[] )
     QString dir = args.getSetting( "dir" );
     QString command;
     QString modelName = args.getSetting( "model" );
+    QString serialization = args.getSetting( "serialization", "application/x-nquads" );
 
     if ( modelName.isEmpty() &&
          backendName.isEmpty() &&
@@ -558,6 +563,12 @@ int main( int argc, char *argv[] )
         }
         QList<BackendSetting> settings;
         settings.append( BackendSetting( BackendOptionStorageDir, dir ) );
+        if ( args.hasSetting( "port" ) ) {
+            settings.append( BackendSetting( BackendOptionPort, args.getSetting( "port" ).toInt() ) );
+        }
+        if ( args.hasSetting( "host" ) ) {
+            settings.append( BackendSetting( BackendOptionHost, args.getSetting( "host" ) ) );
+        }
         if ( !( model = backend->createModel( settings ) ) ) {
             errStream << "Failed to create Model: " << backend->lastError() << endl;
             return 2;
@@ -583,7 +594,6 @@ int main( int argc, char *argv[] )
         }
 
         QString fileName = args[firstArg];
-        QString serialization = args.getSetting( "serialization", "application/x-nquads" );
 
         return importFile( model, fileName, serialization );
     }
@@ -622,10 +632,6 @@ int main( int argc, char *argv[] )
         return success ? 0 : 1;
     }
     else {
-        if ( args.hasSetting( "serialization" ) ) {
-            return usage( "Parameter --serialization does only make sense for commands 'import' and 'export'" );
-        }
-
         if ( command == "query" ) {
             if ( firstArg >= args.count() ) {
                 return usage();
@@ -639,10 +645,26 @@ int main( int argc, char *argv[] )
 
             Soprano::QueryResultIterator it = model->executeQuery( query, Soprano::Query::queryLanguageFromString( queryLang ), queryLang );
             queryTime = time.elapsed();
-            printQueryResult( it );
+            if ( args.hasSetting( "serialization" ) ) {
+                if ( it.isGraph() ) {
+                    QTextStream s( stdout );
+                    return serializeData( it.iterateStatements(), s, serialization );
+                }
+                else {
+                    errStream << "Can only serialize graph queries";
+                    return 1;
+                }
+            }
+            else {
+                printQueryResult( it );
+            }
         }
 
         else {
+            if ( args.hasSetting( "serialization" ) ) {
+                return usage( "Parameter --serialization does only make sense for commands 'import', 'export', and 'query'" );
+            }
+
             if ( args.hasSetting( "querylang" ) ) {
                 return usage( "--querylang does only make sense with command 'query'" );
             }

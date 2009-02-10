@@ -1,3 +1,6 @@
+2.3
+	* sopranocmd now supports to serialize construct and describe query results in all supported formats.
+
 2.2
 	* The AsyncModel now has a "real" asyncroneous mode which uses multiple threads to execute the
 	  commands.
