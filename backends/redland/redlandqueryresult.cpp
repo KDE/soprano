@@ -48,7 +48,7 @@ public:
 
         isGraph = librdf_query_results_is_graph( result ) != 0;
         isBinding = librdf_query_results_is_bindings( result ) != 0;
-        if ( isBool = librdf_query_results_is_boolean( result ) ) {
+        if ( ( isBool = librdf_query_results_is_boolean( result ) ) ) {
             boolResult = librdf_query_results_get_boolean( result ) > 0;
         }
     }
