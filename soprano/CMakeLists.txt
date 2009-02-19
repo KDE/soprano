@@ -75,6 +75,7 @@ set(soprano_SRCS
   inifile.cpp
   desktopfile.cpp
   sopranopluginfile.cpp
+  sopranodirs.cpp
   util/extreadwritelock.cpp
   util/mutexmodel.cpp
   util/mutexstatementiteratorbackend.cpp

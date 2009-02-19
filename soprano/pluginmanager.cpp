@@ -1,7 +1,7 @@
 /*
  * This file is part of Soprano Project.
  *
- * Copyright (C) 2007-2008 Sebastian Trueg <trueg@kde.org>
+ * Copyright (C) 2007-2009 Sebastian Trueg <trueg@kde.org>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -24,114 +24,21 @@
 #include "backend.h"
 #include "parser.h"
 #include "serializer.h"
-#include "query/queryparser.h"
-#include "query/queryserializer.h"
 #include "soprano-config.h"
 #include "sopranopluginfile.h"
 #include "version.h"
+#include "sopranodirs.h"
 
 #include <QtCore/QHash>
 #include <QtCore/QDir>
 #include <QtCore/QDebug>
 #include <QtCore/QMutex>
-#include <QtCore/QLibrary>
-
-#include <stdlib.h>
-
-#if defined _WIN32 || defined _WIN64
-#define PATH_SEPARATOR ';'
-#else
-#define PATH_SEPARATOR ':'
-#endif
 
 
 namespace {
-    inline QStringList makeLibName( const QString &libname )
-    {
-        int pos = libname.lastIndexOf('/');
-        if (pos < 0) {
-            pos = 0;
-        }
-
-        QStringList libNames;
-        if (libname.indexOf('.', pos) < 0) {
-            const char* const extList[] = { ".so", ".dylib", ".bundle", ".sl", ".dll" };
-            for (uint i = 0; i < sizeof(extList) / sizeof(*extList); ++i) {
-                if (QLibrary::isLibrary(libname + extList[i])) {
-                    libNames.append(libname + extList[i]);
-                }
-            }
-        }
-        else {
-            libNames.append(libname);
-        }
-        return libNames;
-    }
-
-    QStringList envDirList( const char* var )
-    {
-        QStringList dirs;
-        QByteArray varData = qgetenv( var );
-        if ( !varData.isEmpty() ) {
-            QStringList d = QString::fromLocal8Bit( varData ).split( PATH_SEPARATOR );
-            Q_FOREACH( const QString &dir, d ) {
-                dirs += QDir::fromNativeSeparators( dir );
-            }
-        }
-        return dirs;
-    }
-
-    QStringList dataDirs()
-    {
-        QStringList paths;
-
-        paths += QLatin1String(SOPRANO_PREFIX"/share");
-        paths += envDirList( "SOPRANO_DIRS" );
-        paths += envDirList( "XDG_DATA_DIRS" );
-
-        return paths;
-    }
-
-    /**
-     * lib dirs without lib suffix or trailing slash.
-     */
-    QStringList libDirs()
-    {
-        QStringList paths;
-        paths << QLatin1String( SOPRANO_PREFIX"/lib" );
-        paths << QLatin1String( "/usr/lib" );
-        paths << QLatin1String( "/usr/local/lib" );
-#ifndef Q_OS_WIN
-        paths += envDirList( "LD_LIBRARY_PATH" );
-#endif
-        return paths;
-    }
-
-    QString findPluginLib( const Soprano::SopranoPluginFile& file )
-    {
-        QStringList libs = makeLibName( file.library() );
-        Q_FOREACH( const QString &lib, libs ) {
-            if ( lib.startsWith( '/' ) ) {
-                return lib;
-            }
-            else {
-                QStringList dirs( libDirs() );
-                dirs.prepend( file.fileName().section( "/", 0, -5, QString::SectionIncludeTrailingSep ) + "lib" );
-
-                foreach( QString dir, dirs ) {
-                    if ( QFile::exists( dir + SOPRANO_LIB_SUFFIX"/soprano/" + lib ) ) {
-                        return dir + SOPRANO_LIB_SUFFIX"/soprano/" + lib;
-                    }
-                    else if ( QFile::exists( dir + "/soprano/" + lib ) ) {
-                        return dir + "/soprano/" + lib;
-                    }
-                    else if ( QFile::exists( dir + "64/soprano/" + lib ) ) {
-                        return dir + "64/soprano/" + lib;
-                    }
-                }
-            }
-        }
-        return QString();
+    QString findPluginLib( const Soprano::SopranoPluginFile& file ) {
+        return Soprano::findLibraryPath( "soprano/" + file.library(),
+                                         QStringList() << file.fileName().section( "/", 0, -5, QString::SectionIncludeTrailingSep ) + "lib" );
     }
 }
 

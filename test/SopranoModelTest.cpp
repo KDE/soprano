@@ -847,6 +847,10 @@ void SopranoModelTest::testLiteralTypes_data()
     QTest::newRow("stringValueWithGermanUmlauts") << LiteralValue( StringPool::germanUmlauts() ) << QUrl(ns + "stringValueWithGermanUmlauts");
     QTest::newRow("stringValueWithFrenchAccents") << LiteralValue( StringPool::frenchAccents() ) << QUrl(ns + "stringValueWithFrenchAccents");
     QTest::newRow("stringValueWithRussianChars") << LiteralValue( StringPool::russianChars() ) << QUrl(ns + "stringValueWithRussianChars");
+
+    // and some others
+    QTest::newRow("stringWithSingleQuote" ) << LiteralValue( QString( "c'est" ) ) << QUrl( ns + "stringWithSingleQuote" );
+    QTest::newRow("stringWithDoubleQuote" ) << LiteralValue( QString( "\"real" ) ) << QUrl( ns + "stringWithDoubleQuote" );
 }
 
 
@@ -887,6 +891,8 @@ void SopranoModelTest::testUriEncoding_data()
     QTest::newRow("germanUmlauts") << QUrl( ns + StringPool::germanUmlauts() ) << QUrl(ns + "germanUmlauts");
     QTest::newRow("frenchAccents") << QUrl( ns + StringPool::frenchAccents() ) << QUrl(ns + "frenchAccents");
     QTest::newRow("russianChars") << QUrl( ns + StringPool::russianChars() ) << QUrl(ns + "russianChars");
+    QTest::newRow("withSingleQuote" ) << QUrl( ns + "c'est" ) << QUrl( ns + "singleQuote" );
+    QTest::newRow("withDoubleQuote" ) << QUrl( ns + "\"real" ) << QUrl( ns + "doubleQuote" );
 }
 
 

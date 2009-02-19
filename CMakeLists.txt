@@ -7,7 +7,7 @@ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/cmake/mod
 ##################  Soprano version  ################################
 set(CMAKE_SOPRANO_VERSION_MAJOR 2)
 set(CMAKE_SOPRANO_VERSION_MINOR 2)
-set(CMAKE_SOPRANO_VERSION_RELEASE 61)
+set(CMAKE_SOPRANO_VERSION_RELEASE 62)
 set(CMAKE_SOPRANO_VERSION_STRING "${CMAKE_SOPRANO_VERSION_MAJOR}.${CMAKE_SOPRANO_VERSION_MINOR}.${CMAKE_SOPRANO_VERSION_RELEASE}")
 
 
@@ -16,6 +16,7 @@ set(CMAKE_SOPRANO_VERSION_STRING "${CMAKE_SOPRANO_VERSION_MAJOR}.${CMAKE_SOPRANO
 option(SOPRANO_BUILD_TESTS "Build all unit tests")
 option(SOPRANO_DISABLE_REDLAND_BACKEND "Disable the compilation of the redland backend")
 option(SOPRANO_DISABLE_SESAME2_BACKEND "Disable the compilation of the sesame2 backend")
+option(SOPRANO_DISABLE_VIRTUOSO_BACKEND "Disable the compilation of the Virtuoso backend")
 option(SOPRANO_DISABLE_CLUCENE_INDEX "Disable the compilation of the clucene-based full-text index")
 option(SOPRANO_DISABLE_RAPTOR_PARSER "Disable the compilation of the raptor parser and serializer plugins (provides most Soprano parsers and serializers)")
 option(SOPRANO_DISABLE_DBUS "Disable the D-Bus integration")
@@ -77,6 +78,10 @@ if(NOT SOPRANO_DISABLE_SESAME2_BACKEND)
   endif(JAVA_INCLUDE_PATH AND JAVA_JVM_LIBRARY)
 endif(NOT SOPRANO_DISABLE_SESAME2_BACKEND)
 
+if(NOT SOPRANO_DISABLE_VIRTUOSO_BACKEND)
+  find_package(IODBC)
+endif(NOT SOPRANO_DISABLE_VIRTUOSO_BACKEND)
+
 
 ##################  setup variables  ################################
 if(REDLAND_FOUND AND NOT SOPRANO_DISABLE_REDLAND_BACKEND)
@@ -97,6 +102,9 @@ endif(RAPTOR_FOUND AND REDLAND_FOUND AND REDLAND_VERSION STRGREATER "1.0.5" AND 
 if(NOT SOPRANO_DISABLE_DBUS AND QT_QTDBUS_FOUND)
   set(BUILD_DBUS_SUPPORT TRUE)
 endif(NOT SOPRANO_DISABLE_DBUS AND QT_QTDBUS_FOUND)
+if(NOT SOPRANO_DISABLE_VIRTUOSO_BACKEND AND IODBC_FOUND)
+  set(BUILD_VIRTUOSO_BACKEND TRUE)
+endif(NOT SOPRANO_DISABLE_VIRTUOSO_BACKEND AND IODBC_FOUND)
 set(HAVE_DBUS BUILD_DBUS_SUPPORT)
 
 ##################  setup install directories  ################################
@@ -191,6 +199,9 @@ endif(BUILD_REDLAND_BACKEND)
 if(BUILD_SESAME2_BACKEND)
   message("   * Sesame2 storage backend (java-based)")
 endif(BUILD_SESAME2_BACKEND)
+if(BUILD_VIRTUOSO_BACKEND)
+  message("   * Virtuoso storage backend (Run-time dependancy: Virtuoso)")
+endif(BUILD_VIRTUOSO_BACKEND)
 
 if(BUILD_RAPTOR_PARSER)
   message("   * Raptor RDF parser")
@@ -220,6 +231,9 @@ endif(NOT BUILD_REDLAND_BACKEND)
 if(NOT BUILD_SESAME2_BACKEND)
   message("   * Sesame2 storage backend (java-based)")
 endif(NOT BUILD_SESAME2_BACKEND)
+if(NOT BUILD_VIRTUOSO_BACKEND)
+  message("   * Virtuoso storage backend")
+endif(NOT BUILD_VIRTUOSO_BACKEND)
 
 if(NOT BUILD_RAPTOR_PARSER)
   message("   * Raptor RDF parser")
