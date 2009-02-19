@@ -173,7 +173,10 @@ namespace {
 
 Soprano::StatementIterator Soprano::QueryResultIterator::iterateStatements() const
 {
-    return new QueryResultStatementIteratorBackend( *this );
+    if ( isValid() )
+        return new QueryResultStatementIteratorBackend( *this );
+    else
+        return StatementIterator();
 }
 
 
@@ -223,13 +226,19 @@ namespace {
 
 Soprano::NodeIterator Soprano::QueryResultIterator::iterateBindings( const QString& variableName ) const
 {
-    return new BindingNodeIteratorBackend( *this, variableName );
+    if ( isValid() )
+        return new BindingNodeIteratorBackend( *this, variableName );
+    else
+        return NodeIterator();
 }
 
 
 Soprano::NodeIterator Soprano::QueryResultIterator::iterateBindings( int offset ) const
 {
-    return new BindingNodeIteratorBackend( *this, offset );
+    if ( isValid() )
+        return new BindingNodeIteratorBackend( *this, offset );
+    else
+        return NodeIterator();
 }
 
 
@@ -300,5 +309,13 @@ Soprano::StatementIterator Soprano::QueryResultIterator::iterateStatementsFromBi
                                                                                         const QString& contextBindingName,
                                                                                         const Statement& statementTemplate ) const
 {
-    return new QueryResultStatementConstructIteratorBackend( *this, statementTemplate, subjectBindingName, predicateBindingName, objectBindingName, contextBindingName );
+    if ( isValid() )
+        return new QueryResultStatementConstructIteratorBackend( *this,
+                                                                 statementTemplate,
+                                                                 subjectBindingName,
+                                                                 predicateBindingName,
+                                                                 objectBindingName,
+                                                                 contextBindingName );
+    else
+        return StatementIterator();
 }
