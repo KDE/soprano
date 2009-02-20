@@ -52,8 +52,7 @@ if(IODBC_CONFIG)
   endif(IODBC_VERSION)
 endif(IODBC_CONFIG)
 
-# we search for iodbc/sql.h so we won't find /usr/include/sql.h
-find_path(IODBC_INCLUDE_DIR iodbc/sql.h
+find_path(IODBC_INCLUDE_DIR sql.h
   PATHS
   ${iodbc_INCLUDE_DIRS}
   )
@@ -64,7 +63,7 @@ find_library(IODBC_LIBRARIES NAMES iodbc
   )
 
 if (IODBC_LIBRARIES AND IODBC_INCLUDE_DIR)
-  set(IODBC_INCLUDE_DIR "${IODBC_INCLUDE_DIR}/iodbc")
+#  set(IODBC_INCLUDE_DIR "${IODBC_INCLUDE_DIR}/iodbc")
   set(IODBC_FOUND TRUE)
 endif (IODBC_LIBRARIES AND IODBC_INCLUDE_DIR)
 
