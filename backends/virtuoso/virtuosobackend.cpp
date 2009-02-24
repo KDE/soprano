@@ -20,6 +20,7 @@
  */
 
 #include "virtuosobackend.h"
+#include "virtuosocontroller.h"
 #include "iodbcmodel.h"
 #include "sopranodirs.h"
 
@@ -46,20 +47,33 @@ Soprano::StorageModel* Soprano::Virtuoso::BackendPlugin::createModel( const Back
     int port = valueInSettings( settings, BackendOptionPort ).toInt();
     QString uid = valueInSettings( settings, BackendOptionUsername ).toString();
     QString pwd = valueInSettings( settings, BackendOptionPassword ).toString();
+    QString path = valueInSettings( settings, BackendOptionStorageDir ).toString();
+    bool debugMode = valueInSettings( settings, BackendOptionUser, QLatin1String( "debugmode" ) ).toBool();
 
-//     if ( host.isEmpty() || port == 0 ) {
-//         setError( "Need host and port to connect to Virtuoso server.", Error::ErrorInvalidArgument );
-//         return 0;
-//     }
+    VirtuosoController* controller = 0;
+    if ( host.isEmpty() || port == 0 ) {
+        if ( path.isEmpty() ) {
+            setError( "Need a database storage path set to start a local Virtuoso instance." );
+            return 0;
+        }
 
-    if ( host.isEmpty() )
+        // start local server
+        controller = new VirtuosoController();
+        if ( !controller->start( settings, debugMode ? VirtuosoController::DebugMode : VirtuosoController::NoFlags ) ) {
+            setError( controller->lastError() );
+            delete controller;
+            return 0;
+        }
+
         host = "localhost";
-    if ( port == 0 )
-        port = 1111;
-    if ( uid.isEmpty() )
+        port = controller->usedPort();
         uid = "dba";
-    if ( pwd.isEmpty() )
         pwd = "dba";
+
+        // FIXME: create some status sql table which stores a version and the already enabled features or already performed
+        //        optimization tasks
+        //        then perform missing initialization based on the values in that table
+    }
 
     QString driverPath = findVirtuosoDriver();
     if ( driverPath.isEmpty() ) {
@@ -72,11 +86,16 @@ Soprano::StorageModel* Soprano::Virtuoso::BackendPlugin::createModel( const Back
 
     IODBCModel* model = new IODBCModel( this );
     if ( model->connect( connectString ) ) {
+        // mem mangement the ugly way
+        // FIXME: improve
+        if ( controller )
+            controller->setParent( model );
         clearError();
         return model;
     }
     else {
         setError( model->lastError() );
+        delete controller;
         delete model;
         return 0;
     }

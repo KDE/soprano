@@ -123,3 +123,12 @@ QStringList Soprano::dataDirs()
           << Soprano::envDirList( "XDG_DATA_DIRS" );
     return paths;
 }
+
+
+QStringList Soprano::exeDirs()
+{
+    QStringList paths;
+    paths << QLatin1String( SOPRANO_PREFIX"/bin" )
+          << envDirList( "PATH" );
+    return paths;
+}

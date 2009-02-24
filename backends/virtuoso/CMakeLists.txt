@@ -19,6 +19,7 @@ set(SRC
   iodbctools.cpp
   iodbcmodel.cpp
   virtuosobackend.cpp
+  virtuosocontroller.cpp
   ${soprano_core_SOURCE_DIR}/sopranodirs.cpp
 )
 

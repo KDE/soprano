@@ -32,6 +32,7 @@ namespace Soprano {
      */
     QStringList libDirs();
     QStringList dataDirs();
+    QStringList exeDirs();
     QString findLibraryPath( const QString& libName, const QStringList& extraDirs = QStringList() );
 }
 
