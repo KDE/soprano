@@ -68,6 +68,7 @@
  * \li \ref Soprano::Server
  * \li \ref Soprano::Client
  * \li \ref soprano_devel_tools
+ * \li \ref soprano_backends
  */
 
 
@@ -99,8 +100,21 @@
  * Soprano::Statement are actually RDF quadruples.
  *
  * For further details on Soprano::Model usage see the class and method documentation.
+ *
+ * For details on existing backends see:
+ * \li \ref soprano_backends
  */
 
+/**
+ * \page soprano_backends %Soprano Backends
+ *
+ * %Soprano is plug-in based and comes with three backend plug-ins which can be used directly
+ * (if they have been built):
+ *
+ * \li \ref soprano_backend_redland
+ * \li \ref soprano_backend_sesame2
+ * \li \ref soprano_backend_virtuoso
+ */
 
 /**
  * \page soprano_misc RDF Parsing and Serialization
