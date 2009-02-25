@@ -19,12 +19,12 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#include "iodbcmodel.h"
+#include "virtuosomodel.h"
 #include "odbcqueryiteratorbackend.h"
 #include "soprano.h"
 #include "odbcenvironment.h"
 #include "odbcconnection.h"
-#include "odbctools.h"
+#include "virtuosotools.h"
 
 #include <QtCore/QDebug>
 #include <QtCore/QDir>
@@ -475,4 +475,4 @@ Soprano::QueryResultIterator Soprano::IODBCModel::executeQuery( const QString& q
     }
 }
 
-#include "iodbcmodel.moc"
+#include "virtuosomodel.moc"

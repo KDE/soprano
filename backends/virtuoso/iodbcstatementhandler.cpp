@@ -26,7 +26,7 @@
  */
 
 #include "iodbcstatementhandler.h"
-#include "odbctools.h"
+#include "virtuosotools.h"
 #include "node.h"
 #include "literalvalue.h"
 #include "xsd.h"

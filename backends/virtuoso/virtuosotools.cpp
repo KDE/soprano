@@ -19,7 +19,7 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#include "odbctools.h"
+#include "virtuosotools.h"
 
 #include <QtCore/QString>
 

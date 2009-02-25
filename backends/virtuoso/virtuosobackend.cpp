@@ -21,7 +21,7 @@
 
 #include "virtuosobackend.h"
 #include "virtuosocontroller.h"
-#include "iodbcmodel.h"
+#include "virtuosomodel.h"
 #include "sopranodirs.h"
 
 #include <QtCore/QDebug>

@@ -23,7 +23,7 @@
  */
 
 #include "iodbcconnection.h"
-#include "odbctools.h"
+#include "virtuosotools.h"
 #include "iodbcstatementhandler.h"
 
 #include <QtCore/QDebug>

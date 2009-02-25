@@ -21,7 +21,7 @@
 
 #include "odbcqueryiteratorbackend.h"
 #include "odbcqueryresultiteratorbackend_p.h"
-#include "odbctools.h"
+#include "virtuosotools.h"
 #include "odbcqueryresult.h"
 #include "statement.h"
 #include "statementiterator.h"

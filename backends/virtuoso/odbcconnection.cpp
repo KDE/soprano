@@ -25,7 +25,7 @@
 #include "odbcqueryresult.h"
 #include "odbcqueryresult_p.h"
 
-#include "odbctools.h"
+#include "virtuosotools.h"
 
 
 HSTMT Soprano::ODBC::ConnectionPrivate::execute( const QString& request )

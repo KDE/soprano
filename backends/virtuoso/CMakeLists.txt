@@ -13,10 +13,10 @@ include_directories(
 )
 
 set(SRC
-  iodbcmodel.cpp
+  virtuosomodel.cpp
   virtuosobackend.cpp
   virtuosocontroller.cpp
-  odbctools.cpp
+  virtuosotools.cpp
   odbcenvironment.cpp
   odbcconnection.cpp
   odbcqueryresult.cpp

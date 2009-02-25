@@ -23,7 +23,7 @@
 #include "odbcenvironment_p.h"
 #include "odbcconnection.h"
 #include "odbcconnection_p.h"
-#include "odbctools.h"
+#include "virtuosotools.h"
 
 #include <sql.h>
 

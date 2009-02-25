@@ -23,7 +23,7 @@
 #include "odbcqueryresult_p.h"
 #include "odbcconnection_p.h"
 
-#include "odbctools.h"
+#include "virtuosotools.h"
 
 #include "node.h"
 #include "literalvalue.h"
