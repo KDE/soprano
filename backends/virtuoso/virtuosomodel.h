@@ -25,13 +25,13 @@
 #include "storagemodel.h"
 
 namespace Soprano {
-    class IODBCModel : public StorageModel
+    class VirtuosoModel : public StorageModel
     {
         Q_OBJECT
 
     public:
-        IODBCModel( const Backend* );
-        ~IODBCModel();
+        VirtuosoModel( const Backend* );
+        ~VirtuosoModel();
 
         bool connect( const QString& name );
         bool isConnected() const;
@@ -45,8 +45,8 @@ namespace Soprano {
         Error::ErrorCode removeAllStatements( const Statement &statement );
         int statementCount() const;
         Node createBlankNode();
-        Soprano::QueryResultIterator executeQuery( const QString &query, 
-                                                   Query::QueryLanguage language = Query::QueryLanguageSparql, 
+        Soprano::QueryResultIterator executeQuery( const QString &query,
+                                                   Query::QueryLanguage language = Query::QueryLanguageSparql,
                                                    const QString& userQueryLanguage = QString() ) const;
 
     private:

@@ -238,7 +238,7 @@ QStringList Soprano::ODBC::QueryResult::resultColumns()
     if ( d->m_columns.isEmpty() ) {
         SQLSMALLINT numCols = -1;
         if ( SQLNumResultCols( d->m_hstmt, &numCols ) != SQL_SUCCESS ) {
-            setError( IODBC::convertSqlError( SQL_HANDLE_STMT, d->m_hstmt ) );
+            setError( Virtuoso::convertSqlError( SQL_HANDLE_STMT, d->m_hstmt ) );
         }
         else {
             clearError();
@@ -261,7 +261,7 @@ QStringList Soprano::ODBC::QueryResult::resultColumns()
                     d->m_columns.append( QString::fromLatin1( ( const char* )colName ) );
                 }
                 else {
-                    setError( IODBC::convertSqlError( SQL_HANDLE_STMT, d->m_hstmt ) );
+                    setError( Virtuoso::convertSqlError( SQL_HANDLE_STMT, d->m_hstmt ) );
                     break;
                 }
             }
@@ -280,7 +280,7 @@ bool Soprano::ODBC::QueryResult::fetchScroll()
         return false;
     }
     else if( sts != SQL_SUCCESS ) {
-        setError( IODBC::convertSqlError( SQL_HANDLE_STMT, d->m_hstmt ) );
+        setError( Virtuoso::convertSqlError( SQL_HANDLE_STMT, d->m_hstmt ) );
         return false;
     }
     else {
@@ -302,29 +302,29 @@ Soprano::Node Soprano::ODBC::QueryResult::getData( int colNum )
 
         int rc = SQLGetStmtAttr( d->m_hstmt, SQL_ATTR_IMP_ROW_DESC, &hdesc, SQL_IS_POINTER, 0 );
         if ( !SQL_SUCCEEDED(rc) ) {
-            setError( IODBC::convertSqlError( SQL_HANDLE_STMT, d->m_hstmt ) );
+            setError( Virtuoso::convertSqlError( SQL_HANDLE_STMT, d->m_hstmt ) );
             return Node();
         }
         rc = SQLGetDescField( hdesc, colNum, SQL_DESC_COL_DV_TYPE, &dvtype, SQL_IS_INTEGER, 0 );
         if ( !SQL_SUCCEEDED(rc) ) {
-            setError( IODBC::convertSqlError( SQL_HANDLE_STMT, d->m_hstmt ) );
+            setError( Virtuoso::convertSqlError( SQL_HANDLE_STMT, d->m_hstmt ) );
             return Node();
         }
         rc = SQLGetDescField( hdesc, colNum, SQL_DESC_COL_DT_DT_TYPE, &dv_dt_type, SQL_IS_INTEGER, 0 );
         if ( !SQL_SUCCEEDED(rc) ) {
-            setError( IODBC::convertSqlError( SQL_HANDLE_STMT, d->m_hstmt ) );
+            setError( Virtuoso::convertSqlError( SQL_HANDLE_STMT, d->m_hstmt ) );
             return Node();
         }
         rc = SQLGetDescField( hdesc, colNum, SQL_DESC_COL_LITERAL_ATTR, &flag, SQL_IS_INTEGER, 0 );
         if ( !SQL_SUCCEEDED(rc) ) {
-            setError( IODBC::convertSqlError( SQL_HANDLE_STMT, d->m_hstmt ) );
+            setError( Virtuoso::convertSqlError( SQL_HANDLE_STMT, d->m_hstmt ) );
             return Node();
         }
         short l_lang = (short)((flag >> 16) & 0xFFFF);
         short l_type = (short)(flag & 0xFFFF);
         rc = SQLGetDescField( hdesc, colNum, SQL_DESC_COL_BOX_FLAGS, &flag, SQL_IS_INTEGER, 0 );
         if ( !SQL_SUCCEEDED(rc) ) {
-            setError( IODBC::convertSqlError( SQL_HANDLE_STMT, d->m_hstmt ) );
+            setError( Virtuoso::convertSqlError( SQL_HANDLE_STMT, d->m_hstmt ) );
             return Node();
         }
 
@@ -351,13 +351,13 @@ Soprano::Node Soprano::ODBC::QueryResult::getData( int colNum )
         case DV_RDF: {
             QUrl type = d->getType( l_type );
             QString lang = d->getLang( l_lang );
-            if ( type == IODBC::fakeBooleanType() ) {
+            if ( type == Virtuoso::fakeBooleanType() ) {
                 node = Node( LiteralValue( length > 0 ) );
             }
             else {
-                if ( type == IODBC::fakeDateTimeType() ) // forcing virtuoso to store as typed string for now
+                if ( type == Virtuoso::fakeDateTimeType() ) // forcing virtuoso to store as typed string for now
                     type = Soprano::Vocabulary::XMLSchema::dateTime();
-                else if ( type == IODBC::fakeTimeType() )
+                else if ( type == Virtuoso::fakeTimeType() )
                     type = Soprano::Vocabulary::XMLSchema::time();
 
                 node = Node( LiteralValue::fromString( QString::fromUtf8( reinterpret_cast<const char*>( data ) ), type ), lang );
@@ -416,7 +416,7 @@ Soprano::Node Soprano::ODBC::QueryResult::getData( int colNum )
         return node;
     }
     else {
-        setError( IODBC::convertSqlError( SQL_HANDLE_STMT, d->m_hstmt ) );
+        setError( Virtuoso::convertSqlError( SQL_HANDLE_STMT, d->m_hstmt ) );
         return Node();
     }
 }

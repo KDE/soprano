@@ -30,7 +30,7 @@
 #include "error.h"
 
 namespace Soprano {
-    namespace IODBC {
+    namespace Virtuoso {
         Soprano::Error::Error convertSqlError( SQLSMALLINT handleType, SQLHANDLE handle );
         QUrl defaultGraph();
         QUrl openlinkVirtualGraph();

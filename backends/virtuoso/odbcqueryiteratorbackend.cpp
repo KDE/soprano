@@ -130,7 +130,7 @@ Soprano::Node Soprano::ODBC::QueryResultIteratorBackend::binding( int offset ) c
         if ( !d->bindingCachedFlags[offset] ) {
             d->bindingCache[offset] = d->m_queryResult->getData( offset+1 );
             // convert the default graph back to the empty graph (hacky but should work in most situations)
-            if ( d->bindingCache[offset] == IODBC::defaultGraph() )
+            if ( d->bindingCache[offset] == Virtuoso::defaultGraph() )
                 d->bindingCache[offset] = Node();
             d->bindingCachedFlags.setBit( offset );
         }

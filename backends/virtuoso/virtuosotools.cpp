@@ -28,7 +28,7 @@ static const char* s_defaultGraph = "sopranofakes:/DEFAULTGRAPH";
 static const char* s_openlinkVirtualGraph = "http://www.openlinksw.com/schemas/virtrdf#";
 
 
-Soprano::Error::Error Soprano::IODBC::convertSqlError( SQLSMALLINT handleType, SQLHANDLE handle )
+Soprano::Error::Error Soprano::Virtuoso::convertSqlError( SQLSMALLINT handleType, SQLHANDLE handle )
 {
     SQLTCHAR buf[513];
     buf[512] = 0;
@@ -59,31 +59,31 @@ Soprano::Error::Error Soprano::IODBC::convertSqlError( SQLSMALLINT handleType, S
 }
 
 
-QUrl Soprano::IODBC::defaultGraph()
+QUrl Soprano::Virtuoso::defaultGraph()
 {
     return QUrl::fromEncoded( s_defaultGraph, QUrl::StrictMode );
 }
 
 
-QUrl Soprano::IODBC::openlinkVirtualGraph()
+QUrl Soprano::Virtuoso::openlinkVirtualGraph()
 {
     return QUrl::fromEncoded( s_openlinkVirtualGraph, QUrl::StrictMode );
 }
 
 
-QUrl Soprano::IODBC::fakeDateTimeType()
+QUrl Soprano::Virtuoso::fakeDateTimeType()
 {
     return QUrl::fromEncoded( "sopranofakes:/dateTimeHackUntilVirtuosoProblemIsResolved", QUrl::StrictMode );
 }
 
 
-QUrl Soprano::IODBC::fakeTimeType()
+QUrl Soprano::Virtuoso::fakeTimeType()
 {
     return QUrl::fromEncoded( "sopranofakes:/timeHackUntilVirtuosoProblemIsResolved", QUrl::StrictMode );
 }
 
 
-QUrl Soprano::IODBC::fakeBooleanType()
+QUrl Soprano::Virtuoso::fakeBooleanType()
 {
     return QUrl::fromEncoded( "sopranofakes:/booleanHackUntilVirtuosoProblemIsResolved", QUrl::StrictMode );
 }

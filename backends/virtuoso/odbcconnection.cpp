@@ -32,14 +32,14 @@ HSTMT Soprano::ODBC::ConnectionPrivate::execute( const QString& request )
 {
     HSTMT hstmt;
     if ( SQLAllocHandle( SQL_HANDLE_STMT, m_hdbc, &hstmt ) != SQL_SUCCESS ) {
-        setError( IODBC::convertSqlError( SQL_HANDLE_DBC, m_hdbc ) );
+        setError( Virtuoso::convertSqlError( SQL_HANDLE_DBC, m_hdbc ) );
         return 0;
     }
     else {
         QByteArray utf8Request = request.toUtf8();
         if ( !SQL_SUCCEEDED( SQLExecDirect( hstmt, ( UCHAR* )utf8Request.data(), utf8Request.length() ) ) ) {
             SQLFreeHandle( SQL_HANDLE_STMT, hstmt );
-            setError( IODBC::convertSqlError( SQL_HANDLE_STMT, hstmt ) );
+            setError( Virtuoso::convertSqlError( SQL_HANDLE_STMT, hstmt ) );
             return 0;
         }
         else {

@@ -87,7 +87,7 @@ Soprano::StorageModel* Soprano::Virtuoso::BackendPlugin::createModel( const Back
 //     VirtuosoConfigurator configurator( connectString );
 //     configurator.configureServer( settings );
 
-    IODBCModel* model = new IODBCModel( this );
+    VirtuosoModel* model = new VirtuosoModel( this );
     if ( model->connect( connectString ) ) {
         // mem mangement the ugly way
         // FIXME: improve

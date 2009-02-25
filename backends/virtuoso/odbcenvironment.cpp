@@ -74,7 +74,7 @@ Soprano::ODBC::Connection* Soprano::ODBC::Environment::createConnection( const Q
                                SQL_DRIVER_COMPLETE );
 
     if ( status != SQL_SUCCESS && status != SQL_SUCCESS_WITH_INFO ) {
-        setError( IODBC::convertSqlError( SQL_HANDLE_DBC, hdbc ) );
+        setError( Virtuoso::convertSqlError( SQL_HANDLE_DBC, hdbc ) );
         SQLFreeHandle( SQL_HANDLE_DBC, hdbc );
         return 0;
     }

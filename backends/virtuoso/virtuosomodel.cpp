@@ -85,12 +85,12 @@ namespace {
         if ( s.object().isValid() ) {
             // HACK: fake datetime to prevent loosing fractions of seconds
             if ( s.object().literal().isDateTime() )
-                query += Soprano::Node( Soprano::LiteralValue::fromString( s.object().literal().toString(), Soprano::IODBC::fakeDateTimeType() ) ).toN3();
+                query += Soprano::Node( Soprano::LiteralValue::fromString( s.object().literal().toString(), Soprano::Virtuoso::fakeDateTimeType() ) ).toN3();
             else if ( s.object().literal().isTime() )
-                query += Soprano::Node( Soprano::LiteralValue::fromString( s.object().literal().toString(), Soprano::IODBC::fakeTimeType() ) ).toN3();
+                query += Soprano::Node( Soprano::LiteralValue::fromString( s.object().literal().toString(), Soprano::Virtuoso::fakeTimeType() ) ).toN3();
             else if ( s.object().literal().isBool() )
                 query += Soprano::Node( Soprano::LiteralValue::fromString( s.object().literal().toBool() ? QString( QLatin1String( "1" ) ) : QString(),
-                                                                           Soprano::IODBC::fakeBooleanType() ) ).toN3();
+                                                                           Soprano::Virtuoso::fakeBooleanType() ) ).toN3();
             else
                 query += nodeToN3( s.object() );
         }
@@ -143,7 +143,7 @@ namespace {
 }
 
 
-class Soprano::IODBCModel::Private
+class Soprano::VirtuosoModel::Private
 {
 public:
     Private()
@@ -156,20 +156,20 @@ public:
 };
 
 
-Soprano::IODBCModel::IODBCModel( const Backend* b )
+Soprano::VirtuosoModel::VirtuosoModel( const Backend* b )
     : StorageModel(b),
       d( new Private() )
 {
 }
 
 
-Soprano::IODBCModel::~IODBCModel()
+Soprano::VirtuosoModel::~VirtuosoModel()
 {
     delete d;
 }
 
 
-bool Soprano::IODBCModel::connect( const QString& name )
+bool Soprano::VirtuosoModel::connect( const QString& name )
 {
     if ( !d->environment ) {
         if ( !( d->environment = ODBC::Environment::createEnvironment() ) ) {
@@ -184,7 +184,7 @@ bool Soprano::IODBCModel::connect( const QString& name )
 }
 
 
-bool Soprano::IODBCModel::isConnected() const
+bool Soprano::VirtuosoModel::isConnected() const
 {
     return d->connection != 0;
 }
@@ -193,7 +193,7 @@ bool Soprano::IODBCModel::isConnected() const
 // TODO: is it faster to use DB.DBA.RDF_QUAD_URI, DB.DBA.RDF_QUAD_URI_L, and DB.DBA.RDF_QUAD_URI_L_TYPED?
 //       (http://docs.openlinksw.com/virtuoso/rdfapiandsql.html)
 //       (the code disabled by the ifdef)
-Soprano::Error::ErrorCode Soprano::IODBCModel::addStatement( const Statement& statement )
+Soprano::Error::ErrorCode Soprano::VirtuosoModel::addStatement( const Statement& statement )
 {
     qDebug() << Q_FUNC_INFO << statement;
 
@@ -204,7 +204,7 @@ Soprano::Error::ErrorCode Soprano::IODBCModel::addStatement( const Statement& st
 
     Statement s( statement );
     if ( !s.context().isValid() ) {
-        s.setContext( IODBC::defaultGraph() );
+        s.setContext( Virtuoso::defaultGraph() );
     }
 
     QString insert;
@@ -269,20 +269,20 @@ Soprano::Error::ErrorCode Soprano::IODBCModel::addStatement( const Statement& st
 }
 
 
-Soprano::NodeIterator Soprano::IODBCModel::listContexts() const
+Soprano::NodeIterator Soprano::VirtuosoModel::listContexts() const
 {
 //    qDebug() << Q_FUNC_INFO;
 
     return executeQuery( QString( "select distinct ?g where { "
                                   "graph ?g { ?s ?p ?o . } . "
                                   "FILTER(?g != %1 && ?g != %2) . }" )
-                         .arg( Node( IODBC::openlinkVirtualGraph() ).toN3() )
-                         .arg( Node( IODBC::defaultGraph() ).toN3() ) )
+                         .arg( Node( Virtuoso::openlinkVirtualGraph() ).toN3() )
+                         .arg( Node( Virtuoso::defaultGraph() ).toN3() ) )
         .iterateBindings( 0 );
 }
 
 
-bool Soprano::IODBCModel::containsStatement( const Statement& statement ) const
+bool Soprano::VirtuosoModel::containsStatement( const Statement& statement ) const
 {
 //    qDebug() << Q_FUNC_INFO << statement;
 
@@ -294,11 +294,11 @@ bool Soprano::IODBCModel::containsStatement( const Statement& statement ) const
 
     Statement s( statement );
     if ( !statement.context().isValid() )
-        s.setContext( IODBC::defaultGraph() );
+        s.setContext( Virtuoso::defaultGraph() );
     QString query = QString( "ask { %1 }" ).arg( statementToConstructGraphPattern( s, true ) );
 //    qDebug() << "containsStatement query" << query;
     return executeQuery( query, Query::QueryLanguageSparql ).boolValue();
-//     if ( IODBCStatementHandler* sh = d->connection.execute( "sparql " + query ) ) {
+//     if ( VirtuosoStatementHandler* sh = d->connection.execute( "sparql " + query ) ) {
 //         bool b = sh->fetchScroll();
 //         delete sh;
 //         return b;
@@ -307,12 +307,12 @@ bool Soprano::IODBCModel::containsStatement( const Statement& statement ) const
 }
 
 
-bool Soprano::IODBCModel::containsAnyStatement( const Statement &statement ) const
+bool Soprano::VirtuosoModel::containsAnyStatement( const Statement &statement ) const
 {
 //    qDebug() << Q_FUNC_INFO << statement;
 
     QString query = QString( "ask { %1 }" ).arg( statementToConstructGraphPattern( statement, true ) );
-//     if ( IODBCStatementHandler* sh = d->connection.execute( "sparql " + query ) ) {
+//     if ( VirtuosoStatementHandler* sh = d->connection.execute( "sparql " + query ) ) {
 //         bool b = sh->fetchScroll();
 //         delete sh;
 //         return b;
@@ -322,14 +322,14 @@ bool Soprano::IODBCModel::containsAnyStatement( const Statement &statement ) con
 }
 
 
-Soprano::StatementIterator Soprano::IODBCModel::listStatements( const Statement& partial ) const
+Soprano::StatementIterator Soprano::VirtuosoModel::listStatements( const Statement& partial ) const
 {
 //    qDebug() << Q_FUNC_INFO << partial;
 
     // we cannot use a construct query due to missing graph support
     QString query = QString( "select * where { %1 ." ).arg( statementToConstructGraphPattern( partial, true ) );
     if ( !partial.context().isValid() )
-        query += QString( " FILTER(?g != %1) }" ).arg( Node( IODBC::openlinkVirtualGraph() ).toN3() );
+        query += QString( " FILTER(?g != %1) }" ).arg( Node( Virtuoso::openlinkVirtualGraph() ).toN3() );
     else
         query += '}';
 //    qDebug() << "List Statements Query" << query;
@@ -342,7 +342,7 @@ Soprano::StatementIterator Soprano::IODBCModel::listStatements( const Statement&
 }
 
 
-Soprano::Error::ErrorCode Soprano::IODBCModel::removeStatement( const Statement& statement )
+Soprano::Error::ErrorCode Soprano::VirtuosoModel::removeStatement( const Statement& statement )
 {
 //    qDebug() << Q_FUNC_INFO << statement;
 
@@ -353,9 +353,9 @@ Soprano::Error::ErrorCode Soprano::IODBCModel::removeStatement( const Statement&
 
     Statement s( statement );
     if ( !s.context().isValid() ) {
-        s.setContext( IODBC::defaultGraph() );
+        s.setContext( Virtuoso::defaultGraph() );
     }
-    else if ( s.context().uri() == IODBC::openlinkVirtualGraph() ) {
+    else if ( s.context().uri() == Virtuoso::openlinkVirtualGraph() ) {
         setError( "Cannot remove statements from the virtual openlink graph. Virtuoso would not like that.", Error::ErrorInvalidArgument );
         return Error::ErrorInvalidArgument;
     }
@@ -373,12 +373,12 @@ Soprano::Error::ErrorCode Soprano::IODBCModel::removeStatement( const Statement&
 }
 
 
-Soprano::Error::ErrorCode Soprano::IODBCModel::removeAllStatements( const Statement& statement )
+Soprano::Error::ErrorCode Soprano::VirtuosoModel::removeAllStatements( const Statement& statement )
 {
 //    qDebug() << Q_FUNC_INFO << statement;
 
     if ( statement.context().isValid() ) {
-        if ( statement.context().uri() == IODBC::openlinkVirtualGraph() ) {
+        if ( statement.context().uri() == Virtuoso::openlinkVirtualGraph() ) {
             setError( "Cannot remove statements from the virtual openlink graph. Virtuoso would not like that.", Error::ErrorInvalidArgument );
             return Error::ErrorInvalidArgument;
         }
@@ -407,14 +407,14 @@ Soprano::Error::ErrorCode Soprano::IODBCModel::removeAllStatements( const Statem
         return Error::convertErrorCode( lastError().code() );
     }
     else {
-//         if ( IODBCStatementHandler* sh = d->connection.execute( "delete from RDF_QUAD wheresparql " + query ) ) {
+//         if ( VirtuosoStatementHandler* sh = d->connection.execute( "delete from RDF_QUAD wheresparql " + query ) ) {
 //             bool b = sh->fetchScroll();
 //             delete sh;
 //             return b;
 //         }
         // FIXME: do this in a fancy way, maybe an inner sql query or something
         QList<Node> allContexts = listContexts().allNodes();
-        allContexts << Node( IODBC::defaultGraph() );
+        allContexts << Node( Virtuoso::defaultGraph() );
         foreach( const Node& node, allContexts ) {
             Statement s( statement );
             s.setContext( node );
@@ -428,14 +428,14 @@ Soprano::Error::ErrorCode Soprano::IODBCModel::removeAllStatements( const Statem
 }
 
 
-int Soprano::IODBCModel::statementCount() const
+int Soprano::VirtuosoModel::statementCount() const
 {
 //    qDebug() << Q_FUNC_INFO;
 
     QueryResultIterator it = executeQuery( QString( "select count(*) where { "
                                                     "graph ?g { ?s ?p ?o . } . "
                                                     "FILTER(?g != %1) . }" )
-                                           .arg( Node( IODBC::openlinkVirtualGraph() ).toN3() ) );
+                                           .arg( Node( Virtuoso::openlinkVirtualGraph() ).toN3() ) );
     if ( it.isValid() && it.next() ) {
         return it.binding( 0 ).literal().toInt();
     }
@@ -445,16 +445,16 @@ int Soprano::IODBCModel::statementCount() const
 }
 
 
-Soprano::Node Soprano::IODBCModel::createBlankNode()
+Soprano::Node Soprano::VirtuosoModel::createBlankNode()
 {
     setError( "createBlankNode not supported by the Virtuoso backend", Error::ErrorNotSupported );
     return Node();
 }
 
 
-Soprano::QueryResultIterator Soprano::IODBCModel::executeQuery( const QString& query,
-                                                                Query::QueryLanguage language,
-                                                                const QString& userQueryLanguage ) const
+Soprano::QueryResultIterator Soprano::VirtuosoModel::executeQuery( const QString& query,
+                                                                   Query::QueryLanguage language,
+                                                                   const QString& userQueryLanguage ) const
 {
 //    qDebug() << Q_FUNC_INFO << query;
 

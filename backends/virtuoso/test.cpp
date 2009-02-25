@@ -15,7 +15,7 @@ int main( int argc, char** argv )
     Soprano::Virtuoso::BackendPlugin bp;
     bp.isAvailable();
 
-    IODBCModel model( 0 );
+    VirtuosoModel model( 0 );
     if ( !model.connect( "host=localhost:1111;uid=dba;pwd=dba;driver=/usr/local/lib/virtodbc.so;" ) ) {
         qDebug() << "Failed to connect to db";
         return 1;
