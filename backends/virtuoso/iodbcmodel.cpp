@@ -20,11 +20,11 @@
  */
 
 #include "iodbcmodel.h"
-#include "iodbcqueryiteratorbackend.h"
-#include "iodbcstatementhandler.h"
+#include "odbcqueryiteratorbackend.h"
 #include "soprano.h"
-#include "iodbcconnection.h"
-#include "iodbctools.h"
+#include "odbcenvironment.h"
+#include "odbcconnection.h"
+#include "odbctools.h"
 
 #include <QtCore/QDebug>
 #include <QtCore/QDir>
@@ -32,11 +32,13 @@
 #include <stdlib.h>
 
 
-// FIXME: this (and some code below) is copied from SparqlModel.
+// FIXME: do the escaping properly, the escapes now have been determined by trial-and-error :(
 namespace {
+#if 0
     QString prepareUrlForSqlCommand( const QUrl& url ) {
         return QString::fromAscii( url.toEncoded() ).replace( '\'', "\\\'" ).replace( '\"', "\\\"" );
     }
+#endif
 
     // we need to encode ' since it is reserved in SQL
     QString nodeToN3( const Soprano::Node& node ) {
@@ -46,7 +48,8 @@ namespace {
             return encoded;
         }
         else {
-            return node.toN3().replace( '\\', "\\\\" ).replace( '\n', "\\n" ).replace( '\t', "\\t" );
+            // escapes need to be escaped, except for double quotes which we then need to de-escape
+            return node.toN3().replace( '\\', "\\\\" ).replace( '\n', "\\n" ).replace( '\t', "\\t" ).replace( "\\\\\"", "\\\"" );
         }
     }
 
@@ -143,7 +146,13 @@ namespace {
 class Soprano::IODBCModel::Private
 {
 public:
-    IODBCConnection connection;
+    Private()
+        : environment( 0 ),
+          connection( 0 ) {
+    }
+
+    ODBC::Environment* environment;
+    ODBC::Connection* connection;
 };
 
 
@@ -162,13 +171,22 @@ Soprano::IODBCModel::~IODBCModel()
 
 bool Soprano::IODBCModel::connect( const QString& name )
 {
-    return d->connection.connect( name );
+    if ( !d->environment ) {
+        if ( !( d->environment = ODBC::Environment::createEnvironment() ) ) {
+            setError( "Unable to create ODBC environment." );
+            return false;
+        }
+    }
+
+    delete d->connection;
+    d->connection = d->environment->createConnection( name );
+    return d->connection != 0;
 }
 
 
 bool Soprano::IODBCModel::isConnected() const
 {
-    return d->connection.isConnected();
+    return d->connection != 0;
 }
 
 
@@ -235,7 +253,7 @@ Soprano::Error::ErrorCode Soprano::IODBCModel::addStatement( const Statement& st
                  .arg( statementToConstructGraphPattern( s, true ) );
     }
     qDebug() << "addStatement query:" << insert;
-    if ( d->connection.executeCommand( insert ) == Error::ErrorNone ) {
+    if ( d->connection->executeCommand( insert ) == Error::ErrorNone ) {
         clearError();
 
         // FIXME: can this be done with SQL/RDF views?
@@ -245,7 +263,7 @@ Soprano::Error::ErrorCode Soprano::IODBCModel::addStatement( const Statement& st
         return Error::ErrorNone;
     }
     else {
-        setError( d->connection.lastError() );
+        setError( d->connection->lastError() );
         return Error::convertErrorCode( lastError().code() );
     }
 }
@@ -345,12 +363,12 @@ Soprano::Error::ErrorCode Soprano::IODBCModel::removeStatement( const Statement&
     QString query = QString( "delete from %1" )
                     .arg( statementToConstructGraphPattern( s, true ) );
 //    qDebug() << "removeStatement query:" << query;
-    if ( d->connection.executeCommand( "sparql " + query ) == Error::ErrorNone ) {
+    if ( d->connection->executeCommand( "sparql " + query ) == Error::ErrorNone ) {
         // FIXME: can this be done with SQL/RDF views?
         emit statementRemoved( statement );
         emit statementsRemoved();
     }
-    setError( d->connection.lastError() );
+    setError( d->connection->lastError() );
     return Error::convertErrorCode( lastError().code() );
 }
 
@@ -380,12 +398,12 @@ Soprano::Error::ErrorCode Soprano::IODBCModel::removeAllStatements( const Statem
 
         }
 //        qDebug() << "removeAllStatements query:" << query;
-        if ( d->connection.executeCommand( "sparql " + query ) == Error::ErrorNone ) {
+        if ( d->connection->executeCommand( "sparql " + query ) == Error::ErrorNone ) {
             // FIXME: can this be done with SQL/RDF views?
             emit statementsRemoved();
             emit statementRemoved( statement );
         }
-        setError( d->connection.lastError() );
+        setError( d->connection->lastError() );
         return Error::convertErrorCode( lastError().code() );
     }
     else {
@@ -446,13 +464,13 @@ Soprano::QueryResultIterator Soprano::IODBCModel::executeQuery( const QString& q
         return QueryResultIterator();
     }
 
-    IODBCStatementHandler* hdl = d->connection.execute( "sparql " + query );
-    if ( hdl ) {
+    ODBC::QueryResult* result = d->connection->executeQuery( "sparql " + query );
+    if ( result ) {
         clearError();
-        return new IODBCQueryResultIteratorBackend( hdl );
+        return new ODBC::QueryResultIteratorBackend( result );
     }
     else {
-        setError( d->connection.lastError() );
+        setError( d->connection->lastError() );
         return 0;
     }
 }

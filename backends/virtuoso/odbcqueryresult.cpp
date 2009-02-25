@@ -1,13 +1,7 @@
 /*
  * This file is part of Soprano Project
  *
- * Copyright (C) 2008 Sebastian Trueg <trueg@kde.org>
- *
- * Certain bits taken from iodbctest.c
- * Copyright (C) 1996-2006 by OpenLink Software <iodbc@openlinksw.com>
- *
- * Certain bits taken from rdf_storage_virtuoso.c
- * Copyright (C) 2000-2008, Openlink Software,  http://www.openlinksw.com/
+ * Copyright (C) 2009 Sebastian Trueg <trueg@kde.org>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -25,8 +19,12 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#include "iodbcstatementhandler.h"
+#include "odbcqueryresult.h"
+#include "odbcqueryresult_p.h"
+#include "odbcconnection_p.h"
+
 #include "odbctools.h"
+
 #include "node.h"
 #include "literalvalue.h"
 #include "xsd.h"
@@ -98,20 +96,7 @@ Q_GLOBAL_STATIC( KeyCache<QString>, s_langCache )
 Q_GLOBAL_STATIC( KeyCache<QUrl>, s_typeCache )
 
 
-class Soprano::IODBCStatementHandler::Private
-{
-public:
-    HDBC m_hdbc;
-    HSTMT m_hstmt;
-
-    bool getCharData( HSTMT hstmt, int colNum, SQLCHAR** buffer, SQLLEN* length );
-
-    QString getLang( short key );
-    QUrl getType( short key );
-};
-
-
-bool Soprano::IODBCStatementHandler::Private::getCharData( HSTMT hstmt, int colNum, SQLCHAR** buffer, SQLLEN* length )
+bool Soprano::ODBC::QueryResultPrivate::getCharData( HSTMT hstmt, int colNum, SQLCHAR** buffer, SQLLEN* length )
 {
     SQLCHAR dummyBuffer[1]; // dummy buffer only used to determine length
 
@@ -150,7 +135,7 @@ bool Soprano::IODBCStatementHandler::Private::getCharData( HSTMT hstmt, int colN
 }
 
 
-QString Soprano::IODBCStatementHandler::Private::getLang( short key )
+QString Soprano::ODBC::QueryResultPrivate::getLang( short key )
 {
     // FIXME: thread safety + error handling
     if ( s_langCache()->contains( key ) ) {
@@ -160,7 +145,7 @@ QString Soprano::IODBCStatementHandler::Private::getLang( short key )
     QString lang;
 
     HSTMT hstmt;
-    int rc = SQLAllocHandle( SQL_HANDLE_STMT, m_hdbc, &hstmt );
+    int rc = SQLAllocHandle( SQL_HANDLE_STMT, m_conn->m_hdbc, &hstmt );
     if ( !SQL_SUCCEEDED(rc) ) {
         qDebug() << "Failed to allocate HSTMT";
         return QString();
@@ -190,7 +175,7 @@ QString Soprano::IODBCStatementHandler::Private::getLang( short key )
 }
 
 
-QUrl Soprano::IODBCStatementHandler::Private::getType( short key )
+QUrl Soprano::ODBC::QueryResultPrivate::getType( short key )
 {
     // FIXME: thread safety + error handling
     if ( s_typeCache()->contains( key ) ) {
@@ -201,7 +186,7 @@ QUrl Soprano::IODBCStatementHandler::Private::getType( short key )
 
     HSTMT hstmt;
 
-    int rc = SQLAllocHandle( SQL_HANDLE_STMT, m_hdbc, &hstmt );
+    int rc = SQLAllocHandle( SQL_HANDLE_STMT, m_conn->m_hdbc, &hstmt );
     if (!SQL_SUCCEEDED(rc)) {
         qDebug() << "Failed to allocate HSTMT";
         return QUrl();
@@ -231,63 +216,63 @@ QUrl Soprano::IODBCStatementHandler::Private::getType( short key )
 }
 
 
-Soprano::IODBCStatementHandler::IODBCStatementHandler( HDBC hdbc, HSTMT hstmt )
-    : d( new Private() )
+
+
+Soprano::ODBC::QueryResult::QueryResult()
+    : d( new QueryResultPrivate() )
 {
-    d->m_hdbc = hdbc;
-    d->m_hstmt = hstmt;
 }
 
 
-Soprano::IODBCStatementHandler::~IODBCStatementHandler()
+Soprano::ODBC::QueryResult::~QueryResult()
 {
-    if ( d->m_hstmt ) {
-        SQLCloseCursor( d->m_hstmt );
-        SQLFreeHandle( SQL_HANDLE_STMT, d->m_hstmt );
-        d->m_hstmt = SQL_NULL_HANDLE;
-    }
+    d->m_conn->m_openResults.removeAll( this );
+    SQLCloseCursor( d->m_hstmt );
+    SQLFreeHandle( SQL_HANDLE_STMT, d->m_hstmt );
+    delete d;
 }
 
 
-QStringList Soprano::IODBCStatementHandler::resultColumns()
+QStringList Soprano::ODBC::QueryResult::resultColumns()
 {
-    QStringList cols;
-    SQLSMALLINT numCols = -1;
-    if ( SQLNumResultCols( d->m_hstmt, &numCols ) != SQL_SUCCESS ) {
-        setError( IODBC::convertSqlError( SQL_HANDLE_STMT, d->m_hstmt ) );
-    }
-    else {
-        clearError();
-        for ( int col = 1; col <= numCols; ++col ) {
-            SQLTCHAR colName[51];
-            colName[50] = 0;
-            SQLSMALLINT colType;
-            SQLULEN colPrecision;
-            SQLSMALLINT colScale;
-            SQLSMALLINT colNullable;
-            if ( SQLDescribeCol( d->m_hstmt,
-                                 col,
-                                 (SQLTCHAR *) colName,
-                                 50,
-                                 0,
-                                 &colType,
-                                 &colPrecision,
-                                 &colScale,
-                                 &colNullable) == SQL_SUCCESS ) {
-                cols.append( QString::fromLatin1( ( const char* )colName ) );
-            }
-            else {
-                setError( IODBC::convertSqlError( SQL_HANDLE_STMT, d->m_hstmt ) );
-                break;
+    if ( d->m_columns.isEmpty() ) {
+        SQLSMALLINT numCols = -1;
+        if ( SQLNumResultCols( d->m_hstmt, &numCols ) != SQL_SUCCESS ) {
+            setError( IODBC::convertSqlError( SQL_HANDLE_STMT, d->m_hstmt ) );
+        }
+        else {
+            clearError();
+            for ( int col = 1; col <= numCols; ++col ) {
+                SQLTCHAR colName[51];
+                colName[50] = 0;
+                SQLSMALLINT colType;
+                SQLULEN colPrecision;
+                SQLSMALLINT colScale;
+                SQLSMALLINT colNullable;
+                if ( SQLDescribeCol( d->m_hstmt,
+                                     col,
+                                     (SQLTCHAR *) colName,
+                                     50,
+                                     0,
+                                     &colType,
+                                     &colPrecision,
+                                     &colScale,
+                                     &colNullable) == SQL_SUCCESS ) {
+                    d->m_columns.append( QString::fromLatin1( ( const char* )colName ) );
+                }
+                else {
+                    setError( IODBC::convertSqlError( SQL_HANDLE_STMT, d->m_hstmt ) );
+                    break;
+                }
             }
         }
     }
 
-    return cols;
+    return d->m_columns;
 }
 
 
-bool Soprano::IODBCStatementHandler::fetchScroll()
+bool Soprano::ODBC::QueryResult::fetchScroll()
 {
     int sts = SQLFetchScroll( d->m_hstmt, SQL_FETCH_NEXT, 1 );
     if ( sts == SQL_NO_DATA_FOUND ) {
@@ -304,7 +289,7 @@ bool Soprano::IODBCStatementHandler::fetchScroll()
 }
 
 
-Soprano::Node Soprano::IODBCStatementHandler::getData( int colNum )
+Soprano::Node Soprano::ODBC::QueryResult::getData( int colNum )
 {
     SQLCHAR* data = 0;
     SQLLEN length = 0;

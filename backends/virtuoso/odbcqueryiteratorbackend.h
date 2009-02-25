@@ -25,31 +25,32 @@
 #include "queryresultiteratorbackend.h"
 
 namespace Soprano {
+    namespace ODBC {
+        class QueryResult;
+        class QueryResultIteratorBackendPrivate;
 
-    class IODBCStatementHandler;
+        class QueryResultIteratorBackend : public Soprano::QueryResultIteratorBackend
+        {
+        public:
+            QueryResultIteratorBackend( ODBC::QueryResult* );
+            ~QueryResultIteratorBackend();
 
-    class IODBCQueryResultIteratorBackend : public QueryResultIteratorBackend
-    {
-    public:
-        IODBCQueryResultIteratorBackend( IODBCStatementHandler* );
-        ~IODBCQueryResultIteratorBackend();
+            bool next();
+            Statement currentStatement() const;
+            Soprano::Node binding( const QString &name ) const;
+            Soprano::Node binding( int offset ) const;
+            int bindingCount() const;
+            QStringList bindingNames() const;
+            bool isGraph() const;
+            bool isBinding() const;
+            bool isBool() const;
+            bool boolValue() const;
+            void close();
 
-        bool next();
-        Statement currentStatement() const;
-        Soprano::Node binding( const QString &name ) const;
-        Soprano::Node binding( int offset ) const;
-        int bindingCount() const;
-        QStringList bindingNames() const;
-        bool isGraph() const;
-        bool isBinding() const;
-        bool isBool() const;
-        bool boolValue() const;
-        void close();
-
-    private:
-        class Private;
-        Private *d;
-    };
+        private:
+            QueryResultIteratorBackendPrivate* const d;
+        };
+    }
 }
 
 #endif

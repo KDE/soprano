@@ -13,13 +13,14 @@ include_directories(
 )
 
 set(SRC
-  iodbcconnection.cpp
-  iodbcqueryiteratorbackend.cpp
-  iodbcstatementhandler.cpp
-  iodbctools.cpp
   iodbcmodel.cpp
   virtuosobackend.cpp
   virtuosocontroller.cpp
+  odbctools.cpp
+  odbcenvironment.cpp
+  odbcconnection.cpp
+  odbcqueryresult.cpp
+  odbcqueryiteratorbackend.cpp
   ${soprano_core_SOURCE_DIR}/sopranodirs.cpp
 )
 

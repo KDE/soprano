@@ -19,9 +19,10 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#include "iodbcqueryiteratorbackend.h"
-#include "iodbcstatementhandler.h"
-#include "iodbctools.h"
+#include "odbcqueryiteratorbackend.h"
+#include "odbcqueryresultiteratorbackend_p.h"
+#include "odbctools.h"
+#include "odbcqueryresult.h"
 #include "statement.h"
 #include "statementiterator.h"
 #include "nodeiterator.h"
@@ -40,31 +41,13 @@
 #include <QtCore/QDebug>
 
 
-class Soprano::IODBCQueryResultIteratorBackend::Private
-{
-public:
-    QPointer<IODBCStatementHandler> handler;
-    QStringList bindingNames;
-    QHash<QString, int> bindingIndexHash;
-
-    QVector<Node> bindingCache;
-    QBitArray bindingCachedFlags;
-
-    bool isGraphResult;
-    bool isAskQueryResult;
-    bool askResult;
-
-    StatementIterator graphIterator;
-};
-
-
-Soprano::IODBCQueryResultIteratorBackend::IODBCQueryResultIteratorBackend( IODBCStatementHandler* hdl )
-    : QueryResultIteratorBackend(),
-      d( new Private() )
+Soprano::ODBC::QueryResultIteratorBackend::QueryResultIteratorBackend( QueryResult* result )
+    : Soprano::QueryResultIteratorBackend(),
+      d( new QueryResultIteratorBackendPrivate() )
 {
     // cache binding names
-    d->handler = hdl;
-    d->bindingNames = hdl->resultColumns();
+    d->m_queryResult = result;
+    d->bindingNames = d->m_queryResult->resultColumns();
     for ( int i = 0; i < d->bindingNames.count(); ++i ) {
         d->bindingIndexHash.insert( d->bindingNames[i], i );
     }
@@ -81,13 +64,13 @@ Soprano::IODBCQueryResultIteratorBackend::IODBCQueryResultIteratorBackend( IODBC
         // cache the result
         // virtuoso returns an empty result set for false boolean results
         // otherwise a single row is returned
-        d->askResult = d->handler->fetchScroll();
+        d->askResult = d->m_queryResult->fetchScroll();
     }
     else if ( d->isGraphResult ) {
         // parse the data
-        if ( d->handler->fetchScroll() ) {
+        if ( d->m_queryResult->fetchScroll() ) {
             if ( const Parser* parser = PluginManager::instance()->discoverParserForSerialization( SerializationTurtle ) ) {
-                QString data = d->handler->getData( 1 ).toString();
+                QString data = d->m_queryResult->getData( 1 ).toString();
                 d->graphIterator = parser->parseString( data, QUrl(), SerializationTurtle );
             }
             else {
@@ -98,17 +81,17 @@ Soprano::IODBCQueryResultIteratorBackend::IODBCQueryResultIteratorBackend( IODBC
 }
 
 
-Soprano::IODBCQueryResultIteratorBackend::~IODBCQueryResultIteratorBackend()
+Soprano::ODBC::QueryResultIteratorBackend::~QueryResultIteratorBackend()
 {
-    delete d->handler;
+    delete d->m_queryResult;
     delete d;
 }
 
 
-bool Soprano::IODBCQueryResultIteratorBackend::next()
+bool Soprano::ODBC::QueryResultIteratorBackend::next()
 {
     if ( d->isAskQueryResult ) {
-        return d->handler != 0;
+        return d->m_queryResult != 0;
     }
     else if ( d->isGraphResult ) {
         return d->graphIterator.next();
@@ -118,18 +101,18 @@ bool Soprano::IODBCQueryResultIteratorBackend::next()
         d->bindingCachedFlags.fill( false );
 
         // ask statement handler for cursor scroll
-        return d->handler ? d->handler->fetchScroll() : false;
+        return d->m_queryResult ? d->m_queryResult->fetchScroll() : false;
     }
 }
 
 
-Soprano::Statement Soprano::IODBCQueryResultIteratorBackend::currentStatement() const
+Soprano::Statement Soprano::ODBC::QueryResultIteratorBackend::currentStatement() const
 {
     return d->graphIterator.current();
 }
 
 
-Soprano::Node Soprano::IODBCQueryResultIteratorBackend::binding( const QString& name ) const
+Soprano::Node Soprano::ODBC::QueryResultIteratorBackend::binding( const QString& name ) const
 {
     if ( d->bindingIndexHash.contains( name ) ) {
         return binding( d->bindingIndexHash[name] );
@@ -141,11 +124,11 @@ Soprano::Node Soprano::IODBCQueryResultIteratorBackend::binding( const QString& 
 }
 
 
-Soprano::Node Soprano::IODBCQueryResultIteratorBackend::binding( int offset ) const
+Soprano::Node Soprano::ODBC::QueryResultIteratorBackend::binding( int offset ) const
 {
-    if ( d->handler && offset < bindingCount() && offset >= 0 ) {
+    if ( d->m_queryResult && offset < bindingCount() && offset >= 0 ) {
         if ( !d->bindingCachedFlags[offset] ) {
-            d->bindingCache[offset] = d->handler->getData( offset+1 );
+            d->bindingCache[offset] = d->m_queryResult->getData( offset+1 );
             // convert the default graph back to the empty graph (hacky but should work in most situations)
             if ( d->bindingCache[offset] == IODBC::defaultGraph() )
                 d->bindingCache[offset] = Node();
@@ -157,45 +140,45 @@ Soprano::Node Soprano::IODBCQueryResultIteratorBackend::binding( int offset ) co
 }
 
 
-int Soprano::IODBCQueryResultIteratorBackend::bindingCount() const
+int Soprano::ODBC::QueryResultIteratorBackend::bindingCount() const
 {
     return d->bindingNames.count();
 }
 
 
-QStringList Soprano::IODBCQueryResultIteratorBackend::bindingNames() const
+QStringList Soprano::ODBC::QueryResultIteratorBackend::bindingNames() const
 {
     return d->bindingNames;
 }
 
 
-bool Soprano::IODBCQueryResultIteratorBackend::isGraph() const
+bool Soprano::ODBC::QueryResultIteratorBackend::isGraph() const
 {
     return d->isGraphResult;
 }
 
 
-bool Soprano::IODBCQueryResultIteratorBackend::isBinding() const
+bool Soprano::ODBC::QueryResultIteratorBackend::isBinding() const
 {
     return !d->isAskQueryResult && !d->isGraphResult;
 }
 
 
-bool Soprano::IODBCQueryResultIteratorBackend::isBool() const
+bool Soprano::ODBC::QueryResultIteratorBackend::isBool() const
 {
     return d->isAskQueryResult;
 }
 
 
-bool Soprano::IODBCQueryResultIteratorBackend::boolValue() const
+bool Soprano::ODBC::QueryResultIteratorBackend::boolValue() const
 {
     return d->askResult;
 }
 
 
-void Soprano::IODBCQueryResultIteratorBackend::close()
+void Soprano::ODBC::QueryResultIteratorBackend::close()
 {
     d->graphIterator.close();
-    delete d->handler;
-    d->handler = 0;
+    delete d->m_queryResult;
+    d->m_queryResult = 0;
 }

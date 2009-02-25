@@ -19,7 +19,7 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#include "iodbctools.h"
+#include "odbctools.h"
 
 #include <QtCore/QString>
 

@@ -84,6 +84,9 @@ Soprano::StorageModel* Soprano::Virtuoso::BackendPlugin::createModel( const Back
     QString connectString = QString( "host=%1;port=%2;uid=%3;pwd=%4;driver=%5" )
                             .arg( host, QString::number( port ), uid, pwd, driverPath );
 
+//     VirtuosoConfigurator configurator( connectString );
+//     configurator.configureServer( settings );
+
     IODBCModel* model = new IODBCModel( this );
     if ( model->connect( connectString ) ) {
         // mem mangement the ugly way

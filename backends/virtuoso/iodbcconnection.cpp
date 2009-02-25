@@ -23,7 +23,7 @@
  */
 
 #include "iodbcconnection.h"
-#include "iodbctools.h"
+#include "odbctools.h"
 #include "iodbcstatementhandler.h"
 
 #include <QtCore/QDebug>
@@ -83,7 +83,7 @@ bool Soprano::IODBCConnection::connect( const QString& connectString )
     close();
 
     // allocate sql handle
-    if ( SQLAllocEnv( &d->m_henv ) != SQL_SUCCESS ) {
+    if ( SQLAllocHandle( SQL_HANDLE_ENV, SQL_NULL_HANDLE, &d->m_henv ) != SQL_SUCCESS ) {
         setError( "Failed to allocate SQL handle" );
         return false;
     }
@@ -107,14 +107,14 @@ bool Soprano::IODBCConnection::connect( const QString& connectString )
     outdsn[4096] = 0;
     short buflen = 0;
     int status = 0;
-    status = SQLDriverConnect ( d->m_hdbc,
-                                0,
-                                (UCHAR*) connectString.toUtf8().data(),
-                                SQL_NTS,
-                                outdsn,
-                                4096,
-                                 &buflen,
-                                SQL_DRIVER_COMPLETE );
+    status = SQLDriverConnect( d->m_hdbc,
+                               0,
+                               (UCHAR*) connectString.toUtf8().data(),
+                               SQL_NTS,
+                               outdsn,
+                               4096,
+                               &buflen,
+                               SQL_DRIVER_COMPLETE );
 
     if ( status != SQL_SUCCESS && status != SQL_SUCCESS_WITH_INFO ) {
         setError( IODBC::convertSqlError( SQL_HANDLE_DBC, d->m_hdbc ) );
@@ -167,7 +167,7 @@ Soprano::IODBCStatementHandler* Soprano::IODBCConnection::execute( const QString
     }
 
     HSTMT hstmt;
-    if ( SQLAllocStmt( d->m_hdbc, &hstmt ) != SQL_SUCCESS ) {
+    if ( SQLAllocHandle( SQL_HANDLE_STMT, d->m_hdbc, &hstmt ) != SQL_SUCCESS ) {
         setError( IODBC::convertSqlError( SQL_HANDLE_DBC, d->m_hdbc ) );
         return 0;
     }
@@ -206,7 +206,7 @@ Soprano::Error::ErrorCode Soprano::IODBCConnection::executeCommand( const QStrin
     }
 
     HSTMT hstmt;
-    if ( SQLAllocStmt( d->m_hdbc, &hstmt ) != SQL_SUCCESS ) {
+    if ( SQLAllocHandle( SQL_HANDLE_STMT, d->m_hdbc, &hstmt ) != SQL_SUCCESS ) {
         setError( IODBC::convertSqlError( SQL_HANDLE_DBC, d->m_hdbc ) );
         return Error::ErrorUnknown;
     }
