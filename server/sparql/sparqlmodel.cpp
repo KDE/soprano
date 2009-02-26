@@ -403,6 +403,8 @@ Soprano::Util::AsyncResult* Soprano::Client::SparqlModel::executeQueryAsync( con
                                                                              Query::QueryLanguage language,
                                                                              const QString& userQueryLanguage ) const
 {
+    Q_UNUSED(language);
+    Q_UNUSED(userQueryLanguage);
     Util::AsyncResult* result = Util::AsyncResult::createResult();
     Command cmd;
     cmd.result = result;
