@@ -32,6 +32,8 @@ Soprano::Model* Soprano::VirtuosoBackendTest::createModel()
         BackendSettings settings;
         settings << BackendSetting( BackendOptionHost, "localhost" );
         settings << BackendSetting( BackendOptionPort, 1111 );
+        settings << BackendSetting( BackendOptionUsername, "dba" );
+        settings << BackendSetting( BackendOptionPassword, "dba" );
         Model* m = b->createModel( settings );
         m->removeAllStatements();
         return m;
