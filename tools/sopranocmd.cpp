@@ -341,7 +341,7 @@ namespace {
         QTextStream s( stdout );
         s << endl;
         s << "Usage:" << endl
-          << "   sopranocmd --backend [--dir <storagedir>] [--serialization <s>] <command> [<parameters>]" << endl
+          << "   sopranocmd --backend [--dir <storagedir>] [--settings <settings>] [--serialization <s>] <command> [<parameters>]" << endl
           << "   sopranocmd --port <port> [--host <host>] --model <name> [--serialization <s>] <command> [<parameters>]" << endl
           << "   sopranocmd --socket <socketpath>  --model <name> [--serialization <s>] <command> [<parameters>]" << endl
 #ifdef BUILD_DBUS_SUPPORT
@@ -359,6 +359,9 @@ namespace {
           << "   --backend           The backend to use when accessing a storage directly and not via the Soprano server." << endl
           << "                       Possible backends are:" << endl
           << "                       " << backendNames().join( ", " ) << endl
+          << endl
+          << "   --settings <s>      A list of additional settings to be passed to the backend. Only applicable in combination with" << endl
+          << "                       --backend. Settings are key=value pairs separated by semicolon." << endl
           << endl
           << "   --dir               The storage directory. This only applies when specifying the backend. Defaults" << endl
           << "                       to current directory." << endl
@@ -426,6 +429,7 @@ int main( int argc, char *argv[] )
     allowedCmdLineArgs.insert( "version", false );
     allowedCmdLineArgs.insert( "help", false );
     allowedCmdLineArgs.insert( "backend", true );
+    allowedCmdLineArgs.insert( "settings", true );
     allowedCmdLineArgs.insert( "dir", true );
     allowedCmdLineArgs.insert( "port", true );
     allowedCmdLineArgs.insert( "host", true );
@@ -463,7 +467,13 @@ int main( int argc, char *argv[] )
         return usage( "Parameter --dir only makes sense in combination with --backend." );
     }
 
+    if ( args.hasSetting( "settings" ) &&
+         !args.hasSetting( "backend" ) ) {
+        return usage( "Parameter --settings only makes sense in combination with --backend." );
+    }
+
     QString backendName = args.getSetting( "backend" );
+    QString backendSettings = args.getSetting( "settings" );
     QString dir = args.getSetting( "dir" );
     QString command;
     QString modelName = args.getSetting( "model" );
@@ -569,6 +579,17 @@ int main( int argc, char *argv[] )
         if ( args.hasSetting( "host" ) ) {
             settings.append( BackendSetting( BackendOptionHost, args.getSetting( "host" ) ) );
         }
+
+        QStringList userSettings = backendSettings.split( ';', QString::SkipEmptyParts );
+        foreach( const QString& setting, userSettings ) {
+            QStringList keyValue = setting.split( '=' );
+            if ( keyValue.count() != 2 ) {
+                errStream << "Invalid backend setting: " << setting;
+                return 2;
+            }
+            settings << BackendSetting( keyValue[0], keyValue[1] );
+        }
+
         if ( !( model = backend->createModel( settings ) ) ) {
             errStream << "Failed to create Model: " << backend->lastError() << endl;
             return 2;
