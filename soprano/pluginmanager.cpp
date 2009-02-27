@@ -79,6 +79,8 @@ const Soprano::Backend* Soprano::PluginManager::discoverBackendByName( const QSt
     QHash<QString, PluginStub>::iterator it = d->backends.find( name );
     if( it != d->backends.end() )
         return dynamic_cast<Backend*>( it->plugin() );
+    else if ( !name.endsWith( QLatin1String( "backend" ) ) )
+        return discoverBackendByName( name + QLatin1String( "backend" ) );
     else
         return 0;
 }
@@ -104,6 +106,8 @@ const Soprano::Parser* Soprano::PluginManager::discoverParserByName( const QStri
     QHash<QString, PluginStub>::iterator it = d->parsers.find( name );
     if( it != d->parsers.end() )
         return dynamic_cast<Parser*>( it->plugin() );
+    else if ( !name.endsWith( QLatin1String( "parser" ) ) )
+        return discoverParserByName( name + QLatin1String( "parser" ) );
     else
         return 0;
 }
@@ -129,6 +133,8 @@ const Soprano::Serializer* Soprano::PluginManager::discoverSerializerByName( con
     QHash<QString, PluginStub>::iterator it = d->serializers.find( name );
     if( it != d->serializers.end() )
         return dynamic_cast<Serializer*>( it->plugin() );
+    else if ( !name.endsWith( QLatin1String( "serializer" ) ) )
+        return discoverSerializerByName( name + QLatin1String( "serializer" ) );
     else
         return 0;
 }
@@ -224,13 +230,6 @@ void Soprano::PluginManager::loadPlugin( const QString& path )
                 name = f.fileName().section( '/', -1 );
                 if( name.endsWith( ".desktop" ) ) {
                     name.truncate( name.length() - 8 );
-                }
-
-                // try some backwards compatibility
-                // as backends redland and sesame2 were always loaded without
-                // the "backend" suffix
-                if( name.endsWith( "backend" ) ) {
-                    name.truncate( name.length() - 7 );
                 }
             }
 
