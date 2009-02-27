@@ -50,7 +50,7 @@ qt4_automoc(multithreadingtest multithreadingtest.cpp)
 add_library(multithreadingtest STATIC multithreadingtest.cpp)
 target_link_libraries(multithreadingtest soprano ${QT_QTCORE_LIBRARY} ${QT_QTTEST_LIBRARY})
 
-if(REDLAND_FOUND)
+if(BUILD_REDLAND_BACKEND)
   # RedlandStatementIterator
   qt4_automoc(redlandstatementiteratortest.cpp)
   add_executable(redlandstatementiteratortest redlandstatementiteratortest.cpp)
@@ -72,7 +72,7 @@ if(REDLAND_FOUND)
   add_executable(redlandmultithreadtest redlandmultithreadtest.cpp)
   target_link_libraries(redlandmultithreadtest soprano multithreadingtest ${QT_QTCORE_LIBRARY} ${QT_QTTEST_LIBRARY})
   add_test(redlandmultithreadtest ${EXECUTABLE_OUTPUT_PATH}/redlandmultithreadtest)
-endif(REDLAND_FOUND)
+endif(BUILD_REDLAND_BACKEND)
 
 # scaling
 qt4_automoc(storagescalingtest storagescalingtest.cpp)
@@ -104,7 +104,7 @@ add_test(inferencemodeltest ${EXECUTABLE_OUTPUT_PATH}/inferencemodeltest)
 #target_link_libraries(queryapitest soprano ${QT_QTCORE_LIBRARY} ${QT_QTTEST_LIBRARY})
 #add_test(queryapitest ${EXECUTABLE_OUTPUT_PATH}/queryapitest)
 
-if(JNI_1_4_FOUND)
+if(BUILD_SESAME2_BACKEND)
   # Sesame2 model tests
   qt4_automoc(sesame2backendtest sesame2backendtest.cpp)
   add_executable(sesame2backendtest sesame2backendtest.cpp)
@@ -115,7 +115,7 @@ if(JNI_1_4_FOUND)
   add_executable(sesame2multithreadtest sesame2multithreadtest.cpp)
   target_link_libraries(sesame2multithreadtest soprano multithreadingtest ${QT_QTCORE_LIBRARY} ${QT_QTTEST_LIBRARY})
   add_test(sesame2multithreadtest ${EXECUTABLE_OUTPUT_PATH}/sesame2multithreadtest)
-endif(JNI_1_4_FOUND)
+endif(BUILD_SESAME2_BACKEND)
 
 # parser test
 qt4_automoc(parsertest parsertest.cpp)
@@ -130,7 +130,7 @@ target_link_libraries(errortest soprano ${QT_QTCORE_LIBRARY} ${QT_QTTEST_LIBRARY
 add_test(errortest ${EXECUTABLE_OUTPUT_PATH}/errortest)
 
 # Index Test
-if(SOPRANO_BUILD_INDEX_LIB)
+if(BUILD_CLUCENE_INDEX)
   include_directories(
     ${CLUCENE_INCLUDE_DIR}
     ${CLUCENE_LIBRARY_DIR})
@@ -150,7 +150,7 @@ if(SOPRANO_BUILD_INDEX_LIB)
   add_executable(indexmodelmultithreadingtest indexmodelmultithreadingtest.cpp)
   target_link_libraries(indexmodelmultithreadingtest soprano sopranoindex multithreadingtest ${QT_QTCORE_LIBRARY} ${QT_QTTEST_LIBRARY})
   add_test(indexmodelmultithreadingtest ${EXECUTABLE_OUTPUT_PATH}/indexmodelmultithreadingtest)
-endif(SOPRANO_BUILD_INDEX_LIB)
+endif(BUILD_CLUCENE_INDEX)
 
 # Server test
 qt4_automoc(sopranodclienttest sopranodclienttest.cpp)
@@ -169,7 +169,7 @@ add_executable(sopranodsocketclienttest sopranodsocketclienttest.cpp)
 target_link_libraries(sopranodsocketclienttest sopranomodeltest sopranoclient ${QT_QTCORE_LIBRARY} ${QT_QTTEST_LIBRARY} ${QT_QTNETWORK_LIBRARY})
 add_test(sopranodsocketclienttest ${EXECUTABLE_OUTPUT_PATH}/sopranodclienttest)
 
-if(HAVE_DBUS)
+if(BUILD_DBUS_SUPPORT)
 qt4_automoc(sopranodbusclienttest sopranodbusclienttest.cpp)
 add_executable(sopranodbusclienttest sopranodbusclienttest.cpp)
 target_link_libraries(sopranodbusclienttest sopranomodeltest sopranoclient ${QT_QTCORE_LIBRARY} ${QT_QTTEST_LIBRARY} ${QT_QTNETWORK_LIBRARY})
@@ -184,7 +184,7 @@ add_test(sopranodbusmultithreadtest ${EXECUTABLE_OUTPUT_PATH}/sopranodbusmultith
 qt4_automoc(sopranodbussignalspy modelsignalspy.cpp)
 add_executable(sopranodbussignalspy modelsignalspy.cpp sopranodbussignalspy.cpp)
 target_link_libraries(sopranodbussignalspy sopranoclient ${QT_QTCORE_LIBRARY})
-endif(HAVE_DBUS)
+endif(BUILD_DBUS_SUPPORT)
 
 # NRL Model test
 qt4_automoc(nrlmodeltest nrlmodeltest.cpp)
