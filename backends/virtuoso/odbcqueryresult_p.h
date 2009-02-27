@@ -36,7 +36,10 @@ namespace Soprano {
         class QueryResultPrivate
         {
         public:
-            QueryResultPrivate();
+            QueryResultPrivate()
+                : m_hstmt( 0 ),
+                  m_conn( 0 ) {
+            }
 
             HSTMT m_hstmt;
             ConnectionPrivate* m_conn;

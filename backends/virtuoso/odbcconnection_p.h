@@ -43,6 +43,7 @@ namespace Soprano {
             HDBC m_hdbc;
             EnvironmentPrivate* m_env;
             QList<QueryResult*> m_openResults;
+            QString m_connectString;
 
             HSTMT execute( const QString& query );
         };

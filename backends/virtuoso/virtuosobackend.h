@@ -29,6 +29,10 @@
 
 
 namespace Soprano {
+    namespace ODBC {
+        class Environment;
+    }
+
     namespace Virtuoso {
         class BackendPlugin : public QObject, public Soprano::Backend
         {
@@ -44,8 +48,12 @@ namespace Soprano {
             BackendFeatures supportedFeatures() const;
             bool isAvailable() const;
 
+            ODBC::Environment* odbcEnvironment() const { return m_odbcEnvironment; }
+
         private:
             QString findVirtuosoDriver() const;
+
+            mutable ODBC::Environment* m_odbcEnvironment;
         };
     }
 }

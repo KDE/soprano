@@ -27,6 +27,7 @@
 
 #include "virtuosotools.h"
 
+#include <QtCore/QDebug>
 
 HSTMT Soprano::ODBC::ConnectionPrivate::execute( const QString& request )
 {
@@ -38,8 +39,8 @@ HSTMT Soprano::ODBC::ConnectionPrivate::execute( const QString& request )
     else {
         QByteArray utf8Request = request.toUtf8();
         if ( !SQL_SUCCEEDED( SQLExecDirect( hstmt, ( UCHAR* )utf8Request.data(), utf8Request.length() ) ) ) {
-            SQLFreeHandle( SQL_HANDLE_STMT, hstmt );
             setError( Virtuoso::convertSqlError( SQL_HANDLE_STMT, hstmt ) );
+            SQLFreeHandle( SQL_HANDLE_STMT, hstmt );
             return 0;
         }
         else {
@@ -76,8 +77,16 @@ Soprano::ODBC::Environment* Soprano::ODBC::Connection::environment() const
 }
 
 
+QString Soprano::ODBC::Connection::odbcConnectString() const
+{
+    return d->m_connectString;
+}
+
+
 Soprano::Error::ErrorCode Soprano::ODBC::Connection::executeCommand( const QString& command )
 {
+    qDebug() << Q_FUNC_INFO << command;
+
     Error::ErrorCode result = Error::ErrorNone;
 
     HSTMT hstmt = d->execute( command );
@@ -92,6 +101,8 @@ Soprano::Error::ErrorCode Soprano::ODBC::Connection::executeCommand( const QStri
 
 Soprano::ODBC::QueryResult* Soprano::ODBC::Connection::executeQuery( const QString& request )
 {
+    qDebug() << Q_FUNC_INFO << request;
+
     HSTMT hstmt = d->execute( request );
     setError( d->lastError() );
     if ( hstmt ) {

@@ -19,8 +19,8 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#include "odbcqueryiteratorbackend.h"
-#include "odbcqueryresultiteratorbackend_p.h"
+#include "virtuosoqueryresultiteratorbackend.h"
+#include "virtuosoqueryresultiteratorbackend_p.h"
 #include "virtuosotools.h"
 #include "odbcqueryresult.h"
 #include "statement.h"
@@ -41,7 +41,7 @@
 #include <QtCore/QDebug>
 
 
-Soprano::ODBC::QueryResultIteratorBackend::QueryResultIteratorBackend( QueryResult* result )
+Soprano::Virtuoso::QueryResultIteratorBackend::QueryResultIteratorBackend( ODBC::QueryResult* result )
     : Soprano::QueryResultIteratorBackend(),
       d( new QueryResultIteratorBackendPrivate() )
 {
@@ -81,14 +81,14 @@ Soprano::ODBC::QueryResultIteratorBackend::QueryResultIteratorBackend( QueryResu
 }
 
 
-Soprano::ODBC::QueryResultIteratorBackend::~QueryResultIteratorBackend()
+Soprano::Virtuoso::QueryResultIteratorBackend::~QueryResultIteratorBackend()
 {
     delete d->m_queryResult;
     delete d;
 }
 
 
-bool Soprano::ODBC::QueryResultIteratorBackend::next()
+bool Soprano::Virtuoso::QueryResultIteratorBackend::next()
 {
     if ( d->isAskQueryResult ) {
         return d->m_queryResult != 0;
@@ -106,13 +106,13 @@ bool Soprano::ODBC::QueryResultIteratorBackend::next()
 }
 
 
-Soprano::Statement Soprano::ODBC::QueryResultIteratorBackend::currentStatement() const
+Soprano::Statement Soprano::Virtuoso::QueryResultIteratorBackend::currentStatement() const
 {
     return d->graphIterator.current();
 }
 
 
-Soprano::Node Soprano::ODBC::QueryResultIteratorBackend::binding( const QString& name ) const
+Soprano::Node Soprano::Virtuoso::QueryResultIteratorBackend::binding( const QString& name ) const
 {
     if ( d->bindingIndexHash.contains( name ) ) {
         return binding( d->bindingIndexHash[name] );
@@ -124,7 +124,7 @@ Soprano::Node Soprano::ODBC::QueryResultIteratorBackend::binding( const QString&
 }
 
 
-Soprano::Node Soprano::ODBC::QueryResultIteratorBackend::binding( int offset ) const
+Soprano::Node Soprano::Virtuoso::QueryResultIteratorBackend::binding( int offset ) const
 {
     if ( d->m_queryResult && offset < bindingCount() && offset >= 0 ) {
         if ( !d->bindingCachedFlags[offset] ) {
@@ -140,43 +140,43 @@ Soprano::Node Soprano::ODBC::QueryResultIteratorBackend::binding( int offset ) c
 }
 
 
-int Soprano::ODBC::QueryResultIteratorBackend::bindingCount() const
+int Soprano::Virtuoso::QueryResultIteratorBackend::bindingCount() const
 {
     return d->bindingNames.count();
 }
 
 
-QStringList Soprano::ODBC::QueryResultIteratorBackend::bindingNames() const
+QStringList Soprano::Virtuoso::QueryResultIteratorBackend::bindingNames() const
 {
     return d->bindingNames;
 }
 
 
-bool Soprano::ODBC::QueryResultIteratorBackend::isGraph() const
+bool Soprano::Virtuoso::QueryResultIteratorBackend::isGraph() const
 {
     return d->isGraphResult;
 }
 
 
-bool Soprano::ODBC::QueryResultIteratorBackend::isBinding() const
+bool Soprano::Virtuoso::QueryResultIteratorBackend::isBinding() const
 {
     return !d->isAskQueryResult && !d->isGraphResult;
 }
 
 
-bool Soprano::ODBC::QueryResultIteratorBackend::isBool() const
+bool Soprano::Virtuoso::QueryResultIteratorBackend::isBool() const
 {
     return d->isAskQueryResult;
 }
 
 
-bool Soprano::ODBC::QueryResultIteratorBackend::boolValue() const
+bool Soprano::Virtuoso::QueryResultIteratorBackend::boolValue() const
 {
     return d->askResult;
 }
 
 
-void Soprano::ODBC::QueryResultIteratorBackend::close()
+void Soprano::Virtuoso::QueryResultIteratorBackend::close()
 {
     d->graphIterator.close();
     delete d->m_queryResult;

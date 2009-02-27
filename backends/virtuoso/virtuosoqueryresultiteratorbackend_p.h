@@ -38,11 +38,11 @@
 
 
 namespace Soprano {
-    namespace ODBC {
+    namespace Virtuoso {
         class QueryResultIteratorBackendPrivate
         {
         public:
-            QueryResult* m_queryResult;
+            ODBC::QueryResult* m_queryResult;
 
             QStringList bindingNames;
             QHash<QString, int> bindingIndexHash;

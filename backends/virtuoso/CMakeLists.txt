@@ -17,10 +17,11 @@ set(SRC
   virtuosobackend.cpp
   virtuosocontroller.cpp
   virtuosotools.cpp
+  virtuosoqueryresultiteratorbackend.cpp
+  virtuosoconfigurator.cpp
   odbcenvironment.cpp
   odbcconnection.cpp
   odbcqueryresult.cpp
-  odbcqueryiteratorbackend.cpp
   ${soprano_core_SOURCE_DIR}/sopranodirs.cpp
 )
 

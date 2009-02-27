@@ -15,14 +15,39 @@
  *
  * \section soprano_backend_vituoso_settings Supported Settings
  *
- * The Virtuoso backend supports the following settings:
+ * The Virtuoso backend supports the following settings which can be passed to Soprano::Backend::createModel:
+ *
+ * \li \p indices - A comma-separated list of quadruple indices to be used (Example:'spog,posg,opsg'). If not
+ *               specified, the indices are not changed, ie. the Virtuoso defaults are used.
+ * \li \p fulltextindex - Enable or disable the full text index which allows to perform full text queries on
+ *                     string literals embedded in SPARQL queries. For more information see the documentation
+ *                     on <a href="http://docs.openlinksw.com/virtuoso/rdfsparql.html#sparqlextensions">Virtuoso SPARQL extensions</a>.
+ *                     <br/>\p none - disable the index (default)
+ *                     <br/>\p sync - enable syncroneous updates of the index (the index is always in sync. This might give a performace penalty)
+ *                     <br/>\p N - The interval in minutes after which the index will be updated.
+ *
+ * The two settings above are user settings and have to be provided using Soprano::BackendOptionUser:
+ *
+ * \code
+ * Soprano::BackendSettings settings;
+ * // configure the used indices
+ * settings << Soprano::BackendSetting( "indices", "spog,posg,opsg" );
+ *
+ * // set the full text index to be updated every 10 minutes
+ * settings << Soprano::BackendSetting( "fulltextindex", "10" );
+ * \endcode
+ *
+ * The following setting is required for starting a local instance of Virtuoso:
+ *
+ * \li Soprano::BackendOptionStorageDir - Set the storage folder to use when spawning a local
+ *      instance of Virtuoso. This can not be combined with any of the settings above.
+ *
+ * The following settings need to be provided to access an already running Virtuoso server:
  *
  * \li Soprano::BackendOptionHost - Set the host the Virtuoso server is running on.
  * \li Soprano::BackendOptionPort - Set the port the Virtuoso server is running on.
  * \li Soprano::BackendOptionUsername - Set the user name to connect to the Virtuoso server.
  * \li Soprano::BackendOptionPassword - Set the password to connect to the Virtuoso server.
- * \li Soprano::BackendOptionStorageDir - Set the storage folder to use when spawning a local
- *      instance of Virtuoso. This can not be combined with any of the settings above.
  *
  *
  * \section soprano_backend_vituoso_specialities Virtuoso Specialities
@@ -40,15 +65,6 @@
  * This means that a conversion needs to take place whenever the empty graph or the special
  * graph are encountered. This introduces a slight performance penalty. In the future an option
  * might be introduced to disable this behaviour.
- *
- *
- * \subsection soprano_virtuoso_system_statements Virtuoso System Statements
- *
- * Virtuoso has a set of virtual system statements which must not be removed. Since these are
- * added at startup, an empty database already contains roughly 1200 statements in one
- * named graph. The backend tries to filter these system statements which works well on all
- * methods except Soprano::Model::executeQuery. This method is too generic to simply perform
- * this filtering without a query parser.
  *
  *
  * \subsection soprano_virtuoso_types SQL Types

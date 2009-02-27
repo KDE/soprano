@@ -25,16 +25,20 @@
 #include "storagemodel.h"
 
 namespace Soprano {
+    namespace ODBC {
+        class Connection;
+    }
+
     class VirtuosoModel : public StorageModel
     {
         Q_OBJECT
 
     public:
-        VirtuosoModel( const Backend* );
+        /**
+         * \param connection The base connection used for non-transaction requests
+         */
+        VirtuosoModel( ODBC::Connection* connection, const Backend* );
         ~VirtuosoModel();
-
-        bool connect( const QString& name );
-        bool isConnected() const;
 
         Error::ErrorCode addStatement( const Statement &statement );
         NodeIterator listContexts() const;

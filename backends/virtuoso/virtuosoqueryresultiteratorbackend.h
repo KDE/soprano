@@ -27,6 +27,10 @@
 namespace Soprano {
     namespace ODBC {
         class QueryResult;
+    }
+
+    namespace Virtuoso {
+
         class QueryResultIteratorBackendPrivate;
 
         class QueryResultIteratorBackend : public Soprano::QueryResultIteratorBackend

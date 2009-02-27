@@ -84,6 +84,7 @@ Soprano::ODBC::Connection* Soprano::ODBC::Environment::createConnection( const Q
     Connection* conn = new Connection();
     conn->d->m_hdbc = hdbc;
     conn->d->m_env = d;
+    conn->d->m_connectString = connectString;
     d->m_openConnections.append( conn );
     return conn;
 }

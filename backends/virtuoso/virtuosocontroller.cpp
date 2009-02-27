@@ -70,11 +70,12 @@ bool Soprano::VirtuosoController::start( const BackendSettings& settings, RunFla
             return false;
         }
 
-        qDebug() << "Starting Virtuoso server";
         QStringList args;
         args << "+foreground"
              << "+config" << m_configFilePath
              << "+wait";
+        qDebug() << "Starting Virtuoso server:" << virtuosoExe << args;
+
         m_virtuosoProcess.start( virtuosoExe, args, QIODevice::ReadOnly );
         m_virtuosoProcess.setReadChannel( QProcess::StandardError );
         m_virtuosoProcess.closeReadChannel( QProcess::StandardOutput );
@@ -102,7 +103,8 @@ bool Soprano::VirtuosoController::waitForVirtuosoToInitialize()
         QEventLoop loop;
         m_initializationLoop = &loop;
         loop.exec();
-        return true;
+        m_initializationLoop = 0;
+        return( m_status == Running );
     }
     else {
         return false;
@@ -115,8 +117,10 @@ void Soprano::VirtuosoController::slotProcessReadyRead()
     // we only wait for the server to tell us that it is ready
     while ( m_virtuosoProcess.canReadLine() ) {
         QString line = QString::fromLatin1( m_virtuosoProcess.readLine() );
+        qDebug() << line;
         if ( line.contains( "Server online at" ) ) {
             m_virtuosoProcess.closeReadChannel( QProcess::StandardError );
+            m_status = Running;
             m_initializationLoop->exit();
         }
     }
@@ -177,7 +181,12 @@ void Soprano::VirtuosoController::slotProcessFinished( int, QProcess::ExitStatus
 
     m_status = NotRunning;
 
+    qDebug() << "Virtuoso server stopped:" << m_lastExitStatus;
+
     emit stopped( m_lastExitStatus );
+
+    if ( m_initializationLoop )
+        m_initializationLoop->exit();
 }
 
 

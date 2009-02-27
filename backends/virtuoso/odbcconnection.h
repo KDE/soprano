@@ -38,6 +38,8 @@ namespace Soprano {
 
             Environment* environment() const;
 
+            QString odbcConnectString() const;
+
             Error::ErrorCode executeCommand( const QString& command );
             QueryResult* executeQuery( const QString& request );
 

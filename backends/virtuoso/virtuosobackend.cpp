@@ -22,15 +22,21 @@
 #include "virtuosobackend.h"
 #include "virtuosocontroller.h"
 #include "virtuosomodel.h"
+#include "virtuosoconfigurator.h"
+#include "odbcenvironment.h"
+
 #include "sopranodirs.h"
 
 #include <QtCore/QDebug>
 #include <QtCore/QtPlugin>
+#include <QtCore/QDir>
+
 
 Q_EXPORT_PLUGIN2(soprano_virtuosobackend, Soprano::Virtuoso::BackendPlugin)
 
 Soprano::Virtuoso::BackendPlugin::BackendPlugin()
-    : Backend( "virtuosobackend" )
+    : Backend( "virtuosobackend" ),
+      m_odbcEnvironment( 0 )
 {
 }
 
@@ -42,6 +48,13 @@ Soprano::Virtuoso::BackendPlugin::~BackendPlugin()
 
 Soprano::StorageModel* Soprano::Virtuoso::BackendPlugin::createModel( const BackendSettings& settings ) const
 {
+    if ( !m_odbcEnvironment ) {
+        if ( !( m_odbcEnvironment = ODBC::Environment::createEnvironment() ) ) {
+            setError( "Unable to create ODBC environment." );
+            return 0;
+        }
+    }
+
     // for now we only support connecting to a running virtuoso instance
     QString host = valueInSettings( settings, BackendOptionHost ).toString();
     int port = valueInSettings( settings, BackendOptionPort ).toInt();
@@ -69,10 +82,6 @@ Soprano::StorageModel* Soprano::Virtuoso::BackendPlugin::createModel( const Back
         port = controller->usedPort();
         uid = "dba";
         pwd = "dba";
-
-        // FIXME: create some status sql table which stores a version and the already enabled features or already performed
-        //        optimization tasks
-        //        then perform missing initialization based on the values in that table
     }
 
     QString driverPath = findVirtuosoDriver();
@@ -84,22 +93,21 @@ Soprano::StorageModel* Soprano::Virtuoso::BackendPlugin::createModel( const Back
     QString connectString = QString( "host=%1;port=%2;uid=%3;pwd=%4;driver=%5" )
                             .arg( host, QString::number( port ), uid, pwd, driverPath );
 
-//     VirtuosoConfigurator configurator( connectString );
-//     configurator.configureServer( settings );
+    if ( ODBC::Connection* connection = odbcEnvironment()->createConnection( connectString ) ) {
 
-    VirtuosoModel* model = new VirtuosoModel( this );
-    if ( model->connect( connectString ) ) {
+        // FIXME: should configuration only be allowed on spawned servers?
+        DatabaseConfigurator configurator( connection );
+        configurator.configureServer( settings );
+
+        VirtuosoModel* model = new VirtuosoModel( connection, this );
         // mem mangement the ugly way
         // FIXME: improve
         if ( controller )
             controller->setParent( model );
-        clearError();
         return model;
     }
     else {
-        setError( model->lastError() );
-        delete controller;
-        delete model;
+        setError( odbcEnvironment()->lastError() );
         return 0;
     }
 }
@@ -107,9 +115,35 @@ Soprano::StorageModel* Soprano::Virtuoso::BackendPlugin::createModel( const Back
 
 bool Soprano::Virtuoso::BackendPlugin::deleteModelData( const BackendSettings& settings ) const
 {
-    Q_UNUSED( settings );
-    setError( "deleting model data not supported yet!" );
-    return false;
+    // get the storage dir for this instance
+    QString path = valueInSettings( settings, BackendOptionStorageDir ).toString();
+    if ( path.isEmpty() ) {
+        setError( "No storage path set. Cannot delete model data.", Error::ErrorInvalidArgument );
+        return false;
+    }
+
+    // create a list of database files as configured in VirtuosoController::writeConfig
+    QString prefix = QLatin1String( "soprano-virtuoso" );
+    QStringList suffixes;
+    suffixes << QLatin1String( ".db" )
+             << QLatin1String( ".log" )
+             << QLatin1String( ".trx" )
+             << QLatin1String( ".pxa" )
+             << QLatin1String( "-temp.db" )
+             << QLatin1String( "-temp.trx" );
+
+    // delete all database files
+    QDir dir( path );
+    foreach( const QString& suffix, suffixes ) {
+        QString file = prefix + suffix;
+        if ( !dir.remove( file ) ) {
+            setError( "Failed to remove file '" + dir.filePath( file ), Error::ErrorUnknown );
+            return false;
+        }
+    }
+
+    clearError();
+    return true;
 }
 
 
@@ -126,7 +160,8 @@ Soprano::BackendFeatures Soprano::Virtuoso::BackendPlugin::supportedFeatures() c
 
 bool Soprano::Virtuoso::BackendPlugin::isAvailable() const
 {
-    return !findVirtuosoDriver().isEmpty();
+    // FIXME: make sure the virtuoso bin's version is at least 5.0.10
+    return !findVirtuosoDriver().isEmpty() && !VirtuosoController::locateVirtuosoBinary().isEmpty();
 }
 
 

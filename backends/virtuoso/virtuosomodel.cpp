@@ -20,7 +20,8 @@
  */
 
 #include "virtuosomodel.h"
-#include "odbcqueryiteratorbackend.h"
+#include "virtuosoqueryresultiteratorbackend.h"
+#include "virtuosobackend.h"
 #include "soprano.h"
 #include "odbcenvironment.h"
 #include "odbcconnection.h"
@@ -140,6 +141,11 @@ namespace {
         }
     }
 #endif
+
+    const char* s_queryPrefix =
+        "sparql "
+        "define input:default-graph-exclude 'http://www.openlinksw.com/schemas/virtrdf#' "
+        "define input:named-graph-exclude 'http://www.openlinksw.com/schemas/virtrdf#'";
 }
 
 
@@ -147,46 +153,25 @@ class Soprano::VirtuosoModel::Private
 {
 public:
     Private()
-        : environment( 0 ),
-          connection( 0 ) {
+        : connection( 0 ) {
     }
 
-    ODBC::Environment* environment;
     ODBC::Connection* connection;
 };
 
 
-Soprano::VirtuosoModel::VirtuosoModel( const Backend* b )
+Soprano::VirtuosoModel::VirtuosoModel( ODBC::Connection* connection, const Backend* b )
     : StorageModel(b),
       d( new Private() )
 {
+    d->connection = connection;
 }
 
 
 Soprano::VirtuosoModel::~VirtuosoModel()
 {
-    delete d;
-}
-
-
-bool Soprano::VirtuosoModel::connect( const QString& name )
-{
-    if ( !d->environment ) {
-        if ( !( d->environment = ODBC::Environment::createEnvironment() ) ) {
-            setError( "Unable to create ODBC environment." );
-            return false;
-        }
-    }
-
     delete d->connection;
-    d->connection = d->environment->createConnection( name );
-    return d->connection != 0;
-}
-
-
-bool Soprano::VirtuosoModel::isConnected() const
-{
-    return d->connection != 0;
+    delete d;
 }
 
 
@@ -195,7 +180,7 @@ bool Soprano::VirtuosoModel::isConnected() const
 //       (the code disabled by the ifdef)
 Soprano::Error::ErrorCode Soprano::VirtuosoModel::addStatement( const Statement& statement )
 {
-    qDebug() << Q_FUNC_INFO << statement;
+//    qDebug() << Q_FUNC_INFO << statement;
 
     if( !statement.isValid() ) {
         setError( "Cannot add invalid statement.", Error::ErrorInvalidArgument );
@@ -252,7 +237,7 @@ Soprano::Error::ErrorCode Soprano::VirtuosoModel::addStatement( const Statement&
         insert = QString("sparql insert into %1")
                  .arg( statementToConstructGraphPattern( s, true ) );
     }
-    qDebug() << "addStatement query:" << insert;
+//    qDebug() << "addStatement query:" << insert;
     if ( d->connection->executeCommand( insert ) == Error::ErrorNone ) {
         clearError();
 
@@ -275,8 +260,7 @@ Soprano::NodeIterator Soprano::VirtuosoModel::listContexts() const
 
     return executeQuery( QString( "select distinct ?g where { "
                                   "graph ?g { ?s ?p ?o . } . "
-                                  "FILTER(?g != %1 && ?g != %2) . }" )
-                         .arg( Node( Virtuoso::openlinkVirtualGraph() ).toN3() )
+                                  "FILTER(?g != %1) . }" )
                          .arg( Node( Virtuoso::defaultGraph() ).toN3() ) )
         .iterateBindings( 0 );
 }
@@ -324,15 +308,11 @@ bool Soprano::VirtuosoModel::containsAnyStatement( const Statement &statement ) 
 
 Soprano::StatementIterator Soprano::VirtuosoModel::listStatements( const Statement& partial ) const
 {
-//    qDebug() << Q_FUNC_INFO << partial;
+    qDebug() << Q_FUNC_INFO << partial;
 
     // we cannot use a construct query due to missing graph support
-    QString query = QString( "select * where { %1 ." ).arg( statementToConstructGraphPattern( partial, true ) );
-    if ( !partial.context().isValid() )
-        query += QString( " FILTER(?g != %1) }" ).arg( Node( Virtuoso::openlinkVirtualGraph() ).toN3() );
-    else
-        query += '}';
-//    qDebug() << "List Statements Query" << query;
+    QString query = QString( "select * where { %1 . }" ).arg( statementToConstructGraphPattern( partial, true ) );
+    qDebug() << "List Statements Query" << query;
     return executeQuery( query, Query::QueryLanguageSparql )
         .iterateStatementsFromBindings( partial.subject().isValid() ? QString() : QString( 's' ),
                                         partial.predicate().isValid() ? QString() : QString( 'p' ),
@@ -456,7 +436,7 @@ Soprano::QueryResultIterator Soprano::VirtuosoModel::executeQuery( const QString
                                                                    Query::QueryLanguage language,
                                                                    const QString& userQueryLanguage ) const
 {
-//    qDebug() << Q_FUNC_INFO << query;
+    qDebug() << Q_FUNC_INFO << query;
 
     if ( language != Soprano::Query::QueryLanguageSparql ) {
         setError( Error::Error( QString( "Unsupported query language %1." )
@@ -464,10 +444,11 @@ Soprano::QueryResultIterator Soprano::VirtuosoModel::executeQuery( const QString
         return QueryResultIterator();
     }
 
-    ODBC::QueryResult* result = d->connection->executeQuery( "sparql " + query );
+    // exclude the default system graph via defines from s_queryPrefix
+    ODBC::QueryResult* result = d->connection->executeQuery( QLatin1String( s_queryPrefix ) + ' ' + query );
     if ( result ) {
         clearError();
-        return new ODBC::QueryResultIteratorBackend( result );
+        return new Virtuoso::QueryResultIteratorBackend( result );
     }
     else {
         setError( d->connection->lastError() );

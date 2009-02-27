@@ -331,7 +331,7 @@ Soprano::Node Soprano::ODBC::QueryResult::getData( int colNum )
         switch (dvtype) {
         case DV_STRING: {
             if (flag) {
-                if ( strncmp( (char*)data, "_:", 2 ) == 0 ) {
+                if ( data && strncmp( (char*)data, "_:", 2 ) == 0 ) {
                     node = Node( QString::fromLatin1( reinterpret_cast<const char*>( data )+2 ) );
                 }
                 else {
@@ -339,7 +339,7 @@ Soprano::Node Soprano::ODBC::QueryResult::getData( int colNum )
                 }
             }
             else {
-                if ( strncmp( (char*)data, "nodeID://", 9 ) == 0 ) {
+                if ( data && strncmp( (char*)data, "nodeID://", 9 ) == 0 ) {
                     node = Node( QString::fromLatin1( reinterpret_cast<const char*>( data )+9 ) );
                 }
                 else {
