@@ -35,12 +35,6 @@
 
 // FIXME: do the escaping properly, the escapes now have been determined by trial-and-error :(
 namespace {
-#if 0
-    QString prepareUrlForSqlCommand( const QUrl& url ) {
-        return QString::fromAscii( url.toEncoded() ).replace( '\'', "\\\'" ).replace( '\"', "\\\"" );
-    }
-#endif
-
     // we need to encode ' since it is reserved in SQL
     QString nodeToN3( const Soprano::Node& node ) {
         if ( node.isResource() ) {
@@ -48,9 +42,12 @@ namespace {
             encoded.replace( '\'', "%27" );
             return encoded;
         }
+        else if ( node.isBlank() ) {
+            // looks like Virtuoso needs a special syntax here, at least that is what the redland bindings do.
+            return '<' + node.toN3() + '>';
+        }
         else {
-            // escapes need to be escaped, except for double quotes which we then need to de-escape
-            return node.toN3().replace( '\\', "\\\\" ).replace( '\n', "\\n" ).replace( '\t', "\\t" ).replace( "\\\\\"", "\\\"" );
+            return node.toN3();
         }
     }
 
@@ -89,8 +86,9 @@ namespace {
                 query += Soprano::Node( Soprano::LiteralValue::fromString( s.object().literal().toString(), Soprano::Virtuoso::fakeDateTimeType() ) ).toN3();
             else if ( s.object().literal().isTime() )
                 query += Soprano::Node( Soprano::LiteralValue::fromString( s.object().literal().toString(), Soprano::Virtuoso::fakeTimeType() ) ).toN3();
-            else if ( s.object().literal().isBool() )
-                query += Soprano::Node( Soprano::LiteralValue::fromString( s.object().literal().toBool() ? QString( QLatin1String( "1" ) ) : QString(),
+            else
+                if ( s.object().literal().isBool() )
+                    query += Soprano::Node( Soprano::LiteralValue::fromString( s.object().literal().toBool() ? QString( QLatin1String( "1" ) ) : QString(),
                                                                            Soprano::Virtuoso::fakeBooleanType() ) ).toN3();
             else
                 query += nodeToN3( s.object() );
@@ -105,42 +103,6 @@ namespace {
 
         return query;
     }
-
-#if 0
-    QString odbcFormatLiteral( const Soprano::LiteralValue& value ) {
-        if ( value.isDate() ) {
-            return QString( "{d '%1'}" ).arg( value.toString() );
-        }
-
-        else if ( value.isTime() ) {
-            QString ts = value.toString();
-            ts.chop( 1 ); // remove the timezone 'Z'
-            return QString( "{t '%1'}" ).arg( ts );
-        }
-
-        else if ( value.isDateTime() ) {
-            QString dts = value.toString();
-            dts.replace( 'T', ' ' );
-            dts.chop( 1 ); // remove the timezone 'Z'
-            return QString( "{ts '%1'}" ).arg( dts );
-        }
-
-        else if ( value.isString() ) {
-            return QString( "'%1'" ).arg( value.toString() );
-        }
-
-        else if ( value.isByteArray() ) {
-            // FIXME
-            Q_ASSERT( 0 );
-            return QString();
-        }
-
-        else {
-            // numbers
-            return value.toString();
-        }
-    }
-#endif
 
     const char* s_queryPrefix =
         "sparql "
@@ -192,51 +154,9 @@ Soprano::Error::ErrorCode Soprano::VirtuosoModel::addStatement( const Statement&
         s.setContext( Virtuoso::defaultGraph() );
     }
 
-    QString insert;
-#if 0
-    // resource objects
-    if ( s.object().isResource() ) {
-        insert = QString( "DB.DBA.RDF_QUAD_URI('%1','%2','%3','%4')" )
-                 .arg( prepareUrlForSqlCommand( s.context().uri() ) )
-                 .arg( prepareUrlForSqlCommand( s.subject().uri() ) )
-                 .arg( prepareUrlForSqlCommand( s.predicate().uri() ) )
-                 .arg( prepareUrlForSqlCommand( s.object().uri() ) );
-    }
+    QString insert = QString("sparql insert into %1")
+                     .arg( statementToConstructGraphPattern( s, true ) );
 
-    // literal objects
-    else if ( s.object().isLiteral() ) {
-        // strings with language or custom datatypes
-        if ( !s.object().language().isEmpty() ||
-             ( s.object().literal().isString() &&
-               s.object().literal().dataTypeUri() != Soprano::Vocabulary::XMLSchema::string() ) ) {
-            insert = QString( "DB.DBA.RDF_QUAD_URI_L_TYPED('%1','%2','%3','%4','%5','%6')" )
-                     .arg( QString::fromAscii( s.context().uri().toEncoded() ) )
-                     .arg( QString::fromAscii( s.subject().uri().toEncoded() ) )
-                     .arg( QString::fromAscii( s.predicate().uri().toEncoded() ) )
-                     .arg( s.object().toString() )
-                     .arg( QString::fromAscii( s.object().literal().dataTypeUri().toEncoded() ) )
-                     .arg( s.object().language() );
-        }
-        else if ( s.object().literal().isString() ) {
-            // FIXME: properly format numbers and datetime
-            insert = QString( "DB.DBA.RDF_QUAD_URI_L('%1','%2','%3','%4')" )
-                     .arg( QString::fromAscii( s.context().uri().toEncoded() ) )
-                     .arg( QString::fromAscii( s.subject().uri().toEncoded() ) )
-                     .arg( QString::fromAscii( s.predicate().uri().toEncoded() ) )
-                     .arg( s.object().toString() );
-        }
-    }
-    else {
-        setError( "No support for inserting blank nodes!", Error::ErrorInvalidArgument );
-        return Error::ErrorInvalidArgument;
-    }
-#endif
-
-    // FIXME: do this like above
-    if ( insert.isEmpty() ) {
-        insert = QString("sparql insert into %1")
-                 .arg( statementToConstructGraphPattern( s, true ) );
-    }
 //    qDebug() << "addStatement query:" << insert;
     if ( d->connection->executeCommand( insert ) == Error::ErrorNone ) {
         clearError();
