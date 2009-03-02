@@ -850,7 +850,13 @@ void SopranoModelTest::testLiteralTypes_data()
 
     // and some others
     QTest::newRow("stringWithSingleQuote" ) << LiteralValue( QString( "c'est" ) ) << QUrl( ns + "stringWithSingleQuote" );
+    QTest::newRow("stringWith2SingleQuote" ) << LiteralValue( QString( "\'\'real" ) ) << QUrl( ns + "stringWith2SingleQuote" );
+    QTest::newRow("stringWith3SingleQuote" ) << LiteralValue( QString( "\'\'\'real" ) ) << QUrl( ns + "stringWith3SingleQuote" );
     QTest::newRow("stringWithDoubleQuote" ) << LiteralValue( QString( "\"real" ) ) << QUrl( ns + "stringWithDoubleQuote" );
+    QTest::newRow("stringWith2DoubleQuote" ) << LiteralValue( QString( "\"\"real" ) ) << QUrl( ns + "stringWith2DoubleQuote" );
+    QTest::newRow("stringWith3DoubleQuote" ) << LiteralValue( QString( "\"\"\"real" ) ) << QUrl( ns + "stringWith3DoubleQuote" );
+    QTest::newRow("stringWithTab" ) << LiteralValue( QString( "foo\tbar" ) ) << QUrl( ns + "stringWithTab" );
+    QTest::newRow("stringWithNewLine" ) << LiteralValue( QString( "foo\nbar" ) ) << QUrl( ns + "stringWithNewLine" );
 }
 
 
