@@ -102,12 +102,27 @@ public:
     }
 
     QString toN3() const {
+        //
+        // Escape control chars:  \t \b \n \r \f \\ \" \'
+        //
+        QString s = toString();
+
+        // FIXME: this can be done faster by running through the string only once.
+        s.replace( '\\', "\\\\" );
+        s.replace( '\"', "\\\"" );
+        s.replace( '\'', "\\\'" );
+        s.replace( '\n', "\\n" );
+        s.replace( '\r', "\\r" );
+        s.replace( '\b', "\\b" );
+        s.replace( '\t', "\\t" );
+        s.replace( '\f', "\\f" );
+
         if( !language.isEmpty() ) {
-            return '\"' + toString().replace( '\"', "\\\"" ) + "\"@" + language;
+            return '\"' + s + "\"@" + language;
         }
         else {
             return QString( "\"%1\"^^<%2>" )
-                .arg( toString().replace( '\"', "\\\"" ), QString::fromAscii( value.dataTypeUri().toEncoded() ) );
+                .arg( s, QString::fromAscii( value.dataTypeUri().toEncoded() ) );
         }
     }
 };
