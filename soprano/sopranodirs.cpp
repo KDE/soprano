@@ -71,7 +71,7 @@ QString Soprano::findLibraryPath( const QString& libName, const QStringList& ext
             return lib;
         }
         else {
-            foreach( QString dir, dirs ) {
+            foreach( const QString& dir, dirs ) {
                 if ( QFile::exists( dir + SOPRANO_LIB_SUFFIX"/" + lib ) ) {
                     return dir + SOPRANO_LIB_SUFFIX"/" + lib;
                 }

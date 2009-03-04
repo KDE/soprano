@@ -206,7 +206,7 @@ void Soprano::PluginManager::loadAllPlugins()
             QDir pluginDir( dir + "/soprano/plugins" );
             qDebug() << "(Soprano::PluginManager) searching plugin file from " << pluginDir.absolutePath();
             QStringList pluginFiles = pluginDir.entryList( QStringList( QLatin1String( "*.desktop" ) ) );
-            Q_FOREACH( QString plugin, pluginFiles ) {
+            Q_FOREACH( const QString &plugin, pluginFiles ) {
                 loadPlugin( pluginDir.absoluteFilePath( plugin ) );
             }
         }
