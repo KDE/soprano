@@ -21,6 +21,9 @@
 
 #include "pluginstub.h"
 #include "plugin.h"
+#include "backend.h"
+#include "parser.h"
+#include "serializer.h"
 
 #include <QtCore/QSharedData>
 #include <QtCore/QPluginLoader>
@@ -34,7 +37,7 @@ public:
     QString name;
     QString libPath;
 
-    Plugin* plugin;
+    QObject* plugin;
 
     ~Private() {
         delete plugin;
@@ -77,22 +80,42 @@ Soprano::PluginStub& Soprano::PluginStub::operator=( const PluginStub& other )
 }
 
 
-Soprano::Plugin* Soprano::PluginStub::plugin()
+QString Soprano::PluginStub::name() const
+{
+    return d->name;
+}
+
+
+QObject* Soprano::PluginStub::plugin()
 {
     if( !d->plugin ) {
         QPluginLoader loader( d->libPath );
-        QObject* plugin = loader.instance();
-        d->plugin = dynamic_cast<Plugin*>( plugin );
-        if( d->plugin ) {
-            qDebug() << "(Soprano::PluginManager) loaded plugin from" << loader.fileName();
-            if ( !d->plugin->isAvailable() ) {
-                qDebug() << "(Soprano::PluginManager) plugin " << d->plugin->pluginName() << "is not available.";
+        d->plugin = loader.instance();
+
+        Plugin* plugin = 0;
+        if ( Backend* backend = qobject_cast<Backend*>( d->plugin ) ) {
+            plugin = backend;
+        }
+        else if ( Parser* parser = qobject_cast<Parser*>( d->plugin ) ) {
+            plugin = parser;
+        }
+        else if ( Serializer* serializer = qobject_cast<Serializer*>( d->plugin ) ) {
+            plugin = serializer;
+        }
+
+        if( plugin ) {
+            if ( d->name.isEmpty() )
+                d->name = plugin->pluginName();
+
+            if ( !plugin->isAvailable() ) {
+                qDebug() << "(Soprano::PluginManager) plugin " << plugin->pluginName() << "is not available.";
                 return 0;
             }
         }
         else {
             qDebug() << "(Soprano::PluginManager) found no soprano plugin at " << loader.fileName();
-            delete plugin;
+            delete d->plugin;
+            d->plugin = 0;
         }
     }
     return d->plugin;

@@ -82,16 +82,16 @@ namespace Soprano
          * to operator== is that empty nodes are matched as wildcards,
          * i.e. they match any other node.
          *
-         * \sa Node::matches()
-         *
          * \return \p true if this statement matches other, \p false if not.
+         *
+         * \sa Node::matches()
          */
         bool matches( const Statement& other ) const;
         //@}
 
         //@{
         /**
-         * A Statement is valid if the subject is a resource or blank 
+         * A Statement is valid if the subject is a resource or blank
          * node, the predicate is a resource node,
          * and the object is a valid node.
          *

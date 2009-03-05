@@ -33,7 +33,6 @@
 #include <stdlib.h>
 
 
-// FIXME: do the escaping properly, the escapes now have been determined by trial-and-error :(
 namespace {
     // we need to encode ' since it is reserved in SQL
     QString nodeToN3( const Soprano::Node& node ) {
@@ -137,9 +136,6 @@ Soprano::VirtuosoModel::~VirtuosoModel()
 }
 
 
-// TODO: is it faster to use DB.DBA.RDF_QUAD_URI, DB.DBA.RDF_QUAD_URI_L, and DB.DBA.RDF_QUAD_URI_L_TYPED?
-//       (http://docs.openlinksw.com/virtuoso/rdfapiandsql.html)
-//       (the code disabled by the ifdef)
 Soprano::Error::ErrorCode Soprano::VirtuosoModel::addStatement( const Statement& statement )
 {
 //    qDebug() << Q_FUNC_INFO << statement;

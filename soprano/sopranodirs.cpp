@@ -24,7 +24,8 @@
 
 #include <QtCore/QLibrary>
 #include <QtCore/QDir>
-#include <QtCore/QFile>
+#include <QtCore/QFileInfo>
+#include <QtCore/QCoreApplication>
 
 
 #if defined _WIN32 || defined _WIN64
@@ -50,6 +51,11 @@ namespace {
                 if ( QLibrary::isLibrary( libname + extList[i] ) ) {
                     libNames.append( libname + extList[i] );
                 }
+#ifndef Q_OS_WIN
+                if ( QLibrary::isLibrary( QLatin1String( "lib" ) + libname + extList[i] ) ) {
+                    libNames.append( QLatin1String( "lib" ) + libname + extList[i] );
+                }
+#endif
             }
         }
         else {
@@ -60,26 +66,37 @@ namespace {
 }
 
 
-QString Soprano::findLibraryPath( const QString& libName, const QStringList& extraDirs )
+QString Soprano::findLibraryPath( const QString& libName, const QStringList& extraDirs, const QStringList& subDirs_ )
 {
-    QStringList dirs( libDirs() );
-    dirs << extraDirs;
+    // paths to search for libs
+    QStringList dirs = libDirs() + extraDirs;
+
+    // suffixes to search
+    QStringList suffixes;
+    suffixes << QLatin1String( SOPRANO_LIB_SUFFIX"/" )
+             << QString( '/' )
+             << QLatin1String( "64/" );
+
+    // we add the empty string to be able to handle all in one loop below
+    QStringList subDirs( subDirs_ );
+    subDirs << QString();
 
     QStringList libs = makeLibNames( libName );
     Q_FOREACH( const QString& lib, libs ) {
         if ( lib.startsWith( '/' ) ) {
-            return lib;
+            QFileInfo fi( lib );
+            if ( fi.isFile() )
+                return fi.absoluteFilePath();
         }
         else {
             foreach( const QString& dir, dirs ) {
-                if ( QFile::exists( dir + SOPRANO_LIB_SUFFIX"/" + lib ) ) {
-                    return dir + SOPRANO_LIB_SUFFIX"/" + lib;
-                }
-                else if ( QFile::exists( dir + '/' + lib ) ) {
-                    return dir + "/" + lib;
-                }
-                else if ( QFile::exists( dir + "64/" + lib ) ) {
-                    return dir + "64/" + lib;
+                foreach( const QString& subDir, subDirs ) {
+                    foreach( const QString& suffix, suffixes ) {
+                        QFileInfo fi( dir + '/' + suffix + subDir + '/' + lib );
+                        if ( fi.isFile() ) {
+                            return fi.absoluteFilePath();
+                        }
+                    }
                 }
             }
         }
@@ -104,11 +121,11 @@ QStringList Soprano::envDirList( const char* var )
 
 QStringList Soprano::libDirs()
 {
-    QStringList paths;
+    QStringList paths = QCoreApplication::libraryPaths();
+#ifndef Q_OS_WIN
     paths << QLatin1String( SOPRANO_PREFIX"/lib" );
     paths << QLatin1String( "/usr/lib" );
     paths << QLatin1String( "/usr/local/lib" );
-#ifndef Q_OS_WIN
     paths += Soprano::envDirList( "LD_LIBRARY_PATH" );
 #endif
     return paths;

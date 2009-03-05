@@ -1,6 +1,6 @@
 [Desktop Entry]
 Encoding=UTF-8
-X-Soprano-Library=libsoprano_raptorserializer
+X-Soprano-Library=soprano_raptorserializer
 X-Soprano-Plugin-Author=Duncan Mac-Vicar
 X-Soprano-Plugin-EMail=duncan@kde.org
 X-Soprano-Plugin-Author=Sebastian Trueg

@@ -24,6 +24,8 @@
 
 #include <QtCore/QSharedDataPointer>
 
+class QObject;
+
 namespace Soprano {
 
     class Plugin;
@@ -58,7 +60,9 @@ namespace Soprano {
          * Get the plugin. Will try to load it if not
          * already loaded.
          */
-        Plugin* plugin();
+        QObject* plugin();
+
+        QString name() const;
 
     private:
         class Private;

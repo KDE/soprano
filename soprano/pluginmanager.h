@@ -1,7 +1,7 @@
 /*
  * This file is part of Soprano Project.
  *
- * Copyright (C) 2007 Sebastian Trueg <trueg@kde.org>
+ * Copyright (C) 2007-2009 Sebastian Trueg <trueg@kde.org>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -61,6 +61,22 @@ namespace Soprano
 
         //@{
         /**
+         * Set the plugin search path. The PluginManager searches a set of folders for installed
+         * plugins. Here a plugin consists of a desktop file describing it and the actual plugin
+         * library file. For loading custom plugins manually see loadCustomPlugin.
+         *
+         * \param path The folders that PluginManager should search for plugin description files.
+         * \param useDefaults If true PluginManager will also search the default plugin paths
+         *
+         * \sa \ref soprano_writing_plugins
+         *
+         * \since 2.3
+         */
+        void setPluginSearchPath( const QStringList& path, bool useDefaults = true );
+        //@}
+
+        //@{
+        /**
          * Find a backend plugin by its name.
          *
          * \return the backend specified by \a name or null if could not
@@ -99,7 +115,7 @@ namespace Soprano
          *       serialization to use. It allows the extension of the %Soprano Parser interface with new
          *       RDF serializations that are not officially supported by %Soprano.
          *
-         * \return A Parser plugin that can parse RDF data encoded in the requested 
+         * \return A Parser plugin that can parse RDF data encoded in the requested
          * serialization or 0 if no such plugin could be found.
          */
         const Parser* discoverParserForSerialization( RdfSerialization serialization, const QString& userSerialization = QString() );
@@ -125,7 +141,7 @@ namespace Soprano
          *       serialization to use. It allows the extension of the %Soprano Serializer interface with new
          *       RDF serializations that are not officially supported by %Soprano.
          *
-         * \return A Serializer plugin that can serialize RDF data encoded in the requested 
+         * \return A Serializer plugin that can serialize RDF data encoded in the requested
          * serialization or 0 if no such plugin could be found.
          */
         const Serializer* discoverSerializerForSerialization( RdfSerialization serialization, const QString& userSerialization = QString() );

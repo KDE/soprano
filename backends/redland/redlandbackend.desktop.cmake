@@ -1,6 +1,6 @@
 [Desktop Entry]
 Encoding=UTF-8
-X-Soprano-Library=libsoprano_redlandbackend
+X-Soprano-Library=soprano_redlandbackend
 X-Soprano-Plugin-Name=redland
 X-Soprano-Plugin-Author=Daniele Galdi
 X-Soprano-Plugin-EMail=daniele.galdi@gmail.com

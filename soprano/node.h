@@ -56,10 +56,10 @@ namespace Soprano
     {
     public:
         enum Type {
-            EmptyNode    = 0, /**< An empty node, can be used as a placeholder in commands like Model::listStatements. */
+            EmptyNode    = 0, /**< An empty node, can be used as a wildcard in commands like Model::listStatements. */
             ResourceNode = 1, /**< A resource node has a URI which can be accessed via uri() */
             LiteralNode  = 2, /**< A literal node has a literal value and an optional language. */
-            BlankNode    = 3  /**< blank node has an identifier string */
+            BlankNode    = 3  /**< A blank node has an identifier string */
         };
 
         /**
@@ -107,6 +107,9 @@ namespace Soprano
         Node( const LiteralValue& value,
               const QString& language = QString() );
 
+        /**
+         * Copy constructor.
+         */
         Node( const Node &other );
 
         ~Node();
@@ -119,16 +122,39 @@ namespace Soprano
         Node& operator=( const Node& other );
 
         /**
-         * Assigns resource to this node and makes it a ResourceNode.
+         * Assigns \p resource to this node and makes it a ResourceNode.
          */
         Node& operator=( const QUrl& resource );
 
+        /**
+         * Assigns \p literal to this node and makes it a LiteralNode.
+         */
         Node& operator=( const LiteralValue& literal );
 
+        /**
+         * Comparision operator.
+         * \return \p true if this node and \p other are equal.
+         */
         bool operator==( const Node& other ) const;
+
+        /**
+         * Comparision operator.
+         * \return \p true if this node and \p other differ.
+         */
         bool operator!=( const Node& other ) const;
 
-        bool operator==( const QUrl& other ) const;
+        /**
+         * Comparision operator.
+         * \return \p true if this node is a ResourceNode and
+         * has URI \p uri.
+         */
+        bool operator==( const QUrl& uri ) const;
+
+        /**
+         * Comparision operator.
+         * \return \p true if this node is a LiteralNode and
+         * has literal value \p other.
+         */
         bool operator==( const LiteralValue& other ) const;
 
         /**
@@ -136,7 +162,9 @@ namespace Soprano
          * to operator== is that empty nodes are matched as wildcards,
          * i.e. they match any other node.
          *
-         * \return true if this node matches other, false if not.
+         * \return \p true if this node matches other, \p false if not.
+         *
+         * \sa Statement::matches
          */
         bool matches( const Node& other ) const;
         //@}
@@ -146,32 +174,32 @@ namespace Soprano
          */
         //@{
         /**
-         * \return The Node type.
+         * \return The node type.
          */
         Type type() const;
 
         /**
-         * \return true if the Node is empty.
+         * \return \p true if the node is empty.
          */
         bool isEmpty() const;
 
         /**
-         * \return true if the Node is a Resource,Literal or Blank.
+         * \return \p true if the node is a ResourceNode, LiteralNode or BlankNode.
          */
         bool isValid() const ;
 
         /**
-         * \return true if the Node is a Literal.
+         * \return \p true if the node is a LiteralNode.
          */
         bool isLiteral() const;
 
         /**
-         * \return true if the Node is a Resource.
+         * \return \p true if the node is a ResourceNode.
          */
         bool isResource() const;
 
         /**
-         * \return true if the Node is a Blank node (anonymous).
+         * \return \p true if the node is a BlankNode (anonymous).
          */
         bool isBlank() const;
         //@}
@@ -181,7 +209,7 @@ namespace Soprano
          */
         //@{
         /**
-         * \return The URI if the node is a Resource node.
+         * \return The URI if the node is a ResourceNode.
          *         An null QUrl otherwise.
          */
         QUrl uri() const;
@@ -193,7 +221,7 @@ namespace Soprano
         //@{
         /**
          * Retrieve a blank node's identifier.
-         * \return The node's identifier if it is a blank node, a null
+         * \return The node's identifier if it is a BlankNode, a null
          * string otherwise.
          */
         QString identifier() const;
@@ -204,14 +232,14 @@ namespace Soprano
          */
         //@{
         /**
-         * \return The Literal value if the node is a Literal node.
+         * \return The literal value if the node is a LiteralNode.
          *         An null QString otherwise.
          */
         LiteralValue literal() const;
 
         /**
          * \return The datatype URI of a literal node, i.e. the XML schema type
-         *         or an empty value if the node is not a literal.
+         *         or an empty value if the node is not a LiteralNode.
          * \sa LiteralValue::dataTypeUri
          */
         QUrl dataType() const;
@@ -227,6 +255,9 @@ namespace Soprano
         QString language() const;
         //@}
 
+        /**
+         * \name Conversion
+         */
         //@{
         /**
          * Converts the Node to a string.
@@ -241,6 +272,14 @@ namespace Soprano
         /**
          * Convert a Node into N3 notation to be used in SPARQL graph patterns.
          *
+         * Examples:
+         * \code
+         * <http://soprano.sourceforce.net/>
+         * "Hello World"^^<http://www.w3.org/2001/XMLSchema#string>
+         * "09-08-1977T17:42.234Z"^^<http://www.w3.org/2001/XMLSchema#dateTime>
+         * _:blankNode
+         * \endcode
+         *
          * \return A string representing the node in N3 encoding or an empty
          * string for invalid nodes.
          *
@@ -250,7 +289,7 @@ namespace Soprano
          */
         QString toN3() const;
         //@}
-        
+
         /**
          * Convenience method to create an empty node.
          * Using this method instead of the default constructor
@@ -267,7 +306,7 @@ namespace Soprano
          *
          * \param uri The URI of the node. If empty the type will be ignored
          *            and an empty node will be created.
-         * 
+         *
          * \return A resource Node or an empty Node if the specified URI is empty.
          */
         static Node createResourceNode( const QUrl& uri );

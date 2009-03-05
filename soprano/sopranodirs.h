@@ -33,7 +33,21 @@ namespace Soprano {
     QStringList libDirs();
     QStringList dataDirs();
     QStringList exeDirs();
-    QString findLibraryPath( const QString& libName, const QStringList& extraDirs = QStringList() );
+
+    /**
+     * Find a library named \p libName.
+     *
+     * Search the standard library paths (including the Qt paths) and the
+     * paths optionally specified in \p extraDirs. Optionally search
+     * \p subDirs, too. The \p subDirs will be appended to the standard
+     * searchpaths and \p extraDirs.
+     *
+     * \return The path to the library file or an emtpy string if no lib
+     * coudl be found.
+     */
+    QString findLibraryPath( const QString& libName,
+                             const QStringList& extraDirs = QStringList(),
+                             const QStringList& subDirs = QStringList() );
 }
 
 #endif

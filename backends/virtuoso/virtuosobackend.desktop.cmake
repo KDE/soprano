@@ -1,6 +1,6 @@
 [Desktop Entry]
 Encoding=UTF-8
-X-Soprano-Library=libsoprano_virtuosobackend
+X-Soprano-Library=soprano_virtuosobackend
 X-Soprano-Plugin-Name=virtuosobackend
 X-Soprano-Plugin-Author=Sebastian Trueg
 X-Soprano-Plugin-EMail=trueg@kde.org

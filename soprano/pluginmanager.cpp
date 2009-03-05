@@ -33,12 +33,39 @@
 #include <QtCore/QDir>
 #include <QtCore/QDebug>
 #include <QtCore/QMutex>
+#include <QtCore/QCoreApplication>
 
 
 namespace {
     QString findPluginLib( const Soprano::SopranoPluginFile& file ) {
-        return Soprano::findLibraryPath( "soprano/" + file.library(),
-                                         QStringList() << file.fileName().section( "/", 0, -5, QString::SectionIncludeTrailingSep ) + "lib" );
+        QStringList fileSearchPaths;
+        // the folder the plugin file is in
+        fileSearchPaths << file.fileName().section( '/', 0, -2, QString::SectionIncludeTrailingSep );
+#ifndef Q_OS_WIN
+        // the lib folder in the same prefix
+        fileSearchPaths << file.fileName().section( "/", 0, -5, QString::SectionIncludeTrailingSep ) + QLatin1String( "lib" );
+#endif
+        return Soprano::findLibraryPath( file.library(), fileSearchPaths, QStringList() << QLatin1String( "soprano" ) );
+    }
+
+    QStringList pluginFileSearchPaths() {
+        QStringList searchPaths;
+#ifdef Q_OS_WIN
+        // on windows Soprano is not installed in a default location
+        // as on linux/unix systems. Thus, we search a variaty of
+        // locations for plugins
+        searchPaths << QCoreApplication::applicationDirPath()
+                    << QCoreApplication::libraryPaths();
+        foreach( const QString& p, QStringList( searchPaths ) ) {
+            searchPaths << p + QLatin1String( "/soprano" );
+            searchPaths << p + QLatin1String( "/plugins" );
+        }
+#else
+        foreach( const QString& p, Soprano::dataDirs() ) {
+            searchPaths << ( p + QLatin1String( "/soprano/plugins" ) );
+        }
+#endif
+        return searchPaths;
     }
 }
 
@@ -50,6 +77,8 @@ public:
         : pluginsLoaded(false) {
     }
 
+    bool addPlugin( PluginStub& stub );
+
     bool pluginsLoaded;
 
     QHash<QString, PluginStub> backends;
@@ -57,13 +86,42 @@ public:
     QHash<QString, PluginStub> serializers;
     QHash<QString, PluginStub> queryParsers;
     QHash<QString, PluginStub> querySerializers;
+
+    QStringList searchPaths;
+    bool useDefaultSearchPaths;
 };
+
+
+bool Soprano::PluginManager::Private::addPlugin( PluginStub& stub )
+{
+    if ( QObject* p = stub.plugin() ) {
+        if ( qobject_cast<Soprano::Backend*>( p ) ) {
+            backends.insert( stub.name(), stub );
+        }
+        else if ( qobject_cast<Soprano::Parser*>( p ) ) {
+            parsers.insert( stub.name(), stub );
+        }
+        else if ( qobject_cast<Soprano::Serializer*>( p ) ) {
+            serializers.insert( stub.name(), stub );
+        }
+        else {
+            qDebug() << "Plugin" << stub.name() << "has unknown plugin type";
+            return false;
+        }
+
+        return true;
+    }
+    else {
+        return false;
+    }
+}
 
 
 Soprano::PluginManager::PluginManager( QObject* parent )
     : QObject( parent ),
       d( new Private )
 {
+    setPluginSearchPath( QStringList(), true );
 }
 
 
@@ -78,7 +136,9 @@ const Soprano::Backend* Soprano::PluginManager::discoverBackendByName( const QSt
     loadAllPlugins();
     QHash<QString, PluginStub>::iterator it = d->backends.find( name );
     if( it != d->backends.end() )
-        return dynamic_cast<Backend*>( it->plugin() );
+        return qobject_cast<Backend*>( it->plugin() );
+    else if ( !name.endsWith( QLatin1String( "backend" ) ) )
+        return discoverBackendByName( name + QLatin1String( "backend" ) );
     else if ( !name.endsWith( QLatin1String( "backend" ) ) )
         return discoverBackendByName( name + QLatin1String( "backend" ) );
     else
@@ -90,7 +150,7 @@ const Soprano::Backend* Soprano::PluginManager::discoverBackendByFeatures( Backe
 {
     loadAllPlugins();
     for( QHash<QString, PluginStub>::iterator it = d->backends.begin(); it != d->backends.end(); ++it ) {
-        if( const Backend* b = dynamic_cast<Backend*>( it->plugin() ) ) {
+        if( const Backend* b = qobject_cast<Backend*>( it->plugin() ) ) {
             if( b->supportsFeatures( features, userFeatures ) ) {
                 return b;
             }
@@ -105,7 +165,9 @@ const Soprano::Parser* Soprano::PluginManager::discoverParserByName( const QStri
     loadAllPlugins();
     QHash<QString, PluginStub>::iterator it = d->parsers.find( name );
     if( it != d->parsers.end() )
-        return dynamic_cast<Parser*>( it->plugin() );
+        return qobject_cast<Parser*>( it->plugin() );
+    else if ( !name.endsWith( QLatin1String( "parser" ) ) )
+        return discoverParserByName( name + QLatin1String( "parser" ) );
     else if ( !name.endsWith( QLatin1String( "parser" ) ) )
         return discoverParserByName( name + QLatin1String( "parser" ) );
     else
@@ -117,7 +179,7 @@ const Soprano::Parser* Soprano::PluginManager::discoverParserForSerialization( R
 {
     loadAllPlugins();
     for( QHash<QString, PluginStub>::iterator it = d->parsers.begin(); it != d->parsers.end(); ++it ) {
-        if( const Parser* p = dynamic_cast<Parser*>( it->plugin() ) ) {
+        if( const Parser* p = qobject_cast<Parser*>( it->plugin() ) ) {
             if( p->supportsSerialization( serialization, userSerialization ) ) {
                 return p;
             }
@@ -132,7 +194,9 @@ const Soprano::Serializer* Soprano::PluginManager::discoverSerializerByName( con
     loadAllPlugins();
     QHash<QString, PluginStub>::iterator it = d->serializers.find( name );
     if( it != d->serializers.end() )
-        return dynamic_cast<Serializer*>( it->plugin() );
+        return qobject_cast<Serializer*>( it->plugin() );
+    else if ( !name.endsWith( QLatin1String( "serializer" ) ) )
+        return discoverSerializerByName( name + QLatin1String( "serializer" ) );
     else if ( !name.endsWith( QLatin1String( "serializer" ) ) )
         return discoverSerializerByName( name + QLatin1String( "serializer" ) );
     else
@@ -144,7 +208,7 @@ const Soprano::Serializer* Soprano::PluginManager::discoverSerializerForSerializ
 {
     loadAllPlugins();
     for( QHash<QString, PluginStub>::iterator it = d->serializers.begin(); it != d->serializers.end(); ++it ) {
-        if( const Serializer* p = dynamic_cast<Serializer*>( it->plugin() ) ) {
+        if( const Serializer* p = qobject_cast<Serializer*>( it->plugin() ) ) {
             if( p->supportsSerialization( serialization, userSerialization ) ) {
                 return p;
             }
@@ -160,7 +224,7 @@ QList<const Soprano::Backend*> Soprano::PluginManager::allBackends()
     QList<const Backend*> bl;
     for ( QHash<QString, PluginStub>::iterator it = d->backends.begin();
           it != d->backends.end(); ++it ) {
-        if( const Backend* p = dynamic_cast<Backend*>( it->plugin() ) ) {
+        if( const Backend* p = qobject_cast<Backend*>( it->plugin() ) ) {
             bl.append( p );
         }
     }
@@ -174,7 +238,7 @@ QList<const Soprano::Parser*> Soprano::PluginManager::allParsers()
     QList<const Parser*> pl;
     for ( QHash<QString, PluginStub>::iterator it = d->parsers.begin();
           it != d->parsers.end(); ++it ) {
-        if( const Parser* p = dynamic_cast<Parser*>( it->plugin() ) ) {
+        if( const Parser* p = qobject_cast<Parser*>( it->plugin() ) ) {
             pl.append( p );
         }
     }
@@ -188,7 +252,7 @@ QList<const Soprano::Serializer*> Soprano::PluginManager::allSerializers()
     QList<const Serializer*> pl;
     for ( QHash<QString, PluginStub>::iterator it = d->serializers.begin();
           it != d->serializers.end(); ++it ) {
-        if( const Serializer* p = dynamic_cast<Serializer*>( it->plugin() ) ) {
+        if( const Serializer* p = qobject_cast<Serializer*>( it->plugin() ) ) {
             pl.append( p );
         }
     }
@@ -201,12 +265,16 @@ void Soprano::PluginManager::loadAllPlugins()
     if( !d->pluginsLoaded ) {
         qDebug() << "(Soprano::PluginManager) loading all plugins";
 
-        QStringList dirs = dataDirs();
-        Q_FOREACH( const QString &dir, dirs ) {
-            QDir pluginDir( dir + "/soprano/plugins" );
+        QStringList searchPaths = d->searchPaths;
+        if ( d->useDefaultSearchPaths ) {
+            searchPaths << pluginFileSearchPaths();
+        }
+
+        Q_FOREACH( const QString& dir, searchPaths ) {
+            QDir pluginDir( dir );
             qDebug() << "(Soprano::PluginManager) searching plugin file from " << pluginDir.absolutePath();
             QStringList pluginFiles = pluginDir.entryList( QStringList( QLatin1String( "*.desktop" ) ) );
-            Q_FOREACH( const QString &plugin, pluginFiles ) {
+            Q_FOREACH( const QString& plugin, pluginFiles ) {
                 loadPlugin( pluginDir.absoluteFilePath( plugin ) );
             }
         }
@@ -272,9 +340,16 @@ void Soprano::PluginManager::loadPlugin( const QString& path )
         else {
         	   qDebug() << "(Soprano::PluginManager) plugin has major version:"
         	            << f.sopranoVersion().left( f.sopranoVersion().indexOf( '.' ) ).toUInt()
-                     << "required major version:" << Soprano::versionMajor();
+                        << "required major version:" << Soprano::versionMajor();
         }
     }
+}
+
+
+void Soprano::PluginManager::setPluginSearchPath( const QStringList& paths, bool useDefaults )
+{
+    d->searchPaths = paths;
+    d->useDefaultSearchPaths = useDefaults;
 }
 
 

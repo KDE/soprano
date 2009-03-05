@@ -1,6 +1,6 @@
 [Desktop Entry]
 Encoding=UTF-8
-X-Soprano-Library=libsoprano_nquadparser
+X-Soprano-Library=soprano_nquadparser
 X-Soprano-Plugin-Author=Sebastian Trueg
 X-Soprano-Plugin-EMail=trueg@kde.org
 X-Soprano-Plugin-Website=http://soprano.sourceforge.net
