@@ -315,7 +315,7 @@ namespace {
     {
         QTextStream s( stdout );
         s << "sopranocmd " << Soprano::versionString() << endl;
-        s << "   Copyright (C) 2007-2008 Sebastian Trueg <trueg@kde.org>" << endl;
+        s << "   Copyright (C) 2007-2009 Sebastian Trueg <trueg@kde.org>" << endl;
         s << "   This program is free software; you can redistribute it and/or modify" << endl
           << "   it under the terms of the GNU General Public License as published by" << endl
           << "   the Free Software Foundation; either version 2 of the License, or" << endl
@@ -341,7 +341,7 @@ namespace {
         QTextStream s( stdout );
         s << endl;
         s << "Usage:" << endl
-          << "   sopranocmd --backend [--dir <storagedir>] [--settings <settings>] [--serialization <s>] <command> [<parameters>]" << endl
+          << "   sopranocmd --backend <backendname> [--dir <storagedir>] [--port <port>] [--host <host>] [--username <username>] [--password <password>] [--settings <settings>] [--serialization <s>] <command> [<parameters>]" << endl
           << "   sopranocmd --port <port> [--host <host>] --model <name> [--serialization <s>] <command> [<parameters>]" << endl
           << "   sopranocmd --socket <socketpath>  --model <name> [--serialization <s>] <command> [<parameters>]" << endl
 #ifdef BUILD_DBUS_SUPPORT
@@ -375,6 +375,12 @@ namespace {
           << endl
           << "   --host <host>       Specify the host the Soprano server is running on (defaults to localhost)." << endl
           << "                       (only applicable when querying against the Soprano server.)" << endl
+          << endl
+          << "   --username <name>   Specify the username for the Soprano backend." << endl
+          << "                       (only applicable when using a virtuoso backend or a sparql endpoint.)" << endl
+          << endl
+          << "   --password <word>   Specify the password for the Soprano backend." << endl
+          << "                       (only applicable when using a virtuoso backend or a sparql endpoint.)" << endl
           << endl
           << "   --socket <path>     Specify the path to the local socket the Soprano server is running on." << endl
           << "                       (only applicable when querying against the Soprano server.)" << endl
@@ -433,6 +439,8 @@ int main( int argc, char *argv[] )
     allowedCmdLineArgs.insert( "dir", true );
     allowedCmdLineArgs.insert( "port", true );
     allowedCmdLineArgs.insert( "host", true );
+    allowedCmdLineArgs.insert( "username", true );
+    allowedCmdLineArgs.insert( "password", true );
     allowedCmdLineArgs.insert( "socket", true );
 #ifdef BUILD_DBUS_SUPPORT
     allowedCmdLineArgs.insert( "dbus", true );
@@ -495,14 +503,18 @@ int main( int argc, char *argv[] )
     if ( backendName.isEmpty() ) {
         if ( args.hasSetting( "sparql" ) ) {
             QUrl sparqlEndPoint = args.getSetting( "sparql" );
+            QString userName = args.getSetting( "username", sparqlEndPoint.userName() );
+            QString password = args.getSetting( "password", sparqlEndPoint.password() );
+
             quint16 port = sparqlEndPoint.port( 80 );
-            if ( args.hasSetting( "port" ) ) {
+            if ( args.hasSetting( "port" ) )
                 port = args.getSetting( "port" ).toInt();
-            }
+
             Soprano::Client::SparqlModel* sparqlModel = new Soprano::Client::SparqlModel( sparqlEndPoint.host(), port,
-                                                                                          sparqlEndPoint.userName(), sparqlEndPoint.password() );
+                                                                                          userName, password );
             if ( !sparqlEndPoint.path().isEmpty() )
                 sparqlModel->setPath( sparqlEndPoint.path() );
+
             model = sparqlModel;
         }
         else if ( args.hasSetting( "port" ) ) {
@@ -578,6 +590,12 @@ int main( int argc, char *argv[] )
         }
         if ( args.hasSetting( "host" ) ) {
             settings.append( BackendSetting( BackendOptionHost, args.getSetting( "host" ) ) );
+        }
+        if ( args.hasSetting( "username" ) ) {
+            settings.append( BackendSetting( BackendOptionUsername, args.getSetting( "username" ) ) );
+        }
+        if ( args.hasSetting( "password" ) ) {
+            settings.append( BackendSetting( BackendOptionPassword, args.getSetting( "password" ) ) );
         }
 
         QStringList userSettings = backendSettings.split( ';', QString::SkipEmptyParts );
