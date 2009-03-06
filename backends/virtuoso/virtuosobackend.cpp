@@ -161,10 +161,50 @@ Soprano::BackendFeatures Soprano::Virtuoso::BackendPlugin::supportedFeatures() c
 }
 
 
+namespace {
+    QString parseVirtuosoVersion( const QByteArray& data ) {
+        QString stderr = QString::fromLocal8Bit( data );
+        int vp = stderr.indexOf( QLatin1String("Version" ) );
+        if ( vp > 0 ) {
+            vp += 8;
+            return stderr.mid( vp, stderr.indexOf( ' ', vp ) - vp );
+        }
+        return QString();
+    }
+
+    QString determineVirtuosoVersion( const QString& virtuosoBin ) {
+        QProcess p;
+        p.start( virtuosoBin, QStringList() << QLatin1String( "--version" ), QIODevice::ReadOnly );
+        p.waitForFinished();
+        return parseVirtuosoVersion( p.readAllStandardError() );
+    }
+}
+
 bool Soprano::Virtuoso::BackendPlugin::isAvailable() const
 {
-    // FIXME: make sure the virtuoso bin's version is at least 5.0.10
-    return !findVirtuosoDriver().isEmpty() && !VirtuosoController::locateVirtuosoBinary().isEmpty();
+    if ( findVirtuosoDriver().isEmpty() ) {
+        qDebug() << Q_FUNC_INFO << "could not find Virtuoso ODBC driver";
+        return false;
+    }
+
+    QString virtuosoBin = VirtuosoController::locateVirtuosoBinary();
+    if ( virtuosoBin.isEmpty() ) {
+        qDebug() << Q_FUNC_INFO << "could not find virtuoso-t binary";
+        return false;
+    }
+
+    QString vs = determineVirtuosoVersion( virtuosoBin );
+    if ( vs.isEmpty() ) {
+        qDebug() << Q_FUNC_INFO << "Failed to determine version of the Virtuoso server at" << virtuosoBin;
+        return false;
+    }
+    if ( vs < QLatin1String( "5.0.10" ) ) {
+        qDebug() << Q_FUNC_INFO << "Minimum Virtuoso version is 5.0.10." << virtuosoBin << "has version" << vs;
+        return false;
+    }
+
+    qDebug() << "Using Virtuoso Version:" << vs;
+    return true;
 }
 
 
