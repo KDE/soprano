@@ -64,7 +64,10 @@ Soprano::StorageModel* Soprano::Virtuoso::BackendPlugin::createModel( const Back
     bool debugMode = valueInSettings( settings, BackendOptionUser, QLatin1String( "debugmode" ) ).toBool();
 
     VirtuosoController* controller = 0;
-    if ( host.isEmpty() || port == 0 ) {
+    if ( host.isEmpty() &&
+         port == 0 &&
+         uid.isEmpty() &&
+         pwd.isEmpty() ) {
         if ( path.isEmpty() ) {
             setError( "Need a database storage path set to start a local Virtuoso instance." );
             return 0;
