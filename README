@@ -1,4 +1,4 @@
-Soprano 2.2
+Soprano 2.3
 ===========
 
 Soprano (formally known as QRDF) is a library which provides a nice Qt
@@ -12,6 +12,7 @@ Soprano has the following features:
 * Backend plugins for:
   - Redland
   - Sesame2
+  - Virtuoso
 * Parser and serializer plugins for:
   - raptor (rdf+xml, turtle, trig, nTriples)
   - nQuads

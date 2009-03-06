@@ -347,7 +347,7 @@ namespace {
 #ifdef BUILD_DBUS_SUPPORT
           << "   sopranocmd --dbus <dbusservice> --model <name> [--serialization <s>] <command> [<parameters>]" << endl
 #endif
-          << "   sopranocmd --sparql <sparql end point> [--port <port> [--serialization <s>] <command> [<parameters>]" << endl
+          << "   sopranocmd --sparql <sparql end point> [--port <port>] [--username <username>] [--password <password>] [--serialization <s>] <command> [<parameters>]" << endl
           << endl
           << "   --version           Print version information." << endl
           << endl
