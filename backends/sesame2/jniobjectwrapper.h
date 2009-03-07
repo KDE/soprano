@@ -34,7 +34,7 @@ class JNIObjectWrapper
 public:
     JNIObjectWrapper();
     JNIObjectWrapper( const JObjectRef& object );
-    ~JNIObjectWrapper();
+    virtual ~JNIObjectWrapper();
 
     void setObject( const JObjectRef& o );
 
@@ -51,7 +51,7 @@ public:
     long callLongMethod( jmethodID methodId, ... );
     JObjectRef callObjectMethod( jmethodID methodId, ... );
 
-    
+
 private:
     JObjectRef m_object;
 };
