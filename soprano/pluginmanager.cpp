@@ -56,7 +56,7 @@ namespace {
         // locations for plugins
         searchPaths << QCoreApplication::applicationDirPath()
                     << QCoreApplication::libraryPaths();
-        foreach( const QString& p, QStringList( searchPaths ) ) {
+        foreach( const QString& p, searchPaths ) {
             searchPaths << p + QLatin1String( "/soprano" );
             searchPaths << p + QLatin1String( "/plugins" );
         }
