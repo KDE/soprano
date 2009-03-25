@@ -1,5 +1,6 @@
 2.2.3
 	* Fixed build system for tests (thanks to Greg Beauchesne)
+	* Fixed plugins to build as MODULEs instead of SHARED (makes proper "plugins" on non-ELF systems)
 
 2.2.2
 	* Properly clear the error in the SparqlModel

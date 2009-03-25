@@ -36,7 +36,7 @@ set(sesame2_backend_SRC
 
 qt4_automoc(${sesame2_backend_SRC})
 
-add_library(soprano_sesame2backend SHARED ${sesame2_backend_SRC})
+add_library(soprano_sesame2backend MODULE ${sesame2_backend_SRC})
 
 target_link_libraries(soprano_sesame2backend soprano ${JAVA_JVM_LIBRARY})
 

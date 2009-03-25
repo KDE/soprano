@@ -13,7 +13,7 @@ set(nquadserializer_SRC
 
 qt4_automoc(${nquadserializer_SRC})
 
-add_library(soprano_nquadserializer SHARED ${nquadserializer_SRC})
+add_library(soprano_nquadserializer MODULE ${nquadserializer_SRC})
 
 TARGET_LINK_LIBRARIES(soprano_nquadserializer soprano)
 
