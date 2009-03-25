@@ -49,7 +49,7 @@ if(BUILD_REDLAND_BACKEND)
 
   qt4_automoc(${redland_backend_SRC})
 
-  add_library(soprano_redlandbackend SHARED ${redland_backend_SRC})
+  add_library(soprano_redlandbackend MODULE ${redland_backend_SRC})
 
   TARGET_LINK_LIBRARIES(soprano_redlandbackend soprano_redlandcore)
 

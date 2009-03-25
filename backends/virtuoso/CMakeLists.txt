@@ -27,7 +27,7 @@ set(SRC
 
 qt4_automoc(${SRC})
 
-add_library(soprano_virtuosobackend SHARED ${SRC})
+add_library(soprano_virtuosobackend MODULE ${SRC})
 
 target_link_libraries(soprano_virtuosobackend
   soprano

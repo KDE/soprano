@@ -13,7 +13,7 @@ set(nquadparser_SRC
 
 qt4_automoc(${nquadparser_SRC})
 
-add_library(soprano_nquadparser SHARED ${nquadparser_SRC})
+add_library(soprano_nquadparser MODULE ${nquadparser_SRC})
 
 TARGET_LINK_LIBRARIES(soprano_nquadparser soprano)
 
