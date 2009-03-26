@@ -20,7 +20,9 @@
  */
 
 #include "virtuosomodel.h"
+#include "virtuosomodel_p.h"
 #include "virtuosoqueryresultiteratorbackend.h"
+#include "virtuosoqueryresultiteratorbackend_p.h"
 #include "virtuosobackend.h"
 #include "soprano.h"
 #include "odbcenvironment.h"
@@ -110,20 +112,9 @@ namespace {
 }
 
 
-class Soprano::VirtuosoModel::Private
-{
-public:
-    Private()
-        : connection( 0 ) {
-    }
-
-    ODBC::Connection* connection;
-};
-
-
 Soprano::VirtuosoModel::VirtuosoModel( ODBC::Connection* connection, const Backend* b )
     : StorageModel(b),
-      d( new Private() )
+      d( new VirtuosoModelPrivate() )
 {
     d->connection = connection;
 }
@@ -131,6 +122,8 @@ Soprano::VirtuosoModel::VirtuosoModel( ODBC::Connection* connection, const Backe
 
 Soprano::VirtuosoModel::~VirtuosoModel()
 {
+    foreach( Virtuoso::QueryResultIteratorBackend* it, d->m_openIterators )
+        it->close();
     delete d->connection;
     delete d;
 }
@@ -195,23 +188,19 @@ bool Soprano::VirtuosoModel::containsStatement( const Statement& statement ) con
     Statement s( statement );
     if ( !statement.context().isValid() )
         s.setContext( Virtuoso::defaultGraph() );
-    QString query = QString( "ask { %1 }" ).arg( statementToConstructGraphPattern( s, true ) );
-//    qDebug() << "containsStatement query" << query;
-    return executeQuery( query, Query::QueryLanguageSparql ).boolValue();
-//     if ( VirtuosoStatementHandler* sh = d->connection.execute( "sparql " + query ) ) {
-//         bool b = sh->fetchScroll();
-//         delete sh;
-//         return b;
-//     }
-//     return false;
+    return containsAnyStatement( s );
 }
 
 
-bool Soprano::VirtuosoModel::containsAnyStatement( const Statement &statement ) const
+bool Soprano::VirtuosoModel::containsAnyStatement( const Statement& statement ) const
 {
 //    qDebug() << Q_FUNC_INFO << statement;
 
-    QString query = QString( "ask { %1 }" ).arg( statementToConstructGraphPattern( statement, true ) );
+    QString query;
+    if ( statement.context().isValid() )
+        query = QString( "ask from %1 where { %2 . }" ).arg( statement.context().toN3(), statementToConstructGraphPattern( statement, false ) );
+    else
+        query = QString( "ask where { %1 . }" ).arg( statementToConstructGraphPattern( statement, true ) );
 //     if ( VirtuosoStatementHandler* sh = d->connection.execute( "sparql " + query ) ) {
 //         bool b = sh->fetchScroll();
 //         delete sh;
@@ -227,7 +216,11 @@ Soprano::StatementIterator Soprano::VirtuosoModel::listStatements( const Stateme
     qDebug() << Q_FUNC_INFO << partial;
 
     // we cannot use a construct query due to missing graph support
-    QString query = QString( "select * where { %1 . }" ).arg( statementToConstructGraphPattern( partial, true ) );
+    QString query;
+    if ( partial.context().isValid() )
+        query = QString( "select * from %1 where { %2 . }" ).arg( partial.context().toN3(), statementToConstructGraphPattern( partial, false ) );
+    else
+        query = QString( "select * where { %1 . }" ).arg( statementToConstructGraphPattern( partial, true ) );
     qDebug() << "List Statements Query" << query;
     return executeQuery( query, Query::QueryLanguageSparql )
         .iterateStatementsFromBindings( partial.subject().isValid() ? QString() : QString( 's' ),
@@ -364,7 +357,10 @@ Soprano::QueryResultIterator Soprano::VirtuosoModel::executeQuery( const QString
     ODBC::QueryResult* result = d->connection->executeQuery( QLatin1String( s_queryPrefix ) + ' ' + query );
     if ( result ) {
         clearError();
-        return new Virtuoso::QueryResultIteratorBackend( result );
+        Virtuoso::QueryResultIteratorBackend* backend = new Virtuoso::QueryResultIteratorBackend( result );
+        backend->d->m_model = d;
+        d->m_openIterators.append( backend );
+        return backend;
     }
     else {
         setError( d->connection->lastError() );

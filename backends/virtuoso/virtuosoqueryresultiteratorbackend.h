@@ -1,7 +1,7 @@
 /*
  * This file is part of Soprano Project
  *
- * Copyright (C) 2008 Sebastian Trueg <trueg@kde.org>
+ * Copyright (C) 2008-2009 Sebastian Trueg <trueg@kde.org>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -25,6 +25,9 @@
 #include "queryresultiteratorbackend.h"
 
 namespace Soprano {
+
+    class VirtuosoModel;
+
     namespace ODBC {
         class QueryResult;
     }
@@ -53,6 +56,8 @@ namespace Soprano {
 
         private:
             QueryResultIteratorBackendPrivate* const d;
+
+            friend class ::Soprano::VirtuosoModel;
         };
     }
 }

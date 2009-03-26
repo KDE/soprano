@@ -38,6 +38,8 @@
 
 
 namespace Soprano {
+    class VirtuosoModelPrivate;
+
     namespace Virtuoso {
         class QueryResultIteratorBackendPrivate
         {
@@ -55,6 +57,8 @@ namespace Soprano {
             bool askResult;
 
             StatementIterator graphIterator;
+
+            VirtuosoModelPrivate* m_model;
         };
     }
 }

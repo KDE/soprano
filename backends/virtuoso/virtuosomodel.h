@@ -29,6 +29,8 @@ namespace Soprano {
         class Connection;
     }
 
+    class VirtuosoModelPrivate;
+
     class VirtuosoModel : public StorageModel
     {
         Q_OBJECT
@@ -54,8 +56,7 @@ namespace Soprano {
                                                    const QString& userQueryLanguage = QString() ) const;
 
     private:
-        class Private;
-        Private* const d;
+        VirtuosoModelPrivate* const d;
     };
 }
 

@@ -21,6 +21,7 @@
 
 #include "virtuosoqueryresultiteratorbackend.h"
 #include "virtuosoqueryresultiteratorbackend_p.h"
+#include "virtuosomodel_p.h"
 #include "virtuosotools.h"
 #include "odbcqueryresult.h"
 #include "statement.h"
@@ -83,6 +84,7 @@ Soprano::Virtuoso::QueryResultIteratorBackend::QueryResultIteratorBackend( ODBC:
 
 Soprano::Virtuoso::QueryResultIteratorBackend::~QueryResultIteratorBackend()
 {
+    d->m_model->m_openIterators.removeAll( this );
     delete d->m_queryResult;
     delete d;
 }
