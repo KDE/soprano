@@ -71,7 +71,7 @@ QStringList Soprano::BindingSet::bindingNames() const
 
 Soprano::Node Soprano::BindingSet::operator[]( int offset ) const
 {
-    return d->values[offset];
+    return value( offset );
 }
 
 
@@ -83,7 +83,10 @@ Soprano::Node Soprano::BindingSet::operator[]( const QString name ) const
 
 Soprano::Node Soprano::BindingSet::value( int offset ) const
 {
-    return d->values[offset];
+    if ( offset >= 0 && offset < d->values.count() )
+        return d->values[offset];
+    else
+        return Node();
 }
 
 
