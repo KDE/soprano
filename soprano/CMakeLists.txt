@@ -137,6 +137,7 @@ install(FILES
   sopranotypes.h
   iterator.h
   iteratorbackend.h
+  nrlmodel.h
   vocabulary/rdf.h
   vocabulary/rdfs.h
   vocabulary/xsd.h

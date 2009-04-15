@@ -28,6 +28,7 @@ install(FILES
   StorageModel
   Global
   Version
+  NRLModel
   DESTINATION
   include/Soprano)
 

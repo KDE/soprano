@@ -1,7 +1,7 @@
 /*
  * This file is part of Soprano Project.
  *
- * Copyright (C) 2007 Sebastian Trueg <trueg@kde.org>
+ * Copyright (C) 2007-2009 Sebastian Trueg <trueg@kde.org>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -25,6 +25,10 @@
 #include "filtermodel.h"
 #include "soprano_export.h"
 
+#ifndef USING_SOPRANO_NRLMODEL_UNSTABLE_API
+#error The Soprano::NrlModel API is subject to change. This has to be acnowledged.
+#endif
+
 namespace Soprano {
     /**
      * \class NRLModel nrlmodel.h Soprano/NRLModel
@@ -33,12 +37,14 @@ namespace Soprano {
      *
      * The NRLModel enforces NRL cardinality rules. That means predicates with a cardinality
      * of maximum 1 are always udpated while statements that define predicates with a maximum
-     * cardinality bigger than 1 are rejected once the maximum is reached (future versions 
+     * cardinality bigger than 1 are rejected once the maximum is reached (future versions
      * might remove an earlier defined statement based on the time the old statements were
      * added).
      *
      * Thus, at the moment NRLModel is mostly usable for handling properties with a maximum
      * cardinality of 1.
+     *
+     * THE API AND EVEN THE COMPLETE CLASS IS SUBJECT TO CHANGE!
      *
      * \author Sebastian Trueg <trueg@kde.org>
      *
@@ -81,14 +87,34 @@ namespace Soprano {
          * same effect as Model::addStatement().
          *
          * Adding a statement that defines a predicate with a maximum
-         * cardinality bigger than 1 which has already been reached 
+         * cardinality bigger than 1 which has already been reached
          * fails with an error.
          *
          * \return Error::ErrorNone on success.
          */
-        Error::ErrorCode addStatement( const Statement& s );
+        Error::ErrorCode addNrlStatement( const Statement& s );
 
-        using FilterModel::addStatement;
+        /**
+         * Create a new graph of type \p type.
+         *
+         * This will actually create two graphs: the requested one
+         * and its metadata graph which will already contain basic
+         * metadata like creation date.
+         *
+         * \return The URI of the newly created graph.
+         *
+         * \since 2.3
+         */
+        QUrl createGraph( const QUrl& type, QUrl* metadataGraph = 0 );
+
+        /**
+         * Remove a complete graph including its metadata graph
+         *
+         * This method can be seen as the counterpart to createGraph
+         *
+         * \since 2.3
+         */
+        Error::ErrorCode removeGraph( const QUrl& graph );
 
     private:
         class Private;

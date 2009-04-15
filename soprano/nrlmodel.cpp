@@ -1,7 +1,7 @@
 /*
  * This file is part of Soprano Project.
  *
- * Copyright (C) 2007 Sebastian Trueg <trueg@kde.org>
+ * Copyright (C) 2007-2009 Sebastian Trueg <trueg@kde.org>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -19,15 +19,30 @@
  * Boston, MA 02110-1301, USA.
  */
 
+#define USING_SOPRANO_NRLMODEL_UNSTABLE_API
 #include "nrlmodel.h"
+#undef USING_SOPRANO_NRLMODEL_UNSTABLE_API
 #include "error.h"
 #include "vocabulary/nrl.h"
+#include "vocabulary/nao.h"
+#include "vocabulary/rdf.h"
 #include "queryresultiterator.h"
 #include "statementiterator.h"
+#include "nodeiterator.h"
 #include "node.h"
 #include "statement.h"
 
+#include <QtCore/QUuid>
+#include <QtCore/QDateTime>
 #include <QtCore/QDebug>
+
+
+namespace {
+    // TODO: make the "nepomuk" part configurable, maybe using setCreatorName or something
+    QUrl createGraphUri() {
+        return QUrl( "urn:nepomuk:local:" + QUuid::createUuid().toString().remove( QRegExp( "[\\{\\}]" ) ) );
+    }
+}
 
 
 class Soprano::NRLModel::Private
@@ -72,7 +87,7 @@ bool Soprano::NRLModel::ignoreContext() const
 }
 
 
-Soprano::Error::ErrorCode Soprano::NRLModel::addStatement( const Statement& statement )
+Soprano::Error::ErrorCode Soprano::NRLModel::addNrlStatement( const Statement& statement )
 {
     // 1. check if any cardinality restrictions are defined for s.predicate()
     // 2. if so -> enforce
@@ -169,4 +184,33 @@ Soprano::Error::ErrorCode Soprano::NRLModel::addStatement( const Statement& stat
 
     // make gcc shut up
     return Error::ErrorNone;
+}
+
+
+QUrl Soprano::NRLModel::createGraph( const QUrl& type, QUrl* metadataGraph )
+{
+    QUrl graph = createGraphUri();
+    QUrl metadatagraph = createGraphUri();
+
+    FilterModel::addStatement( metadatagraph, Soprano::Vocabulary::NRL::coreGraphMetadataFor(), graph, metadatagraph );
+    FilterModel::addStatement( metadatagraph, Soprano::Vocabulary::RDF::type(), Soprano::Vocabulary::NRL::GraphMetadata(), metadatagraph );
+    FilterModel::addStatement( graph, Soprano::Vocabulary::RDF::type(), type, metadatagraph );
+    FilterModel::addStatement( graph, Soprano::Vocabulary::NAO::created(), Soprano::LiteralValue( QDateTime::currentDateTime() ), metadatagraph );
+
+    if ( metadataGraph )
+        *metadataGraph = metadatagraph;
+
+    return graph;
+}
+
+
+Soprano::Error::ErrorCode Soprano::NRLModel::removeGraph( const QUrl& graph )
+{
+    QList<Node> metadataGraphs = listStatements( QUrl(), Soprano::Vocabulary::NRL::coreGraphMetadataFor(), graph ).iterateSubjects().allNodes();
+    foreach ( const Node& mg, metadataGraphs ) {
+        Error::ErrorCode c = removeContext( mg );
+        if ( c != Error::ErrorNone )
+            return c;
+    }
+    return removeContext( graph );
 }
