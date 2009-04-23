@@ -290,7 +290,12 @@ void Soprano::PluginManager::loadPlugin( const QString& path )
         qDebug() << "(Soprano::PluginManager) found plugin file" << path;
         if ( f.sopranoVersion().left( f.sopranoVersion().indexOf( '.' ) ).toUInt() == Soprano::versionMajor() ) {
             qDebug() << "(Soprano::PluginManager) plugin has proper version.";
+
             QString libPath = findPluginLib( f );
+            if ( libPath.isEmpty() ) {
+                qDebug() << "Failed to find the library for plugin" << f.pluginName() << "(" << f.library() << ")";
+                return;
+            }
 
             QString type = f.serviceTypes();
             QString name = f.pluginName();

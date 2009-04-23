@@ -73,7 +73,7 @@ QString Soprano::findLibraryPath( const QString& libName, const QStringList& ext
 
     // suffixes to search
     QStringList suffixes;
-    suffixes << QLatin1String( SOPRANO_LIB_SUFFIX"/" )
+    suffixes << QLatin1String( "/"SOPRANO_LIB_SUFFIX"/" )
              << QString( '/' )
              << QLatin1String( "64/" );
 
@@ -92,7 +92,7 @@ QString Soprano::findLibraryPath( const QString& libName, const QStringList& ext
             foreach( const QString& dir, dirs ) {
                 foreach( const QString& subDir, subDirs ) {
                     foreach( const QString& suffix, suffixes ) {
-                        QFileInfo fi( dir + '/' + suffix + subDir + '/' + lib );
+                        QFileInfo fi( dir + suffix + subDir + '/' + lib );
                         if ( fi.isFile() ) {
                             return fi.absoluteFilePath();
                         }
