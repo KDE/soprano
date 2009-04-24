@@ -26,6 +26,7 @@
 #include <QtCore/QDir>
 #include <QtCore/QFileInfo>
 #include <QtCore/QCoreApplication>
+#include <QtCore/QDebug>
 
 
 #if defined _WIN32 || defined _WIN64
@@ -73,12 +74,19 @@ QString Soprano::findLibraryPath( const QString& libName, const QStringList& ext
 
     // suffixes to search
     QStringList suffixes;
-    suffixes << QLatin1String( "/"SOPRANO_LIB_SUFFIX"/" )
+    suffixes << QLatin1String( SOPRANO_LIB_SUFFIX"/" )
              << QString( '/' )
              << QLatin1String( "64/" );
 
+    // subdirs to search
+    QStringList subDirs;
+    foreach( const QString& subDir, subDirs_ ) {
+        QString s( subDir );
+        if ( !s.endsWith( '/' ) )
+            s += '/';
+        subDirs << s;
+    }
     // we add the empty string to be able to handle all in one loop below
-    QStringList subDirs( subDirs_ );
     subDirs << QString();
 
     QStringList libs = makeLibNames( libName );
@@ -92,7 +100,7 @@ QString Soprano::findLibraryPath( const QString& libName, const QStringList& ext
             foreach( const QString& dir, dirs ) {
                 foreach( const QString& subDir, subDirs ) {
                     foreach( const QString& suffix, suffixes ) {
-                        QFileInfo fi( dir + suffix + subDir + '/' + lib );
+                        QFileInfo fi( dir + suffix + subDir + lib );
                         if ( fi.isFile() ) {
                             return fi.absoluteFilePath();
                         }
