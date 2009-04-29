@@ -132,6 +132,7 @@ install(FILES
   error.h
   locator.h
   literalvalue.h
+  languagetag.h
   ${CMAKE_CURRENT_BINARY_DIR}/version.h
   rdfschemamodel.h
   bindingset.h
