@@ -31,31 +31,25 @@
 class Soprano::Node::NodeData : public QSharedData
 {
 public:
-    NodeData( Type type_ = EmptyNode )
-        : type( type_ ) {}
-
+    NodeData() {}
     virtual ~NodeData() {}
 
-    Type type;
-
-    virtual QString toString() const {
-        return QString();
-    }
-
-    virtual QString toN3() const {
-        return QString();
-    }
+    virtual Type type() const = 0;
+    virtual QString toString() const = 0;
+    virtual QString toN3() const = 0;
 };
 
 class Soprano::Node::ResourceNodeData : public NodeData
 {
 public:
     ResourceNodeData( const QUrl& uri_ = QUrl() )
-        : NodeData( ResourceNode ),
+        : NodeData(),
           uri( uri_ ){
     }
 
     QUrl uri;
+
+    Type type() const { return ResourceNode; }
 
     QString toString() const {
         return uri.toString();
@@ -70,11 +64,13 @@ class Soprano::Node::BNodeData : public NodeData
 {
 public:
     BNodeData( const QString& id = QString() )
-        : NodeData( BlankNode ),
+        : NodeData(),
           identifier( id ) {
     }
 
     QString identifier;
+
+    Type type() const { return BlankNode; }
 
     QString toString() const {
         return identifier;
@@ -89,12 +85,14 @@ class Soprano::Node::LiteralNodeData : public NodeData
 {
 public:
     LiteralNodeData( const LiteralValue& val = LiteralValue() )
-        : NodeData( LiteralNode ),
+        : NodeData(),
           value( val )
     {
     }
 
     LiteralValue value;
+
+    Type type() const { return LiteralNode; }
 
     QString toString() const {
         return value.toString();
@@ -168,7 +166,7 @@ Soprano::Node::~Node()
 
 bool Soprano::Node::isEmpty() const
 {
-    return ( !d || d->type == Soprano::Node::EmptyNode );
+    return ( !d || d->type() == Soprano::Node::EmptyNode );
 }
 
 bool Soprano::Node::isValid() const
@@ -178,22 +176,22 @@ bool Soprano::Node::isValid() const
 
 bool Soprano::Node::isLiteral() const
 {
-    return ( d && d->type == Soprano::Node::LiteralNode );
+    return ( d && d->type() == Soprano::Node::LiteralNode );
 }
 
 bool Soprano::Node::isResource() const
 {
-    return ( d && d->type == Soprano::Node::ResourceNode );
+    return ( d && d->type() == Soprano::Node::ResourceNode );
 }
 
 bool Soprano::Node::isBlank() const
 {
-    return ( d && d->type == Soprano::Node::BlankNode );
+    return ( d && d->type() == Soprano::Node::BlankNode );
 }
 
 Soprano::Node::Type Soprano::Node::type() const
 {
-    return d ? d->type : EmptyNode;
+    return d ? d->type() : EmptyNode;
 }
 
 QUrl Soprano::Node::uri() const
@@ -287,15 +285,15 @@ bool Soprano::Node::operator==( const Node& other ) const
         return false;
     }
     else if ( type() != EmptyNode ) {
-        if ( d->type == ResourceNode ) {
+        if ( d->type() == ResourceNode ) {
             return(  static_cast<const ResourceNodeData*>( d.constData() )->uri ==
                      static_cast<const ResourceNodeData*>( other.d.constData() )->uri );
         }
-        else if ( d->type == BlankNode ) {
+        else if ( d->type() == BlankNode ) {
             return( static_cast<const BNodeData*>( d.constData() )->identifier ==
                     static_cast<const BNodeData*>( other.d.constData() )->identifier );
         }
-        else if ( d->type == LiteralNode ) {
+        else if ( d->type() == LiteralNode ) {
             return ( static_cast<const LiteralNodeData*>( d.constData() )->value ==
                      static_cast<const LiteralNodeData*>( other.d.constData() )->value );
         }
