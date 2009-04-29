@@ -67,6 +67,7 @@ namespace Soprano
          * \sa lookup()
          */
         enum LookupFlag {
+            LookupFlagNone = 0,
             /// Disables fallback behavior for lookup ranges
             LookupFlagNoFallback = 1
         };
@@ -319,7 +320,7 @@ namespace Soprano
         static int lookup(
             const QList<LanguageTag> & choices,
             const QList<LanguageTag> & priority,
-            LookupFlags flags = LookupFlags(),
+            LookupFlags flags = LookupFlagNone,
             MatchFilter scheme = MatchFilterBasic
         );
 
@@ -342,7 +343,7 @@ namespace Soprano
         static int lookup(
             const QList<LanguageTag> & choices,
             const LanguageTag & priority,
-            LookupFlags flags = LookupFlags(),
+            LookupFlags flags = LookupFlagNone,
             MatchFilter scheme = MatchFilterBasic
         );
 
