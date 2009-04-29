@@ -42,6 +42,8 @@ set(soprano_SRCS
   error.h
   literalvalue.cpp
   literalvalue.h
+  languagetag.cpp
+  languagetag.h
   locator.cpp
   locator.h
   datetime.cpp

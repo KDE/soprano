@@ -5,6 +5,7 @@ install(FILES
   Model
   Statement
   Node
+  LanguageTag
   StatementIterator
   NodeIterator
   Iterator

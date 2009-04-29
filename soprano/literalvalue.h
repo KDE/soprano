@@ -27,6 +27,8 @@
 #include <QtCore/QVariant>
 #include <QtCore/QSharedDataPointer>
 
+#include "languagetag.h"
+
 
 namespace Soprano
 {
@@ -275,6 +277,14 @@ namespace Soprano
         //@{
         bool isValid() const;
 
+        /**
+          * Determines if this literal value is a plain literal.
+          * Plain literals have no data type, but may have an optional language tag.
+          *
+          * \return \c true if this literal is plain
+          */
+        bool isPlain() const;
+
         bool isInt() const;
         bool isInt64() const;
         bool isUnsignedInt() const;
@@ -327,9 +337,18 @@ namespace Soprano
          * The XML Schema datatype URI.
          *
          * \return The URI of the XML Schema type referring to the
-         * stored type or an empty QUrl if the LiteralValue is empty.
+         * stored type or an empty QUrl if the LiteralValue is empty or
+         * is a plain literal.
          */
         QUrl dataTypeUri() const;
+
+        /**
+         * The language tag.
+         *
+         * \return The language tag of the plain literal or an empty LanguageTag
+         * if the LiteralValue has no language or it is a typed literal.
+         */
+        LanguageTag language() const;
 
         /**
          * The type of the data.
@@ -380,6 +399,23 @@ namespace Soprano
         static LiteralValue fromString( const QString& value, const QUrl& dataTypeUri );
 
         /**
+         * Create a plain LiteralValue object with an optional language tag.
+         *
+         * \param value The value of the literal.
+         *
+         * \param lang The language tag.
+         *
+         * Both an empty \a value and \a lang will result in an invalid LiteralValue
+         * instance but an empty \a value with a valid \a lang is possible. A valid
+         * \a value with an empty \a lang will result in a plain, untyped literal with no
+         * language tag.
+         *
+         * \return A newly created LiteralValue instance based on the provided \a value and
+         * \a lang.
+         */
+        static LiteralValue createPlainLiteral( const QString& value, const LanguageTag& lang = LanguageTag() );
+
+        /**
          * Convert an XML Schema URI into a QVariant::Type.
          * \return The QVariant::Type corresponding to dataTypeUri or QVariant::Invalid
          * if dataTypeUri is unknown.
@@ -397,6 +433,8 @@ namespace Soprano
         class Private;
         QSharedDataPointer<Private> d;
     };
+
+    SOPRANO_EXPORT uint qHash( const LiteralValue& lit );
 }
 
 SOPRANO_EXPORT QDebug operator<<( QDebug dbg, const Soprano::LiteralValue& );

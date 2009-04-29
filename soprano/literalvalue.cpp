@@ -31,25 +31,123 @@
 #include <QtCore/QDebug>
 #include <QtCore/QSharedData>
 
+// Uncomment this to disable the union typing
+//#define DISABLE_SOPRANO_LITERALVALUE_UNION
+
 
 class Soprano::LiteralValue::Private : public QSharedData
 {
 public:
     Private()
-        : stringCacheValid( false ) {
+        : stringCacheValid( false ),
+         plainLiteral( true ) {
+#ifndef DISABLE_SOPRANO_LITERALVALUE_UNION
+        new (&uriLangUnion) Soprano::LanguageTag();
+#endif /* DISABLE_SOPRANO_LITERALVALUE_UNION */
     }
 
     Private( const QVariant& v )
         : value( v ),
-          stringCacheValid( false ) {
+          stringCacheValid( false ),
+          plainLiteral( false ) {
+#ifndef DISABLE_SOPRANO_LITERALVALUE_UNION
+        new (&uriLangUnion) QUrl();
+#endif /* DISABLE_SOPRANO_LITERALVALUE_UNION */
+    }
+
+    ~Private()
+    {
+#ifndef DISABLE_SOPRANO_LITERALVALUE_UNION
+        destroyData();
+#endif /* DISABLE_SOPRANO_LITERALVALUE_UNION */
     }
 
     QVariant value;
-    mutable QUrl dataTypeUri;
+
+    void setLanguage( const LanguageTag& lang );
+    void setDataTypeUri( const QUrl& uri ) const;
+
+    LanguageTag language() const;
+    QUrl dataTypeUri() const;
+
     mutable QString stringCache;
+
     mutable bool stringCacheValid;
+    mutable bool plainLiteral;
+private:
+    // Poor man's union of QUrl and Soprano::LanguageTag that works for non-POD types
+#ifndef DISABLE_SOPRANO_LITERALVALUE_UNION
+    mutable void * uriLangUnion;
+    void destroyData() const;
+#else
+    mutable QUrl dataTypeUriValue;
+    mutable Soprano::LanguageTag languageTag;
+#endif /* DISABLE_SOPRANO_LITERALVALUE_UNION */
+
 };
 
+#ifndef DISABLE_SOPRANO_LITERALVALUE_UNION
+// Static assertions; causes a compiler error if violated
+static char assert_size[
+    sizeof(QUrl) == sizeof(void *)
+    && sizeof(Soprano::LanguageTag) == sizeof(void *) ? 1 : -1
+];
+
+void Soprano::LiteralValue::Private::destroyData() const
+{
+    if (plainLiteral) {
+        reinterpret_cast<Soprano::LanguageTag *>(&uriLangUnion)->Soprano::LanguageTag::~LanguageTag();
+    } else {
+        reinterpret_cast<QUrl *>(&uriLangUnion)->~QUrl();
+    }
+}
+#endif /* DISABLE_SOPRANO_LITERALVALUE_UNION */
+
+void Soprano::LiteralValue::Private::setLanguage( const Soprano::LanguageTag& lang )
+{
+#ifndef DISABLE_SOPRANO_LITERALVALUE_UNION
+    destroyData();
+    new (&uriLangUnion) Soprano::LanguageTag(lang);
+#else
+    languageTag = lang;
+    dataTypeUriValue = QUrl();
+#endif /* DISABLE_SOPRANO_LITERALVALUE_UNION */
+    plainLiteral = true;
+}
+
+void Soprano::LiteralValue::Private::setDataTypeUri( const QUrl& uri ) const
+{
+#ifndef DISABLE_SOPRANO_LITERALVALUE_UNION
+    destroyData();
+    new (&uriLangUnion) QUrl(uri);
+#else
+    languageTag = Soprano::LanguageTag();
+    dataTypeUriValue = uri;
+#endif /* DISABLE_SOPRANO_LITERALVALUE_UNION */
+    plainLiteral = false;
+}
+
+Soprano::LanguageTag Soprano::LiteralValue::Private::language() const
+{
+#ifndef DISABLE_SOPRANO_LITERALVALUE_UNION
+    return plainLiteral
+        ? *reinterpret_cast<Soprano::LanguageTag *>(&uriLangUnion)
+        : Soprano::LanguageTag();
+#else
+    return languageTag;
+#endif /* DISABLE_SOPRANO_LITERALVALUE_UNION */
+}
+
+QUrl Soprano::LiteralValue::Private::dataTypeUri() const
+{
+#ifndef DISABLE_SOPRANO_LITERALVALUE_UNION
+    return plainLiteral
+        ? QUrl()
+        : *reinterpret_cast<QUrl *>(&uriLangUnion);
+#else
+    return dataTypeUriValue;
+#endif /* DISABLE_SOPRANO_LITERALVALUE_UNION */
+}
 
 Soprano::LiteralValue::LiteralValue()
     : d( new Private )
@@ -74,7 +172,7 @@ Soprano::LiteralValue::LiteralValue( const QVariant& other )
     QUrl type = dataTypeUriFromType( other.type() );
     if ( !type.isEmpty() ) {
         d->value = other;
-        d->dataTypeUri = type;
+        d->setDataTypeUri(type);
     }
 }
 
@@ -162,6 +260,10 @@ bool Soprano::LiteralValue::isValid() const
     return d->value.isValid();
 }
 
+bool Soprano::LiteralValue::isPlain() const
+{
+    return d->plainLiteral;
+}
 
 Soprano::LiteralValue& Soprano::LiteralValue::operator=( const LiteralValue& v )
 {
@@ -174,8 +276,8 @@ Soprano::LiteralValue& Soprano::LiteralValue::operator=( int i )
 {
     d->stringCacheValid = false;
     d->value.setValue( i );
-    if ( typeFromDataTypeUri( d->dataTypeUri ) != QVariant::Int ) {
-        d->dataTypeUri = QUrl();
+    if ( typeFromDataTypeUri( d->dataTypeUri() ) != QVariant::Int ) {
+        d->setDataTypeUri(QUrl());
     }
     return *this;
 }
@@ -185,7 +287,7 @@ Soprano::LiteralValue& Soprano::LiteralValue::operator=( qlonglong i )
 {
     d->stringCacheValid = false;
     d->value.setValue( i );
-    d->dataTypeUri = QUrl();
+    d->setDataTypeUri(QUrl());
     return *this;
 }
 
@@ -194,8 +296,8 @@ Soprano::LiteralValue& Soprano::LiteralValue::operator=( uint i )
 {
     d->stringCacheValid = false;
     d->value.setValue( i );
-    if ( typeFromDataTypeUri( d->dataTypeUri ) != QVariant::UInt ) {
-        d->dataTypeUri = QUrl();
+    if ( typeFromDataTypeUri( d->dataTypeUri() ) != QVariant::UInt ) {
+        d->setDataTypeUri(QUrl());
     }
     return *this;
 }
@@ -205,7 +307,7 @@ Soprano::LiteralValue& Soprano::LiteralValue::operator=( qulonglong i )
 {
     d->stringCacheValid = false;
     d->value.setValue( i );
-    d->dataTypeUri = QUrl();
+    d->setDataTypeUri(QUrl());
     return *this;
 }
 
@@ -214,7 +316,7 @@ Soprano::LiteralValue& Soprano::LiteralValue::operator=( bool b )
 {
     d->stringCacheValid = false;
     d->value.setValue( b );
-    d->dataTypeUri = QUrl();
+    d->setDataTypeUri(QUrl());
     return *this;
 }
 
@@ -223,7 +325,7 @@ Soprano::LiteralValue& Soprano::LiteralValue::operator=( double v )
 {
     d->stringCacheValid = false;
     d->value.setValue( v );
-    d->dataTypeUri = QUrl();
+    d->setDataTypeUri(QUrl());
     return *this;
 }
 
@@ -233,7 +335,7 @@ Soprano::LiteralValue& Soprano::LiteralValue::operator=( const QString& string )
     d->stringCacheValid = true;
     d->stringCache = string;
     d->value.setValue( string );
-    d->dataTypeUri = QUrl();
+    d->setDataTypeUri(QUrl());
     return *this;
 }
 
@@ -248,7 +350,7 @@ Soprano::LiteralValue& Soprano::LiteralValue::operator=( const QDate& date )
 {
     d->stringCacheValid = false;
     d->value.setValue( date );
-    d->dataTypeUri = QUrl();
+    d->setDataTypeUri(QUrl());
     return *this;
 }
 
@@ -257,7 +359,7 @@ Soprano::LiteralValue& Soprano::LiteralValue::operator=( const QTime& time )
 {
     d->stringCacheValid = false;
     d->value.setValue( time );
-    d->dataTypeUri = QUrl();
+    d->setDataTypeUri(QUrl());
     return *this;
 }
 
@@ -266,7 +368,7 @@ Soprano::LiteralValue& Soprano::LiteralValue::operator=( const QDateTime& dateti
 {
     d->stringCacheValid = false;
     d->value.setValue( datetime.toUTC() );
-    d->dataTypeUri = QUrl();
+    d->setDataTypeUri(QUrl());
     return *this;
 }
 
@@ -275,7 +377,7 @@ Soprano::LiteralValue& Soprano::LiteralValue::operator=( const QByteArray& data 
 {
     d->stringCacheValid = false;
     d->value.setValue( data );
-    d->dataTypeUri = QUrl();
+    d->setDataTypeUri(QUrl());
     return *this;
 }
 
@@ -474,23 +576,41 @@ QVariant Soprano::LiteralValue::variant() const
 
 QUrl Soprano::LiteralValue::dataTypeUri() const
 {
-    if ( d->dataTypeUri.isEmpty() ) {
-        d.constData()->dataTypeUri = LiteralValue::dataTypeUriFromType( type() );
+    if ( !d->plainLiteral && d->dataTypeUri().isEmpty() ) {
+        d.constData()->setDataTypeUri(LiteralValue::dataTypeUriFromType( type() ));
     }
-    return d->dataTypeUri;
+    return d->dataTypeUri();
+}
+
+Soprano::LanguageTag Soprano::LiteralValue::language() const
+{
+    return d->language();
 }
 
 
 bool Soprano::LiteralValue::operator==( const LiteralValue& other ) const
 {
-    return( d->value == other.d->value &&
-            dataTypeUri() == other.dataTypeUri() );
+    if ( d->value != other.d->value ||
+         d->plainLiteral != other.d->plainLiteral ) return false;
+
+    if ( d->plainLiteral ) {
+        return language() == other.language();
+    } else {
+        return dataTypeUri() == other.dataTypeUri();
+    }
 }
 
 
 bool Soprano::LiteralValue::operator!=( const LiteralValue& other ) const
 {
-    return d->value != other.d->value;
+    if ( d->value != other.d->value ||
+         d->plainLiteral != other.d->plainLiteral ) return true;
+
+    if ( d->plainLiteral ) {
+        return language() != other.language();
+    } else {
+        return dataTypeUri() != other.dataTypeUri();
+    }
 }
 
 
@@ -533,11 +653,24 @@ Soprano::LiteralValue Soprano::LiteralValue::fromString( const QString& value, c
     }
     else {
         LiteralValue v = LiteralValue::fromString( value, typeFromDataTypeUri( type ) );
-        v.d->dataTypeUri = type;
+        v.d->setDataTypeUri(type);
         return v;
     }
 }
 
+Soprano::LiteralValue Soprano::LiteralValue::createPlainLiteral( const QString& value, const LanguageTag& lang )
+{
+    if ( value.isEmpty() && lang.isEmpty() ) {
+        return LiteralValue();
+    }
+    else {
+        LiteralValue v;
+        v.d->value = v.d->stringCache = value;
+        v.d->stringCacheValid = true;
+        v.d->setLanguage( lang );
+        return v;
+    }
+}
 
 
 QVariant::Type Soprano::LiteralValue::typeFromDataTypeUri( const QUrl& dataTypeUri )
@@ -601,4 +734,13 @@ QDebug operator<<( QDebug dbg, const Soprano::LiteralValue& v )
 {
     dbg << v.toString();
     return dbg;
+}
+
+uint Soprano::qHash( const LiteralValue& lit )
+{
+    if (lit.isPlain()) {
+        return ~(qHash( lit.toString() ) ^ qHash( lit.language() ));
+    } else {
+        return qHash( lit.toString() ) ^ qHash( lit.dataTypeUri() );
+    }
 }

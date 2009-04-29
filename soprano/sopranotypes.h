@@ -55,14 +55,14 @@ namespace Soprano
      * \param userSerialization If \p serialization is SerializationUser then this is the user defined serialization.
      *        (this parameter is added for convinience to avoid having an additional check before using this method.)
      *
-     * \return The mimetype of serialization, an empty string is serialization is SerializationUnknown, or 
+     * \return The mimetype of serialization, an empty string is serialization is SerializationUnknown, or
      * \p userSerialization if \p serialization is SerializationUser.
      */
     SOPRANO_EXPORT QString serializationMimeType( RdfSerialization serialization, const QString& userSerialization = QString() );
 
     /**
      * Parse a mimetype and match it to the Soprano::RdfSerialization enum.
-     * \return the Soprano::RdfSerialization type that matches mimetype or SerializationUnknown if the mimetype 
+     * \return the Soprano::RdfSerialization type that matches mimetype or SerializationUnknown if the mimetype
      * could not be parsed. Be aware that Soprano is very lax in parsing the mimetype, i.e. you can use simple
      * strings like 'trig' or 'n-quads' instead of the proper mimetype for convenience.
      */
@@ -83,7 +83,7 @@ namespace Soprano
         BackendOptionPort = 0x10,           /**< An integer option defining the port on which to connect the host. \since 2.3 */
         BackendOptionUsername = 0x20,       /**< A string option optionally defining the username. \since 2.3 */
         BackendOptionPassword = 0x40,       /**< A string option optionally defining the password. \since 2.3 */
-        BackendOptionUser = 0x1000           /**< Additional options can be supported through user options which are identified by a string key in BackendSetting::userSettingName. */
+        BackendOptionUser = 0x1000          /**< Additional options can be supported through user options which are identified by a string key in BackendSetting::userSettingName. */
     };
     Q_DECLARE_FLAGS( BackendOptions, BackendOption )
 
@@ -100,12 +100,12 @@ namespace Soprano
         BackendFeatureAddStatement = 0x1,       /**< The backend supports the adding of statements (Model::addStatement()). */
         BackendFeatureRemoveStatements = 0x2,   /**< The backend supports the removal of statements (Model::removeStatement()). */
         BackendFeatureListStatements = 0x4,     /**< The backend supports the listing of statements (Model::listStatements(), Model::containsStatement()) */
-        BackendFeatureQuery = 0x8,               /**< The backend supports RDF queries (Model::executeQuery()) */
-        BackendFeatureInference = 0x10,          /**< The backend provides includes inference engine. */
+        BackendFeatureQuery = 0x8,              /**< The backend supports RDF queries (Model::executeQuery()) */
+        BackendFeatureInference = 0x10,         /**< The backend provides includes inference engine. */
         BackendFeatureInferenceOptional = 0x20, /**< The backend's inference engine is optional, i.e. it can be disabled. */
         BackendFeatureContext = 0x40,           /**< The backend supports contexts, i.e. named graphs. If this feature is not present Statement::context() will always return an empty node. */
         BackendFeatureStorageMemory = 0x80,     /**< The backend supports pure memory Models. (Soprano::BackendOptionStorageMemory) */
-        BackendFeatureUser = 0x1000              /**< Backends may support additional features that are not officially supported by %Soprano. */
+        BackendFeatureUser = 0x1000             /**< Backends may support additional features that are not officially supported by %Soprano. */
     };
     Q_DECLARE_FLAGS( BackendFeatures, BackendFeature )
 
@@ -139,7 +139,7 @@ namespace Soprano
          * \param userQueryLanguage If \p lang equals Query::QueryLanguageUser,
          * \p userQueryLanguage defines the language to use.
          *
-         * \return A string representation of \p lang. If \p lang equals Soprano::Query::QueryLanguageUser, the method 
+         * \return A string representation of \p lang. If \p lang equals Soprano::Query::QueryLanguageUser, the method
          * simply returns \p userQueryLanguage.
          */
         SOPRANO_EXPORT QString queryLanguageToString( Soprano::Query::QueryLanguage lang, const QString& userQueryLanguage = QString() );

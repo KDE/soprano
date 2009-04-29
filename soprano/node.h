@@ -29,6 +29,7 @@
 
 #include "soprano_export.h"
 #include "literalvalue.h"
+#include "languagetag.h"
 
 namespace Soprano
 {
@@ -41,8 +42,8 @@ namespace Soprano
      * is essentially a set of Statements.
      *
      * A Node can have one of four types: EmptyNode, ResourceNode, LiteralNode, and BlankNode.
-     * Resource nodes are identified through their URI (uri()), literal nodes have a LiteralValue (literal())
-     * and an optional language string (language()), and blank nodes have a string identifier.
+     * Resource nodes are identified through their URI (uri()), literal nodes have a LiteralValue (literal()),
+     * and blank nodes have a string identifier.
      *
      * Empty nodes can be used as wildcards in methods such as Model::listStatements.
      *
@@ -100,12 +101,27 @@ namespace Soprano
          *
          * \param value The value of a node. If empty the node will become
          *              an empty node.
+         *
+         * \sa createLiteralNode()
+         *
+         * \since 2.3
+         */
+        Node( const LiteralValue& value );
+
+        /**
+         * Creates a literal node.
+         *
+         * \param value The value of a node. If empty the node will become
+         *              an empty node.
          * \param language The language of the literal value.
          *
          * \sa createLiteralNode()
+         *
+         * \deprecated Use Node( const LiteralValue& ) and
+         *             LiteralValue::createPlainLiteral( const QString&, const LanguageTag& )
          */
         Node( const LiteralValue& value,
-              const QString& language = QString() );
+              const QString& language );
 
         /**
          * Copy constructor.
@@ -251,6 +267,9 @@ namespace Soprano
          *
          * \return A string representing the language of the literal value
          *         or an empty string if the node is not a literal.
+         *
+         * \deprecated Language exists on the LiteralValue. Use literal() and
+         *             LiteralValue::language().
          */
         QString language() const;
         //@}
@@ -334,12 +353,82 @@ namespace Soprano
          *
          * \param value The value of a node. If empty the node will become
          *              an empty node.
+         *
+         * \return A literal node or an empty node if the specified value
+         * was empty.
+         *
+         * \since 2.3
+         */
+        static Node createLiteralNode( const LiteralValue& value );
+
+        /**
+         * Convenience method to create a literal node.
+         * Using this method instead of the constructor
+         * may result in better readable code.
+         *
+         * \param value The value of a node. If empty the node will become
+         *              an empty node.
          * \param language The language of the literal value.
          *
          * \return A literal node or an empty node if the specified value
          * was empty.
+         *
+         * \deprecated Use createLiteralNode( const LiteralValue& ) and
+         *             LiteralValue::createPlainLiteral( const QString&, const LanguageTag& )
          */
         static Node createLiteralNode( const LiteralValue& value, const QString& language );
+
+        /**
+         * Format a resource URI as N3 string to be used in SPARQL queries.
+         *
+         * \return A string representing the resource in N3 encoding or an empty
+         * string for invalid URIs.
+         *
+         * Example:
+         * \code
+         * <http://soprano.sourceforce.net/>
+         * \endcode
+         *
+         * \sa toN3
+         *
+         * \since 2.3
+         */
+        static QString resourceToN3( const QUrl& resource );
+
+        /**
+         * Format a blank node identifier as N3 string to be used in SPARQL queries.
+         *
+         * \return A string representing the blank identifier in N3 encoding or an empty
+         * string for invalid/empty ids.
+         *
+         * Example:
+         * \code
+         * _:blankNode
+         * \endcode
+         *
+         * \sa toN3
+         *
+         * \since 2.3
+         */
+        static QString blankToN3( const QString& blank );
+
+        /**
+         * Format a literal value as N3 string to be used in SPARQL queries.
+         *
+         * \return A string representing the literal in N3 encoding or an empty
+         * string for invalid literals.
+         *
+         * Examples:
+         * \code
+         * "Hello World"^^<http://www.w3.org/2001/XMLSchema#string>
+         * "09-08-1977T17:42.234Z"^^<http://www.w3.org/2001/XMLSchema#dateTime>
+         * \endcode
+         *
+         * \sa toN3
+         *
+         * \since 2.3
+         */
+        static QString literalToN3( const LiteralValue& literal );
 
     private:
         class NodeData;

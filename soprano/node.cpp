@@ -62,7 +62,7 @@ public:
     }
 
     QString toN3() const {
-        return '<' + QString::fromAscii( uri.toEncoded() ) + '>';
+        return Node::resourceToN3( uri );
     }
 };
 
@@ -81,49 +81,27 @@ public:
     }
 
     QString toN3() const {
-        return "_:" + identifier;
+        return Node::blankToN3( identifier );
     }
 };
 
 class Soprano::Node::LiteralNodeData : public NodeData
 {
 public:
-    LiteralNodeData( const LiteralValue& val = LiteralValue(), const QString& lang = QString() )
+    LiteralNodeData( const LiteralValue& val = LiteralValue() )
         : NodeData( LiteralNode ),
-          value( val ),
-          language( lang ) {
+          value( val )
+    {
     }
 
     LiteralValue value;
-    QString language;
 
     QString toString() const {
         return value.toString();
     }
 
     QString toN3() const {
-        //
-        // Escape control chars:  \t \b \n \r \f \\ \" \'
-        //
-        QString s = toString();
-
-        // FIXME: this can be done faster by running through the string only once.
-        s.replace( '\\', "\\\\" );
-        s.replace( '\"', "\\\"" );
-        s.replace( '\'', "\\\'" );
-        s.replace( '\n', "\\n" );
-        s.replace( '\r', "\\r" );
-        s.replace( '\b', "\\b" );
-        s.replace( '\t', "\\t" );
-        s.replace( '\f', "\\f" );
-
-        if( !language.isEmpty() ) {
-            return '\"' + s + "\"@" + language;
-        }
-        else {
-            return QString( "\"%1\"^^<%2>" )
-                .arg( s, QString::fromAscii( value.dataTypeUri().toEncoded() ) );
-        }
+        return Node::literalToN3( value );
     }
 };
 
@@ -158,10 +136,26 @@ Soprano::Node::Node( const QString &id )
     }
 }
 
+Soprano::Node::Node( const LiteralValue& value )
+{
+    if ( value.isValid() ) {
+        d = new LiteralNodeData( value );
+    }
+    else {
+        d = 0;
+    }
+}
+
 Soprano::Node::Node( const LiteralValue& value, const QString& lang )
 {
     if ( value.isValid() ) {
-        d = new LiteralNodeData( value, lang );
+        LiteralValue lit;
+        if ( lang.isEmpty() ) {
+            lit = value;
+        } else {
+            lit = LiteralValue::createPlainLiteral( value.toString(), lang );
+        }
+        d = new LiteralNodeData( lit );
     }
     else {
         d = 0;
@@ -246,12 +240,7 @@ QUrl Soprano::Node::dataType() const
 
 QString Soprano::Node::language() const
 {
-    if ( isLiteral() ) {
-        return static_cast<const LiteralNodeData*>( d.constData() )->language;
-    }
-    else {
-        return QString();
-    }
+    return literal().language().toString();
 }
 
 QString Soprano::Node::toString() const
@@ -308,9 +297,7 @@ bool Soprano::Node::operator==( const Node& other ) const
         }
         else if ( d->type == LiteralNode ) {
             return ( static_cast<const LiteralNodeData*>( d.constData() )->value ==
-                     static_cast<const LiteralNodeData*>( other.d.constData() )->value &&
-                     static_cast<const LiteralNodeData*>( d.constData() )->language ==
-                     static_cast<const LiteralNodeData*>( other.d.constData() )->language );
+                     static_cast<const LiteralNodeData*>( other.d.constData() )->value );
         }
     }
 
@@ -334,9 +321,7 @@ bool Soprano::Node::operator!=( const Node& other ) const
     }
     else if ( type() == LiteralNode ) {
         return ( static_cast<const LiteralNodeData*>( d.constData() )->value !=
-                 static_cast<const LiteralNodeData*>( other.d.constData() )->value ||
-                 static_cast<const LiteralNodeData*>( d.constData() )->language !=
-                 static_cast<const LiteralNodeData*>( other.d.constData() )->language );
+                 static_cast<const LiteralNodeData*>( other.d.constData() )->value );
     }
     else {
         // empty nodes are always equal
@@ -382,10 +367,61 @@ Soprano::Node Soprano::Node::createBlankNode( const QString& id )
     return Node( id );
 }
 
+Soprano::Node Soprano::Node::createLiteralNode( const LiteralValue& val )
+{
+    return Node( val );
+}
 
 Soprano::Node Soprano::Node::createLiteralNode( const LiteralValue& val, const QString& language )
 {
     return Node( val, language );
+}
+
+
+QString Soprano::Node::resourceToN3( const QUrl& uri )
+{
+    return '<' + QString::fromAscii( uri.toEncoded() ) + '>';
+}
+
+
+QString Soprano::Node::blankToN3( const QString& blank )
+{
+    if ( blank.isEmpty() )
+        return blank;
+    else
+        return "_:" + blank;
+}
+
+
+QString Soprano::Node::literalToN3( const LiteralValue& literal )
+{
+    //
+    // Escape control chars:  \t \b \n \r \f \\ \" \'
+    //
+    QString s = literal.toString();
+
+    // FIXME: this can be done faster by running through the string only once.
+    s.replace( '\\', "\\\\" );
+    s.replace( '\"', "\\\"" );
+    s.replace( '\'', "\\\'" );
+    s.replace( '\n', "\\n" );
+    s.replace( '\r', "\\r" );
+    s.replace( '\b', "\\b" );
+    s.replace( '\t', "\\t" );
+    s.replace( '\f', "\\f" );
+
+    if( literal.isPlain() ) {
+        if ( literal.language().isEmpty() ) {
+            return '\"' + s + '\"';
+        }
+        else {
+            return '\"' + s + "\"@" + literal.language().toString();
+        }
+    }
+    else {
+        return QString( "\"%1\"^^<%2>" )
+            .arg( s, QString::fromAscii( literal.dataTypeUri().toEncoded() ) );
+    }
 }
 
 
@@ -419,10 +455,32 @@ QTextStream& operator<<( QTextStream& s, const Soprano::Node& n )
 
 uint Soprano::qHash( const Soprano::Node& node )
 {
-    if( node.isResource() )
-        return qHash( node.uri() );
-    else
-        return qHash( node.toString() );
+    uint hashVal;
+    switch ( node.type() ) {
+    case Soprano::Node::EmptyNode:
+        hashVal = 0;
+        break;
+    case Soprano::Node::ResourceNode:
+        hashVal = qHash( node.uri() );
+        break;
+    case Soprano::Node::LiteralNode:
+        hashVal = qHash( node.literal() );
+        break;
+    case Soprano::Node::BlankNode:
+        hashVal = qHash( node.identifier() );
+        break;
+    default:
+        // Should never get here
+        hashVal = 0;
+        break;
+    }
+
+    // Rotate bits so as to further distinguish node types with the
+    // same string
+    uint typeInt( ((uint)node.type()) & 0x1F );
+    hashVal = (hashVal << typeInt) | (hashVal >> (0x20 - typeInt));
+
+    return hashVal;
 }
 
 

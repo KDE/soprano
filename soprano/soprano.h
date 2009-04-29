@@ -1,4 +1,4 @@
-/* 
+/*
  * This file is part of Soprano Project
  *
  * Copyright (C) 2006 Daniele Galdi <daniele.galdi@gmail.com>
@@ -26,6 +26,7 @@
 #include "node.h"
 #include "nodeiterator.h"
 #include "literalvalue.h"
+#include "languagetag.h"
 #include "statement.h"
 #include "statementiterator.h"
 #include "simplestatementiterator.h"
