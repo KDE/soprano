@@ -357,7 +357,7 @@ namespace Soprano
 
 Q_DECLARE_TYPEINFO( Soprano::LanguageTag, Q_MOVABLE_TYPE );
 
-Q_DECLARE_OPERATORS_FOR_FLAGS(Soprano::LanguageTag::LookupFlags);
+Q_DECLARE_OPERATORS_FOR_FLAGS(Soprano::LanguageTag::LookupFlags)
 
 SOPRANO_EXPORT QDebug operator<<( QDebug s, const Soprano::LanguageTag& );
 SOPRANO_EXPORT QTextStream& operator<<( QTextStream& s, const Soprano::LanguageTag& );
