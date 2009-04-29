@@ -1,7 +1,10 @@
 2.3
 	* sopranocmd now supports to serialize construct and describe query results in all supported formats.
 	* Fixed plugin loading on windows.
-	* Fixed plugins to build as MODULEs instead of SHARED (makes proper "plugins" on non-ELF systems)
+	* New class LanguageTag replacing the old simple string language handling with a sophisticated one
+	  implementing RFC 4647 (thanks to Greg Beauchesne for the patch)
+	* New static methods Node::resourceToN3, Node::literalToN3, and Node::blankToN3 for easy N3
+	  formatting without the creation of a Node instance.
 
 2.2
 	* The AsyncModel now has a "real" asyncroneous mode which uses multiple threads to execute the
