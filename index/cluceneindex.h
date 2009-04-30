@@ -52,7 +52,7 @@ namespace Soprano {
         /**
          * \class CLuceneIndex cluceneindex.h Soprano/Index/CLuceneIndex
          *
-         * \brief The CLuceneIndex provides a wrapper around a CLucene index 
+         * \brief The CLuceneIndex provides a wrapper around a CLucene index
          * which stores RDF statements.
          *
          * It is used by the IndexFilterModel to actually handle the index. It has been
@@ -82,9 +82,9 @@ namespace Soprano {
             CLuceneIndex( lucene::analysis::Analyzer* analyzer = 0 );
 
             /**
-             * Destructor. 
+             * Destructor.
              *
-             * Calls close(). 
+             * Calls close().
              */
             ~CLuceneIndex();
             //@}
@@ -108,6 +108,30 @@ namespace Soprano {
              * \sa open()
              */
             bool isOpen() const;
+            //@}
+
+            //@{
+            /**
+             * Optionally set the analyzer to be used for query parsing. By default the index
+             * analyzer specified in the constructor is used.
+             *
+             * CLuceneIndex will not take ownership of the analyzer.
+             *
+             * \sa search(const QString&)
+             *
+             * \since 2.3
+             */
+            void setQueryAnalyzer( lucene::analysis::Analyzer* analyzer );
+
+            /**
+             * Get the query analyzer set in setQueryAnalyzer. This method is only
+             * provided for convenience.
+             *
+             * \return The analyzer set in setQueryAnalyzer or 0 if none was set.
+             *
+             * \since 2.3
+             */
+            lucene::analysis::Analyzer* queryAnalyzer() const;
             //@}
 
             //@{
@@ -168,7 +192,7 @@ namespace Soprano {
              * \return The document representing the resource or 0 if no transaction has been started or
              * a clucene error occured.
              *
-             * \warning This is an advanced method. Calling this method is thread-safe but using the 
+             * \warning This is an advanced method. Calling this method is thread-safe but using the
              * returned document is not.
              */
             lucene::document::Document* documentForResource( const Node& resource );
@@ -190,7 +214,7 @@ namespace Soprano {
              * Evaluates the given query.
              * Each hit is a resource and a score. Resource properties may be read from the model.
              *
-             * \param query The query to evaluate. The iterator takes ownership of the query. 
+             * \param query The query to evaluate. The iterator takes ownership of the query.
              * Do not delete.it! (If anyone using this understands the weird CLucene memory
              * management enough to fix this issue, please...)
              *

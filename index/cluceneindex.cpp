@@ -49,6 +49,7 @@ public:
           indexReader( 0 ),
           indexWriter( 0 ),
           analyzer( 0 ),
+          queryAnalyzer( 0 ),
           searcher( 0 ),
           deleteAnalyzer( false ),
           transactionID( 0 ) {
@@ -58,6 +59,7 @@ public:
     lucene::index::IndexReader* indexReader;
     lucene::index::IndexWriter* indexWriter;
     lucene::analysis::Analyzer* analyzer;
+    lucene::analysis::Analyzer* queryAnalyzer;
     lucene::search::IndexSearcher* searcher;
 
     bool deleteAnalyzer;
@@ -347,6 +349,18 @@ bool Soprano::Index::CLuceneIndex::isOpen() const
 }
 
 
+void Soprano::Index::CLuceneIndex::setQueryAnalyzer( lucene::analysis::Analyzer* analyzer )
+{
+    d->queryAnalyzer = analyzer;
+}
+
+
+lucene::analysis::Analyzer* Soprano::Index::CLuceneIndex::queryAnalyzer() const
+{
+    return d->queryAnalyzer;
+}
+
+
 lucene::document::Document* Soprano::Index::CLuceneIndex::documentForResource( const Node& resource )
 {
     qDebug() << "CLuceneIndex::documentForResource in thread " << QThread::currentThreadId();
@@ -530,7 +544,8 @@ Soprano::Iterator<Soprano::Index::QueryHit> Soprano::Index::CLuceneIndex::search
 {
     clearError();
     try {
-        lucene::search::Query* q = lucene::queryParser::QueryParser::parse( TString( query ).data(), textFieldName().data(), d->analyzer );
+        lucene::queryParser::QueryParser parser( textFieldName().data(), d->queryAnalyzer ? d->queryAnalyzer : d->analyzer );
+        lucene::search::Query* q = parser.parse( TString( query ).data() );
         Iterator<QueryHit> hits = search( q );
         // FIXME: is it possible to use the stupid CLucene ref counting here?
         if ( !hits.isValid() ) {
