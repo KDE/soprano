@@ -24,6 +24,8 @@
 #include <QtTest/QTest>
 #include <QtCore/QDebug>
 
+#define USING_SOPRANO_NRLMODEL_UNSTABLE_API
+
 #include "../soprano/soprano.h"
 #include "../soprano/nrlmodel.h"
 
