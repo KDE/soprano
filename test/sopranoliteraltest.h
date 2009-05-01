@@ -37,6 +37,8 @@ class SopranoLiteralTest : public QObject
   void cleanupTestCase();
   void testDataTypes_data();
   void testDataTypes();
+  void testPlainLiterals_data();
+  void testPlainLiterals();
   void testToString_data();
   void testToString();
 

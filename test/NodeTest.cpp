@@ -55,14 +55,24 @@ void NodeTest::testCreateLiteralNode()
   QCOMPARE( node.type(), Node::LiteralNode );
   QVERIFY( node.isValid() );
   QCOMPARE( node.literal().toString(), literal );
+  QVERIFY( !node.literal().isPlain() );
   QVERIFY( node.uri().isEmpty() );
 
   Node germanNode( LiteralValue( "Hallo Welt" ), "de" );
   QCOMPARE( germanNode.type(), Node::LiteralNode );
   QVERIFY( germanNode.isValid() );
+  QVERIFY( germanNode.literal().isPlain() );
   QCOMPARE( germanNode.literal().toString(), QString( "Hallo Welt" )  );
   QVERIFY( germanNode.uri().isEmpty() );
-  QCOMPARE( germanNode.language(), QString( "de" ) );
+  QCOMPARE( germanNode.language(), QString( "de" ) ); // Backwards compatibility
+
+  germanNode = LiteralValue::createPlainLiteral( "Hallo Welt", "de" );
+  QCOMPARE( germanNode.type(), Node::LiteralNode );
+  QVERIFY( germanNode.isValid() );
+  QVERIFY( germanNode.literal().isPlain() );
+  QCOMPARE( germanNode.literal().toString(), QString( "Hallo Welt" )  );
+  QVERIFY( germanNode.uri().isEmpty() );
+  QCOMPARE( germanNode.language(), QString( "de" ) ); // Backwards compatibility
 }
 
 void NodeTest::testCreateBlankNode()

@@ -92,6 +92,46 @@ void SopranoLiteralTest::testDataTypes()
     QCOMPARE( s2.object().literal().dataTypeUri().toString(), xmlSchemaNs + dataType );
 }
 
+void SopranoLiteralTest::testPlainLiterals_data()
+{
+    QTest::addColumn<QString>( "str" );
+    QTest::addColumn<QString>( "lang" );
+    QTest::addColumn<LiteralValue>( "value" );
+
+    QTest::newRow( "char-en" ) << "Some text" << "en" << LiteralValue::createPlainLiteral( "Some text", "en" );
+    QTest::newRow( "QLatin1String-en" ) << "Some text" << "en" << LiteralValue::createPlainLiteral( QLatin1String("Some text"), "en" );
+    QTest::newRow( "QString-en" ) << "Some text" << "en" << LiteralValue::createPlainLiteral( QString("Some text"), "en" );
+    QTest::newRow( "en-us" ) << "Some text" << "en-us" << LiteralValue::createPlainLiteral( "Some text", "en-us" );
+    QTest::newRow( "en-US" ) << "Some text" << "en-us" << LiteralValue::createPlainLiteral( "Some text", "en-US" );
+    QTest::newRow( "en-GB" ) << "Some text" << "en-GB" << LiteralValue::createPlainLiteral( "Some text", "en-GB" );
+    QTest::newRow( "plain" ) << "Some text" << QString() << LiteralValue::createPlainLiteral( "Some text" );
+}
+
+void SopranoLiteralTest::testPlainLiterals()
+{
+    QFETCH(QString, str);
+    QFETCH(QString, lang);
+    QFETCH(LiteralValue, value);
+
+    Node subject( QUrl("http://iamarandomuri/yessir") );
+    Node predicate( QUrl("http://iamarandomuri/yesmadam/" + QString(QTest::currentDataTag())) );
+
+    Node object( value );
+
+    Statement s( subject, predicate, object );
+
+    // add the value
+    QVERIFY( m_model->addStatement( s ) == 0 );
+
+    // and retrieve it
+    StatementIterator it = m_model->listStatements( Statement( subject, predicate, Node() ) );
+    QVERIFY( it.isValid() );
+    QVERIFY( it.next() );
+    Statement s2 = *it;
+    QCOMPARE( s2.object().literal().toString(), str );
+    QCOMPARE( s2.object().literal().language(), object.literal().language() );
+    QCOMPARE( s2.object().literal().language(), LanguageTag(lang) );
+}
 
 void SopranoLiteralTest::testToString_data()
 {
