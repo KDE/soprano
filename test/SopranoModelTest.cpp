@@ -931,6 +931,8 @@ void SopranoModelTest::testIteratorNesting()
 {
     QVERIFY( m_model );
 
+    m_model->removeAllStatements();
+
     Node c1 = createRandomUri();
     Node c2 = createRandomUri();
     Node c3 = createRandomUri();
@@ -984,6 +986,22 @@ void SopranoModelTest::testIteratorNesting()
             QCOMPARE( cnt1, 5 );
         }
     }
+
+    // test query iterator nesting
+    cnt1 = 0;
+    QueryResultIterator it4 = m_model->executeQuery( "select * where { graph ?g { ?r ?p ?o . } . }",
+                                                     Query::QueryLanguageSparql );
+    while ( it4.next() ) {
+        ++cnt1;
+        QUrl g = it4["g"].uri();
+        QueryResultIterator it5 = m_model->executeQuery( QString( "select * where { graph %1 { ?r ?p ?o . } . }" ).arg( Node::resourceToN3( g ) ),
+                                                         Query::QueryLanguageSparql );
+        cnt2 = 0;
+        while ( it5.next() )
+            ++cnt2;
+        QCOMPARE( cnt2, 5 );
+    }
+    QCOMPARE( cnt1, 20 );
 }
 
 
