@@ -430,8 +430,10 @@ namespace Soprano
         static QUrl dataTypeUriFromType( QVariant::Type type );
 
     private:
-        class Private;
-        QSharedDataPointer<Private> d;
+        class LiteralValueData;
+        class PlainData;
+        class TypedData;
+        QSharedDataPointer<LiteralValueData> d;
     };
 
     SOPRANO_EXPORT uint qHash( const LiteralValue& lit );
