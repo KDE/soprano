@@ -174,9 +174,17 @@ namespace Soprano
         bool operator==( const LiteralValue& other ) const;
 
         /**
-         * Match this node against other. The only difference
+         * Match this node against template node \a other. The only difference
          * to operator== is that empty nodes are matched as wildcards,
          * i.e. they match any other node.
+         *
+         * Be aware that the following is NOT always true since only \a other
+         * is treated a a wildcard:
+         *
+         * \code
+         * // NOT always true:
+         * a.matches(b) == b.matches(a)
+         * \endcode
          *
          * \return \p true if this node matches other, \p false if not.
          *

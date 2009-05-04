@@ -78,9 +78,17 @@ namespace Soprano
         bool operator!=( const Statement& other ) const;
 
         /**
-         * Match this statement against other. The only difference
+         * Match this statement against template statement \a other. The only difference
          * to operator== is that empty nodes are matched as wildcards,
          * i.e. they match any other node.
+         *
+         * Be aware that the following is NOT always true since only \a other
+         * is treated a a wildcard:
+         *
+         * \code
+         * // NOT always true:
+         * a.matches(b) == b.matches(a)
+         * \endcode
          *
          * \return \p true if this statement matches other, \p false if not.
          *
