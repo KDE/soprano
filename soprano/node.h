@@ -47,10 +47,6 @@ namespace Soprano
      *
      * Empty nodes can be used as wildcards in methods such as Model::listStatements.
      *
-     * \warning Be aware that string literals in %Soprano always have type
-     * xsd:string. There is no direct support for rdfs:Literal. Backend implementations
-     * should honour this restriction.
-     *
      * \author Daniele Galdi <daniele.galdi@gmail.com><br>Sebastian Trueg <trueg@kde.org>
      */
     class SOPRANO_EXPORT Node
