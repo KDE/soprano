@@ -27,8 +27,6 @@
 #include <QtTest/QTest>
 #include <QtCore/QList>
 #include <QtCore/QDebug>
-#include <QtCore/QFile>
-#include <QtCore/QTextStream>
 #include <QtCore/QTime>
 #include <QtCore/QUrl>
 #include <QtCore/QUuid>
@@ -64,7 +62,9 @@ static QList<Statement> createTestData( const Statement& s, int num )
 
 
 SopranoModelTest::SopranoModelTest()
-    : m_model( 0 )
+    : m_model( 0 ),
+      m_features( BackendFeatureAll ),
+      m_testSignals( true )
 {
 }
 
@@ -212,10 +212,6 @@ void SopranoModelTest::testListStatements()
 
     StatementIterator it1 = m_model->listStatements( Statement( resource_1, Node(), Node() ) );
 
-    QFile f( "/tmp/testdump" );
-    f.open( QIODevice::WriteOnly );
-    QTextStream fs( &f );
-
     int cnt = 0;
     while( it1.next() ) {
         ++cnt;
@@ -225,8 +221,6 @@ void SopranoModelTest::testListStatements()
             qDebug() << st.subject() << "vs." << resource_1;
         }
         QCOMPARE( st.subject(), resource_1 );
-
-        fs << st << endl;
     }
 
     QCOMPARE( cnt, 50 );
@@ -480,6 +474,9 @@ void SopranoModelTest::testContainsStatements()
 
 void SopranoModelTest::testGraphQuery()
 {
+    if ( !( m_features&BackendFeatureQuery ) )
+        return;
+
     QVERIFY( m_model != 0 );
 
     QString query( "CONSTRUCT { ?s ?p ?o } WHERE { ?s ?p ?o . }" );
@@ -499,6 +496,9 @@ void SopranoModelTest::testGraphQuery()
 
 void SopranoModelTest::testBooleanQuery()
 {
+    if ( !( m_features&BackendFeatureQuery ) )
+        return;
+
     QVERIFY( m_model != 0 );
 
     QString query( "ASK where {?a ?b ?c}" );
@@ -523,6 +523,9 @@ void SopranoModelTest::testBooleanQuery()
 
 void SopranoModelTest::testInvalidQuery()
 {
+    if ( !( m_features&BackendFeatureQuery ) )
+        return;
+
     QVERIFY( m_model != 0 );
 
     QueryResultIterator res = m_model->executeQuery( "INVALID query", Query::QueryLanguageSparql );
@@ -531,6 +534,9 @@ void SopranoModelTest::testInvalidQuery()
 
 void SopranoModelTest::testQuery()
 {
+    if ( !( m_features&BackendFeatureQuery ) )
+        return;
+
     QVERIFY( m_model != 0 );
 
     /* SPARQL */
@@ -987,6 +993,10 @@ void SopranoModelTest::testIteratorNesting()
         }
     }
 
+
+    if ( !( m_features&BackendFeatureQuery ) )
+        return;
+
     // test query iterator nesting
     cnt1 = 0;
     QueryResultIterator it4 = m_model->executeQuery( "select * where { graph ?g { ?r ?p ?o . } . }",
@@ -1020,6 +1030,9 @@ namespace {
 
 void SopranoModelTest::testStatementsAddedSignal()
 {
+    if ( !m_testSignals )
+        return;
+
     QVERIFY( m_model );
 
     m_model->removeAllStatements();
@@ -1040,6 +1053,9 @@ void SopranoModelTest::testStatementsAddedSignal()
 
 void SopranoModelTest::testStatementAddedSignal()
 {
+    if ( !m_testSignals )
+        return;
+
     QVERIFY( m_model );
 
     m_model->removeAllStatements();
@@ -1067,6 +1083,9 @@ void SopranoModelTest::testStatementAddedSignal()
 
 void SopranoModelTest::testStatementsRemovedSignal()
 {
+    if ( !m_testSignals )
+        return;
+
     QVERIFY( m_model );
 
     m_model->removeAllStatements();
@@ -1096,6 +1115,9 @@ void SopranoModelTest::testStatementsRemovedSignal()
 
 void SopranoModelTest::testStatementRemovedSignal()
 {
+    if ( !m_testSignals )
+        return;
+
     QVERIFY( m_model );
 
     m_model->removeAllStatements();

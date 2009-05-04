@@ -50,8 +50,8 @@ namespace Soprano
      * \brief A Model is the central class in %Soprano. It is a queryable
      * collection of RDF quadruples, i.e statements.
      *
-     * Model itself is just an interface for numerous implementations. There are basically
-     * two types of Models in %Soprano:
+     * Model itself is just an interface for numerous implementations. (If you are looking for a simple container
+     * for statements, see Graph.) There are basically two types of Models in %Soprano:
      *
      * \li StorageModel is the base class for Model implementations that actually store RDF quadruples.
      *     StorageModels are created transparently by %Soprano backend plugins: Backend::createModel()
@@ -220,7 +220,7 @@ namespace Soprano
          *
          * \param query The query to evaluate.
          *
-         * \return An iterator over all results matching the query, 
+         * \return An iterator over all results matching the query,
          * on error an invalid iterator is returned.
          *
          * \sa Query::QueryParser
@@ -241,8 +241,8 @@ namespace Soprano
          * \param language The %query language used to encode \p query.
          * \param userQueryLanguage If \p language equals Query::QueryLanguageUser
          * userQueryLanguage defines the language to use.
-         * 
-         * \return An iterator over all results matching the query, 
+         *
+         * \return An iterator over all results matching the query,
          * on error an invalid iterator is returned.
          */
         virtual QueryResultIterator executeQuery( const QString& query, Query::QueryLanguage language, const QString& userQueryLanguage = QString() ) const = 0;
@@ -324,7 +324,7 @@ namespace Soprano
          */
         virtual Node createBlankNode() = 0;
         //@}
-    
+
     Q_SIGNALS:
         /**
          * Emitted when new statements have been added to the model.

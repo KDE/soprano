@@ -1,7 +1,7 @@
 /*
  * This file is part of Soprano Project.
  *
- * Copyright (C) 2007 Sebastian Trueg <trueg@kde.org>
+ * Copyright (C) 2009 Sebastian Trueg <trueg@k3b.org>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -19,41 +19,27 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef _SOPRANODCLIENT_BACKEND_TEST_H_
-#define _SOPRANODCLIENT_BACKEND_TEST_H_
+#ifndef _GRAPH_TEST_H_
+#define _GRAPH_TEST_H_
+
+#include <QtTest/QtTest>
 
 #include "SopranoModelTest.h"
 
-#include <QtCore/QHash>
 
 namespace Soprano {
     class Model;
-    namespace Client {
-    class TcpClient;
-    }
 }
 
-class SopranodClientTest : public SopranoModelTest
+class GraphTest: public SopranoModelTest
 {
     Q_OBJECT
 
 public:
-    SopranodClientTest() {
-        setTestSignals( false );
-    }
+    GraphTest();
 
 protected:
     virtual Soprano::Model* createModel();
-    virtual void deleteModel( Soprano::Model* );
-
-private Q_SLOTS:
-    void initTestCase();
-    void cleanupTestCase();
-
-private:
-    Soprano::Client::TcpClient* m_client;
-    int m_modelCnt;
-    QHash<Soprano::Model*, QString> m_modelMap;
 };
 
 #endif

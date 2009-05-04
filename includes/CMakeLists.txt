@@ -30,6 +30,7 @@ install(FILES
   Global
   Version
   NRLModel
+  Graph
   DESTINATION
   include/Soprano)
 

@@ -1,7 +1,7 @@
-/* 
+/*
  * This file is part of Soprano Project.
  *
- * Copyright (C) 2006-2007 Sebastian Trueg <strueg@mandriva.com>
+ * Copyright (C) 2006-2009 Sebastian Trueg <strueg@mandriva.com>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -25,10 +25,11 @@
 #define SOPRANO_TEST_H
 
 #include "backend.h"
-#include "../soprano/statement.h"
+#include "sopranotypes.h"
+#include "statement.h"
 
 namespace Soprano {
-  class Model;
+    class Model;
 }
 
 class SopranoModelTest: public QObject
@@ -39,58 +40,69 @@ public:
     SopranoModelTest();
 
 private Q_SLOTS:
-  virtual void init();
-  virtual void cleanup();
+    virtual void init();
+    virtual void cleanup();
 
-  void testAddListOfStatement(); 
-  void testAddStatements();
+    void testAddListOfStatement();
+    void testAddStatements();
 
-  void testListStatements();
-  void testListStatementsWithContext();
+    void testListStatements();
+    void testListStatementsWithContext();
 
-  void testRemoveStatement();
-  void testRemoveStatements();
-  void testRemoveAllStatement();
+    void testRemoveStatement();
+    void testRemoveStatements();
+    void testRemoveAllStatement();
 
-  void testContainsStatement();
-  void testContainsStatements();
+    void testContainsStatement();
+    void testContainsStatements();
 
-  void testGraphQuery();
-  void testBooleanQuery();
-  void testQuery();
-  void testInvalidQuery();
+    void testGraphQuery();
+    void testBooleanQuery();
+    void testQuery();
+    void testInvalidQuery();
 
-  void testListContexts();
+    void testListContexts();
 
-  virtual void testCloseStatementIteratorOnModelDelete();
+    virtual void testCloseStatementIteratorOnModelDelete();
 
-  void testContexts();
+    void testContexts();
 
-  void testLiteralTypes_data();
-  void testLiteralTypes();
+    void testLiteralTypes_data();
+    void testLiteralTypes();
 
-  void testUriEncoding_data();
-  void testUriEncoding();
+    void testUriEncoding_data();
+    void testUriEncoding();
 
-  void testIteratorNesting();
+    void testIteratorNesting();
 
-  void testStatementsAddedSignal();
-  void testStatementAddedSignal();
-  void testStatementsRemovedSignal();
-  void testStatementRemovedSignal();
+    void testStatementsAddedSignal();
+    void testStatementAddedSignal();
+    void testStatementsRemovedSignal();
+    void testStatementRemovedSignal();
 
-  void testPerformance();
+    void testPerformance();
 
 protected:
-  virtual Soprano::Model* createModel() = 0;
-  virtual void deleteModel( Soprano::Model* );
+    virtual Soprano::Model* createModel() = 0;
+    virtual void deleteModel( Soprano::Model* );
 
-  Soprano::Statement m_st1;
-  Soprano::Statement m_st2;
-  Soprano::Statement m_st3;
-  Soprano::Statement m_st4;
-  
-  Soprano::Model* m_model;
+    void setSupportedBackendFeatures( Soprano::BackendFeatures features ) {
+        m_features = features;
+    }
+    void setTestSignals( bool b ) {
+        m_testSignals = b;
+    }
+
+    Soprano::Statement m_st1;
+    Soprano::Statement m_st2;
+    Soprano::Statement m_st3;
+    Soprano::Statement m_st4;
+
+    Soprano::Model* m_model;
+
+private:
+    Soprano::BackendFeatures m_features;
+    bool m_testSignals;
 };
 
 #endif

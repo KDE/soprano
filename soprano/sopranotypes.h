@@ -105,6 +105,14 @@ namespace Soprano
         BackendFeatureInferenceOptional = 0x20, /**< The backend's inference engine is optional, i.e. it can be disabled. */
         BackendFeatureContext = 0x40,           /**< The backend supports contexts, i.e. named graphs. If this feature is not present Statement::context() will always return an empty node. */
         BackendFeatureStorageMemory = 0x80,     /**< The backend supports pure memory Models. (Soprano::BackendOptionStorageMemory) */
+        BackendFeatureAll = BackendFeatureAddStatement|
+        BackendFeatureRemoveStatements|
+        BackendFeatureListStatements|
+        BackendFeatureQuery|
+        BackendFeatureInference|
+        BackendFeatureInferenceOptional|
+        BackendFeatureContext|
+        BackendFeatureStorageMemory,            /**< All features. \since 2.3 */
         BackendFeatureUser = 0x1000             /**< Backends may support additional features that are not officially supported by %Soprano. */
     };
     Q_DECLARE_FLAGS( BackendFeatures, BackendFeature )

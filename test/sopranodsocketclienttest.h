@@ -37,6 +37,11 @@ class SopranodSocketClientTest : public SopranoModelTest
 {
     Q_OBJECT
 
+public:
+    SopranodSocketClientTest() {
+        setTestSignals( false );
+    }
+
 protected:
     virtual Soprano::Model* createModel();
     virtual void deleteModel( Soprano::Model* );
