@@ -723,7 +723,8 @@ int main( int argc, char *argv[] )
 
             Soprano::QueryResultIterator it = model->executeQuery( query, Soprano::Query::queryLanguageFromString( queryLang ), queryLang );
             queryTime = time.elapsed();
-            if ( args.hasSetting( "serialization" ) ) {
+            if ( !args.hasSetting( "file" ) &&
+                 args.hasSetting( "serialization" ) ) {
                 if ( it.isGraph() ) {
                     QTextStream s( stdout );
                     return serializeData( it.iterateStatements(), s, serialization );
