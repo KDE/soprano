@@ -151,7 +151,6 @@ namespace {
             if ( parser->lastError() ) {
                 QTextStream s( stderr );
                 s << "Parsing failed: " << parser->lastError() << endl;
-                delete model;
                 return 2;
             }
 
@@ -163,20 +162,17 @@ namespace {
                 else {
                     QTextStream s( stderr );
                     s << "Failed to import statement " << *it << ": " << model->lastError() << endl;
-                    delete model;
                     return 2;
                 }
             }
 
             QTextStream s( stdout );
             s << "Imported " << cnt << " statements." << endl;
-            delete model;
             return 0;
         }
         else {
             QTextStream s( stderr );
             s << "Could not find parser plugin for serialization " << serialization << endl;
-            delete model;
             return 1;
         }
     }
@@ -220,6 +216,15 @@ namespace {
         }
     }
 
+
+    Soprano::Model* createMemoryModel()
+    {
+        const Soprano::Backend* backend = PluginManager::instance()->discoverBackendByFeatures( BackendFeatureStorageMemory );
+        if ( backend )
+            return backend->createModel( QList<BackendSetting>() << BackendSetting( BackendOptionStorageMemory ) );
+        else
+            return 0;
+    }
 
 
     class CmdLineArgs
@@ -348,6 +353,7 @@ namespace {
           << "   sopranocmd --dbus <dbusservice> --model <name> [--serialization <s>] <command> [<parameters>]" << endl
 #endif
           << "   sopranocmd --sparql <sparql end point> [--port <port>] [--username <username>] [--password <password>] [--serialization <s>] <command> [<parameters>]" << endl
+          << "   sopranocmd --file <rdf-file> [--serialization <s>] <command> [<parameters>]" << endl
           << endl
           << "   --version           Print version information." << endl
           << endl
@@ -386,6 +392,8 @@ namespace {
           << "                       (only applicable when querying against the Soprano server.)" << endl
           << endl
           << "   --sparql <endpoint> Specify the remote Http sparql endpoint to use." << endl
+          << endl
+          << "   --file <rdf-file>   Use an rdf file as input." << endl
           << endl
           << "   --serialization <s> The serialization used for commands 'export' and 'import'. Defaults to 'application/x-nquads'." << endl
           << "                       (can also be used to change the output format of construct and describe queries.)" << endl
@@ -448,6 +456,7 @@ int main( int argc, char *argv[] )
     allowedCmdLineArgs.insert( "sparql", true );
     allowedCmdLineArgs.insert( "serialization", true );
     allowedCmdLineArgs.insert( "querylang", true );
+    allowedCmdLineArgs.insert( "file", true );
 
     CmdLineArgs args;
     if ( !CmdLineArgs::parseCmdLine( args, app.arguments(), allowedCmdLineArgs ) ) {
@@ -480,15 +489,32 @@ int main( int argc, char *argv[] )
         return usage( "Parameter --settings only makes sense in combination with --backend." );
     }
 
+    if ( args.hasSetting( "file" ) &&
+         ( args.hasSetting( "dbus" ) ||
+           args.hasSetting( "backend" ) ||
+           args.hasSetting( "socket" ) ||
+           args.hasSetting( "sparql" ) ||
+           args.hasSetting( "model" ) ||
+           args.hasSetting( "username" ) ||
+           args.hasSetting( "password" ) ||
+           args.hasSetting( "host" ) ||
+           args.hasSetting( "port" ) ||
+           args.hasSetting( "dir" ) ) ) {
+        return usage( "Invalid parameters for --file mode." );
+    }
+
+
     QString backendName = args.getSetting( "backend" );
     QString backendSettings = args.getSetting( "settings" );
     QString dir = args.getSetting( "dir" );
     QString command;
     QString modelName = args.getSetting( "model" );
     QString serialization = args.getSetting( "serialization", "application/x-nquads" );
+    QString file = args.getSetting( "file" );
 
     if ( modelName.isEmpty() &&
          backendName.isEmpty() &&
+         file.isEmpty() &&
          !args.hasSetting( "sparql" ) ) {
         return usage( "No model name specified." );
     }
@@ -568,6 +594,17 @@ int main( int argc, char *argv[] )
             }
         }
 #endif
+        else if ( !file.isEmpty() ) {
+            if ( !( model = createMemoryModel() ) ) {
+                errStream << "Failed to create temporary model." << endl;
+                return 2;
+            }
+            if ( int r = importFile( model, file, serialization ) ) {
+                errStream << "Failed to parse " << file << endl;
+                delete model;
+                return r;
+            }
+        }
         else {
             errStream << "Please specify a backend to be used or details on how to contact" << endl
                       << "a soprano server." << endl;
@@ -634,7 +671,9 @@ int main( int argc, char *argv[] )
 
         QString fileName = args[firstArg];
 
-        return importFile( model, fileName, serialization );
+        int r = importFile( model, fileName, serialization );
+        delete model;
+        return r;
     }
     else if ( command == "export" ) {
         QString fileName;
@@ -700,7 +739,8 @@ int main( int argc, char *argv[] )
         }
 
         else {
-            if ( args.hasSetting( "serialization" ) ) {
+            if ( !args.hasSetting( "file" ) &&
+                 args.hasSetting( "serialization" ) ) {
                 return usage( "Parameter --serialization does only make sense for commands 'import', 'export', and 'query'" );
             }
 
