@@ -339,7 +339,8 @@ bool Soprano::Node::operator==( const LiteralValue& other ) const
 
 bool Soprano::Node::matches( const Node& other ) const
 {
-    if ( isEmpty() || other.isEmpty() ) {
+    // other is a template
+    if ( other.isEmpty() ) {
         return true;
     }
     else {
