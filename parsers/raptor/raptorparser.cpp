@@ -106,8 +106,8 @@ namespace {
                                                          QString::fromUtf8( ( const char* )objectLiteralLanguage ) );
             }
             else {
-                return Soprano::Node::createLiteralNode( Soprano::LiteralValue( QString::fromUtf8( ( const char* )data ) ),
-                                                         QString::fromUtf8( ( const char* )objectLiteralLanguage ) );
+                return Soprano::Node::createLiteralNode( Soprano::LiteralValue::createPlainLiteral( QString::fromUtf8( ( const char* )data ),
+                                                                                                    QString::fromUtf8( ( const char* )objectLiteralLanguage ) ) );
             }
 
         default:

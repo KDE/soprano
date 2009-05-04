@@ -66,7 +66,7 @@ Soprano::Node Soprano::Sesame2::convertNode( const JObjectRef& resource )
             return Node( LiteralValue::fromString( value.toQString(), convertURI( dataType ) ), lang.toQString() );
         }
         else {
-            return Node( LiteralValue( value.toQString() ), lang.toQString() );
+            return Node( LiteralValue::createPlainLiteral( value.toQString(), lang.toQString() ) );
         }
     }
     else {

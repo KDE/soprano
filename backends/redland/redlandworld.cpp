@@ -157,7 +157,7 @@ librdf_node *Soprano::Redland::World::createNode( const Node& node )
         return librdf_new_node_from_typed_literal( world,
                                                    (unsigned char *)node.literal().toString().toUtf8().data(),
                                                    node.language().toUtf8().data(),
-                                                   node.language().isEmpty() // redland does only handle non-empty lang values for rdfs:Literal
+                                                   !node.literal().isPlain()
                                                    ? librdf_new_uri( world, (const unsigned char*)node.dataType().toEncoded().data() )
                                                    : 0 );
     }
@@ -192,13 +192,14 @@ Soprano::Node Soprano::Redland::World::createNode( librdf_node *node )
     else if ( librdf_node_is_literal( node ) ) {
         librdf_uri* datatype = librdf_node_get_literal_value_datatype_uri( node );
         if ( !datatype ) {
-            return Soprano::Node( Soprano::LiteralValue( QString::fromUtf8( (const char *)librdf_node_get_literal_value( node ) ) ),
-                                  QString::fromAscii( librdf_node_get_literal_value_language( node ) ) );
+            return Soprano::Node( Soprano::LiteralValue::createPlainLiteral( QString::fromUtf8( (const char *)librdf_node_get_literal_value( node ) ),
+                                                                             QString::fromAscii( librdf_node_get_literal_value_language( node ) ) ) );
         }
-        return Soprano::Node( Soprano::LiteralValue::fromString( QString::fromUtf8( (const char *)librdf_node_get_literal_value( node ) ),
-                                                                 QUrl::fromEncoded( (const char *)librdf_uri_as_string( datatype ),
-                                                                                    QUrl::StrictMode ) ),
-                              QString::fromAscii( librdf_node_get_literal_value_language( node ) ) );
+        else {
+            return Soprano::Node( Soprano::LiteralValue::fromString( QString::fromUtf8( (const char *)librdf_node_get_literal_value( node ) ),
+                                                                     QUrl::fromEncoded( (const char *)librdf_uri_as_string( datatype ),
+                                                                                        QUrl::StrictMode ) ) );
+        }
     }
 
     return Soprano::Node();
