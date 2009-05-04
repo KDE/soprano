@@ -309,7 +309,7 @@
  * onto2vocabularyclass --name <name> --encoding <encoding> [--namespace <ns>] [--export-module <module>|--no-visibility-export] <ontologyfile>
  * \endcode
  *
- * The value pf \p --name is use as the name of the generated namespace (the RDF in Soprano::Vocabulary::RDF).
+ * The value of \p --name is use as the name of the generated namespace (the RDF in Soprano::Vocabulary::RDF).
  *
  * The optional value of \p --namespace is used as the surrounding namespace (the Soprano::Vocabulary in Soprano::Vocabulary::RDF).
  * If none is specified the global namespace is used.
