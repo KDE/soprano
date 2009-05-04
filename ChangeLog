@@ -5,7 +5,10 @@
 	  implementing RFC 4647 (thanks to Greg Beauchesne for the patch)
 	* New static methods Node::resourceToN3, Node::literalToN3, and Node::blankToN3 for easy N3
 	  formatting without the creation of a Node instance.
-
+	* Fixed both Node::matches and Statement::matches - now only the paramter is treated as a wildcard
+	* sopranocmd: new paramter --file which allows to execute commands on files directly without
+	  creating a database on disk.
+	
 2.2
 	* The AsyncModel now has a "real" asyncroneous mode which uses multiple threads to execute the
 	  commands.
