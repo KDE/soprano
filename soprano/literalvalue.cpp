@@ -597,14 +597,9 @@ Soprano::LiteralValue Soprano::LiteralValue::fromString( const QString& value, c
 
 Soprano::LiteralValue Soprano::LiteralValue::createPlainLiteral( const QString& value, const LanguageTag& lang )
 {
-    if ( value.isEmpty() && lang.isEmpty() ) {
-        return LiteralValue();
-    }
-    else {
-        LiteralValue v;
-        v.d = new PlainData( value, lang );
-        return v;
-    }
+    LiteralValue v;
+    v.d = new PlainData( value, lang );
+    return v;
 }
 
 
