@@ -377,37 +377,37 @@ bool Soprano::LiteralValue::isByteArray() const
 
 int Soprano::LiteralValue::toInt() const
 {
-    return d->value.toInt();
+    return d ? d->value.toInt() : 0;
 }
 
 
 qlonglong Soprano::LiteralValue::toInt64() const
 {
-    return d->value.toLongLong();
+    return d ? d->value.toLongLong() : 0L;
 }
 
 
 uint Soprano::LiteralValue::toUnsignedInt() const
 {
-    return d->value.toUInt();
+    return d ? d->value.toUInt() : 0U;
 }
 
 
 qulonglong Soprano::LiteralValue::toUnsignedInt64() const
 {
-    return d->value.toULongLong();
+    return d ? d->value.toULongLong() : 0UL;
 }
 
 
 bool Soprano::LiteralValue::toBool() const
 {
-    return d->value.toBool();
+    return d ? d->value.toBool() : false;
 }
 
 
 double Soprano::LiteralValue::toDouble() const
 {
-    return d->value.toDouble();
+    return d ? d->value.toDouble() : 0.0;
 }
 
 
@@ -485,7 +485,7 @@ QDateTime Soprano::LiteralValue::toDateTime() const
 
 QByteArray Soprano::LiteralValue::toByteArray() const
 {
-    return d->value.toByteArray();
+    return d ? d->value.toByteArray() : QByteArray();
 }
 
 
