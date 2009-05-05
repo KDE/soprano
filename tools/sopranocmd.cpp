@@ -18,6 +18,7 @@
 #include <QtCore/QDebug>
 #include <QtCore/QList>
 #include <QtCore/QDir>
+#include <QtCore/QRegExp>
 
 #include "soprano-tools-config.h"
 
@@ -28,6 +29,7 @@
 #include "../soprano/parser.h"
 #include "../soprano/serializer.h"
 #include "../soprano/storagemodel.h"
+#include "../soprano/vocabulary.h"
 
 #include "../server/tcpclient.h"
 #include "../server/localsocketclient.h"
@@ -109,11 +111,19 @@ namespace {
             if ( pos > 0 ) {
                 literalType = s.mid( pos + 4, s.length() - pos - 5 );
                 value = s.mid( 1, pos-1 );
+                return Soprano::LiteralValue::fromString( value, QUrl( literalType ) );
             }
             else {
-                value = s.mid( 1, s.length()-1 );
+                QString lang;
+                pos = s.indexOf( "\"@" );
+                int len = s.length()-2;
+                if ( pos > 0 ) {
+                    lang = s.mid( pos+2, s.length() - pos - 3 );
+                    len -= lang.length() - 1;
+                }
+                value = s.mid( 1, len );
+                return Soprano::LiteralValue::createPlainLiteral( value, lang );
             }
-            return Soprano::LiteralValue::fromString( value, QUrl( literalType ) );
         }
         else {
             // we only check for boolean, integer and double here
@@ -224,6 +234,36 @@ namespace {
             return backend->createModel( QList<BackendSetting>() << BackendSetting( BackendOptionStorageMemory ) );
         else
             return 0;
+    }
+
+
+    QString tuneQuery( QString query, const QString& queryLang )
+    {
+        if ( Soprano::Query::queryLanguageFromString( queryLang ) == Soprano::Query::QueryLanguageSparql ) {
+            QHash<QString, QUrl> prefixes;
+            prefixes.insert( "rdf", Vocabulary::RDF::rdfNamespace() );
+            prefixes.insert( "rdfs", Vocabulary::RDFS::rdfsNamespace() );
+            prefixes.insert( "nrl", Vocabulary::NRL::nrlNamespace() );
+            prefixes.insert( "nao", Vocabulary::NAO::naoNamespace() );
+            prefixes.insert( "xsd", Vocabulary::XMLSchema::xsdNamespace() );
+
+            for ( QHash<QString, QUrl>::const_iterator it = prefixes.constBegin();
+                  it != prefixes.constEnd(); ++it ) {
+                QString prefix = it.key();
+                QUrl ns = it.value();
+
+                // very stupid check for the prefix usage
+                if ( query.contains( prefix + ':' ) ) {
+                    // if the prefix is not defined add it
+                    if ( !query.contains( QRegExp( QString( "[pP][rR][eE][fF][iI][xX]\\s*%1\\s*:\\s*<%2>" )
+                                                   .arg( prefix )
+                                                   .arg( QRegExp::escape( ns.toString() ) ) ) ) ) {
+                        query.prepend( QString( "prefix %1: <%2> " ).arg( prefix ).arg( ns.toString() ) );
+                    }
+                }
+            }
+        }
+        return query;
     }
 
 
@@ -401,6 +441,8 @@ namespace {
           << "                       There is no need to know the exact mimetype.)" << endl
           << endl
           << "   --querylang <lang>  The query language used for query commands. Defaults to 'SPARQL'" << endl
+          << "                       Hint: sopranocmd automatically adds prefix definitions for standard namespaces such as RDF, " << endl
+          << "                             RDFS, NRL, etc. if used in a SPARQL query." << endl
           << endl
           << "   <command>           The command to perform. Can be one of 'add', 'remove', 'list', 'query', 'import', or 'export'." << endl << endl
           << "   <parameters>        The parameters to the command." << endl
@@ -419,8 +461,11 @@ namespace {
           << "   - Literal nodes are defined as a combination of their string value and their datatype URI" << endl
           << "     or as a simple literal string:" << endl
           << "     Examples: \"Hello World\"^^<http://www.w3.org/2001/XMLSchema#string>" << endl
-          << "               42" << endl
-          << "               0.7" << endl
+          << "               42         (evaluates to a literal of type integer)" << endl
+          << "               0.7        (evaluates to a literal of type double)" << endl
+          << "               Hello      (evaluates to a literal of type string)" << endl
+          << "               \"Hello\"    (evaluates to a plain literal)" << endl
+          << "               \"Hallo\"@de (evaluates to a plain literal)" << endl
           << "   - An empty string evaluates to an empy node (\"\" does the trick)" << endl;
 
         if ( !error.isEmpty() ) {
@@ -721,7 +766,8 @@ int main( int argc, char *argv[] )
             QTime time;
             time.start();
 
-            Soprano::QueryResultIterator it = model->executeQuery( query, Soprano::Query::queryLanguageFromString( queryLang ), queryLang );
+            Soprano::QueryResultIterator it = model->executeQuery( tuneQuery( query, queryLang ),
+                                                                   Soprano::Query::queryLanguageFromString( queryLang ), queryLang );
             queryTime = time.elapsed();
             if ( !args.hasSetting( "file" ) &&
                  args.hasSetting( "serialization" ) ) {
