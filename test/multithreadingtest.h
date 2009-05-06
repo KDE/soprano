@@ -1,4 +1,4 @@
-/* 
+/*
  * This file is part of Soprano Project.
  *
  * Copyright (C) 2007 Sebastian Trueg <strueg@mandriva.com>
@@ -42,14 +42,12 @@ private Q_SLOTS:
     void testNodeIterator_data();
     void testNodeIterator();
     void testAddStatement();
-    void testModelCreation_data();
-    void testModelCreation();
     void cleanupTestCase();
 
 protected:
     virtual Soprano::Model* createModel() = 0;
     virtual void deleteModel( Soprano::Model* );
-  
+
 private:
     void startAllTests( Soprano::Model* );
     void verifyAllTests();

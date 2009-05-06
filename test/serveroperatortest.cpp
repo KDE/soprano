@@ -418,7 +418,7 @@ void ServerOperatorTest::testNode_data()
     QTest::newRow( "blank" ) << Node( QString( "nodeId" ) );
     QTest::newRow( "resource" ) << Node( QUrl( "http://soprano.org/mytestresource" ));
     QTest::newRow( "literal" ) << Node( LiteralValue( "Hello World" ) );
-    QTest::newRow( "literal-with-lang" ) << Node( LiteralValue( "Hallo Welt" ), "de" );
+    QTest::newRow( "literal-with-lang" ) << Node( LiteralValue::createPlainLiteral( "Hallo Welt", "de" ) );
 }
 
 

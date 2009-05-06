@@ -58,7 +58,7 @@ void NodeTest::testCreateLiteralNode()
   QVERIFY( !node.literal().isPlain() );
   QVERIFY( node.uri().isEmpty() );
 
-  Node germanNode( LiteralValue( "Hallo Welt" ), "de" );
+  Node germanNode( LiteralValue::createPlainLiteral( "Hallo Welt", "de" ) );
   QCOMPARE( germanNode.type(), Node::LiteralNode );
   QVERIFY( germanNode.isValid() );
   QVERIFY( germanNode.literal().isPlain() );

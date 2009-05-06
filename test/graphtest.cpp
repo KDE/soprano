@@ -137,6 +137,12 @@ Soprano::Model* GraphTest::createModel()
     return new GraphModel();
 }
 
+
+void GraphTest::testCloseStatementIteratorOnModelDelete()
+{
+    // nothing. the iterators have a copy of the graph
+}
+
 QTEST_MAIN( GraphTest )
 
 #include "graphtest.moc"

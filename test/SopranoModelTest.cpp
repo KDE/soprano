@@ -838,6 +838,10 @@ void SopranoModelTest::testLiteralTypes_data()
 
     QString ns = "http://soprano.org/literalTest#";
 
+    // plain literals
+    QTest::newRow("plain") << LiteralValue::createPlainLiteral( "Hello World" ) << QUrl(ns + "plain");
+    QTest::newRow("plainDe") << LiteralValue::createPlainLiteral( "Hallo Welt", "de" ) << QUrl(ns + "plainDe");
+
     // all the standard literal types
     QTest::newRow("intValue") << LiteralValue( 42 ) << QUrl(ns + "intValue");
     QTest::newRow("boolFalseValue") << LiteralValue( false ) << QUrl(ns + "boolFalseValue");
@@ -883,6 +887,10 @@ void SopranoModelTest::testLiteralTypes()
     QVERIFY( it.next() );
     QCOMPARE( it.current().object().literal(), literal );
     it.close();
+
+    it = m_model->listStatements( Statement( Node(), Node(), literal ) );
+    QVERIFY( it.next() );
+    QCOMPARE( it.current().object().literal(), literal );
 }
 
 

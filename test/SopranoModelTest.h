@@ -39,6 +39,9 @@ class SopranoModelTest: public QObject
 public:
     SopranoModelTest();
 
+protected Q_SLOTS:
+    virtual void testCloseStatementIteratorOnModelDelete();
+
 private Q_SLOTS:
     virtual void init();
     virtual void cleanup();
@@ -62,8 +65,6 @@ private Q_SLOTS:
     void testInvalidQuery();
 
     void testListContexts();
-
-    virtual void testCloseStatementIteratorOnModelDelete();
 
     void testContexts();
 

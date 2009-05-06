@@ -38,6 +38,9 @@ class GraphTest: public SopranoModelTest
 public:
     GraphTest();
 
+protected Q_SLOTS:
+    virtual void testCloseStatementIteratorOnModelDelete();
+
 protected:
     virtual Soprano::Model* createModel();
 };
