@@ -262,7 +262,7 @@ Soprano::Node Soprano::NQuadParser::parseNode( const QString& s, int& offset ) c
                     int langEnd = s.indexOf( QRegExp( "\\s" ), literalEndPos+1 );
                     if ( langEnd > 0 ) {
                         QString lang = s.mid( literalEndPos+2, langEnd-literalEndPos-2 );
-                        node = Node( LiteralValue( value ), lang );
+                        node = Node( LiteralValue::createPlainLiteral( value, lang ) );
 
                         offset = langEnd;
                     }

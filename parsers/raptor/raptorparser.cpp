@@ -102,8 +102,7 @@ namespace {
         case RAPTOR_IDENTIFIER_TYPE_XML_LITERAL:
             if ( objectLiteralDatatype ) {
                 return Soprano::Node::createLiteralNode( Soprano::LiteralValue::fromString( QString::fromUtf8( ( const char* )data ),
-                                                                                            QString::fromUtf8( ( char* )raptor_uri_as_string( objectLiteralDatatype ) ) ),
-                                                         QString::fromUtf8( ( const char* )objectLiteralLanguage ) );
+                                                                                            QString::fromUtf8( ( char* )raptor_uri_as_string( objectLiteralDatatype ) ) ) );
             }
             else {
                 return Soprano::Node::createLiteralNode( Soprano::LiteralValue::createPlainLiteral( QString::fromUtf8( ( const char* )data ),
