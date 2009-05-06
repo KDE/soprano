@@ -31,7 +31,10 @@
 
 namespace {
     Soprano::Node literalToNode( Soprano::Client::SparqlParser::Literal l ) {
-        return Soprano::Node::createLiteralNode( Soprano::LiteralValue::fromString(l.data(), l.datatype()), l.xml_lang() );
+        if ( l.datatype().isEmpty() )
+            return Soprano::LiteralValue::createPlainLiteral( l.data(), l.xml_lang() );
+        else
+            return Soprano::LiteralValue::fromString( l.data(), l.datatype() );
     }
 
     Soprano::Node bindingToNode( const Soprano::Client::SparqlParser::Binding& binding ) {

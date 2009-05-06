@@ -25,11 +25,14 @@
 #include <qglobal.h>
 
 // Chagelog:
-// Protocol version 3: 
+// Protocol version 3:
 //     Soprano 2.1
 //     No changed commands but completely changed types streaming
 //     no usage of operators anymore
-#define PROTOCOL_VERSION 3
+// Protocol version 4:
+//     Soprano 2.3
+//     literal language is now stored in LiteralValue
+#define PROTOCOL_VERSION 4
 
 namespace Soprano {
     namespace Server {

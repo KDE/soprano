@@ -27,6 +27,7 @@
 #include "backend.h"
 #include "literalvalue.h"
 #include "locator.h"
+#include "languagetag.h"
 
 #include <QtCore/QIODevice>
 
@@ -168,8 +169,17 @@ bool Soprano::DataStream::writeError( const Error::Error& error )
 
 bool Soprano::DataStream::writeLiteralValue( const LiteralValue& value )
 {
-    return( writeUrl( value.dataTypeUri() ) &&
-            writeString( value.toString() ) );
+    if ( !writeBool( value.isPlain() ) ) {
+        return false;
+    }
+    if ( value.isPlain() ) {
+        return( writeString( value.toString() ) &&
+                writeString( value.language().toString() ) );
+    }
+    else {
+        return( writeString( value.toString() ) &&
+                writeUrl( value.dataTypeUri() ) );
+    }
 }
 
 
@@ -180,8 +190,7 @@ bool Soprano::DataStream::writeNode( const Node& node )
     }
 
     if ( node.type() == Soprano::Node::LiteralNode ) {
-        if ( !writeLiteralValue( node.literal() ) ||
-             !writeString( node.language() ) ) {
+        if ( !writeLiteralValue( node.literal() ) ) {
             return false;
         }
     }
@@ -446,16 +455,28 @@ bool Soprano::DataStream::readError( Error::Error& error )
 
 bool Soprano::DataStream::readLiteralValue( LiteralValue& val )
 {
-    QUrl dt;
-    QString v;
-    if ( readUrl( dt ) &&
-         readString( v ) ) {
-        val = LiteralValue::fromString( v, dt );
-        return true;
+    bool plain;
+    if ( readBool( plain ) ) {
+        QString v;
+        if ( plain ) {
+            QString lang;
+            if ( readString( v ) &&
+                 readString( lang ) ) {
+                val = LiteralValue::createPlainLiteral( v, lang );
+                return true;
+            }
+        }
+        else {
+            QUrl dt;
+            if ( readString( v ) &&
+                 readUrl( dt ) ) {
+                val = LiteralValue::fromString( v, dt );
+                return true;
+            }
+        }
     }
-    else {
-        return false;
-    }
+
+    return false;
 }
 
 
@@ -467,12 +488,10 @@ bool Soprano::DataStream::readNode( Node& node )
     }
     if ( type == Soprano::Node::LiteralNode ) {
         Soprano::LiteralValue v;
-        QString lang;
-        if ( !readLiteralValue( v ) ||
-             !readString( lang ) ) {
+        if ( !readLiteralValue( v ) ) {
             return false;
         }
-        node = Soprano::Node( v, lang );
+        node = v;
     }
     else if ( type == Soprano::Node::ResourceNode ) {
         QUrl url;
