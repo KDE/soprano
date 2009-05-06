@@ -63,7 +63,7 @@ Soprano::Node Soprano::Sesame2::convertNode( const JObjectRef& resource )
         JObjectRef dataType = resourceWrapper.callObjectMethod( resourceWrapper.getMethodID( "getDatatype", "()L"ORG_OPENRDF_MODEL_URI";" ) );
 
         if ( dataType ) {
-            return Node( LiteralValue::fromString( value.toQString(), convertURI( dataType ) ), lang.toQString() );
+            return Node( LiteralValue::fromString( value.toQString(), convertURI( dataType ) ) );
         }
         else {
             return Node( LiteralValue::createPlainLiteral( value.toQString(), lang.toQString() ) );
