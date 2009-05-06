@@ -416,34 +416,39 @@ double Soprano::LiteralValue::toDouble() const
 // in the ISO8601 specification.
 QString Soprano::LiteralValue::toString() const
 {
-    if ( !d->stringCacheValid ) {
-        if( isInt() )
-            d->stringCache = QString::number( toInt() );
-        else if( isInt64() )
-            d->stringCache = QString::number( toInt64() );
-        else if( isUnsignedInt() )
-            d->stringCache = QString::number( toUnsignedInt() );
-        else if( isUnsignedInt64() )
-            d->stringCache = QString::number( toUnsignedInt64() );
-        else if( isBool() )
-            d->stringCache = ( toBool() ? QString("true") : QString("false" ) );
-        else if( isDouble() ) // FIXME: decide on a proper double encoding or check if there is one in xml schema
-            d->stringCache = QString::number( toDouble(), 'e', 10 );
-        else if( isDate() )
-            d->stringCache = DateTime::toString( toDate() );
-        else if( isTime() )
-            d->stringCache = DateTime::toString( toTime() );
-        else if( isDateTime() )
-            d->stringCache = DateTime::toString( toDateTime() );
-        else if ( isByteArray() )
-            d->stringCache = QString::fromAscii( toByteArray().toBase64() );
-        else
-            d->stringCache = d->value.toString();
+    if ( d ) {
+        if ( !d->stringCacheValid ) {
+            if( isInt() )
+                d->stringCache = QString::number( toInt() );
+            else if( isInt64() )
+                d->stringCache = QString::number( toInt64() );
+            else if( isUnsignedInt() )
+                d->stringCache = QString::number( toUnsignedInt() );
+            else if( isUnsignedInt64() )
+                d->stringCache = QString::number( toUnsignedInt64() );
+            else if( isBool() )
+                d->stringCache = ( toBool() ? QString("true") : QString("false" ) );
+            else if( isDouble() ) // FIXME: decide on a proper double encoding or check if there is one in xml schema
+                d->stringCache = QString::number( toDouble(), 'e', 10 );
+            else if( isDate() )
+                d->stringCache = DateTime::toString( toDate() );
+            else if( isTime() )
+                d->stringCache = DateTime::toString( toTime() );
+            else if( isDateTime() )
+                d->stringCache = DateTime::toString( toDateTime() );
+            else if ( isByteArray() )
+                d->stringCache = QString::fromAscii( toByteArray().toBase64() );
+            else
+                d->stringCache = d->value.toString();
 
-        d->stringCacheValid = true;
+            d->stringCacheValid = true;
+        }
+
+        return d->stringCache;
     }
-
-    return d->stringCache;
+    else {
+        return QString();
+    }
 }
 
 
