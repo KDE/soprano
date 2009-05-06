@@ -53,7 +53,7 @@ target_link_libraries(
 set_target_properties(
   sopranoindex
   PROPERTIES
-  VERSION 1.0.0
+  VERSION 1.1.0
   SOVERSION 1
   DEFINE_SYMBOL MAKE_SOPRANO_INDEX_LIB
   INSTALL_NAME_DIR ${LIB_DESTINATION}

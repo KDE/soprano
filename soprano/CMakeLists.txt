@@ -102,7 +102,7 @@ add_library(soprano SHARED ${soprano_SRCS})
 target_link_libraries(soprano ${QT_QTCORE_LIBRARY})
 
 set_target_properties(soprano PROPERTIES
-  VERSION 4.1.0
+  VERSION 4.2.0
   SOVERSION 4
   DEFINE_SYMBOL MAKE_SOPRANO_LIB
   INSTALL_NAME_DIR ${LIB_DESTINATION}

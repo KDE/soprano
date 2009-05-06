@@ -101,7 +101,7 @@ set_target_properties(sopranoserver PROPERTIES
 )
 
 set_target_properties(sopranoclient PROPERTIES
-  VERSION 1.0.0
+  VERSION 1.1.0
   SOVERSION 1
   DEFINE_SYMBOL MAKE_SOPRANO_CLIENT_LIB
   INSTALL_NAME_DIR ${LIB_DESTINATION}
