@@ -115,6 +115,7 @@ install(TARGETS soprano
   )
 
 install(FILES
+  sopranomacros.h
   parser.h
   queryresultiterator.h
   queryresultiteratorbackend.h

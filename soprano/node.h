@@ -30,6 +30,7 @@
 #include "soprano_export.h"
 #include "literalvalue.h"
 #include "languagetag.h"
+#include "sopranomacros.h"
 
 namespace Soprano
 {
@@ -116,8 +117,8 @@ namespace Soprano
          * \deprecated Use Node( const LiteralValue& ) and
          *             LiteralValue::createPlainLiteral( const QString&, const LanguageTag& )
          */
-        Node( const LiteralValue& value,
-              const QString& language );
+        SOPRANO_CONSTRUCTOR_DEPRECATED Node( const LiteralValue& value,
+                                             const QString& language );
 
         /**
          * Copy constructor.
@@ -380,7 +381,7 @@ namespace Soprano
          * \deprecated Use createLiteralNode( const LiteralValue& ) and
          *             LiteralValue::createPlainLiteral( const QString&, const LanguageTag& )
          */
-        static Node createLiteralNode( const LiteralValue& value, const QString& language );
+        static SOPRANO_DEPRECATED Node createLiteralNode( const LiteralValue& value, const QString& language );
 
         /**
          * Format a resource URI as N3 string to be used in SPARQL queries.
