@@ -373,7 +373,7 @@ Soprano::Node Soprano::Node::createLiteralNode( const LiteralValue& val )
 
 Soprano::Node Soprano::Node::createLiteralNode( const LiteralValue& val, const QString& language )
 {
-    return Node( val, language );
+    return Node( LiteralValue::createPlainLiteral( val.toString(), language ) );
 }
 
 
