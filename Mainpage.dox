@@ -27,6 +27,8 @@
  *
  * \section quickstart Quickstart
  *
+ * (Also see the \ref soprano_howto for details on building %Soprano applications)
+ *
  * Create an RDF Model:
  *
  * \code
@@ -61,6 +63,7 @@
  *
  * The following sections contain further information on the usage of %Soprano.
  *
+ * \li \ref soprano_howto
  * \li \ref soprano_storage
  * \li \ref soprano_misc
  * \li \ref soprano_error_handling
@@ -323,6 +326,57 @@
  * and to generate the include file (&lt;module&gt;_export.h) which has to exist and define the macro.
  */
 
+/**
+ * \page soprano_howto %Soprano Howto
+ *
+ * Using %Soprano in your own project is pretty straight forward. %Soprano provides includes for all classes and enumerations.
+ * Using a %Soprano class like Statement is as simple as including
+ *
+ * \code
+ * #include <Soprano/Statement>
+ * \endcode
+ *
+ * For an easy start one can simply include the %Soprano header which pulls in all classes. The following code shows a
+ * simple example of a %Soprano application which creates a new Model, adds a Statement, and lists it.
+ *
+ * \code
+ * #include <Soprano/Soprano>
+ * #include <QDebug>
+ *
+ * int main( int argc, char** argv )
+ * {
+ *     Soprano::Model* model = Soprano::createModel();
+ *     model->addStatement( QUrl( "http://mysite.org/data#A"),
+ *                          Soprano::Vocabulary::RDFS::label(),
+ *                          Soprano::LiteralValue( "A test resource" ) );
+ *     Soprano::StatementIterator it = model->listStatements();
+ *     while( it.next() )
+ *         qDebug() << *it;
+ * }
+ * \endcode
+ *
+ * %Soprano provides pkg-config integration which allows to build the above example using qmake. The following pro file
+ * looks for %Soprano includes and libs via pkg-config and builds the application sopranotest.
+ *
+ * \code
+ * TEMPLATE = app
+ * SOURCES += main.cpp
+ * TARGET = sopranotest
+ * CONFIG += qt link_pkgconfig
+ * PKGCONFIG += soprano
+ * \endcode
+ *
+ * Using cmake is as simple:
+ *
+ * \code
+ * find_package(PkgConfig REQUIRED)
+ * find_package(Qt4 REQUIRED)
+ * pkg_search_module(Soprano REQUIRED soprano)
+ * include_directories(${Soprano_INCLUDE_DIRS} ${QT_INCLUDE_DIR})
+ * add_executable(sopranotest main.cpp)
+ * target_link_libraries(sopranotest ${Soprano_LIBRARIES} ${QT_QTCORE_LIBRARY})
+ * \endcode
+ */
 
 // DOXYGEN_VERSION=2.0.96
 // DOXYGEN_NAME=Soprano
