@@ -63,15 +63,15 @@
  *
  * The following sections contain further information on the usage of %Soprano.
  *
- * \li \ref soprano_howto
- * \li \ref soprano_storage
- * \li \ref soprano_misc
- * \li \ref soprano_error_handling
- * \li \ref soprano_writing_plugins
- * \li \ref Soprano::Server
- * \li \ref Soprano::Client
- * \li \ref soprano_devel_tools
- * \li \ref soprano_backends
+ * \li \subpage soprano_howto - Learn how to integrate %Soprano into your build system
+ * \li \subpage soprano_storage - Learn how to use RDF storage in %Soprano
+ * \li \subpage soprano_misc - Learn how to parse and serialize RDF data in %Soprano
+ * \li \subpage soprano_error_handling - Learn how %Soprano's error system works
+ * \li \subpage soprano_writing_plugins - Learn how to write your own %Soprano plugins
+ * \li \ref Soprano::Server - Learn how to create a %Soprano server
+ * \li \ref Soprano::Client - Learn how to create a %Soprano client accessing a %Soprano server via DBus or a local socket
+ * \li \ref soprano_devel_tools - Learn about the nice command line tools %Soprano provides
+ * \li \ref soprano_backends - Learn about the available storage backends and their features and settings
  */
 
 
@@ -165,7 +165,7 @@
  */
 
 /**
- * \page soprano_writing_plugins Writing %Soprano Plugins
+ * \page soprano_writing_plugins Writing Soprano Plugins
  *
  * %Soprano has five kinds of plugins: Soprano::Backend, Soprano::Parser, Soprano::Serializer,
  * Soprano::Query::Parser, and Soprano::Query::Serializer.
@@ -201,7 +201,7 @@
  * target folder.
  *
  * Finally we need to create a desktop file describing the plugin. The minimal desktop file
- * looks as follows (for details see \ref soprano_plugin_desktop_file):
+ * looks as follows (for details see \subpage soprano_plugin_desktop_file):
  *
  * \code
  * [Desktop Entry]
@@ -289,7 +289,7 @@
  */
 
 /**
- * \page soprano_devel_tools %Soprano Development Tools
+ * \page soprano_devel_tools Soprano Development Tools
  *
  * %Soprano provides two small tools that can make the life of a developer easier.
  *
@@ -324,10 +324,14 @@
  * all together with \p --no-visibility-export. The latter is useful if the namespace is not part of a public
  * API. When using the \p --export-module parameter the value is used to generate the macro (&lt;module&gt;_EXPORT)
  * and to generate the include file (&lt;module&gt;_export.h) which has to exist and define the macro.
+ *
+ * \sa \ref cmake_magic
  */
 
 /**
- * \page soprano_howto %Soprano Howto
+ * \page soprano_howto Soprano Howto
+ *
+ * \section includes Soprano includes
  *
  * Using %Soprano in your own project is pretty straight forward. %Soprano provides includes for all classes and enumerations.
  * Using a %Soprano class like Statement is as simple as including
@@ -355,6 +359,21 @@
  * }
  * \endcode
  *
+ *
+ * \section build_systems Soprano in the Build System
+ *
+ * Integrating %Soprano into your own build system is rather simple. %Soprano provides a set of libraries and one include path.
+ * The libraries are:
+ * \li libsoprano - The core library providing storage, parsing, and all utility classes
+ * \li libsopranoindex - The full text index based on CLucene (Soprano::Index)
+ * \li libsopranoserver - The server library which provides a simple implementation of an RDF database server (Soprano::Server)
+ * \li libsopranoclient - The counterpart to the server library (Soprano::Client)
+ *
+ * A PkgConfig description is provided for the core library and can be used as described in the following.
+ *
+ *
+ * \subsection qmake Using qmake with Soprano
+ *
  * %Soprano provides pkg-config integration which allows to build the above example using qmake. The following pro file
  * looks for %Soprano includes and libs via pkg-config and builds the application sopranotest.
  *
@@ -366,7 +385,11 @@
  * PKGCONFIG += soprano
  * \endcode
  *
- * Using cmake is as simple:
+ *
+ * \subsection cmake Using CMake with Soprano
+ *
+ * Using cmake is as simple. Find required packages \em Qt4 and \em PkgConfig, look for %Soprano via PkgConfig and link to both
+ * %Soprano and QtCore:
  *
  * \code
  * find_package(PkgConfig REQUIRED)
@@ -376,11 +399,33 @@
  * add_executable(sopranotest main.cpp)
  * target_link_libraries(sopranotest ${Soprano_LIBRARIES} ${QT_QTCORE_LIBRARY})
  * \endcode
+ *
+ * \warning PkgConfig is not available on Windows. For platform independant development use a typical cmake module like
+ * KDE's <a href="http://websvn.kde.org:80/%2Acheckout%2A/trunk/KDE/kdelibs/cmake/modules/FindSoprano.cmake">FindSoprano.cmake</a>.
+ *
+ * \subsubsection cmake_magic Some CMake Magic
+ *
+ * %Soprano provides the simple \ref onto2vocabularyclass tool which can generate convinience namespaces such as Soprano::Vocabulary::RDF
+ * from ontology files. With CMake it is rather simple to generate these namespaces on-the-fly instead of packaging the generated files.
+ *
+ * Imagine your code contains an ontology description in rdf+xml format named Foo (Foo Object Ontology) and you want to make it's classes and
+ * properties accessible in the <em>MyStuff::Foo</em> namespace:
+ *
+ * \code
+ * add_custom_command(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/foo.h ${CMAKE_CURRENT_BINARY_DIR}/foo.cpp
+ *   COMMAND onto2vocabularyclass --name Foo --encoding rdfxml --namespace "MyStuff::Foo" --no-visibility-export foo.rdfs
+ *   MAIN_DEPENDENCY foo.rdfs
+ *   DEPENDS foo.rdfs
+ * )
+ * \endcode
+ *
+ * This will create a new command which creates the files \p foo.h and \p foo.cpp in the build directory. Just add them to the
+ * list of source/header files and be done with it.
  */
 
-// DOXYGEN_VERSION=2.0.96
+// DOXYGEN_VERSION=2.3
 // DOXYGEN_NAME=Soprano
-// DOXYGEN_COPYRIGHT=2007-2008 <a href='mailto:trueg@kde.org'>Sebastian Trueg</a>
+// DOXYGEN_COPYRIGHT=2007-2009 <a href='mailto:trueg@kde.org'>Sebastian Trueg</a>
 // DOXYGEN_ENABLE=YES
 // DOXYGEN_SET_RECURSIVE = NO
 // DOXYGEN_SET_HTML_DYNAMIC_SECTIONS  = YES
