@@ -114,8 +114,8 @@ namespace Soprano
          *
          * \sa createLiteralNode()
          *
-         * \deprecated Use Node( const LiteralValue& ) and
-         *             LiteralValue::createPlainLiteral( const QString&, const LanguageTag& )
+         * \deprecated Use Soprano::Node::Node( const LiteralValue& ) and
+         *             Soprano::LiteralValue::createPlainLiteral( const QString&, const LanguageTag& )
          */
         SOPRANO_CONSTRUCTOR_DEPRECATED Node( const LiteralValue& value,
                                              const QString& language );
@@ -273,8 +273,8 @@ namespace Soprano
          * \return A string representing the language of the literal value
          *         or an empty string if the node is not a literal.
          *
-         * \deprecated Language exists on the LiteralValue. Use literal() and
-         *             LiteralValue::language().
+         * \deprecated Language exists on the Soprano::LiteralValue. Use Soprano::Node::literal() and
+         *             Soprano::LiteralValue::language().
          */
         QString language() const;
         //@}
@@ -378,8 +378,8 @@ namespace Soprano
          * \return A literal node or an empty node if the specified value
          * was empty.
          *
-         * \deprecated Use createLiteralNode( const LiteralValue& ) and
-         *             LiteralValue::createPlainLiteral( const QString&, const LanguageTag& )
+         * \deprecated Use Soprano::Node::createLiteralNode( const LiteralValue& ) and
+         *             Soprano::LiteralValue::createPlainLiteral( const QString&, const LanguageTag& )
          */
         static SOPRANO_DEPRECATED Node createLiteralNode( const LiteralValue& value, const QString& language );
 

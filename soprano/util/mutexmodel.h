@@ -68,7 +68,7 @@ namespace Soprano {
         
                 /**
                  * \deprecated This was a buggy mode which was impossible to fix.
-                 * Use AsyncModel instead.
+                 * Use Soprano::Util::AsyncModel instead.
                  */
                 ReadWriteSingleThreading
             };
