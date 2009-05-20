@@ -745,7 +745,8 @@ int main( int argc, char *argv[] )
             success = exportFile( model->listStatements(), fileName, serialization );
         }
         else {
-            success = exportFile( model->executeQuery( query, Soprano::Query::queryLanguageFromString( queryLang ), queryLang ).iterateStatements(),
+            success = exportFile( model->executeQuery( tuneQuery( query, queryLang ),
+                                                       Soprano::Query::queryLanguageFromString( queryLang ), queryLang ).iterateStatements(),
                                   fileName,
                                   serialization );
         }
