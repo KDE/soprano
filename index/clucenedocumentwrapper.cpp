@@ -61,7 +61,7 @@ void Soprano::Index::CLuceneDocumentWrapper::addProperty( const TString& field, 
 
     // FIXME: Do we really need to store the values? after all we have them in the RDF store anyway!
     //        And if we have to store we could do it compressed using jstreams
-    // store this predicate (YES, the CLucene API is that bad. We actually put in Fields allocated on the heap here!)
+    // store this predicate (YES, the CLucene API is that weird. We actually put in Fields allocated on the heap here!)
     d->document->add( *new Field( field.data(), text.data(),
 #ifdef CL_VERSION_19_OR_GREATER
                                   isUri
@@ -78,7 +78,7 @@ void Soprano::Index::CLuceneDocumentWrapper::addProperty( const TString& field, 
     // affect e.g. phrase and proximity searches (concatenation basically
     // means loss of information).
     //
-    // (YES, the CLucene API is that bad. We actually put in Fields allocated on the heap here!)
+    // (YES, the CLucene API is that weird. We actually put in Fields allocated on the heap here!)
     if( !isUri ) {
         d->document->add( *new Field( textFieldName().data(), text.data(),
 #ifdef CL_VERSION_19_OR_GREATER
@@ -170,7 +170,7 @@ int Soprano::Index::CLuceneDocumentWrapper::numberOfPropertyFields() const
 
 void Soprano::Index::CLuceneDocumentWrapper::addID( const QString& id )
 {
-    // (YES, the CLucene API is that bad. We actually put in Fields allocated on the heap here!)
+    // (YES, the CLucene API is that weird. We actually put in Fields allocated on the heap here!)
     d->document->add( *new lucene::document::Field( idFieldName().data(), TString( id ).data(),
 #ifdef CL_VERSION_19_OR_GREATER
                                                     Field::STORE_YES|Field::INDEX_UNTOKENIZED|Field::TERMVECTOR_NO
