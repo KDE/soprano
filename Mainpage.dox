@@ -1,8 +1,8 @@
 /**
  * \mainpage Soprano (aka QRDF) - A modular RDF storage framework
  *
- * %Soprano is a QT-based pluggable framework for RDF storage and parsing. It tries to provide a highly usable
- * interface to several RDF storage solutions.
+ * %Soprano is a <a href="http://www.qtsoftware.com/">Qt</a>-based pluggable framework for <a href="http://www.w3.org/RDF/">RDF</a>
+ * storage and parsing. It tries to provide a highly usable interface to several RDF storage solutions.
  *
  * \section overview Overview
  *
@@ -21,7 +21,7 @@
  * Apart from storage %Soprano provides a system for RDF parser and serializer plugins. For more details on parsing
  * or serializing RDF data see the Soprano::Parser and Soprano::Serializer classes.
  *
- * %Soprano comes with a builtin Server and Client implementations allowing to build remote repositories quickly.
+ * %Soprano comes with a builtin \link Soprano::Server Server \endlink and \link Soprano::Client Client \endlink implementations allowing to build remote repositories quickly.
  * Soprano::Client::SparqlModel provides a client to arbitrary <a href="http://www.w3.org/TR/rdf-sparql-protocol/">SPARQL (SPARQL Protocol and RDF Query Language)</a>
  * Http services.
  *
@@ -70,7 +70,7 @@
  * \li \subpage soprano_writing_plugins - Learn how to write your own %Soprano plugins
  * \li \ref Soprano::Server - Learn how to create a %Soprano server
  * \li \ref Soprano::Client - Learn how to create a %Soprano client accessing a %Soprano server via DBus or a local socket
- * \li \ref soprano_devel_tools - Learn about the nice command line tools %Soprano provides
+ * \li \subpage soprano_devel_tools - Learn about the nice command line tools %Soprano provides
  * \li \ref soprano_backends - Learn about the available storage backends and their features and settings
  */
 
@@ -105,18 +105,18 @@
  * For further details on Soprano::Model usage see the class and method documentation.
  *
  * For details on existing backends see:
- * \li \ref soprano_backends
+ * \li \subpage soprano_backends
  */
 
 /**
- * \page soprano_backends %Soprano Backends
+ * \page soprano_backends Soprano Backends
  *
  * %Soprano is plug-in based and comes with three backend plug-ins which can be used directly
  * (if they have been built):
  *
- * \li \ref soprano_backend_redland
- * \li \ref soprano_backend_sesame2
- * \li \ref soprano_backend_virtuoso
+ * \li \subpage soprano_backend_redland
+ * \li \subpage soprano_backend_sesame2
+ * \li \subpage soprano_backend_virtuoso
  */
 
 /**
