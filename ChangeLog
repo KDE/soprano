@@ -1,10 +1,10 @@
 2.3
-	* sopranocmd now supports to serialize construct and describe query results in all supported formats.
-	* Fixed plugin loading on windows.
 	* New class LanguageTag replacing the old simple string language handling with a sophisticated one
 	  implementing RFC 4647. At the same time Soprano now directly supports plain literals in addition
 	  to typed string literals (compare LiteralValue::createPlainLiteral).
 	  (thanks to Greg Beauchesne for the patch)
+	  CAUTION: This patch changes behaviour: parsers and storage backends will now return plain literals
+	           instead of typed string literals!
 	* New static methods Node::resourceToN3, Node::literalToN3, and Node::blankToN3 for easy N3
 	  formatting without the creation of a Node instance.
 	* Fixed both Node::matches and Statement::matches - now only the paramter is treated as a wildcard
@@ -13,8 +13,10 @@
 	    creating a database on disk.
           - standard namespace prefixes rdf, rdfs, xsd, nrl, and nao are now added to sparql queries
             automatically if used.
+	  - construct and describe query results can now be serialized in all supported formats.
 	* New class Graph which is a simple based container for statements as a quick replacement for Model
 	  in case one wants to handle a small number of statements without query support.
+	* Fixed plugin loading on windows.
 
 2.2
 	* The AsyncModel now has a "real" asyncroneous mode which uses multiple threads to execute the
