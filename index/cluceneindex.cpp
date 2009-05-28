@@ -702,7 +702,7 @@ void Soprano::Index::CLuceneIndex::clear()
 {
     if ( d->indexPresent() ) {
         try {
-            int numDocs = d->getIndexReader()->numDocs();
+            int numDocs = d->getIndexReader()->maxDoc();
             for ( int i = 0; i < numDocs; ++i ) {
                 d->getIndexReader()->deleteDocument( i );
             }
