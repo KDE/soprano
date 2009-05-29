@@ -20,6 +20,7 @@
  */
 
 #include "tstring.h"
+#include <stdlib.h>
 
 class TString::Private : public QSharedData
 {
@@ -121,7 +122,11 @@ bool TString::isEmpty() const
 
 int TString::length() const
 {
-    return _tcslen( d->data );
+#ifdef _UCS2
+    return wcslen( d->data );
+#else
+    return strlen( d->data );
+#endif
 }
 
 
@@ -154,7 +159,11 @@ QString TString::toQString() const
 
 bool TString::operator==( const TString& other ) const
 {
-    return _tcscmp( d->data, other.d->data ) == 0;
+#ifdef _UCS2
+    return wcscmp( d->data, other.d->data ) == 0;
+#else
+	return strcmp( d->data, other.d->data ) == 0;
+#endif
 }
 
 
