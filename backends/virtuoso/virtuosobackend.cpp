@@ -163,11 +163,11 @@ Soprano::BackendFeatures Soprano::Virtuoso::BackendPlugin::supportedFeatures() c
 
 namespace {
     QString parseVirtuosoVersion( const QByteArray& data ) {
-        QString stderr = QString::fromLocal8Bit( data );
-        int vp = stderr.indexOf( QLatin1String("Version" ) );
+        QString erroutput = QString::fromLocal8Bit( data );
+        int vp = erroutput.indexOf( QLatin1String("Version" ) );
         if ( vp > 0 ) {
             vp += 8;
-            return stderr.mid( vp, stderr.indexOf( ' ', vp ) - vp );
+            return erroutput.mid( vp, erroutput.indexOf( ' ', vp ) - vp );
         }
         return QString();
     }
