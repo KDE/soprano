@@ -263,7 +263,7 @@ QList<const Soprano::Serializer*> Soprano::PluginManager::allSerializers()
 void Soprano::PluginManager::loadAllPlugins()
 {
     if( !d->pluginsLoaded ) {
-        qDebug() << "(Soprano::PluginManager) loading all plugins";
+//        qDebug() << "(Soprano::PluginManager) loading all plugins";
 
         QStringList searchPaths = d->searchPaths;
         if ( d->useDefaultSearchPaths ) {
@@ -272,7 +272,7 @@ void Soprano::PluginManager::loadAllPlugins()
 
         Q_FOREACH( const QString& dir, searchPaths ) {
             QDir pluginDir( dir );
-            qDebug() << "(Soprano::PluginManager) searching plugin file from " << pluginDir.absolutePath();
+//            qDebug() << "(Soprano::PluginManager) searching plugin file from " << pluginDir.absolutePath();
             QStringList pluginFiles = pluginDir.entryList( QStringList( QLatin1String( "*.desktop" ) ) );
             Q_FOREACH( const QString& plugin, pluginFiles ) {
                 loadPlugin( pluginDir.absoluteFilePath( plugin ) );
@@ -287,9 +287,9 @@ void Soprano::PluginManager::loadPlugin( const QString& path )
 {
     SopranoPluginFile f;
     if ( f.open( path ) ) {
-        qDebug() << "(Soprano::PluginManager) found plugin file" << path;
+//        qDebug() << "(Soprano::PluginManager) found plugin file" << path;
         if ( f.sopranoVersion().left( f.sopranoVersion().indexOf( '.' ) ).toUInt() == Soprano::versionMajor() ) {
-            qDebug() << "(Soprano::PluginManager) plugin has proper version.";
+//            qDebug() << "(Soprano::PluginManager) plugin has proper version.";
 
             QString libPath = findPluginLib( f );
             if ( libPath.isEmpty() ) {
@@ -310,31 +310,31 @@ void Soprano::PluginManager::loadPlugin( const QString& path )
 
             if( type.contains( "Soprano/Backend" ) ) {
                 if ( !d->backends.contains( name ) ) {
-                    qDebug() << "(Soprano::PluginManager) found backend plugin " << name;
+//                    qDebug() << "(Soprano::PluginManager) found backend plugin " << name;
                     d->backends.insert( name, plugin );
                 }
             }
             else if( type.contains( "Soprano/Parser" ) ) {
                 if ( !d->parsers.contains( name ) ) {
-                    qDebug() << "(Soprano::PluginManager) found parser plugin " << name;
+//                    qDebug() << "(Soprano::PluginManager) found parser plugin " << name;
                     d->parsers.insert( name, plugin );
                 }
             }
             else if( type.contains( "Soprano/Serializer" ) ) {
                 if ( !d->serializers.contains( name ) ) {
-                    qDebug() << "(Soprano::PluginManager) found serializer plugin " << name;
+//                    qDebug() << "(Soprano::PluginManager) found serializer plugin " << name;
                     d->serializers.insert( name, plugin );
                 }
             }
             else if( type.contains( "Soprano/QueryParser" ) ) {
                 if ( !d->queryParsers.contains( name ) ) {
-                    qDebug() << "(Soprano::PluginManager) found query parser plugin " << name;
+//                    qDebug() << "(Soprano::PluginManager) found query parser plugin " << name;
                     d->queryParsers.insert( name, plugin );
                 }
             }
             else if( type.contains( "Soprano/QuerySerializer" ) ) {
                 if ( !d->querySerializers.contains( name ) ) {
-                    qDebug() << "(Soprano::PluginManager) found query serializer plugin " << name;
+//                    qDebug() << "(Soprano::PluginManager) found query serializer plugin " << name;
                     d->querySerializers.insert( name, plugin );
                 }
             }

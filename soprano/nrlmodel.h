@@ -26,7 +26,7 @@
 #include "soprano_export.h"
 
 #ifndef USING_SOPRANO_NRLMODEL_UNSTABLE_API
-#error The Soprano::NrlModel API is subject to change. This has to be acnowledged.
+#error The Soprano::NrlModel API is subject to change. This has to be acnowledged by defining USING_SOPRANO_NRLMODEL_UNSTABLE_API
 #endif
 
 namespace Soprano {
