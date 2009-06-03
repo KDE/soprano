@@ -30,6 +30,8 @@ if(WIN32)
   set(CMAKE_DEBUG_POSTFIX "d")
 endif(WIN32)
 
+include(SopranoCPack.cmake)
+
 ##################  find packages  ################################
 
 set(QT_MIN_VERSION "4.4.0")
