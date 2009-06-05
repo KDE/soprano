@@ -250,8 +250,7 @@ void Soprano::Index::IndexFilterModel::rebuildIndex()
             filters << QString("?p = %1").arg(Soprano::Node(p).toN3());
         }
         QueryResultIterator it2 = FilterModel::executeQuery( QString( "select distinct ?p ?o where { %1 ?p ?o . FILTER(%2) . }" )
-                                                             .arg( res.toN3() )
-                                                             .arg( filters.join( " || " ) ),
+                                                             .arg( res.toN3(), filters.join( " || " ) ),
                                                              Query::QueryLanguageSparql );
         while ( it2.next() ) {
             d->index->addStatement( Statement( res, it2.binding( "p" ), it2.binding( "o" ) ) );
