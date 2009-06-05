@@ -547,7 +547,7 @@ Soprano::Iterator<Soprano::Index::QueryHit> Soprano::Index::CLuceneIndex::search
         lucene::queryParser::QueryParser parser( textFieldName().data(), d->queryAnalyzer ? d->queryAnalyzer : d->analyzer );
         lucene::search::Query* q = parser.parse( TString( query ).data() );
         Iterator<QueryHit> hits = search( q );
-        // FIXME: is it possible to use the stupid CLucene ref counting here?
+        // FIXME: is it possible to use the CLucene ref counting here?
         if ( !hits.isValid() ) {
             delete q;
         }

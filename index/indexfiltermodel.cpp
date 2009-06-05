@@ -119,6 +119,7 @@ Soprano::Error::ErrorCode Soprano::Index::IndexFilterModel::addStatement( const 
 //    qDebug() << "IndexFilterModel::addStatement(" << statement << ") in thread " << QThread::currentThreadId();
     bool store = d->storeStatement( statement );
 
+    // TODO: avoid the containsStatement here. Can we tell clucene to ignore duplicates?
     if ( !store ||
          !FilterModel::containsStatement( statement ) ) {
         Error::ErrorCode c = Error::ErrorNone;
