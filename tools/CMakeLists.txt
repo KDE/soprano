@@ -22,6 +22,7 @@ target_link_libraries(
   sopranoclient
   ${QT_QTCORE_LIBRARY}
   soprano
+  sopranoindex
 )
 
 target_link_libraries(
