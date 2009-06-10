@@ -22,8 +22,13 @@ target_link_libraries(
   sopranoclient
   ${QT_QTCORE_LIBRARY}
   soprano
-  sopranoindex
 )
+if(SOPRANO_BUILD_INDEX_LIB)
+  target_link_libraries(
+    sopranocmd
+    sopranoindex
+  )
+endif(SOPRANO_BUILD_INDEX_LIB)
 
 target_link_libraries(
   onto2vocabularyclass

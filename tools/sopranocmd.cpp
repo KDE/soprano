@@ -30,7 +30,10 @@
 #include "../soprano/serializer.h"
 #include "../soprano/storagemodel.h"
 #include "../soprano/vocabulary.h"
+
+#ifdef BUILD_CLUCENE_INDEX
 #include "../index/indexfiltermodel.h"
+#endif
 
 #include "../server/tcpclient.h"
 #include "../server/localsocketclient.h"
@@ -436,8 +439,10 @@ namespace {
           << endl
           << "   --file <rdf-file>   Use an rdf file as input." << endl
           << endl
+#ifdef BUILD_CLUCENE_INDEX
           << "   --index <path>      Use the CLucene index stored at <path> via an IndexFilterModel." << endl
           << endl
+#endif
           << "   --serialization <s> The serialization used for commands 'export' and 'import'. Defaults to 'application/x-nquads'." << endl
           << "                       (can also be used to change the output format of construct and describe queries.)" << endl
           << "                       (be aware that Soprano can understand simple string identifiers such as 'trig' or 'n-triples'." << endl
@@ -505,7 +510,9 @@ int main( int argc, char *argv[] )
     allowedCmdLineArgs.insert( "serialization", true );
     allowedCmdLineArgs.insert( "querylang", true );
     allowedCmdLineArgs.insert( "file", true );
+#ifdef BUILD_CLUCENE_INDEX
     allowedCmdLineArgs.insert( "index", true );
+#endif
 
     CmdLineArgs args;
     if ( !CmdLineArgs::parseCmdLine( args, app.arguments(), allowedCmdLineArgs ) ) {
@@ -710,11 +717,13 @@ int main( int argc, char *argv[] )
         return usage();
     }
 
+#ifdef BUILD_CLUCENE_INDEX
     if ( args.hasSetting( "index" ) ) {
         Index::IndexFilterModel* filterModel = new Index::IndexFilterModel( args.getSetting( "index" ), model );
         model->setParent( filterModel ); // mem management
         model = filterModel;
     }
+#endif
 
     int queryTime = 0;
 
