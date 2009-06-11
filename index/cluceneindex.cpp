@@ -220,8 +220,8 @@ public:
                         docWrapper.addProperty( field->name(), field->stringValue(), !field->isIndexed() );
                     }
                 }
-                delete( fields );
-                delete( oldDoc );
+                _CLDELETE( fields );
+                _CLDELETE( oldDoc );
             }
 
             // step 4: add the new doc to our cache
@@ -255,7 +255,7 @@ public:
             if ( !docEmpty( doc ) ) {
                 getIndexWriter()->addDocument( doc );
             }
-            delete( doc );
+            _CLDELETE( doc );
         }
 
         documentCache.clear();
