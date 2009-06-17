@@ -546,12 +546,18 @@ Soprano::Iterator<Soprano::Index::QueryHit> Soprano::Index::CLuceneIndex::search
     try {
         lucene::queryParser::QueryParser parser( textFieldName().data(), d->queryAnalyzer ? d->queryAnalyzer : d->analyzer );
         lucene::search::Query* q = parser.parse( TString( query ).data() );
-        Iterator<QueryHit> hits = search( q );
-        // FIXME: is it possible to use the CLucene ref counting here?
-        if ( !hits.isValid() ) {
-            delete q;
+        if ( !q ) {
+            setError( QString( "Failed to parse CLucene query: '%1'" ).arg( query ) );
+            return Iterator<QueryHit>();
         }
-        return hits;
+        else {
+            Iterator<QueryHit> hits = search( q );
+            // FIXME: is it possible to use the CLucene ref counting here?
+            if ( !hits.isValid() ) {
+                delete q;
+            }
+            return hits;
+        }
     }
     catch( CLuceneError& err ) {
         qDebug() << "search" << query << "failed: " << err.what();
