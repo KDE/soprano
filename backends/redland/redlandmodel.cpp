@@ -93,7 +93,7 @@ Soprano::Redland::RedlandModel::~RedlandModel()
     librdf_free_model( d->model );
     librdf_free_storage( d->storage );
 
-    delete d->world;
+//    delete d->world;
     delete d;
 }
 

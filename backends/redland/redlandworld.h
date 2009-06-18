@@ -1,4 +1,4 @@
-/* 
+/*
  * This file is part of Soprano Project
  *
  * Copyright (C) 2006 Daniele Galdi <daniele.galdi@gmail.com>
@@ -79,6 +79,8 @@ namespace Soprano {
              * The only reason for this method are the stupid asserts that clutter stderr.
              */
             void freeStatement( librdf_statement* statement );
+
+            static Soprano::Redland::World* theWorld();
 
         private:
             librdf_world * m_world;

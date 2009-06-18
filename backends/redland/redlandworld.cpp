@@ -29,6 +29,7 @@
 #include <QtCore/QStringList>
 #include <QtCore/QDebug>
 
+Q_GLOBAL_STATIC( Soprano::Redland::World, s_theWorld )
 
 static QString redlandLogFacilityToString( int facility )
 {
@@ -228,4 +229,10 @@ void Soprano::Redland::World::freeStatement( librdf_statement* statement )
     if( statement ) {
         librdf_free_statement( statement );
     }
+}
+
+
+Soprano::Redland::World* Soprano::Redland::World::theWorld()
+{
+    return s_theWorld();
 }
