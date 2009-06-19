@@ -202,8 +202,11 @@ Soprano::QueryResultIterator Soprano::Index::IndexFilterModel::executeQuery( con
         Iterator<QueryHit> res = index()->search( query );
         if ( !res.isValid() ) {
             setError( index()->lastError() );
+            return 0;
         }
-        return new QueryHitWrapperResultIteratorBackend( res );
+        else {
+            return new QueryHitWrapperResultIteratorBackend( res );
+        }
     }
     else {
         return FilterModel::executeQuery( query, language, userQueryLanguage );
