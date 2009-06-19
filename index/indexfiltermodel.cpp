@@ -119,6 +119,7 @@ Soprano::Error::ErrorCode Soprano::Index::IndexFilterModel::addStatement( const 
 //    qDebug() << "IndexFilterModel::addStatement(" << statement << ") in thread " << QThread::currentThreadId();
     bool store = d->storeStatement( statement );
 
+    // TODO: avoid the containsStatement here. Can we tell clucene to ignore duplicates?
     if ( !store ||
          !FilterModel::containsStatement( statement ) ) {
         Error::ErrorCode c = Error::ErrorNone;
@@ -252,8 +253,7 @@ void Soprano::Index::IndexFilterModel::rebuildIndex()
             filters << QString("?p = %1").arg(Soprano::Node(p).toN3());
         }
         QueryResultIterator it2 = FilterModel::executeQuery( QString( "select distinct ?p ?o where { %1 ?p ?o . FILTER(%2) . }" )
-                                                             .arg( res.toN3() )
-                                                             .arg( filters.join( " || " ) ),
+                                                             .arg( res.toN3(), filters.join( " || " ) ),
                                                              Query::QueryLanguageSparql );
         while ( it2.next() ) {
             d->index->addStatement( Statement( res, it2.binding( "p" ), it2.binding( "o" ) ) );
