@@ -107,7 +107,13 @@ Soprano::Error::ErrorCode Soprano::Model::removeStatements( const QList<Statemen
 
 Soprano::Error::ErrorCode Soprano::Model::removeContext( const Node& context )
 {
-    return removeAllStatements( Statement( Node(), Node(), Node(), context ) );
+    if( context.isValid() ) {
+        return removeAllStatements( Statement( Node(), Node(), Node(), context ) );
+    }
+    else {
+        setError( "Cannot remove the empty context", Error::ErrorInvalidArgument );
+        return Error::ErrorInvalidArgument;
+    }
 }
 
 

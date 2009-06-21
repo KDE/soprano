@@ -18,7 +18,9 @@
 	* New class Graph which is a simple based container for statements as a quick replacement for Model
 	  in case one wants to handle a small number of statements without query support.
 	* Fixed plugin loading on windows.
-
+	* Fixed a deadlock in the IndexFilterModel in case a query could not be parsed.
+	* Prevent Model::removeContext to remove empty contexts, i.e. the whole database.
+	
 2.2
 	* The AsyncModel now has a "real" asyncroneous mode which uses multiple threads to execute the
 	  commands.
