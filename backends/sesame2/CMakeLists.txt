@@ -40,11 +40,17 @@ add_library(soprano_sesame2backend MODULE ${sesame2_backend_SRC})
 
 target_link_libraries(soprano_sesame2backend soprano ${JAVA_JVM_LIBRARY})
 
-install(TARGETS soprano_sesame2backend
-  LIBRARY DESTINATION ${LIB_DESTINATION}/soprano
-  RUNTIME DESTINATION bin/soprano
-  ARCHIVE DESTINATION lib/soprano
-  )
+if(WIN32)
+# RUNTIME and ARCHIVE are ignored when the library type is set to MODULE (cf. add_library above)
+# so specify the bin directory explicitely. Only the .dll will be copied.
+  INSTALL(TARGETS soprano_sesame2backend DESTINATION bin/soprano)
+else(WIN32)
+  INSTALL(TARGETS soprano_sesame2backend
+    LIBRARY DESTINATION ${LIB_DESTINATION}/soprano
+    RUNTIME DESTINATION bin/soprano
+    ARCHIVE DESTINATION lib/soprano
+    )
+endif(WIN32)
 
 install(FILES
   openrdf-sesame-2.1.4-onejar.jar

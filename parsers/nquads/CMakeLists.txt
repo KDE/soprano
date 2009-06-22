@@ -17,11 +17,17 @@ add_library(soprano_nquadparser MODULE ${nquadparser_SRC})
 
 TARGET_LINK_LIBRARIES(soprano_nquadparser soprano)
 
-INSTALL(TARGETS soprano_nquadparser
-	LIBRARY DESTINATION ${LIB_DESTINATION}/soprano
-	RUNTIME DESTINATION bin/soprano
-	ARCHIVE DESTINATION lib/soprano
-)
+if(WIN32)
+# RUNTIME and ARCHIVE are ignored when the library type is set to MODULE (cf. add_library above)
+# so specify the bin directory explicitely. Only the .dll will be copied.
+  INSTALL(TARGETS soprano_nquadparser DESTINATION bin/soprano)
+else(WIN32)
+  INSTALL(TARGETS soprano_nquadparser
+    LIBRARY DESTINATION ${LIB_DESTINATION}/soprano
+    RUNTIME DESTINATION bin/soprano
+    ARCHIVE DESTINATION lib/soprano
+    )
+endif(WIN32)
 
 configure_file(nquadparser.desktop.cmake ${CMAKE_CURRENT_BINARY_DIR}/nquadparser.desktop)
 

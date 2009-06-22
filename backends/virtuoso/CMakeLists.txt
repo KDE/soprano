@@ -34,11 +34,17 @@ target_link_libraries(soprano_virtuosobackend
   ${IODBC_LIBRARIES}
 )
 
-install(TARGETS soprano_virtuosobackend
-  LIBRARY DESTINATION ${LIB_DESTINATION}/soprano
-  RUNTIME DESTINATION bin/soprano
-  ARCHIVE DESTINATION lib/soprano
-  )
+if(WIN32)
+# RUNTIME and ARCHIVE are ignored when the library type is set to MODULE (cf. add_library above)
+# so specify the bin directory explicitely. Only the .dll will be copied.
+  INSTALL(TARGETS soprano_virtuosobackend DESTINATION bin/soprano)
+else(WIN32)
+  INSTALL(TARGETS soprano_virtuosobackend
+    LIBRARY DESTINATION ${LIB_DESTINATION}/soprano
+    RUNTIME DESTINATION bin/soprano
+    ARCHIVE DESTINATION lib/soprano
+    )
+endif(WIN32)
 
 configure_file(virtuosobackend.desktop.cmake ${CMAKE_CURRENT_BINARY_DIR}/virtuosobackend.desktop)
 
