@@ -47,16 +47,14 @@ namespace {
 
         QStringList libNames;
         if (libname.indexOf('.', pos) < 0) {
-            const char* const extList[] = { ".so", ".dylib", ".bundle", ".sl", ".dll", 0 };
+            const char* const extList[] = { ".so", ".dylib", ".bundle", ".sl", ".dll", "d.dll", 0 };
             for ( int i = 0; extList[i]; ++i ) {
                 if ( QLibrary::isLibrary( libname + extList[i] ) ) {
                     libNames.append( libname + extList[i] );
                 }
-#ifndef Q_OS_WIN
                 if ( QLibrary::isLibrary( QLatin1String( "lib" ) + libname + extList[i] ) ) {
                     libNames.append( QLatin1String( "lib" ) + libname + extList[i] );
                 }
-#endif
             }
         }
         else {
@@ -130,8 +128,10 @@ QStringList Soprano::envDirList( const char* var )
 QStringList Soprano::libDirs()
 {
     QStringList paths = QCoreApplication::libraryPaths();
-#ifndef Q_OS_WIN
     paths << QLatin1String( SOPRANO_PREFIX"/lib" );
+#ifdef Q_OS_WIN
+    paths << QLatin1String( SOPRANO_PREFIX"/bin" );
+#else
     paths << QLatin1String( "/usr/lib" );
     paths << QLatin1String( "/usr/local/lib" );
     paths += Soprano::envDirList( "LD_LIBRARY_PATH" );

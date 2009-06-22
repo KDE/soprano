@@ -50,21 +50,9 @@ namespace {
 
     QStringList pluginFileSearchPaths() {
         QStringList searchPaths;
-#ifdef Q_OS_WIN
-        // on windows Soprano is not installed in a default location
-        // as on linux/unix systems. Thus, we search a variaty of
-        // locations for plugins
-        searchPaths << QCoreApplication::applicationDirPath()
-                    << QCoreApplication::libraryPaths();
-        foreach( const QString& p, searchPaths ) {
-            searchPaths << p + QLatin1String( "/soprano" );
-            searchPaths << p + QLatin1String( "/plugins" );
-        }
-#else
         foreach( const QString& p, Soprano::dataDirs() ) {
             searchPaths << ( p + QLatin1String( "/soprano/plugins" ) );
         }
-#endif
         return searchPaths;
     }
 }
