@@ -158,6 +158,7 @@ add_subdirectory(includes)
 if(SOPRANO_BUILD_TESTS)
   add_subdirectory(test) 
 endif(SOPRANO_BUILD_TESTS)
+add_subdirectory(cmake)
 
 
 ##################  create pkgconfig file  ################################

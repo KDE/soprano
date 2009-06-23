@@ -3,7 +3,7 @@
  * $Id: sourceheader 511311 2006-02-19 14:51:05Z trueg $
  *
  * This file is part of the Soprano project.
- * Copyright (C) 2007 Sebastian Trueg <trueg@kde.org>
+ * Copyright (C) 2007-2009 Sebastian Trueg <trueg@kde.org>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,6 +21,8 @@
 #include <QtCore/QRegExp>
 
 #include "soprano-tools-config.h"
+
+#include "modelmonitor.h"
 
 #include "../soprano/statementiterator.h"
 #include "../soprano/queryresultiterator.h"
@@ -43,9 +45,118 @@
 #endif
 #include "../server/sparql/sparqlmodel.h"
 
+#include <signal.h>
+
 using namespace Soprano;
 
 namespace {
+    ModelMonitor* s_monitor = 0;
+
+#ifndef Q_OS_WIN
+    void signalHandler( int signal )
+    {
+        switch( signal ) {
+        case SIGHUP:
+        case SIGQUIT:
+        case SIGINT:
+            // shut the monitor down gracefully so we can cleanup
+            // afterwards
+            if ( s_monitor )
+                s_monitor->stopMonitoring();
+            else
+                exit( 2 );
+        }
+    }
+#endif
+
+    class CmdLineArgs
+    {
+    public:
+        static bool parseCmdLine( CmdLineArgs& a, const QStringList& args, const QHash<QString, bool>& allowed ) {
+            int i = 1;
+            bool optionParsing = true;
+            QTextStream errStream(stderr);
+            while ( i < args.count() ) {
+                if ( args[i].startsWith( "--" ) ) {
+                    if ( !optionParsing ) {
+                        return false;
+                    }
+
+                    QString name = args[i].mid( 2 );
+                    if ( name.length() == 0 ) {
+                        return false;
+                    }
+
+                    if ( allowed.contains( name ) ) {
+                        if ( !allowed[name] ) {
+                            a.m_options.append( name );
+                        }
+                        else if ( i+1 < args.count() ) {
+                            if ( !args[i+1].startsWith( "--" ) ) {
+                                a.m_settings[name] = args[++i];
+                            }
+                            else {
+                                errStream << "Missing parameter: " << name << endl << endl;
+                                return false;
+                            }
+                        }
+                        else {
+                            errStream << "Missing parameter: " << name << endl << endl;
+                            return false;
+                        }
+                    }
+                    else {
+                        errStream << "Invalid option: " << name << endl << endl;
+                        return false;
+                    }
+                }
+                else {
+                    optionParsing = false;
+
+                    a.m_args.append( args[i] );
+                }
+
+                ++i;
+            }
+
+            return true;
+        }
+
+        bool hasSetting( const QString& name ) const {
+            return m_settings.contains( name );
+        }
+
+        QString getSetting( const QString& name, const QString& defaultValue = QString() ) const {
+            if ( m_settings.contains( name ) ) {
+                return m_settings[name];
+            }
+            else {
+                return defaultValue;
+            }
+        }
+
+        bool optionSet( const QString& name ) const {
+            return m_options.contains( name );
+        }
+
+        int count() const {
+            return m_args.count();
+        }
+
+        QString operator[]( int i ) const {
+            return m_args[i];
+        }
+
+        QString arg( int i ) const {
+            return m_args[i];
+        }
+
+    private:
+        QHash<QString, QString> m_settings;
+        QStringList m_args;
+        QStringList m_options;
+    };
+
     void printStatementList( Soprano::StatementIterator it )
     {
         QTextStream outStream( stdout );
@@ -271,95 +382,6 @@ namespace {
     }
 
 
-    class CmdLineArgs
-    {
-    public:
-        static bool parseCmdLine( CmdLineArgs& a, const QStringList& args, const QHash<QString, bool>& allowed ) {
-            int i = 1;
-            bool optionParsing = true;
-            QTextStream errStream(stderr);
-            while ( i < args.count() ) {
-                if ( args[i].startsWith( "--" ) ) {
-                    if ( !optionParsing ) {
-                        return false;
-                    }
-
-                    QString name = args[i].mid( 2 );
-                    if ( name.length() == 0 ) {
-                        return false;
-                    }
-
-                    if ( allowed.contains( name ) ) {
-                        if ( !allowed[name] ) {
-                            a.m_options.append( name );
-                        }
-                        else if ( i+1 < args.count() ) {
-                            if ( !args[i+1].startsWith( "--" ) ) {
-                                a.m_settings[name] = args[++i];
-                            }
-                            else {
-                                errStream << "Missing parameter: " << name << endl << endl;
-                                return false;
-                            }
-                        }
-                        else {
-                            errStream << "Missing parameter: " << name << endl << endl;
-                            return false;
-                        }
-                    }
-                    else {
-                        errStream << "Invalid option: " << name << endl << endl;
-                        return false;
-                    }
-                }
-                else {
-                    optionParsing = false;
-
-                    a.m_args.append( args[i] );
-                }
-
-                ++i;
-            }
-
-            return true;
-        }
-
-        bool hasSetting( const QString& name ) const {
-            return m_settings.contains( name );
-        }
-
-        QString getSetting( const QString& name, const QString& defaultValue = QString() ) const {
-            if ( m_settings.contains( name ) ) {
-                return m_settings[name];
-            }
-            else {
-                return defaultValue;
-            }
-        }
-
-        bool optionSet( const QString& name ) const {
-            return m_options.contains( name );
-        }
-
-        int count() const {
-            return m_args.count();
-        }
-
-        QString operator[]( int i ) const {
-            return m_args[i];
-        }
-
-        QString arg( int i ) const {
-            return m_args[i];
-        }
-
-    private:
-        QHash<QString, QString> m_settings;
-        QStringList m_args;
-        QStringList m_options;
-    };
-
-
     int version()
     {
         QTextStream s( stdout );
@@ -452,14 +474,21 @@ namespace {
           << "                       Hint: sopranocmd automatically adds prefix definitions for standard namespaces such as RDF, " << endl
           << "                             RDFS, NRL, etc. if used in a SPARQL query." << endl
           << endl
-          << "   <command>           The command to perform. Can be one of 'add', 'remove', 'list', 'query', 'import', or 'export'." << endl << endl
-          << "   <parameters>        The parameters to the command." << endl
-          << "                       - For command 'query' this is a SPARQL query string." << endl
-          << "                       - For commands 'add' and 'remove' this is a list of 3 or 4 RDF node definitions." << endl
-          << "                       - For command 'list' this is an optional list of one to four node definitions." << endl
-          << "                       - For commands 'import' and 'export' this is a local file name to either parse or write to." << endl
-          << "                         For command 'export' an optional second parameter before the filename can define a construct" << endl
-          << "                         query to only select a subset to export." << endl << endl;
+          << "   <command>           The command to perform." << endl
+          << "                       - 'add':     Add a new statement. The parameters are a list of 3 or 4 nodes as defined below." << endl
+          << "                       - 'remove':  Remove one or more statements. The parameters are a list of up to 4 nodes which define" << endl
+          << "                                    the statement pattern to apply. Each statement mathing the pattern will be removed." << endl
+          << "                       - 'list':    List statements. As with 'remove' the parameters are a list of up to 4 nodes." << endl
+          << "                       - 'monitor': Monitor a remote model. sopranocmd will continue listing added and removed statements" << endl
+          << "                                    matching the statement pattern specified via the parameters until it is stopped. Be aware" << endl
+          << "                                    that some backends do not report every removed statement but only the remove pattern." << endl
+          << "                       - 'query':   Execute a query on the model and print the results. The paramter is the actual query to perform." << endl
+          << "                       - 'import':  Import a set of statements into the model. The parameter is a local filename to read the" << endl
+          << "                                    statements to import from." << endl
+          << "                       - 'export':  Export a set of statements to a file. The parameters are an optional SPARQL construct query" << endl
+          << "                                    which selects the statements to export (if not specified all statements are exported) and a local" << endl
+          << "                                    filename to write the exported statements to." << endl << endl
+          << "   <parameters>        The parameters to the command as specified above." << endl << endl;
 
         s << "   Nodes are defined in an N-Triples-like notation:" << endl
           << "   - Resouce nodes are defined in angle brackets." << endl
@@ -490,6 +519,15 @@ namespace {
 int main( int argc, char *argv[] )
 {
     QCoreApplication app( argc, argv );
+
+#ifndef Q_OS_WIN
+    struct sigaction sa;
+    ::memset( &sa, 0, sizeof( sa ) );
+    sa.sa_handler = signalHandler;
+    sigaction( SIGHUP, &sa, 0 );
+    sigaction( SIGINT, &sa, 0 );
+    sigaction( SIGQUIT, &sa, 0 );
+#endif
 
     QHash<QString, bool> allowedCmdLineArgs;
     allowedCmdLineArgs.insert( "model", true );
@@ -576,12 +614,16 @@ int main( int argc, char *argv[] )
     }
 
     QTextStream errStream(stderr);
-    Soprano::Client::TcpClient* tcpClient = 0;
-#ifdef BUILD_DBUS_SUPPORT
-    Soprano::Client::DBusClient* dbusClient = 0;
-#endif
-    Soprano::Client::LocalSocketClient* localSocketClient = 0;
+
+    //
+    // ====================================================================
+    // Create the Model
+    // ====================================================================
+    //
+
     Soprano::Model* model = 0;
+    bool isRemoteModel = false;
+
     if ( backendName.isEmpty() ) {
         if ( args.hasSetting( "sparql" ) ) {
             QUrl sparqlEndPoint = args.getSetting( "sparql" );
@@ -598,6 +640,7 @@ int main( int argc, char *argv[] )
                 sparqlModel->setPath( sparqlEndPoint.path() );
 
             model = sparqlModel;
+            isRemoteModel = true;
         }
         else if ( args.hasSetting( "port" ) ) {
             QHostAddress host = QHostAddress::LocalHost;
@@ -607,7 +650,7 @@ int main( int argc, char *argv[] )
                 host = args.getSetting( "host" );
             }
 
-            tcpClient = new Soprano::Client::TcpClient();
+            Soprano::Client::TcpClient* tcpClient = new Soprano::Client::TcpClient();
 
             if ( !tcpClient->connect( host, port ) ) {
                 errStream << "Failed to connect to server on port " << port << endl;
@@ -619,10 +662,11 @@ int main( int argc, char *argv[] )
                 delete tcpClient;
                 return 2;
             }
+            isRemoteModel = true;
         }
         else if ( args.hasSetting( "socket" ) ) {
             QString socketPath = args.getSetting( "socket" );
-            localSocketClient = new Soprano::Client::LocalSocketClient();
+            Soprano::Client::LocalSocketClient* localSocketClient = new Soprano::Client::LocalSocketClient();
             if ( !localSocketClient->connect( socketPath ) ) {
                 errStream << "Failed to contact Soprano server through socket at " << socketPath << endl;
                 delete localSocketClient;
@@ -633,11 +677,12 @@ int main( int argc, char *argv[] )
                 delete localSocketClient;
                 return 2;
             }
+            isRemoteModel = true;
         }
 #ifdef BUILD_DBUS_SUPPORT
         else if ( args.hasSetting( "dbus" ) ) {
             QString dbusService = args.getSetting( "dbus" );
-            dbusClient = new Soprano::Client::DBusClient( dbusService );
+            Soprano::Client::DBusClient* dbusClient = new Soprano::Client::DBusClient( dbusService );
             if ( !dbusClient->isValid() ) {
                 errStream << "Failed to contact Soprano dbus service at " << dbusService << endl;
                 delete dbusClient;
@@ -648,6 +693,7 @@ int main( int argc, char *argv[] )
                 delete dbusClient;
                 return 2;
             }
+            isRemoteModel = true;
         }
 #endif
         else if ( !file.isEmpty() ) {
@@ -717,6 +763,13 @@ int main( int argc, char *argv[] )
         return usage();
     }
 
+
+    //
+    // ====================================================================
+    // Create an optional index
+    // ====================================================================
+    //
+
 #ifdef BUILD_CLUCENE_INDEX
     if ( args.hasSetting( "index" ) ) {
         Index::IndexFilterModel* filterModel = new Index::IndexFilterModel( args.getSetting( "index" ), model );
@@ -724,6 +777,12 @@ int main( int argc, char *argv[] )
         model = filterModel;
     }
 #endif
+
+    //
+    // ====================================================================
+    // Execute the actual command
+    // ====================================================================
+    //
 
     int queryTime = 0;
 
@@ -806,6 +865,10 @@ int main( int argc, char *argv[] )
         }
 
         else {
+            //
+            // For all commands below (add, remove, list, monitor) we need a list of nodes as parameter
+            //
+
             if ( !args.hasSetting( "file" ) &&
                  args.hasSetting( "serialization" ) ) {
                 return usage( "Parameter --serialization does only make sense for commands 'import', 'export', and 'query'" );
@@ -845,27 +908,46 @@ int main( int argc, char *argv[] )
                 delete model;
                 return 1;
             }
+            if ( n4.isLiteral() ) {
+                errStream << "Context needs to be a resource or blank node." << endl;
+                delete model;
+                return 1;
+            }
+            Statement statement( n1, n2, n3, n4 );
 
             QTime time;
             time.start();
 
             if ( command == "list" ) {
-                Soprano::StatementIterator it = model->listStatements( Soprano::Statement( n1, n2, n3, n4 ) );
+                Soprano::StatementIterator it = model->listStatements( statement );
                 queryTime = time.elapsed();
                 printStatementList( it );
             }
             else if ( command == "add" ) {
-                if ( n1.isEmpty() || n2.isEmpty() || n3.isEmpty() ) {
+                if ( !statement.isValid() ) {
                     errStream << "At least subject, predicate, and object have to be defined." << endl;
                     delete model;
                     return 1;
                 }
-                model->addStatement( Soprano::Statement( n1, n2, n3, n4 ) );
+                model->addStatement( statement );
                 queryTime = time.elapsed();
             }
             else if ( command == "remove" ) {
-                model->removeAllStatements( Soprano::Statement( n1, n2, n3, n4 ) );
+                model->removeAllStatements( statement );
                 queryTime = time.elapsed();
+            }
+            else if ( command == "monitor" ) {
+                if ( !isRemoteModel ) {
+                    errStream << "Monitoring a non-local model does not make sense since no statements could be added or removed." << endl;
+                    return 1;
+                }
+
+                ModelMonitor monitor( model );
+                s_monitor = &monitor;
+                monitor.monitor( statement );
+
+                delete model;
+                return 0;
             }
             else {
                 errStream << "Unsupported command: " << command << endl;
@@ -876,12 +958,12 @@ int main( int argc, char *argv[] )
     }
 
     if ( !model->lastError() ) {
-        errStream << "Query time: " << QTime().addMSecs( queryTime ).toString( "hh:mm:ss.z" ) << endl;
+        errStream << "Execution time: " << QTime().addMSecs( queryTime ).toString( "hh:mm:ss.z" ) << endl;
         delete model;
         return 0;
     }
     else {
-        errStream << "Query failed: " << model->lastError() << endl;
+        errStream << "Execution failed: " << model->lastError() << endl;
         delete model;
         return 2;
     }

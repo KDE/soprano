@@ -325,7 +325,7 @@
  * API. When using the \p --export-module parameter the value is used to generate the macro (&lt;module&gt;_EXPORT)
  * and to generate the include file (&lt;module&gt;_export.h) which has to exist and define the macro.
  *
- * \sa \ref cmake_magic
+ * See \ref cmake_magic for simple integration of onto2vocabularyclass in the build system.
  */
 
 /**
@@ -406,21 +406,28 @@
  * \subsubsection cmake_magic Some CMake Magic
  *
  * %Soprano provides the simple \ref onto2vocabularyclass tool which can generate convinience namespaces such as Soprano::Vocabulary::RDF
- * from ontology files. With CMake it is rather simple to generate these namespaces on-the-fly instead of packaging the generated files.
+ * from ontology files. With CMake it is very simple to generate these namespaces on-the-fly instead of packaging the generated files.
  *
- * Imagine your code contains an ontology description in rdf+xml format named Foo (Foo Object Ontology) and you want to make it's classes and
- * properties accessible in the <em>MyStuff::Foo</em> namespace:
+ * Imagine ones code contains an ontology description in rdf+xml format named Foo (Foo Object Ontology) and you want to make it's classes and
+ * properties accessible in the <em>MyStuff::Foo</em> namespace. One simply includes the cmake macro provided by Soprano:
  *
  * \code
- * add_custom_command(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/foo.h ${CMAKE_CURRENT_BINARY_DIR}/foo.cpp
- *   COMMAND onto2vocabularyclass --name Foo --encoding rdfxml --namespace "MyStuff::Foo" --no-visibility-export foo.rdfs
- *   MAIN_DEPENDENCY foo.rdfs
- *   DEPENDS foo.rdfs
- * )
+ * include(SopranoAddOntology)
  * \endcode
  *
- * This will create a new command which creates the files \p foo.h and \p foo.cpp in the build directory. Just add them to the
- * list of source/header files and be done with it.
+ * And then uses it to add the generated files to the sources:
+ *
+ * \code
+ * soprano_add_ontology(foo_SOURCES ${CMAKE_CURRENT_BINARY_DIR}/foo.h "FOO" "Vocabulary")
+ * \endcode
+ *
+ * This will add a command to generate files foo.h and foo.cpp at build time and add the latter to the sources foo_SOURCES. The generated
+ * namespace will be named Vocabulary::FOO. It is optionally possible to make the namespace public API and export it by adding the VISIBILITY
+ * keyword:
+ *
+ * \code
+ * soprano_add_ontology(foo_SOURCES ${CMAKE_CURRENT_BINARY_DIR}/foo.h "FOO" "Vocabulary" VISIBILITY "foo")
+ * \endcode
  */
 
 // DOXYGEN_VERSION=2.3

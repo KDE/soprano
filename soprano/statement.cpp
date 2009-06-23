@@ -155,6 +155,6 @@ QDebug operator<<( QDebug s, const Soprano::Statement& sm )
 
 QTextStream& operator<<( QTextStream& s, const Soprano::Statement& sm )
 {
-    s << "[ " << sm.subject() << ", " << sm.predicate() << ", " << sm.object() << ", " << sm.context() << " ]";
+    s << sm.subject() << " " << sm.predicate() << " " << sm.object() << " " << sm.context();
     return s;
 }
