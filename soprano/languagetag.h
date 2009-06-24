@@ -26,6 +26,7 @@
 #include <QtCore/QTextStream>
 #include <QtCore/QLocale>
 #include <QtCore/QFlags>
+#include <QtCore/QMetaType>
 
 #include "soprano_export.h"
 
@@ -355,6 +356,7 @@ namespace Soprano
     SOPRANO_EXPORT uint qHash( const LanguageTag& node );
 }
 
+Q_DECLARE_METATYPE( Soprano::LanguageTag )
 Q_DECLARE_TYPEINFO( Soprano::LanguageTag, Q_MOVABLE_TYPE );
 
 Q_DECLARE_OPERATORS_FOR_FLAGS(Soprano::LanguageTag::LookupFlags)
