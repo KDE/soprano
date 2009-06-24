@@ -55,6 +55,7 @@ using lucene::document::Field;
 
 void Soprano::Index::CLuceneDocumentWrapper::addProperty( const TString& field, const TString& text, bool isUri )
 {
+    qDebug() << Q_FUNC_INFO << field << text << isUri;
     // FIXME: I think we should only index (and never store) the following:
     //        1. The predicate/literal combination itself
     //        2. Everything in the "text" or "content" or some other special field
