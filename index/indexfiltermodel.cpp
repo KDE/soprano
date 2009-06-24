@@ -118,8 +118,6 @@ Soprano::Error::ErrorCode Soprano::Index::IndexFilterModel::addStatement( const 
 {
 //    qDebug() << "IndexFilterModel::addStatement(" << statement << ") in thread " << QThread::currentThreadId();
     bool store = d->storeStatement( statement );
-if ( store && statement.object().isResource() )
-    qDebug() << "(IndexFilterModel) Indexing resource statement:" << statement;
 
     // TODO: avoid the containsStatement here. Can we tell clucene to ignore duplicates?
     if ( !store ||
