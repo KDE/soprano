@@ -314,7 +314,7 @@ namespace Soprano
          *            that basic (\link LanguageTag::MatchFilterBasic MatchFilterBasic\endlink)
          *            processing should be used.
          *
-         * \return the index of the matching language tag in \a priority, or
+         * \return the index of the matching language tag in \a choices, or
          *         < 0 if no tag matched.
          */
         static int lookup(
@@ -335,7 +335,7 @@ namespace Soprano
          *            that basic (\link LanguageTag::MatchFilterBasic MatchFilterBasic\endlink)
          *            processing should be used.
          *
-         * \return the index of the matching language tag in \a priority, or
+         * \return the index of the matching language tag in \a choices, or
          *         < 0 if no tag matched.
          *
          * \sa lookup(const QList<LanguageTag> &, const QList<LanguageTag> &, LookupFlags, MatchFilter)

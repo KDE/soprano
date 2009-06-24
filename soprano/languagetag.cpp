@@ -354,8 +354,12 @@ int Soprano::LanguageTag::lookup(
     QList<QStringList> splitChoices;
 
     Q_FOREACH (const LanguageTag& choice, choices) {
-        if (choice.toString() == constants()->matchWildcard) continue;
-        splitChoices.append(choice.subTags());
+        QString choiceString(choice.toString());
+        if (choiceString.isEmpty() || choiceString == constants()->matchWildcard) {
+            splitChoices.append(QStringList());
+        } else {
+            splitChoices.append(choice.subTags());
+        }
     }
 
     int choiceCount(splitChoices.size());
@@ -368,6 +372,8 @@ int Soprano::LanguageTag::lookup(
         do {
             for (int i = 0; i < choiceCount; ++i) {
                 QStringList choiceSub(splitChoices[i]);
+
+                if (choiceSub.isEmpty()) continue;
 
                 bool matched;
                 switch (scheme) {
