@@ -181,11 +181,14 @@ public:
         int cnt = 0;
         lucene::document::DocumentFieldEnumeration* it = doc->fields();
         while ( it->hasMoreElements() ) {
-            it->nextElement();
-            ++cnt;
+            lucene::document::Field* field = it->nextElement();
+            TString fieldName( field->name(), true );
+            if ( fieldName != Index::idFieldName() &&
+                 fieldName != Index::textFieldName() )
+                ++cnt;
         }
         delete it;
-        return cnt <= 2;
+        return cnt == 0;
     }
 
     lucene::document::Document* getDocument( const Node& resource ) {

@@ -2,6 +2,8 @@
 	* Fixed plugins to build as MODULEs instead of SHARED (makes proper "plugins" on non-ELF systems)
 	* Always return an invalid iterator if IndexFilterModel::executeQuery failed. This will prevent
           a deadlock in Nepomuk where the iterator would never be unregistered.
+	* Fixed a bug in the CLuceneIndex which would fail to save an indexed resource object if it was
+	  the first to be added (using setForceIndexPredicates)
 
 2.2.3
 	* Fixed build system for tests (thanks to Greg Beauchesne)
