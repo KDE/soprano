@@ -53,7 +53,7 @@ else(WIN32)
 endif(WIN32)
 
 install(FILES
-  openrdf-sesame-2.1.4-onejar.jar
+  openrdf-sesame-2.2.4-onejar.jar
   slf4j-api-1.5.5.jar
   slf4j-simple-1.5.5.jar
   SopranoSesame2Wrapper.class

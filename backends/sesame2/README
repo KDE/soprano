@@ -11,7 +11,7 @@ slf4j-1.5.5.tar.gz
 
 The Sesame2 sources are not bundled. They can be retrieved 
 from the Aduna SVN server:
-  http://repo.aduna-software.org/svn/org.openrdf/sesame/tags/2.1.4/
+  http://repo.aduna-software.org/svn/org.openrdf/sesame/tags/2.2.4/
 
 
 Sebastian Trueg <trueg@kde.org>               30. July 2008
