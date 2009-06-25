@@ -42,12 +42,12 @@ namespace Soprano
      * \brief Wraps one setting for Model creation.
      *
      * A BackendSetting consists of an option type and an option value. The option type can either be a predefined
-     * value from Soprano::BackendOption or a user defined string value that depends on the Backend implementation. In the 
+     * value from Soprano::BackendOption or a user defined string value that depends on the Backend implementation. In the
      * latter case option has to be set to Soprano::BackendOptionUser.
      *
-     * \sa Backend::createModel(), BackendSettings, isOptionInSettings, settingInSettings, valueInSettings
-     *
      * \author Sebastian Trueg <trueg@kde.org>
+     *
+     * \sa Backend::createModel()<br/>BackendSettings
      */
     class SOPRANO_EXPORT BackendSetting
     {
@@ -89,7 +89,7 @@ namespace Soprano
         BackendSetting& operator=( const BackendSetting& other );
 
         /**
-         * The option that this setting sets. If Soprano::BackendOptionUser 
+         * The option that this setting sets. If Soprano::BackendOptionUser
          * the option is identified by userOptionName().
          */
         BackendOption option() const;
@@ -131,6 +131,8 @@ namespace Soprano
      *
      * \return \p true if the option is defined.
      *
+     * \relates BackendSetting
+     *
      * \since 2.2
      */
     SOPRANO_EXPORT bool isOptionInSettings( const BackendSettings& settings, BackendOption option, const QString& userOptionName = QString() );
@@ -144,6 +146,8 @@ namespace Soprano
      * defines the user option to be extracted.
      *
      * \return The extracted setting.
+     *
+     * \relates BackendSetting
      *
      * \since 2.2
      */
@@ -159,6 +163,8 @@ namespace Soprano
      *
      * \return The value of the specified option or an invalid variant if the set
      * does not contain the option.
+     *
+     * \relates BackendSetting
      *
      * \since 2.2
      */
@@ -216,7 +222,7 @@ namespace Soprano
 
         /**
          * Each backend can support a set of features. Backends without any features do not make much sense.
-         * If the features include Soprano::BackendFeatureUser additional user features not defined in 
+         * If the features include Soprano::BackendFeatureUser additional user features not defined in
          * Backend::BackendFeature can be supported via supportedUserFeatures().
          *
          * \return A combination of Soprano::BackendFeature values.
