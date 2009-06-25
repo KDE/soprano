@@ -115,6 +115,7 @@ EXCLUDE                = ${soprano_SOURCE_DIR}/soprano/datetime.h \
                          ${soprano_SOURCE_DIR}/soprano/desktopfile.h \
                          ${soprano_SOURCE_DIR}/soprano/sopranopluginfile.h \
                          ${soprano_SOURCE_DIR}/soprano/pluginstub.h \
+                         ${soprano_SOURCE_DIR}/soprano/sopranodirs.h \
                          ${soprano_SOURCE_DIR}/soprano/util/mutexiteratorbase.h \
                          ${soprano_SOURCE_DIR}/soprano/util/mutexnodeiteratorbackend.h \
                          ${soprano_SOURCE_DIR}/soprano/util/mutexstatementiteratorbackend.h \
