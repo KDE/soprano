@@ -360,7 +360,10 @@ Soprano::Node Soprano::ODBC::QueryResult::getData( int colNum )
                 else if ( type == Virtuoso::fakeTimeType() )
                     type = Soprano::Vocabulary::XMLSchema::time();
 
-                node = Node( LiteralValue::fromString( QString::fromUtf8( reinterpret_cast<const char*>( data ) ), type ), lang );
+                if ( type.isEmpty() )
+                    node = Node( LiteralValue::createPlainLiteral( QString::fromUtf8( reinterpret_cast<const char*>( data ) ), lang ) );
+                else
+                    node = Node( LiteralValue::fromString( QString::fromUtf8( reinterpret_cast<const char*>( data ) ), type ) );
             }
             break;
         }
@@ -384,7 +387,7 @@ Soprano::Node Soprano::ODBC::QueryResult::getData( int colNum )
         case DV_DATE:
         case DV_TIME:
         case DV_DATETIME: {
-            qDebug() << "datetime data:" << ( const char* )data;
+//            qDebug() << "datetime data:" << ( const char* )data;
             QUrl type;
             switch( dv_dt_type ) {
             case DT_TYPE_DATE:
