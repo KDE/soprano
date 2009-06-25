@@ -198,8 +198,8 @@ bool Soprano::Virtuoso::BackendPlugin::isAvailable() const
         qDebug() << Q_FUNC_INFO << "Failed to determine version of the Virtuoso server at" << virtuosoBin;
         return false;
     }
-    if ( vs < QLatin1String( "5.0.10" ) ) {
-        qDebug() << Q_FUNC_INFO << "Minimum Virtuoso version is 5.0.10." << virtuosoBin << "has version" << vs;
+    if ( vs < QLatin1String( "5.0.11" ) ) {
+        qDebug() << Q_FUNC_INFO << "Minimum Virtuoso version is 5.0.11." << virtuosoBin << "has version" << vs;
         return false;
     }
 
