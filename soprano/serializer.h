@@ -27,6 +27,9 @@
 #include "error.h"
 
 #include <QtCore/QObject>
+#include <QtCore/QHash>
+#include <QtCore/QUrl>
+#include <QtCore/QString>
 
 class QTextStream;
 
@@ -70,7 +73,7 @@ namespace Soprano
         /**
          * The serialiazation types supported by this serializer.
          * \return A combination of Soprano::RdfSerialization types. If
-         * the list contains Soprano::SerializationUser the serializer 
+         * the list contains Soprano::SerializationUser the serializer
          * supports additional RDF serialiazations not
          * officially supported by %Soprano.
          */
@@ -112,6 +115,36 @@ namespace Soprano
          * \return \p true if the %serialization was successful,  false otherwise.
          */
         virtual bool serialize( StatementIterator it, QTextStream& stream, RdfSerialization serialization, const QString& userSerialization = QString() ) const = 0;
+
+        /**
+         * Add a prefix to be used by the serializer.
+         *
+         * Be aware that serializer instances are reused. Thus, it is highly recommended to clear prefixes after using the Serializer.
+         * A future version of %Soprano will have a revised %Serializer API which handles this issue more effective.
+         *
+         * Method is const for historical reasons.
+         *
+         * \since 2.3
+         */
+        void addPrefix( const QString& qname, const QUrl& uri ) const;
+
+        /**
+         * Clear all prefixes set via addPrefix.
+         *
+         * Method is const for historical reasons.
+         *
+         * \since 2.3
+         */
+        void clearPrefixes() const;
+
+        /**
+         * Retrieve all prefixes set via addPrefix.
+         *
+         * \return a QHash containing of the prefixe qnames and their URIs.
+         *
+         * \since 2.3
+         */
+        QHash<QString, QUrl> prefixes() const;
 
     protected:
         Serializer( const QString& name );

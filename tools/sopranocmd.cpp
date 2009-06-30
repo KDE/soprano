@@ -305,9 +305,20 @@ namespace {
 
     bool serializeData( Soprano::StatementIterator data, QTextStream& stream, const QString& serialization )
     {
-        const Soprano::Serializer* serializer = Soprano::PluginManager::instance()->discoverSerializerForSerialization( Soprano::mimeTypeToSerialization( serialization ), serialization );
+        const Soprano::Serializer* serializer
+            = Soprano::PluginManager::instance()->discoverSerializerForSerialization( Soprano::mimeTypeToSerialization( serialization ),
+                                                                                      serialization );
 
         if ( serializer ) {
+            //
+            // As we support a bunch of default prefixes in queries, we do so with serialization
+            //
+            serializer->addPrefix( "rdf", Soprano::Vocabulary::RDF::rdfNamespace() );
+            serializer->addPrefix( "rdfs", Soprano::Vocabulary::RDFS::rdfsNamespace() );
+            serializer->addPrefix( "xsd", Soprano::Vocabulary::XMLSchema::xsdNamespace() );
+            serializer->addPrefix( "nrl", Soprano::Vocabulary::NRL::nrlNamespace() );
+            serializer->addPrefix( "nao", Soprano::Vocabulary::NAO::naoNamespace() );
+
             if ( serializer->serialize( data, stream, Soprano::mimeTypeToSerialization( serialization ), serialization ) ) {
                 QTextStream s( stdout );
                 s << "Successfully exported model." << endl;
@@ -342,9 +353,15 @@ namespace {
     }
 
 
-    Soprano::Model* createMemoryModel()
+    Soprano::Model* createMemoryModel( const QString& backendName = QString() )
     {
-        const Soprano::Backend* backend = PluginManager::instance()->discoverBackendByFeatures( BackendFeatureStorageMemory );
+        const Soprano::Backend* backend = 0;
+        if ( !backendName.isEmpty() ) {
+            backend = PluginManager::instance()->discoverBackendByName( backendName );
+        }
+        else {
+            backend = PluginManager::instance()->discoverBackendByFeatures( BackendFeatureStorageMemory );
+        }
         if ( backend )
             return backend->createModel( QList<BackendSetting>() << BackendSetting( BackendOptionStorageMemory ) );
         else
@@ -585,7 +602,6 @@ int main( int argc, char *argv[] )
 
     if ( args.hasSetting( "file" ) &&
          ( args.hasSetting( "dbus" ) ||
-           args.hasSetting( "backend" ) ||
            args.hasSetting( "socket" ) ||
            args.hasSetting( "sparql" ) ||
            args.hasSetting( "model" ) ||
@@ -624,96 +640,89 @@ int main( int argc, char *argv[] )
     Soprano::Model* model = 0;
     bool isRemoteModel = false;
 
-    if ( backendName.isEmpty() ) {
-        if ( args.hasSetting( "sparql" ) ) {
-            QUrl sparqlEndPoint = args.getSetting( "sparql" );
-            QString userName = args.getSetting( "username", sparqlEndPoint.userName() );
-            QString password = args.getSetting( "password", sparqlEndPoint.password() );
+    if ( args.hasSetting( "sparql" ) ) {
+        QUrl sparqlEndPoint = args.getSetting( "sparql" );
+        QString userName = args.getSetting( "username", sparqlEndPoint.userName() );
+        QString password = args.getSetting( "password", sparqlEndPoint.password() );
 
-            quint16 port = sparqlEndPoint.port( 80 );
-            if ( args.hasSetting( "port" ) )
-                port = args.getSetting( "port" ).toInt();
-
-            Soprano::Client::SparqlModel* sparqlModel = new Soprano::Client::SparqlModel( sparqlEndPoint.host(), port,
-                                                                                          userName, password );
-            if ( !sparqlEndPoint.path().isEmpty() )
-                sparqlModel->setPath( sparqlEndPoint.path() );
-
-            model = sparqlModel;
-            isRemoteModel = true;
-        }
-        else if ( args.hasSetting( "port" ) ) {
-            QHostAddress host = QHostAddress::LocalHost;
-            quint16 port = Soprano::Client::TcpClient::DEFAULT_PORT;
+        quint16 port = sparqlEndPoint.port( 80 );
+        if ( args.hasSetting( "port" ) )
             port = args.getSetting( "port" ).toInt();
-            if ( args.hasSetting( "host" ) ) {
-                host = args.getSetting( "host" );
-            }
 
-            Soprano::Client::TcpClient* tcpClient = new Soprano::Client::TcpClient();
+        Soprano::Client::SparqlModel* sparqlModel = new Soprano::Client::SparqlModel( sparqlEndPoint.host(), port,
+                                                                                      userName, password );
+        if ( !sparqlEndPoint.path().isEmpty() )
+            sparqlModel->setPath( sparqlEndPoint.path() );
 
-            if ( !tcpClient->connect( host, port ) ) {
-                errStream << "Failed to connect to server on port " << port << endl;
-                delete tcpClient;
-                return 3;
-            }
-            if ( !( model = tcpClient->createModel( modelName ) ) ) {
-                errStream << "Failed to create Model: " << tcpClient->lastError() << endl;
-                delete tcpClient;
-                return 2;
-            }
-            isRemoteModel = true;
+        model = sparqlModel;
+        isRemoteModel = true;
+    }
+    else if ( args.hasSetting( "port" ) ) {
+        QHostAddress host = QHostAddress::LocalHost;
+        quint16 port = Soprano::Client::TcpClient::DEFAULT_PORT;
+        port = args.getSetting( "port" ).toInt();
+        if ( args.hasSetting( "host" ) ) {
+            host = args.getSetting( "host" );
         }
-        else if ( args.hasSetting( "socket" ) ) {
-            QString socketPath = args.getSetting( "socket" );
-            Soprano::Client::LocalSocketClient* localSocketClient = new Soprano::Client::LocalSocketClient();
-            if ( !localSocketClient->connect( socketPath ) ) {
-                errStream << "Failed to contact Soprano server through socket at " << socketPath << endl;
-                delete localSocketClient;
-                return 3;
-            }
-            if ( !( model = localSocketClient->createModel( modelName ) ) ) {
-                errStream << "Failed to create Model: " << localSocketClient->lastError() << endl;
-                delete localSocketClient;
-                return 2;
-            }
-            isRemoteModel = true;
+
+        Soprano::Client::TcpClient* tcpClient = new Soprano::Client::TcpClient();
+
+        if ( !tcpClient->connect( host, port ) ) {
+            errStream << "Failed to connect to server on port " << port << endl;
+            delete tcpClient;
+            return 3;
         }
+        if ( !( model = tcpClient->createModel( modelName ) ) ) {
+            errStream << "Failed to create Model: " << tcpClient->lastError() << endl;
+            delete tcpClient;
+            return 2;
+        }
+        isRemoteModel = true;
+    }
+    else if ( args.hasSetting( "socket" ) ) {
+        QString socketPath = args.getSetting( "socket" );
+        Soprano::Client::LocalSocketClient* localSocketClient = new Soprano::Client::LocalSocketClient();
+        if ( !localSocketClient->connect( socketPath ) ) {
+            errStream << "Failed to contact Soprano server through socket at " << socketPath << endl;
+            delete localSocketClient;
+            return 3;
+        }
+        if ( !( model = localSocketClient->createModel( modelName ) ) ) {
+            errStream << "Failed to create Model: " << localSocketClient->lastError() << endl;
+            delete localSocketClient;
+            return 2;
+        }
+        isRemoteModel = true;
+    }
 #ifdef BUILD_DBUS_SUPPORT
-        else if ( args.hasSetting( "dbus" ) ) {
-            QString dbusService = args.getSetting( "dbus" );
-            Soprano::Client::DBusClient* dbusClient = new Soprano::Client::DBusClient( dbusService );
-            if ( !dbusClient->isValid() ) {
-                errStream << "Failed to contact Soprano dbus service at " << dbusService << endl;
-                delete dbusClient;
-                return 3;
-            }
-            if ( !( model = dbusClient->createModel( modelName ) ) ) {
-                errStream << "Failed to create Model: " << dbusClient->lastError() << endl;
-                delete dbusClient;
-                return 2;
-            }
-            isRemoteModel = true;
+    else if ( args.hasSetting( "dbus" ) ) {
+        QString dbusService = args.getSetting( "dbus" );
+        Soprano::Client::DBusClient* dbusClient = new Soprano::Client::DBusClient( dbusService );
+        if ( !dbusClient->isValid() ) {
+            errStream << "Failed to contact Soprano dbus service at " << dbusService << endl;
+            delete dbusClient;
+            return 3;
         }
+        if ( !( model = dbusClient->createModel( modelName ) ) ) {
+            errStream << "Failed to create Model: " << dbusClient->lastError() << endl;
+            delete dbusClient;
+            return 2;
+        }
+        isRemoteModel = true;
+    }
 #endif
-        else if ( !file.isEmpty() ) {
-            if ( !( model = createMemoryModel() ) ) {
-                errStream << "Failed to create temporary model." << endl;
-                return 2;
-            }
-            if ( int r = importFile( model, file, serialization ) ) {
-                errStream << "Failed to parse " << file << endl;
-                delete model;
-                return r;
-            }
+    else if ( !file.isEmpty() ) {
+        if ( !( model = createMemoryModel( backendName ) ) ) {
+            errStream << "Failed to create temporary model." << endl;
+            return 2;
         }
-        else {
-            errStream << "Please specify a backend to be used or details on how to contact" << endl
-                      << "a soprano server." << endl;
-            return 4;
+        if ( int r = importFile( model, file, serialization ) ) {
+            errStream << "Failed to parse " << file << endl;
+            delete model;
+            return r;
         }
     }
-    else {
+    else if ( !backendName.isEmpty() ) {
         const Backend* backend = Soprano::PluginManager::instance()->discoverBackendByName( backendName );
         if ( !backend ) {
             errStream << "Failed to load backend " << backendName << endl;
@@ -751,6 +760,11 @@ int main( int argc, char *argv[] )
             errStream << "Failed to create Model: " << backend->lastError() << endl;
             return 2;
         }
+    }
+    else {
+        errStream << "Please specify a backend to be used or details on how to contact" << endl
+                  << "a soprano server." << endl;
+        return 4;
     }
 
     int firstArg = 0;

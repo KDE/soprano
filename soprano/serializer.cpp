@@ -28,6 +28,8 @@
 
 class Soprano::Serializer::Private
 {
+public:
+    QHash<QString, QUrl> prefixes;
 };
 
 
@@ -58,4 +60,22 @@ bool Soprano::Serializer::supportsSerialization( RdfSerialization s, const QStri
 QStringList Soprano::Serializer::supportedUserSerializations() const
 {
     return QStringList();
+}
+
+
+void Soprano::Serializer::addPrefix( const QString& qname, const QUrl& uri ) const
+{
+    d->prefixes.insert( qname, uri );
+}
+
+
+void Soprano::Serializer::clearPrefixes() const
+{
+    d->prefixes.clear();
+}
+
+
+QHash<QString, QUrl> Soprano::Serializer::prefixes() const
+{
+    return d->prefixes;
 }

@@ -24,6 +24,8 @@
 	* Prevent Model::removeContext to remove empty contexts, i.e. the whole database.
 	* Statement::operator<<(QTextStream) now uses a simpler format (only spaces between nodes and no brackets)
 	* Updated Sesame2 to 2.2.4
+	* Added prefix handling to the Serializer API. For a future Soprano version the Serializer API has to be 
+	  replaced with something more powerful.
 	
 2.2
 	* The AsyncModel now has a "real" asyncroneous mode which uses multiple threads to execute the

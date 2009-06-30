@@ -198,6 +198,15 @@ bool Soprano::Raptor::Serializer::serialize( StatementIterator it,
         return false;
     }
 
+    // add prefixes
+    QHash<QString, QUrl> namespaces = prefixes();
+    for ( QHash<QString, QUrl>::const_iterator pfit = namespaces.constBegin();
+          pfit != namespaces.constEnd(); ++pfit ) {
+        librdf_serializer_set_namespace( serializer,
+                                         librdf_new_uri( world.worldPtr(), reinterpret_cast<unsigned char*>( pfit.value().toEncoded().data() ) ),
+                                         pfit.key().toLatin1().data() );
+    }
+
     bool success = true;
 
 #ifdef HAVE_IOSTREAM_HANDLER2
