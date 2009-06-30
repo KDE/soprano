@@ -3,6 +3,14 @@
 # to the specified sources list.
 # The files are generated in the current binary dir
 #
+# soprano_add_ontology( SOURCES
+#            ONTOLOGY_FILE
+#            ONTOLOGY_NAME
+#            NAMESPACE
+#            ENCODING
+#            [VISIBLITY VISIBILITY_NAME]
+# )
+#
 # As an optional argument one can add VISIBILITY <visibility-name>
 #
 # Example:

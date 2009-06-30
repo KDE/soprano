@@ -406,7 +406,17 @@
  * \subsubsection cmake_magic Some CMake Magic
  *
  * %Soprano provides the simple \ref onto2vocabularyclass tool which can generate convinience namespaces such as Soprano::Vocabulary::RDF
- * from ontology files. With CMake it is very simple to generate these namespaces on-the-fly instead of packaging the generated files.
+ * from ontology files. With CMake it is very simple to generate these namespaces on-the-fly instead of packaging the generated files by
+ * using the SopranoAddOntology macro provided by %Soprano:
+ *
+ * \code
+ * soprano_add_ontology(SOURCES
+ *                      ONTOLOGY_FILE
+ *                      ONTOLOGY_NAME
+ *                      NAMESPACE
+ *                      ENCODING
+ *                      [VISIBLITY VISIBILITY_NAME])
+ * \endcode
  *
  * Imagine ones code contains an ontology description in rdf+xml format named Foo (Foo Object Ontology) and you want to make it's classes and
  * properties accessible in the <em>MyStuff::Foo</em> namespace. One simply includes the cmake macro provided by Soprano:
@@ -418,7 +428,7 @@
  * And then uses it to add the generated files to the sources:
  *
  * \code
- * soprano_add_ontology(foo_SOURCES ${CMAKE_CURRENT_BINARY_DIR}/foo.h "FOO" "Vocabulary")
+ * soprano_add_ontology(foo_SOURCES ${CMAKE_CURRENT_BINARY_DIR}/foo.rdfs "FOO" "Vocabulary" "rdfxml")
  * \endcode
  *
  * This will add a command to generate files foo.h and foo.cpp at build time and add the latter to the sources foo_SOURCES. The generated
@@ -426,7 +436,7 @@
  * keyword:
  *
  * \code
- * soprano_add_ontology(foo_SOURCES ${CMAKE_CURRENT_BINARY_DIR}/foo.h "FOO" "Vocabulary" VISIBILITY "foo")
+ * soprano_add_ontology(foo_SOURCES ${CMAKE_CURRENT_BINARY_DIR}/foo.rdfs "FOO" "Vocabulary" "rdfxml" VISIBILITY "foo")
  * \endcode
  */
 
