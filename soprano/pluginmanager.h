@@ -214,6 +214,8 @@ namespace Soprano
 
         class Private;
         Private* const d;
+
+        friend class PluginManagerFactory;
     };
 }
 

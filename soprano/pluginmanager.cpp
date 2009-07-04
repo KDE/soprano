@@ -359,16 +359,23 @@ void Soprano::PluginManager::setPluginSearchPath( const QStringList& paths, bool
 }
 
 
+namespace Soprano {
+    /**
+     * Little hack class to ensure BC (cannot make PluginManager constructor public)
+     * and at the same time use Q_GLOBAL_STATIC
+     */
+    class PluginManagerFactory
+    {
+    public:
+        Soprano::PluginManager manager;
+    };
+}
+
+Q_GLOBAL_STATIC( Soprano::PluginManagerFactory, s_pluginManagerFactory )
+
 Soprano::PluginManager* Soprano::PluginManager::instance()
 {
-    static PluginManager* s_instance = 0;
-    static QMutex s_mutex;
-    s_mutex.lock();
-    if( !s_instance ) {
-        s_instance = new PluginManager();
-    }
-    s_mutex.unlock();
-    return s_instance;
+    return &s_pluginManagerFactory()->manager;
 }
 
 #include "pluginmanager.moc"

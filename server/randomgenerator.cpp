@@ -1,7 +1,7 @@
 /*
  * This file is part of Soprano Project.
  *
- * Copyright (C) 2007 Sebastian Trueg <trueg@kde.org>
+ * Copyright (C) 2007-2009 Sebastian Trueg <trueg@kde.org>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -22,24 +22,22 @@
 #include "randomgenerator.h"
 
 #include <QtCore/QMutex>
+#include <QtCore/QObject>
 
 #include <stdlib.h>
 #include <time.h>
 
 
-static QMutex s_creationMutex;
-static Soprano::RandomGenerator* s_instance = 0;
+Q_GLOBAL_STATIC( Soprano::RandomGenerator, s_randomGenerator )
 
 Soprano::RandomGenerator::RandomGenerator()
 {
-    s_instance = this;
     srand( time(0) );
 }
 
 
 Soprano::RandomGenerator::~RandomGenerator()
 {
-    s_instance = 0;
 }
 
 
@@ -55,11 +53,5 @@ int Soprano::RandomGenerator::randomInt()
 
 Soprano::RandomGenerator* Soprano::RandomGenerator::instance()
 {
-    s_creationMutex.lock();
-    if ( !s_instance ) {
-        s_instance = new RandomGenerator();
-    }
-    s_creationMutex.unlock();
-
-    return s_instance;
+    return s_randomGenerator();
 }
