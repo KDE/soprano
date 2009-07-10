@@ -37,6 +37,9 @@ class MultiThreadingTest : public QObject
 {
 Q_OBJECT
 
+public:
+    virtual ~MultiThreadingTest() {}
+
 private Q_SLOTS:
     void initTestCase();
     void testNodeIterator_data();
