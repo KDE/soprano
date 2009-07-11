@@ -1,4 +1,4 @@
-/* 
+/*
  * This file is part of Soprano Project
  *
  * Copyright (C) 2006 Daniele Galdi <daniele.galdi@gmail.com>
@@ -40,9 +40,13 @@ namespace Soprano {
      *
      * \return the backend specified by \a name or null if could not
      * be found.
+     *
+     * \sa PluginManager::discoverBackendByName()
+     *
+     * \relatesalso PluginManager
      */
     SOPRANO_EXPORT const Backend* discoverBackendByName( const QString& name );
-  
+
     /**
      * Find a backend plugin by its features.
      *
@@ -52,14 +56,27 @@ namespace Soprano {
      * \return a backend that supports the features defined in \a features.
      *
      * \sa PluginManager::discoverBackendByFeatures()
+     *
+     * \relatesalso PluginManager
      */
     SOPRANO_EXPORT const Backend* discoverBackendByFeatures( BackendFeatures features, const QStringList& userFeatures = QStringList() );
 
     /**
+     * Set the Backend to globally use in createModel.
+     *
      * By default and if available backend "redland" is used.
+     *
+     * \relatesalso PluginManager
      */
     SOPRANO_EXPORT void setUsedBackend( const Backend* );
 
+    /**
+     * Retrieve the Backend to globally use in createModel.
+     *
+     * Can be set via setUsedBackend.
+     *
+     * \relatesalso PluginManager
+     */
     SOPRANO_EXPORT const Backend* usedBackend();
 
     /**
@@ -71,6 +88,8 @@ namespace Soprano {
      * however, define their own default settings.
      *
      * \sa Model, Backend::createModel, BackendSetting
+     *
+     * \relatesalso Backend
      */
     SOPRANO_EXPORT Model* createModel( const BackendSettings& settings = BackendSettings() );
 }
