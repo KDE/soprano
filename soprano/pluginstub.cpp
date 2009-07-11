@@ -40,8 +40,9 @@ public:
     QObject* plugin;
 
     ~Private() {
-        delete plugin;
         // FIXME: unload the lib
+        // NOTE: This won't work as Qt might already have statically destroyed
+        //       the plugin once this destructor is reached.
     }
 };
 
