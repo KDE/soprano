@@ -9,7 +9,3 @@ endif(REDLAND_FOUND)
 if(BUILD_SESAME2_BACKEND)
   add_subdirectory(sesame2)
 endif(BUILD_SESAME2_BACKEND)
-
-if(BUILD_VIRTUOSO_BACKEND)
-  add_subdirectory(virtuoso)
-endif(BUILD_VIRTUOSO_BACKEND)

@@ -203,13 +203,6 @@ qt4_automoc(${asyncmodeltest_SRC})
 add_executable(asyncmodeltest ${asyncmodeltest_SRC})
 target_link_libraries(asyncmodeltest soprano ${QT_QTCORE_LIBRARY} ${QT_QTTEST_LIBRARY})
 
-if(BUILD_VIRTUOSO_BACKEND)
-  qt4_automoc(virtuosobackendtest virtuosobackendtest.cpp)
-  add_executable(virtuosobackendtest virtuosobackendtest.cpp)
-  target_link_libraries(virtuosobackendtest sopranomodeltest)
-  add_test(virtuosobackendtest virtuosobackendtest)
-endif(BUILD_VIRTUOSO_BACKEND)
-
 # graph model tests
 qt4_automoc(graphtest graphtest.cpp)
 add_executable(graphtest graphtest.cpp)

@@ -116,7 +116,6 @@
  *
  * \li \subpage soprano_backend_redland
  * \li \subpage soprano_backend_sesame2
- * \li \subpage soprano_backend_virtuoso
  */
 
 /**
