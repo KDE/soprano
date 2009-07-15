@@ -12,7 +12,6 @@ Soprano has the following features:
 * Backend plugins for:
   - Redland
   - Sesame2
-  - Virtuoso
 * Parser and serializer plugins for:
   - raptor (rdf+xml, turtle, trig, nTriples)
   - nQuads

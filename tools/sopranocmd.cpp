@@ -466,10 +466,10 @@ namespace {
           << "                       (only applicable when querying against the Soprano server.)" << endl
           << endl
           << "   --username <name>   Specify the username for the Soprano backend." << endl
-          << "                       (only applicable when using a virtuoso backend or a sparql endpoint.)" << endl
+          << "                       (only applicable when using a sparql endpoint.)" << endl
           << endl
           << "   --password <word>   Specify the password for the Soprano backend." << endl
-          << "                       (only applicable when using a virtuoso backend or a sparql endpoint.)" << endl
+          << "                       (only applicable when using a sparql endpoint.)" << endl
           << endl
           << "   --socket <path>     Specify the path to the local socket the Soprano server is running on." << endl
           << "                       (only applicable when querying against the Soprano server.)" << endl
