@@ -49,10 +49,24 @@ namespace Soprano {
         class SOPRANO_EXPORT Rule
         {
         public:
+            /**
+             * Constructs an invalid rule
+             */
             Rule();
+
+            /**
+             * Copy constructor. Creates a shallow copy of \p other.
+             */
             Rule( const Rule& other );
+
+            /**
+             * Destructor
+             */
             ~Rule();
 
+            /**
+             * Assignment operator. Creates a shallow copy of \p other.
+             */
             Rule& operator=( const Rule& other );
 
             /**
@@ -63,6 +77,9 @@ namespace Soprano {
              */
             QList<StatementPattern> preconditions() const;
 
+            /**
+             * Add a precondition
+             */
             void addPrecondition( const StatementPattern& );
 
             /**
@@ -72,6 +89,9 @@ namespace Soprano {
              */
             StatementPattern effect() const;
 
+            /**
+             * Set the effect of the rule.
+             */
             void setEffect( const StatementPattern& );
 
             /**
@@ -90,7 +110,7 @@ namespace Soprano {
              *
              * The purpose of this method is to allow retricting the application of
              * a rule to one statement, i.e. a newly added one.
-             * 
+             *
              * \param statement The Statement to bind this rule to.
              *
              * \sa createSparqlQuery, bindEffect, bindPreconditions
@@ -141,6 +161,16 @@ namespace Soprano {
              * \sa bindToStatement, bindEffect
              */
             QList<Statement> bindPreconditions( const BindingSet& bindings ) const;
+
+            /**
+             * Check if a rule is valid.
+             *
+             * \return \p true if the rule is valid and can be used with the InferenceModel,
+             * \p false otherwise.
+             *
+             * \since 2.3
+             */
+            bool isValid() const;
 
         private:
             /**

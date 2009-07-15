@@ -52,6 +52,9 @@ namespace Soprano {
         class SOPRANO_EXPORT StatementPattern
         {
         public:
+            /**
+             * Creates an invalid pattern
+             */
             StatementPattern();
             StatementPattern( const NodePattern&, const NodePattern&, const NodePattern& );
             StatementPattern( const StatementPattern& );
@@ -66,6 +69,13 @@ namespace Soprano {
             bool match( const Statement& ) const;
 
             QString createSparqlGraphPattern( const BindingSet& bindings ) const;
+
+            /**
+             * \return \p true if the pattern is valid.
+             *
+             * \since 2.3
+             */
+            bool isValid() const;
 
         private:
             class Private;

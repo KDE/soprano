@@ -23,6 +23,8 @@
 #define _INFERENCE_RULE_PARSER_H_
 
 #include <QtCore/QString>
+#include <QtCore/QHash>
+#include <QtCore/QUrl>
 
 #include "soprano_export.h"
 
@@ -30,6 +32,7 @@ namespace Soprano {
     namespace Inference {
 
         class RuleSet;
+        class Rule;
 
         /**
          * \class RuleParser inferenceruleparser.h Soprano/Inference/RuleParser
@@ -46,9 +49,57 @@ namespace Soprano {
             RuleParser();
             ~RuleParser();
 
+            /**
+             * Parse rules from a file. The parsed rules
+             * can be accessed via rules().
+             *
+             * \return \p true on success, \p false otherwise.
+             */
             bool parseFile( const QString& path );
 
+            /**
+             * Parse a single rule from a string.
+             *
+             * \param line A single line defining the rule
+             *
+             * \return The parsed rule in case \p line is a valid
+             * rule line, an invalid rule otherwise. The parsed rule
+             * can also be accessed via rules().
+             *
+             * \since 2.3
+             */
+            Rule parseRule( const QString& line );
+
+            /**
+             * Retrieve the rules parsed in parseFile and parseRule
+             */
             RuleSet rules() const;
+
+            /**
+             * Add a prefix to use during rule parsing.
+             *
+             * \param qname The abbreviated name of the prefix
+             * \param uri The namespace to use for the prefix
+             *
+             * \since 2.3
+             */
+            void addPrefix( const QString& qname, const QUrl& uri );
+
+            /**
+             * Retrieve all prefixes set via addPrefix.
+             *
+             * \return a QHash containing of the prefixe qnames and their URIs.
+             *
+             * \since 2.3
+             */
+            QHash<QString, QUrl> prefixes() const;
+
+            /**
+             * Clear all parsed rules and prefixes.
+             *
+             * \since 2.3
+             */
+            void clear();
 
         private:
             class Private;

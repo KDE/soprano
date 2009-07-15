@@ -294,6 +294,12 @@ QList<Soprano::Statement> Soprano::Inference::Rule::bindPreconditions( const Bin
 }
 
 
+bool Soprano::Inference::Rule::isValid() const
+{
+    return !d->preconditions.isEmpty() && d->effect.isValid();
+}
+
+
 QDebug operator<<( QDebug s, const Soprano::Inference::Rule& rule )
 {
     s.nospace() << "[";

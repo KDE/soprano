@@ -17,7 +17,7 @@
 	  - New parameter --index which allows to wrap an IndexFilterModel around the actual Model.
 	  - New command 'monitor' which allows to monitor a remote repository for statementAdded and
 	    statementRemoved signals.
-	* New class Graph which is a simple based container for statements as a quick replacement for Model
+	* New class Graph which is a simple QSet based container for statements as a quick replacement for Model
 	  in case one wants to handle a small number of statements without query support.
 	* Fixed plugin loading on windows.
 	* Fixed a deadlock in the IndexFilterModel in case a query could not be parsed.
@@ -26,6 +26,7 @@
 	* Updated Sesame2 to 2.2.4
 	* Added prefix handling to the Serializer API. For a future Soprano version the Serializer API has to be 
 	  replaced with something more powerful.
+	* Improved inference rule handling in the rule parser
 	
 2.2
 	* The AsyncModel now has a "real" asyncroneous mode which uses multiple threads to execute the

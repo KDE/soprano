@@ -56,7 +56,7 @@ namespace Soprano {
             ~NodePattern();
 
             NodePattern& operator=( const NodePattern& );
-        
+
             bool isVariable() const;
 
             /**
@@ -81,6 +81,13 @@ namespace Soprano {
             bool match( const Node& node ) const;
 
             QString createSparqlNodePattern( const BindingSet& bindings ) const;
+
+            /**
+             * \return \p true if the pattern is valid.
+             *
+             * \since 2.3
+             */
+            bool isValid() const;
 
         private:
             class Private;

@@ -105,6 +105,12 @@ QString Soprano::Inference::StatementPattern::createSparqlGraphPattern( const Bi
 }
 
 
+bool Soprano::Inference::StatementPattern::isValid() const
+{
+    return d->subject.isValid() && d->predicate.isValid() && d->object.isValid();
+}
+
+
 QDebug operator<<( QDebug s, const Soprano::Inference::StatementPattern& pattern )
 {
     s.nospace() << "(" << pattern.subjectPattern() << " " << pattern.predicatePattern() << " " << pattern.objectPattern() << ")";

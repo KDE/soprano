@@ -50,8 +50,9 @@ private Q_SLOTS:
     void testPerformInferenceMulti();
     void testClearInference();
     void testPerformance();
-    void testRuleParser_data();
-    void testRuleParser();
+    void testParseRuleFile_data();
+    void testParseRuleFile();
+    void testParseRule();
     void cleanupTestCase();
 
 private:

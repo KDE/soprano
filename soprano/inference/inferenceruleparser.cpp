@@ -29,7 +29,7 @@
 #include <QtCore/QStringList>
 #include <QtCore/QTextStream>
 #include <QtCore/QFile>
-#include <QtCore/QMap>
+#include <QtCore/QHash>
 #include <QtCore/QList>
 #include <QtCore/QDebug>
 #include <QtCore/QUrl>
@@ -39,11 +39,10 @@ class Soprano::Inference::RuleParser::Private
 {
 public:
     Private()
-        : prefixLine( "(?:PREFIX|prefix)\\s+(\\S+)\\s+<(\\S+)>" ),
+        : prefixLine( "(?:PREFIX|prefix)\\s+(\\S+)\\:\\s+<(\\S+)>" ),
           ruleLine( "\\[" "\\s*" "(\\w+)\\:" "\\s*" "(\\([^\\)]+\\))" "(?:\\s*\\,\\s*(\\([^\\)]+\\)))*" "\\s*" "\\-\\>" "\\s*" "(\\([^\\)]+\\))" "\\s*" "\\]" ),
-          statementPattern( "\\(" "(\\?\\w|\\<\\S+\\>|[^\\<\\>\\s]+)" "\\s*" "(\\?\\w|\\<\\S+\\>|[^\\<\\>\\s]+)" "\\s*" "(\\?\\w|\\<\\S+\\>|[^\\<\\>\\s]+)" "\\)" ) {
+          statementPattern( "\\(" "(\\?\\w|\\<\\S+\\>|[^\\<\\>\\s]+|\\'[^\\']+\\'|[0-9]+|\\\".+\\\"\\^\\^\\<\\S+\\>)" "\\s*" "(\\?\\w|\\<\\S+\\>|[^\\<\\>\\s]+|\\'[^\\']+\\'|[0-9]+|\\\".+\\\"\\^\\^\\<\\S+\\>)" "\\s*" "(\\?\\w|\\<\\S+\\>|[^\\<\\>\\s]+|\\'[^\\']+\\'|[0-9]+|\\\".+\\\"\\^\\^\\<\\S+\\>)" "\\s*" "\\)" ) {
     }
-
 
     NodePattern parseNodePattern( const QString& s, bool* success ) {
         if ( s[0] == '?' ) {
@@ -55,7 +54,7 @@ public:
             return Soprano::Inference::NodePattern( Soprano::Node( QUrl( s.mid( 1, s.length()-2 ) ) ) );
         }
         else {
-            QString prefix = s.left( s.indexOf( ':' )+1 );
+            QString prefix = s.left( s.indexOf( ':' ) );
             if ( !prefixes.contains( prefix ) ) {
                 qDebug() << "Could not find prefix" << prefix;
                 *success = false;
@@ -63,7 +62,7 @@ public:
             }
             else {
                 *success = true;
-                return Soprano::Inference::NodePattern( Node( QUrl( prefixes[prefix] + s.mid( s.indexOf( ':' )+1 ) ) ) );
+                return Soprano::Inference::NodePattern( Node( QUrl( prefixes[prefix].toString() + s.mid( s.indexOf( ':' )+1 ) ) ) );
             }
         }
     }
@@ -88,7 +87,7 @@ public:
     }
 
     RuleSet rules;
-    QMap<QString, QString> prefixes;
+    QHash<QString, QUrl> prefixes;
 
     QRegExp prefixLine;
     QRegExp ruleLine;
@@ -110,48 +109,22 @@ Soprano::Inference::RuleParser::~RuleParser()
 
 bool Soprano::Inference::RuleParser::parseFile( const QString& path )
 {
-    // cleanup first
-    d->rules.clear();
-    d->prefixes.clear();
-
     QFile file( path );
     if ( file.open( QIODevice::ReadOnly ) ) {
         QTextStream s( &file );
         QString line;
         while ( !( line = s.readLine().trimmed() ).isNull() ) {
-            if ( line.startsWith( '#' ) ||
-                 line.isEmpty() ) {
-                // do nothing
-            }
-            else if ( d->prefixLine.exactMatch( line ) ) {
-                qDebug() << "Found prefix line:" << d->prefixLine.cap( 1 ) << "->" << d->prefixLine.cap( 2 );
-                d->prefixes.insert( d->prefixLine.cap( 1 ), d->prefixLine.cap( 2 ) );
-            }
-            else if ( d->ruleLine.exactMatch( line ) ) {
-                QString ruleName = d->ruleLine.cap( 1 );
-                Rule newRule;
-                bool success = true;
-
-                // start with the effect statement pattern
-                int effectPos = d->statementPattern.lastIndexIn( line );
-                newRule.setEffect( d->parseMatchedStatementPattern( &success ) );
-
-                // get out all the condition patterns
-                int pos = 0;
-                while ( ( pos = d->statementPattern.indexIn( line, pos ) ) != -1 &&
-                        pos < effectPos ) {
-                    newRule.addPrecondition( d->parseMatchedStatementPattern( &success ) );
-                    if ( !success ) {
-                        return false;
-                    }
-                    pos += d->statementPattern.matchedLength();
+            if ( !line.isEmpty() && !line.startsWith( '#' ) ) {
+                if ( d->prefixLine.exactMatch( line ) ) {
+                    qDebug() << "Found prefix line:" << d->prefixLine.cap( 1 ) << "->" << d->prefixLine.cap( 2 );
+                    d->prefixes.insert( d->prefixLine.cap( 1 ), d->prefixLine.cap( 2 ) );
                 }
-
-                d->rules.insert( ruleName, newRule );
-            }
-            else {
-                qDebug() << "Failed to parse line: " << line;
-                return false;
+                else {
+                    Rule rule = parseRule( line );
+                    if ( !rule.isValid() )
+                        return false;
+                    // else the rule is already stored in d->rules
+                }
             }
         }
 
@@ -164,7 +137,60 @@ bool Soprano::Inference::RuleParser::parseFile( const QString& path )
 }
 
 
+Soprano::Inference::Rule Soprano::Inference::RuleParser::parseRule( const QString& line )
+{
+    if ( d->ruleLine.exactMatch( line ) ) {
+        QString name = d->ruleLine.cap( 1 );
+        Rule newRule;
+        bool success = true;
+
+        // start with the effect statement pattern
+        int effectPos = d->statementPattern.lastIndexIn( line );
+        newRule.setEffect( d->parseMatchedStatementPattern( &success ) );
+        if ( !success )
+            return Rule();
+
+        // get out all the condition patterns
+        int pos = 0;
+        while ( ( pos = d->statementPattern.indexIn( line, pos ) ) != -1 &&
+                pos < effectPos ) {
+            newRule.addPrecondition( d->parseMatchedStatementPattern( &success ) );
+            if ( !success ) {
+                return Rule();
+            }
+            pos += d->statementPattern.matchedLength();
+        }
+
+        d->rules.insert( name, newRule );
+        return newRule;
+    }
+    else {
+        qDebug() << "Failed to parse line: " << line;
+        return Rule();
+    }
+}
+
+
 Soprano::Inference::RuleSet Soprano::Inference::RuleParser::rules() const
 {
     return d->rules;
+}
+
+
+void Soprano::Inference::RuleParser::addPrefix( const QString& qname, const QUrl& uri )
+{
+    d->prefixes.insert( qname, uri );
+}
+
+
+QHash<QString, QUrl> Soprano::Inference::RuleParser::prefixes() const
+{
+    return d->prefixes;
+}
+
+
+void Soprano::Inference::RuleParser::clear()
+{
+    d->rules.clear();
+    d->prefixes.clear();
 }

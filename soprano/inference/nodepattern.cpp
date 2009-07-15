@@ -132,6 +132,12 @@ QString Soprano::Inference::NodePattern::createSparqlNodePattern( const BindingS
 }
 
 
+bool Soprano::Inference::NodePattern::isValid() const
+{
+    return ( d->variable && !d->name.isEmpty() ) || d->node.isValid();
+}
+
+
 QDebug operator<<( QDebug s, const Soprano::Inference::NodePattern& pattern )
 {
     if ( pattern.isVariable() ) {

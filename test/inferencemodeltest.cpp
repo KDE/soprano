@@ -330,7 +330,7 @@ void InferenceModelTest::testPerformance()
 }
 
 
-void InferenceModelTest::testRuleParser_data()
+void InferenceModelTest::testParseRuleFile_data()
 {
     QTest::addColumn<int>( "ruleset" );
     QTest::addColumn<int>( "ruleCount" );
@@ -340,7 +340,7 @@ void InferenceModelTest::testRuleParser_data()
 }
 
 
-void InferenceModelTest::testRuleParser()
+void InferenceModelTest::testParseRuleFile()
 {
     QFETCH( int, ruleset );
     QFETCH( int, ruleCount );
@@ -353,6 +353,22 @@ void InferenceModelTest::testRuleParser()
     Q_FOREACH( QString name, ruleNames ) {
         qDebug() << name << ": " << rules[name];
     }
+}
+
+
+void InferenceModelTest::testParseRule()
+{
+    QString prefix( "PREFIX nrl: <http://www.semanticdesktop.org/ontologies/2007/08/15/nrl/>" );
+    QString rule( "[nrl1: (?p <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> nrl:TransitiveProperty), (?x ?p ?y), (?y ?p ?z) -> (?x ?p ?z)]" );
+
+    RuleParser parser;
+
+    // without the prefix it should not work
+    QVERIFY( !parser.parseRule( rule ).isValid() );
+
+    QVERIFY( !parser.parseRule( prefix ).isValid() );
+    parser.addPrefix( "nrl", Soprano::Vocabulary::NRL::nrlNamespace() );
+    QVERIFY( parser.parseRule( rule ).isValid() );
 }
 
 
