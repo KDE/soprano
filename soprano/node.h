@@ -446,6 +446,9 @@ namespace Soprano
     SOPRANO_EXPORT uint qHash( const Node& node );
 }
 
+/**
+ * \relates Soprano::Node
+ */
 SOPRANO_EXPORT QDebug operator<<( QDebug s, const Soprano::Node& );
 
 /**
@@ -453,6 +456,8 @@ SOPRANO_EXPORT QDebug operator<<( QDebug s, const Soprano::Node& );
  * based on the N-Triples standard, except that it uses Unicode strings.
  *
  * \sa Soprano::Node::toN3()
+ *
+ * \relates Soprano::Node
  */
 SOPRANO_EXPORT QTextStream& operator<<( QTextStream& s, const Soprano::Node& );
 
