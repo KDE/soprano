@@ -129,9 +129,9 @@ void SopranoModelTest::testAddListOfStatement()
 
     m_model->addStatements( statements );
 
-    QVERIFY( m_model->containsAnyStatement( st1 ) );
-    QVERIFY( m_model->containsAnyStatement( st2 ) );
-    QVERIFY( m_model->containsAnyStatement( st3 ) );
+    QVERIFY( m_model->containsStatement( st1 ) );
+    QVERIFY( m_model->containsStatement( st2 ) );
+    QVERIFY( m_model->containsStatement( st3 ) );
 }
 
 
@@ -431,6 +431,13 @@ void SopranoModelTest::testContainsStatement()
     QVERIFY( m_model->containsStatement( Statement( res1, pre, res3, context1 ) ) );
     QVERIFY( !m_model->lastError() );
     QVERIFY( m_model->containsStatement( Statement( res1, pre, res4, context2 ) ) );
+    QVERIFY( !m_model->lastError() );
+
+    QVERIFY( !m_model->containsStatement( Statement( context2, res1, pre, res3 ) ) );
+    QVERIFY( !m_model->lastError() );
+    QVERIFY( !m_model->containsStatement( Statement( res1, pre, res4, context1 ) ) );
+    QVERIFY( !m_model->lastError() );
+    QVERIFY( !m_model->containsStatement( Statement( res1, pre, res3, context2 ) ) );
     QVERIFY( !m_model->lastError() );
 
     // make sure the context is not used as wildcard
