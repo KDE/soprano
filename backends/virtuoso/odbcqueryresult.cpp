@@ -151,7 +151,7 @@ QString Soprano::ODBC::QueryResultPrivate::getLang( short key )
         return QString();
     }
 
-    SQLINTEGER ind = 0;
+    SQLLEN ind = 0;
     rc = SQLBindParameter( hstmt, 1, SQL_PARAM_INPUT, SQL_C_SSHORT, SQL_SMALLINT, 0, 0, &key, 0, &ind );
     if ( SQL_SUCCEEDED(rc) ) {
         rc = SQLExecDirect( hstmt, ( SQLCHAR* )"select RL_ID from DB.DBA.RDF_LANGUAGE where RL_TWOBYTE=?", SQL_NTS );
@@ -192,7 +192,7 @@ QUrl Soprano::ODBC::QueryResultPrivate::getType( short key )
         return QUrl();
     }
 
-    SQLINTEGER ind;
+    SQLLEN ind;
     rc = SQLBindParameter( hstmt, 1, SQL_PARAM_INPUT, SQL_C_SSHORT, SQL_SMALLINT, 0, 0, &key, 0, &ind);
     if ( SQL_SUCCEEDED(rc) ) {
         rc = SQLExecDirect( hstmt, ( SQLCHAR* )"select RDT_QNAME from DB.DBA.RDF_DATATYPE where RDT_TWOBYTE=?", SQL_NTS );
