@@ -106,6 +106,9 @@ namespace Soprano {
             {
 
             public:
+                Binding()
+                    : mType(NONE) 
+                {}
                 enum BindingType { NONE, URI, BNODE, LITERAL, UNBOUND };
                 typedef QList<Binding> List;
                 typedef QListIterator<Binding> Iterator;

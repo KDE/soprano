@@ -253,9 +253,10 @@ Soprano::LanguageTag::LanguageTag( QLocale::Language lang, QLocale::Country coun
     d(0)
 {
     QString langStr(Private::langToString(lang));
-    QString countryStr;
 
     if (!langStr.isEmpty() && langStr != QLatin1String("  ")) {
+        QString countryStr;
+
         if (country != QLocale::AnyCountry) {
             countryStr = Private::countryToString(country);
         }

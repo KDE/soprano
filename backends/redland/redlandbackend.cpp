@@ -42,7 +42,7 @@ Q_EXPORT_PLUGIN2(soprano_redlandbackend, Soprano::Redland::BackendPlugin)
 static QString createRedlandOptionString( const QHash<QString, QString>& options )
 {
   QStringList os;
-  for( QHash<QString, QString>::const_iterator it = options.begin(); it != options.end(); it++ )
+  for( QHash<QString, QString>::const_iterator it = options.begin(); it != options.end(); ++it )
     os += QString("%1='%2'").arg( it.key() ).arg( it.value() );
   return os.join(",");
 }

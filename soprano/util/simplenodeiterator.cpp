@@ -51,6 +51,7 @@ namespace Soprano {
 }
 
 Soprano::Util::SimpleNodeIteratorBackend::SimpleNodeIteratorBackend()
+    : m_first(false)
 {
     // make sure we are properly initialized
     operator=( m_nodes );
@@ -58,6 +59,7 @@ Soprano::Util::SimpleNodeIteratorBackend::SimpleNodeIteratorBackend()
 
 
 Soprano::Util::SimpleNodeIteratorBackend::SimpleNodeIteratorBackend( const QList<Node>& s )
+    : m_first(false)
 {
     operator=( s );
 }

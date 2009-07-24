@@ -117,6 +117,11 @@ int raptorIOStreamWriteBytes( void* data, const void* ptr, size_t size, size_t n
 
 class StreamData {
 public:
+    StreamData()
+        : world(0),
+          initialized(false),
+          atEnd(false) {}
+
     Soprano::StatementIterator it;
     Soprano::Redland::World* world;
     bool initialized;

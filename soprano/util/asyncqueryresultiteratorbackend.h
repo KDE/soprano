@@ -34,7 +34,11 @@ namespace Soprano {
         public:
             AsyncQueryResultIteratorBackend( AsyncModelPrivate* d, const QueryResultIterator& it )
                 : AsyncIteratorBase<BindingSet>( d, it ),
-                m_iterator( it ) {
+                m_iterator( it ),
+                m_isGraph(false),
+                m_isBinding(false),
+                m_isBool(false),
+                m_boolVal(false) {
             }
 
             // called in work thread

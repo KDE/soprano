@@ -177,6 +177,11 @@ namespace {
 
     class Command {
     public:
+        Command()
+            : result(0), 
+              id(0), 
+              commandType(ErrorCodeCommand) {}
+        
         Soprano::Util::AsyncResult* result;
         int id;
         CommandType commandType;

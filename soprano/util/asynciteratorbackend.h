@@ -82,7 +82,8 @@ namespace Soprano {
         public:
             AsyncIteratorBase( AsyncModelPrivate* d, const Iterator<T>& it )
                 : AsyncIteratorHandle( d ),
-                m_iterator( it ) {
+                m_iterator( it ),
+                m_atEnd(false) {
             }
 
             virtual ~AsyncIteratorBase() {}

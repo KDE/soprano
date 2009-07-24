@@ -51,6 +51,7 @@ namespace Soprano {
 }
 
 Soprano::Util::SimpleStatementIteratorBackend::SimpleStatementIteratorBackend()
+    : m_first(false)
 {
     // make sure we are properly initialized
     operator=( m_statements );
@@ -58,6 +59,7 @@ Soprano::Util::SimpleStatementIteratorBackend::SimpleStatementIteratorBackend()
 
 
 Soprano::Util::SimpleStatementIteratorBackend::SimpleStatementIteratorBackend( const QList<Statement>& s )
+    : m_first(false)
 {
     operator=( s );
 }
