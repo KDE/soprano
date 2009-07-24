@@ -34,17 +34,53 @@
 #include <QtCore/QDebug>
 #include <QtCore/QUrl>
 
+namespace {
+    // Match a node
+    const char* s_nodePattern =
+        "("
+
+        // - a variable:          ?VARNAME
+        "\\?\\w+"
+        "|"
+
+        // - a resource:          <URI>
+        "\\<[^\\<\\>\\s]+\\>"
+        "|"
+
+        // - a blank node:        _QNAME
+        "_\\w+"
+        "|"
+
+        // - a prefixed resource: PREFIX:QNAME
+        "\\w+\\:\\w+"
+        "|"
+
+        // - a plain literal:     "LITERAL"[@LANG] or 'LITERAL'[@LANG]
+        "[\\'\\\"][^\\'\\\"]+[\\'\\\"](?:@\\w+)?"
+        "|"
+
+        // - a typed literal:     "LITERAL"^^<TYPE> or 'LITERAL'^^<TYPE>
+        "[\\'\\\"][^\\'\\\"]+[\\'\\\"]\\^\\^\\<[^\\<\\>\\s]+\\>"
+        "|"
+
+        // an integer
+        "[0-9]+"
+
+        ")";
+}
+
 
 class Soprano::Inference::RuleParser::Private
 {
 public:
     Private()
-        : prefixLine( "(?:PREFIX|prefix)\\s+(\\S+)\\:\\s+<(\\S+)>" ),
-          ruleLine( "\\[" "\\s*" "(\\w+)\\:" "\\s*" "(\\([^\\)]+\\))" "(?:\\s*\\,\\s*(\\([^\\)]+\\)))*" "\\s*" "\\-\\>" "\\s*" "(\\([^\\)]+\\))" "\\s*" "\\]" ),
-          statementPattern( "\\(" "(\\?\\w|\\<\\S+\\>|[^\\<\\>\\s]+|\\'[^\\']+\\'|[0-9]+|\\\".+\\\"\\^\\^\\<\\S+\\>)" "\\s*" "(\\?\\w|\\<\\S+\\>|[^\\<\\>\\s]+|\\'[^\\']+\\'|[0-9]+|\\\".+\\\"\\^\\^\\<\\S+\\>)" "\\s*" "(\\?\\w|\\<\\S+\\>|[^\\<\\>\\s]+|\\'[^\\']+\\'|[0-9]+|\\\".+\\\"\\^\\^\\<\\S+\\>)" "\\s*" "\\)" ) {
+        : prefixLine( QLatin1String( "(?:[Pp][Rr][Ee][Ff][Ii][Xx])\\s+(\\S+)\\:\\s+<(\\S+)>" ) ),
+          ruleLine( QLatin1String( "\\[" "\\s*" "(\\w+)\\:" "\\s*" "(\\([^\\)]+\\))" "(?:\\s*\\,\\s*(\\([^\\)]+\\)))*" "\\s*" "\\-\\>" "\\s*" "(\\([^\\)]+\\))" "\\s*" "\\]" ) ),
+          statementPattern( QLatin1String( "\\(" ) + QLatin1String( s_nodePattern ) + QLatin1String( "\\s*" ) + QLatin1String( s_nodePattern ) + QLatin1String( "\\s*" ) + QLatin1String( s_nodePattern ) + QLatin1String( "\\s*\\)" ) ) {
     }
 
     NodePattern parseNodePattern( const QString& s, bool* success ) {
+        qDebug() << Q_FUNC_INFO << s;
         if ( s[0] == '?' ) {
             *success = true;
             return Soprano::Inference::NodePattern( s.mid( 1 ) );
@@ -53,26 +89,59 @@ public:
             *success = true;
             return Soprano::Inference::NodePattern( Soprano::Node( QUrl( s.mid( 1, s.length()-2 ) ) ) );
         }
-        else {
-            QString prefix = s.left( s.indexOf( ':' ) );
-            if ( !prefixes.contains( prefix ) ) {
-                qDebug() << "Could not find prefix" << prefix;
-                *success = false;
-                return Soprano::Inference::NodePattern();
+        else if ( s[0] == '_' && s.length() > 2 && s[1] == ':' ) {
+            return Soprano::Node::createBlankNode( s.mid( 2 ) );
+        }
+        else if ( s[0] == '"' || s[0] == '\'' ) {
+            QString value = s;
+            QString literalType;
+            int pos = s.indexOf( s[0] + QLatin1String( "^^<" ) );
+            if ( pos > 0 ) {
+                literalType = s.mid( pos + 4, s.length() - pos - 5 );
+                value = s.mid( 1, pos-1 );
+                *success = true;
+                return Soprano::Inference::NodePattern( Soprano::LiteralValue::fromString( value, QUrl( literalType ) ) );
             }
             else {
+                QString lang;
+                pos = s.indexOf( s[0] + QLatin1String( "@" ) );
+                int len = s.length()-2;
+                if ( pos > 0 ) {
+                    lang = s.mid( pos+2, s.length() - pos - 3 );
+                    len -= lang.length() - 1;
+                }
+                value = s.mid( 1, len );
                 *success = true;
-                return Soprano::Inference::NodePattern( Node( QUrl( prefixes[prefix].toString() + s.mid( s.indexOf( ':' )+1 ) ) ) );
+                return Soprano::Inference::NodePattern( Soprano::LiteralValue::createPlainLiteral( value, lang ) );
+            }
+        }
+        else {
+            int val = s.toInt( success );
+            if ( *success ) {
+                return Soprano::Inference::NodePattern( Soprano::LiteralValue( val ) );
+            }
+            else {
+                QString prefix = s.left( s.indexOf( ':' ) );
+                if ( !prefixes.contains( prefix ) ) {
+                    qDebug() << "Could not find prefix" << prefix;
+                    *success = false;
+                    return Soprano::Inference::NodePattern();
+                }
+                else {
+                    *success = true;
+                    return Soprano::Inference::NodePattern( Node( QUrl( prefixes[prefix].toString() + s.mid( s.indexOf( ':' )+1 ) ) ) );
+                }
             }
         }
     }
 
     StatementPattern parseMatchedStatementPattern( bool* success ) {
+        qDebug() << Q_FUNC_INFO << statementPattern.capturedTexts();
         QString subject = statementPattern.cap( 1 );
         QString predicate = statementPattern.cap( 2 );
         QString object = statementPattern.cap( 3 );
 
-//        qDebug() << "Parsed statement pattern: " << subject << predicate << object;
+        qDebug() << "Parsed statement pattern: " << subject << predicate << object;
 
         bool s1, s2, s3;
         Soprano::Inference::NodePattern subjectPattern = parseNodePattern( subject, &s1 );
