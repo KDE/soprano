@@ -240,7 +240,7 @@ int main( int argc, char *argv[] )
     Model* model = Soprano::createModel( BackendSettings() << BackendSetting( BackendOptionStorageMemory ) );
     if ( !model ) {
         QTextStream s( stderr );
-        s << "Failed to create memory model" << endl;
+        s << "Failed to create memory model. Backend sesame2 not found" << endl;
         return 1;
     }
     while ( it.next() ) {
