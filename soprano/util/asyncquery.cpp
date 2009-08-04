@@ -30,6 +30,7 @@
 #include <QtCore/QMutex>
 #include <QtCore/QMutexLocker>
 #include <QtCore/QWaitCondition>
+#include <QtCore/QDebug>
 
 
 namespace {
@@ -115,6 +116,7 @@ void Soprano::Util::AsyncQuery::Private::run()
                     }
                     else {
                         // we are done, error is set below
+                        m_waitMutex.unlock();
                         break;
                     }
                 }
@@ -255,8 +257,10 @@ bool Soprano::Util::AsyncQuery::next()
 
 void Soprano::Util::AsyncQuery::close()
 {
+    d->m_waitMutex.lock();
     d->m_closed = true;
     d->m_nextWaiter.wakeAll();
+    d->m_waitMutex.unlock();
 }
 
 
