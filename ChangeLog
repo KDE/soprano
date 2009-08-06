@@ -1,3 +1,7 @@
+2.3.1
+	* Changed installation path of cmake modules (SopranoAppOntology.cmake) to <prefix/share/soprano/cmake
+	* Prevent the redland backend to add one statement multiple times.
+	
 2.3
 	* New class LanguageTag replacing the old simple string language handling with a sophisticated one
 	  implementing RFC 4647. At the same time Soprano now directly supports plain literals in addition

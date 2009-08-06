@@ -2,7 +2,7 @@
  * This file is part of Soprano Project.
  *
  * Copyright (C) 2006 Daniele Galdi <daniele.galdi@gmail.com>
- * Copyright (C) 2007 Sebastian Trueg <trueg@kde.org>
+ * Copyright (C) 2007-2009 Sebastian Trueg <trueg@kde.org>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -35,16 +35,27 @@
 #include <QtCore/QDebug>
 
 
-static bool isContextOnlyStatement( const Soprano::Statement& statement )
-{
-    return ( !statement.subject().isValid() &&
-             !statement.predicate().isValid() &&
-             !statement.object().isValid() &&
-             statement.context().isValid() );
+namespace {
+    bool isContextOnlyStatement( const Soprano::Statement& statement )
+    {
+        return ( !statement.subject().isValid() &&
+                 !statement.predicate().isValid() &&
+                 !statement.object().isValid() &&
+                 statement.context().isValid() );
+    }
+
+    bool isRedlandStatementEmpty( librdf_statement* statement )
+    {
+        return ( !statement ||
+                 ( !librdf_statement_get_subject( statement ) &&
+                   !librdf_statement_get_predicate( statement ) &&
+                   !librdf_statement_get_object( statement ) ) );
+    }
 }
 
 
-class Soprano::Redland::RedlandModel::Private {
+class Soprano::Redland::RedlandModel::Private
+{
 public:
     Private() :
         world(0),
@@ -61,7 +72,83 @@ public:
     QList<RedlandStatementIterator*> iterators;
     QList<Redland::NodeIteratorBackend*> nodeIterators;
     QList<RedlandQueryResult*> results;
+
+    /**
+     * librdf_model_find_statements_in_context does not support empty contexts. All in all
+     * redland is not very flexible. Thus, we have to do it all manually.
+     */
+    librdf_stream* redlandFindStatements( const Soprano::Statement& statement );
+    librdf_stream* redlandFindStatements( librdf_statement* statement, librdf_node* context );
+    bool redlandContainsStatement( const Soprano::Statement& statement );
+    bool redlandContainsStatement( librdf_statement* statement, librdf_node* context );
 };
+
+
+librdf_stream* Soprano::Redland::RedlandModel::Private::redlandFindStatements( const Soprano::Statement& statement )
+{
+    librdf_node* ctx = world->createNode( statement.context() );
+    librdf_statement* st = world->createStatement( statement );
+    librdf_stream *stream = redlandFindStatements( st, ctx );
+    world->freeNode( ctx );
+    world->freeStatement( st );
+    return stream;
+}
+
+
+librdf_stream* Soprano::Redland::RedlandModel::Private::redlandFindStatements( librdf_statement* statement, librdf_node* context )
+{
+    if ( isRedlandStatementEmpty( statement ) && context ) {
+        return librdf_model_context_as_stream( model, context );
+    }
+    else {
+        // context support does not work, redland API claims that librdf_model_find_statements_in_context
+        // with a NULL context is the same as librdf_model_find_statements. Well, in practice it is not.
+        // We even have to set the context on all statements if we only search in one context!
+        librdf_stream *stream = 0;
+        if( !context ) {
+            stream = librdf_model_find_statements( model, statement );
+        }
+        else {
+            stream = librdf_model_find_statements_in_context( model, statement, context );
+        }
+        return stream;
+    }
+
+    return 0;
+}
+
+
+bool Soprano::Redland::RedlandModel::Private::redlandContainsStatement( const Soprano::Statement& statement )
+{
+    librdf_statement* s = world->createStatement( statement );
+    librdf_node* c = statement.context().isValid() ? world->createNode( statement.context() ) : 0;
+    bool cr = redlandContainsStatement( s, c );
+    world->freeStatement( s );
+    world->freeNode( c );
+    return cr;
+}
+
+
+bool Soprano::Redland::RedlandModel::Private::redlandContainsStatement( librdf_statement* statement, librdf_node* context )
+{
+    if ( isRedlandStatementEmpty( statement ) && context ) {
+        return librdf_model_contains_context( model, context ) != 0;
+    }
+    else {
+        // librdf_model_contains_statement does not support
+        // empty nodes and also there is no context support for contains.
+        librdf_stream* s = redlandFindStatements( statement, context );
+        if ( s ) {
+            bool c = !librdf_stream_end( s );
+            librdf_free_stream( s );
+            return c;
+        }
+        else {
+            return false;
+        }
+    }
+}
+
 
 Soprano::Redland::RedlandModel::RedlandModel( const Backend* b, librdf_model *model, librdf_storage *storage, World* world )
     : StorageModel( b )
@@ -142,8 +229,13 @@ Soprano::Error::ErrorCode Soprano::Redland::RedlandModel::addStatement( const St
         }
     }
     else {
+        //
+        // there is a bug (at least IMHO it is a bug) in redland which allows to add the same statement to one graph
+        // multiple times.
+        //
         librdf_node* redlandContext = d->world->createNode( statement.context() );
-        if ( librdf_model_context_add_statement( d->model, redlandContext, redlandStatement ) ) {
+        if ( d->redlandContainsStatement( redlandStatement, redlandContext ) ||
+             librdf_model_context_add_statement( d->model, redlandContext, redlandStatement ) ) {
             d->world->freeStatement( redlandStatement );
             d->world->freeNode( redlandContext );
             setError( d->world->lastError( Error::Error( "Failed to add statement",
@@ -189,29 +281,35 @@ Soprano::NodeIterator Soprano::Redland::RedlandModel::listContexts() const
 }
 
 
-bool Soprano::Redland::RedlandModel::containsAnyStatement( const Statement &statement ) const
+bool Soprano::Redland::RedlandModel::containsStatement( const Statement& statement ) const
+{
+    if ( statement.isValid() ) {
+        MultiMutexReadLocker lock( &d->readWriteLock );
+        if ( statement.context().isValid() ) {
+            bool c = d->redlandContainsStatement( statement );
+            setError( d->world->lastError() );
+            return c;
+        }
+        else {
+            return StorageModel::containsStatement( statement );
+        }
+    }
+    else {
+        setError( "Cannot check for invalid statement", Error::ErrorInvalidArgument );
+        return false;
+    }
+}
+
+
+bool Soprano::Redland::RedlandModel::containsAnyStatement( const Statement& statement ) const
 {
     clearError();
 
-    if ( isContextOnlyStatement( statement ) ) {
-        MultiMutexReadLocker lock( &d->readWriteLock );
+    MultiMutexReadLocker lock( &d->readWriteLock );
 
-        librdf_node *ctx = d->world->createNode( statement.context() );
-        if ( !ctx ) {
-            setError( d->world->lastError() );
-            return false;
-        }
-
-        int result = librdf_model_contains_context( d->model, ctx );
-
-        d->world->freeNode( ctx );
-
-        return result != 0;
-    }
-
-    // FIXME: looks as if librdf_model_contains_statement does not support
-    // empty nodes and also there is no context support for contains.
-    return listStatements( statement ).next();
+    bool c = d->redlandContainsStatement( statement );
+    setError( d->world->lastError() );
+    return c;
 }
 
 
@@ -247,65 +345,22 @@ Soprano::QueryResultIterator Soprano::Redland::RedlandModel::executeQuery( const
 }
 
 
-Soprano::StatementIterator Soprano::Redland::RedlandModel::listStatements( const Statement &partial ) const
+Soprano::StatementIterator Soprano::Redland::RedlandModel::listStatements( const Statement& partial ) const
 {
     d->readWriteLock.lockForRead();
 
     clearError();
 
-    if ( isContextOnlyStatement( partial ) ) {
-
-        librdf_node *ctx = d->world->createNode( partial.context() );
-
-        librdf_stream *stream = librdf_model_context_as_stream( d->model, ctx );
-        d->world->freeNode( ctx );
-        if ( !stream ) {
-            setError( d->world->lastError() );
-            d->readWriteLock.unlock();
-            return StatementIterator();
-        }
-
-        // see listStatements( Statement ) for details on the context hack
-        // second lock for the iterator itself
-        RedlandStatementIterator* it = new RedlandStatementIterator( this, stream, partial.context() );
-        d->iterators.append( it );
-        return StatementIterator( it );
+    librdf_stream* stream = d->redlandFindStatements( partial );
+    if ( !stream ) {
+        setError( d->world->lastError() );
+        d->readWriteLock.unlock();
+        return StatementIterator();
     }
-    else {
-        librdf_statement *st = d->world->createStatement( partial );
-        if ( !st ) {
-            setError( d->world->lastError() );
-            d->readWriteLock.unlock();
-            return StatementIterator();
-        }
 
-        librdf_node *ctx = d->world->createNode( partial.context() );
-
-        // FIXME: context support does not work, redland API claims that librdf_model_find_statements_in_context
-        // with a NULL context is the same as librdf_model_find_statements. Well, in practice it is not.
-        // We even have to set the context on all statements if we only search in one context!
-        librdf_stream *stream = 0;
-        if( partial.context().isEmpty() ) {
-            stream = librdf_model_find_statements( d->model, st );
-        }
-        else {
-            stream = librdf_model_find_statements_in_context( d->model, st, ctx );
-        }
-
-        d->world->freeNode( ctx );
-        d->world->freeStatement( st );
-
-        if ( !stream ) {
-            setError( d->world->lastError() );
-            d->readWriteLock.unlock();
-            return StatementIterator();
-        }
-
-        // we do not unlock d->readWriteLock here. That is done once the iterator closes
-        RedlandStatementIterator* it = new RedlandStatementIterator( this, stream, partial.context() );
-        d->iterators.append( it );
-        return StatementIterator( it );
-    }
+    RedlandStatementIterator* it = new RedlandStatementIterator( this, stream, partial.context() );
+    d->iterators.append( it );
+    return StatementIterator( it );
 }
 
 
