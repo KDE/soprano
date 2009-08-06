@@ -206,6 +206,8 @@ Soprano::Error::ErrorCode Soprano::Redland::RedlandModel::addStatement( const St
 
     clearError();
 
+    bool added = true;
+
     d->readWriteLock.lockForWrite();
 
     librdf_statement* redlandStatement = d->world->createStatement( statement );
@@ -234,14 +236,18 @@ Soprano::Error::ErrorCode Soprano::Redland::RedlandModel::addStatement( const St
         // multiple times.
         //
         librdf_node* redlandContext = d->world->createNode( statement.context() );
-        if ( d->redlandContainsStatement( redlandStatement, redlandContext ) ||
-             librdf_model_context_add_statement( d->model, redlandContext, redlandStatement ) ) {
-            d->world->freeStatement( redlandStatement );
-            d->world->freeNode( redlandContext );
-            setError( d->world->lastError( Error::Error( "Failed to add statement",
-                                                         Error::ErrorUnknown ) ) );
-            d->readWriteLock.unlock();
-            return Error::ErrorUnknown;
+        if ( d->redlandContainsStatement( redlandStatement, redlandContext ) ) {
+            added = false;
+        }
+        else {
+            if ( librdf_model_context_add_statement( d->model, redlandContext, redlandStatement ) ) {
+                d->world->freeStatement( redlandStatement );
+                d->world->freeNode( redlandContext );
+                setError( d->world->lastError( Error::Error( "Failed to add statement",
+                                                             Error::ErrorUnknown ) ) );
+                d->readWriteLock.unlock();
+                return Error::ErrorUnknown;
+            }
         }
 
         d->world->freeNode( redlandContext );
@@ -254,8 +260,10 @@ Soprano::Error::ErrorCode Soprano::Redland::RedlandModel::addStatement( const St
 
     d->readWriteLock.unlock();
 
-    emit statementAdded( statement );
-    emit statementsAdded();
+    if ( added ) {
+        emit statementAdded( statement );
+        emit statementsAdded();
+    }
 
     return Error::ErrorNone;
 }
