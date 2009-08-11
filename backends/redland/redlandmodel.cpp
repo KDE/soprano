@@ -79,8 +79,14 @@ public:
      */
     librdf_stream* redlandFindStatements( const Soprano::Statement& statement );
     librdf_stream* redlandFindStatements( librdf_statement* statement, librdf_node* context );
-    bool redlandContainsStatement( const Soprano::Statement& statement );
-    bool redlandContainsStatement( librdf_statement* statement, librdf_node* context );
+
+    /**
+     *  1 - found statement
+     *  0 - statement not found
+     * -1 - error
+     */
+    int redlandContainsStatement( const Soprano::Statement& statement );
+    int redlandContainsStatement( librdf_statement* statement, librdf_node* context );
 };
 
 
@@ -118,21 +124,21 @@ librdf_stream* Soprano::Redland::RedlandModel::Private::redlandFindStatements( l
 }
 
 
-bool Soprano::Redland::RedlandModel::Private::redlandContainsStatement( const Soprano::Statement& statement )
+int Soprano::Redland::RedlandModel::Private::redlandContainsStatement( const Soprano::Statement& statement )
 {
     librdf_statement* s = world->createStatement( statement );
     librdf_node* c = statement.context().isValid() ? world->createNode( statement.context() ) : 0;
-    bool cr = redlandContainsStatement( s, c );
+    int cr = redlandContainsStatement( s, c );
     world->freeStatement( s );
     world->freeNode( c );
     return cr;
 }
 
 
-bool Soprano::Redland::RedlandModel::Private::redlandContainsStatement( librdf_statement* statement, librdf_node* context )
+int Soprano::Redland::RedlandModel::Private::redlandContainsStatement( librdf_statement* statement, librdf_node* context )
 {
     if ( isRedlandStatementEmpty( statement ) && context ) {
-        return librdf_model_contains_context( model, context ) != 0;
+        return( librdf_model_contains_context( model, context ) != 0 ? 1 : 0 );
     }
     else {
         // librdf_model_contains_statement does not support
@@ -141,10 +147,10 @@ bool Soprano::Redland::RedlandModel::Private::redlandContainsStatement( librdf_s
         if ( s ) {
             bool c = !librdf_stream_end( s );
             librdf_free_stream( s );
-            return c;
+            return( c ? 1 : 0 );
         }
         else {
-            return false;
+            return -1;
         }
     }
 }
@@ -161,6 +167,7 @@ Soprano::Redland::RedlandModel::RedlandModel( const Backend* b, librdf_model *mo
     Q_ASSERT( model != 0L );
     Q_ASSERT( storage != 0L );
 }
+
 
 Soprano::Redland::RedlandModel::~RedlandModel()
 {
@@ -236,7 +243,7 @@ Soprano::Error::ErrorCode Soprano::Redland::RedlandModel::addStatement( const St
         // multiple times.
         //
         librdf_node* redlandContext = d->world->createNode( statement.context() );
-        if ( d->redlandContainsStatement( redlandStatement, redlandContext ) ) {
+        if ( d->redlandContainsStatement( redlandStatement, redlandContext ) > 0 ) {
             added = false;
         }
         else {
@@ -294,9 +301,12 @@ bool Soprano::Redland::RedlandModel::containsStatement( const Statement& stateme
     if ( statement.isValid() ) {
         MultiMutexReadLocker lock( &d->readWriteLock );
         if ( statement.context().isValid() ) {
-            bool c = d->redlandContainsStatement( statement );
-            setError( d->world->lastError() );
-            return c;
+            int c = d->redlandContainsStatement( statement );
+            if ( c < 0 )
+                setError( d->world->lastError() );
+            else
+                clearError();
+            return( c > 0 );
         }
         else {
             return StorageModel::containsStatement( statement );
@@ -311,13 +321,14 @@ bool Soprano::Redland::RedlandModel::containsStatement( const Statement& stateme
 
 bool Soprano::Redland::RedlandModel::containsAnyStatement( const Statement& statement ) const
 {
-    clearError();
-
     MultiMutexReadLocker lock( &d->readWriteLock );
 
-    bool c = d->redlandContainsStatement( statement );
-    setError( d->world->lastError() );
-    return c;
+    int c = d->redlandContainsStatement( statement );
+    if ( c < 0 )
+        setError( d->world->lastError() );
+    else
+        clearError();
+    return( c > 0 );
 }
 
 
