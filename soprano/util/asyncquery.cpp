@@ -91,13 +91,15 @@ void Soprano::Util::AsyncQuery::Private::run()
             m_boolValue = it.boolValue();
         }
 
+        // lock the mutex before emitting to ensure consistency
+        m_waitMutex.lock();
+
         // inform the client
         QMetaObject::invokeMethod( q, "_s_emitQueryReady", Qt::QueuedConnection );
 
         // wait for a call to next
         if( m_type != BooleanResult ) {
             forever {
-                m_waitMutex.lock();
                 m_nextWaiter.wait( &m_waitMutex );
                 if( !m_closed ) {
                     bool nextReady = it.next();
@@ -108,26 +110,24 @@ void Soprano::Util::AsyncQuery::Private::run()
                         else
                             m_currentBindings = it.currentBindings();
 
-                        // we are done, release the mutex
-                        m_waitMutex.unlock();
-
                         // inform the client
                         QMetaObject::invokeMethod( q, "_s_emitNextReady", Qt::QueuedConnection );
                     }
                     else {
                         // we are done, error is set below
-                        m_waitMutex.unlock();
                         break;
                     }
                 }
                 else {
-                    // we have been closed, release the mutex
-                    m_waitMutex.unlock();
+                    // we have been closed
                     break;
                 }
             }
         }
     }
+
+    // finally release the mutex
+    m_waitMutex.unlock();
 
     // finished, set the error, finished will be emitted in _s_finished
     q->setError( m_model->lastError() );
@@ -243,9 +243,10 @@ bool Soprano::Util::AsyncQuery::isBool() const
 
 bool Soprano::Util::AsyncQuery::next()
 {
-    if( d->m_waitMutex.tryLock() ) {
-        d->m_waitMutex.unlock();
+    if( d->isRunning() ) {
+        d->m_waitMutex.lock();
         d->m_nextWaiter.wakeAll();
+        d->m_waitMutex.unlock();
         return true;
     }
     else {
