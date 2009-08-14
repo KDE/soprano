@@ -435,7 +435,7 @@ int main( int argc, char *argv[] )
 
     for( QMap<QString, QPair<QString, QString> >::const_iterator it = normalizedResources.constBegin();
          it != normalizedResources.constEnd(); ++it ) {
-        QString name = it.value().first;
+        QString name = normalizeName( it.value().first );
         sourceStream << createIndent( 1 ) << "QUrl " << className.toLower() << "_" << name << ";" << endl;
     }
     sourceStream << "};" << endl << endl;
@@ -453,7 +453,7 @@ int main( int argc, char *argv[] )
 
     for( QMap<QString, QPair<QString, QString> >::const_iterator it = normalizedResources.constBegin();
          it != normalizedResources.constEnd(); ++it ) {
-        QString name = it.value().first;
+        QString name = normalizeName( it.value().first );
 
         sourceStream << "QUrl ";
 
