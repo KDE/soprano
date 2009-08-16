@@ -2,7 +2,7 @@
  * This file is part of the Soprano Project.
  *
  * Copyright (C) 2007 Rajeev J Sebastian <rajeev.sebastian@gmail.com>
- * Copyright (C) 2008 Sebastian Trueg <trueg@kde.org>
+ * Copyright (C) 2008-2009 Sebastian Trueg <trueg@kde.org>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -168,23 +168,22 @@ namespace {
     }
 
     enum CommandType {
-        ErrorCodeCommand,
         QueryCommand,
         ListStatementsCommand,
-        ListNodesCommand,
-        BooleanCommand
+        ListContextsCommand
     };
 
     class Command {
     public:
         Command()
-            : result(0), 
-              id(0), 
-              commandType(ErrorCodeCommand) {}
-        
+            : result(0),
+              id(0),
+              commandType(QueryCommand) {}
+
         Soprano::Util::AsyncResult* result;
         int id;
         CommandType commandType;
+        Soprano::Statement partialListStatement;
     };
 }
 
@@ -420,6 +419,31 @@ Soprano::Util::AsyncResult* Soprano::Client::SparqlModel::executeQueryAsync( con
 }
 
 
+Soprano::Util::AsyncResult* Soprano::Client::SparqlModel::listStatementsAsync( const Statement& statement ) const
+{
+    Util::AsyncResult* result = Util::AsyncResult::createResult();
+    Command cmd;
+    cmd.result = result;
+    cmd.commandType = ListStatementsCommand;
+    cmd.partialListStatement = statement;
+    cmd.id = d->client->query( QString( "select * where { %1 }" ).arg( statementToConstructGraphPattern( statement, true ) ) );
+    d->commands[cmd.id] = cmd;
+    return result;
+}
+
+
+Soprano::Util::AsyncResult* Soprano::Client::SparqlModel::listContextsAsync() const
+{
+    Util::AsyncResult* result = Util::AsyncResult::createResult();
+    Command cmd;
+    cmd.result = result;
+    cmd.commandType = ListContextsCommand;
+    cmd.id = d->client->query( "select distinct ?g where { graph ?g {?s ?p ?o}}" );
+    d->commands[cmd.id] = cmd;
+    return result;
+}
+
+
 void Soprano::Client::SparqlModel::slotRequestFinished( int id, bool error, const QByteArray& data )
 {
     if ( d->commands.contains( id ) ) {
@@ -432,6 +456,22 @@ void Soprano::Client::SparqlModel::slotRequestFinished( int id, bool error, cons
             case QueryCommand:
                 cmd.result->setResult( QVariant::fromValue( iteratorFromData( data ) ), Error::Error() );
                 break;
+
+            case ListStatementsCommand:
+                cmd.result->setResult( QVariant::fromValue(
+                                           iteratorFromData( data )
+                                           .iterateStatementsFromBindings( cmd.partialListStatement.subject().isValid() ? QString() : QString( 's' ),
+                                                                           cmd.partialListStatement.predicate().isValid() ? QString() : QString( 'p' ),
+                                                                           cmd.partialListStatement.object().isValid() ? QString() : QString( 'o' ),
+                                                                           cmd.partialListStatement.context().isValid() ? QString() : QString( 'g' ),
+                                                                           cmd.partialListStatement ) ),
+                                       Error::Error() );
+                break;
+
+            case ListContextsCommand:
+                cmd.result->setResult( QVariant::fromValue( iteratorFromData( data ).iterateBindings( "g" ) ), Error::Error() );
+                break;
+
             default:
                 Q_ASSERT( 0 );
             }

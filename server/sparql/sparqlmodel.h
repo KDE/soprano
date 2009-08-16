@@ -2,7 +2,7 @@
  * This file is part of Soprano Project.
  *
  * Copyright (C) 2007 Rajeev J Sebastian <rajeev.sebastian@gmail.com>
- * Copyright (C) 2008 Sebastian Trueg <trueg@kde.org>
+ * Copyright (C) 2008-2009 Sebastian Trueg <trueg@kde.org>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -27,9 +27,6 @@
 #include "soprano_export.h"
 #include "asyncresult.h"
 
-
-// TODO: internally the http communication is done async. Thus, the SparqlModel should have an async interface
-//       in addition to the standard sync one. Using AsyncModel and thus starting another thread seems like overkill
 
 namespace Soprano {
     namespace Client {
@@ -149,7 +146,22 @@ namespace Soprano {
             //@}
 
             //@{
+            /**
+             * \reimpl
+             */
             Soprano::StatementIterator listStatements( const Statement& partial ) const;
+
+            /**
+             * Asyncroneously list statements.
+             *
+             * \param statement The partial Statement to match.
+             *
+             * \return an AsyncResult with result type StatementIterator
+             * object which will signal when the result is ready.
+             *
+             * \since 2.4
+             */
+            Soprano::Util::AsyncResult* listStatementsAsync( const Statement& statement ) const;
 
             /**
              * Execute a query on the SPARQL endpoint.
@@ -159,11 +171,11 @@ namespace Soprano {
              *        the SparqlModel does only support one query language: Query::QueryLanguageSparql.
              * \param userQueryLanguage unused since \p language needs to be set to Query::QueryLanguageSparql.
              *
-             * \return An iterator over all results matching the query, 
+             * \return An iterator over all results matching the query,
              * on error an invalid iterator is returned.
              */
-            Soprano::QueryResultIterator executeQuery( const QString& query, 
-                                                       Query::QueryLanguage language = Query::QueryLanguageSparql, 
+            Soprano::QueryResultIterator executeQuery( const QString& query,
+                                                       Query::QueryLanguage language = Query::QueryLanguageSparql,
                                                        const QString& userQueryLanguage = QString() ) const;
 
 
@@ -175,20 +187,41 @@ namespace Soprano {
              * \param language The %query language used to encode \p query.
              * \param userQueryLanguage If \p language equals Query::QueryLanguageUser
              * userQueryLanguage defines the language to use.
-             * 
+             *
              * \sa executeQuery
              *
              * \return an AsyncResult with result type QueryResultIterator
              * object which will signal when the result is ready.
              */
-            Soprano::Util::AsyncResult* executeQueryAsync( const QString& query, 
-                                                           Query::QueryLanguage language = Query::QueryLanguageSparql, 
+            Soprano::Util::AsyncResult* executeQueryAsync( const QString& query,
+                                                           Query::QueryLanguage language = Query::QueryLanguageSparql,
                                                            const QString& userQueryLanguage = QString() ) const;
 
+            /**
+             * \reimpl
+             */
             NodeIterator listContexts() const;
 
+            /**
+             * Asyncroneously list all contexts.
+             *
+             * \param statement The partial Statement to match.
+             *
+             * \return an AsyncResult with result type NodeIterator
+             * object which will signal when the result is ready.
+             *
+             * \since 2.4
+             */
+            Soprano::Util::AsyncResult* listContextsAsync() const;
+
+            /**
+             * \reimpl
+             */
             bool containsStatement( const Statement& statement ) const;
 
+            /**
+             * \reimpl
+             */
             bool containsAnyStatement( const Statement& statement ) const;
             //@}
 
