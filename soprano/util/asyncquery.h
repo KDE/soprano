@@ -47,16 +47,17 @@ namespace Soprano {
          *
          * AsyncQuery objects will always delete themselves once the end of
          * the iterator is reached and the finished signal has been emitted.
-         * The only exception are boolean queries (such as SPARQL ASK).
-         * The result will be available as soon as the queryReady signal has
-         * been emitted but the AsyncQuery object will not delete itself
-         * until close() has been called.
+         * This also means that boolean results need to be read in a slot
+         * connected to the finished() signal.
+         *
+         * Typical usage would be to connect to the nextReady signal and call
+         * next() in it to trigger async iteration to the next element.
          *
          * \sa Soprano::Util::AsyncModel
          *
          * \author Sebastian Trueg <trueg@kde.org>
          *
-         * \since 2.3
+         * \since 2.4
          */
         class SOPRANO_EXPORT AsyncQuery : public QObject, public Error::ErrorCache
         {
@@ -168,11 +169,11 @@ namespace Soprano {
 
         public Q_SLOTS:
             /**
-             * Trigger iteration to the next element.
+             * Trigger iteration to the next element. Be aware that this has not to be called
+             * for the first element which is emitted automatically.
              * Once the next result has been retrieved the nextReady signal is emitted.
              *
-             * \return \p true if successful, \p false if another iteration is already
-             * in progress.
+             * \return \p true if successful, \p false if the iteration reached the end.
              */
             bool next();
 
@@ -187,18 +188,8 @@ namespace Soprano {
 
         Q_SIGNALS:
             /**
-             * Emitted once the query is ready, i.e. the type of the query is available
-             * and next can be called or the boolean result can be read.
-             *
-             * In case of an error it is possible that this signal is never emitted.
-             *
-             * \param query The query itself for convinience.
-             */
-            void queryReady( Soprano::Util::AsyncQuery* );
-
-            /**
              * Emitted once the next value is ready when iterating the result via
-             * next().
+             * next(). Will be emitted automatically for the first element.
              *
              * \param query The query itself for convinience.
              */
@@ -206,7 +197,8 @@ namespace Soprano {
 
             /**
              * Emitted once the last element has been read and the internal
-             * iterator is finished after the last call to next().
+             * iterator is finished after the last call to next() or if the result
+             * of a boolean query is available.
              *
              * Once this signals has been emitted the query will delete itself.
              * In a slot connected to this signal ErrorCache::lastError() can be
@@ -244,7 +236,6 @@ namespace Soprano {
             Private* const d;
 
             Q_PRIVATE_SLOT( d, void _s_finished() )
-            Q_PRIVATE_SLOT( d, void _s_emitQueryReady() )
             Q_PRIVATE_SLOT( d, void _s_emitNextReady() )
         };
     }

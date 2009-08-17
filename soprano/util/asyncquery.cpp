@@ -53,7 +53,6 @@ public:
 
     void run();
     void _s_finished();
-    void _s_emitQueryReady();
     void _s_emitNextReady();
 
     Soprano::Model* m_model;
@@ -94,13 +93,9 @@ void Soprano::Util::AsyncQuery::Private::run()
         // lock the mutex before emitting to ensure consistency
         m_waitMutex.lock();
 
-        // inform the client
-        QMetaObject::invokeMethod( q, "_s_emitQueryReady", Qt::QueuedConnection );
-
         // wait for a call to next
         if( m_type != BooleanResult ) {
             forever {
-                m_nextWaiter.wait( &m_waitMutex );
                 if( !m_closed ) {
                     bool nextReady = it.next();
                     if( nextReady ) {
@@ -112,6 +107,9 @@ void Soprano::Util::AsyncQuery::Private::run()
 
                         // inform the client
                         QMetaObject::invokeMethod( q, "_s_emitNextReady", Qt::QueuedConnection );
+
+                        // wait for the call to next()
+                        m_nextWaiter.wait( &m_waitMutex );
                     }
                     else {
                         // we are done, error is set below
@@ -137,14 +135,7 @@ void Soprano::Util::AsyncQuery::Private::run()
 void Soprano::Util::AsyncQuery::Private::_s_finished()
 {
     emit q->finished( q );
-    if( m_type != BooleanResult )
-        q->deleteLater();
-}
-
-
-void Soprano::Util::AsyncQuery::Private::_s_emitQueryReady()
-{
-    emit q->queryReady( q );
+    q->deleteLater();
 }
 
 
