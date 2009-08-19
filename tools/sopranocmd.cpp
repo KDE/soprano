@@ -837,10 +837,17 @@ int main( int argc, char *argv[] )
             success = exportFile( model->listStatements(), fileName, serialization );
         }
         else {
-            success = exportFile( model->executeQuery( tuneQuery( query, queryLang ),
-                                                       Soprano::Query::queryLanguageFromString( queryLang ), queryLang ).iterateStatements(),
-                                  fileName,
-                                  serialization );
+            QueryResultIterator it = model->executeQuery( tuneQuery( query, queryLang ),
+                                                          Soprano::Query::queryLanguageFromString( queryLang ), queryLang );
+            if ( it.isGraph() ) {
+                success = exportFile( it.iterateStatements(),
+                                      fileName,
+                                      serialization );
+            }
+            else {
+                errStream << "Can only export graph queries";
+                return 1;
+            }
         }
 
         delete model;
