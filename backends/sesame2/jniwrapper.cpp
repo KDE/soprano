@@ -95,7 +95,7 @@ JNIWrapper* JNIWrapper::instance()
 
 JNIEnv* JNIWrapper::env() const
 {
-    QHash<QThread*, JNIEnv*>::const_iterator it = d->jniEnvMap.find( QThread::currentThread() );
+    QHash<QThread*, JNIEnv*>::const_iterator it = d->jniEnvMap.constFind( QThread::currentThread() );
     if ( it == d->jniEnvMap.constEnd() ) {
         JNIEnv* env = 0;
         d->jvm->AttachCurrentThread( ( void** )&env, 0 );
