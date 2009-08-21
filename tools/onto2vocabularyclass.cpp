@@ -217,7 +217,7 @@ int main( int argc, char *argv[] )
 
     if ( !QFile::exists( fileName ) ) {
         QTextStream s( stderr );
-        s << "Could not find file" << fileName << endl;
+        s << "Could not find file " << fileName << endl;
         return 1;
     }
 
