@@ -24,7 +24,6 @@
 
 #include "query.h"
 
-#include <QDebug>
 #include <QtCore/QVariant>
 #include <QtCore/QList>
 

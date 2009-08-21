@@ -30,7 +30,6 @@
 #include <QtCore/QSharedData>
 #include <QtCore/QSet>
 
-#include <QDebug>
 
 
 namespace Soprano {

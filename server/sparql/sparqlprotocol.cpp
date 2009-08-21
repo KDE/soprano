@@ -25,7 +25,6 @@
 #include <QtCore/QString>
 #include <QtCore/QUrl>
 #include <QtNetwork/QHttp>
-#include <QtNetwork/QHttpResponseHeader>
 #include <QtCore/QBuffer>
 #include <QtCore/QDebug>
 #include <QtCore/QEventLoop>

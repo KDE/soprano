@@ -27,7 +27,6 @@
 
 #include <QtCore/QObject>
 #include <QtCore/QList>
-#include <QtNetwork/QHostAddress>
 
 
 class QIODevice;

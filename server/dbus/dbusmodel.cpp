@@ -32,7 +32,6 @@
 #include "statementiterator.h"
 #include "queryresultiterator.h"
 
-#include <QDebug>
 
 class Soprano::Client::DBusModel::Private
 {

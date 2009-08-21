@@ -41,7 +41,6 @@
 
 #include <QtCore/QHash>
 #include <QtCore/QDebug>
-#include <QtNetwork/QTcpSocket>
 #include <QtCore/QThread>
 #include <QtCore/QTime>
 
