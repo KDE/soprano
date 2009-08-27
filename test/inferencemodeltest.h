@@ -53,6 +53,7 @@ private Q_SLOTS:
     void testParseRuleFile_data();
     void testParseRuleFile();
     void testParseRule();
+    void testLiteralEffect();
     void cleanupTestCase();
 
 private:

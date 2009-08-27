@@ -48,7 +48,12 @@ void InferenceModelTest::initTestCase()
     rule.addPrecondition( StatementPattern( NodePattern( "b" ), NodePattern( Vocabulary::RDFS::subClassOf() ), NodePattern( "c" ) ) );
     rule.setEffect( StatementPattern( NodePattern( "a" ), NodePattern( Vocabulary::RDFS::subClassOf() ), NodePattern( "c" ) ) );
 
+    Rule literalRule;
+    literalRule.addPrecondition( StatementPattern( NodePattern( "a" ), NodePattern( "b" ), NodePattern( LiteralValue( "Hello" ) ) ) );
+    literalRule.setEffect( StatementPattern( NodePattern( "a" ), NodePattern( "b" ), NodePattern( LiteralValue( "Hello World" ) ) ) );
+
     m_infModel->addRule( rule );
+    m_infModel->addRule( literalRule );
 }
 
 
@@ -360,10 +365,27 @@ void InferenceModelTest::testParseRule()
 {
     QString prefix( "PREFIX nrl: <http://www.semanticdesktop.org/ontologies/2007/08/15/nrl/>" );
     QString rule( "[nrl1: (?p <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> nrl:TransitiveProperty), (?x ?p ?y), (?y ?p ?z) -> (?x ?p ?z)]" );
+    QString literalRule1( "[literal1: (?s ?p 'Hello') -> (?s ?p 'Hello World' ) ]" );
+    QString literalRule2( "[literal2: (?s ?p \"Hello\") -> (?s ?p \"Hello Brain\" ) ]" );
+    QString literalRule3( "[literal2: (?s ?p \"Hello\"^^<http://www.w3.org/2001/XMLSchema#string>) -> (?s ?p \"Hello Typed\"^^<http://www.w3.org/2001/XMLSchema#string> ) ]" );
 
     RuleParser parser;
 
-    // without the prefix it should not work
+
+    Rule parsedLiteralRule1 = parser.parseRule( literalRule1 );
+    QVERIFY( parsedLiteralRule1.isValid() );
+    QVERIFY( parsedLiteralRule1.effect().objectPattern().resource() == LiteralValue::createPlainLiteral( "Hello World" ) );
+
+    Rule parsedLiteralRule2 = parser.parseRule( literalRule2 );
+    QVERIFY( parsedLiteralRule2.isValid() );
+    QVERIFY( parsedLiteralRule2.effect().objectPattern().resource() == LiteralValue::createPlainLiteral( "Hello Brain" ) );
+
+    Rule parsedLiteralRule3 = parser.parseRule( literalRule3 );
+    QVERIFY( parsedLiteralRule3.isValid() );
+    QVERIFY( parsedLiteralRule3.effect().objectPattern().resource() == LiteralValue( "Hello Typed" ) );
+
+
+    // without the prefix it should not work to parse nrl1
     QVERIFY( !parser.parseRule( rule ).isValid() );
 
     QVERIFY( !parser.parseRule( prefix ).isValid() );
@@ -387,6 +409,16 @@ void InferenceModelTest::testClearInference()
     QVERIFY( it.next() );
     QVERIFY( it.current() == s1 || it.current() == s2 );
     QVERIFY( !it.next() );
+}
+
+
+void InferenceModelTest::testLiteralEffect()
+{
+    Statement s( QUrl( "http://soprano.sf.net/test#X" ), QUrl( "http://soprano.sf.net/test#label" ), LiteralValue( "Hello" ) );
+
+    m_infModel->addStatement( s );
+
+    QVERIFY( m_infModel->containsAnyStatement( s.subject(), s.predicate(), LiteralValue( "Hello World" ) ) );
 }
 
 QTEST_MAIN( InferenceModelTest )
