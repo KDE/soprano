@@ -443,6 +443,9 @@ namespace Soprano
         QSharedDataPointer<NodeData> d;
     };
 
+    /**
+     * \relates Soprano::Node
+     */
     SOPRANO_EXPORT uint qHash( const Node& node );
 }
 
