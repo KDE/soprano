@@ -65,7 +65,14 @@ Soprano::Virtuoso::QueryResultIteratorBackend::QueryResultIteratorBackend( ODBC:
         // cache the result
         // virtuoso returns an empty result set for false boolean results
         // otherwise a single row is returned
-        d->askResult = d->m_queryResult->fetchScroll();
+        if ( d->m_queryResult->fetchScroll() ) {
+            Node askVal = d->m_queryResult->getData( 1 );
+            qDebug() << Q_FUNC_INFO << d->m_queryResult->resultColumns() << askVal;
+            d->askResult = askVal.literal().toInt() != 0;
+        }
+        else {
+            d->askResult = false;
+        }
     }
     else if ( d->isGraphResult ) {
         // parse the data
