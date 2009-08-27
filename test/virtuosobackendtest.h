@@ -24,6 +24,9 @@
 
 #include "SopranoModelTest.h"
 
+#include <QtCore/QHash>
+
+
 namespace Soprano {
 
     class Model;
@@ -32,8 +35,16 @@ namespace Soprano {
     {
         Q_OBJECT
 
+    public:
+        VirtuosoBackendTest();
+
     protected:
         virtual Soprano::Model* createModel();
+        void deleteModel( Soprano::Model* m );
+
+    private:
+        int m_modelCnt;
+        QHash<Soprano::Model*, Soprano::BackendSettings> m_settingsHash;
     };
 }
 
