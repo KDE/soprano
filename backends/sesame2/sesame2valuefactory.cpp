@@ -179,25 +179,25 @@ JObjectRef Soprano::Sesame2::ValueFactory::convertStatement( const Statement& st
 {
     JObjectRef subject = convertNode( statement.subject() );
     if ( JNIWrapper::instance()->exceptionOccured() ) {
-        qDebug() << "(Soprano::Sesame2::ValueFactory::convertStatement) conversion of subject failed";
+        qDebug() << "(Soprano::Sesame2::ValueFactory::convertStatement) conversion of subject failed:" << statement.subject();
         return 0;
     }
 
     JObjectRef predicate = convertNode( statement.predicate() );
     if ( JNIWrapper::instance()->exceptionOccured() ) {
-        qDebug() << "(Soprano::Sesame2::ValueFactory::convertStatement) conversion of predicate failed";
+        qDebug() << "(Soprano::Sesame2::ValueFactory::convertStatement) conversion of predicate failed:" << statement.predicate();
         return 0;
     }
 
     JObjectRef object = convertNode( statement.object() );
     if ( JNIWrapper::instance()->exceptionOccured() ) {
-        qDebug() << "(Soprano::Sesame2::ValueFactory::convertStatement) conversion of object failed";
+        qDebug() << "(Soprano::Sesame2::ValueFactory::convertStatement) conversion of object failed:" << statement.object();
         return 0;
     }
 
     JObjectRef context = convertNode( statement.context() );
     if ( JNIWrapper::instance()->exceptionOccured() ) {
-        qDebug() << "(Soprano::Sesame2::ValueFactory::convertStatement) conversion of context failed";
+        qDebug() << "(Soprano::Sesame2::ValueFactory::convertStatement) conversion of context failed:" << statement.context();
         return 0;
     }
 
