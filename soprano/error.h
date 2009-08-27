@@ -35,7 +35,7 @@ namespace Soprano {
          * used to provide a quick success status check in methods
          * such as Model::addStatement().
          *
-         * \sa Error::Error::code()
+         * \sa Error::Error::code(), Error::convertErrorCode
          */
         enum ErrorCode {
             ErrorNone = 0x0,             /**< No error occured, i.e. success. */
@@ -141,7 +141,7 @@ namespace Soprano {
              * ErrorUnknown + librdf_log_message_code()
              * \endcode
              *
-             * \sa ErrorCode
+             * \sa ErrorCode, Error::convertErrorCode
              */
             int code() const;
 
@@ -164,7 +164,7 @@ namespace Soprano {
              * an empty Locator.
              */
             ParserError toParserError() const;
-    
+
         protected:
             /** \cond protected_error_members */
             Error( ErrorData* );
@@ -239,7 +239,7 @@ namespace Soprano {
              * Get the last error that occured in the current thread.
              */
             virtual Error lastError() const;
-        
+
         protected:
             ErrorCache();
 
@@ -250,7 +250,7 @@ namespace Soprano {
 
             /**
              * Set the last occured error. This method is const to allow setting
-             * of errors in all types of methods. The last error is as such a 
+             * of errors in all types of methods. The last error is as such a
              * mutable property.
              */
             void setError( const Error& ) const;
