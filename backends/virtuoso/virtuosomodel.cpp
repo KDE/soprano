@@ -99,7 +99,7 @@ namespace {
         }
 
         if ( withContext ) {
-            query += " }";
+            query += " . }";
         }
 
         return query;
@@ -107,8 +107,8 @@ namespace {
 
     const char* s_queryPrefix =
         "sparql "
-        "define input:default-graph-exclude 'http://www.openlinksw.com/schemas/virtrdf#' "
-        "define input:named-graph-exclude 'http://www.openlinksw.com/schemas/virtrdf#'";
+        "define input:default-graph-exclude <http://www.openlinksw.com/schemas/virtrdf#> "
+        "define input:named-graph-exclude <http://www.openlinksw.com/schemas/virtrdf#>";
 }
 
 
@@ -170,7 +170,7 @@ Soprano::NodeIterator Soprano::VirtuosoModel::listContexts() const
     return executeQuery( QString( "select distinct ?g where { "
                                   "graph ?g { ?s ?p ?o . } . "
                                   "FILTER(?g != %1) . }" )
-                         .arg( Node( Virtuoso::defaultGraph() ).toN3() ) )
+                         .arg( Node::resourceToN3( Virtuoso::defaultGraph() ) ) )
         .iterateBindings( 0 );
 }
 
@@ -213,14 +213,15 @@ bool Soprano::VirtuosoModel::containsAnyStatement( const Statement& statement ) 
 
 Soprano::StatementIterator Soprano::VirtuosoModel::listStatements( const Statement& partial ) const
 {
-    qDebug() << Q_FUNC_INFO << partial;
+//    qDebug() << Q_FUNC_INFO << partial;
 
     // we cannot use a construct query due to missing graph support
     QString query;
     if ( partial.context().isValid() )
         query = QString( "select * from %1 where { %2 . }" ).arg( partial.context().toN3(), statementToConstructGraphPattern( partial, false ) );
     else
-        query = QString( "select * where { %1 . }" ).arg( statementToConstructGraphPattern( partial, true ) );
+        query = QString( "select * where { %1 . }" )
+                .arg( statementToConstructGraphPattern( partial, true ) );
     qDebug() << "List Statements Query" << query;
     return executeQuery( query, Query::QueryLanguageSparql )
         .iterateStatementsFromBindings( partial.subject().isValid() ? QString() : QString( 's' ),
@@ -273,7 +274,8 @@ Soprano::Error::ErrorCode Soprano::VirtuosoModel::removeAllStatements( const Sta
         }
 
         QString query;
-        if ( !statement.subject().isValid() &&
+        if ( statement.context().isValid() &&
+             !statement.subject().isValid() &&
              !statement.predicate().isValid() &&
              !statement.object().isValid() ) {
             // Virtuoso docu says this might be faster
@@ -281,12 +283,12 @@ Soprano::Error::ErrorCode Soprano::VirtuosoModel::removeAllStatements( const Sta
         }
         else {
             query = QString( "delete from %1 { %2 } where { %3 }" )
-                    .arg( statement.context().toN3() )
+                    .arg( statement.context().isValid() ? statement.context().toN3() : QString( "?g" ) )
                     .arg( statementToConstructGraphPattern( statement, false ) )
                     .arg( statementToConstructGraphPattern( statement, true ) );
 
         }
-//        qDebug() << "removeAllStatements query:" << query;
+        qDebug() << "removeAllStatements query:" << query;
         if ( d->connection->executeCommand( "sparql " + query ) == Error::ErrorNone ) {
             // FIXME: can this be done with SQL/RDF views?
             emit statementsRemoved();
@@ -296,11 +298,6 @@ Soprano::Error::ErrorCode Soprano::VirtuosoModel::removeAllStatements( const Sta
         return Error::convertErrorCode( lastError().code() );
     }
     else {
-//         if ( VirtuosoStatementHandler* sh = d->connection.execute( "delete from RDF_QUAD wheresparql " + query ) ) {
-//             bool b = sh->fetchScroll();
-//             delete sh;
-//             return b;
-//         }
         // FIXME: do this in a fancy way, maybe an inner sql query or something
         QList<Node> allContexts = listContexts().allNodes();
         allContexts << Node( Virtuoso::defaultGraph() );
@@ -311,6 +308,31 @@ Soprano::Error::ErrorCode Soprano::VirtuosoModel::removeAllStatements( const Sta
             if ( c != Error::ErrorNone )
                 return c;
         }
+
+// the code below is not finished yet, still missing is a literal comparison. But then it should be much faster
+#if 0
+QStringList conditions;
+        if ( statement.subject().isValid() )
+            conditions << QString( "s=iri_to_id ('')" ).arg( QString::fromAscii( statement.subject().uri().toEncoded() ) );
+        if ( statement.predicate().isValid() )
+            conditions << QString( "p=iri_to_id ('')" ).arg( QString::fromAscii( statement.predicate().uri().toEncoded() ) );
+        if ( statement.object().isValid() ) {
+            if ( statement.object().isResource() ) {
+                conditions << QString( "o=iri_to_id ('')" ).arg( QString::fromAscii( statement.object().uri().toEncoded() ) );
+            }
+            else {
+                Q_ASSERT( 0 );
+            }
+        }
+
+        QString query = QLatin1String( "delete from DB.DBA.RDF_QUAD where " ) + conditions.join( QLatin1String( " AND " ) ) + ';';
+
+        if ( ODBC::QueryResult* sh = d->connection->executeQuery( query ) ) {
+            bool b = sh->fetchScroll();
+            delete sh;
+            return Error::ErrorUnknown;
+        }
+#endif
 
         return Error::ErrorNone;
     }
@@ -324,7 +346,7 @@ int Soprano::VirtuosoModel::statementCount() const
     QueryResultIterator it = executeQuery( QString( "select count(*) where { "
                                                     "graph ?g { ?s ?p ?o . } . "
                                                     "FILTER(?g != %1) . }" )
-                                           .arg( Node( Virtuoso::openlinkVirtualGraph() ).toN3() ) );
+                                           .arg( Node::resourceToN3( Virtuoso::openlinkVirtualGraph() ) ) );
     if ( it.isValid() && it.next() ) {
         return it.binding( 0 ).literal().toInt();
     }
@@ -345,7 +367,7 @@ Soprano::QueryResultIterator Soprano::VirtuosoModel::executeQuery( const QString
                                                                    Query::QueryLanguage language,
                                                                    const QString& userQueryLanguage ) const
 {
-    qDebug() << Q_FUNC_INFO << query;
+//    qDebug() << Q_FUNC_INFO << query;
 
     if ( language != Soprano::Query::QueryLanguageSparql ) {
         setError( Error::Error( QString( "Unsupported query language %1." )
