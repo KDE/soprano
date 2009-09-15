@@ -75,7 +75,7 @@ namespace Soprano
          * The serialiazation types supported by this parser.
          * \return A combination of Soprano::RdfSerialization types. If
          * the list contains Soprano::SerializationUser the parser 
-         * supports additional RDF serialiazations not
+         * supports additional RDF serializations not
          * officially supported by %Soprano.
          */
         virtual RdfSerializations supportedSerializations() const = 0;
