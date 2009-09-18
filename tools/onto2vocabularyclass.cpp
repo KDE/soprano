@@ -144,6 +144,12 @@ QString normalizeName( const QString& name )
     return QString( name ).replace( '-', QString() );
 }
 
+bool isKeyword( const QString& name )
+{
+    // TODO: add more C++ keywords that are not usable as method names
+    static const QStringList keywords = QStringList() << "class";
+    return keywords.contains( name );
+}
 
 int main( int argc, char *argv[] )
 {
@@ -369,6 +375,8 @@ int main( int argc, char *argv[] )
          it != normalizedResources.constEnd(); ++it ) {
         QString uri = it.key();
         QString name = normalizeName( it.value().first );
+        if ( isKeyword( name ) )
+            continue;
         QString comment = it.value().second;
 
         if ( comment.isEmpty() ) {
@@ -454,6 +462,8 @@ int main( int argc, char *argv[] )
     for( QMap<QString, QPair<QString, QString> >::const_iterator it = normalizedResources.constBegin();
          it != normalizedResources.constEnd(); ++it ) {
         QString name = normalizeName( it.value().first );
+        if ( isKeyword( name ) )
+            continue;
 
         sourceStream << "QUrl ";
 
