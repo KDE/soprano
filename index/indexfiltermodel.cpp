@@ -74,7 +74,7 @@ bool Soprano::Index::IndexFilterModelPrivate::storeStatement( const Statement& s
 
 bool Soprano::Index::IndexFilterModelPrivate::indexStatement( const Statement& statement ) const
 {
-    return statement.object().isLiteral() || forceIndexPredicates.contains( statement.predicate().uri() );
+    return ( statement.object().isLiteral() && !statement.toString().isEmpty() ) || forceIndexPredicates.contains( statement.predicate().uri() );
 }
 
 
