@@ -26,6 +26,8 @@
 #include "vocabulary/nrl.h"
 #include "vocabulary/nao.h"
 #include "vocabulary/rdf.h"
+#include "vocabulary/rdfs.h"
+#include "vocabulary/xsd.h"
 #include "queryresultiterator.h"
 #include "statementiterator.h"
 #include "nodeiterator.h"
@@ -49,16 +51,55 @@ class Soprano::NRLModel::Private
 {
 public:
     Private()
-        : ignoreContext( true ) {
+        : ignoreContext( true ),
+          m_expandQueryPrefixes( false ) {
+    }
+
+    /**
+     * Get all prefixes stored in the model
+     */
+    void buildPrefixMap()
+    {
+        m_prefixes.clear();
+
+        // fixed prefixes
+        m_prefixes.insert( "rdf", Soprano::Vocabulary::RDF::rdfNamespace() );
+        m_prefixes.insert( "rdfs", Soprano::Vocabulary::RDFS::rdfsNamespace() );
+        m_prefixes.insert( "xsd", Soprano::Vocabulary::XMLSchema::xsdNamespace() );
+        m_prefixes.insert( "nrl", Soprano::Vocabulary::NRL::nrlNamespace() );
+        m_prefixes.insert( "nao", Soprano::Vocabulary::NAO::naoNamespace() );
+
+        // get prefixes from nepomuk
+        Soprano::QueryResultIterator it =
+            q->executeQuery( QString( "select ?ns ?ab where { "
+                                      "?g %1 ?ns . "
+                                      "?g %2 ?ab . }" )
+                             .arg( Soprano::Node::resourceToN3( Soprano::Vocabulary::NAO::hasDefaultNamespace() ) )
+                             .arg( Soprano::Node::resourceToN3( Soprano::Vocabulary::NAO::hasDefaultNamespaceAbbreviation() ) ),
+                             Soprano::Query::QueryLanguageSparql );
+        while ( it.next() ) {
+            QString ab = it["ab"].toString();
+            QUrl ns = it["ns"].toString();
+            if ( !m_prefixes.contains( ab ) ) {
+                m_prefixes.insert( ab, ns );
+            }
+        }
     }
 
     bool ignoreContext;
+    bool m_expandQueryPrefixes;
+
+    // cache of all prefixes that are supported
+    QHash<QString, QUrl> m_prefixes;
+
+    NRLModel* q;
 };
 
 Soprano::NRLModel::NRLModel()
     : FilterModel(),
       d( new Private() )
 {
+    d->q = this;
 }
 
 
@@ -66,6 +107,7 @@ Soprano::NRLModel::NRLModel( Model* parent )
     : FilterModel( parent ),
       d( new Private() )
 {
+    d->q = this;
 }
 
 
@@ -84,6 +126,22 @@ void Soprano::NRLModel::setIgnoreContext( bool b )
 bool Soprano::NRLModel::ignoreContext() const
 {
     return d->ignoreContext;
+}
+
+
+void Soprano::NRLModel::setEnableQueryPrefixExpansion( bool enable )
+{
+    if ( enable != d->m_expandQueryPrefixes ) {
+        d->m_expandQueryPrefixes = true;
+        if ( enable )
+            d->buildPrefixMap();
+    }
+}
+
+
+bool Soprano::NRLModel::queryPrefixExpansionEnabled() const
+{
+    return d->m_expandQueryPrefixes;
 }
 
 
@@ -213,4 +271,31 @@ Soprano::Error::ErrorCode Soprano::NRLModel::removeGraph( const QUrl& graph )
             return c;
     }
     return removeContext( graph );
+}
+
+
+Soprano::QueryResultIterator Soprano::NRLModel::executeQuery( const QString& query, Query::QueryLanguage language, const QString& userQueryLanguage ) const
+{
+    QString expandedQuery( query );
+
+    if ( language == Query::QueryLanguageSparql &&
+         d->m_expandQueryPrefixes ) {
+        for ( QHash<QString, QUrl>::const_iterator it = d->m_prefixes.constBegin();
+              it != d->m_prefixes.constEnd(); ++it ) {
+            QString prefix = it.key();
+            QUrl ns = it.value();
+
+            // very stupid check for the prefix usage
+            if ( expandedQuery.contains( prefix + ':' ) ) {
+                // if the prefix is not defined add it
+                if ( !expandedQuery.contains( QRegExp( QString( "[pP][rR][eE][fF][iI][xX]\\s*%1\\s*:\\s*<%2>" )
+                                                       .arg( prefix )
+                                                       .arg( QRegExp::escape( ns.toString() ) ) ) ) ) {
+                    expandedQuery.prepend( QString( "prefix %1: <%2> " ).arg( prefix ).arg( ns.toString() ) );
+                }
+            }
+        }
+    }
+
+    return FilterModel::executeQuery( expandedQuery, language, userQueryLanguage );
 }

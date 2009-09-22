@@ -32,6 +32,8 @@
 #include "../soprano/serializer.h"
 #include "../soprano/storagemodel.h"
 #include "../soprano/vocabulary.h"
+#define USING_SOPRANO_NRLMODEL_UNSTABLE_API
+#include "../soprano/nrlmodel.h"
 
 #ifdef BUILD_CLUCENE_INDEX
 #include "../index/indexfiltermodel.h"
@@ -369,36 +371,6 @@ namespace {
     }
 
 
-    QString tuneQuery( QString query, const QString& queryLang )
-    {
-        if ( Soprano::Query::queryLanguageFromString( queryLang ) == Soprano::Query::QueryLanguageSparql ) {
-            QHash<QString, QUrl> prefixes;
-            prefixes.insert( "rdf", Vocabulary::RDF::rdfNamespace() );
-            prefixes.insert( "rdfs", Vocabulary::RDFS::rdfsNamespace() );
-            prefixes.insert( "nrl", Vocabulary::NRL::nrlNamespace() );
-            prefixes.insert( "nao", Vocabulary::NAO::naoNamespace() );
-            prefixes.insert( "xsd", Vocabulary::XMLSchema::xsdNamespace() );
-
-            for ( QHash<QString, QUrl>::const_iterator it = prefixes.constBegin();
-                  it != prefixes.constEnd(); ++it ) {
-                QString prefix = it.key();
-                QUrl ns = it.value();
-
-                // very stupid check for the prefix usage
-                if ( query.contains( prefix + ':' ) ) {
-                    // if the prefix is not defined add it
-                    if ( !query.contains( QRegExp( QString( "[pP][rR][eE][fF][iI][xX]\\s*%1\\s*:\\s*<%2>" )
-                                                   .arg( prefix )
-                                                   .arg( QRegExp::escape( ns.toString() ) ) ) ) ) {
-                        query.prepend( QString( "prefix %1: <%2> " ).arg( prefix ).arg( ns.toString() ) );
-                    }
-                }
-            }
-        }
-        return query;
-    }
-
-
     int version()
     {
         QTextStream s( stdout );
@@ -441,6 +413,9 @@ namespace {
           << "   --version           Print version information." << endl
           << endl
           << "   --help              Print this help." << endl
+          << endl
+          << "   --nrl               Enable NRL (Nepomuk) feature. At the moment this means automatic query prefix expansion based on" << endl
+          << "                       ontologies stored in the model." << endl
           << endl
           << "   --model <name>      The name of the Soprano model to perform the command on." << endl
           << "                       (only applicable when querying against the Soprano server.)" << endl
@@ -568,6 +543,7 @@ int main( int argc, char *argv[] )
 #ifdef BUILD_CLUCENE_INDEX
     allowedCmdLineArgs.insert( "index", true );
 #endif
+    allowedCmdLineArgs.insert( "nrl", false );
 
     CmdLineArgs args;
     if ( !CmdLineArgs::parseCmdLine( args, app.arguments(), allowedCmdLineArgs ) ) {
@@ -777,6 +753,11 @@ int main( int argc, char *argv[] )
         return usage();
     }
 
+    if ( args.optionSet( "nrl" ) ) {
+        NRLModel* nrlModel = new NRLModel( model );
+        nrlModel->setEnableQueryPrefixExpansion( true );
+        model = nrlModel;
+    }
 
     //
     // ====================================================================
@@ -837,7 +818,7 @@ int main( int argc, char *argv[] )
             success = exportFile( model->listStatements(), fileName, serialization );
         }
         else {
-            QueryResultIterator it = model->executeQuery( tuneQuery( query, queryLang ),
+            QueryResultIterator it = model->executeQuery( query,
                                                           Soprano::Query::queryLanguageFromString( queryLang ), queryLang );
             if ( it.isGraph() ) {
                 success = exportFile( it.iterateStatements(),
@@ -866,7 +847,7 @@ int main( int argc, char *argv[] )
             QTime time;
             time.start();
 
-            Soprano::QueryResultIterator it = model->executeQuery( tuneQuery( query, queryLang ),
+            Soprano::QueryResultIterator it = model->executeQuery( query,
                                                                    Soprano::Query::queryLanguageFromString( queryLang ), queryLang );
             queryTime = time.elapsed();
             if ( !args.hasSetting( "file" ) &&

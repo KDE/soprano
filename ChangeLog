@@ -1,6 +1,8 @@
 2.4
 	* New methods Client::SparqlModel::listStatementsAsync and Client::SparqlModel::listContexts
-
+	* New paramter --nrl for sopranocmd which will trigger automatic query prefix expansion based on
+	  prefixes stored in the underlying model.
+	
 2.3
 	* New class LanguageTag replacing the old simple string language handling with a sophisticated one
 	  implementing RFC 4647. At the same time Soprano now directly supports plain literals in addition

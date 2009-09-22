@@ -79,6 +79,23 @@ namespace Soprano {
         bool ignoreContext() const;
 
         /**
+         * Enable automatic query prefix expansion based on nao:hasDefaultNamespaceAbbreviation.
+         * This will trigger reading all prefixes stored in the underlying model.
+         *
+         * By default query prefix expansion is disabled.
+         *
+         * \since 2.4
+         */
+        void setEnableQueryPrefixExpansion( bool enable );
+
+        /**
+         * \return \p true if query prefix expansion is enabled.
+         *
+         * \since 2.4
+         */
+        bool queryPrefixExpansionEnabled() const;
+
+        /**
          * Add a statement.
          *
          * \param s The statement containing the property to be set.
@@ -115,6 +132,14 @@ namespace Soprano {
          * \since 2.3
          */
         Error::ErrorCode removeGraph( const QUrl& graph );
+
+        /**
+         * If queryPrefixExpansionEnabled is \p true query prefixes will be expanded before sending the
+         * query to the underlying model.
+         *
+         * \reimplemented
+         */
+        virtual QueryResultIterator executeQuery( const QString& query, Query::QueryLanguage language, const QString& userQueryLanguage = QString() ) const;
 
     private:
         class Private;
