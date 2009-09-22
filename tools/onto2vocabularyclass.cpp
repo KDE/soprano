@@ -144,11 +144,14 @@ QString normalizeName( const QString& name )
     return QString( name ).replace( '-', QString() );
 }
 
-bool isKeyword( const QString& name )
+QString disambiguateKeyword( const QString& name, const QString &className )
 {
+    Q_ASSERT( !name.isEmpty() );
     // TODO: add more C++ keywords that are not usable as method names
     static const QStringList keywords = QStringList() << "class";
-    return keywords.contains( name );
+    if ( keywords.contains( name ) )
+        return className.toLower() + name.left( 1 ).toUpper() + name.mid( 1 );
+    return name;
 }
 
 int main( int argc, char *argv[] )
@@ -375,8 +378,6 @@ int main( int argc, char *argv[] )
          it != normalizedResources.constEnd(); ++it ) {
         QString uri = it.key();
         QString name = normalizeName( it.value().first );
-        if ( isKeyword( name ) )
-            continue;
         QString comment = it.value().second;
 
         if ( comment.isEmpty() ) {
@@ -388,7 +389,7 @@ int main( int argc, char *argv[] )
         headerStream << createIndent( indent );
         if ( visibilityExport )
             headerStream << QString( "%1_EXPORT " ).arg(exportModule.toUpper());
-        headerStream << "QUrl " << name << "();" << endl;
+        headerStream << "QUrl " << disambiguateKeyword( name, className ) << "();" << endl;
 
         ++it;
         if ( it != normalizedResources.constEnd() ) {
@@ -462,8 +463,6 @@ int main( int argc, char *argv[] )
     for( QMap<QString, QPair<QString, QString> >::const_iterator it = normalizedResources.constBegin();
          it != normalizedResources.constEnd(); ++it ) {
         QString name = normalizeName( it.value().first );
-        if ( isKeyword( name ) )
-            continue;
 
         sourceStream << "QUrl ";
 
@@ -471,7 +470,7 @@ int main( int argc, char *argv[] )
             sourceStream << namespaceName << "::";
         }
 
-        sourceStream << className << "::" << name << "()" << endl
+        sourceStream << className << "::" << disambiguateKeyword( name, className ) << "()" << endl
                      << "{" << endl
                      << createIndent( 1 ) << "return " << singletonName << "()->" << className.toLower() << "_" << name << ";" << endl
                      << "}" << endl;
