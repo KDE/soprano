@@ -52,6 +52,8 @@ namespace Soprano {
      */
     class SOPRANO_EXPORT NRLModel : public FilterModel
     {
+        Q_OBJECT
+
     public:
         NRLModel();
         NRLModel( Model* parent );
@@ -94,6 +96,14 @@ namespace Soprano {
          * \since 2.4
          */
         bool queryPrefixExpansionEnabled() const;
+
+        /**
+         * The prefixes that have been read from the underlying model.
+         *
+         * \return A list of prefixes mapping to the namespaces read from
+         * the model. This list is empty if queryPrefixExpansion is disabled.
+         */
+        QHash<QString, QUrl> queryPrefixes() const;
 
         /**
          * Add a statement.

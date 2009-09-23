@@ -145,6 +145,12 @@ bool Soprano::NRLModel::queryPrefixExpansionEnabled() const
 }
 
 
+QHash<QString, QUrl> Soprano::NRLModel::queryPrefixes() const
+{
+    return d->m_prefixes;
+}
+
+
 Soprano::Error::ErrorCode Soprano::NRLModel::addNrlStatement( const Statement& statement )
 {
     // 1. check if any cardinality restrictions are defined for s.predicate()
@@ -299,3 +305,5 @@ Soprano::QueryResultIterator Soprano::NRLModel::executeQuery( const QString& que
 
     return FilterModel::executeQuery( expandedQuery, language, userQueryLanguage );
 }
+
+#include "nrlmodel.moc"

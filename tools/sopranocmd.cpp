@@ -52,6 +52,7 @@
 using namespace Soprano;
 
 namespace {
+    Soprano::Model* s_model = 0;
     ModelMonitor* s_monitor = 0;
 
 #ifndef Q_OS_WIN
@@ -210,6 +211,8 @@ namespace {
         return QUrl( s );
     }
 
+    QRegExp s_prefixedUriRx( "(\\w+)\\:(\\w+)" );
+
     Soprano::Node parseNode( const QString& s )
     {
         if ( s.isEmpty() ) {
@@ -242,6 +245,20 @@ namespace {
                 return Soprano::LiteralValue::createPlainLiteral( value, lang );
             }
         }
+        else if ( s_prefixedUriRx.exactMatch( s ) ) {
+            QUrl ns;
+            Soprano::NRLModel* nrlModel = qobject_cast<Soprano::NRLModel*>( s_model );
+            if ( nrlModel ) {
+                ns = nrlModel->queryPrefixes()[s_prefixedUriRx.cap( 1 )];
+            }
+            if ( ns.isValid() )
+                return QUrl( ns.toString() + s_prefixedUriRx.cap( 2 ) );
+            else
+                return Soprano::Node();
+        }
+        else if ( s == QLatin1String( "a" ) ) {
+            return Soprano::Vocabulary::RDF::type();
+        }
         else {
             // we only check for boolean, integer and double here
             if ( s.toLower() == "false" )
@@ -267,6 +284,9 @@ namespace {
 
     int importFile( Soprano::Model* model, const QString& fileName, const QString& serialization )
     {
+        Soprano::NRLModel* nrlModel = qobject_cast<Soprano::NRLModel*>( model );
+        QUrl graph;
+
         const Soprano::Parser* parser = Soprano::PluginManager::instance()->discoverParserForSerialization( Soprano::mimeTypeToSerialization( serialization ), serialization );
 
         if ( parser ) {
@@ -283,7 +303,21 @@ namespace {
 
             int cnt = 0;
             while ( it.next() ) {
-                if ( model->addStatement( *it ) == Soprano::Error::ErrorNone ) {
+                //
+                // In NRL mode we make sure each statement is in a proper graph
+                //
+                Statement statement( *it );
+                if ( !statement.context().isValid() &&
+                     nrlModel ) {
+                    if ( graph.isEmpty() ) {
+                        graph = nrlModel->createGraph( Soprano::Vocabulary::NRL::KnowledgeBase() );
+                        QTextStream s( stderr );
+                        s << "Generated new NRL context for imported statements: " << graph.toString() << endl;
+                    }
+                    statement.setContext( graph );
+                }
+
+                if ( model->addStatement( statement ) == Soprano::Error::ErrorNone ) {
                     ++cnt;
                 }
                 else {
@@ -293,7 +327,7 @@ namespace {
                 }
             }
 
-            QTextStream s( stdout );
+            QTextStream s( stderr );
             s << "Imported " << cnt << " statements." << endl;
             return 0;
         }
@@ -401,7 +435,8 @@ namespace {
         QTextStream s( stdout );
         s << endl;
         s << "Usage:" << endl
-          << "   sopranocmd --backend <backendname> [--dir <storagedir>] [--port <port>] [--host <host>] [--username <username>] [--password <password>] [--settings <settings>] [--serialization <s>] <command> [<parameters>]" << endl
+          << "   sopranocmd --backend <backendname> [--dir <storagedir>] [--port <port>] [--host <host>] "
+          << "[--username <username>] [--password <password>] [--settings <settings>] [--serialization <s>] <command> [<parameters>]" << endl
           << "   sopranocmd --port <port> [--host <host>] --model <name> [--serialization <s>] <command> [<parameters>]" << endl
           << "   sopranocmd --socket <socketpath>  --model <name> [--serialization <s>] <command> [<parameters>]" << endl
 #ifdef BUILD_DBUS_SUPPORT
@@ -414,8 +449,10 @@ namespace {
           << endl
           << "   --help              Print this help." << endl
           << endl
-          << "   --nrl               Enable NRL (Nepomuk) feature. At the moment this means automatic query prefix expansion based on" << endl
-          << "                       ontologies stored in the model." << endl
+          << "   --nrl               Enable NRL (Nepomuk) features. This includes automatic query prefix expansion based on" << endl
+          << "                       ontologies stored in the model and automatic context creation for imported statements" << endl
+          << "                       without a predefined context/named graph. The newly created context will be of type" << endl
+          << "                       nrl:KnowledgeBase and already have its creation date set in its very own nrl:GraphMetadata." << endl
           << endl
           << "   --model <name>      The name of the Soprano model to perform the command on." << endl
           << "                       (only applicable when querying against the Soprano server.)" << endl
@@ -476,7 +513,8 @@ namespace {
           << "                                    that some backends do not report every removed statement but only the remove pattern." << endl
           << "                       - 'query':   Execute a query on the model and print the results. The paramter is the actual query to perform." << endl
           << "                       - 'import':  Import a set of statements into the model. The parameter is a local filename to read the" << endl
-          << "                                    statements to import from." << endl
+          << "                                    statements to import from. If the option --nrl is given imported statements are added to a new" << endl
+          << "                                    context/named graph if they do not have one already." << endl
           << "                       - 'export':  Export a set of statements to a file. The parameters are an optional SPARQL construct query" << endl
           << "                                    which selects the statements to export (if not specified all statements are exported) and a local" << endl
           << "                                    filename to write the exported statements to." << endl << endl
@@ -613,7 +651,6 @@ int main( int argc, char *argv[] )
     // ====================================================================
     //
 
-    Soprano::Model* model = 0;
     bool isRemoteModel = false;
 
     if ( args.hasSetting( "sparql" ) ) {
@@ -630,7 +667,7 @@ int main( int argc, char *argv[] )
         if ( !sparqlEndPoint.path().isEmpty() )
             sparqlModel->setPath( sparqlEndPoint.path() );
 
-        model = sparqlModel;
+        s_model = sparqlModel;
         isRemoteModel = true;
     }
     else if ( args.hasSetting( "port" ) ) {
@@ -648,7 +685,7 @@ int main( int argc, char *argv[] )
             delete tcpClient;
             return 3;
         }
-        if ( !( model = tcpClient->createModel( modelName ) ) ) {
+        if ( !( s_model = tcpClient->createModel( modelName ) ) ) {
             errStream << "Failed to create Model: " << tcpClient->lastError() << endl;
             delete tcpClient;
             return 2;
@@ -663,7 +700,7 @@ int main( int argc, char *argv[] )
             delete localSocketClient;
             return 3;
         }
-        if ( !( model = localSocketClient->createModel( modelName ) ) ) {
+        if ( !( s_model = localSocketClient->createModel( modelName ) ) ) {
             errStream << "Failed to create Model: " << localSocketClient->lastError() << endl;
             delete localSocketClient;
             return 2;
@@ -679,7 +716,7 @@ int main( int argc, char *argv[] )
             delete dbusClient;
             return 3;
         }
-        if ( !( model = dbusClient->createModel( modelName ) ) ) {
+        if ( !( s_model = dbusClient->createModel( modelName ) ) ) {
             errStream << "Failed to create Model: " << dbusClient->lastError() << endl;
             delete dbusClient;
             return 2;
@@ -688,13 +725,13 @@ int main( int argc, char *argv[] )
     }
 #endif
     else if ( !file.isEmpty() ) {
-        if ( !( model = createMemoryModel( backendName ) ) ) {
+        if ( !( s_model = createMemoryModel( backendName ) ) ) {
             errStream << "Failed to create temporary model." << endl;
             return 2;
         }
-        if ( int r = importFile( model, file, serialization ) ) {
+        if ( int r = importFile( s_model, file, serialization ) ) {
             errStream << "Failed to parse " << file << endl;
-            delete model;
+            delete s_model;
             return r;
         }
     }
@@ -732,7 +769,7 @@ int main( int argc, char *argv[] )
             settings << BackendSetting( keyValue[0], keyValue[1] );
         }
 
-        if ( !( model = backend->createModel( settings ) ) ) {
+        if ( !( s_model = backend->createModel( settings ) ) ) {
             errStream << "Failed to create Model: " << backend->lastError() << endl;
             return 2;
         }
@@ -749,15 +786,24 @@ int main( int argc, char *argv[] )
         ++firstArg;
     }
     else {
-        delete model;
+        delete s_model;
         return usage();
     }
 
+
+    //
+    // ====================================================================
+    // Create an optional NRLModel
+    // ====================================================================
+    //
+
     if ( args.optionSet( "nrl" ) ) {
-        NRLModel* nrlModel = new NRLModel( model );
+        NRLModel* nrlModel = new NRLModel( s_model );
         nrlModel->setEnableQueryPrefixExpansion( true );
-        model = nrlModel;
+        s_model->setParent( nrlModel ); // mem management
+        s_model = nrlModel;
     }
+
 
     //
     // ====================================================================
@@ -767,11 +813,12 @@ int main( int argc, char *argv[] )
 
 #ifdef BUILD_CLUCENE_INDEX
     if ( args.hasSetting( "index" ) ) {
-        Index::IndexFilterModel* filterModel = new Index::IndexFilterModel( args.getSetting( "index" ), model );
-        model->setParent( filterModel ); // mem management
-        model = filterModel;
+        Index::IndexFilterModel* filterModel = new Index::IndexFilterModel( args.getSetting( "index" ), s_model );
+        s_model->setParent( filterModel ); // mem management
+        s_model = filterModel;
     }
 #endif
+
 
     //
     // ====================================================================
@@ -783,14 +830,14 @@ int main( int argc, char *argv[] )
 
     if ( command == "import" ) {
         if ( firstArg != args.count()-1 ) {
-            delete model;
+            delete s_model;
             return usage();
         }
 
         QString fileName = args[firstArg];
 
-        int r = importFile( model, fileName, serialization );
-        delete model;
+        int r = importFile( s_model, fileName, serialization );
+        delete s_model;
         return r;
     }
     else if ( command == "export" ) {
@@ -805,7 +852,7 @@ int main( int argc, char *argv[] )
             query = args[firstArg];
         }
         else {
-            delete model;
+            delete s_model;
             return usage();
         }
 
@@ -815,11 +862,11 @@ int main( int argc, char *argv[] )
         bool success = true;
         if ( query.isEmpty() ) {
             // export all statements
-            success = exportFile( model->listStatements(), fileName, serialization );
+            success = exportFile( s_model->listStatements(), fileName, serialization );
         }
         else {
-            QueryResultIterator it = model->executeQuery( query,
-                                                          Soprano::Query::queryLanguageFromString( queryLang ), queryLang );
+            QueryResultIterator it = s_model->executeQuery( query,
+                                                            Soprano::Query::queryLanguageFromString( queryLang ), queryLang );
             if ( it.isGraph() ) {
                 success = exportFile( it.iterateStatements(),
                                       fileName,
@@ -831,7 +878,7 @@ int main( int argc, char *argv[] )
             }
         }
 
-        delete model;
+        delete s_model;
 
         return success ? 0 : 1;
     }
@@ -847,8 +894,8 @@ int main( int argc, char *argv[] )
             QTime time;
             time.start();
 
-            Soprano::QueryResultIterator it = model->executeQuery( query,
-                                                                   Soprano::Query::queryLanguageFromString( queryLang ), queryLang );
+            Soprano::QueryResultIterator it = s_model->executeQuery( query,
+                                                                     Soprano::Query::queryLanguageFromString( queryLang ), queryLang );
             queryTime = time.elapsed();
             if ( !args.hasSetting( "file" ) &&
                  args.hasSetting( "serialization" ) ) {
@@ -883,7 +930,7 @@ int main( int argc, char *argv[] )
             // parse node commands (max 4)
             Soprano::Node n1, n2, n3, n4;
             if ( args.count() > 5 ) {
-                delete model;
+                delete s_model;
                 return usage();
             }
 
@@ -902,17 +949,17 @@ int main( int argc, char *argv[] )
 
             if ( n1.isLiteral() ) {
                 errStream << "Subject needs to be a resource or blank node." << endl;
-                delete model;
+                delete s_model;
                 return 1;
             }
             if ( !n2.isResource() && !n2.isEmpty() ) {
                 errStream << "Predicate needs to be a resource node." << endl;
-                delete model;
+                delete s_model;
                 return 1;
             }
             if ( n4.isLiteral() ) {
                 errStream << "Context needs to be a resource or blank node." << endl;
-                delete model;
+                delete s_model;
                 return 1;
             }
             Statement statement( n1, n2, n3, n4 );
@@ -921,21 +968,21 @@ int main( int argc, char *argv[] )
             time.start();
 
             if ( command == "list" ) {
-                Soprano::StatementIterator it = model->listStatements( statement );
+                Soprano::StatementIterator it = s_model->listStatements( statement );
                 queryTime = time.elapsed();
                 printStatementList( it );
             }
             else if ( command == "add" ) {
                 if ( !statement.isValid() ) {
                     errStream << "At least subject, predicate, and object have to be defined." << endl;
-                    delete model;
+                    delete s_model;
                     return 1;
                 }
-                model->addStatement( statement );
+                s_model->addStatement( statement );
                 queryTime = time.elapsed();
             }
             else if ( command == "remove" ) {
-                model->removeAllStatements( statement );
+                s_model->removeAllStatements( statement );
                 queryTime = time.elapsed();
             }
             else if ( command == "monitor" ) {
@@ -944,29 +991,29 @@ int main( int argc, char *argv[] )
                     return 1;
                 }
 
-                ModelMonitor monitor( model );
+                ModelMonitor monitor( s_model );
                 s_monitor = &monitor;
                 monitor.monitor( statement );
 
-                delete model;
+                delete s_model;
                 return 0;
             }
             else {
                 errStream << "Unsupported command: " << command << endl;
-                delete model;
+                delete s_model;
                 return 1;
             }
         }
     }
 
-    if ( !model->lastError() ) {
+    if ( !s_model->lastError() ) {
         errStream << "Execution time: " << QTime().addMSecs( queryTime ).toString( "hh:mm:ss.z" ) << endl;
-        delete model;
+        delete s_model;
         return 0;
     }
     else {
-        errStream << "Execution failed: " << model->lastError() << endl;
-        delete model;
+        errStream << "Execution failed: " << s_model->lastError() << endl;
+        delete s_model;
         return 2;
     }
 }
