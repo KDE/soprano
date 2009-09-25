@@ -341,6 +341,9 @@ void SopranoModelTest::testRemoveStatement()
     QVERIFY( m_model->containsStatement( s2 ) );
     QVERIFY( !m_model->lastError() );
 
+    QVERIFY( m_model->removeStatement( s2 ) == Error::ErrorNone );
+    QVERIFY( !m_model->containsStatement( s2 ) );
+
     // make sure invalid statements throw an error
     s1.setObject( Node() );
     QVERIFY( m_model->removeStatement( Statement( s1 ) ) != Error::ErrorNone );
@@ -455,6 +458,9 @@ void SopranoModelTest::testContainsStatement()
 void SopranoModelTest::testContainsStatements()
 {
     QVERIFY( m_model != 0 );
+
+    QTextStream sm( stdout );
+    m_model->write( sm );
 
     // check all wildcard combinations
     QVERIFY( m_model->containsAnyStatement( Statement( m_st1.subject(), Node(), Node() ) ) );

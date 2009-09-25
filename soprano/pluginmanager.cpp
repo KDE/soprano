@@ -359,6 +359,49 @@ void Soprano::PluginManager::setPluginSearchPath( const QStringList& paths, bool
 }
 
 
+bool Soprano::PluginManager::loadCustomPlugin( const QString& path )
+{
+    PluginStub stub( QString(), path );
+    return d->addPlugin( stub );
+}
+
+
+const Soprano::Backend* Soprano::PluginManager::loadCustomBackend( const QString& path )
+{
+    PluginStub stub( QString(), path );
+    if ( Backend* pp = qobject_cast<Backend*>( stub.plugin() ) ) {
+        if ( d->addPlugin( stub ) ) {
+            return pp;
+        }
+    }
+    return 0;
+}
+
+
+const Soprano::Parser* Soprano::PluginManager::loadCustomParser( const QString& path )
+{
+    PluginStub stub( QString(), path );
+    if ( Parser* pp = qobject_cast<Parser*>( stub.plugin() ) ) {
+        if ( d->addPlugin( stub ) ) {
+            return pp;
+        }
+    }
+    return 0;
+}
+
+
+const Soprano::Serializer* Soprano::PluginManager::loadCustomSerializer( const QString& path )
+{
+    PluginStub stub( QString(), path );
+    if ( Serializer* pp = qobject_cast<Serializer*>( stub.plugin() ) ) {
+        if ( d->addPlugin( stub ) ) {
+            return pp;
+        }
+    }
+    return 0;
+}
+
+
 namespace Soprano {
     /**
      * Little hack class to ensure BC (cannot make PluginManager constructor public)

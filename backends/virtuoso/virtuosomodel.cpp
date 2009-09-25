@@ -220,8 +220,9 @@ Soprano::StatementIterator Soprano::VirtuosoModel::listStatements( const Stateme
     if ( partial.context().isValid() )
         query = QString( "select * from %1 where { %2 . }" ).arg( partial.context().toN3(), statementToConstructGraphPattern( partial, false ) );
     else
-        query = QString( "select * where { %1 . }" )
-                .arg( statementToConstructGraphPattern( partial, true ) );
+        query = QString( "select * where { %1 . FILTER(?g != %2) . }" )
+                .arg( statementToConstructGraphPattern( partial, true ) )
+                .arg( Node::resourceToN3( Virtuoso::openlinkVirtualGraph() ) );
     qDebug() << "List Statements Query" << query;
     return executeQuery( query, Query::QueryLanguageSparql )
         .iterateStatementsFromBindings( partial.subject().isValid() ? QString() : QString( 's' ),

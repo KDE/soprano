@@ -73,6 +73,67 @@ namespace Soprano
          * \since 2.3
          */
         void setPluginSearchPath( const QStringList& path, bool useDefaults = true );
+
+        /**
+         * Load a custom plugin from a library at the specified path.
+         *
+         * \param path The path to the library file that contains the plugin. Be aware that
+         * plugins loaded via this method do not need a desktop file as described
+         *
+         * PluginManager uses the name the plugin provides (Plugin::pluginName)
+         * to manage the plugin.
+         *
+         * \return \p true if the plugin could be loaded successfully, \p false
+         * if no suported plugin could be found at path.
+         *
+         * \since 2.3
+         */
+        bool loadCustomPlugin( const QString& path );
+
+        /**
+         * Load a custom Backend plugin from a library at the specified path.
+         *
+         * \param path The path to the library file that contains the plugin.
+         *
+         * PluginManager uses the name the plugin provides (Plugin::pluginName)
+         * to manage the plugin.
+         *
+         * \return The loaded Backend plugin or 0 in case no suported plugin could
+         * be found at path or the found plugin is not a backend.
+         *
+         * \since 2.3
+         */
+        const Backend* loadCustomBackend( const QString& path );
+
+        /**
+         * Load a custom Parser plugin from a library at the specified path.
+         *
+         * \param path The path to the library file that contains the plugin.
+         *
+         * PluginManager uses the name the plugin provides (Plugin::pluginName)
+         * to manage the plugin.
+         *
+         * \return The loaded Parser plugin or 0 in case no suported plugin could
+         * be found at path or the found plugin is not a backend.
+         *
+         * \since 2.3
+         */
+        const Parser* loadCustomParser( const QString& path );
+
+        /**
+         * Load a custom Serializer plugin from a library at the specified path.
+         *
+         * \param path The path to the library file that contains the plugin.
+         *
+         * PluginManager uses the name the plugin provides (Plugin::pluginName)
+         * to manage the plugin.
+         *
+         * \return The loaded Serializer plugin or 0 in case no suported plugin could
+         * be found at path or the found plugin is not a backend.
+         *
+         * \since 2.3
+         */
+        const Serializer* loadCustomSerializer( const QString& path );
         //@}
 
         //@{
