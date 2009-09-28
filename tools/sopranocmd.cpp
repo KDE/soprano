@@ -55,23 +55,6 @@ namespace {
     Soprano::Model* s_model = 0;
     ModelMonitor* s_monitor = 0;
 
-#ifndef Q_OS_WIN
-    void signalHandler( int signal )
-    {
-        switch( signal ) {
-        case SIGHUP:
-        case SIGQUIT:
-        case SIGINT:
-            // shut the monitor down gracefully so we can cleanup
-            // afterwards
-            if ( s_monitor )
-                s_monitor->stopMonitoring();
-            else
-                exit( 2 );
-        }
-    }
-#endif
-
     class CmdLineArgs
     {
     public:
@@ -405,7 +388,7 @@ namespace {
     }
 
 
-    int version()
+    int printVersion()
     {
         QTextStream s( stdout );
         s << "sopranocmd " << Soprano::versionString() << endl;
@@ -428,9 +411,9 @@ namespace {
         return names;
     }
 
-    int usage( const QString& error = QString() )
+    int printUsage( const QString& error = QString() )
     {
-        version();
+        printVersion();
 
         QTextStream s( stdout );
         s << endl;
@@ -546,6 +529,24 @@ namespace {
 }
 
 
+#ifndef Q_OS_WIN
+void signalHandler( int signal )
+{
+    switch( signal ) {
+    case SIGHUP:
+    case SIGQUIT:
+    case SIGINT:
+        // shut the monitor down gracefully so we can cleanup
+        // afterwards
+        if ( s_monitor )
+            s_monitor->stopMonitoring();
+        else
+            exit( 2 );
+    }
+}
+#endif
+
+
 int main( int argc, char *argv[] )
 {
     QCoreApplication app( argc, argv );
@@ -589,10 +590,10 @@ int main( int argc, char *argv[] )
     }
 
     if ( args.optionSet( "version" ) ) {
-        return version();
+        return printVersion();
     }
     if ( args.optionSet( "help" ) ) {
-        return usage();
+        return printUsage();
     }
 
     if ( args.hasSetting( "backend" ) ) {
@@ -600,18 +601,18 @@ int main( int argc, char *argv[] )
              args.hasSetting( "socket" ) ||
              args.hasSetting( "sparql" ) ||
              args.hasSetting( "model" ) ) {
-            return usage( "Cannot mix server parameters with --backend." );
+            return printUsage( "Cannot mix server parameters with --backend." );
         }
     }
 
     if ( args.hasSetting( "dir" ) &&
          !args.hasSetting( "backend" ) ) {
-        return usage( "Parameter --dir only makes sense in combination with --backend." );
+        return printUsage( "Parameter --dir only makes sense in combination with --backend." );
     }
 
     if ( args.hasSetting( "settings" ) &&
          !args.hasSetting( "backend" ) ) {
-        return usage( "Parameter --settings only makes sense in combination with --backend." );
+        return printUsage( "Parameter --settings only makes sense in combination with --backend." );
     }
 
     if ( args.hasSetting( "file" ) &&
@@ -624,7 +625,7 @@ int main( int argc, char *argv[] )
            args.hasSetting( "host" ) ||
            args.hasSetting( "port" ) ||
            args.hasSetting( "dir" ) ) ) {
-        return usage( "Invalid parameters for --file mode." );
+        return printUsage( "Invalid parameters for --file mode." );
     }
 
 
@@ -640,7 +641,7 @@ int main( int argc, char *argv[] )
          backendName.isEmpty() &&
          file.isEmpty() &&
          !args.hasSetting( "sparql" ) ) {
-        return usage( "No model name specified." );
+        return printUsage( "No model name specified." );
     }
 
     QTextStream errStream(stderr);
@@ -787,7 +788,7 @@ int main( int argc, char *argv[] )
     }
     else {
         delete s_model;
-        return usage();
+        return printUsage();
     }
 
 
@@ -831,7 +832,7 @@ int main( int argc, char *argv[] )
     if ( command == "import" ) {
         if ( firstArg != args.count()-1 ) {
             delete s_model;
-            return usage();
+            return printUsage();
         }
 
         QString fileName = args[firstArg];
@@ -853,7 +854,7 @@ int main( int argc, char *argv[] )
         }
         else {
             delete s_model;
-            return usage();
+            return printUsage();
         }
 
         QString queryLang = args.getSetting( "querylang", "SPARQL" );
@@ -885,7 +886,7 @@ int main( int argc, char *argv[] )
     else {
         if ( command == "query" ) {
             if ( firstArg >= args.count() ) {
-                return usage();
+                return printUsage();
             }
 
             QString queryLang = args.getSetting( "querylang", "SPARQL" );
@@ -920,18 +921,18 @@ int main( int argc, char *argv[] )
 
             if ( !args.hasSetting( "file" ) &&
                  args.hasSetting( "serialization" ) ) {
-                return usage( "Parameter --serialization does only make sense for commands 'import', 'export', and 'query'" );
+                return printUsage( "Parameter --serialization does only make sense for commands 'import', 'export', and 'query'" );
             }
 
             if ( args.hasSetting( "querylang" ) ) {
-                return usage( "--querylang does only make sense with command 'query'" );
+                return printUsage( "--querylang does only make sense with command 'query'" );
             }
 
             // parse node commands (max 4)
             Soprano::Node n1, n2, n3, n4;
             if ( args.count() > 5 ) {
                 delete s_model;
-                return usage();
+                return printUsage();
             }
 
             if ( args.count() > 1 ) {
