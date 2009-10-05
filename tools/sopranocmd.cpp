@@ -55,6 +55,9 @@ namespace {
     Soprano::Model* s_model = 0;
     ModelMonitor* s_monitor = 0;
 
+    /// true if the output should be human-readable
+    bool s_interactive = true;
+
     class CmdLineArgs
     {
     public:
@@ -151,10 +154,11 @@ namespace {
             outStream << *it << endl;
             ++cnt;
         }
+        QTextStream stderrStream(stderr);
         if ( it.lastError() ) {
-            outStream << "Error occured: " << it.lastError() << endl;
+            stderrStream << "Error occured: " << it.lastError() << endl;
         }
-        outStream << "Total results: " << cnt << endl;
+        stderrStream << "Total results: " << cnt << endl;
     }
 
 
@@ -171,15 +175,26 @@ namespace {
                 if ( graph ) {
                     outStream << it.currentStatement() << endl;
                 }
-                else {
+                else if( s_interactive ) {
                     outStream << *it << endl;
+                }
+                else {
+                    const BindingSet set = *it;
+                    for( int i = 0; i < set.count(); ++i ) {
+                        outStream << set[i];
+                        if( i == set.count()-1 )
+                            outStream << endl;
+                        else
+                            outStream << " ";
+                    }
                 }
                 ++cnt;
             }
+            QTextStream stderrStream(stderr);
             if ( it.lastError() ) {
-                outStream << "Error occured: " << it.lastError() << endl;
+                stderrStream << "Error occured: " << it.lastError() << endl;
             }
-            outStream << "Total results: " << cnt << endl;
+            stderrStream << "Total results: " << cnt << endl;
         }
     }
 
@@ -432,10 +447,15 @@ namespace {
           << endl
           << "   --help              Print this help." << endl
           << endl
-          << "   --nrl               Enable NRL (Nepomuk) features. This includes automatic query prefix expansion based on" << endl
-          << "                       ontologies stored in the model and automatic context creation for imported statements" << endl
-          << "                       without a predefined context/named graph. The newly created context will be of type" << endl
-          << "                       nrl:KnowledgeBase and already have its creation date set in its very own nrl:GraphMetadata." << endl
+          << "   --nrl               Enable NRL (Nepomuk) features. This includes the following features:" << endl
+          << "                       - Automatic query prefix expansion based on ontologies stored in the model." << endl
+          << "                       - Automatic context creation for imported statements without a predefined context/named" << endl
+          << "                         graph. The newly created context will be of type nrl:KnowledgeBase and already have" << endl
+          << "                         its creation date set in its very own nrl:GraphMetadata." << endl
+          << "                       - Automatic removal of metadata graphs if using the remove command with the only defined" << endl
+          << "                         node being the context." << endl
+          << endl
+          << "   --foo               Enables scriptable output which can be used as input for other commands." << endl
           << endl
           << "   --model <name>      The name of the Soprano model to perform the command on." << endl
           << "                       (only applicable when querying against the Soprano server.)" << endl
@@ -484,12 +504,16 @@ namespace {
           << endl
           << "   --querylang <lang>  The query language used for query commands. Defaults to 'SPARQL'" << endl
           << "                       Hint: sopranocmd automatically adds prefix definitions for standard namespaces such as RDF, " << endl
-          << "                             RDFS, NRL, etc. if used in a SPARQL query." << endl
+          << "                             RDFS, NRL, etc. if used in a SPARQL query with the --nrl parameter." << endl
           << endl
           << "   <command>           The command to perform." << endl
           << "                       - 'add':     Add a new statement. The parameters are a list of 3 or 4 nodes as defined below." << endl
           << "                       - 'remove':  Remove one or more statements. The parameters are a list of up to 4 nodes which define" << endl
-          << "                                    the statement pattern to apply. Each statement mathing the pattern will be removed." << endl
+          << "                         'rm'       the statement pattern to apply. Each statement matching the pattern will be removed." << endl
+          << "                                    When used in combination with the --nrl parameter metadata graphs are removed automatically" << endl
+          << "                                    if only a context is provided as pattern." << endl
+          << "                       - 'rmgraph': Remove a complete graph/context. One can specify a list of graphs/contexts to remove." << endl
+          << "                                    When used in combination with the --nrl parameter metadata graphs are removed automatically." << endl
           << "                       - 'list':    List statements. As with 'remove' the parameters are a list of up to 4 nodes." << endl
           << "                       - 'monitor': Monitor a remote model. sopranocmd will continue listing added and removed statements" << endl
           << "                                    matching the statement pattern specified via the parameters until it is stopped. Be aware" << endl
@@ -583,6 +607,7 @@ int main( int argc, char *argv[] )
     allowedCmdLineArgs.insert( "index", true );
 #endif
     allowedCmdLineArgs.insert( "nrl", false );
+    allowedCmdLineArgs.insert( "foo", false );
 
     CmdLineArgs args;
     if ( !CmdLineArgs::parseCmdLine( args, app.arguments(), allowedCmdLineArgs ) ) {
@@ -628,6 +653,9 @@ int main( int argc, char *argv[] )
         return printUsage( "Invalid parameters for --file mode." );
     }
 
+    if ( args.optionSet( "foo" ) ) {
+        s_interactive = false;
+    }
 
     QString backendName = args.getSetting( "backend" );
     QString backendSettings = args.getSetting( "settings" );
@@ -914,6 +942,26 @@ int main( int argc, char *argv[] )
             }
         }
 
+
+        else if( command == "rmgraph" ) {
+            QTime time;
+            time.start();
+
+            for( int i = 1; i < args.count(); ++i ) {
+                Node n = parseNode( args.arg( i ) );
+                if( n.isValid() ) {
+                    s_model->removeContext( n );
+                }
+                else {
+                    errStream << "Need to define a list of valid resource nodes with command 'rmgraph'." << endl;
+                    delete s_model;
+                    return 1;
+                }
+            }
+
+            queryTime = time.elapsed();
+        }
+
         else {
             //
             // For all commands below (add, remove, list, monitor) we need a list of nodes as parameter
@@ -982,7 +1030,7 @@ int main( int argc, char *argv[] )
                 s_model->addStatement( statement );
                 queryTime = time.elapsed();
             }
-            else if ( command == "remove" ) {
+            else if ( command == "remove" || command == "rm" ) {
                 s_model->removeAllStatements( statement );
                 queryTime = time.elapsed();
             }

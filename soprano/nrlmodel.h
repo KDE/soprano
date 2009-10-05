@@ -33,7 +33,7 @@ namespace Soprano {
     /**
      * \class NRLModel nrlmodel.h Soprano/NRLModel
      *
-     * \brief Model filter that enforces NRL cardinality rules.
+     * \brief Model filter that makes working with NRL data simpler.
      *
      * The NRLModel enforces NRL cardinality rules. That means predicates with a cardinality
      * of maximum 1 are always udpated while statements that define predicates with a maximum
@@ -43,6 +43,9 @@ namespace Soprano {
      *
      * Thus, at the moment NRLModel is mostly usable for handling properties with a maximum
      * cardinality of 1.
+     *
+     * NRLModel also provides automatic query prefix expansion and named graph creation and
+     * removal with automatic metadata graph handling.
      *
      * THE API AND EVEN THE COMPLETE CLASS IS SUBJECT TO CHANGE!
      *
@@ -67,6 +70,8 @@ namespace Soprano {
          * \param b If \p true (the default) NRLModel does ignore the context
          * when enforcing rules. If \p false the NRL rules can be violated
          * across contexts.
+         *
+         * By default contexts are ignored.
          *
          * \sa ignoreContext()
          */
@@ -102,6 +107,8 @@ namespace Soprano {
          *
          * \return A list of prefixes mapping to the namespaces read from
          * the model. This list is empty if queryPrefixExpansion is disabled.
+         *
+         * \since 2.4
          */
         QHash<QString, QUrl> queryPrefixes() const;
 
@@ -148,8 +155,22 @@ namespace Soprano {
          * query to the underlying model.
          *
          * \reimplemented
+         *
+         * \since 2.4
          */
         virtual QueryResultIterator executeQuery( const QString& query, Query::QueryLanguage language, const QString& userQueryLanguage = QString() ) const;
+
+        /**
+         * \reimplemented
+         *
+         * If the only node defined in \p statement is the context the graph including its
+         * metadata is removed.
+         *
+         * \sa removeGraph
+         *
+         * \since 2.4
+         */
+        virtual Error::ErrorCode removeAllStatements( const Statement& statement );
 
     private:
         class Private;

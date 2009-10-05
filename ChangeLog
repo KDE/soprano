@@ -1,8 +1,9 @@
 2.4
-	* New methods Client::SparqlModel::listStatementsAsync and Client::SparqlModel::listContexts
+	* New methods Client::SparqlModel::listStatementsAsync and Client::SparqlModel::listContextsAsync
 	* New paramter --nrl for sopranocmd which will trigger automatic query prefix expansion based on
-	  prefixes stored in the underlying model and automatic context creation for imported statements
-	  that do not have one set.
+	  prefixes stored in the underlying model, automatic context creation for imported statements
+	  that do not have one set, and automatic metad ata graph removal on removeContext calls.
+	* The latter new sopranocmd features are based on the equivalent new features in NRLModel.
 	
 2.3
 	* New class LanguageTag replacing the old simple string language handling with a sophisticated one

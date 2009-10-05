@@ -270,13 +270,19 @@ QUrl Soprano::NRLModel::createGraph( const QUrl& type, QUrl* metadataGraph )
 
 Soprano::Error::ErrorCode Soprano::NRLModel::removeGraph( const QUrl& graph )
 {
-    QList<Node> metadataGraphs = listStatements( QUrl(), Soprano::Vocabulary::NRL::coreGraphMetadataFor(), graph ).iterateSubjects().allNodes();
+    QList<Node> metadataGraphs = FilterModel::executeQuery( QString("select ?mg where { ?mg %1 %2 . }")
+                                                            .arg(Node::resourceToN3(Soprano::Vocabulary::NRL::coreGraphMetadataFor()) )
+                                                            .arg(Node::resourceToN3(graph)),
+                                                            Query::QueryLanguageSparql ).iterateBindings(0).allNodes();
     foreach ( const Node& mg, metadataGraphs ) {
-        Error::ErrorCode c = removeContext( mg );
+        // we can only use removeAllStatements(Statement) here since all other variants will come back to
+        // our version below which in turn calls us again
+        Error::ErrorCode c = FilterModel::removeAllStatements( Statement( Node(), Node(), Node(), mg ) );
         if ( c != Error::ErrorNone )
             return c;
     }
-    return removeContext( graph );
+    // this is where we do not want to be called recursively
+    return FilterModel::removeAllStatements( Statement( Node(), Node(), Node(), graph ) );
 }
 
 
@@ -304,6 +310,20 @@ Soprano::QueryResultIterator Soprano::NRLModel::executeQuery( const QString& que
     }
 
     return FilterModel::executeQuery( expandedQuery, language, userQueryLanguage );
+}
+
+
+Soprano::Error::ErrorCode Soprano::NRLModel::removeAllStatements( const Statement& statement )
+{
+    if( statement.context().isValid() &&
+        !statement.subject().isValid() &&
+        !statement.predicate().isValid() &&
+        !statement.object().isValid() ) {
+        return removeGraph( statement.context().uri() );
+    }
+    else {
+        return FilterModel::removeAllStatements( statement );
+    }
 }
 
 #include "nrlmodel.moc"
