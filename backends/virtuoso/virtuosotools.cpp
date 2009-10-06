@@ -71,19 +71,13 @@ QUrl Soprano::Virtuoso::openlinkVirtualGraph()
 }
 
 
-QUrl Soprano::Virtuoso::fakeDateTimeType()
-{
-    return QUrl::fromEncoded( "sopranofakes:/dateTimeHackUntilVirtuosoProblemIsResolved", QUrl::StrictMode );
-}
-
-
-QUrl Soprano::Virtuoso::fakeTimeType()
-{
-    return QUrl::fromEncoded( "sopranofakes:/timeHackUntilVirtuosoProblemIsResolved", QUrl::StrictMode );
-}
-
-
 QUrl Soprano::Virtuoso::fakeBooleanType()
 {
     return QUrl::fromEncoded( "sopranofakes:/booleanHackUntilVirtuosoProblemIsResolved", QUrl::StrictMode );
+}
+
+
+QUrl Soprano::Virtuoso::fakeBase64BinaryType()
+{
+    return QUrl::fromEncoded( "sopranofakes:/base64BinaryHackUntilVirtuosoProblemIsResolved", QUrl::StrictMode );
 }

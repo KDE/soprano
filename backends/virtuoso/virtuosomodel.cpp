@@ -82,16 +82,16 @@ namespace {
         }
 
         if ( s.object().isValid() ) {
-            // HACK: fake datetime to prevent loosing fractions of seconds
-            if ( s.object().literal().isDateTime() )
-                query += Soprano::Node( Soprano::LiteralValue::fromString( s.object().literal().toString(), Soprano::Virtuoso::fakeDateTimeType() ) ).toN3();
-            else if ( s.object().literal().isTime() )
-                query += Soprano::Node( Soprano::LiteralValue::fromString( s.object().literal().toString(), Soprano::Virtuoso::fakeTimeType() ) ).toN3();
-            else
-                if ( s.object().literal().isBool() )
-                    query += Soprano::Node( Soprano::LiteralValue::fromString( s.object().literal().toBool() ? QString( QLatin1String( "1" ) ) : QString(),
+            // The fake types do not work anymore in 5.0.12!
+#if 1
+            if ( s.object().literal().isBool() )
+                query += Soprano::Node( Soprano::LiteralValue::fromString( s.object().literal().toBool() ? QString( QLatin1String( "true" ) ) : QLatin1String("false"),
                                                                            Soprano::Virtuoso::fakeBooleanType() ) ).toN3();
+            else if ( s.object().literal().isByteArray() )
+                query += Soprano::Node( Soprano::LiteralValue::fromString( s.object().literal().toString(),
+                                                                           Soprano::Virtuoso::fakeBase64BinaryType() ) ).toN3();
             else
+#endif
                 query += nodeToN3( s.object() );
         }
         else {
@@ -106,9 +106,9 @@ namespace {
     }
 
     const char* s_queryPrefix =
-        "sparql "
-        "define input:default-graph-exclude <http://www.openlinksw.com/schemas/virtrdf#> "
-        "define input:named-graph-exclude <http://www.openlinksw.com/schemas/virtrdf#>";
+        "sparql ";
+//         "define input:default-graph-exclude <http://www.openlinksw.com/schemas/virtrdf#> "
+//         "define input:named-graph-exclude <http://www.openlinksw.com/schemas/virtrdf#>";
 }
 
 
@@ -169,8 +169,9 @@ Soprano::NodeIterator Soprano::VirtuosoModel::listContexts() const
 
     return executeQuery( QString( "select distinct ?g where { "
                                   "graph ?g { ?s ?p ?o . } . "
-                                  "FILTER(?g != %1) . }" )
-                         .arg( Node::resourceToN3( Virtuoso::defaultGraph() ) ) )
+                                  "FILTER(?g != %1 && ?g != %2) . }" )
+                         .arg( Node::resourceToN3( Virtuoso::defaultGraph() ) )
+                         .arg( Node::resourceToN3( Virtuoso::openlinkVirtualGraph() ) ) )
         .iterateBindings( 0 );
 }
 
@@ -223,7 +224,7 @@ Soprano::StatementIterator Soprano::VirtuosoModel::listStatements( const Stateme
         query = QString( "select * where { %1 . FILTER(?g != %2) . }" )
                 .arg( statementToConstructGraphPattern( partial, true ) )
                 .arg( Node::resourceToN3( Virtuoso::openlinkVirtualGraph() ) );
-    qDebug() << "List Statements Query" << query;
+//    qDebug() << "List Statements Query" << query;
     return executeQuery( query, Query::QueryLanguageSparql )
         .iterateStatementsFromBindings( partial.subject().isValid() ? QString() : QString( 's' ),
                                         partial.predicate().isValid() ? QString() : QString( 'p' ),

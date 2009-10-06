@@ -343,7 +343,7 @@ Soprano::Node Soprano::ODBC::QueryResult::getData( int colNum )
                     node = Node( QString::fromLatin1( reinterpret_cast<const char*>( data )+9 ) );
                 }
                 else {
-                    node = Node( LiteralValue( QString::fromUtf8( reinterpret_cast<const char*>( data ) ) ) );
+                    node = Node( LiteralValue::createPlainLiteral( QString::fromUtf8( reinterpret_cast<const char*>( data ) ) ) );
                 }
             }
             break;
@@ -351,19 +351,29 @@ Soprano::Node Soprano::ODBC::QueryResult::getData( int colNum )
         case DV_RDF: {
             QUrl type = d->getType( l_type );
             QString lang = d->getLang( l_lang );
+            const char* str = reinterpret_cast<const char*>( data );
+
             if ( type == Virtuoso::fakeBooleanType() ) {
-                node = Node( LiteralValue( length > 0 ) );
+                node = Node( LiteralValue( !qstrcmp( "true", str ) ) );
             }
             else {
-                if ( type == Virtuoso::fakeDateTimeType() ) // forcing virtuoso to store as typed string for now
-                    type = Soprano::Vocabulary::XMLSchema::dateTime();
-                else if ( type == Virtuoso::fakeTimeType() )
-                    type = Soprano::Vocabulary::XMLSchema::time();
+                if ( type == Virtuoso::fakeBase64BinaryType() )
+                    type = Soprano::Vocabulary::XMLSchema::base64Binary();
+
+                // This is yet another hack for virtuoso versions that convert all unknown types into xsd:int
+                else if ( type == Soprano::Vocabulary::XMLSchema::xsdInt() ) {
+                    if ( !qstrcmp( "true", str ) ) {
+                        return LiteralValue( true );
+                    }
+                    else if ( !qstrcmp( "false", str ) ) {
+                        return LiteralValue( false );
+                    }
+                }
 
                 if ( type.isEmpty() )
-                    node = Node( LiteralValue::createPlainLiteral( QString::fromUtf8( reinterpret_cast<const char*>( data ) ), lang ) );
+                    node = Node( LiteralValue::createPlainLiteral( QString::fromUtf8( str ), lang ) );
                 else
-                    node = Node( LiteralValue::fromString( QString::fromUtf8( reinterpret_cast<const char*>( data ) ), type ) );
+                    node = Node( LiteralValue::fromString( QString::fromUtf8( str ), type ) );
             }
             break;
         }
