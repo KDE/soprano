@@ -55,10 +55,10 @@
 QTime Soprano::DateTime::fromTimeString( const QString& s )
 {
     // ensure the format
-    if( s.length() < 9 ||
+    if( s.length() < 8 ||
         s[2] != ':' ||
         s[5] != ':' ) {
-        qDebug() << Q_FUNC_INFO << " invalid formatted time string: " << s << endl;
+        qDebug() << Q_FUNC_INFO << " invalid formatted time string (too short): " << s << endl;
         return QTime();
     }
 
@@ -66,19 +66,19 @@ QTime Soprano::DateTime::fromTimeString( const QString& s )
 
     int hh = s.mid( 0, 2 ).toInt( &ok );
     if( !ok ) {
-        qDebug() << Q_FUNC_INFO << " invalid formatted time string: " << s << endl;
+        qDebug() << Q_FUNC_INFO << " invalid formatted time string (failed to parse hours): " << s << endl;
         return QTime();
     }
 
     int mm = s.mid( 3, 2 ).toInt( &ok );
     if( !ok ) {
-        qDebug() << Q_FUNC_INFO << " invalid formatted time string: " << s << endl;
+        qDebug() << Q_FUNC_INFO << " invalid formatted time string (failed to parse minutes): " << s << endl;
         return QTime();
     }
 
     int ss = s.mid( 6, 2 ).toInt( &ok );
     if( !ok ) {
-        qDebug() << Q_FUNC_INFO << " invalid formatted time string: " << s << endl;
+        qDebug() << Q_FUNC_INFO << " invalid formatted time string (failed to parse seconds): " << s << endl;
         return QTime();
     }
 
@@ -86,27 +86,24 @@ QTime Soprano::DateTime::fromTimeString( const QString& s )
 
     // parse the fraction of seconds
     int z = 0;
-    if( s[8] == '.' || s[8] == ',' ) {
-        ++pos;
-        while( s.length() > pos && s[pos].isDigit() )
+    if( s.length() > 8 ) {
+        if ( s[8] == '.' || s[8] == ',' ) {
             ++pos;
-        z = s.mid(9, pos-9).leftJustified( 3, '0' ).toInt(&ok);
-        if( !ok ) {
-            qDebug() << Q_FUNC_INFO << " invalid formatted time string: " << s << endl;
-            return QTime();
+            while( s.length() > pos && s[pos].isDigit() )
+                ++pos;
+            z = s.mid(9, pos-9).leftJustified( 3, '0' ).toInt(&ok);
+            if( !ok ) {
+                qDebug() << Q_FUNC_INFO << " invalid formatted time string (failed to parse fractions): " << s << endl;
+                return QTime();
+            }
         }
     }
 
     // finally create the time object
     QTime t( hh, mm, ss, z );
 
-    if ( pos >= s.length() ) {
-        qDebug() << Q_FUNC_INFO << " invalid formatted time string: " << s << endl;
-        return QTime();
-    }
-
     // parse the timezone
-    if( s[pos] == 'Z' ) {
+    if( pos == s.length() || s[pos] == 'Z' ) {
         return t;
     }
     else {
