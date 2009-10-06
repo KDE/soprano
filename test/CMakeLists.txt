@@ -18,6 +18,12 @@ include_directories(
 
 configure_file(config-testdata.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/config-testdata.h)
 
+# DateTime
+qt4_automoc(datetimetest datetimetest.cpp)
+add_executable(datetimetest datetimetest.cpp ../soprano/datetime.cpp)
+target_link_libraries(datetimetest ${QT_QTCORE_LIBRARY} ${QT_QTTEST_LIBRARY})
+add_test(datetimetest ${EXECUTABLE_OUTPUT_PATH}/datetimetest)
+
 # Node
 qt4_automoc(nodetest NodeTest.cpp)
 add_executable(nodetest NodeTest.cpp)
