@@ -55,11 +55,11 @@ namespace Soprano {
             bool next() {
                 return AsyncIteratorBase<BindingSet>::getNext();
             }
-            
+
             BindingSet current() const {
                 return AsyncIteratorBase<BindingSet>::getCurrent();
             }
-            
+
             Statement currentStatement() const {
                 if( AsyncIteratorHandle::modelPrivate() && AsyncIteratorHandle::modelPrivate()->mode == AsyncModel::SingleThreaded )
                     return m_iterator.currentStatement();
@@ -166,6 +166,75 @@ namespace Soprano {
 
             QQueue<Statement> m_statementCache;
             Statement m_currentStatement;
+        };
+
+
+        /**
+         * The sole purpose of this class is to provide iterator counting for the non-async query methods
+         * in AsyncModel
+         */
+        class SyncQueryResultIteratorBackend : public QueryResultIteratorBackend, public AsyncIteratorHandle
+        {
+        public:
+            SyncQueryResultIteratorBackend( AsyncModelPrivate* d, const QueryResultIterator& it )
+                : AsyncIteratorHandle( d ),
+                  m_iterator( it ) {
+            }
+
+            bool next() {
+                return m_iterator.next();
+            }
+
+            BindingSet current() const {
+                return m_iterator.current();
+            }
+
+            Statement currentStatement() const {
+                return m_iterator.currentStatement();
+            }
+
+            Node binding( const QString& name ) const {
+                return m_iterator.binding( name );
+            }
+
+            Node binding( int offset ) const {
+                return m_iterator.binding( offset );
+            }
+
+            int bindingCount() const {
+                return m_iterator.bindingCount();
+            }
+
+            QStringList bindingNames() const {
+                return m_iterator.bindingNames();
+            }
+
+            bool isGraph() const {
+                return m_iterator.isGraph();
+            }
+
+            bool isBinding() const {
+                return m_iterator.isBinding();
+            }
+
+            bool isBool() const {
+                return m_iterator.isBool();
+            }
+
+            bool boolValue() const {
+                return m_iterator.boolValue();
+            }
+
+            void close() {
+                return m_iterator.close();
+            }
+
+            Error::Error lastError() const {
+                return m_iterator.lastError();
+            }
+
+        private:
+            QueryResultIterator m_iterator;
         };
     }
 }

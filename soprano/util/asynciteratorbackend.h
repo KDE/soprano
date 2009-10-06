@@ -198,7 +198,7 @@ namespace Soprano {
             }
 
             // called in the main thread by IteratorBackend::current
-            T getCurrent() const { 
+            T getCurrent() const {
                 if( modelPrivate() ) {
                     if( modelPrivate()->mode == AsyncModel::MultiThreaded )
                         return m_current;
@@ -213,7 +213,7 @@ namespace Soprano {
             virtual int cacheFillState() const {
                 return m_cache.size();
             }
-            
+
             virtual void enqueueCurrent() {
                 m_cache.enqueue( m_iterator.current() );
             }
@@ -246,23 +246,57 @@ namespace Soprano {
             bool next() {
                 return AsyncIteratorBase<T>::getNext();
             }
-            
+
             T current() const {
                 return AsyncIteratorBase<T>::getCurrent();
             }
-            
+
             void close() {
                 AsyncIteratorBase<T>::closeIterator();
             }
 
             Error::Error lastError() const {
-                if( AsyncIteratorHandle::modelPrivate() && 
+                if( AsyncIteratorHandle::modelPrivate() &&
                     AsyncIteratorHandle::modelPrivate()->mode == AsyncModel::SingleThreaded )
                     return AsyncIteratorBase<T>::m_iterator.lastError();
                 else
                     return AsyncIteratorBase<T>::m_error;
             }
         };
+
+
+        /**
+         * The sole purpose of this class is to provide iterator counting for the non-async query methods
+         * in AsyncModel
+         */
+        template<typename T> class SyncIteratorBackend : public AsyncIteratorHandle, public IteratorBackend<T>
+        {
+        public:
+            SyncIteratorBackend( AsyncModelPrivate* d, const Iterator<T>& it )
+                : AsyncIteratorHandle( d ),
+                  m_iterator( it ) {
+            }
+
+            bool next() {
+                return m_iterator.next();
+            }
+
+            T current() const {
+                return m_iterator.current();
+            }
+
+            void close() {
+                m_iterator.close();
+                remove();
+            }
+
+            Error::Error lastError() const {
+                return m_iterator.lastError();
+            }
+
+        private:
+            Iterator<T> m_iterator;
+         };
     }
 }
 

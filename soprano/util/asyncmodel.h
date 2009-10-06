@@ -1,4 +1,4 @@
-/* 
+/*
  * This file is part of Soprano Project.
  *
  * Copyright (C) 2008 Sebastian Trueg <trueg@kde.org>
@@ -120,7 +120,7 @@ namespace Soprano {
              * \since 2.2
              */
             AsyncModelMode mode() const;
-            
+
             /**
              * Asyncroneously add the Statement to the Model.
              *
@@ -267,14 +267,14 @@ namespace Soprano {
              * \param language The %query language used to encode \p query.
              * \param userQueryLanguage If \p language equals Query::QueryLanguageUser
              * userQueryLanguage defines the language to use.
-             * 
+             *
              * \sa executeQuery
              *
              * \return an AsyncResult with result type QueryResultIterator
              * object which will signal when the result is ready.
              */
-            AsyncResult* executeQueryAsync( const QString& query, 
-                                            Query::QueryLanguage language, 
+            AsyncResult* executeQueryAsync( const QString& query,
+                                            Query::QueryLanguage language,
                                             const QString& userQueryLanguage = QString() ) const;
 
             /**
@@ -327,6 +327,36 @@ namespace Soprano {
              * object which will signal when the result is ready.
              */
             AsyncResult* createBlankNodeAsync();
+
+            /**
+             * \reimplemented
+             *
+             * The call is directly delivered to the parent model. However, the iterator is counted so that interweaving
+             * asyncroneous and non-asyncroneous calls does not result in unwanted behaviour.
+             *
+             * \since 2.4
+             */
+            StatementIterator listStatements( const Statement& partial ) const;
+
+            /**
+             * \reimplemented
+             *
+             * The call is directly delivered to the parent model. However, the iterator is counted so that interweaving
+             * asyncroneous and non-asyncroneous calls does not result in unwanted behaviour.
+             *
+             * \since 2.4
+             */
+            NodeIterator listContexts() const;
+
+            /**
+             * \reimplemented
+             *
+             * The call is directly delivered to the parent model. However, the iterator is counted so that interweaving
+             * asyncroneous and non-asyncroneous calls does not result in unwanted behaviour.
+             *
+             * \since 2.4
+             */
+            QueryResultIterator executeQuery( const QString& query, Query::QueryLanguage language, const QString& userQueryLanguage = QString() ) const;
 
             using FilterModel::addStatement;
             using FilterModel::removeStatement;

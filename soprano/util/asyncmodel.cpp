@@ -278,4 +278,22 @@ Soprano::Util::AsyncResult* Soprano::Util::AsyncModel::createBlankNodeAsync()
     return result;
 }
 
+
+Soprano::StatementIterator Soprano::Util::AsyncModel::listStatements( const Statement& partial ) const
+{
+    return new SyncIteratorBackend<Statement>( d, FilterModel::listStatements( partial ) );
+}
+
+
+Soprano::NodeIterator Soprano::Util::AsyncModel::listContexts() const
+{
+    return new SyncIteratorBackend<Node>( d, FilterModel::listContexts() );
+}
+
+
+Soprano::QueryResultIterator Soprano::Util::AsyncModel::executeQuery( const QString& query, Query::QueryLanguage language, const QString& userQueryLanguage ) const
+{
+    return new SyncQueryResultIteratorBackend( d, FilterModel::executeQuery( query, language, userQueryLanguage ) );
+}
+
 #include "asyncmodel.moc"
