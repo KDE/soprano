@@ -6,6 +6,7 @@ Add here what you want to add in Soprano
 * some reference counting in the inference model to properly handle removal of statements
 * copy the types of the source statement's graph to the inference graph
 * Add error handling to server/clientconnection.cpp and server/serverconnection.cpp (disconnect on read or write error)
+* Create FilterIteratorBackend which is a simple wrapper around an iterator and can be reused for the MutexModel and the AsyncModel
 
 Soprano 3:
 * make Soprano::Backend::createModel non-virtual and let it call a virtual protected method. Then remove the Backend* paramter
