@@ -1,9 +1,15 @@
 2.4
 	* New methods Client::SparqlModel::listStatementsAsync and Client::SparqlModel::listContextsAsync
-	* New paramter --nrl for sopranocmd which will trigger automatic query prefix expansion based on
-	  prefixes stored in the underlying model, automatic context creation for imported statements
-	  that do not have one set, and automatic metad ata graph removal on removeContext calls.
-	* The latter new sopranocmd features are based on the equivalent new features in NRLModel.
+	* Automatic query prefix expansion in NRLModel
+	* Automatic NRL metadata graph removal in NRLModel
+	* sopranocmd:
+	  - New paramter --nrl for sopranocmd which will trigger automatic query prefix expansion based on
+	    prefixes stored in the underlying model, automatic context creation for imported statements
+	    that do not have one set, and automatic metad ata graph removal on removeContext calls.
+	  - New parameter --graphselect which allows to convert SPARQL select query results into a graph
+	    result. This is very usable since SPARQL construct queries do not support contexts/named graphs.
+	  - New command 'rmgraph' which allows to delete a list of graphs/contexts.
+	  - New parameter --foo which enables scriptable binding results without variable names.
 	
 2.3
 	* New class LanguageTag replacing the old simple string language handling with a sophisticated one
