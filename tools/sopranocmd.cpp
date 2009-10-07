@@ -19,6 +19,7 @@
 #include <QtCore/QList>
 #include <QtCore/QDir>
 #include <QtCore/QRegExp>
+#include <QtCore/QSharedPointer>
 
 #include "soprano-tools-config.h"
 
@@ -146,36 +147,98 @@ namespace {
         QStringList m_options;
     };
 
-    void printStatementList( Soprano::StatementIterator it )
+    /// The global CmdLineArgs object. Defined here so the methods below can use
+    /// the command line args, too
+    CmdLineArgs args;
+
+    int serializeData( Soprano::StatementIterator data, QTextStream& stream, const QString& serialization )
     {
-        QTextStream outStream( stdout );
-        int cnt = 0;
-        while ( it.next() ) {
-            outStream << *it << endl;
-            ++cnt;
+        const Soprano::Serializer* serializer
+            = Soprano::PluginManager::instance()->discoverSerializerForSerialization( Soprano::mimeTypeToSerialization( serialization ),
+                                                                                      serialization );
+
+        if ( serializer ) {
+            //
+            // As we support a bunch of default prefixes in queries, we do so with serialization
+            //
+            serializer->addPrefix( "rdf", Soprano::Vocabulary::RDF::rdfNamespace() );
+            serializer->addPrefix( "rdfs", Soprano::Vocabulary::RDFS::rdfsNamespace() );
+            serializer->addPrefix( "xsd", Soprano::Vocabulary::XMLSchema::xsdNamespace() );
+            serializer->addPrefix( "nrl", Soprano::Vocabulary::NRL::nrlNamespace() );
+            serializer->addPrefix( "nao", Soprano::Vocabulary::NAO::naoNamespace() );
+
+            if ( serializer->serialize( data, stream, Soprano::mimeTypeToSerialization( serialization ), serialization ) ) {
+                QTextStream s( stderr );
+                s << "Successfully exported model." << endl;
+                return 0;
+            }
+            else {
+                QTextStream s( stderr );
+                s << "Failed to export statements: " << serializer->lastError() << endl;
+                return 2;
+            }
         }
-        QTextStream stderrStream(stderr);
-        if ( it.lastError() ) {
-            stderrStream << "Error occured: " << it.lastError() << endl;
+        else {
+            QTextStream s( stderr );
+            s << "Could not find serializer plugin for serialization " << serialization << endl;
+            return 1;
         }
-        stderrStream << "Total results: " << cnt << endl;
     }
 
 
-    void printQueryResult( Soprano::QueryResultIterator it )
+    int printStatementList( Soprano::StatementIterator it )
     {
         QTextStream outStream( stdout );
+        QTextStream errStream(stderr);
+
+        if ( !args.hasSetting( "file" ) &&
+             args.hasSetting( "serialization" ) ) {
+            return serializeData( it, outStream, args.getSetting( "serialization" ) );
+        }
+        else {
+            int cnt = 0;
+            while ( it.next() ) {
+                outStream << *it << endl;
+                ++cnt;
+            }
+
+            if ( it.lastError() ) {
+                errStream << "Error occured: " << it.lastError() << endl;
+                return 2;
+            }
+            errStream << "Total results: " << cnt << endl;
+            return 0;
+        }
+    }
+
+
+    int printQueryResult( Soprano::QueryResultIterator it )
+    {
+        QTextStream outStream( stdout );
+        QTextStream errStream( stderr );
+
         if ( it.isBool() ) {
             outStream << ( it.boolValue() ? "true" : "false" ) << endl;
         }
+
+        else if ( it.isGraph() ) {
+            return printStatementList( it.iterateStatements() );
+        }
+
+        else if ( it.isBinding() &&
+                  args.hasSetting( "graphselect" ) ) {
+            QStringList vars = args.getSetting( "graphselect" ).split( ';', QString::SkipEmptyParts );
+            if ( vars.count() != 4 ) {
+                errStream << "Need 4 variables to construct statements from bindings." << endl;
+                return 1;
+            }
+            return printStatementList( it.iterateStatementsFromBindings(vars[0], vars[1], vars[2], vars[3]) );
+        }
+
         else {
-            bool graph = it.isGraph();
             int cnt = 0;
             while ( it.next() ) {
-                if ( graph ) {
-                    outStream << it.currentStatement() << endl;
-                }
-                else if( s_interactive ) {
+                if( s_interactive ) {
                     outStream << *it << endl;
                 }
                 else {
@@ -193,9 +256,12 @@ namespace {
             QTextStream stderrStream(stderr);
             if ( it.lastError() ) {
                 stderrStream << "Error occured: " << it.lastError() << endl;
+                return 2;
             }
             stderrStream << "Total results: " << cnt << endl;
         }
+
+        return 0;
     }
 
     QUrl parseUri( const QString& s ) {
@@ -337,48 +403,13 @@ namespace {
     }
 
 
-    bool serializeData( Soprano::StatementIterator data, QTextStream& stream, const QString& serialization )
-    {
-        const Soprano::Serializer* serializer
-            = Soprano::PluginManager::instance()->discoverSerializerForSerialization( Soprano::mimeTypeToSerialization( serialization ),
-                                                                                      serialization );
-
-        if ( serializer ) {
-            //
-            // As we support a bunch of default prefixes in queries, we do so with serialization
-            //
-            serializer->addPrefix( "rdf", Soprano::Vocabulary::RDF::rdfNamespace() );
-            serializer->addPrefix( "rdfs", Soprano::Vocabulary::RDFS::rdfsNamespace() );
-            serializer->addPrefix( "xsd", Soprano::Vocabulary::XMLSchema::xsdNamespace() );
-            serializer->addPrefix( "nrl", Soprano::Vocabulary::NRL::nrlNamespace() );
-            serializer->addPrefix( "nao", Soprano::Vocabulary::NAO::naoNamespace() );
-
-            if ( serializer->serialize( data, stream, Soprano::mimeTypeToSerialization( serialization ), serialization ) ) {
-                QTextStream s( stdout );
-                s << "Successfully exported model." << endl;
-                return true;
-            }
-            else {
-                QTextStream s( stderr );
-                s << "Failed to export statements: " << serializer->lastError() << endl;
-                return false;
-            }
-        }
-        else {
-            QTextStream s( stderr );
-            s << "Could not find serializer plugin for serialization " << serialization << endl;
-            return false;
-        }
-    }
-
-
-    bool exportFile( Soprano::StatementIterator data, const QString& fileName, const QString& serialization )
+    int exportFile( Soprano::StatementIterator data, const QString& fileName, const QString& serialization )
     {
         QFile file( fileName );
         if ( !file.open( QIODevice::WriteOnly ) ) {
             QTextStream s( stderr );
             s << "Could not open file for writing: " << fileName << endl;
-            return false;
+            return 1;
         }
         else {
             QTextStream stream( &file );
@@ -467,7 +498,7 @@ namespace {
           << "   --settings <s>      A list of additional settings to be passed to the backend. Only applicable in combination with" << endl
           << "                       --backend. Settings are key=value pairs separated by semicolon." << endl
           << endl
-          << "   --dir               The storage directory. This only applies when specifying the backend. Defaults" << endl
+          << "   --dir <dir>         The storage directory. This only applies when specifying the backend. Defaults" << endl
           << "                       to current directory." << endl
           << endl
 #ifdef BUILD_DBUS_SUPPORT
@@ -505,6 +536,12 @@ namespace {
           << "   --querylang <lang>  The query language used for query commands. Defaults to 'SPARQL'" << endl
           << "                       Hint: sopranocmd automatically adds prefix definitions for standard namespaces such as RDF, " << endl
           << "                             RDFS, NRL, etc. if used in a SPARQL query with the --nrl parameter." << endl
+          << endl
+          << "   --graphselect <variablelist>" << endl
+          << "                       This parameter allows to emulate construct queries using a select query. This has the advantage that one" << endl
+          << "                       can construct statements including the context/named graph which is not supported by SPARQL construct." << endl
+          << "                       <variablelist> contains the four variables bould to subject, predicate, object, and context in that order." << endl
+          << "                       It is a list separated by semicolon. Example: --graphselect 's;p;o;g'" << endl
           << endl
           << "   <command>           The command to perform." << endl
           << "                       - 'add':     Add a new statement. The parameters are a list of 3 or 4 nodes as defined below." << endl
@@ -608,8 +645,8 @@ int main( int argc, char *argv[] )
 #endif
     allowedCmdLineArgs.insert( "nrl", false );
     allowedCmdLineArgs.insert( "foo", false );
+    allowedCmdLineArgs.insert( "graphselect", true );
 
-    CmdLineArgs args;
     if ( !CmdLineArgs::parseCmdLine( args, app.arguments(), allowedCmdLineArgs ) ) {
         return 1;
     }
@@ -664,6 +701,7 @@ int main( int argc, char *argv[] )
     QString modelName = args.getSetting( "model" );
     QString serialization = args.getSetting( "serialization", "application/x-nquads" );
     QString file = args.getSetting( "file" );
+    QString queryLang = args.getSetting( "querylang", "SPARQL" );
 
     if ( modelName.isEmpty() &&
          backendName.isEmpty() &&
@@ -760,7 +798,6 @@ int main( int argc, char *argv[] )
         }
         if ( int r = importFile( s_model, file, serialization ) ) {
             errStream << "Failed to parse " << file << endl;
-            delete s_model;
             return r;
         }
     }
@@ -815,7 +852,6 @@ int main( int argc, char *argv[] )
         ++firstArg;
     }
     else {
-        delete s_model;
         return printUsage();
     }
 
@@ -855,18 +891,19 @@ int main( int argc, char *argv[] )
     // ====================================================================
     //
 
+    // Memory management the convenient way: will delete the model once it goes out of scope
+    QSharedPointer<Soprano::Model> modelCleanupPointer( s_model );
+
     int queryTime = 0;
 
     if ( command == "import" ) {
         if ( firstArg != args.count()-1 ) {
-            delete s_model;
             return printUsage();
         }
 
         QString fileName = args[firstArg];
 
         int r = importFile( s_model, fileName, serialization );
-        delete s_model;
         return r;
     }
     else if ( command == "export" ) {
@@ -881,33 +918,27 @@ int main( int argc, char *argv[] )
             query = args[firstArg];
         }
         else {
-            delete s_model;
             return printUsage();
         }
-
-        QString queryLang = args.getSetting( "querylang", "SPARQL" );
-        QString serialization = args.getSetting( "serialization", "application/x-nquads" );
 
         bool success = true;
         if ( query.isEmpty() ) {
             // export all statements
-            success = exportFile( s_model->listStatements(), fileName, serialization );
+            success = !exportFile( s_model->listStatements(), fileName, serialization );
         }
         else {
             QueryResultIterator it = s_model->executeQuery( query,
                                                             Soprano::Query::queryLanguageFromString( queryLang ), queryLang );
             if ( it.isGraph() ) {
-                success = exportFile( it.iterateStatements(),
-                                      fileName,
-                                      serialization );
+                success = !exportFile( it.iterateStatements(),
+                                       fileName,
+                                       serialization );
             }
             else {
                 errStream << "Can only export graph queries";
-                return 1;
+                success = false;
             }
         }
-
-        delete s_model;
 
         return success ? 0 : 1;
     }
@@ -917,7 +948,6 @@ int main( int argc, char *argv[] )
                 return printUsage();
             }
 
-            QString queryLang = args.getSetting( "querylang", "SPARQL" );
             QString query = args[firstArg];
 
             QTime time;
@@ -926,20 +956,15 @@ int main( int argc, char *argv[] )
             Soprano::QueryResultIterator it = s_model->executeQuery( query,
                                                                      Soprano::Query::queryLanguageFromString( queryLang ), queryLang );
             queryTime = time.elapsed();
+
             if ( !args.hasSetting( "file" ) &&
-                 args.hasSetting( "serialization" ) ) {
-                if ( it.isGraph() ) {
-                    QTextStream s( stdout );
-                    return serializeData( it.iterateStatements(), s, serialization );
-                }
-                else {
-                    errStream << "Can only serialize graph queries";
-                    return 1;
-                }
+                 args.hasSetting( "serialization" ) &&
+                 !( it.isGraph() || args.hasSetting( "graphselect" ) ) ) {
+                errStream << "Can only serialize graph queries" << endl;
+                return 1;
             }
-            else {
-                printQueryResult( it );
-            }
+
+            printQueryResult( it );
         }
 
 
@@ -954,7 +979,6 @@ int main( int argc, char *argv[] )
                 }
                 else {
                     errStream << "Need to define a list of valid resource nodes with command 'rmgraph'." << endl;
-                    delete s_model;
                     return 1;
                 }
             }
@@ -979,7 +1003,6 @@ int main( int argc, char *argv[] )
             // parse node commands (max 4)
             Soprano::Node n1, n2, n3, n4;
             if ( args.count() > 5 ) {
-                delete s_model;
                 return printUsage();
             }
 
@@ -998,17 +1021,14 @@ int main( int argc, char *argv[] )
 
             if ( n1.isLiteral() ) {
                 errStream << "Subject needs to be a resource or blank node." << endl;
-                delete s_model;
                 return 1;
             }
             if ( !n2.isResource() && !n2.isEmpty() ) {
                 errStream << "Predicate needs to be a resource node." << endl;
-                delete s_model;
                 return 1;
             }
             if ( n4.isLiteral() ) {
                 errStream << "Context needs to be a resource or blank node." << endl;
-                delete s_model;
                 return 1;
             }
             Statement statement( n1, n2, n3, n4 );
@@ -1024,7 +1044,6 @@ int main( int argc, char *argv[] )
             else if ( command == "add" ) {
                 if ( !statement.isValid() ) {
                     errStream << "At least subject, predicate, and object have to be defined." << endl;
-                    delete s_model;
                     return 1;
                 }
                 s_model->addStatement( statement );
@@ -1044,12 +1063,10 @@ int main( int argc, char *argv[] )
                 s_monitor = &monitor;
                 monitor.monitor( statement );
 
-                delete s_model;
                 return 0;
             }
             else {
                 errStream << "Unsupported command: " << command << endl;
-                delete s_model;
                 return 1;
             }
         }
@@ -1057,12 +1074,10 @@ int main( int argc, char *argv[] )
 
     if ( !s_model->lastError() ) {
         errStream << "Execution time: " << QTime().addMSecs( queryTime ).toString( "hh:mm:ss.z" ) << endl;
-        delete s_model;
         return 0;
     }
     else {
         errStream << "Execution failed: " << s_model->lastError() << endl;
-        delete s_model;
         return 2;
     }
 }
