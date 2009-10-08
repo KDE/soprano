@@ -23,4 +23,5 @@ Soprano 3:
 * Make BackendSettings a class which provides method to lookup a value
 * Use Q_DECLARE_TYPEINFO(Node, Q_MOVABLE_TYPE) for Node and Statement, will break BC in 2.x
 * Make Statement destructor non-virtual
-
+* Have a method to load a complete graph in one go (from a file or better a stream)
+* Idea: what about a parameter like Sesame has for enabling/disabling inference in listStatements and executeQuery
