@@ -73,11 +73,7 @@
  * They are all represented as SQL integer values.
  *
  * The backend does solve this issue for boolean values only by introducing a fake datatype
- * for boolean literals: a non-empty string means true while an empty string means false.
+ * for boolean literals.
  * This is converted internally so the user of the backend will never notice it. The only exception
  * may be queries that contain filters. More input is needed here.
- *
- * The same hack used for boolean values is currently used for time and datetime values, too. This
- * is caused by the fact that Virtuoso looses the fractions of seconds. It is very well possible
- * that this can simply be solved by changing some setting. Again: help is appreciated.
  */
