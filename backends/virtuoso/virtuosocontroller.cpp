@@ -70,6 +70,13 @@ bool Soprano::VirtuosoController::start( const BackendSettings& settings, RunFla
             return false;
         }
 
+        // remove old lock files to be sure
+        QString lockFilePath
+            = valueInSettings( settings, BackendOptionStorageDir ).toString()
+            + QLatin1String( "/soprano-virtuoso.lck" );
+        if ( QFile::exists( lockFilePath ) )
+            QFile::remove( lockFilePath );
+
         QStringList args;
         args << "+foreground"
              << "+config" << m_configFilePath
@@ -82,6 +89,7 @@ bool Soprano::VirtuosoController::start( const BackendSettings& settings, RunFla
         if ( waitForVirtuosoToInitialize() ) {
             clearError();
             m_status = Running;
+            qDebug() << "Virtuoso started:" << m_virtuosoProcess.pid();
             return true;
         }
         else {
@@ -137,10 +145,12 @@ int Soprano::VirtuosoController::usedPort() const
 bool Soprano::VirtuosoController::shutdown()
 {
     if ( isRunning() ) {
+        qDebug() << "Shutting down virtuoso instance" << m_virtuosoProcess.pid();
         m_status = ShuttingDown;
         m_virtuosoProcess.terminate();
-        if ( !m_virtuosoProcess.waitForFinished( 60*1000 ) ) {
-            setError( "Virtuoso did not shut down after 1 minute. Process killed." );
+        if ( !m_virtuosoProcess.waitForFinished( 30*1000 ) ) {
+            qDebug() << "Killing virtuoso instance" << m_virtuosoProcess.pid();
+            setError( "Virtuoso did not shut down after 30 seconds. Process killed." );
             m_status = Killing;
             m_virtuosoProcess.kill();
             return false;
