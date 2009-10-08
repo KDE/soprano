@@ -67,7 +67,7 @@ Soprano::Virtuoso::QueryResultIteratorBackend::QueryResultIteratorBackend( ODBC:
         // otherwise a single row is returned
         if ( d->m_queryResult->fetchScroll() ) {
             Node askVal = d->m_queryResult->getData( 1 );
-            qDebug() << Q_FUNC_INFO << d->m_queryResult->resultColumns() << askVal;
+//            qDebug() << Q_FUNC_INFO << d->m_queryResult->resultColumns() << askVal;
             d->askResult = askVal.literal().toInt() != 0;
         }
         else {
