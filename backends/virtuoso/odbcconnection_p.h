@@ -25,8 +25,10 @@
 #include <sql.h>
 
 #include <QtCore/QList>
+#include <QtCore/QUrl>
 
 #include "error.h"
+#include "keycache.h"
 
 namespace Soprano {
     namespace ODBC {
@@ -45,7 +47,13 @@ namespace Soprano {
             QList<QueryResult*> m_openResults;
             QString m_connectString;
 
+            KeyCache<QString> m_langCache;
+            KeyCache<QUrl> m_typeCache;
+
             HSTMT execute( const QString& query );
+            bool getCharData( HSTMT hstmt, int colNum, SQLCHAR** buffer, SQLLEN* length );
+            QString getLang( short key );
+            QUrl getType( short key );
         };
     }
 }

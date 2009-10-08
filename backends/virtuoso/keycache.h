@@ -19,35 +19,40 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef _SOPRANO_ODBC_QUERY_RESULT_P_H_
-#define _SOPRANO_ODBC_QUERY_RESULT_P_H_
+#ifndef _SOPRANO_ODBC_KEYCACHE_H_
+#define _SOPRANO_ODBC_KEYCACHE_H_
 
-#include <sql.h>
-
-#include <QtCore/QStringList>
-#include <QtCore/QUrl>
+#include <QtCore/QHash>
+#include <QtCore/QMutex>
+#include <QtCore/QMutexLocker>
+#include <QtCore/QDebug>
 
 
 namespace Soprano {
     namespace ODBC {
-
-        class ConnectionPrivate;
-
-        class QueryResultPrivate
-        {
+        template<typename T> class KeyCache {
         public:
-            QueryResultPrivate()
-                : m_hstmt( 0 ),
-                  m_conn( 0 ) {
+            bool contains( short key ) const {
+                QMutexLocker lock( &m_mutex );
+                return m_hash.contains( key );
+            }
+            void insert( short key, const T& value ) {
+                QMutexLocker lock( &m_mutex );
+                qDebug() << "inserting into KeyCache:" << key << value;
+                m_hash.insert( key, value );
+            }
+            T value( short key ) const {
+                QMutexLocker lock( &m_mutex );
+                return m_hash[key];
             }
 
-            HSTMT m_hstmt;
-            ConnectionPrivate* m_conn;
-
-            QStringList m_columns;
+        private:
+            QHash<short, T> m_hash;
+            mutable QMutex m_mutex;
         };
     }
 }
 
 #endif
+
 

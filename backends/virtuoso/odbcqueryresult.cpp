@@ -68,155 +68,6 @@
 /******************************************************************/
 
 
-namespace {
-    template<typename T> class KeyCache {
-    public:
-        bool contains( short key ) const {
-            QMutexLocker lock( &m_mutex );
-            return m_hash.contains( key );
-        }
-        void insert( short key, const T& value ) {
-            QMutexLocker lock( &m_mutex );
-            qDebug() << "inserting into KeyCache:" << key << value;
-            m_hash.insert( key, value );
-        }
-        T value( short key ) const {
-            QMutexLocker lock( &m_mutex );
-            return m_hash[key];
-        }
-
-    private:
-        QHash<short, T> m_hash;
-        mutable QMutex m_mutex;
-    };
-}
-
-
-Q_GLOBAL_STATIC( KeyCache<QString>, s_langCache )
-Q_GLOBAL_STATIC( KeyCache<QUrl>, s_typeCache )
-
-
-bool Soprano::ODBC::QueryResultPrivate::getCharData( HSTMT hstmt, int colNum, SQLCHAR** buffer, SQLLEN* length )
-{
-    SQLCHAR dummyBuffer[1]; // dummy buffer only used to determine length
-
-    int r = SQLGetData( hstmt, colNum, SQL_C_CHAR, dummyBuffer, 0, length );
-
-    if ( SQL_SUCCEEDED( r ) ) {
-        //
-        // Treat a 0 length and null data as an empty node
-        //
-        if ( *length == SQL_NULL_DATA || *length == 0 ) {
-            *buffer = 0;
-            *length = 0;
-            return true;
-        }
-
-        //
-        // again with real length buffer
-        //
-        else {
-            *buffer = new SQLCHAR[*length+4]; // FIXME: why +4 (I got this from the redland plugin)
-            r = SQLGetData ( hstmt, colNum, SQL_C_CHAR, *buffer, *length+4, length );
-            if ( SQL_SUCCEEDED( r ) ) {
-                return true;
-            }
-            else {
-                delete [] *buffer;
-                *buffer = 0;
-                *length = 0;
-                return false;
-            }
-        }
-    }
-    else {
-        return false;
-    }
-}
-
-
-QString Soprano::ODBC::QueryResultPrivate::getLang( short key )
-{
-    // FIXME: thread safety + error handling
-    if ( s_langCache()->contains( key ) ) {
-        return s_langCache()->value( key );
-    }
-
-    QString lang;
-
-    HSTMT hstmt;
-    int rc = SQLAllocHandle( SQL_HANDLE_STMT, m_conn->m_hdbc, &hstmt );
-    if ( !SQL_SUCCEEDED(rc) ) {
-        qDebug() << "Failed to allocate HSTMT";
-        return QString();
-    }
-
-    SQLLEN ind = 0;
-    rc = SQLBindParameter( hstmt, 1, SQL_PARAM_INPUT, SQL_C_SSHORT, SQL_SMALLINT, 0, 0, &key, 0, &ind );
-    if ( SQL_SUCCEEDED(rc) ) {
-        rc = SQLExecDirect( hstmt, ( SQLCHAR* )"select RL_ID from DB.DBA.RDF_LANGUAGE where RL_TWOBYTE=?", SQL_NTS );
-        if ( SQL_SUCCEEDED(rc) ) {
-            rc = SQLFetch( hstmt );
-            if ( SQL_SUCCEEDED(rc) ) {
-                SQLCHAR* data = 0;
-                SQLLEN length = 0;
-                if ( getCharData( hstmt, 1, &data, &length ) ) {
-                    lang = QString::fromLatin1( reinterpret_cast<const char*>( data ), length );
-                    s_langCache()->insert( key, lang );
-                }
-            }
-        }
-    }
-
-    SQLCloseCursor( hstmt );
-    SQLFreeHandle( SQL_HANDLE_STMT, hstmt );
-
-    return lang;
-}
-
-
-QUrl Soprano::ODBC::QueryResultPrivate::getType( short key )
-{
-    // FIXME: thread safety + error handling
-    if ( s_typeCache()->contains( key ) ) {
-        return s_typeCache()->value( key );
-    }
-
-    QUrl type;
-
-    HSTMT hstmt;
-
-    int rc = SQLAllocHandle( SQL_HANDLE_STMT, m_conn->m_hdbc, &hstmt );
-    if (!SQL_SUCCEEDED(rc)) {
-        qDebug() << "Failed to allocate HSTMT";
-        return QUrl();
-    }
-
-    SQLLEN ind;
-    rc = SQLBindParameter( hstmt, 1, SQL_PARAM_INPUT, SQL_C_SSHORT, SQL_SMALLINT, 0, 0, &key, 0, &ind);
-    if ( SQL_SUCCEEDED(rc) ) {
-        rc = SQLExecDirect( hstmt, ( SQLCHAR* )"select RDT_QNAME from DB.DBA.RDF_DATATYPE where RDT_TWOBYTE=?", SQL_NTS );
-        if ( SQL_SUCCEEDED(rc) ) {
-            rc = SQLFetch( hstmt );
-            if ( SQL_SUCCEEDED(rc) ) {
-                SQLCHAR* data = 0;
-                SQLLEN length = 0;
-                if ( getCharData( hstmt, 1, &data, &length ) ) {
-                    type = QUrl::fromEncoded( reinterpret_cast<const char*>( data ), QUrl::StrictMode );
-                    s_typeCache()->insert( key, type );
-                }
-            }
-        }
-    }
-
-    SQLCloseCursor( hstmt );
-    SQLFreeHandle( SQL_HANDLE_STMT, hstmt );
-
-    return type;
-}
-
-
-
 
 Soprano::ODBC::QueryResult::QueryResult()
     : d( new QueryResultPrivate() )
@@ -293,7 +144,7 @@ Soprano::Node Soprano::ODBC::QueryResult::getData( int colNum )
 {
     SQLCHAR* data = 0;
     SQLLEN length = 0;
-    if ( d->getCharData( d->m_hstmt, colNum, &data, &length ) ) {
+    if ( d->m_conn->getCharData( d->m_hstmt, colNum, &data, &length ) ) {
         SQLHDESC hdesc = 0;
         int dvtype = 0;
         int dv_dt_type = 0;
@@ -349,8 +200,8 @@ Soprano::Node Soprano::ODBC::QueryResult::getData( int colNum )
             break;
         }
         case DV_RDF: {
-            QUrl type = d->getType( l_type );
-            QString lang = d->getLang( l_lang );
+            QUrl type = d->m_conn->getType( l_type );
+            QString lang = d->m_conn->getLang( l_lang );
             const char* str = reinterpret_cast<const char*>( data );
 
             if ( type == Virtuoso::fakeBooleanType() ) {
@@ -359,16 +210,6 @@ Soprano::Node Soprano::ODBC::QueryResult::getData( int colNum )
             else {
                 if ( type == Virtuoso::fakeBase64BinaryType() )
                     type = Soprano::Vocabulary::XMLSchema::base64Binary();
-
-                // This is yet another hack for virtuoso versions that convert all unknown types into xsd:int
-                else if ( type == Soprano::Vocabulary::XMLSchema::xsdInt() ) {
-                    if ( !qstrcmp( "true", str ) ) {
-                        return LiteralValue( true );
-                    }
-                    else if ( !qstrcmp( "false", str ) ) {
-                        return LiteralValue( false );
-                    }
-                }
 
                 if ( type.isEmpty() )
                     node = Node( LiteralValue::createPlainLiteral( QString::fromUtf8( str ), lang ) );

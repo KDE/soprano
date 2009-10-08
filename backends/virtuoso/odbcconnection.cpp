@@ -51,6 +51,127 @@ HSTMT Soprano::ODBC::ConnectionPrivate::execute( const QString& request )
 }
 
 
+bool Soprano::ODBC::ConnectionPrivate::getCharData( HSTMT hstmt, int colNum, SQLCHAR** buffer, SQLLEN* length )
+{
+    SQLCHAR dummyBuffer[1]; // dummy buffer only used to determine length
+
+    int r = SQLGetData( hstmt, colNum, SQL_C_CHAR, dummyBuffer, 0, length );
+
+    if ( SQL_SUCCEEDED( r ) ) {
+        //
+        // Treat a 0 length and null data as an empty node
+        //
+        if ( *length == SQL_NULL_DATA || *length == 0 ) {
+            *buffer = 0;
+            *length = 0;
+            return true;
+        }
+
+        //
+        // again with real length buffer
+        //
+        else {
+            *buffer = new SQLCHAR[*length+4]; // FIXME: why +4 (I got this from the redland plugin)
+            r = SQLGetData ( hstmt, colNum, SQL_C_CHAR, *buffer, *length+4, length );
+            if ( SQL_SUCCEEDED( r ) ) {
+                return true;
+            }
+            else {
+                delete [] *buffer;
+                *buffer = 0;
+                *length = 0;
+                return false;
+            }
+        }
+    }
+    else {
+        return false;
+    }
+}
+
+
+QString Soprano::ODBC::ConnectionPrivate::getLang( short key )
+{
+    // FIXME: error handling
+    if ( m_langCache.contains( key ) ) {
+        return m_langCache.value( key );
+    }
+
+    QString lang;
+
+    HSTMT hstmt;
+    int rc = SQLAllocHandle( SQL_HANDLE_STMT, m_hdbc, &hstmt );
+    if ( !SQL_SUCCEEDED(rc) ) {
+        qDebug() << "Failed to allocate HSTMT";
+        return QString();
+    }
+
+    SQLLEN ind = 0;
+    rc = SQLBindParameter( hstmt, 1, SQL_PARAM_INPUT, SQL_C_SSHORT, SQL_SMALLINT, 0, 0, &key, 0, &ind );
+    if ( SQL_SUCCEEDED(rc) ) {
+        rc = SQLExecDirect( hstmt, ( SQLCHAR* )"select RL_ID from DB.DBA.RDF_LANGUAGE where RL_TWOBYTE=?", SQL_NTS );
+        if ( SQL_SUCCEEDED(rc) ) {
+            rc = SQLFetch( hstmt );
+            if ( SQL_SUCCEEDED(rc) ) {
+                SQLCHAR* data = 0;
+                SQLLEN length = 0;
+                if ( getCharData( hstmt, 1, &data, &length ) ) {
+                    lang = QString::fromLatin1( reinterpret_cast<const char*>( data ), length );
+                    m_langCache.insert( key, lang );
+                }
+            }
+        }
+    }
+
+    SQLCloseCursor( hstmt );
+    SQLFreeHandle( SQL_HANDLE_STMT, hstmt );
+
+    return lang;
+}
+
+
+QUrl Soprano::ODBC::ConnectionPrivate::getType( short key )
+{
+    // FIXME: error handling
+    if ( m_typeCache.contains( key ) ) {
+        return m_typeCache.value( key );
+    }
+
+    QUrl type;
+
+    HSTMT hstmt;
+
+    int rc = SQLAllocHandle( SQL_HANDLE_STMT, m_hdbc, &hstmt );
+    if (!SQL_SUCCEEDED(rc)) {
+        qDebug() << "Failed to allocate HSTMT";
+        return QUrl();
+    }
+
+    SQLLEN ind;
+    rc = SQLBindParameter( hstmt, 1, SQL_PARAM_INPUT, SQL_C_SSHORT, SQL_SMALLINT, 0, 0, &key, 0, &ind);
+    if ( SQL_SUCCEEDED(rc) ) {
+        rc = SQLExecDirect( hstmt, ( SQLCHAR* )"select RDT_QNAME from DB.DBA.RDF_DATATYPE where RDT_TWOBYTE=?", SQL_NTS );
+        if ( SQL_SUCCEEDED(rc) ) {
+            rc = SQLFetch( hstmt );
+            if ( SQL_SUCCEEDED(rc) ) {
+                SQLCHAR* data = 0;
+                SQLLEN length = 0;
+                if ( getCharData( hstmt, 1, &data, &length ) ) {
+                    type = QUrl::fromEncoded( reinterpret_cast<const char*>( data ), QUrl::StrictMode );
+                    m_typeCache.insert( key, type );
+                }
+            }
+        }
+    }
+
+    SQLCloseCursor( hstmt );
+    SQLFreeHandle( SQL_HANDLE_STMT, hstmt );
+
+    return type;
+}
+
+
+
 Soprano::ODBC::Connection::Connection()
     : d( new ConnectionPrivate() )
 {
