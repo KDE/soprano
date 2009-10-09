@@ -567,7 +567,7 @@ void SopranoModelTest::testQuery()
         ++cnt;
     }
 
-    QVERIFY( cnt == 4 );
+    QCOMPARE( cnt, 4 );
 
     // test bindings
     rs1 = m_model->executeQuery( sparql, Query::QueryLanguageSparql );
@@ -890,7 +890,7 @@ void SopranoModelTest::testLiteralTypes()
     QFETCH( LiteralValue, literal );
     QFETCH( QUrl, predicate );
 
-//    qDebug() << "testing literal: " << literal;
+    qDebug() << "testing literal: " << literal;
 
     QUrl sub( "http://soprano.org/literalTest#X" );
 
