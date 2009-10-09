@@ -599,10 +599,13 @@ void signalHandler( int signal )
     case SIGINT:
         // shut the monitor down gracefully so we can cleanup
         // afterwards
-        if ( s_monitor )
+        if ( s_monitor ) {
             s_monitor->stopMonitoring();
-        else
+        }
+        else {
+            delete s_model;
             exit( 2 );
+        }
     }
 }
 #endif
