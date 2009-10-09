@@ -10,6 +10,9 @@
 	    result. This is very usable since SPARQL construct queries do not support contexts/named graphs.
 	  - New command 'rmgraph' which allows to delete a list of graphs/contexts.
 	  - New parameter --foo which enables scriptable binding results without variable names.
+	* ServerCore is now fully multithreaded allowing two clients perform read-only commands simultaneously.
+	* New Virtuoso storage backend which can either connect to a running Virtuoso instance or spawn one
+          locally.
 	
 2.3
 	* New class LanguageTag replacing the old simple string language handling with a sophisticated one
