@@ -19,24 +19,34 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef _SOPRANO_ODBC_ENVIRONMENT_P_H_
-#define _SOPRANO_ODBC_ENVIRONMENT_P_H_
+#ifndef _SOPRANO_ODBC_CONNECTION_POOL_P_H_
+#define _SOPRANO_ODBC_CONNECTION_POOL_P_H_
 
-#include <sql.h>
+#include "error.h"
 
+#include <QtCore/QHash>
+#include <QtCore/QMutex>
+
+class QThread;
 
 namespace Soprano {
     namespace ODBC {
-        class EnvironmentPrivate
+
+        class Connection;
+        class EnvironmentPrivate;
+
+        class ConnectionPoolPrivate : public Error::ErrorCache
         {
         public:
-            EnvironmentPrivate( Environment* env )
-                : m_env( env ),
-                  m_henv( SQL_NULL_HANDLE ) {
-            }
+            QString m_odbcConnectString;
 
-            Environment* m_env;
-            HENV m_henv;
+            QHash<QThread*, Connection*> m_openConnections;
+
+            Connection* createConnection();
+
+            QMutex m_connectionMutex;
+
+            friend class Connection;
         };
     }
 }

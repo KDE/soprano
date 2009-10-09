@@ -19,24 +19,37 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef _SOPRANO_ODBC_ENVIRONMENT_P_H_
-#define _SOPRANO_ODBC_ENVIRONMENT_P_H_
+#ifndef _SOPRANO_ODBC_CONNECTION_POOL_H_
+#define _SOPRANO_ODBC_CONNECTION_POOL_H_
 
-#include <sql.h>
+#include <QtCore/QObject>
 
+#include "error.h"
 
 namespace Soprano {
     namespace ODBC {
-        class EnvironmentPrivate
-        {
-        public:
-            EnvironmentPrivate( Environment* env )
-                : m_env( env ),
-                  m_henv( SQL_NULL_HANDLE ) {
-            }
 
-            Environment* m_env;
-            HENV m_henv;
+        class Connection;
+        class ConnectionPoolPrivate;
+
+        class ConnectionPool : public QObject, public Soprano::Error::ErrorCache
+        {
+            Q_OBJECT
+
+        public:
+            ConnectionPool( const QString& odbcConnectString, QObject* parent = 0 );
+            ~ConnectionPool();
+
+            /**
+             * Get the connection for the current thread.
+             */
+            Connection* connection();
+
+        private Q_SLOTS:
+            void slotThreadFinished();
+
+        private:
+            ConnectionPoolPrivate* const d;
         };
     }
 }

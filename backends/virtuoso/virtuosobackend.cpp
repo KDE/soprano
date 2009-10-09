@@ -23,7 +23,7 @@
 #include "virtuosocontroller.h"
 #include "virtuosomodel.h"
 #include "virtuosoconfigurator.h"
-#include "odbcenvironment.h"
+#include "odbcconnectionpool.h"
 
 #include "sopranodirs.h"
 
@@ -35,8 +35,7 @@
 Q_EXPORT_PLUGIN2(soprano_virtuosobackend, Soprano::Virtuoso::BackendPlugin)
 
 Soprano::Virtuoso::BackendPlugin::BackendPlugin()
-    : Backend( "virtuosobackend" ),
-      m_odbcEnvironment( 0 )
+    : Backend( "virtuosobackend" )
 {
 }
 
@@ -48,13 +47,6 @@ Soprano::Virtuoso::BackendPlugin::~BackendPlugin()
 
 Soprano::StorageModel* Soprano::Virtuoso::BackendPlugin::createModel( const BackendSettings& settings ) const
 {
-    if ( !m_odbcEnvironment ) {
-        if ( !( m_odbcEnvironment = ODBC::Environment::createEnvironment() ) ) {
-            setError( "Unable to create ODBC environment." );
-            return 0;
-        }
-    }
-
     // for now we only support connecting to a running virtuoso instance
     QString host = valueInSettings( settings, BackendOptionHost ).toString();
     int port = valueInSettings( settings, BackendOptionPort ).toInt();
@@ -96,23 +88,18 @@ Soprano::StorageModel* Soprano::Virtuoso::BackendPlugin::createModel( const Back
     QString connectString = QString( "host=%1:%2;uid=%3;pwd=%4;driver=%5" )
                             .arg( host, QString::number( port ), uid, pwd, driverPath );
 
-    if ( ODBC::Connection* connection = odbcEnvironment()->createConnection( connectString ) ) {
+    ODBC::ConnectionPool* connectionPool = new ODBC::ConnectionPool( connectString );
 
-        // FIXME: should configuration only be allowed on spawned servers?
-        DatabaseConfigurator configurator( connection );
-        configurator.configureServer( settings );
+    // FIXME: should configuration only be allowed on spawned servers?
+    DatabaseConfigurator configurator( connectionPool->connection() );
+    configurator.configureServer( settings );
 
-        VirtuosoModel* model = new VirtuosoModel( connection, this );
-        // mem mangement the ugly way
-        // FIXME: improve
-        if ( controller )
-            controller->setParent( model );
-        return model;
-    }
-    else {
-        setError( odbcEnvironment()->lastError() );
-        return 0;
-    }
+    VirtuosoModel* model = new VirtuosoModel( connectionPool, this );
+    // mem mangement the ugly way
+    // FIXME: improve
+    if ( controller )
+        controller->setParent( model );
+    return model;
 }
 
 

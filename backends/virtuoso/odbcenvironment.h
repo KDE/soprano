@@ -24,6 +24,8 @@
 
 #include "error.h"
 
+#include <sql.h>
+
 namespace Soprano {
     namespace ODBC {
 
@@ -35,7 +37,7 @@ namespace Soprano {
         public:
             ~Environment();
 
-            Connection* createConnection( const QString& connectionString );
+            HENV henv() const;
 
             static Environment* createEnvironment();
 

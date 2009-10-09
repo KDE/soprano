@@ -21,6 +21,8 @@
 
 #include "odbcconnection.h"
 #include "odbcconnection_p.h"
+#include "odbcconnectionpool_p.h"
+#include "odbcenvironment.h"
 #include "odbcenvironment_p.h"
 #include "odbcqueryresult.h"
 #include "odbcqueryresult_p.h"
@@ -28,6 +30,8 @@
 #include "virtuosotools.h"
 
 #include <QtCore/QDebug>
+#include <QtCore/QThread>
+
 
 HSTMT Soprano::ODBC::ConnectionPrivate::execute( const QString& request )
 {
@@ -175,32 +179,22 @@ QUrl Soprano::ODBC::ConnectionPrivate::getType( short key )
 Soprano::ODBC::Connection::Connection()
     : d( new ConnectionPrivate() )
 {
+    qDebug() << Q_FUNC_INFO << QThread::currentThread();
 }
 
 
 Soprano::ODBC::Connection::~Connection()
 {
-    d->m_env->m_openConnections.removeAll( this );
+    qDebug() << Q_FUNC_INFO << QThread::currentThread();
 
     qDeleteAll( d->m_openResults );
 
     if ( d->m_hdbc ) {
         SQLFreeHandle( SQL_HANDLE_DBC, d->m_hdbc );
     }
+    delete d->m_env;
 
     delete d;
-}
-
-
-Soprano::ODBC::Environment* Soprano::ODBC::Connection::environment() const
-{
-    return d->m_env->m_env;
-}
-
-
-QString Soprano::ODBC::Connection::odbcConnectString() const
-{
-    return d->m_connectString;
 }
 
 

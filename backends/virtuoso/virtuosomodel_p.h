@@ -26,17 +26,17 @@
 
 namespace Soprano {
     namespace ODBC {
-        class Connection;
+        class ConnectionPool;
     }
 
     class VirtuosoModelPrivate
     {
     public:
         VirtuosoModelPrivate()
-            : connection( 0 ) {
+            : connectionPool( 0 ) {
         }
 
-        ODBC::Connection* connection;
+        ODBC::ConnectionPool* connectionPool;
         QList<Virtuoso::QueryResultIteratorBackend*> m_openIterators;
     };
 }

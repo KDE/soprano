@@ -36,10 +36,6 @@ namespace Soprano {
         public:
             ~Connection();
 
-            Environment* environment() const;
-
-            QString odbcConnectString() const;
-
             Error::ErrorCode executeCommand( const QString& command );
             QueryResult* executeQuery( const QString& request );
 
@@ -48,7 +44,8 @@ namespace Soprano {
 
             ConnectionPrivate* const d;
 
-            friend class Environment;
+            friend class ConnectionPool;
+            friend class ConnectionPoolPrivate;
         };
     }
 }

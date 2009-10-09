@@ -21,8 +21,6 @@
 
 #include "odbcenvironment.h"
 #include "odbcenvironment_p.h"
-#include "odbcconnection.h"
-#include "odbcconnection_p.h"
 #include "virtuosotools.h"
 
 #include <sql.h>
@@ -36,8 +34,6 @@ Soprano::ODBC::Environment::Environment()
 
 Soprano::ODBC::Environment::~Environment()
 {
-    qDeleteAll( d->m_openConnections );
-
     if ( d->m_henv ) {
         SQLFreeHandle( SQL_HANDLE_ENV, d->m_henv );
     }
@@ -45,48 +41,9 @@ Soprano::ODBC::Environment::~Environment()
 }
 
 
-Soprano::ODBC::Connection* Soprano::ODBC::Environment::createConnection( const QString& connectString )
+HENV Soprano::ODBC::Environment::henv() const
 {
-    HDBC hdbc;
-
-    // alloc hdbc handle
-    if ( SQLAllocConnect( d->m_henv, &hdbc ) != SQL_SUCCESS ) {
-        setError( "Failed to allocate SQL handle" );
-        return 0;
-    }
-
-    // set the app name
-//    SQLSetConnectAttr( d->m_hdbc, SQL_ATTR_AUTOCOMMIT, SQL_AUTOCOMMIT_ON, 0 );
-//    SQLSetConnectOption( d->m_hdbc, SQL_APPLICATION_NAME, "Soprano" );
-    SQLSetConnectOption( hdbc, SQL_AUTOCOMMIT, SQL_AUTOCOMMIT_ON );
-
-    SQLTCHAR outdsn[4097];
-    outdsn[4096] = 0;
-    short buflen = 0;
-    int status = 0;
-    status = SQLDriverConnect( hdbc,
-                               0,
-                               (UCHAR*) connectString.toUtf8().data(),
-                               SQL_NTS,
-                               outdsn,
-                               4096,
-                               &buflen,
-                               SQL_DRIVER_COMPLETE );
-
-    if ( status != SQL_SUCCESS && status != SQL_SUCCESS_WITH_INFO ) {
-        setError( Virtuoso::convertSqlError( SQL_HANDLE_DBC, hdbc ) );
-        SQLFreeHandle( SQL_HANDLE_DBC, hdbc );
-        return 0;
-    }
-
-    clearError();
-
-    Connection* conn = new Connection();
-    conn->d->m_hdbc = hdbc;
-    conn->d->m_env = d;
-    conn->d->m_connectString = connectString;
-    d->m_openConnections.append( conn );
-    return conn;
+    return d->m_henv;
 }
 
 

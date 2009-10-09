@@ -33,19 +33,21 @@
 namespace Soprano {
     namespace ODBC {
 
-        class EnvironmentPrivate;
+        class ConnectionPoolPrivate;
+        class Environment;
 
         class ConnectionPrivate : public Error::ErrorCache
         {
         public:
             ConnectionPrivate()
-                : m_hdbc( SQL_NULL_HANDLE ) {
+                : m_env( 0 ),
+                  m_hdbc( SQL_NULL_HANDLE ) {
             }
 
+            Environment* m_env;
             HDBC m_hdbc;
-            EnvironmentPrivate* m_env;
+            ConnectionPoolPrivate* m_pool;
             QList<QueryResult*> m_openResults;
-            QString m_connectString;
 
             KeyCache<QString> m_langCache;
             KeyCache<QUrl> m_typeCache;

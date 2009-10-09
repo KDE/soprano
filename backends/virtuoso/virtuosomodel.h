@@ -26,7 +26,7 @@
 
 namespace Soprano {
     namespace ODBC {
-        class Connection;
+        class ConnectionPool;
     }
 
     class VirtuosoModelPrivate;
@@ -39,7 +39,7 @@ namespace Soprano {
         /**
          * \param connection The base connection used for non-transaction requests
          */
-        VirtuosoModel( ODBC::Connection* connection, const Backend* );
+        VirtuosoModel( ODBC::ConnectionPool* connectionPool, const Backend* );
         ~VirtuosoModel();
 
         Error::ErrorCode addStatement( const Statement &statement );

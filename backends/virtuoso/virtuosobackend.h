@@ -48,12 +48,8 @@ namespace Soprano {
             BackendFeatures supportedFeatures() const;
             bool isAvailable() const;
 
-            ODBC::Environment* odbcEnvironment() const { return m_odbcEnvironment; }
-
         private:
             QString findVirtuosoDriver() const;
-
-            mutable ODBC::Environment* m_odbcEnvironment;
         };
     }
 }

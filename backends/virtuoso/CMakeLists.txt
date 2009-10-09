@@ -21,6 +21,7 @@ set(SRC
   virtuosoconfigurator.cpp
   odbcenvironment.cpp
   odbcconnection.cpp
+  odbcconnectionpool.cpp
   odbcqueryresult.cpp
   ${soprano_core_SOURCE_DIR}/sopranodirs.cpp
 )
