@@ -36,14 +36,8 @@
 
 
 namespace {
-    // we need to encode ' since it is reserved in SQL
     QString nodeToN3( const Soprano::Node& node ) {
-        if ( node.isResource() ) {
-            QString encoded = node.toN3();
-            encoded.replace( '\'', "%27" );
-            return encoded;
-        }
-        else if ( node.isBlank() ) {
+        if ( node.isBlank() ) {
             // looks like Virtuoso needs a special syntax here, at least that is what the redland bindings do.
             return '<' + node.toN3() + '>';
         }
@@ -145,6 +139,11 @@ Soprano::Error::ErrorCode Soprano::VirtuosoModel::addStatement( const Statement&
 
     QString insert = QString("sparql insert into %1")
                      .arg( statementToConstructGraphPattern( s, true ) );
+
+    if ( statement.object().toN3().length() > 100000 ) {
+        qDebug() << "Ignoring very long object for debugging purposes." << statement.subject() << statement.predicate() << statement.object().toN3().length();
+        return Error::ErrorNone;
+    }
 
 //    qDebug() << "addStatement query:" << insert;
     if ( d->connection->executeCommand( insert ) == Error::ErrorNone ) {
@@ -301,7 +300,10 @@ Soprano::Error::ErrorCode Soprano::VirtuosoModel::removeAllStatements( const Sta
     }
     else {
         // FIXME: do this in a fancy way, maybe an inner sql query or something
-        QList<Node> allContexts = listContexts().allNodes();
+        QList<Node> allContexts = executeQuery( QString( "select distinct ?g where { %1 . FILTER(?g != %2) . }" )
+                                                .arg( statementToConstructGraphPattern( statement, true ) )
+                                                .arg( Node::resourceToN3( Virtuoso::openlinkVirtualGraph() ) ) )
+                                  .iterateBindings( 0 ).allNodes();
         allContexts << Node( Virtuoso::defaultGraph() );
         foreach( const Node& node, allContexts ) {
             Statement s( statement );
@@ -387,6 +389,7 @@ Soprano::QueryResultIterator Soprano::VirtuosoModel::executeQuery( const QString
         return backend;
     }
     else {
+        qDebug() << "Query failed:" << query;
         setError( d->connection->lastError() );
         return 0;
     }
