@@ -26,6 +26,8 @@
 #include "model.h"
 
 #include <QtCore/QHash>
+#include <QtCore/QMutex>
+#include <QtCore/QMutexLocker>
 
 
 class Soprano::Server::ModelPool::Private
@@ -35,6 +37,8 @@ public:
 
     QHash<quint32, Model*> modelIdMap;
     QHash<QString, quint32> modelNameMap;
+
+    QMutex mutex;
 
     quint32 generateUniqueId() {
         quint32 id = 0;
@@ -61,6 +65,7 @@ Soprano::Server::ModelPool::~ModelPool()
 
 Soprano::Model* Soprano::Server::ModelPool::modelById( quint32 id ) const
 {
+    QMutexLocker locker( &d->mutex );
     QHash<quint32, Model*>::iterator it = d->modelIdMap.find( id );
     if ( it != d->modelIdMap.end() ) {
         return *it;
@@ -77,6 +82,7 @@ Soprano::Model* Soprano::Server::ModelPool::modelByName( const QString& name )
 
 quint32 Soprano::Server::ModelPool::idForModelName( const QString& name )
 {
+    QMutexLocker locker( &d->mutex );
     quint32 id = 0;
 
     QHash<QString, quint32>::const_iterator it = d->modelNameMap.constFind( name );
@@ -98,6 +104,7 @@ quint32 Soprano::Server::ModelPool::idForModelName( const QString& name )
 
 void Soprano::Server::ModelPool::removeModel( const QString& name )
 {
+    QMutexLocker locker( &d->mutex );
     d->modelIdMap.remove( d->modelNameMap[name] );
     d->modelNameMap.remove( name );
 }

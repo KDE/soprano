@@ -27,6 +27,7 @@
 
 #include "model.h"
 
+#include <QtCore/QDebug>
 #include <QtCore/QHash>
 #include <QtCore/QRegExp>
 
@@ -41,11 +42,11 @@ public:
 };
 
 
-Soprano::Server::DBusServerAdaptor::DBusServerAdaptor( ServerCore* parent, const QString& dbusObjectPath )
+Soprano::Server::DBusServerAdaptor::DBusServerAdaptor( QObject* parent, ServerCore* core, const QString& dbusObjectPath )
     : QDBusAbstractAdaptor( parent ),
       d( new Private() )
 {
-    d->core = parent;
+    d->core = core;
     d->dbusObjectPath = dbusObjectPath;
 }
 

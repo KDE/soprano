@@ -53,7 +53,7 @@ namespace Soprano {
                     "  </interface>\n")
 
     public:
-        DBusServerAdaptor( ServerCore* core, const QString& dbusObjectPath );
+        DBusServerAdaptor( QObject* parent, ServerCore* core, const QString& dbusObjectPath );
         virtual ~DBusServerAdaptor();
 
     public Q_SLOTS:

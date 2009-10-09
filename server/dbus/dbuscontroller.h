@@ -1,7 +1,8 @@
 /*
  * This file is part of Soprano Project.
  *
- * Copyright (C) 2007-2009 Sebastian Trueg <trueg@kde.org>
+ * Copyright (C) 2009 Thomas Riccardi <riccardi.thomas@gmail.com>
+ * Copyright (C) 2009 Sebastian Trueg <trueg@kde.org>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -19,52 +20,32 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef _SOPRANO_SERVER_CONNECTION_H_
-#define _SOPRANO_SERVER_CONNECTION_H_
+#ifndef _SOPRANO_SERVER_DBUS_CONTROLLER_H_
+#define _SOPRANO_SERVER_DBUS_CONTROLLER_H_
 
-#include <QtCore/QObject>
 #include <QtCore/QThread>
 
-class QIODevice;
-
 namespace Soprano {
-
-    class Backend;
-    namespace Util {
-        class AsyncResult;
-    }
-
     namespace Server {
 
         class ServerCore;
-        class ModelPool;
 
-        class ServerConnection : public QThread
+        /**
+         * Starts listening to incoming DBus commands in a separate thread.
+         */
+        class DBusController : public QThread
         {
             Q_OBJECT
 
         public:
-            /**
-             * Create a new ServerConnection.
-             *
-             * \param core The ServerCore that maintains all Models.
-             * \param socket The connection socket.
-             */
-            ServerConnection( ModelPool* pool, ServerCore* core );
-            ~ServerConnection();
-
-            void close();
-
-            void start( QIODevice* socket );
-
-        protected:
-            void run();
+            DBusController( ServerCore* core, const QString& dbusObjectPath );
+            ~DBusController();
 
         private:
-            class Private;
-            Private* const d;
+            void run();
 
-            Q_PRIVATE_SLOT( d, void _s_readNextCommand() )
+            ServerCore* m_core;
+            QString m_dbusObjectPath;
         };
     }
 }

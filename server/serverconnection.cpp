@@ -1,7 +1,7 @@
 /*
  * This file is part of Soprano Project.
  *
- * Copyright (C) 2007 Sebastian Trueg <trueg@kde.org>
+ * Copyright (C) 2007-2009 Sebastian Trueg <trueg@kde.org>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -24,7 +24,6 @@
 #include "commands.h"
 #include "randomgenerator.h"
 #include "socketdevice.h"
-#include "asyncmodel.h"
 #include "datastream.h"
 #include "modelpool.h"
 
@@ -63,7 +62,6 @@ public:
     QHash<quint32, QueryResultIterator> openQueryIterators;
 
     void _s_readNextCommand();
-    void _s_resultReady( Soprano::Util::AsyncResult* result );
 
     quint32 generateUniqueId();
     Soprano::Model* getModel();
@@ -104,7 +102,7 @@ public:
 // do NOT use core as parent. Otherwise ~QObject will crash us
 // when we shut down the connections gracefully in ~ServerCore
 Soprano::Server::ServerConnection::ServerConnection( ModelPool* pool, ServerCore* core )
-    : QObject( 0 ),
+    : QThread( 0 ),
       d( new Private() )
 {
     d->q = this;
@@ -118,7 +116,11 @@ Soprano::Server::ServerConnection::ServerConnection( ModelPool* pool, ServerCore
 Soprano::Server::ServerConnection::~ServerConnection()
 {
     qDebug() << "Removing connection";
-    delete d->socket;
+
+    // d->socket deleted when quit()
+    quit();
+    wait();
+
     delete d;
 }
 
@@ -132,10 +134,37 @@ void Soprano::Server::ServerConnection::close()
 void Soprano::Server::ServerConnection::start( QIODevice* socket )
 {
     d->socket = socket;
-    connect( socket, SIGNAL( readyRead() ),
+
+    // "push" the socket to the new thread,
+    // because QTcpSocket::write(...) seems to create children objects, in the new thread, and :
+    // "QObject: Cannot create children for a parent that is in a different thread."
+    d->socket->setParent( 0 );
+    d->socket->moveToThread( this );
+
+    // we move 'this' (ServerConnection object) to the new thread,
+    // the one created by ourselves and it works!
+    moveToThread( this );
+
+    // start the thread (call run())
+    QThread::start( QThread::InheritPriority );
+}
+
+void Soprano::Server::ServerConnection::run()
+{
+    // we are in the new thread
+
+    connect( d->socket, SIGNAL( readyRead() ),
              this, SLOT( _s_readNextCommand() ) );
-    connect( socket, SIGNAL( disconnected() ),
-             this, SIGNAL( finished() ) );
+
+    // quit() emits the signal finished() when the thread is finished
+    connect( d->socket, SIGNAL( disconnected() ),
+             this, SLOT( quit() ) );
+
+    // start the event loop
+    exec();
+
+    delete d->socket;
+    d->socket = 0;
 }
 
 
@@ -240,47 +269,6 @@ void Soprano::Server::ServerConnection::Private::_s_readNextCommand()
         q->close();
         break;
     }
-}
-
-
-void Soprano::Server::ServerConnection::Private::_s_resultReady( Util::AsyncResult* result )
-{
-    // we only handle one client request at the same time
-    // Thus, we simply communicate the result
-
-    DataStream stream( socket );
-
-    QVariant value = result->value();
-
-    if( value.userType() == QVariant::Bool ) {
-        stream.writeBool( value.toBool() );
-    }
-    else if ( value.userType() == QVariant::Int ) {
-        stream.writeInt32( ( qint32 )value.toInt() );
-    }
-    else if ( value.userType() == qMetaTypeId<Node>() ) {
-        stream.writeNode( value.value<Node>() );
-    }
-    else if ( value.userType() == qMetaTypeId<StatementIterator>() ) {
-        StatementIterator it = value.value<StatementIterator>();
-        stream.writeUnsignedInt32( it.isValid() ? mapIterator( it ) : quint32(0) );
-    }
-    else if ( value.userType() == qMetaTypeId<NodeIterator>() ) {
-        NodeIterator it = value.value<NodeIterator>();
-        stream.writeUnsignedInt32( it.isValid() ? mapIterator( it ) : quint32(0) );
-    }
-    else if ( value.userType() == qMetaTypeId<QueryResultIterator>() ) {
-        QueryResultIterator it = value.value<QueryResultIterator>();
-        stream.writeUnsignedInt32( it.isValid() ? mapIterator( it ) : quint32(0) );
-    }
-    else if ( value.userType() == qMetaTypeId<Error::ErrorCode>() ) {
-        stream.writeErrorCode( value.value<Error::ErrorCode>() );
-    }
-    else {
-        Q_ASSERT( false );
-    }
-
-    stream.writeError( result->lastError() );
 }
 
 
@@ -401,14 +389,8 @@ void Soprano::Server::ServerConnection::Private::addStatement()
         Statement s;
         stream.readStatement( s );
 
-        if ( Util::AsyncModel* am = qobject_cast<Util::AsyncModel*>( model ) ) {
-            connect( am->addStatementAsync( s ), SIGNAL( resultReady( Soprano::Util::AsyncResult* ) ),
-                     q, SLOT( _s_resultReady( Soprano::Util::AsyncResult* ) ) );
-        }
-        else {
-            stream.writeErrorCode( model->addStatement( s ) );
-            stream.writeError( model->lastError() );
-        }
+        stream.writeErrorCode( model->addStatement( s ) );
+        stream.writeError( model->lastError() );
     }
     else {
         stream.writeErrorCode( Error::ErrorInvalidArgument );
@@ -428,14 +410,8 @@ void Soprano::Server::ServerConnection::Private::removeStatement()
         Statement s;
         stream.readStatement( s );
 
-        if ( Util::AsyncModel* am = qobject_cast<Util::AsyncModel*>( model ) ) {
-            connect( am->removeStatementAsync( s ), SIGNAL( resultReady( Soprano::Util::AsyncResult* ) ),
-                     q, SLOT( _s_resultReady( Soprano::Util::AsyncResult* ) ) );
-        }
-        else {
-            stream.writeErrorCode( model->removeStatement( s ) );
-            stream.writeError( model->lastError() );
-        }
+        stream.writeErrorCode( model->removeStatement( s ) );
+        stream.writeError( model->lastError() );
     }
     else {
         stream.writeErrorCode( Error::ErrorInvalidArgument );
@@ -455,14 +431,8 @@ void Soprano::Server::ServerConnection::Private::removeAllStatements()
         Statement s;
         stream.readStatement( s );
 
-        if ( Util::AsyncModel* am = qobject_cast<Util::AsyncModel*>( model ) ) {
-            connect( am->removeAllStatementsAsync( s ), SIGNAL( resultReady( Soprano::Util::AsyncResult* ) ),
-                     q, SLOT( _s_resultReady( Soprano::Util::AsyncResult* ) ) );
-        }
-        else {
-            stream.writeErrorCode( model->removeAllStatements( s ) );
-            stream.writeError( model->lastError() );
-        }
+        stream.writeErrorCode( model->removeAllStatements( s ) );
+        stream.writeError( model->lastError() );
     }
     else {
         stream.writeErrorCode( Error::ErrorInvalidArgument );
@@ -482,15 +452,9 @@ void Soprano::Server::ServerConnection::Private::listStatements()
         Statement s;
         stream.readStatement( s );
 
-        if ( Util::AsyncModel* am = qobject_cast<Util::AsyncModel*>( model ) ) {
-            connect( am->listStatementsAsync( s ), SIGNAL( resultReady( Soprano::Util::AsyncResult* ) ),
-                     q, SLOT( _s_resultReady( Soprano::Util::AsyncResult* ) ) );
-        }
-        else {
-            StatementIterator it = model->listStatements( s );
-            stream.writeUnsignedInt32( it.isValid() ? mapIterator( it ) : quint32(0) );
-            stream.writeError( model->lastError() );
-        }
+        StatementIterator it = model->listStatements( s );
+        stream.writeUnsignedInt32( it.isValid() ? mapIterator( it ) : quint32(0) );
+        stream.writeError( model->lastError() );
     }
     else {
         stream.writeUnsignedInt32( 0 );
@@ -510,14 +474,8 @@ void Soprano::Server::ServerConnection::Private::containsStatement()
         Statement s;
         stream.readStatement( s );
 
-        if ( Util::AsyncModel* am = qobject_cast<Util::AsyncModel*>( model ) ) {
-            connect( am->containsStatementAsync( s ), SIGNAL( resultReady( Soprano::Util::AsyncResult* ) ),
-                     q, SLOT( _s_resultReady( Soprano::Util::AsyncResult* ) ) );
-        }
-        else {
-            stream.writeBool( model->containsStatement( s ) );
-            stream.writeError( model->lastError() );
-        }
+        stream.writeBool( model->containsStatement( s ) );
+        stream.writeError( model->lastError() );
     }
     else {
         stream.writeBool( false );
@@ -537,14 +495,8 @@ void Soprano::Server::ServerConnection::Private::containsAnyStatement()
         Statement s;
         stream.readStatement( s );
 
-        if ( Util::AsyncModel* am = qobject_cast<Util::AsyncModel*>( model ) ) {
-            connect( am->containsAnyStatementAsync( s ), SIGNAL( resultReady( Soprano::Util::AsyncResult* ) ),
-                     q, SLOT( _s_resultReady( Soprano::Util::AsyncResult* ) ) );
-        }
-        else {
-            stream.writeBool( model->containsAnyStatement( s ) );
-            stream.writeError( model->lastError() );
-        }
+        stream.writeBool( model->containsAnyStatement( s ) );
+        stream.writeError( model->lastError() );
     }
     else {
         stream.writeBool( false );
@@ -560,15 +512,9 @@ void Soprano::Server::ServerConnection::Private::listContexts()
 
     Model* model = getModel();
     if ( model ) {
-        if ( Util::AsyncModel* am = qobject_cast<Util::AsyncModel*>( model ) ) {
-            connect( am->listContextsAsync(), SIGNAL( resultReady( Soprano::Util::AsyncResult* ) ),
-                     q, SLOT( _s_resultReady( Soprano::Util::AsyncResult* ) ) );
-        }
-        else {
-            NodeIterator it = model->listContexts();
-            stream.writeUnsignedInt32( it.isValid() ? mapIterator( it ) : quint32(0) );
-            stream.writeError( model->lastError() );
-        }
+        NodeIterator it = model->listContexts();
+        stream.writeUnsignedInt32( it.isValid() ? mapIterator( it ) : quint32(0) );
+        stream.writeError( model->lastError() );
     }
     else {
         stream.writeUnsignedInt32( 0 );
@@ -590,15 +536,9 @@ void Soprano::Server::ServerConnection::Private::query()
         stream.readUnsignedInt16( queryLang );
         stream.readString( userLang );
 
-        if ( Util::AsyncModel* am = qobject_cast<Util::AsyncModel*>( model ) ) {
-            connect( am->executeQueryAsync( queryString, ( Query::QueryLanguage )queryLang, userLang ), SIGNAL( resultReady( Soprano::Util::AsyncResult* ) ),
-                     q, SLOT( _s_resultReady( Soprano::Util::AsyncResult* ) ) );
-        }
-        else {
-            QueryResultIterator it = model->executeQuery( queryString, ( Query::QueryLanguage )queryLang, userLang );
-            stream.writeUnsignedInt32( it.isValid() ? mapIterator( it ) : quint32(0) );
-            stream.writeError( model->lastError() );
-        }
+        QueryResultIterator it = model->executeQuery( queryString, ( Query::QueryLanguage )queryLang, userLang );
+        stream.writeUnsignedInt32( it.isValid() ? mapIterator( it ) : quint32(0) );
+        stream.writeError( model->lastError() );
     }
     else {
         stream.writeUnsignedInt32( 0 );
@@ -613,15 +553,9 @@ void Soprano::Server::ServerConnection::Private::statementCount()
 
     Model* model = getModel();
     if ( model ) {
-        if ( Util::AsyncModel* am = qobject_cast<Util::AsyncModel*>( model ) ) {
-            connect( am->statementCountAsync(), SIGNAL( resultReady( Soprano::Util::AsyncResult* ) ),
-                     q, SLOT( _s_resultReady( Soprano::Util::AsyncResult* ) ) );
-        }
-        else {
-            qint32 count = model->statementCount();
-            stream.writeInt32( count );
-            stream.writeError( model->lastError() );
-        }
+        qint32 count = model->statementCount();
+        stream.writeInt32( count );
+        stream.writeError( model->lastError() );
     }
     else {
         stream.writeInt32( -1 );
@@ -636,14 +570,8 @@ void Soprano::Server::ServerConnection::Private::isEmpty()
 
     Model* model = getModel();
     if ( model ) {
-        if ( Util::AsyncModel* am = qobject_cast<Util::AsyncModel*>( model ) ) {
-            connect( am->isEmptyAsync(), SIGNAL( resultReady( Soprano::Util::AsyncResult* ) ),
-                     q, SLOT( _s_resultReady( Soprano::Util::AsyncResult* ) ) );
-        }
-        else {
-            stream.writeBool( model->isEmpty() );
-            stream.writeError( model->lastError() );
-        }
+        stream.writeBool( model->isEmpty() );
+        stream.writeError( model->lastError() );
     }
     else {
         stream.writeBool( false );
@@ -658,14 +586,8 @@ void Soprano::Server::ServerConnection::Private::createBlankNode()
 
     Model* model = getModel();
     if ( model ) {
-        if ( Util::AsyncModel* am = qobject_cast<Util::AsyncModel*>( model ) ) {
-            connect( am->createBlankNodeAsync(), SIGNAL( resultReady( Soprano::Util::AsyncResult* ) ),
-                     q, SLOT( _s_resultReady( Soprano::Util::AsyncResult* ) ) );
-        }
-        else {
-            stream.writeNode( model->createBlankNode() );
-            stream.writeError( model->lastError() );
-        }
+        stream.writeNode( model->createBlankNode() );
+        stream.writeError( model->lastError() );
     }
     else {
         stream.writeNode( Node() );

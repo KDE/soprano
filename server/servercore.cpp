@@ -23,7 +23,7 @@
 #include "soprano-server-config.h"
 #include "serverconnection.h"
 #ifdef BUILD_DBUS_SUPPORT
-#include "dbus/dbusserveradaptor.h"
+#include "dbus/dbuscontroller.h"
 #endif
 #include "modelpool.h"
 
@@ -40,6 +40,7 @@
 #include <QtNetwork/QLocalServer>
 #include <QtNetwork/QLocalSocket>
 #include <QtNetwork/QTcpSocket>
+#include <QtDBus/QtDBus>
 
 
 Q_DECLARE_METATYPE( QLocalSocket::LocalSocketError )
@@ -55,7 +56,7 @@ public:
     Private()
         :
 #ifdef BUILD_DBUS_SUPPORT
-        dbusAdaptor( 0 ),
+        dbusController( 0 ),
 #endif
         tcpServer( 0 ),
         socketServer( 0 )
@@ -68,7 +69,7 @@ public:
     QList<ServerConnection*> connections;
 
 #ifdef BUILD_DBUS_SUPPORT
-    DBusServerAdaptor* dbusAdaptor;
+    DBusController* dbusController;
 #endif
 
     QTcpServer* tcpServer;
@@ -121,6 +122,9 @@ Soprano::Server::ServerCore::ServerCore( QObject* parent )
 
 Soprano::Server::ServerCore::~ServerCore()
 {
+#ifdef BUILD_DBUS_SUPPORT
+    delete d->dbusController;
+#endif
     qDeleteAll( d->connections );
     qDeleteAll( d->models );
     delete d->modelPool;
@@ -262,14 +266,12 @@ bool Soprano::Server::ServerCore::start( const QString& name )
 void Soprano::Server::ServerCore::registerAsDBusObject( const QString& objectPath )
 {
 #ifdef BUILD_DBUS_SUPPORT
-    if ( !d->dbusAdaptor ) {
+    if ( !d->dbusController ) {
         QString path( objectPath );
         if ( path.isEmpty() ) {
             path = "/org/soprano/Server";
         }
-
-        d->dbusAdaptor = new Soprano::Server::DBusServerAdaptor( this, path );
-        QDBusConnection::sessionBus().registerObject( path, this );
+        d->dbusController = new Soprano::Server::DBusController( this, path );
     }
 #else
     qFatal("Soprano has been built without D-Bus support!" );

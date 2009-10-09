@@ -49,6 +49,7 @@ if(BUILD_DBUS_SUPPORT)
     dbus/dbusnodeiteratoradaptor.cpp
     dbus/dbusqueryresultiteratoradaptor.cpp
     dbus/dbusserveradaptor.cpp
+    dbus/dbuscontroller.cpp
     dbus/dbusoperators.cpp
     )
 
