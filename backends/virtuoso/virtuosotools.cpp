@@ -28,7 +28,7 @@ static const char* s_defaultGraph = "sopranofakes:/DEFAULTGRAPH";
 static const char* s_openlinkVirtualGraph = "http://www.openlinksw.com/schemas/virtrdf#";
 
 
-Soprano::Error::Error Soprano::Virtuoso::convertSqlError( SQLSMALLINT handleType, SQLHANDLE handle )
+Soprano::Error::Error Soprano::Virtuoso::convertSqlError( SQLSMALLINT handleType, SQLHANDLE handle, const QString& extraMessage )
 {
     SQLTCHAR buf[513];
     buf[512] = 0;
@@ -37,7 +37,7 @@ Soprano::Error::Error Soprano::Virtuoso::convertSqlError( SQLSMALLINT handleType
     SQLSMALLINT len = 0;
 
     // find last error
-    Error::Error err;
+    QString msg;
     int i = 0;
     while ( SQL_SUCCEEDED( SQLGetDiagRec( handleType,
                                           handle,
@@ -47,15 +47,18 @@ Soprano::Error::Error Soprano::Virtuoso::convertSqlError( SQLSMALLINT handleType
                                           buf,
                                           512,
                                           &len ) ) ) {
-        err = Soprano::Error::Error( "iODBC Error: " + QString::fromLatin1( ( const char* )buf, len ) );
+        msg = QLatin1String( "iODBC Error: " ) + QString::fromLatin1( ( const char* )buf, len );
     }
 
-    if ( !err ) {
-        return Soprano::Error::Error( "Failed to retrieve error information from iODBC" );
+    if ( msg.isEmpty() ) {
+        return msg = "Failed to retrieve error information from iODBC";
     }
-    else {
-        return err;
+
+    if ( !extraMessage.isEmpty() ) {
+        msg = extraMessage + QLatin1String( " (" ) + msg + ')';
     }
+
+    return Error::Error( msg );
 }
 
 
