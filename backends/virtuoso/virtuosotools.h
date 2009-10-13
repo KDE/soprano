@@ -31,7 +31,7 @@
 
 namespace Soprano {
     namespace Virtuoso {
-        Soprano::Error::Error convertSqlError( SQLSMALLINT handleType, SQLHANDLE handle );
+        Soprano::Error::Error convertSqlError( SQLSMALLINT handleType, SQLHANDLE handle, const QString& extraMessage = QString() );
         QUrl defaultGraph();
         QUrl openlinkVirtualGraph();
         QUrl fakeBooleanType();
