@@ -43,7 +43,7 @@ HSTMT Soprano::ODBC::ConnectionPrivate::execute( const QString& request )
     else {
         QByteArray utf8Request = request.toUtf8();
         if ( !SQL_SUCCEEDED( SQLExecDirect( hstmt, ( UCHAR* )utf8Request.data(), utf8Request.length() ) ) ) {
-            setError( Virtuoso::convertSqlError( SQL_HANDLE_STMT, hstmt ) );
+            setError( Virtuoso::convertSqlError( SQL_HANDLE_STMT, hstmt, QLatin1String( "SQLExecDirect failed on query '" ) + request + '\'' ) );
             SQLFreeHandle( SQL_HANDLE_STMT, hstmt );
             return 0;
         }
@@ -84,11 +84,13 @@ bool Soprano::ODBC::ConnectionPrivate::getCharData( HSTMT hstmt, int colNum, SQL
                 delete [] *buffer;
                 *buffer = 0;
                 *length = 0;
+                setError( Virtuoso::convertSqlError( SQL_HANDLE_STMT, hstmt, QLatin1String( "SQLGetData failed" ) ) );
                 return false;
             }
         }
     }
     else {
+        setError( Virtuoso::convertSqlError( SQL_HANDLE_STMT, hstmt, QLatin1String( "SQLGetData for data lenght failed" ) ) );
         return false;
     }
 }

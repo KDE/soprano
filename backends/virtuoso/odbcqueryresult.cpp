@@ -112,7 +112,7 @@ QStringList Soprano::ODBC::QueryResult::resultColumns()
                     d->m_columns.append( QString::fromLatin1( ( const char* )colName ) );
                 }
                 else {
-                    setError( Virtuoso::convertSqlError( SQL_HANDLE_STMT, d->m_hstmt ) );
+                    setError( Virtuoso::convertSqlError( SQL_HANDLE_STMT, d->m_hstmt, QLatin1String( "SQLDescribeCol failed" ) ) );
                     break;
                 }
             }
@@ -125,13 +125,13 @@ QStringList Soprano::ODBC::QueryResult::resultColumns()
 
 bool Soprano::ODBC::QueryResult::fetchScroll()
 {
-    int sts = SQLFetchScroll( d->m_hstmt, SQL_FETCH_NEXT, 1 );
+    int sts = SQLFetch( d->m_hstmt );
     if ( sts == SQL_NO_DATA_FOUND ) {
         clearError();
         return false;
     }
     else if( sts != SQL_SUCCESS ) {
-        setError( Virtuoso::convertSqlError( SQL_HANDLE_STMT, d->m_hstmt ) );
+        setError( Virtuoso::convertSqlError( SQL_HANDLE_STMT, d->m_hstmt, QLatin1String( "SQLFetchScroll failed" ) ) );
         return false;
     }
     else {
@@ -153,29 +153,29 @@ Soprano::Node Soprano::ODBC::QueryResult::getData( int colNum )
 
         int rc = SQLGetStmtAttr( d->m_hstmt, SQL_ATTR_IMP_ROW_DESC, &hdesc, SQL_IS_POINTER, 0 );
         if ( !SQL_SUCCEEDED(rc) ) {
-            setError( Virtuoso::convertSqlError( SQL_HANDLE_STMT, d->m_hstmt ) );
+            setError( Virtuoso::convertSqlError( SQL_HANDLE_STMT, d->m_hstmt, QLatin1String( "SQLGetStmtAttr failed" ) ) );
             return Node();
         }
         rc = SQLGetDescField( hdesc, colNum, SQL_DESC_COL_DV_TYPE, &dvtype, SQL_IS_INTEGER, 0 );
         if ( !SQL_SUCCEEDED(rc) ) {
-            setError( Virtuoso::convertSqlError( SQL_HANDLE_STMT, d->m_hstmt ) );
+            setError( Virtuoso::convertSqlError( SQL_HANDLE_STMT, d->m_hstmt, QLatin1String( "SQLGetDescField SQL_DESC_COL_DV_TYPE failed" ) ) );
             return Node();
         }
         rc = SQLGetDescField( hdesc, colNum, SQL_DESC_COL_DT_DT_TYPE, &dv_dt_type, SQL_IS_INTEGER, 0 );
         if ( !SQL_SUCCEEDED(rc) ) {
-            setError( Virtuoso::convertSqlError( SQL_HANDLE_STMT, d->m_hstmt ) );
+            setError( Virtuoso::convertSqlError( SQL_HANDLE_STMT, d->m_hstmt, QLatin1String( "SQLGetDescField SQL_DESC_COL_DT_DT_TYPE failed" ) ) );
             return Node();
         }
         rc = SQLGetDescField( hdesc, colNum, SQL_DESC_COL_LITERAL_ATTR, &flag, SQL_IS_INTEGER, 0 );
         if ( !SQL_SUCCEEDED(rc) ) {
-            setError( Virtuoso::convertSqlError( SQL_HANDLE_STMT, d->m_hstmt ) );
+            setError( Virtuoso::convertSqlError( SQL_HANDLE_STMT, d->m_hstmt, QLatin1String( "SQLGetDescField SQL_DESC_COL_LITERAL_ATTR failed" ) ) );
             return Node();
         }
         short l_lang = (short)((flag >> 16) & 0xFFFF);
         short l_type = (short)(flag & 0xFFFF);
         rc = SQLGetDescField( hdesc, colNum, SQL_DESC_COL_BOX_FLAGS, &flag, SQL_IS_INTEGER, 0 );
         if ( !SQL_SUCCEEDED(rc) ) {
-            setError( Virtuoso::convertSqlError( SQL_HANDLE_STMT, d->m_hstmt ) );
+            setError( Virtuoso::convertSqlError( SQL_HANDLE_STMT, d->m_hstmt, QLatin1String( "SQLGetDescField failed" ) ) );
             return Node();
         }
 
@@ -267,10 +267,12 @@ Soprano::Node Soprano::ODBC::QueryResult::getData( int colNum )
 
         delete [] data;
 
+        clearError();
+
         return node;
     }
     else {
-        setError( Virtuoso::convertSqlError( SQL_HANDLE_STMT, d->m_hstmt ) );
+        setError( Virtuoso::convertSqlError( SQL_HANDLE_STMT, d->m_hstmt, QLatin1String( "Failed to get char data" ) ) );
         return Node();
     }
 }
