@@ -87,6 +87,7 @@ namespace Soprano {
         QString m_configFilePath;
 
         RunFlags m_runFlags;
+        quint16 m_port;
         Status m_status;
         ExitStatus m_lastExitStatus;
 
