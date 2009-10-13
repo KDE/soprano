@@ -109,7 +109,20 @@ bool Soprano::Virtuoso::QueryResultIteratorBackend::next()
         d->bindingCachedFlags.fill( false );
 
         // ask statement handler for cursor scroll
-        return d->m_queryResult ? d->m_queryResult->fetchScroll() : false;
+        if ( d->m_queryResult && d->m_queryResult->fetchScroll() ) {
+            // we need to cache the values already here since there are situations where
+            // the query succeeds but getting values fails
+            for ( int i = 0; i < bindingCount(); ++i ) {
+                binding( i );
+                if ( lastError() ) {
+                    return false;
+                }
+            }
+            return true;
+        }
+        else {
+            return false;
+        }
     }
 }
 
@@ -136,13 +149,21 @@ Soprano::Node Soprano::Virtuoso::QueryResultIteratorBackend::binding( int offset
 {
     if ( d->m_queryResult && offset < bindingCount() && offset >= 0 ) {
         if ( !d->bindingCachedFlags[offset] ) {
-            d->bindingCache[offset] = d->m_queryResult->getData( offset+1 );
+            Node node = d->m_queryResult->getData( offset+1 );
+            setError( d->m_queryResult->lastError() );
+
             // convert the default graph back to the empty graph (hacky but should work in most situations)
-            if ( d->bindingCache[offset] == Virtuoso::defaultGraph() )
-                d->bindingCache[offset] = Node();
+            if ( node == Virtuoso::defaultGraph() )
+                node = Node();
+
+            d->bindingCache[offset] = node;
             d->bindingCachedFlags.setBit( offset );
+
+            return node;
         }
-        return d->bindingCache[offset];
+        else {
+            return d->bindingCache[offset];
+        }
     }
     return Node();
 }
