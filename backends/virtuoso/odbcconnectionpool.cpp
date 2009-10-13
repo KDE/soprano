@@ -104,7 +104,7 @@ Soprano::ODBC::ConnectionPool::~ConnectionPool()
 
 Soprano::ODBC::Connection* Soprano::ODBC::ConnectionPool::connection()
 {
-    qDebug() << Q_FUNC_INFO << QThread::currentThread();
+//    qDebug() << Q_FUNC_INFO << QThread::currentThread();
 
     QMutexLocker lock( &d->m_connectionMutex );
 
