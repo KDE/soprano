@@ -167,8 +167,10 @@ Soprano::Model* Soprano::Server::ServerCore::model( const QString& name )
 
         Model* model = createModel( settings );
 
-        // protect the model against deadlocks when used by multiple clients. ServerCore is single-threaded, thus,
-        // we use AsyncModel which is used automatically by ServerConnection and DBusExportModel
+        // Although the server is now multithreaded we still have the DBus interface which is not
+        // It has its own dedicated thread but a deadlock can still be produced by a write operation
+        // which is issued while an iterator is open. By using the AsyncModel in SingleThreadMode
+        // we make sure that the DBus adaptor never deadlocks.
 
         Util::AsyncModel* asyncModel = new Util::AsyncModel( model );
         model->setParent( asyncModel ); // memory management
