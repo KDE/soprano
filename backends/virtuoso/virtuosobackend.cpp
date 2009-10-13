@@ -126,7 +126,8 @@ bool Soprano::Virtuoso::BackendPlugin::deleteModelData( const BackendSettings& s
     QDir dir( path );
     foreach( const QString& suffix, suffixes ) {
         QString file = prefix + suffix;
-        if ( !dir.remove( file ) ) {
+        if ( QFile::exists( file ) &&
+             !dir.remove( file ) ) {
             setError( "Failed to remove file '" + dir.filePath( file ), Error::ErrorUnknown );
             return false;
         }
