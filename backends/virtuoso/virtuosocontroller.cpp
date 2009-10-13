@@ -30,10 +30,31 @@
 #include <QtCore/QEventLoop>
 #include <QtCore/QDir>
 #include <QtCore/QDebug>
+#include <QtCore/QDebug>
 
+Q_DECLARE_METATYPE( QProcess::ExitStatus )
+
+namespace {
+    quint16 getFreePortNumber() {
+//         QTcpServer server;
+//         if ( server.listen() ) {
+//             return server.serverPort();
+//         }
+//         else {
+//             qDebug() << "Failed to determine free port. Falling back to default 1111.";
+//             return 1111;
+//         }
+        int p = 1111;
+        while ( QFile::exists( QString( "/tmp/virt_%1" ).arg( p ) ) ) {
+            ++p;
+        }
+        return p;
+    }
+}
 
 Soprano::VirtuosoController::VirtuosoController()
     : QObject( 0 ),
+      m_port( 0 ),
       m_status( NotRunning ),
       m_lastExitStatus( NormalExit ),
       m_initializationLoop( 0 )
@@ -42,6 +63,9 @@ Soprano::VirtuosoController::VirtuosoController()
              this, SLOT(slotProcessFinished(int,QProcess::ExitStatus)) );
     connect( &m_virtuosoProcess, SIGNAL(readyReadStandardError()),
              this, SLOT(slotProcessReadyRead()) );
+
+    // necessary in case we are started from a thread != the main thread
+    qRegisterMetaType<QProcess::ExitStatus>();
 }
 
 
@@ -137,8 +161,7 @@ void Soprano::VirtuosoController::slotProcessReadyRead()
 
 int Soprano::VirtuosoController::usedPort() const
 {
-    // FIXME
-    return 1111;
+    return m_port;
 }
 
 
@@ -153,6 +176,7 @@ bool Soprano::VirtuosoController::shutdown()
             setError( "Virtuoso did not shut down after 30 seconds. Process killed." );
             m_status = Killing;
             m_virtuosoProcess.kill();
+            m_virtuosoProcess.waitForFinished();
             return false;
         }
         else {
@@ -207,11 +231,13 @@ void Soprano::VirtuosoController::writeConfigFile( const QString& path, const Ba
 
     // storage dir
     QString dir = valueInSettings( settings, BackendOptionStorageDir ).toString();
+    int numberOfBuffers = 10000;
+    if ( isOptionInSettings( settings, BackendOptionUser, "buffers" ) )
+        numberOfBuffers = valueInSettings( settings, BackendOptionUser, "buffers" ).toInt();
 
     // although we do not actually use a port Virtuoso uses the port number to create
-    // the unix socket name. Thus, we should change it here to be able to start multiple
-    // intances of Virtuoso
-    int port = 1111;
+    // the unix socket name.
+    m_port = getFreePortNumber();
 
     if ( !dir.endsWith( '/' ) )
         dir += '/';
@@ -233,7 +259,7 @@ void Soprano::VirtuosoController::writeConfigFile( const QString& path, const Ba
 
     cfs.beginGroup( "Parameters" );
     cfs.setValue( "LiteMode", "1" );
-    cfs.setValue( "ServerPort", QString::number( port ) );
+    cfs.setValue( "ServerPort", QString::number( m_port ) );
     cfs.setValue( "DisableTcpSocket", "1" );
 
     // FIXME: what is this?
@@ -242,14 +268,14 @@ void Soprano::VirtuosoController::writeConfigFile( const QString& path, const Ba
     // FIXME: what is this?
     cfs.setValue( "PrefixResultNames", "0" );
 
-    // down from 10
+    // Number of thread used in the server (default: 10)
     cfs.setValue( "ServerThreads", "5" );
 
     // down from 60
     cfs.setValue( "CheckpointInterval", "10" );
 
-    // down from 2000 (FIXME: made Virtuoso 5.0.10rc1 crash -> test)
-    //cfs.setValue( "NumberOfBuffers", "100" );
+    // Memory used by Virtuoso, 8k buffers
+    cfs.setValue( "NumberOfBuffers", numberOfBuffers );
 
     // down from 1200
     cfs.setValue( "MaxDirtyBuffers", "50" );
