@@ -380,7 +380,6 @@ Soprano::Node Soprano::Node::createLiteralNode( const LiteralValue& val, const Q
 QString Soprano::Node::resourceToN3( const QUrl& uri )
 {
     QByteArray a = uri.toEncoded();
-    a.replace( '\'', "%27" ); // This is a hack for Virtuoso
     return '<' + QString::fromAscii( a ) + '>';
 }
 
