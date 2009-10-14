@@ -58,7 +58,7 @@ void Soprano::VirtuosoBackendTest::deleteModel( Soprano::Model* m )
     if ( b ) {
         b->deleteModelData( m_settingsHash[m] );
         QDir tmpDir( "/tmp" );
-        tmpDir.rmdir( settingInSettings( m_settingsHash[m], BackendOptionStorageDir ).value().toString() );
+        tmpDir.rmdir( settingInSettings( m_settingsHash[m], BackendOptionStorageDir ).value().toString().section( "/", -1 ) );
         m_settingsHash.remove( m );
     }
     delete m;

@@ -951,6 +951,14 @@ void SopranoModelTest::testUriEncoding()
     QVERIFY( it.next() );
     QCOMPARE( it.current().subject().uri(), sub );
     it.close();
+
+    QueryResultIterator it2 = m_model->executeQuery( QString( "select ?p where { "
+                                                              "%1 ?p %2 . }" )
+                                                     .arg( Node::resourceToN3( sub ) )
+                                                     .arg( Node::resourceToN3( uri ) ),
+                                                     Query::QueryLanguageSparql );
+    QVERIFY( it2.next() );
+    QCOMPARE( it2["p"].uri(), predicate );
 }
 
 

@@ -1,7 +1,8 @@
-/* 
+/*
  * This file is part of Soprano Project.
  *
  * Copyright (C) 2006 Daniele Galdi <daniele.galdi@gmail.com>
+ * Copyright (C) 2009 Sebastian Trueg <trueg@kde.org>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -26,12 +27,15 @@
 
 class NodeTest: public QObject
 {
-  Q_OBJECT
-  private slots:
-  void testCreateEmptyNode();
-  void testCreateResourceNode();
-  void testCreateBlankNode();
-  void testCreateLiteralNode();
+    Q_OBJECT
+
+private slots:
+    void testCreateEmptyNode();
+    void testCreateResourceNode();
+    void testCreateBlankNode();
+    void testCreateLiteralNode();
+    void testToN3_data();
+    void testToN3();
 };
 
 #endif // NODE_TEST_H
