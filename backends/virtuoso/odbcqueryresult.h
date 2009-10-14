@@ -39,7 +39,7 @@ namespace Soprano {
             ~QueryResult();
 
             QStringList resultColumns();
-            bool fetchScroll();
+            bool fetchRow();
             Node getData( int colNum );
 
         private:

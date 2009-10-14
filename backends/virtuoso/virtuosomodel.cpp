@@ -77,8 +77,6 @@ namespace {
         }
 
         if ( s.object().isValid() ) {
-            // The fake types do not work anymore in 5.0.12!
-#if 1
             if ( s.object().literal().isBool() )
                 query += Soprano::Node( Soprano::LiteralValue::fromString( s.object().literal().toBool() ? QString( QLatin1String( "true" ) ) : QLatin1String("false"),
                                                                            Soprano::Virtuoso::fakeBooleanType() ) ).toN3();
@@ -86,7 +84,6 @@ namespace {
                 query += Soprano::Node( Soprano::LiteralValue::fromString( s.object().literal().toString(),
                                                                            Soprano::Virtuoso::fakeBase64BinaryType() ) ).toN3();
             else
-#endif
                 query += nodeToN3( s.object() );
         }
         else {
@@ -98,6 +95,55 @@ namespace {
         }
 
         return query;
+    }
+
+
+    /**
+     * Soprano uses QUrl::toEncoded to encode URIs in Node::resourceToN3. The same method is used to store URIs in
+     * other backends like redland and sesame2.
+     * Virtuoso, however, is a little more picky about reserved characters in URIs. Essentially it wants us to encode
+     * all of them unless they are used in their special meaning. We cannot change Node::resourceToN3 without loosing
+     * backwards compatibility.
+     *
+     * Thus, we simply run through all the queries and re-encode all used URIs.
+     *
+     * Thus, we are sure to always use the same encoding for all URIs.
+     */
+    QString encodeQuery( const QString& s )
+    {
+        QString result( s );
+
+        int quoteCnt = 0;
+        int doubleQuoteCnt = 0;
+        int uriStart = -1;
+        int i = 0;
+        while ( i < result.length() ) {
+            if ( result[i] == '"' ) {
+                if ( !( quoteCnt%2 ) )
+                    ++doubleQuoteCnt;
+            }
+            else if ( result[i] == '\'' ) {
+                if ( !( doubleQuoteCnt%2 ) )
+                    ++quoteCnt;
+            }
+            else if ( result[i] == '<' ) {
+                if ( !( quoteCnt%2 ) &&
+                     !( doubleQuoteCnt%2 ) ) {
+                    uriStart = i+1;
+                }
+            }
+            else if ( result[i] == '>' ) {
+                if ( uriStart != -1 ) {
+                    QString encodedUri = QString::fromAscii( result.mid( uriStart, i-uriStart ).toAscii().toPercentEncoding( "%/:#?=&;@" ) );
+                    result.replace( uriStart, i-uriStart, encodedUri );
+                    i = encodedUri.length() + uriStart;
+                    uriStart = -1;
+                }
+            }
+            ++i;
+        }
+
+        return result;
     }
 
     const char* s_queryPrefix =
@@ -124,11 +170,22 @@ Soprano::VirtuosoModel::~VirtuosoModel()
 }
 
 
+//
+// Patrick van Kleef <pkleef@openlinksw.com> says:
+// You may  want to concider using the TTLP_MT stored procedure to load
+// either large number of triples or large triples, since this is much more
+// efficient. You can call this with:
+//
+//         TTLP_MT( ?, 'graphname', 'graphname', 255);
+//
+// and bind with a blob parameter that holds the triples.
+//
 Soprano::Error::ErrorCode Soprano::VirtuosoModel::addStatement( const Statement& statement )
 {
 //    qDebug() << Q_FUNC_INFO << statement;
 
     if( !statement.isValid() ) {
+        qDebug() << Q_FUNC_INFO << "Cannot add invalid statement:" << statement;
         setError( "Cannot add invalid statement.", Error::ErrorInvalidArgument );
         return Error::ErrorInvalidArgument;
     }
@@ -141,14 +198,8 @@ Soprano::Error::ErrorCode Soprano::VirtuosoModel::addStatement( const Statement&
     QString insert = QString("sparql insert into %1")
                      .arg( statementToConstructGraphPattern( s, true ) );
 
-    if ( statement.object().toN3().length() > 100000 ) {
-        qDebug() << "Ignoring very long object for debugging purposes." << statement.subject() << statement.predicate() << statement.object().toN3().length();
-        return Error::ErrorNone;
-    }
-
-//    qDebug() << "addStatement query:" << insert;
     ODBC::Connection* conn = d->connectionPool->connection();
-    if ( conn->executeCommand( insert ) == Error::ErrorNone ) {
+    if ( conn->executeCommand( encodeQuery( insert ) ) == Error::ErrorNone ) {
         clearError();
 
         // FIXME: can this be done with SQL/RDF views?
@@ -257,7 +308,7 @@ Soprano::Error::ErrorCode Soprano::VirtuosoModel::removeStatement( const Stateme
                     .arg( statementToConstructGraphPattern( s, true ) );
 //    qDebug() << "removeStatement query:" << query;
     ODBC::Connection* conn = d->connectionPool->connection();
-    if ( conn->executeCommand( "sparql " + query ) == Error::ErrorNone ) {
+    if ( conn->executeCommand( "sparql " + encodeQuery( query ) ) == Error::ErrorNone ) {
         // FIXME: can this be done with SQL/RDF views?
         emit statementRemoved( statement );
         emit statementsRemoved();
@@ -294,7 +345,7 @@ Soprano::Error::ErrorCode Soprano::VirtuosoModel::removeAllStatements( const Sta
         }
         qDebug() << "removeAllStatements query:" << query;
         ODBC::Connection* conn = d->connectionPool->connection();
-        if ( conn->executeCommand( "sparql " + query ) == Error::ErrorNone ) {
+        if ( conn->executeCommand( "sparql " + encodeQuery( query ) ) == Error::ErrorNone ) {
             // FIXME: can this be done with SQL/RDF views?
             emit statementsRemoved();
             emit statementRemoved( statement );
@@ -388,7 +439,7 @@ Soprano::QueryResultIterator Soprano::VirtuosoModel::executeQuery( const QString
 
     // exclude the default system graph via defines from s_queryPrefix
     ODBC::Connection* conn = d->connectionPool->connection();
-    ODBC::QueryResult* result = conn->executeQuery( QLatin1String( s_queryPrefix ) + ' ' + query );
+    ODBC::QueryResult* result = conn->executeQuery( QLatin1String( s_queryPrefix ) + ' ' + encodeQuery( query ) );
     if ( result ) {
         clearError();
         Virtuoso::QueryResultIteratorBackend* backend = new Virtuoso::QueryResultIteratorBackend( result );

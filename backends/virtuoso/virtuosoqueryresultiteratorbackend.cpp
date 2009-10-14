@@ -48,6 +48,7 @@ Soprano::Virtuoso::QueryResultIteratorBackend::QueryResultIteratorBackend( ODBC:
 {
     // cache binding names
     d->m_queryResult = result;
+    d->m_resultType = QueryResultIteratorBackendPrivate::UnknownResult;
     d->bindingNames = d->m_queryResult->resultColumns();
     for ( int i = 0; i < d->bindingNames.count(); ++i ) {
         d->bindingIndexHash.insert( d->bindingNames[i], i );
@@ -55,17 +56,16 @@ Soprano::Virtuoso::QueryResultIteratorBackend::QueryResultIteratorBackend( ODBC:
     d->bindingCachedFlags = QBitArray( d->bindingNames.count(), false );
     d->bindingCache.resize( d->bindingNames.count() );
 
-    // handle ask and graph results the hacky way
-    d->isGraphResult = ( d->bindingNames.count() == 1 &&
-                         d->bindingNames[0] == "callret-0" );
-    d->askResult = false;
-    d->isAskQueryResult = ( d->bindingNames.count() == 1 &&
-                            d->bindingNames[0] == "__ASK_RETVAL" );
-    if ( d->isAskQueryResult ) {
+
+    // ASK queries are rather easy to detect
+    // =====================================
+    if ( d->bindingNames.count() == 1 &&
+         d->bindingNames[0] == "__ASK_RETVAL" ) {
+        d->m_resultType = QueryResultIteratorBackendPrivate::AskResult;
         // cache the result
         // virtuoso returns an empty result set for false boolean results
         // otherwise a single row is returned
-        if ( d->m_queryResult->fetchScroll() ) {
+        if ( d->m_queryResult->fetchRow() ) {
             Node askVal = d->m_queryResult->getData( 1 );
 //            qDebug() << Q_FUNC_INFO << d->m_queryResult->resultColumns() << askVal;
             d->askResult = askVal.literal().toInt() != 0;
@@ -74,17 +74,46 @@ Soprano::Virtuoso::QueryResultIteratorBackend::QueryResultIteratorBackend( ODBC:
             d->askResult = false;
         }
     }
-    else if ( d->isGraphResult ) {
-        // parse the data
-        if ( d->m_queryResult->fetchScroll() ) {
-            if ( const Parser* parser = PluginManager::instance()->discoverParserForSerialization( SerializationTurtle ) ) {
-                QString data = d->m_queryResult->getData( 1 ).toString();
-                d->graphIterator = parser->parseString( data, QUrl(), SerializationTurtle );
+
+    // Graph queries are a little trickier
+    // =====================================
+    else if ( d->bindingNames.count() == 1 &&
+              d->bindingNames[0] == "callret-0" ) {
+        if ( d->m_queryResult->fetchRow() ) {
+            Node node = d->m_queryResult->getData( 1 );
+            if ( !d->m_queryResult->lastError() ) {
+                // FIXME: This is hacky. Better check if the value is a BLOB
+                if ( node.literal().isString() ) {
+                    d->m_resultType = QueryResultIteratorBackendPrivate::GraphResult;
+                    if ( const Parser* parser = PluginManager::instance()->discoverParserForSerialization( SerializationTurtle ) ) {
+                        QString data = node.toString();
+                        d->graphIterator = parser->parseString( data, QUrl(), SerializationTurtle );
+                        setError( parser->lastError() );
+                    }
+                    else {
+                        setError( "Failed to load Turtle parser for graph data from Virtuoso server" );
+                    }
+                }
+                else {
+                    d->m_resultType = QueryResultIteratorBackendPrivate::MethodCallResult;
+                    d->m_methodCallResultIterated = false;
+
+                    // we reuse the binding cache here. It is not very beautiful. :(
+                    d->bindingCache[0] = node;
+                    d->bindingCachedFlags.setBit( 0 );
+                }
             }
             else {
-                setError( "Failed to load Turtle parser for graph data from Virtuoso server" );
+                setError( d->m_queryResult->lastError() );
             }
         }
+        else {
+            setError( d->m_queryResult->lastError() );
+        }
+    }
+
+    else {
+        d->m_resultType = QueryResultIteratorBackendPrivate::BindingResult;
     }
 }
 
@@ -98,18 +127,19 @@ Soprano::Virtuoso::QueryResultIteratorBackend::~QueryResultIteratorBackend()
 
 bool Soprano::Virtuoso::QueryResultIteratorBackend::next()
 {
-    if ( d->isAskQueryResult ) {
+    switch( d->m_resultType ) {
+    case QueryResultIteratorBackendPrivate::AskResult:
         return d->m_queryResult != 0;
-    }
-    else if ( d->isGraphResult ) {
+
+    case QueryResultIteratorBackendPrivate::GraphResult:
         return d->graphIterator.next();
-    }
-    else {
+
+    case QueryResultIteratorBackendPrivate::BindingResult:
         // reset cache
         d->bindingCachedFlags.fill( false );
 
         // ask statement handler for cursor scroll
-        if ( d->m_queryResult && d->m_queryResult->fetchScroll() ) {
+        if ( d->m_queryResult && d->m_queryResult->fetchRow() ) {
             // we need to cache the values already here since there are situations where
             // the query succeeds but getting values fails
             for ( int i = 0; i < bindingCount(); ++i ) {
@@ -123,6 +153,18 @@ bool Soprano::Virtuoso::QueryResultIteratorBackend::next()
         else {
             return false;
         }
+
+    case QueryResultIteratorBackendPrivate::MethodCallResult:
+        if ( d->m_methodCallResultIterated ) {
+            return false;
+        }
+        else {
+            d->m_methodCallResultIterated = true;
+            return true;
+        }
+
+    default:
+        return false;
     }
 }
 
@@ -183,19 +225,20 @@ QStringList Soprano::Virtuoso::QueryResultIteratorBackend::bindingNames() const
 
 bool Soprano::Virtuoso::QueryResultIteratorBackend::isGraph() const
 {
-    return d->isGraphResult;
+    return d->m_resultType == QueryResultIteratorBackendPrivate::GraphResult;
 }
 
 
 bool Soprano::Virtuoso::QueryResultIteratorBackend::isBinding() const
 {
-    return !d->isAskQueryResult && !d->isGraphResult;
+    return( d->m_resultType == QueryResultIteratorBackendPrivate::BindingResult ||
+            d->m_resultType == QueryResultIteratorBackendPrivate::MethodCallResult );
 }
 
 
 bool Soprano::Virtuoso::QueryResultIteratorBackend::isBool() const
 {
-    return d->isAskQueryResult;
+    return d->m_resultType == QueryResultIteratorBackendPrivate::AskResult;
 }
 
 

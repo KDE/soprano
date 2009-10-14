@@ -123,7 +123,7 @@ QStringList Soprano::ODBC::QueryResult::resultColumns()
 }
 
 
-bool Soprano::ODBC::QueryResult::fetchScroll()
+bool Soprano::ODBC::QueryResult::fetchRow()
 {
     int sts = SQLFetch( d->m_hstmt );
     if ( sts == SQL_NO_DATA_FOUND ) {
@@ -131,7 +131,7 @@ bool Soprano::ODBC::QueryResult::fetchScroll()
         return false;
     }
     else if( sts != SQL_SUCCESS ) {
-        setError( Virtuoso::convertSqlError( SQL_HANDLE_STMT, d->m_hstmt, QLatin1String( "SQLFetchScroll failed" ) ) );
+        setError( Virtuoso::convertSqlError( SQL_HANDLE_STMT, d->m_hstmt, QLatin1String( "SQLFetch failed" ) ) );
         return false;
     }
     else {
@@ -178,6 +178,8 @@ Soprano::Node Soprano::ODBC::QueryResult::getData( int colNum )
             setError( Virtuoso::convertSqlError( SQL_HANDLE_STMT, d->m_hstmt, QLatin1String( "SQLGetDescField failed" ) ) );
             return Node();
         }
+
+        clearError();
 
         switch (dvtype) {
         case DV_STRING: {
@@ -238,7 +240,6 @@ Soprano::Node Soprano::ODBC::QueryResult::getData( int colNum )
         case DV_DATE:
         case DV_TIME:
         case DV_DATETIME: {
-//            qDebug() << "datetime data:" << ( const char* )data;
             QUrl type;
             switch( dv_dt_type ) {
             case DT_TYPE_DATE:
@@ -252,7 +253,7 @@ Soprano::Node Soprano::ODBC::QueryResult::getData( int colNum )
                 break;
             }
             QString dts = QString::fromUtf8( reinterpret_cast<const char*>( data ) );
-            // FIXME: make Virtuoso return correct values
+            // Virtuoso returns datetime values with a space instead of a T: "2009-04-07 13:33:19.790"
             dts.replace( ' ', 'T' );
             node = LiteralValue::fromString( dts, type );
             break;
@@ -261,18 +262,17 @@ Soprano::Node Soprano::ODBC::QueryResult::getData( int colNum )
             node = LiteralValue( QString::fromUtf8( reinterpret_cast<const char*>( data ) ) );
             break;
         default:
-             /***printf ("*unexpected result type %d*", dtp);***/
+            qDebug("*unexpected result type %d*", dvtype);
+            setError( QString( "Internal Error: Unknown result type %1" ).arg( dvtype ) );
             break;
         }
 
         delete [] data;
 
-        clearError();
-
         return node;
     }
     else {
-        setError( Virtuoso::convertSqlError( SQL_HANDLE_STMT, d->m_hstmt, QLatin1String( "Failed to get char data" ) ) );
+        setError( d->m_conn->lastError() );
         return Node();
     }
 }

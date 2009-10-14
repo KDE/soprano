@@ -19,8 +19,8 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef _SOPRANO_ODBC_QUERY_RESULT_ITERATOR_BACKEND_H_
-#define _SOPRANO_ODBC_QUERY_RESULT_ITERATOR_BACKEND_H_
+#ifndef _SOPRANO_ODBC_QUERY_RESULT_ITERATOR_BACKEND_P_H_
+#define _SOPRANO_ODBC_QUERY_RESULT_ITERATOR_BACKEND_P_H_
 
 #include "odbcqueryresult.h"
 
@@ -52,11 +52,20 @@ namespace Soprano {
             QVector<Node> bindingCache;
             QBitArray bindingCachedFlags;
 
-            bool isGraphResult;
-            bool isAskQueryResult;
+            enum ResultType {
+                UnknownResult = 0,
+                GraphResult,
+                AskResult,
+                BindingResult,
+                MethodCallResult
+            };
+            ResultType m_resultType;
+
             bool askResult;
 
             StatementIterator graphIterator;
+
+            bool m_methodCallResultIterated;
 
             VirtuosoModelPrivate* m_model;
         };

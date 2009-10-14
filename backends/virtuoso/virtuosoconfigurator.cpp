@@ -151,7 +151,7 @@ QStringList Soprano::Virtuoso::DatabaseConfigurator::configuredIndices()
                                    "ISS_KEY_NAME LIKE 'RDF_QUAD_*'" );
     ODBC::QueryResult* result = m_connection->executeQuery( query );
     if ( result ) {
-        while ( result->fetchScroll() ) {
+        while ( result->fetchRow() ) {
             indices << result->getData( 1 ).toString();
         }
     }
@@ -186,20 +186,29 @@ bool Soprano::Virtuoso::DatabaseConfigurator::updateFulltextIndexState( const QS
 
 bool Soprano::Virtuoso::DatabaseConfigurator::updateFulltextIndexRules( bool enable )
 {
-    QString query = QLatin1String( "SELECT * FROM DB.DBA.RDF_OBJ_FT_RULES WHERE ROFR_REASON='Soprano'" );
+    QString query = QLatin1String( "SELECT ROFR_REASON FROM DB.DBA.RDF_OBJ_FT_RULES WHERE ROFR_G=null AND ROFR_P=null" );
 
     bool haveRule = false;
 
+    QString ruleName = QLatin1String( "Soprano" );
     ODBC::QueryResult* result = m_connection->executeQuery( query );
-    if ( result && result->fetchScroll() ) {
+    if ( result && result->fetchRow() ) {
         haveRule = true;
+        QString name = result->getData( 0 ).toString();
+        if ( !name.isEmpty() ) {
+            qDebug() << Q_FUNC_INFO << "Found existing rule with name" << name;
+            ruleName = name;
+        }
+        else {
+            qDebug() << Q_FUNC_INFO << "empty rule name!";
+        }
     }
 
     if ( enable && !haveRule ) {
-        return m_connection->executeCommand( QLatin1String( "DB.DBA.RDF_OBJ_FT_RULE_ADD( null, null, 'Soprano' )" ) ) == Error::ErrorNone;
+        return m_connection->executeCommand( QString( "DB.DBA.RDF_OBJ_FT_RULE_ADD( null, null, '%1' )" ).arg( ruleName ) ) == Error::ErrorNone;
     }
     else if ( !enable && haveRule ) {
-        return m_connection->executeCommand( QLatin1String( "DB.DBA.RDF_OBJ_FT_RULE_DEL( null, null, 'Soprano' )" ) ) == Error::ErrorNone;
+        return m_connection->executeCommand( QString( "DB.DBA.RDF_OBJ_FT_RULE_DEL( null, null, '%1' )" ).arg( ruleName ) ) == Error::ErrorNone;
     }
     else {
         return true;

@@ -202,7 +202,7 @@ Soprano::ODBC::Connection::~Connection()
 
 Soprano::Error::ErrorCode Soprano::ODBC::Connection::executeCommand( const QString& command )
 {
-//    qDebug() << Q_FUNC_INFO << command;
+    qDebug() << Q_FUNC_INFO << command;
 
     Error::ErrorCode result = Error::ErrorNone;
 
@@ -218,7 +218,7 @@ Soprano::Error::ErrorCode Soprano::ODBC::Connection::executeCommand( const QStri
 
 Soprano::ODBC::QueryResult* Soprano::ODBC::Connection::executeQuery( const QString& request )
 {
-//    qDebug() << Q_FUNC_INFO << request;
+    qDebug() << Q_FUNC_INFO << request;
 
     HSTMT hstmt = d->execute( request );
     setError( d->lastError() );
