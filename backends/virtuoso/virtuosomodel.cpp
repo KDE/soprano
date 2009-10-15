@@ -119,11 +119,13 @@ namespace {
         int i = 0;
         while ( i < result.length() ) {
             if ( result[i] == '"' ) {
-                if ( !( quoteCnt%2 ) )
+                if ( !( quoteCnt%2 ) &&
+                     uriStart == -1 )
                     ++doubleQuoteCnt;
             }
             else if ( result[i] == '\'' ) {
-                if ( !( doubleQuoteCnt%2 ) )
+                if ( !( doubleQuoteCnt%2 ) &&
+                     uriStart == -1 )
                     ++quoteCnt;
             }
             else if ( result[i] == '<' ) {
