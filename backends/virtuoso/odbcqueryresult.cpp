@@ -53,7 +53,7 @@
 #define DV_TIMESTAMP_OBJ 208
 #define DV_DATE  129
 #define DV_TIME  210
-
+#define DV_DB_NULL 204
 
 #define DT_TYPE_DATETIME 1
 #define DT_TYPE_DATE 2
@@ -260,6 +260,9 @@ Soprano::Node Soprano::ODBC::QueryResult::getData( int colNum )
         }
         case DV_IRI_ID:
             node = LiteralValue( QString::fromUtf8( reinterpret_cast<const char*>( data ) ) );
+            break;
+        case DV_DB_NULL:
+            // a null node -> empty
             break;
         default:
             qDebug("*unexpected result type %d*", dvtype);
