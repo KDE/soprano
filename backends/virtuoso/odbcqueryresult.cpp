@@ -148,7 +148,8 @@ Soprano::Node Soprano::ODBC::QueryResult::getData( int colNum )
         SQLHDESC hdesc = 0;
         int dvtype = 0;
         int dv_dt_type = 0;
-        int flag = 0;
+        int literalAttr = 0;
+        int boxFlags = 0;
         Soprano::Node node;
 
         int rc = SQLGetStmtAttr( d->m_hstmt, SQL_ATTR_IMP_ROW_DESC, &hdesc, SQL_IS_POINTER, 0 );
@@ -166,14 +167,14 @@ Soprano::Node Soprano::ODBC::QueryResult::getData( int colNum )
             setError( Virtuoso::convertSqlError( SQL_HANDLE_STMT, d->m_hstmt, QLatin1String( "SQLGetDescField SQL_DESC_COL_DT_DT_TYPE failed" ) ) );
             return Node();
         }
-        rc = SQLGetDescField( hdesc, colNum, SQL_DESC_COL_LITERAL_ATTR, &flag, SQL_IS_INTEGER, 0 );
+        rc = SQLGetDescField( hdesc, colNum, SQL_DESC_COL_LITERAL_ATTR, &literalAttr, SQL_IS_INTEGER, 0 );
         if ( !SQL_SUCCEEDED(rc) ) {
             setError( Virtuoso::convertSqlError( SQL_HANDLE_STMT, d->m_hstmt, QLatin1String( "SQLGetDescField SQL_DESC_COL_LITERAL_ATTR failed" ) ) );
             return Node();
         }
-        short l_lang = (short)((flag >> 16) & 0xFFFF);
-        short l_type = (short)(flag & 0xFFFF);
-        rc = SQLGetDescField( hdesc, colNum, SQL_DESC_COL_BOX_FLAGS, &flag, SQL_IS_INTEGER, 0 );
+        short l_lang = (short)((literalAttr >> 16) & 0xFFFF);
+        short l_type = (short)(literalAttr & 0xFFFF);
+        rc = SQLGetDescField( hdesc, colNum, SQL_DESC_COL_BOX_FLAGS, &boxFlags, SQL_IS_INTEGER, 0 );
         if ( !SQL_SUCCEEDED(rc) ) {
             setError( Virtuoso::convertSqlError( SQL_HANDLE_STMT, d->m_hstmt, QLatin1String( "SQLGetDescField failed" ) ) );
             return Node();
@@ -183,7 +184,7 @@ Soprano::Node Soprano::ODBC::QueryResult::getData( int colNum )
 
         switch (dvtype) {
         case DV_STRING: {
-            if (flag) {
+            if ( boxFlags & 0x1 ) {
                 if ( data && strncmp( (char*)data, "_:", 2 ) == 0 ) {
                     node = Node( QString::fromLatin1( reinterpret_cast<const char*>( data )+2 ) );
                 }
