@@ -302,8 +302,8 @@ namespace {
                 pos = s.indexOf( "\"@" );
                 int len = s.length()-2;
                 if ( pos > 0 ) {
-                    lang = s.mid( pos+2, s.length() - pos - 3 );
-                    len -= lang.length() - 1;
+                    lang = s.mid( pos+2, s.length() - pos - 2 );
+                    len -= lang.length() + 1;
                 }
                 value = s.mid( 1, len );
                 return Soprano::LiteralValue::createPlainLiteral( value, lang );
