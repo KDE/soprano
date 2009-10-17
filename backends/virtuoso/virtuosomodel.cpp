@@ -97,57 +97,6 @@ namespace {
         return query;
     }
 
-
-    /**
-     * Soprano uses QUrl::toEncoded to encode URIs in Node::resourceToN3. The same method is used to store URIs in
-     * other backends like redland and sesame2.
-     * Virtuoso, however, is a little more picky about reserved characters in URIs. Essentially it wants us to encode
-     * all of them unless they are used in their special meaning. We cannot change Node::resourceToN3 without loosing
-     * backwards compatibility.
-     *
-     * Thus, we simply run through all the queries and re-encode all used URIs.
-     *
-     * Thus, we are sure to always use the same encoding for all URIs.
-     */
-    QString encodeQuery( const QString& s )
-    {
-        QString result( s );
-
-        int quoteCnt = 0;
-        int doubleQuoteCnt = 0;
-        int uriStart = -1;
-        int i = 0;
-        while ( i < result.length() ) {
-            if ( result[i] == '"' ) {
-                if ( !( quoteCnt%2 ) &&
-                     uriStart == -1 )
-                    ++doubleQuoteCnt;
-            }
-            else if ( result[i] == '\'' ) {
-                if ( !( doubleQuoteCnt%2 ) &&
-                     uriStart == -1 )
-                    ++quoteCnt;
-            }
-            else if ( result[i] == '<' ) {
-                if ( !( quoteCnt%2 ) &&
-                     !( doubleQuoteCnt%2 ) ) {
-                    uriStart = i+1;
-                }
-            }
-            else if ( result[i] == '>' ) {
-                if ( uriStart != -1 ) {
-                    QString encodedUri = QString::fromAscii( result.mid( uriStart, i-uriStart ).toAscii().toPercentEncoding( "%/:#?=&;@" ) );
-                    result.replace( uriStart, i-uriStart, encodedUri );
-                    i = encodedUri.length() + uriStart;
-                    uriStart = -1;
-                }
-            }
-            ++i;
-        }
-
-        return result;
-    }
-
     const char* s_queryPrefix =
         "sparql ";
 //         "define input:default-graph-exclude <http://www.openlinksw.com/schemas/virtrdf#> "
@@ -201,7 +150,7 @@ Soprano::Error::ErrorCode Soprano::VirtuosoModel::addStatement( const Statement&
                      .arg( statementToConstructGraphPattern( s, true ) );
 
     ODBC::Connection* conn = d->connectionPool->connection();
-    if ( conn->executeCommand( encodeQuery( insert ) ) == Error::ErrorNone ) {
+    if ( conn->executeCommand( insert ) == Error::ErrorNone ) {
         clearError();
 
         // FIXME: can this be done with SQL/RDF views?
@@ -310,7 +259,7 @@ Soprano::Error::ErrorCode Soprano::VirtuosoModel::removeStatement( const Stateme
                     .arg( statementToConstructGraphPattern( s, true ) );
 //    qDebug() << "removeStatement query:" << query;
     ODBC::Connection* conn = d->connectionPool->connection();
-    if ( conn->executeCommand( "sparql " + encodeQuery( query ) ) == Error::ErrorNone ) {
+    if ( conn->executeCommand( "sparql " + query ) == Error::ErrorNone ) {
         // FIXME: can this be done with SQL/RDF views?
         emit statementRemoved( statement );
         emit statementsRemoved();
@@ -347,7 +296,7 @@ Soprano::Error::ErrorCode Soprano::VirtuosoModel::removeAllStatements( const Sta
         }
         qDebug() << "removeAllStatements query:" << query;
         ODBC::Connection* conn = d->connectionPool->connection();
-        if ( conn->executeCommand( "sparql " + encodeQuery( query ) ) == Error::ErrorNone ) {
+        if ( conn->executeCommand( "sparql " + query ) == Error::ErrorNone ) {
             // FIXME: can this be done with SQL/RDF views?
             emit statementsRemoved();
             emit statementRemoved( statement );
@@ -441,7 +390,7 @@ Soprano::QueryResultIterator Soprano::VirtuosoModel::executeQuery( const QString
 
     // exclude the default system graph via defines from s_queryPrefix
     ODBC::Connection* conn = d->connectionPool->connection();
-    ODBC::QueryResult* result = conn->executeQuery( QLatin1String( s_queryPrefix ) + ' ' + encodeQuery( query ) );
+    ODBC::QueryResult* result = conn->executeQuery( QLatin1String( s_queryPrefix ) + ' ' + query );
     if ( result ) {
         clearError();
         Virtuoso::QueryResultIteratorBackend* backend = new Virtuoso::QueryResultIteratorBackend( result );
