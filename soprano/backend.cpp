@@ -141,8 +141,15 @@ Soprano::BackendSetting& Soprano::settingInSettings( BackendSettings& settings, 
             }
         }
     }
-    static BackendSetting s_dummy;
-    return s_dummy;
+
+    // not found -> add empty setting
+    BackendSetting setting;
+    if( option == BackendOptionUser )
+        setting = BackendSetting( userOptionName,  QVariant() );
+    else
+        setting = BackendSetting( option, QVariant() );
+    settings << setting;
+    return settings.last();
 }
 
 

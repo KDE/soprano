@@ -145,7 +145,7 @@ namespace Soprano
      * \param userOptionName If \p option is Soprano::BackendOptionUser, this
      * defines the user option to be extracted.
      *
-     * \return The extracted setting.
+     * \return The extracted setting. An empty setting is added to \p settings in case the option is not found in \p settings.
      *
      * \relates BackendSetting
      *
