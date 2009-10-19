@@ -40,10 +40,10 @@ namespace {
     QString findPluginLib( const Soprano::SopranoPluginFile& file ) {
         QStringList fileSearchPaths;
         // the folder the plugin file is in
-        fileSearchPaths << file.fileName().section( '/', 0, -2, QString::SectionIncludeTrailingSep );
+        fileSearchPaths << file.fileName().section( '/', 0, -2 );
 #ifndef Q_OS_WIN
         // the lib folder in the same prefix
-        fileSearchPaths << file.fileName().section( "/", 0, -5, QString::SectionIncludeTrailingSep ) + QLatin1String( "lib" );
+        fileSearchPaths << file.fileName().section( "/", 0, -5, QString::SectionIncludeTrailingSep ) + QLatin1String( "lib"SOPRANO_LIB_SUFFIX );
 #endif
         return Soprano::findLibraryPath( file.library(), fileSearchPaths, QStringList() << QLatin1String( "soprano" ) );
     }
@@ -287,6 +287,7 @@ void Soprano::PluginManager::loadAllPlugins()
 void Soprano::PluginManager::loadPlugin( const QString& path )
 {
     SopranoPluginFile f;
+//    qDebug() << path;
     if ( f.open( path ) ) {
 //        qDebug() << "(Soprano::PluginManager) found plugin file" << path;
         if ( f.sopranoVersion().left( f.sopranoVersion().indexOf( '.' ) ).toUInt() == Soprano::versionMajor() ) {

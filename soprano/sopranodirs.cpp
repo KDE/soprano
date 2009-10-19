@@ -70,11 +70,11 @@ QString Soprano::findLibraryPath( const QString& libName, const QStringList& ext
     // paths to search for libs
     QStringList dirs = libDirs() + extraDirs;
 
-    // suffixes to search
-    QStringList suffixes;
-    suffixes << QLatin1String( SOPRANO_LIB_SUFFIX"/" )
-             << QString( '/' )
-             << QLatin1String( "64/" );
+#ifndef NDEBUG
+    foreach( const QString& dir, dirs ) {
+        Q_ASSERT(!dir.endsWith('/'));
+    }
+#endif
 
     // subdirs to search
     QStringList subDirs;
@@ -87,6 +87,15 @@ QString Soprano::findLibraryPath( const QString& libName, const QStringList& ext
     // we add the empty string to be able to handle all in one loop below
     subDirs << QString();
 
+#ifndef NDEBUG
+    foreach( const QString& dir, subDirs ) {
+        if (!dir.isEmpty()) {
+            Q_ASSERT(dir.endsWith('/'));
+            Q_ASSERT(!dir.startsWith('/'));
+        }
+    }
+#endif
+
     QStringList libs = makeLibNames( libName );
     Q_FOREACH( const QString& lib, libs ) {
         if ( lib.startsWith( '/' ) ) {
@@ -97,11 +106,9 @@ QString Soprano::findLibraryPath( const QString& libName, const QStringList& ext
         else {
             foreach( const QString& dir, dirs ) {
                 foreach( const QString& subDir, subDirs ) {
-                    foreach( const QString& suffix, suffixes ) {
-                        QFileInfo fi( dir + suffix + subDir + lib );
-                        if ( fi.isFile() ) {
-                            return fi.absoluteFilePath();
-                        }
+                    QFileInfo fi( dir + '/' + subDir + lib );
+                    if ( fi.isFile() ) {
+                        return fi.absoluteFilePath();
                     }
                 }
             }
@@ -128,12 +135,12 @@ QStringList Soprano::envDirList( const char* var )
 QStringList Soprano::libDirs()
 {
     QStringList paths = QCoreApplication::libraryPaths();
-    paths << QLatin1String( SOPRANO_PREFIX"/lib" );
+    paths << QLatin1String( SOPRANO_PREFIX"/lib"SOPRANO_LIB_SUFFIX );
 #ifdef Q_OS_WIN
     paths << QLatin1String( SOPRANO_PREFIX"/bin" );
 #else
-    paths << QLatin1String( "/usr/lib" );
-    paths << QLatin1String( "/usr/local/lib" );
+    paths << QLatin1String( "/usr/lib"SOPRANO_LIB_SUFFIX );
+    paths << QLatin1String( "/usr/local/lib"SOPRANO_LIB_SUFFIX );
     paths += Soprano::envDirList( "LD_LIBRARY_PATH" );
 #endif
     return paths;
