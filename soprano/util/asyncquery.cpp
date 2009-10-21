@@ -60,8 +60,8 @@ public:
     Query::QueryLanguage m_queryLang;
     QString m_userQueryLang;
 
+    QMutex m_closeMutex;
     QMutex m_mutex;
-    QMutex m_waitMutex;
     QWaitCondition m_nextWaiter;
 
     bool m_closed;
@@ -90,42 +90,33 @@ void Soprano::Util::AsyncQuery::Private::run()
             m_boolValue = it.boolValue();
         }
 
-        // lock the mutex before emitting to ensure consistency
-        m_waitMutex.lock();
-
-        // wait for a call to next
         if( m_type != BooleanResult ) {
-            forever {
-                if( !m_closed ) {
-                    bool nextReady = it.next();
-                    if( nextReady ) {
-                        // cache the next result
-                        if( m_type == GraphResult )
-                            m_currentStatement = it.currentStatement();
-                        else
-                            m_currentBindings = it.currentBindings();
+            while ( !m_closed ) {
+                bool nextReady = it.next();
+                if( nextReady && !m_closed ) {
+                    // lock the mutex before emitting to ensure consistency
+                    m_mutex.lock();
 
-                        // inform the client
-                        QMetaObject::invokeMethod( q, "_s_emitNextReady", Qt::QueuedConnection );
+                    // cache the next result
+                    if( m_type == GraphResult )
+                        m_currentStatement = it.currentStatement();
+                    else
+                        m_currentBindings = it.currentBindings();
 
-                        // wait for the call to next()
-                        m_nextWaiter.wait( &m_waitMutex );
-                    }
-                    else {
-                        // we are done, error is set below
-                        break;
-                    }
+                    // inform the client
+                    QMetaObject::invokeMethod( q, "_s_emitNextReady", Qt::QueuedConnection );
+
+                    // wait for the call to next()
+                    m_nextWaiter.wait( &m_mutex );
+                    m_mutex.unlock();
                 }
                 else {
-                    // we have been closed
+                    // we are done, error is set below
                     break;
                 }
             }
         }
     }
-
-    // finally release the mutex
-    m_waitMutex.unlock();
 
     // finished, set the error, finished will be emitted in _s_finished
     q->setError( m_model->lastError() );
@@ -235,9 +226,9 @@ bool Soprano::Util::AsyncQuery::isBool() const
 bool Soprano::Util::AsyncQuery::next()
 {
     if( d->isRunning() ) {
-        d->m_waitMutex.lock();
+        d->m_mutex.lock();
         d->m_nextWaiter.wakeAll();
-        d->m_waitMutex.unlock();
+        d->m_mutex.unlock();
         return true;
     }
     else {
@@ -249,10 +240,9 @@ bool Soprano::Util::AsyncQuery::next()
 
 void Soprano::Util::AsyncQuery::close()
 {
-    d->m_waitMutex.lock();
+    QMutexLocker lock( &d->m_mutex );
     d->m_closed = true;
     d->m_nextWaiter.wakeAll();
-    d->m_waitMutex.unlock();
 }
 
 
