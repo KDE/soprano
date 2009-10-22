@@ -124,6 +124,7 @@ QString Soprano::ODBC::ConnectionPrivate::getLang( short key )
                 if ( getCharData( hstmt, 1, &data, &length ) ) {
                     lang = QString::fromLatin1( reinterpret_cast<const char*>( data ), length );
                     m_langCache.insert( key, lang );
+                    delete [] data;
                 }
             }
         }
@@ -165,6 +166,7 @@ QUrl Soprano::ODBC::ConnectionPrivate::getType( short key )
                 if ( getCharData( hstmt, 1, &data, &length ) ) {
                     type = QUrl::fromEncoded( reinterpret_cast<const char*>( data ), QUrl::StrictMode );
                     m_typeCache.insert( key, type );
+                    delete [] data;
                 }
             }
         }

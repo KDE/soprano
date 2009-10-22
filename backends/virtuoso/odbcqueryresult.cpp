@@ -155,21 +155,25 @@ Soprano::Node Soprano::ODBC::QueryResult::getData( int colNum )
         int rc = SQLGetStmtAttr( d->m_hstmt, SQL_ATTR_IMP_ROW_DESC, &hdesc, SQL_IS_POINTER, 0 );
         if ( !SQL_SUCCEEDED(rc) ) {
             setError( Virtuoso::convertSqlError( SQL_HANDLE_STMT, d->m_hstmt, QLatin1String( "SQLGetStmtAttr failed" ) ) );
+            delete [] data;
             return Node();
         }
         rc = SQLGetDescField( hdesc, colNum, SQL_DESC_COL_DV_TYPE, &dvtype, SQL_IS_INTEGER, 0 );
         if ( !SQL_SUCCEEDED(rc) ) {
             setError( Virtuoso::convertSqlError( SQL_HANDLE_STMT, d->m_hstmt, QLatin1String( "SQLGetDescField SQL_DESC_COL_DV_TYPE failed" ) ) );
+            delete [] data;
             return Node();
         }
         rc = SQLGetDescField( hdesc, colNum, SQL_DESC_COL_DT_DT_TYPE, &dv_dt_type, SQL_IS_INTEGER, 0 );
         if ( !SQL_SUCCEEDED(rc) ) {
             setError( Virtuoso::convertSqlError( SQL_HANDLE_STMT, d->m_hstmt, QLatin1String( "SQLGetDescField SQL_DESC_COL_DT_DT_TYPE failed" ) ) );
+            delete [] data;
             return Node();
         }
         rc = SQLGetDescField( hdesc, colNum, SQL_DESC_COL_LITERAL_ATTR, &literalAttr, SQL_IS_INTEGER, 0 );
         if ( !SQL_SUCCEEDED(rc) ) {
             setError( Virtuoso::convertSqlError( SQL_HANDLE_STMT, d->m_hstmt, QLatin1String( "SQLGetDescField SQL_DESC_COL_LITERAL_ATTR failed" ) ) );
+            delete [] data;
             return Node();
         }
         short l_lang = (short)((literalAttr >> 16) & 0xFFFF);
@@ -177,10 +181,13 @@ Soprano::Node Soprano::ODBC::QueryResult::getData( int colNum )
         rc = SQLGetDescField( hdesc, colNum, SQL_DESC_COL_BOX_FLAGS, &boxFlags, SQL_IS_INTEGER, 0 );
         if ( !SQL_SUCCEEDED(rc) ) {
             setError( Virtuoso::convertSqlError( SQL_HANDLE_STMT, d->m_hstmt, QLatin1String( "SQLGetDescField failed" ) ) );
+            delete [] data;
             return Node();
         }
 
         clearError();
+
+//        qDebug() << dvtype << dv_dt_type << literalAttr << boxFlags << l_lang << l_type << reinterpret_cast<const char*>( data);
 
         switch (dvtype) {
         case DV_STRING: {
