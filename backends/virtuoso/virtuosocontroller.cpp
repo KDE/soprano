@@ -232,8 +232,11 @@ void Soprano::VirtuosoController::writeConfigFile( const QString& path, const Ba
     // storage dir
     QString dir = valueInSettings( settings, BackendOptionStorageDir ).toString();
     int numberOfBuffers = 10000;
+    int numberOfThreads = 10;
     if ( isOptionInSettings( settings, BackendOptionUser, "buffers" ) )
         numberOfBuffers = valueInSettings( settings, BackendOptionUser, "buffers" ).toInt();
+    if ( isOptionInSettings( settings, BackendOptionUser, "threads" ) )
+        numberOfBuffers = valueInSettings( settings, BackendOptionUser, "threads" ).toInt();
 
     // although we do not actually use a port Virtuoso uses the port number to create
     // the unix socket name.
@@ -269,7 +272,8 @@ void Soprano::VirtuosoController::writeConfigFile( const QString& path, const Ba
     cfs.setValue( "PrefixResultNames", "0" );
 
     // Number of thread used in the server (default: 10)
-    cfs.setValue( "ServerThreads", "5" );
+    // FIXME: we have a problem here: soprano server is now multithreaded. Thus, we run out of threads very quickly.
+    cfs.setValue( "ServerThreads", numberOfThreads );
 
     // down from 60
     cfs.setValue( "CheckpointInterval", "10" );
