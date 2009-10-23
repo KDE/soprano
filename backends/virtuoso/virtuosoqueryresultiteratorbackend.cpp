@@ -97,8 +97,6 @@ Soprano::Virtuoso::QueryResultIteratorBackend::QueryResultIteratorBackend( ODBC:
                 else {
                     d->m_resultType = QueryResultIteratorBackendPrivate::MethodCallResult;
                     d->m_methodCallResultIterated = false;
-
-                    // we reuse the binding cache here. It is not very beautiful. :(
                     d->bindingCache[0] = node;
                     d->bindingCachedFlags.setBit( 0 );
                 }
