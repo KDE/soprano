@@ -261,6 +261,7 @@ void SopranoModelTest::testListStatements()
     while( it4.next() ) {
         ++cnt;
         Statement st = *it4;
+        qDebug() << st;
         QVERIFY( statements.contains( st ) || st == m_st1 || st == m_st2 || st == m_st3 || st == m_st4 );
     }
 

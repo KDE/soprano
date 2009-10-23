@@ -36,8 +36,11 @@ Soprano::Model* Soprano::VirtuosoBackendTest::createModel()
     const Soprano::Backend* b = Soprano::discoverBackendByName( "virtuosobackend" );
     if ( b ) {
         BackendSettings settings;
-        QString dirName = QString( "soprano_virtuoso_backend_test_model_%1" ).arg( ++m_modelCnt );
+        QString dirName( "soprano_virtuoso_backend_test_model_" );
         QDir tmpDir( "/tmp" );
+        while ( tmpDir.exists( dirName + QString::number( m_modelCnt ) ) )
+            ++m_modelCnt;
+        dirName += QString::number( m_modelCnt );
         tmpDir.mkdir( dirName );
         settings << BackendSetting( BackendOptionStorageDir, "/tmp/" + dirName );
 //         settings << BackendSetting( BackendOptionHost, "localhost" );
