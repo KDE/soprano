@@ -22,7 +22,7 @@
 #include "odbcqueryresult.h"
 #include "odbcqueryresult_p.h"
 #include "odbcconnection_p.h"
-
+#include "virtuosoodbcext.h"
 #include "virtuosotools.h"
 
 #include "node.h"
@@ -34,39 +34,6 @@
 #include <QtCore/QVariant>
 #include <QtCore/QStringList>
 #include <QtCore/QDebug>
-
-
-/******************* Virtuoso defines *******************/
-
-#define DV_LONG_INT 189
-
-#define DV_STRING 182
-#define DV_RDF 246		/*!< RDF object that is SQL value + type id + language id + outline id + flag whether the sql value is full */
-
-#define DV_LONG_INT 189
-#define DV_SINGLE_FLOAT 190
-#define DV_DOUBLE_FLOAT 191
-#define DV_NUMERIC 219
-#define DV_DATETIME 211
-#define DV_IRI_ID 243
-#define DV_TIMESTAMP 128
-#define DV_TIMESTAMP_OBJ 208
-#define DV_DATE  129
-#define DV_TIME  210
-#define DV_DB_NULL 204
-
-#define DT_TYPE_DATETIME 1
-#define DT_TYPE_DATE 2
-#define DT_TYPE_TIME 3
-
-
-#define SQL_DESC_COL_DV_TYPE		1057L
-#define SQL_DESC_COL_DT_DT_TYPE		1058L
-#define SQL_DESC_COL_LITERAL_ATTR	1059L
-#define SQL_DESC_COL_BOX_FLAGS		1060L
-
-/******************************************************************/
-
 
 
 Soprano::ODBC::QueryResult::QueryResult()
@@ -147,51 +114,32 @@ Soprano::Node Soprano::ODBC::QueryResult::getData( int colNum )
     if ( d->m_conn->getCharData( d->m_hstmt, colNum, &data, &length ) ) {
         SQLHDESC hdesc = 0;
         int dvtype = 0;
-        int dv_dt_type = 0;
-        int literalAttr = 0;
-        int boxFlags = 0;
-        Soprano::Node node;
 
-        int rc = SQLGetStmtAttr( d->m_hstmt, SQL_ATTR_IMP_ROW_DESC, &hdesc, SQL_IS_POINTER, 0 );
-        if ( !SQL_SUCCEEDED(rc) ) {
+        if ( !SQL_SUCCEEDED( SQLGetStmtAttr( d->m_hstmt, SQL_ATTR_IMP_ROW_DESC, &hdesc, SQL_IS_POINTER, 0 ) ) ) {
             setError( Virtuoso::convertSqlError( SQL_HANDLE_STMT, d->m_hstmt, QLatin1String( "SQLGetStmtAttr failed" ) ) );
             delete [] data;
             return Node();
         }
-        rc = SQLGetDescField( hdesc, colNum, SQL_DESC_COL_DV_TYPE, &dvtype, SQL_IS_INTEGER, 0 );
-        if ( !SQL_SUCCEEDED(rc) ) {
+        else if ( !SQL_SUCCEEDED( SQLGetDescField( hdesc, colNum, SQL_DESC_COL_DV_TYPE, &dvtype, SQL_IS_INTEGER, 0 ) ) ) {
             setError( Virtuoso::convertSqlError( SQL_HANDLE_STMT, d->m_hstmt, QLatin1String( "SQLGetDescField SQL_DESC_COL_DV_TYPE failed" ) ) );
-            delete [] data;
-            return Node();
-        }
-        rc = SQLGetDescField( hdesc, colNum, SQL_DESC_COL_DT_DT_TYPE, &dv_dt_type, SQL_IS_INTEGER, 0 );
-        if ( !SQL_SUCCEEDED(rc) ) {
-            setError( Virtuoso::convertSqlError( SQL_HANDLE_STMT, d->m_hstmt, QLatin1String( "SQLGetDescField SQL_DESC_COL_DT_DT_TYPE failed" ) ) );
-            delete [] data;
-            return Node();
-        }
-        rc = SQLGetDescField( hdesc, colNum, SQL_DESC_COL_LITERAL_ATTR, &literalAttr, SQL_IS_INTEGER, 0 );
-        if ( !SQL_SUCCEEDED(rc) ) {
-            setError( Virtuoso::convertSqlError( SQL_HANDLE_STMT, d->m_hstmt, QLatin1String( "SQLGetDescField SQL_DESC_COL_LITERAL_ATTR failed" ) ) );
-            delete [] data;
-            return Node();
-        }
-        short l_lang = (short)((literalAttr >> 16) & 0xFFFF);
-        short l_type = (short)(literalAttr & 0xFFFF);
-        rc = SQLGetDescField( hdesc, colNum, SQL_DESC_COL_BOX_FLAGS, &boxFlags, SQL_IS_INTEGER, 0 );
-        if ( !SQL_SUCCEEDED(rc) ) {
-            setError( Virtuoso::convertSqlError( SQL_HANDLE_STMT, d->m_hstmt, QLatin1String( "SQLGetDescField failed" ) ) );
             delete [] data;
             return Node();
         }
 
         clearError();
 
-//        qDebug() << dvtype << dv_dt_type << literalAttr << boxFlags << l_lang << l_type << reinterpret_cast<const char*>( data);
+        Soprano::Node node;
 
         switch (dvtype) {
-        case DV_STRING: {
-            if ( boxFlags & 0x1 ) {
+        case VIRTUOSO_DV_STRING: {
+            int boxFlags = 0;
+            if ( !SQL_SUCCEEDED( SQLGetDescField( hdesc, colNum, SQL_DESC_COL_BOX_FLAGS, &boxFlags, SQL_IS_INTEGER, 0 ) ) ) {
+                setError( Virtuoso::convertSqlError( SQL_HANDLE_STMT, d->m_hstmt, QLatin1String( "SQLGetDescField failed" ) ) );
+                delete [] data;
+                return Node();
+            }
+
+            if ( boxFlags == 1 ) {
                 if ( data && strncmp( (char*)data, "_:", 2 ) == 0 ) {
                     node = Node( QString::fromLatin1( reinterpret_cast<const char*>( data )+2 ) );
                 }
@@ -203,15 +151,30 @@ Soprano::Node Soprano::ODBC::QueryResult::getData( int colNum )
                 if ( data && strncmp( (char*)data, "nodeID://", 9 ) == 0 ) {
                     node = Node( QString::fromLatin1( reinterpret_cast<const char*>( data )+9 ) );
                 }
-                else {
+                else if ( boxFlags == 2 ) {
                     node = Node( LiteralValue::createPlainLiteral( QString::fromUtf8( reinterpret_cast<const char*>( data ) ) ) );
+                }
+                else {
+                    node = Node( LiteralValue::createPlainLiteral( QString::fromLatin1( reinterpret_cast<const char*>( data ) ) ) );
                 }
             }
             break;
         }
-        case DV_RDF: {
-            QUrl type = d->m_conn->getType( l_type );
-            QString lang = d->m_conn->getLang( l_lang );
+
+        case VIRTUOSO_DV_RDF: {
+            SQLCHAR langBuf[100];
+            SQLCHAR typeBuf[100];
+            SQLINTEGER langBufLen = 0;
+            SQLINTEGER typeBufLen = 0;
+            if ( !SQL_SUCCEEDED( SQLGetDescField( hdesc, colNum, SQL_DESC_COL_LITERAL_LANG, langBuf, sizeof( langBuf ), &langBufLen ) ) ||
+                 !SQL_SUCCEEDED( SQLGetDescField( hdesc, colNum, SQL_DESC_COL_LITERAL_TYPE, typeBuf, sizeof( typeBuf ), &typeBufLen ) ) ) {
+                setError( Virtuoso::convertSqlError( SQL_HANDLE_STMT, d->m_hstmt, QLatin1String( "SQLGetDescField SQL_DESC_COL_LITERAL_* failed" ) ) );
+                delete [] data;
+                return Node();
+            }
+
+            QUrl type = QUrl::fromEncoded( QByteArray::fromRawData( reinterpret_cast<const char*>( typeBuf ), typeBufLen ), QUrl::StrictMode );
+            QString lang = QString::fromLatin1( reinterpret_cast<const char*>( langBuf ), langBufLen );
             const char* str = reinterpret_cast<const char*>( data );
 
             if ( type == Virtuoso::fakeBooleanType() ) {
@@ -228,32 +191,39 @@ Soprano::Node Soprano::ODBC::QueryResult::getData( int colNum )
             }
             break;
         }
-        case DV_LONG_INT: /* integer */
+
+        case VIRTUOSO_DV_LONG_INT: /* integer */
             node = LiteralValue::fromString( QString::fromUtf8( reinterpret_cast<const char*>( data ) ), QVariant::Int );
             break;
 
-        case DV_SINGLE_FLOAT: /* float */
+        case VIRTUOSO_DV_SINGLE_FLOAT: /* float */
             node = LiteralValue::fromString( QString::fromUtf8( reinterpret_cast<const char*>( data ) ), Vocabulary::XMLSchema::xsdFloat() );
             break;
 
-        case DV_DOUBLE_FLOAT: /* double */
+        case VIRTUOSO_DV_DOUBLE_FLOAT: /* double */
             node = LiteralValue::fromString( QString::fromUtf8( reinterpret_cast<const char*>( data ) ), QVariant::Double );
             break;
 
-        case DV_NUMERIC: /* decimal */
+        case VIRTUOSO_DV_NUMERIC: /* decimal */
             node = LiteralValue::fromString( QString::fromUtf8( reinterpret_cast<const char*>( data ) ), Vocabulary::XMLSchema::decimal() );
             break;
 
-        case DV_TIMESTAMP: /* datetime */
-        case DV_DATE:
-        case DV_TIME:
-        case DV_DATETIME: {
+        case VIRTUOSO_DV_TIMESTAMP: /* datetime */
+        case VIRTUOSO_DV_DATE:
+        case VIRTUOSO_DV_TIME:
+        case VIRTUOSO_DV_DATETIME: {
+            int dv_dt_type = 0;
+            if ( !SQL_SUCCEEDED( SQLGetDescField( hdesc, colNum, SQL_DESC_COL_DT_DT_TYPE, &dv_dt_type, SQL_IS_INTEGER, 0 ) ) ) {
+                setError( Virtuoso::convertSqlError( SQL_HANDLE_STMT, d->m_hstmt, QLatin1String( "SQLGetDescField SQL_DESC_COL_DT_DT_TYPE failed" ) ) );
+                delete [] data;
+                return Node();
+            }
             QUrl type;
             switch( dv_dt_type ) {
-            case DT_TYPE_DATE:
+            case VIRTUOSO_DT_TYPE_DATE:
                 type = Vocabulary::XMLSchema::date();
                 break;
-            case DT_TYPE_TIME:
+            case VIRTUOSO_DT_TYPE_TIME:
                 type = Vocabulary::XMLSchema::time();
                 break;
             default:
@@ -266,12 +236,15 @@ Soprano::Node Soprano::ODBC::QueryResult::getData( int colNum )
             node = LiteralValue::fromString( dts, type );
             break;
         }
-        case DV_IRI_ID:
-            node = LiteralValue( QString::fromUtf8( reinterpret_cast<const char*>( data ) ) );
+
+        case VIRTUOSO_DV_IRI_ID:
+            setError( QLatin1String( "IRI_ID is not supported yet." ) );
             break;
-        case DV_DB_NULL:
+
+        case 204: // VIRTUOSO_DV_DB_NULL
             // a null node -> empty
             break;
+
         default:
             qDebug("*unexpected result type %d*", dvtype);
             setError( QString( "Internal Error: Unknown result type %1" ).arg( dvtype ) );

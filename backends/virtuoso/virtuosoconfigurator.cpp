@@ -74,7 +74,7 @@ Soprano::Virtuoso::DatabaseConfigurator::~DatabaseConfigurator()
 bool Soprano::Virtuoso::DatabaseConfigurator::configureServer( const BackendSettings& settings )
 {
     // update indexes
-    QString indexes = valueInSettings( settings, "indexes", "OPGS,POGS,GPOS" ).toString();
+    QString indexes = valueInSettings( settings, "indexes" ).toString();
     if ( !indexes.isEmpty() ) {
         if ( !updateIndexes( indexes ) )
             return false;
