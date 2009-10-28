@@ -603,7 +603,6 @@ void signalHandler( int signal )
             s_monitor->stopMonitoring();
         }
         else {
-            delete s_model;
             exit( 2 );
         }
     }
