@@ -154,15 +154,11 @@ namespace Soprano {
          * If queryPrefixExpansionEnabled is \p true query prefixes will be expanded before sending the
          * query to the underlying model.
          *
-         * \reimplemented
-         *
          * \since 2.4
          */
         virtual QueryResultIterator executeQuery( const QString& query, Query::QueryLanguage language, const QString& userQueryLanguage = QString() ) const;
 
         /**
-         * \reimplemented
-         *
          * If the only node defined in \p statement is the context the graph including its
          * metadata is removed.
          *
