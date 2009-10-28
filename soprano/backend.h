@@ -154,6 +154,22 @@ namespace Soprano
     SOPRANO_EXPORT BackendSetting& settingInSettings( BackendSettings& settings, BackendOption option, const QString& userOptionName = QString() );
 
     /**
+     * Get a setting from the set.
+     *
+     * \param settings The list to check.
+     * \param option The option to extract.
+     * \param userOptionName If \p option is Soprano::BackendOptionUser, this
+     * defines the user option to be extracted.
+     *
+     * \return The extracted setting. If the setting is not found an empty BackendSetting is returned.
+     *
+     * \relates BackendSetting
+     *
+     * \since 2.4
+     */
+    SOPRANO_EXPORT BackendSetting settingInSettings( const BackendSettings& settings, BackendOption option, const QString& userOptionName = QString() );
+
+    /**
      * Retrieve the value of an option.
      *
      * \param settings The list to check.
@@ -169,6 +185,38 @@ namespace Soprano
      * \since 2.2
      */
     SOPRANO_EXPORT QVariant valueInSettings( const BackendSettings& settings, BackendOption option, const QString& userOptionName = QString() );
+
+    /**
+     * Retrieve the value of an option.
+     *
+     * \param settings The list to check.
+     * \param option The option to retrieve.
+     * \param defaultValue The default to use if \p option is not part of \p settings
+     *
+     * \return The value of the specified option or \p default if \p settings
+     * does not contain the option.
+     *
+     * \relates BackendSetting
+     *
+     * \since 2.4
+     */
+    SOPRANO_EXPORT QVariant valueInSettingsWithDefault( const BackendSettings& settings, BackendOption option, const QVariant& defaultValue );
+
+    /**
+     * Retrieve the value of an option.
+     *
+     * \param settings The list to check.
+     * \param option The user option to retrieve.
+     * \param defaultValue The default to use if \p option is not part of \p settings
+     *
+     * \return The value of the specified option or \p default if \p settings
+     * does not contain the option.
+     *
+     * \relates BackendSetting
+     *
+     * \since 2.4
+     */
+    SOPRANO_EXPORT QVariant valueInSettings( const BackendSettings& settings, const QString& userOptionName, const QVariant& defaultValue = QVariant() );
 
 
     /**
