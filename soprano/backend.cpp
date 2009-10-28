@@ -153,6 +153,12 @@ Soprano::BackendSetting& Soprano::settingInSettings( BackendSettings& settings, 
 }
 
 
+Soprano::BackendSetting& Soprano::settingInSettings( BackendSettings& settings, const QString& userOptionName )
+{
+    return settingInSettings( settings, BackendOptionUser, userOptionName );
+}
+
+
 Soprano::BackendSetting Soprano::settingInSettings( const BackendSettings& settings, BackendOption option, const QString& userOptionName )
 {
     QList<Soprano::BackendSetting>::const_iterator end = settings.constEnd();
@@ -171,6 +177,12 @@ Soprano::BackendSetting Soprano::settingInSettings( const BackendSettings& setti
 
     // not found -> return empty setting
     return BackendSetting();
+}
+
+
+Soprano::BackendSetting Soprano::settingInSettings( const BackendSettings& settings, const QString& userOptionName )
+{
+    return settingInSettings( settings, BackendOptionUser, userOptionName );
 }
 
 

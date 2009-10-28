@@ -154,6 +154,20 @@ namespace Soprano
     SOPRANO_EXPORT BackendSetting& settingInSettings( BackendSettings& settings, BackendOption option, const QString& userOptionName = QString() );
 
     /**
+     * \overload
+     *
+     * \param settings The list to check.
+     * \param userOptionName The user option to be extracted.
+     *
+     * \return The extracted setting. An empty setting is added to \p settings in case the option is not found in \p settings.
+     *
+     * \relates BackendSetting
+     *
+     * \since 2.4
+     */
+    SOPRANO_EXPORT BackendSetting& settingInSettings( BackendSettings& settings, const QString& userOptionName );
+
+    /**
      * Get a setting from the set.
      *
      * \param settings The list to check.
@@ -168,6 +182,20 @@ namespace Soprano
      * \since 2.4
      */
     SOPRANO_EXPORT BackendSetting settingInSettings( const BackendSettings& settings, BackendOption option, const QString& userOptionName = QString() );
+
+    /**
+     * \overload
+     *
+     * \param settings The list to check.
+     * \param userOptionName The user option to be extracted.
+     *
+     * \return The extracted setting. If the setting is not found an empty BackendSetting is returned.
+     *
+     * \relates BackendSetting
+     *
+     * \since 2.4
+     */
+    SOPRANO_EXPORT BackendSetting settingInSettings( const BackendSettings& settings, const QString& userOptionName = QString() );
 
     /**
      * Retrieve the value of an option.
@@ -187,7 +215,23 @@ namespace Soprano
     SOPRANO_EXPORT QVariant valueInSettings( const BackendSettings& settings, BackendOption option, const QString& userOptionName = QString() );
 
     /**
-     * Retrieve the value of an option.
+     * \overload
+     *
+     * \param settings The list to check.
+     * \param userOptionName The user option to retrieve.
+     * \param defaultValue The default to use if \p option is not part of \p settings
+     *
+     * \return The value of the specified option or \p default if \p settings
+     * does not contain the option.
+     *
+     * \relates BackendSetting
+     *
+     * \since 2.4
+     */
+    SOPRANO_EXPORT QVariant valueInSettings( const BackendSettings& settings, const QString& userOptionName, const QVariant& defaultValue = QVariant() );
+
+    /**
+     * Retrieve the value of an option with a fallback default.
      *
      * \param settings The list to check.
      * \param option The option to retrieve.
@@ -201,22 +245,6 @@ namespace Soprano
      * \since 2.4
      */
     SOPRANO_EXPORT QVariant valueInSettingsWithDefault( const BackendSettings& settings, BackendOption option, const QVariant& defaultValue );
-
-    /**
-     * Retrieve the value of an option.
-     *
-     * \param settings The list to check.
-     * \param option The user option to retrieve.
-     * \param defaultValue The default to use if \p option is not part of \p settings
-     *
-     * \return The value of the specified option or \p default if \p settings
-     * does not contain the option.
-     *
-     * \relates BackendSetting
-     *
-     * \since 2.4
-     */
-    SOPRANO_EXPORT QVariant valueInSettings( const BackendSettings& settings, const QString& userOptionName, const QVariant& defaultValue = QVariant() );
 
 
     /**

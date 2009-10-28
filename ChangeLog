@@ -13,7 +13,8 @@
 	* ServerCore is now fully multithreaded allowing two clients perform read-only commands simultaneously.
 	* New Virtuoso storage backend which can either connect to a running Virtuoso instance or spawn one
           locally.
-	
+	* New convenience methods to handle BackendSettings.
+
 2.3
 	* New class LanguageTag replacing the old simple string language handling with a sophisticated one
 	  implementing RFC 4647. At the same time Soprano now directly supports plain literals in addition
