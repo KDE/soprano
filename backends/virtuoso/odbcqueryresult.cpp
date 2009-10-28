@@ -115,11 +115,20 @@ Soprano::Node Soprano::ODBC::QueryResult::getData( int colNum )
         SQLHDESC hdesc = 0;
         int dvtype = 0;
 
+        //
+        // Before we can retrieve the column meta data using SQLGetDescField,
+        // we first needs to retrieve the correct descriptor handle attached to the statement handle
+        //
         if ( !SQL_SUCCEEDED( SQLGetStmtAttr( d->m_hstmt, SQL_ATTR_IMP_ROW_DESC, &hdesc, SQL_IS_POINTER, 0 ) ) ) {
             setError( Virtuoso::convertSqlError( SQL_HANDLE_STMT, d->m_hstmt, QLatin1String( "SQLGetStmtAttr failed" ) ) );
             delete [] data;
             return Node();
         }
+
+        //
+        // Retrieve the datatype of a field
+        // Will yield one of the VIRTUOSO_DV_* defined in virtuosoodbcext.h
+        //
         else if ( !SQL_SUCCEEDED( SQLGetDescField( hdesc, colNum, SQL_DESC_COL_DV_TYPE, &dvtype, SQL_IS_INTEGER, 0 ) ) ) {
             setError( Virtuoso::convertSqlError( SQL_HANDLE_STMT, d->m_hstmt, QLatin1String( "SQLGetDescField SQL_DESC_COL_DV_TYPE failed" ) ) );
             delete [] data;
@@ -128,10 +137,17 @@ Soprano::Node Soprano::ODBC::QueryResult::getData( int colNum )
 
         clearError();
 
+        // The node we will construct below
         Soprano::Node node;
 
         switch (dvtype) {
         case VIRTUOSO_DV_STRING: {
+            //
+            // Retrieve the flags associated with the field:
+            // 0  - field contains a normal string
+            // 1  - field contains an IRI string
+            // 2  - field contains a UTF-8 string
+            //
             int boxFlags = 0;
             if ( !SQL_SUCCEEDED( SQLGetDescField( hdesc, colNum, SQL_DESC_COL_BOX_FLAGS, &boxFlags, SQL_IS_INTEGER, 0 ) ) ) {
                 setError( Virtuoso::convertSqlError( SQL_HANDLE_STMT, d->m_hstmt, QLatin1String( "SQLGetDescField failed" ) ) );
@@ -162,6 +178,9 @@ Soprano::Node Soprano::ODBC::QueryResult::getData( int colNum )
         }
 
         case VIRTUOSO_DV_RDF: {
+            //
+            // Retrieve lang and type strings which are cached in the server for faster lookups
+            //
             SQLCHAR langBuf[100];
             SQLCHAR typeBuf[100];
             SQLINTEGER langBufLen = 0;
@@ -192,26 +211,30 @@ Soprano::Node Soprano::ODBC::QueryResult::getData( int colNum )
             break;
         }
 
-        case VIRTUOSO_DV_LONG_INT: /* integer */
+        case VIRTUOSO_DV_LONG_INT:
             node = LiteralValue::fromString( QString::fromUtf8( reinterpret_cast<const char*>( data ) ), QVariant::Int );
             break;
 
-        case VIRTUOSO_DV_SINGLE_FLOAT: /* float */
+        case VIRTUOSO_DV_SINGLE_FLOAT:
             node = LiteralValue::fromString( QString::fromUtf8( reinterpret_cast<const char*>( data ) ), Vocabulary::XMLSchema::xsdFloat() );
             break;
 
-        case VIRTUOSO_DV_DOUBLE_FLOAT: /* double */
+        case VIRTUOSO_DV_DOUBLE_FLOAT:
             node = LiteralValue::fromString( QString::fromUtf8( reinterpret_cast<const char*>( data ) ), QVariant::Double );
             break;
 
-        case VIRTUOSO_DV_NUMERIC: /* decimal */
+        case VIRTUOSO_DV_NUMERIC:
             node = LiteralValue::fromString( QString::fromUtf8( reinterpret_cast<const char*>( data ) ), Vocabulary::XMLSchema::decimal() );
             break;
 
-        case VIRTUOSO_DV_TIMESTAMP: /* datetime */
+        case VIRTUOSO_DV_TIMESTAMP:
         case VIRTUOSO_DV_DATE:
         case VIRTUOSO_DV_TIME:
         case VIRTUOSO_DV_DATETIME: {
+            //
+            // Retrieve the date subtype
+            // Will yield one of the VIRTUOSO_DT_TYPE_* defined in virtuosoodbcext.h
+            //
             int dv_dt_type = 0;
             if ( !SQL_SUCCEEDED( SQLGetDescField( hdesc, colNum, SQL_DESC_COL_DT_DT_TYPE, &dv_dt_type, SQL_IS_INTEGER, 0 ) ) ) {
                 setError( Virtuoso::convertSqlError( SQL_HANDLE_STMT, d->m_hstmt, QLatin1String( "SQLGetDescField SQL_DESC_COL_DT_DT_TYPE failed" ) ) );
@@ -238,10 +261,18 @@ Soprano::Node Soprano::ODBC::QueryResult::getData( int colNum )
         }
 
         case VIRTUOSO_DV_IRI_ID:
+            //
+            // node is an IRI ID
+            //
+            // This type is only returned in output:valmode "LONG"
+            // It needs to be translated into a literal string using the
+            // ID_TO_IRI() function as the value is database specific.
+            //
             setError( QLatin1String( "IRI_ID is not supported yet." ) );
             break;
 
-        case 204: // VIRTUOSO_DV_DB_NULL
+        case 204:
+            // VIRTUOSO_DV_DB_NULL
             // a null node -> empty
             break;
 
