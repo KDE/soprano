@@ -17,16 +17,16 @@
  *
  * The Virtuoso backend supports the following settings which can be passed to Soprano::Backend::createModel:
  *
- * \li \p indexes - A comma separated list of quadruple indexes to be used (Example:'spog,posg,opsg'). If not
- *                  specified, the indexes are not changed, ie. the Virtuoso defaults are used.
- * \li \p fulltextindex - Enable or disable the full text index which allows to perform full text queries on
- *                     string literals embedded in SPARQL queries. For more information see the documentation
- *                     on <a href="http://docs.openlinksw.com/virtuoso/rdfsparql.html#sparqlextensions">Virtuoso SPARQL extensions</a>.
- *                     <br/>\p none - disable the index (default)
- *                     <br/>\p sync - enable syncroneous updates of the index (the index is always in sync. This might give a performace penalty)
- *                     <br/>\p N - The interval in minutes after which the index will be updated.
- * \li \p buffers - The number of buffers (8k in size) to be used by Virtuoso. Defaults to 10000.
- * \li \p threads - The number of server threads. Defaults to 100.
+ * - \c indexes - A comma separated list of quadruple indexes to be used (Example: '\c spog,\c posg,\c opsg'). If not
+ *                specified, the indexes are not changed, ie. the Virtuoso defaults are used.
+ * - \c fulltextindex - Enable or disable the full text index which allows to perform full text queries on
+ *                      string literals embedded in SPARQL queries. For more information see the documentation
+ *                      on <a href="http://docs.openlinksw.com/virtuoso/rdfsparql.html#sparqlextensions">Virtuoso SPARQL extensions</a>.
+ *                      - \c none - disable the index
+ *                      - \c sync - enable syncroneous updates of the index (the index is always in sync. This might give a performace penalty)
+ *                      - \c N - The interval in minutes after which the index will be updated.
+ * - \c buffers - The number of buffers (8k in size) to be used by Virtuoso. Defaults to 10000.
+ * - \c threads - The number of server threads. Defaults to 100.
  *
  * The two settings above are user settings and have to be provided using Soprano::BackendOptionUser:
  *
