@@ -29,9 +29,9 @@
 #include "node.h"
 
 namespace {
-    QStringList normalizeIndexNames( const QStringList& indices ) {
+    QStringList normalizeIndexNames( const QStringList& indexes ) {
         QStringList normalized;
-        foreach( const QString& index, indices )
+        foreach( const QString& index, indexes )
             normalized << index.toUpper();
         return normalized;
     }
@@ -50,11 +50,12 @@ namespace {
         return true;
     }
 
-    QStringList defaultIndices() {
+    QStringList defaultIndexes() {
         return QStringList() << QLatin1String( "SPOG" )
                              << QLatin1String( "POSG" )
                              << QLatin1String( "OPSG" )
-                             << QLatin1String( "GSOP" );
+                             << QLatin1String( "GSPO" )
+                             << QLatin1String( "GPOS" );
     }
 }
 
@@ -72,10 +73,10 @@ Soprano::Virtuoso::DatabaseConfigurator::~DatabaseConfigurator()
 
 bool Soprano::Virtuoso::DatabaseConfigurator::configureServer( const BackendSettings& settings )
 {
-    // update indices
-    QString indices = valueInSettings( settings, BackendOptionUser, "indices" ).toString();
-    if ( !indices.isEmpty() ) {
-        if ( !updateIndices( indices ) )
+    // update indexes
+    QString indexes = valueInSettings( settings, "indexes", "OPGS,POGS,GPOS" ).toString();
+    if ( !indexes.isEmpty() ) {
+        if ( !updateIndexes( indexes ) )
             return false;
     }
 
@@ -90,46 +91,46 @@ bool Soprano::Virtuoso::DatabaseConfigurator::configureServer( const BackendSett
 }
 
 
-bool Soprano::Virtuoso::DatabaseConfigurator::updateIndices( const QString& indices_ )
+bool Soprano::Virtuoso::DatabaseConfigurator::updateIndexes( const QString& indexes_ )
 {
-    qDebug() << Q_FUNC_INFO << indices_;
+    qDebug() << Q_FUNC_INFO << indexes_;
 
-    Q_ASSERT( !indices_.isEmpty() );
+    Q_ASSERT( !indexes_.isEmpty() );
 
-    QStringList indices = normalizeIndexNames( indices_.split( ',', QString::SkipEmptyParts ) );
-    QStringList currentIndices = configuredIndices();
+    QStringList indexes = normalizeIndexNames( indexes_.split( ',', QString::SkipEmptyParts ) );
+    QStringList currentIndexes = configuredIndexes();
 
-    if ( indices.isEmpty() )
-        indices = defaultIndices();
+    if ( indexes.isEmpty() )
+        indexes = defaultIndexes();
 
     // sort them for comparision
-    qSort( indices );
-    qSort( currentIndices );
+    qSort( indexes );
+    qSort( currentIndexes );
 
-    // FIXME: how about the primary key which defaults to (G,S,P,O)? We could change that, too.
+    QStringList newIndexes = ( currentIndexes.toSet() - indexes.toSet() ).toList();
 
-    QStringList newIndices = ( currentIndices.toSet() - indices.toSet() ).toList();
+    if ( currentIndexes.isEmpty() || indexes != currentIndexes ) {
+        qDebug() << "indexes need updating";
 
-    if ( currentIndices.isEmpty() || indices != currentIndices ) {
-        qDebug() << "indices need updating";
-
-        // drop all indices on the RDF_QUAD table which are no longer needed
-        foreach( const QString& index, newIndices ) {
+        // drop all indexes on the RDF_QUAD table which are no longer needed
+        foreach( const QString& index, newIndexes ) {
             m_connection->executeCommand( QLatin1String( "DROP INDEX RDF_QUAD_" ) + index.toUpper() );
         }
 
-        // add the new indices
-        foreach( const QString& index, indices.toSet() - currentIndices.toSet() ) {
+        // add the new indexes
+        // TODO: convert the data if necessary (I think that is if indexes are dropped)
+        foreach( const QString& index, indexes.toSet() - currentIndexes.toSet() ) {
             if ( verifyIndex( index ) ) {
-                newIndices << index;
-                // FIXME: bitmap indices can only end in an IRI, i.e. not in O. Can we use a normal index instead?
-                m_connection->executeCommand( QString( "create bitmap index RDF_QUAD_%1 on DB.DBA.RDF_QUAD "
+                newIndexes << index;
+                // bitmap indexes cannot end with O
+                m_connection->executeCommand( QString( "create %6 index RDF_QUAD_%1 on DB.DBA.RDF_QUAD "
                                                        "(%2, %3, %4, %5) partition (O varchar (-1, 0hexffff))" )
                                               .arg( index )
                                               .arg( index[0] )
                                               .arg( index[1] )
                                               .arg( index[2] )
-                                              .arg( index[3] ) );
+                                              .arg( index[3] )
+                                              .arg( index[3] != 'O' ? QString( QLatin1String( "bitmap" ) ) : QString() ) );
             }
             else {
                 qDebug() << "Invalid index specified:" << index;
@@ -141,9 +142,9 @@ bool Soprano::Virtuoso::DatabaseConfigurator::updateIndices( const QString& indi
 }
 
 
-QStringList Soprano::Virtuoso::DatabaseConfigurator::configuredIndices()
+QStringList Soprano::Virtuoso::DatabaseConfigurator::configuredIndexes()
 {
-    QStringList indices;
+    QStringList indexes;
 
     QString query = QLatin1String( "SELECT DISTINCT SUBSTRING(ISS_KEY_NAME,10,4) "
                                    "FROM SYS_INDEX_SPACE_STATS WHERE "
@@ -152,13 +153,13 @@ QStringList Soprano::Virtuoso::DatabaseConfigurator::configuredIndices()
     ODBC::QueryResult* result = m_connection->executeQuery( query );
     if ( result ) {
         while ( result->fetchRow() ) {
-            indices << result->getData( 1 ).toString();
+            indexes << result->getData( 1 ).toString();
         }
     }
 
-    qDebug() << Q_FUNC_INFO << indices;
+    qDebug() << Q_FUNC_INFO << indexes;
 
-    return indices;
+    return indexes;
 }
 
 

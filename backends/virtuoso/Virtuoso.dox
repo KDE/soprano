@@ -17,8 +17,8 @@
  *
  * The Virtuoso backend supports the following settings which can be passed to Soprano::Backend::createModel:
  *
- * \li \p indices - A comma-separated list of quadruple indices to be used (Example:'spog,posg,opsg'). If not
- *               specified, the indices are not changed, ie. the Virtuoso defaults are used.
+ * \li \p indexes - A comma separated list of quadruple indexes to be used (Example:'spog,posg,opsg'). If not
+ *                  specified, the indexes are not changed, ie. the Virtuoso defaults are used.
  * \li \p fulltextindex - Enable or disable the full text index which allows to perform full text queries on
  *                     string literals embedded in SPARQL queries. For more information see the documentation
  *                     on <a href="http://docs.openlinksw.com/virtuoso/rdfsparql.html#sparqlextensions">Virtuoso SPARQL extensions</a>.
@@ -32,8 +32,8 @@
  *
  * \code
  * Soprano::BackendSettings settings;
- * // configure the used indices
- * settings << Soprano::BackendSetting( "indices", "spog,posg,opsg" );
+ * // configure the used indexes
+ * settings << Soprano::BackendSetting( "indexes", "spog,posg,opsg" );
  *
  * // set the full text index to be updated every 10 minutes
  * settings << Soprano::BackendSetting( "fulltextindex", "10" );

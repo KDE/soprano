@@ -41,7 +41,7 @@ namespace Soprano {
             /**
              * Supported configuration settings:
              * -----------------------
-             * indices       - comma separated list of indices that have been created (example: "spog,posg,opsg,gspo")
+             * indexes       - comma separated list of indexes that have been created (example: "spog,posg,opsg,gspo")
              * fulltextindex - config state, one of
              *                 "none" (no fulltext indexing),
              *                 "sync" (string literals will be indexed syncroneous - might slow things down)
@@ -54,7 +54,7 @@ namespace Soprano {
             /**
              * \return The stored value
              */
-            bool updateIndices( const QString& indices );
+            bool updateIndexes( const QString& indexes );
 
             /**
              * \return The stored value
@@ -67,9 +67,9 @@ namespace Soprano {
             bool updateFulltextIndexRules( bool enable );
 
             /**
-             * \return A list of indices (in the form OSPG) which are currently configured on the server
+             * \return A list of indexes (in the form OSPG) which are currently configured on the server
              */
-            QStringList configuredIndices();
+            QStringList configuredIndexes();
 
             ODBC::Connection* m_connection;
         };

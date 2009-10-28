@@ -248,10 +248,10 @@ bool Soprano::Virtuoso::QueryResultIteratorBackend::boolValue() const
 
 void Soprano::Virtuoso::QueryResultIteratorBackend::close()
 {
-    d->graphIterator.close();
-    delete d->m_queryResult;
-    d->m_queryResult = 0;
     if ( d->m_model )
         d->m_model->m_openIterators.removeAll( this );
     d->m_model = 0;
+    d->graphIterator.close();
+    delete d->m_queryResult;
+    d->m_queryResult = 0;
 }
