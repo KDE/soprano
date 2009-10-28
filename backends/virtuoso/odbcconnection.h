@@ -23,6 +23,7 @@
 #define _SOPRANO_ODBC_CONNECTION_H_
 
 #include "error.h"
+#include <sql.h>
 
 namespace Soprano {
     namespace ODBC {
@@ -41,6 +42,8 @@ namespace Soprano {
 
         private:
             Connection();
+
+            HSTMT execute( const QString& query );
 
             ConnectionPrivate* const d;
 

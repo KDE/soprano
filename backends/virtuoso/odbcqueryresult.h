@@ -23,6 +23,7 @@
 #define _SOPRANO_ODBC_QUERY_RESULT_H_
 
 #include "error.h"
+#include <sql.h>
 
 namespace Soprano {
 
@@ -44,6 +45,8 @@ namespace Soprano {
 
         private:
             QueryResult();
+
+            bool getCharData( int colNum, SQLCHAR** buffer, SQLLEN* length );
 
             QueryResultPrivate* const d;
 

@@ -33,70 +33,6 @@
 #include <QtCore/QThread>
 
 
-HSTMT Soprano::ODBC::ConnectionPrivate::execute( const QString& request )
-{
-    HSTMT hstmt;
-    if ( SQLAllocHandle( SQL_HANDLE_STMT, m_hdbc, &hstmt ) != SQL_SUCCESS ) {
-        setError( Virtuoso::convertSqlError( SQL_HANDLE_DBC, m_hdbc ) );
-        return 0;
-    }
-    else {
-        QByteArray utf8Request = request.toUtf8();
-        if ( !SQL_SUCCEEDED( SQLExecDirect( hstmt, ( UCHAR* )utf8Request.data(), utf8Request.length() ) ) ) {
-            setError( Virtuoso::convertSqlError( SQL_HANDLE_STMT, hstmt, QLatin1String( "SQLExecDirect failed on query '" ) + request + '\'' ) );
-            SQLFreeHandle( SQL_HANDLE_STMT, hstmt );
-            return 0;
-        }
-        else {
-            clearError();
-            return hstmt;
-        }
-    }
-}
-
-
-bool Soprano::ODBC::ConnectionPrivate::getCharData( HSTMT hstmt, int colNum, SQLCHAR** buffer, SQLLEN* length )
-{
-    SQLCHAR dummyBuffer[1]; // dummy buffer only used to determine length
-
-    int r = SQLGetData( hstmt, colNum, SQL_C_CHAR, dummyBuffer, 0, length );
-
-    if ( SQL_SUCCEEDED( r ) ) {
-        //
-        // Treat a 0 length and null data as an empty node
-        //
-        if ( *length == SQL_NULL_DATA || *length == 0 ) {
-            *buffer = 0;
-            *length = 0;
-            return true;
-        }
-
-        //
-        // again with real length buffer
-        //
-        else {
-            *buffer = new SQLCHAR[*length+4]; // FIXME: why +4 (I got this from the redland plugin)
-            r = SQLGetData ( hstmt, colNum, SQL_C_CHAR, *buffer, *length+4, length );
-            if ( SQL_SUCCEEDED( r ) ) {
-                return true;
-            }
-            else {
-                delete [] *buffer;
-                *buffer = 0;
-                *length = 0;
-                setError( Virtuoso::convertSqlError( SQL_HANDLE_STMT, hstmt, QLatin1String( "SQLGetData failed" ) ) );
-                return false;
-            }
-        }
-    }
-    else {
-        setError( Virtuoso::convertSqlError( SQL_HANDLE_STMT, hstmt, QLatin1String( "SQLGetData for data lenght failed" ) ) );
-        return false;
-    }
-}
-
-
-
 Soprano::ODBC::Connection::Connection()
     : d( new ConnectionPrivate() )
 {
@@ -125,8 +61,7 @@ Soprano::Error::ErrorCode Soprano::ODBC::Connection::executeCommand( const QStri
 
     Error::ErrorCode result = Error::ErrorNone;
 
-    HSTMT hstmt = d->execute( command );
-    setError( d->lastError() );
+    HSTMT hstmt = execute( command );
     if ( hstmt ) {
         SQLCloseCursor( hstmt );
         SQLFreeHandle( SQL_HANDLE_STMT, hstmt );
@@ -139,8 +74,7 @@ Soprano::ODBC::QueryResult* Soprano::ODBC::Connection::executeQuery( const QStri
 {
 //    qDebug() << Q_FUNC_INFO << request;
 
-    HSTMT hstmt = d->execute( request );
-    setError( d->lastError() );
+    HSTMT hstmt = execute( request );
     if ( hstmt ) {
         QueryResult* result = new QueryResult();
         result->d->m_conn = d;
@@ -150,5 +84,27 @@ Soprano::ODBC::QueryResult* Soprano::ODBC::Connection::executeQuery( const QStri
     }
     else {
         return 0;
+    }
+}
+
+
+HSTMT Soprano::ODBC::Connection::execute( const QString& request )
+{
+    HSTMT hstmt;
+    if ( SQLAllocHandle( SQL_HANDLE_STMT, d->m_hdbc, &hstmt ) != SQL_SUCCESS ) {
+        setError( Virtuoso::convertSqlError( SQL_HANDLE_DBC, d->m_hdbc ) );
+        return 0;
+    }
+    else {
+        QByteArray utf8Request = request.toUtf8();
+        if ( !SQL_SUCCEEDED( SQLExecDirect( hstmt, ( UCHAR* )utf8Request.data(), utf8Request.length() ) ) ) {
+            setError( Virtuoso::convertSqlError( SQL_HANDLE_STMT, hstmt, QLatin1String( "SQLExecDirect failed on query '" ) + request + '\'' ) );
+            SQLFreeHandle( SQL_HANDLE_STMT, hstmt );
+            return 0;
+        }
+        else {
+            clearError();
+            return hstmt;
+        }
     }
 }

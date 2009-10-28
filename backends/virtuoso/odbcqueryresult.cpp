@@ -111,7 +111,7 @@ Soprano::Node Soprano::ODBC::QueryResult::getData( int colNum )
 {
     SQLCHAR* data = 0;
     SQLLEN length = 0;
-    if ( d->m_conn->getCharData( d->m_hstmt, colNum, &data, &length ) ) {
+    if ( getCharData( colNum, &data, &length ) ) {
         SQLHDESC hdesc = 0;
         int dvtype = 0;
 
@@ -134,8 +134,6 @@ Soprano::Node Soprano::ODBC::QueryResult::getData( int colNum )
             delete [] data;
             return Node();
         }
-
-        clearError();
 
         // The node we will construct below
         Soprano::Node node;
@@ -287,7 +285,49 @@ Soprano::Node Soprano::ODBC::QueryResult::getData( int colNum )
         return node;
     }
     else {
-        setError( d->m_conn->lastError() );
         return Node();
+    }
+}
+
+
+bool Soprano::ODBC::QueryResult::getCharData( int colNum, SQLCHAR** buffer, SQLLEN* length )
+{
+    SQLCHAR dummyBuffer[1]; // dummy buffer only used to determine length
+
+    int r = SQLGetData( d->m_hstmt, colNum, SQL_C_CHAR, dummyBuffer, 0, length );
+
+    if ( SQL_SUCCEEDED( r ) ) {
+        //
+        // Treat a 0 length and null data as an empty node
+        //
+        if ( *length == SQL_NULL_DATA || *length == 0 ) {
+            *buffer = 0;
+            *length = 0;
+            clearError();
+            return true;
+        }
+
+        //
+        // again with real length buffer
+        //
+        else {
+            *buffer = new SQLCHAR[*length+4]; // FIXME: why +4 (I got this from the redland plugin)
+            r = SQLGetData ( d->m_hstmt, colNum, SQL_C_CHAR, *buffer, *length+4, length );
+            if ( SQL_SUCCEEDED( r ) ) {
+                clearError();
+                return true;
+            }
+            else {
+                delete [] *buffer;
+                *buffer = 0;
+                *length = 0;
+                setError( Virtuoso::convertSqlError( SQL_HANDLE_STMT, d->m_hstmt, QLatin1String( "SQLGetData failed" ) ) );
+                return false;
+            }
+        }
+    }
+    else {
+        setError( Virtuoso::convertSqlError( SQL_HANDLE_STMT, d->m_hstmt, QLatin1String( "SQLGetData for data lenght failed" ) ) );
+        return false;
     }
 }

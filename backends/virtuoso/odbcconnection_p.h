@@ -27,15 +27,13 @@
 #include <QtCore/QList>
 #include <QtCore/QUrl>
 
-#include "error.h"
-
 namespace Soprano {
     namespace ODBC {
 
         class ConnectionPoolPrivate;
         class Environment;
 
-        class ConnectionPrivate : public Error::ErrorCache
+        class ConnectionPrivate
         {
         public:
             ConnectionPrivate()
@@ -47,9 +45,6 @@ namespace Soprano {
             HDBC m_hdbc;
             ConnectionPoolPrivate* m_pool;
             QList<QueryResult*> m_openResults;
-
-            HSTMT execute( const QString& query );
-            bool getCharData( HSTMT hstmt, int colNum, SQLCHAR** buffer, SQLLEN* length );
         };
     }
 }
