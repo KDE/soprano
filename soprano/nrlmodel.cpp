@@ -36,6 +36,8 @@
 
 #include <QtCore/QUuid>
 #include <QtCore/QDateTime>
+#include <QtCore/QMutex>
+#include <QtCore/QMutexLocker>
 #include <QtCore/QDebug>
 
 
@@ -60,6 +62,8 @@ public:
      */
     void buildPrefixMap()
     {
+        QMutexLocker lock( &m_mutex );
+
         m_prefixes.clear();
 
         // fixed prefixes
@@ -93,6 +97,9 @@ public:
     QHash<QString, QUrl> m_prefixes;
 
     NRLModel* q;
+
+private:
+    QMutex m_mutex;
 };
 
 Soprano::NRLModel::NRLModel()
