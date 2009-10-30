@@ -248,10 +248,17 @@ bool Soprano::Virtuoso::QueryResultIteratorBackend::boolValue() const
 
 void Soprano::Virtuoso::QueryResultIteratorBackend::close()
 {
-    if ( d->m_model )
-        d->m_model->m_openIterators.removeAll( this );
-    d->m_model = 0;
-    d->graphIterator.close();
-    delete d->m_queryResult;
-    d->m_queryResult = 0;
+    //
+    // while an iterator must not be used in two differnt threads,
+    // the VirtuosoModel destructor will close all open iterators
+    // which may happen in a different thread indeed.
+    //
+    d->m_closeMutex.lock();
+    if ( d->m_model ) {
+        d->m_model = 0;
+        d->graphIterator.close();
+        delete d->m_queryResult;
+        d->m_queryResult = 0;
+    }
+    d->m_closeMutex.unlock();
 }

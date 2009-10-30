@@ -35,6 +35,7 @@
 #include <QtCore/QVector>
 #include <QtCore/QBitArray>
 #include <QtCore/QHash>
+#include <QtCore/QMutex>
 
 
 namespace Soprano {
@@ -68,6 +69,8 @@ namespace Soprano {
             bool m_methodCallResultIterated;
 
             VirtuosoModelPrivate* m_model;
+
+            QMutex m_closeMutex;
         };
     }
 }
