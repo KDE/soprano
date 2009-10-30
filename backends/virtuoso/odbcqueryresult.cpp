@@ -107,6 +107,22 @@ bool Soprano::ODBC::QueryResult::fetchRow()
 }
 
 
+namespace {
+    class DataArrayPointer
+    {
+    public:
+        DataArrayPointer( SQLCHAR* data )
+            : m_data( data ) {
+        }
+        ~DataArrayPointer() {
+            delete [] m_data;
+        }
+
+    private:
+        SQLCHAR* m_data;
+    };
+}
+
 Soprano::Node Soprano::ODBC::QueryResult::getData( int colNum )
 {
     SQLCHAR* data = 0;
@@ -115,13 +131,15 @@ Soprano::Node Soprano::ODBC::QueryResult::getData( int colNum )
         SQLHDESC hdesc = 0;
         int dvtype = 0;
 
+        // easy mem cleanup: never care about data again below
+        DataArrayPointer dap( data );
+
         //
         // Before we can retrieve the column meta data using SQLGetDescField,
         // we first needs to retrieve the correct descriptor handle attached to the statement handle
         //
         if ( !SQL_SUCCEEDED( SQLGetStmtAttr( d->m_hstmt, SQL_ATTR_IMP_ROW_DESC, &hdesc, SQL_IS_POINTER, 0 ) ) ) {
             setError( Virtuoso::convertSqlError( SQL_HANDLE_STMT, d->m_hstmt, QLatin1String( "SQLGetStmtAttr failed" ) ) );
-            delete [] data;
             return Node();
         }
 
@@ -131,7 +149,6 @@ Soprano::Node Soprano::ODBC::QueryResult::getData( int colNum )
         //
         else if ( !SQL_SUCCEEDED( SQLGetDescField( hdesc, colNum, SQL_DESC_COL_DV_TYPE, &dvtype, SQL_IS_INTEGER, 0 ) ) ) {
             setError( Virtuoso::convertSqlError( SQL_HANDLE_STMT, d->m_hstmt, QLatin1String( "SQLGetDescField SQL_DESC_COL_DV_TYPE failed" ) ) );
-            delete [] data;
             return Node();
         }
 
@@ -149,13 +166,15 @@ Soprano::Node Soprano::ODBC::QueryResult::getData( int colNum )
             int boxFlags = 0;
             if ( !SQL_SUCCEEDED( SQLGetDescField( hdesc, colNum, SQL_DESC_COL_BOX_FLAGS, &boxFlags, SQL_IS_INTEGER, 0 ) ) ) {
                 setError( Virtuoso::convertSqlError( SQL_HANDLE_STMT, d->m_hstmt, QLatin1String( "SQLGetDescField failed" ) ) );
-                delete [] data;
                 return Node();
             }
 
-            if ( boxFlags == 1 ) {
+            if ( boxFlags & 1 ) {
                 if ( data && strncmp( (char*)data, "_:", 2 ) == 0 ) {
-                    node = Node( QString::fromLatin1( reinterpret_cast<const char*>( data )+2 ) );
+                    if ( boxFlags & 2 )
+                        node = Node( QString::fromUtf8( reinterpret_cast<const char*>( data )+2 ) );
+                    else
+                        node = Node( QString::fromLatin1( reinterpret_cast<const char*>( data )+2 ) );
                 }
                 else {
                     node = Node( QUrl::fromEncoded( reinterpret_cast<const char*>( data ), QUrl::StrictMode ) );
@@ -165,7 +184,7 @@ Soprano::Node Soprano::ODBC::QueryResult::getData( int colNum )
                 if ( data && strncmp( (char*)data, "nodeID://", 9 ) == 0 ) {
                     node = Node( QString::fromLatin1( reinterpret_cast<const char*>( data )+9 ) );
                 }
-                else if ( boxFlags == 2 ) {
+                else if ( boxFlags & 2 ) {
                     node = Node( LiteralValue::createPlainLiteral( QString::fromUtf8( reinterpret_cast<const char*>( data ) ) ) );
                 }
                 else {
@@ -186,7 +205,6 @@ Soprano::Node Soprano::ODBC::QueryResult::getData( int colNum )
             if ( !SQL_SUCCEEDED( SQLGetDescField( hdesc, colNum, SQL_DESC_COL_LITERAL_LANG, langBuf, sizeof( langBuf ), &langBufLen ) ) ||
                  !SQL_SUCCEEDED( SQLGetDescField( hdesc, colNum, SQL_DESC_COL_LITERAL_TYPE, typeBuf, sizeof( typeBuf ), &typeBufLen ) ) ) {
                 setError( Virtuoso::convertSqlError( SQL_HANDLE_STMT, d->m_hstmt, QLatin1String( "SQLGetDescField SQL_DESC_COL_LITERAL_* failed" ) ) );
-                delete [] data;
                 return Node();
             }
 
@@ -236,7 +254,6 @@ Soprano::Node Soprano::ODBC::QueryResult::getData( int colNum )
             int dv_dt_type = 0;
             if ( !SQL_SUCCEEDED( SQLGetDescField( hdesc, colNum, SQL_DESC_COL_DT_DT_TYPE, &dv_dt_type, SQL_IS_INTEGER, 0 ) ) ) {
                 setError( Virtuoso::convertSqlError( SQL_HANDLE_STMT, d->m_hstmt, QLatin1String( "SQLGetDescField SQL_DESC_COL_DT_DT_TYPE failed" ) ) );
-                delete [] data;
                 return Node();
             }
             QUrl type;
@@ -279,8 +296,6 @@ Soprano::Node Soprano::ODBC::QueryResult::getData( int colNum )
             setError( QString( "Internal Error: Unknown result type %1" ).arg( dvtype ) );
             break;
         }
-
-        delete [] data;
 
         return node;
     }
