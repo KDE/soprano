@@ -114,8 +114,8 @@ Soprano::VirtuosoModel::VirtuosoModel( ODBC::ConnectionPool* connectionPool, con
 
 Soprano::VirtuosoModel::~VirtuosoModel()
 {
-    foreach( Virtuoso::QueryResultIteratorBackend* it, d->m_openIterators )
-        it->close();
+    while ( !d->m_openIterators.isEmpty() )
+        d->m_openIterators.last()->close();
     delete d->connectionPool;
     delete d;
 }
@@ -149,20 +149,24 @@ Soprano::Error::ErrorCode Soprano::VirtuosoModel::addStatement( const Statement&
     QString insert = QString("sparql insert into %1")
                      .arg( statementToConstructGraphPattern( s, true ) );
 
-    ODBC::Connection* conn = d->connectionPool->connection();
-    if ( conn->executeCommand( insert ) == Error::ErrorNone ) {
-        clearError();
+    if ( ODBC::Connection* conn = d->connectionPool->connection() ) {
+        if ( conn->executeCommand( insert ) == Error::ErrorNone ) {
+            clearError();
 
-        // FIXME: can this be done with SQL/RDF views?
-        emit statementAdded( statement );
-        emit statementsAdded();
+            // FIXME: can this be done with SQL/RDF views?
+            emit statementAdded( statement );
+            emit statementsAdded();
 
-        return Error::ErrorNone;
+            return Error::ErrorNone;
+        }
+        else {
+            setError( conn->lastError() );
+        }
     }
     else {
-        setError( conn->lastError() );
-        return Error::convertErrorCode( lastError().code() );
+        setError( d->connectionPool->lastError() );
     }
+    return Error::convertErrorCode( lastError().code() );
 }
 
 
@@ -258,13 +262,17 @@ Soprano::Error::ErrorCode Soprano::VirtuosoModel::removeStatement( const Stateme
     QString query = QString( "delete from %1" )
                     .arg( statementToConstructGraphPattern( s, true ) );
 //    qDebug() << "removeStatement query:" << query;
-    ODBC::Connection* conn = d->connectionPool->connection();
-    if ( conn->executeCommand( "sparql " + query ) == Error::ErrorNone ) {
-        // FIXME: can this be done with SQL/RDF views?
-        emit statementRemoved( statement );
-        emit statementsRemoved();
+    if ( ODBC::Connection* conn = d->connectionPool->connection() ) {
+        if ( conn->executeCommand( "sparql " + query ) == Error::ErrorNone ) {
+            // FIXME: can this be done with SQL/RDF views?
+            emit statementRemoved( statement );
+            emit statementsRemoved();
+        }
+        setError( conn->lastError() );
     }
-    setError( conn->lastError() );
+    else {
+        setError( d->connectionPool->lastError() );
+    }
     return Error::convertErrorCode( lastError().code() );
 }
 
@@ -295,13 +303,17 @@ Soprano::Error::ErrorCode Soprano::VirtuosoModel::removeAllStatements( const Sta
 
         }
         qDebug() << "removeAllStatements query:" << query;
-        ODBC::Connection* conn = d->connectionPool->connection();
-        if ( conn->executeCommand( "sparql " + query ) == Error::ErrorNone ) {
-            // FIXME: can this be done with SQL/RDF views?
-            emit statementsRemoved();
-            emit statementRemoved( statement );
+        if ( ODBC::Connection* conn = d->connectionPool->connection() ) {
+            if ( conn->executeCommand( "sparql " + query ) == Error::ErrorNone ) {
+                // FIXME: can this be done with SQL/RDF views?
+                emit statementsRemoved();
+                emit statementRemoved( statement );
+            }
+            setError( conn->lastError() );
         }
-        setError( conn->lastError() );
+        else {
+            setError( d->connectionPool->lastError() );
+        }
         return Error::convertErrorCode( lastError().code() );
     }
     else {
@@ -339,11 +351,18 @@ QStringList conditions;
 
         QString query = QLatin1String( "delete from DB.DBA.RDF_QUAD where " ) + conditions.join( QLatin1String( " AND " ) ) + ';';
 
-        ODBC::Connection* conn = d->connectionPool->connection();
-        if ( ODBC::QueryResult* sh = conn->executeQuery( query ) ) {
-            bool b = sh->fetchScroll();
-            delete sh;
-            return Error::ErrorUnknown;
+        if ( ODBC::Connection* conn = d->connectionPool->connection() ) {
+            if ( ODBC::QueryResult* sh = conn->executeQuery( query ) ) {
+                bool b = sh->fetchScroll();
+                delete sh;
+                return Error::ErrorUnknown;
+            }
+            else {
+                setError( conn->lastError() );
+            }
+        }
+        else {
+            setError( d->connectionPool->lastError() );
         }
 #endif
 
@@ -389,18 +408,23 @@ Soprano::QueryResultIterator Soprano::VirtuosoModel::executeQuery( const QString
     }
 
     // exclude the default system graph via defines from s_queryPrefix
-    ODBC::Connection* conn = d->connectionPool->connection();
-    ODBC::QueryResult* result = conn->executeQuery( QLatin1String( s_queryPrefix ) + ' ' + query );
-    if ( result ) {
-        clearError();
-        Virtuoso::QueryResultIteratorBackend* backend = new Virtuoso::QueryResultIteratorBackend( result );
-        backend->d->m_model = d;
-        d->m_openIterators.append( backend );
-        return backend;
+    if ( ODBC::Connection* conn = d->connectionPool->connection() ) {
+        ODBC::QueryResult* result = conn->executeQuery( QLatin1String( s_queryPrefix ) + ' ' + query );
+        if ( result ) {
+            clearError();
+            Virtuoso::QueryResultIteratorBackend* backend = new Virtuoso::QueryResultIteratorBackend( result );
+            backend->d->m_model = d;
+            d->m_openIterators.append( backend );
+            return backend;
+        }
+        else {
+            qDebug() << "Query failed:" << query;
+            setError( conn->lastError() );
+            return 0;
+        }
     }
     else {
-        qDebug() << "Query failed:" << query;
-        setError( conn->lastError() );
+        setError( d->connectionPool->lastError() );
         return 0;
     }
 }
