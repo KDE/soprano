@@ -31,7 +31,7 @@
 #include "../soprano/global.h"
 #include "../soprano/vocabulary/rdfs.h"
 #include "../soprano/vocabulary/rdf.h"
-#include "../soprano/vocabulary/owl.h"
+#include "../soprano/vocabulary/nrl.h"
 
 
 using namespace Soprano;
@@ -154,6 +154,22 @@ QString disambiguateKeyword( const QString& name, const QString &className )
     return name;
 }
 
+QList<Soprano::Node> extractRelevantResources( Soprano::Model* model )
+{
+    // we are still using redland for memory storage. Thus, we cannot use graph queries since redland does not support them fully:
+    QSet<Node> resources;
+    StatementIterator it = model->listStatements( Node(), Vocabulary::RDF::type(), Node() );
+    while ( it.next() ) {
+        Statement s( *it );
+        if ( !s.context().isValid() ||
+             !model->containsStatement( s.context(), Vocabulary::RDF::type(), Vocabulary::NRL::GraphMetadata() ) ) {
+            resources << s.subject();
+        }
+    }
+    return resources.toList();
+}
+
+
 int main( int argc, char *argv[] )
 {
     QCoreApplication app( argc, argv );
@@ -275,21 +291,7 @@ int main( int argc, char *argv[] )
     QTextStream sourceStream( &sourceFile );
 
     // select all relevant resource, try to be intelligent about it...
-    QList<Node> allResources = model->executeQuery( QString( "select distinct ?r where { "
-                                                             "graph ?g { ?r a ?rt . } . "
-                                                             "OPTIONAL { ?g a ?gt . "
-                                                             "FILTER(?gt = <http://www.semanticdesktop.org/ontologies/2007/08/15/nrl#GraphMetadata>) . } . "
-                                                             "FILTER(!BOUND(?gt)) . "
-                                                             "}" ),
-                                                    Query::QueryLanguageSparql ).iterateBindings( "r" ).allNodes();
-
-    // stupid sparql has no way of saying: "empty graph" so we need to do that manually for
-    // the case where no graph is defined
-    if ( allResources.isEmpty() ) {
-        allResources = model->executeQuery( QString( "select distinct ?r where { "
-                                                     "?r a ?t . }" ),
-                                            Query::QueryLanguageSparql ).iterateBindings( "r" ).allNodes();
-    }
+    QList<Node> allResources = extractRelevantResources( model );
 
     // create entries
     // ----------------------------------------------------
