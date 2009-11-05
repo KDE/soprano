@@ -1,6 +1,7 @@
 2.3.2
 	* Do not fail when trying to index empty strings, but ignore them.
 	* Fixed parsing of plain literals with language code in sopranocmd.
+	* Make onto2vocabularyclass work with the redland backend (not using graph SPARQL queries anymore)
 
 2.3.1
 	* Changed installation path of cmake modules (SopranoAppOntology.cmake) to <prefix/share/soprano/cmake
