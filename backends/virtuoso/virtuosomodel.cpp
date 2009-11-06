@@ -414,7 +414,7 @@ Soprano::QueryResultIterator Soprano::VirtuosoModel::executeQuery( const QString
             clearError();
             Virtuoso::QueryResultIteratorBackend* backend = new Virtuoso::QueryResultIteratorBackend( result );
             backend->d->m_model = d;
-            d->m_openIterators.append( backend );
+            d->addIterator( backend );
             return backend;
         }
         else {

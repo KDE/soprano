@@ -22,7 +22,10 @@
 #ifndef _SOPRANO_IODBC_MODEL_P_H_
 #define _SOPRANO_IODBC_MODEL_P_H_
 
+#include <QtCore/QMutex>
+
 #include "virtuosoqueryresultiteratorbackend.h"
+
 
 namespace Soprano {
     namespace ODBC {
@@ -36,8 +39,23 @@ namespace Soprano {
             : connectionPool( 0 ) {
         }
 
+        inline void addIterator( Virtuoso::QueryResultIteratorBackend* iterator ) {
+            m_openIteratorMutex.lock();
+            m_openIterators.append(iterator);
+            m_openIteratorMutex.unlock();
+        }
+        
+        inline void removeIterator( Virtuoso::QueryResultIteratorBackend* iterator ) {
+            m_openIteratorMutex.lock();
+            m_openIterators.removeAll(iterator);
+            m_openIteratorMutex.unlock();
+        }
+
         ODBC::ConnectionPool* connectionPool;
         QList<Virtuoso::QueryResultIteratorBackend*> m_openIterators;
+        
+    private:
+        QMutex m_openIteratorMutex;
     };
 }
 
