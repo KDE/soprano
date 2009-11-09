@@ -169,12 +169,9 @@ Soprano::Node Soprano::ODBC::QueryResult::getData( int colNum )
                 return Node();
             }
 
-            if ( boxFlags & 1 ) {
+            if ( boxFlags & VIRTUOSO_BF_IRI ) {
                 if ( data && strncmp( (char*)data, "_:", 2 ) == 0 ) {
-                    if ( boxFlags & 2 )
-                        node = Node( QString::fromUtf8( reinterpret_cast<const char*>( data )+2 ) );
-                    else
-                        node = Node( QString::fromLatin1( reinterpret_cast<const char*>( data )+2 ) );
+                    node = Node( QString::fromUtf8( reinterpret_cast<const char*>( data )+2 ) );
                 }
                 else {
                     node = Node( QUrl::fromEncoded( reinterpret_cast<const char*>( data ), QUrl::StrictMode ) );
@@ -184,7 +181,7 @@ Soprano::Node Soprano::ODBC::QueryResult::getData( int colNum )
                 if ( data && strncmp( (char*)data, "nodeID://", 9 ) == 0 ) {
                     node = Node( QString::fromLatin1( reinterpret_cast<const char*>( data )+9 ) );
                 }
-                else if ( boxFlags & 2 ) {
+                else if ( boxFlags & VIRTUOSO_BF_UTF8 ) {
                     node = Node( LiteralValue::createPlainLiteral( QString::fromUtf8( reinterpret_cast<const char*>( data ) ) ) );
                 }
                 else {
