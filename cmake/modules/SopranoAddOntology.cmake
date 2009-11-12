@@ -35,8 +35,14 @@ MACRO(SOPRANO_ADD_ONTOLOGY _sources _ontoFile _ontoName _namespace _encoding)
   set(_ontoHeaderFile "${CMAKE_CURRENT_BINARY_DIR}/${_ontoFilePrefix}.h")
   set(_ontoSourceFile "${CMAKE_CURRENT_BINARY_DIR}/${_ontoFilePrefix}.cpp")
 
+  # SOPRANO_ONTO2VOCABULARYCLASS_EXECUTABLE exist in FindSoprano.cmake from kdelibs since Nov 12 2009
+  # Just set it to the name of the executable (without path) for the case that this file is used with
+  # an older kdelibs:
+  if (NOT SOPRANO_ONTO2VOCABULARYCLASS_EXECUTABLE)
+     set(SOPRANO_ONTO2VOCABULARYCLASS_EXECUTABLE onto2vocabularyclass)
+  endif (NOT SOPRANO_ONTO2VOCABULARYCLASS_EXECUTABLE)
   add_custom_command(OUTPUT ${_ontoHeaderFile} ${_ontoSourceFile}
-    COMMAND onto2vocabularyclass --name ${_ontoName} --encoding ${_encoding} --namespace ${_namespace} ${_visibility} ${_ontoFile}
+    COMMAND ${SOPRANO_ONTO2VOCABULARYCLASS_EXECUTABLE} --name ${_ontoName} --encoding ${_encoding} --namespace ${_namespace} ${_visibility} ${_ontoFile}
     MAIN_DEPENDENCY ${_ontoFile}
     DEPENDS ${_ontoFile}
     )
