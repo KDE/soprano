@@ -236,7 +236,7 @@ if(NOT BUILD_SESAME2_BACKEND)
   message("   * Sesame2 storage backend (java-based)")
 endif(NOT BUILD_SESAME2_BACKEND)
 if(NOT BUILD_VIRTUOSO_BACKEND)
-  message("   * Virtuoso storage backend")
+  message("   * Virtuoso storage backend (missing iodbc)")
 endif(NOT BUILD_VIRTUOSO_BACKEND)
 
 if(NOT BUILD_RAPTOR_PARSER)
