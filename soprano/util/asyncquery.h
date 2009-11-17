@@ -45,6 +45,9 @@ namespace Soprano {
          * In contrast to AsyncModel everything is asyncroneous, not only
          * the execution of the query itself, but also the iteration.
          *
+         * For executing a query asyncroneously simply use the static executeQuery()
+         * method which will return a pointer to the newly created query object.
+         *
          * AsyncQuery objects will always delete themselves once the end of
          * the iterator is reached and the finished signal has been emitted.
          * This also means that boolean results need to be read in a slot
@@ -193,7 +196,7 @@ namespace Soprano {
              *
              * \param query The query itself for convinience.
              */
-            void nextReady( Soprano::Util::AsyncQuery* );
+            void nextReady( Soprano::Util::AsyncQuery* query );
 
             /**
              * Emitted once the last element has been read and the internal
