@@ -93,6 +93,7 @@ set(soprano_SRCS
   util/asyncresult.cpp
   util/asynccommand.cpp
   util/asynciteratorbackend.cpp
+  util/asyncquery.cpp
   )
 
 qt4_automoc(${soprano_SRCS})
@@ -171,4 +172,5 @@ install(FILES
   util/readonlymodel.h
   util/asyncmodel.h
   util/asyncresult.h
+  util/asyncquery.h
   DESTINATION include/soprano)

@@ -7,5 +7,6 @@ install(FILES
   ReadOnlyModel
   AsyncModel
   AsyncResult
+  AsyncQuery
   DESTINATION
   include/Soprano/Util)

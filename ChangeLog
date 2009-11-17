@@ -14,6 +14,9 @@
 	* New Virtuoso storage backend which can either connect to a running Virtuoso instance or spawn one
           locally.
 	* New convenience methods to handle BackendSettings.
+	* New class AsyncQuery which will spawn a new thread for real asnycroneous query execution (in contrast
+          to AsyncModel which only performs the actual query call in another thread while the iteration is
+          syncroneous.)
 
 2.3
 	* New class LanguageTag replacing the old simple string language handling with a sophisticated one
