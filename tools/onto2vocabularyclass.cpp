@@ -260,8 +260,6 @@ int main( int argc, char *argv[] )
         return 1;
     }
 
-    // try using the sesame2 backend for graph queries
-    Soprano::setUsedBackend( Soprano::discoverBackendByName( "sesame2" ) );
     Model* model = Soprano::createModel( BackendSettings() << BackendSetting( BackendOptionStorageMemory ) );
     if ( !model ) {
         QTextStream s( stderr );
