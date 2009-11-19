@@ -283,9 +283,10 @@ void Soprano::Server::ServerCore::registerAsDBusObject( const QString& objectPat
 
 void Soprano::Server::ServerCore::serverConnectionFinished()
 {
+    qDebug() << Q_FUNC_INFO;
     ServerConnection* conn = qobject_cast<ServerConnection*>( sender() );
     d->connections.removeAll( conn );
-    conn->deleteLater();
+    delete conn;
 }
 
 
@@ -313,7 +314,7 @@ QStringList Soprano::Server::ServerCore::allModels() const
 
 void Soprano::Server::ServerCore::slotNewTcpConnection()
 {
-    qDebug() << "(ServerCore) new tcp connection.";
+    qDebug() << Q_FUNC_INFO;
     ServerConnection* conn = new ServerConnection( d->modelPool, this );
     d->connections.append( conn );
     connect( conn, SIGNAL(finished()), this, SLOT(serverConnectionFinished()));
@@ -326,7 +327,7 @@ void Soprano::Server::ServerCore::slotNewTcpConnection()
 
 void Soprano::Server::ServerCore::slotNewSocketConnection()
 {
-    qDebug() << "(ServerCore) new socket connection.";
+    qDebug() << Q_FUNC_INFO;
     ServerConnection* conn = new ServerConnection( d->modelPool, this );
     d->connections.append( conn );
     connect( conn, SIGNAL(finished()), this, SLOT(serverConnectionFinished()));

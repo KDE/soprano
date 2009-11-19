@@ -115,7 +115,7 @@ Soprano::Server::ServerConnection::ServerConnection( ModelPool* pool, ServerCore
 
 Soprano::Server::ServerConnection::~ServerConnection()
 {
-    qDebug() << "Removing connection";
+    qDebug() << Q_FUNC_INFO << "Removing connection";
 
     // d->socket deleted when quit()
     quit();
@@ -162,6 +162,8 @@ void Soprano::Server::ServerConnection::run()
 
     // start the event loop
     exec();
+
+    qDebug() << Q_FUNC_INFO << "thread done.";
 
     delete d->socket;
     d->socket = 0;
