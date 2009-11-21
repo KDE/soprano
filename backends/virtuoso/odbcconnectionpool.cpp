@@ -97,7 +97,9 @@ Soprano::ODBC::ConnectionPool::ConnectionPool( const QString& odbcConnectString,
 
 Soprano::ODBC::ConnectionPool::~ConnectionPool()
 {
-    qDeleteAll( d->m_openConnections );
+    // cannot use qDeleteAll since Connection's destructor will change m_openConnections
+    while( !d->m_openConnections.isEmpty() )
+        delete d->m_openConnections.begin().value();
     delete d;
 }
 
