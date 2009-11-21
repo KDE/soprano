@@ -286,7 +286,7 @@ void Soprano::Server::ServerCore::serverConnectionFinished()
     qDebug() << Q_FUNC_INFO;
     ServerConnection* conn = qobject_cast<ServerConnection*>( sender() );
     d->connections.removeAll( conn );
-    conn->deleteLater();
+    delete conn;
 }
 
 
