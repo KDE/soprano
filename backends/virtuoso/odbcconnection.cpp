@@ -34,7 +34,8 @@
 
 
 Soprano::ODBC::Connection::Connection()
-    : d( new ConnectionPrivate() )
+    : QObject(),
+      d( new ConnectionPrivate() )
 {
     qDebug() << Q_FUNC_INFO << QThread::currentThread();
 }
@@ -44,6 +45,10 @@ Soprano::ODBC::Connection::~Connection()
 {
     qDebug() << Q_FUNC_INFO << QThread::currentThread();
 
+    d->m_pool->m_connectionMutex.lock();
+    d->m_pool->m_openConnections.remove( d->m_pool->m_openConnections.key( this ) );
+    d->m_pool->m_connectionMutex.unlock();
+
     qDeleteAll( d->m_openResults );
 
     if ( d->m_hdbc ) {
@@ -52,6 +57,12 @@ Soprano::ODBC::Connection::~Connection()
     delete d->m_env;
 
     delete d;
+}
+
+
+void Soprano::ODBC::Connection::cleanup()
+{
+    delete this;
 }
 
 
@@ -108,3 +119,5 @@ HSTMT Soprano::ODBC::Connection::execute( const QString& request )
         }
     }
 }
+
+#include "odbcconnection.moc"

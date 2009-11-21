@@ -116,19 +116,17 @@ Soprano::ODBC::Connection* Soprano::ODBC::ConnectionPool::connection()
 
     Connection* conn = d->createConnection();
     d->m_openConnections.insert( QThread::currentThread(), conn );
+    // using the cleanup slot rather than deleteLater to not depend on any event loop
     connect( QThread::currentThread(), SIGNAL( finished() ),
-             this, SLOT( slotThreadFinished() ) );
+             conn, SLOT( cleanup() ),
+             Qt::DirectConnection );
+    connect( QThread::currentThread(), SIGNAL( terminated() ),
+             conn, SLOT( cleanup() ),
+             Qt::DirectConnection );
+    connect( QThread::currentThread(), SIGNAL( destroyed() ),
+             conn, SLOT( cleanup() ),
+             Qt::DirectConnection );
     return conn;
-}
-
-
-void Soprano::ODBC::ConnectionPool::slotThreadFinished()
-{
-    QObject* s = sender();
-    if ( QThread* t = qobject_cast<QThread*>( s ) ) {
-        QMutexLocker lock( &d->m_connectionMutex );
-        delete d->m_openConnections.take( t );
-    }
 }
 
 #include "odbcconnectionpool.moc"

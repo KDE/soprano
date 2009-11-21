@@ -22,6 +22,8 @@
 #ifndef _SOPRANO_ODBC_CONNECTION_H_
 #define _SOPRANO_ODBC_CONNECTION_H_
 
+#include <QtCore/QObject>
+
 #include "error.h"
 #include <sql.h>
 
@@ -32,13 +34,18 @@ namespace Soprano {
         class ConnectionPrivate;
         class QueryResult;
 
-        class Connection : public Soprano::Error::ErrorCache
+        class Connection : public QObject, public Soprano::Error::ErrorCache
         {
+            Q_OBJECT
+
         public:
             ~Connection();
 
             Error::ErrorCode executeCommand( const QString& command );
             QueryResult* executeQuery( const QString& request );
+
+        public Q_SLOTS:
+            void cleanup();
 
         private:
             Connection();

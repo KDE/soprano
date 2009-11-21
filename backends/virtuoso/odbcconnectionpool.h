@@ -45,9 +45,6 @@ namespace Soprano {
              */
             Connection* connection();
 
-        private Q_SLOTS:
-            void slotThreadFinished();
-
         private:
             ConnectionPoolPrivate* const d;
         };
