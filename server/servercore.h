@@ -1,4 +1,4 @@
-/* 
+/*
  * This file is part of Soprano Project.
  *
  * Copyright (C) 2007 Sebastian Trueg <trueg@kde.org>
@@ -43,7 +43,7 @@ namespace Soprano {
          * of named Model instances that can be accessed by clients over
          * a tcp connection through Server::BackendPlugin.
          *
-         * Creating a server is very simple: Either derive from ServerCore or 
+         * Creating a server is very simple: Either derive from ServerCore or
          * create an instance and then call start() to make the server listen
          * for incoming connections.
          *
@@ -60,9 +60,11 @@ namespace Soprano {
          * registers a DBus interface on the DBus session bus. Both ways of
          * communication can be used simultaneously.
          *
-         * ServerCore is designed for single-threaded usage. Thus, model() uses
-         * Util::AsyncModel to protect against deadlocks.
-         * This behaviour can of course be changed by reimplementing model().
+         * ServerCore will spawn a new thread for each incoming TCP or local socket
+         * connection. In addition the D-Bus interface is running in its own thread.
+         * The maximum number of threads that are spawned can be set via setMaximumConnectionCount().
+         * By default there is no restriction on the maximum thread count to keep
+         * backwards compatibility.
          *
          * \author Sebastian Trueg <trueg@kde.org>
          */
@@ -104,6 +106,33 @@ namespace Soprano {
              * \return A list of BackendSetting objects.
              */
             QList<BackendSetting> backendSettings() const;
+
+            /**
+             * Set the maximum number of TCP and local socket connections. If the max is reached
+             * new incoming connections are refused.
+             *
+             * This makes sense to restrict the number of threads the server spawns.
+             *
+             * A typical usage would be to server a max number of clients via a local
+             * socket connection and let the rest share the one D-Bus interface.
+             *
+             * \param max The maximum number of connections. Using a value of 0 means no restriction.
+             *
+             * \since 2.4
+             */
+            void setMaximumConnectionCount( int max );
+
+            /**
+             * The maximum number of incoming connections that are served.
+             *
+             * \return The maxium number of connections the server will handle
+             * or 0 if there is no restriction.
+             *
+             * \sa setMaximumConnectionCount.
+             *
+             * \since 2.4
+             */
+            int maximumConnectionCount() const;
 
             /**
              * Get or create Model with the specific name.
@@ -160,7 +189,7 @@ namespace Soprano {
              *
              * \warning Via the TCP connection signals are not supported. Thus, the models created
              * by it will not emit signals such as Model::statementAdded. Also no permission handling or
-             * any kind of security is implemented at the moment. Thus, if a server is running and is 
+             * any kind of security is implemented at the moment. Thus, if a server is running and is
              * listening on a port, it is open to connections from any client on any computer in the
              * network.
              *
@@ -186,6 +215,8 @@ namespace Soprano {
              * Use Client::DBusClient to connect.
              *
              * In case Soprano is compiled without D-Bus support this method does nothing.
+             *
+             * D-Bus clients will be served in a separate thread.
              */
             void registerAsDBusObject( const QString& objectPath = QString() );
 

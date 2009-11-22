@@ -54,16 +54,18 @@ class Soprano::Server::ServerCore::Private
 {
 public:
     Private()
-        :
+        : maxConnectionCount( 0 ),
 #ifdef BUILD_DBUS_SUPPORT
-        dbusController( 0 ),
+          dbusController( 0 ),
 #endif
-        tcpServer( 0 ),
-        socketServer( 0 )
+          tcpServer( 0 ),
+          socketServer( 0 )
     {}
 
     const Backend* backend;
     BackendSettings settings;
+
+    int maxConnectionCount;
 
     QHash<QString, Model*> models;
     QList<ServerConnection*> connections;
@@ -78,6 +80,8 @@ public:
     // bridge between ServerCore and ServerConnection
     ModelPool* modelPool;
 
+    ServerCore* q;
+
     BackendSettings createBackendSettings( const QString& name ) {
         BackendSettings newSettings = settings;
         if ( isOptionInSettings( newSettings, BackendOptionStorageDir ) ) {
@@ -87,9 +91,31 @@ public:
         return newSettings;
     }
 
+    void handleIncomingConnection( QIODevice* socket );
+
     void _s_localSocketError( QLocalSocket::LocalSocketError );
     void _s_tcpSocketError( QAbstractSocket::SocketError );
 };
+
+
+void Soprano::Server::ServerCore::Private::handleIncomingConnection( QIODevice* socket )
+{
+    qDebug() << Q_FUNC_INFO;
+    if ( maxConnectionCount > 0 &&
+         connections.count() >= maxConnectionCount ) {
+        qDebug() << Q_FUNC_INFO << "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA too many conenctions! go away!";
+        delete socket;
+    }
+    else {
+        qDebug() << Q_FUNC_INFO << "New connection. Current count:" << connections.count();
+        ServerConnection* conn = new ServerConnection( modelPool, q );
+        connections.append( conn );
+        connect( conn, SIGNAL(finished()), q, SLOT(serverConnectionFinished()));
+        connect( socket, SIGNAL( error( QLocalSocket::LocalSocketError ) ),
+                 q, SLOT( _s_localSocketError( QLocalSocket::LocalSocketError ) ) );
+        conn->start( socket );
+    }
+}
 
 
 void Soprano::Server::ServerCore::Private::_s_localSocketError( QLocalSocket::LocalSocketError error )
@@ -111,6 +137,8 @@ Soprano::Server::ServerCore::ServerCore( QObject* parent )
     : QObject( parent ),
       d( new Private() )
 {
+    d->q = this;
+
     // default backend
     d->backend = Soprano::usedBackend();
     d->modelPool = new ModelPool( this );
@@ -153,6 +181,18 @@ void Soprano::Server::ServerCore::setBackendSettings( const QList<BackendSetting
 QList<Soprano::BackendSetting> Soprano::Server::ServerCore::backendSettings() const
 {
     return d->settings;
+}
+
+
+void Soprano::Server::ServerCore::setMaximumConnectionCount( int max )
+{
+    d->maxConnectionCount = max;
+}
+
+
+int Soprano::Server::ServerCore::maximumConnectionCount() const
+{
+    return d->maxConnectionCount;
 }
 
 
@@ -287,6 +327,7 @@ void Soprano::Server::ServerCore::serverConnectionFinished()
     ServerConnection* conn = qobject_cast<ServerConnection*>( sender() );
     d->connections.removeAll( conn );
     delete conn;
+    qDebug() << Q_FUNC_INFO << "Connection removed. Current count:" << d->connections.count();
 }
 
 
@@ -315,26 +356,14 @@ QStringList Soprano::Server::ServerCore::allModels() const
 void Soprano::Server::ServerCore::slotNewTcpConnection()
 {
     qDebug() << Q_FUNC_INFO;
-    ServerConnection* conn = new ServerConnection( d->modelPool, this );
-    d->connections.append( conn );
-    connect( conn, SIGNAL(finished()), this, SLOT(serverConnectionFinished()));
-    QTcpSocket* socket = d->tcpServer->nextPendingConnection();
-    connect( socket, SIGNAL( error( QAbstractSocket::SocketError ) ),
-             this, SLOT( _s_tcpSocketError( QAbstractSocket::SocketError ) ) );
-    conn->start( socket );
+    d->handleIncomingConnection( d->tcpServer->nextPendingConnection() );
 }
 
 
 void Soprano::Server::ServerCore::slotNewSocketConnection()
 {
     qDebug() << Q_FUNC_INFO;
-    ServerConnection* conn = new ServerConnection( d->modelPool, this );
-    d->connections.append( conn );
-    connect( conn, SIGNAL(finished()), this, SLOT(serverConnectionFinished()));
-    QLocalSocket* socket = d->socketServer->nextPendingConnection();
-    connect( socket, SIGNAL( error( QLocalSocket::LocalSocketError ) ),
-             this, SLOT( _s_localSocketError( QLocalSocket::LocalSocketError ) ) );
-    conn->start( socket );
+    d->handleIncomingConnection( d->socketServer->nextPendingConnection() );
 }
 
 #include "servercore.moc"
