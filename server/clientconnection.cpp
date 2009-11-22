@@ -20,6 +20,7 @@
  */
 
 #include "clientconnection.h"
+#include "clientconnection_p.h"
 #include "commands.h"
 #include "socketdevice.h"
 #include "datastream.h"
@@ -44,24 +45,40 @@ namespace {
     const int s_defaultTimeout = 600000;
 }
 
-class Soprano::Client::ClientConnection::Private
+
+Soprano::Client::SocketHandler::SocketHandler( ClientConnectionPrivate* client, QIODevice* socket )
+    : QObject(),
+      m_client( client ),
+      m_socket( socket )
 {
-public:
-    QHash<QThread*, QIODevice*> socketHash;
-    QMutex socketMutex;
-};
+}
+
+
+Soprano::Client::SocketHandler::~SocketHandler()
+{
+    QMutexLocker lock( &m_client->socketMutex );
+    m_client->socketHash.remove( m_client->socketHash.key( this ) );
+    delete m_socket;
+}
+
+
+void Soprano::Client::SocketHandler::cleanup()
+{
+    delete this;
+}
 
 
 Soprano::Client::ClientConnection::ClientConnection( QObject* parent )
     : QObject( parent ),
-      d( new Private() )
+      d( new ClientConnectionPrivate() )
 {
 }
 
 
 Soprano::Client::ClientConnection::~ClientConnection()
 {
-    qDeleteAll( d->socketHash );
+    while( !d->socketHash.isEmpty() )
+        delete d->socketHash.begin().value();
     delete d;
 }
 
@@ -70,32 +87,26 @@ QIODevice* Soprano::Client::ClientConnection::socket()
 {
     QMutexLocker lock( &d->socketMutex );
 
-    QHash<QThread*, QIODevice*>::iterator it = d->socketHash.find( QThread::currentThread() );
+    QHash<QThread*, SocketHandler*>::iterator it = d->socketHash.find( QThread::currentThread() );
     if ( it != d->socketHash.end() ) {
-        return *it;
+        return it.value()->socket();
     }
     else if ( QIODevice* socket = newConnection() ) {
-        d->socketHash.insert( QThread::currentThread(), socket );
+        SocketHandler* cleaner = new SocketHandler( d, socket );
+        d->socketHash.insert( QThread::currentThread(), cleaner );
         connect( QThread::currentThread(), SIGNAL( finished() ),
-                 this, SLOT( slotThreadFinished() ),
+                 cleaner, SLOT( cleanup() ),
+                 Qt::DirectConnection );
+        connect( QThread::currentThread(), SIGNAL( terminated() ),
+                 cleaner, SLOT( cleanup() ),
+                 Qt::DirectConnection );
+        connect( QThread::currentThread(), SIGNAL( destroyed() ),
+                 cleaner, SLOT( cleanup() ),
                  Qt::DirectConnection );
         return socket;
     }
 
     return 0;
-}
-
-
-void Soprano::Client::ClientConnection::slotThreadFinished()
-{
-    QThread* thread = qobject_cast<QThread*>( sender() );
-    if ( thread ) {
-        QHash<QThread*, QIODevice*>::iterator it = d->socketHash.find( thread );
-        if ( it != d->socketHash.end() ) {
-            delete *it;
-            d->socketHash.erase( it );
-        }
-    }
 }
 
 
@@ -682,7 +693,8 @@ bool Soprano::Client::ClientConnection::checkProtocolVersion()
 bool Soprano::Client::ClientConnection::testConnection()
 {
     QIODevice* s = socket();
-    return s ? isConnected( s ) : false; 
+    return s ? isConnected( s ) : false;
 }
 
 #include "clientconnection.moc"
+#include "clientconnection_p.moc"

@@ -1,7 +1,7 @@
-/* 
+/*
  * This file is part of Soprano Project.
  *
- * Copyright (C) 2007-2008 Sebastian Trueg <trueg@kde.org>
+ * Copyright (C) 2007-2009 Sebastian Trueg <trueg@kde.org>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -39,6 +39,9 @@ namespace Soprano {
     class BackendSetting;
 
     namespace Client {
+
+        class ClientConnectionPrivate;
+
         class ClientConnection : public QObject, public Error::ErrorCache
         {
             Q_OBJECT
@@ -91,14 +94,10 @@ namespace Soprano {
             virtual QIODevice* newConnection() = 0;
             virtual bool isConnected( QIODevice* dev ) = 0;
 
-        private Q_SLOTS:
-            void slotThreadFinished();
-
         private:
             QIODevice* socket();
 
-            class Private;
-            Private* const d;
+            ClientConnectionPrivate* const d;
         };
     }
 }
