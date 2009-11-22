@@ -40,13 +40,13 @@
 #include "../index/indexfiltermodel.h"
 #endif
 
-#include "../server/tcpclient.h"
-#include "../server/localsocketclient.h"
+#include "../client/tcpclient.h"
+#include "../client/localsocketclient.h"
 #ifdef BUILD_DBUS_SUPPORT
-#include "../server/dbus/dbusclient.h"
-#include "../server/dbus/dbusmodel.h"
+#include "../client/dbus/dbusclient.h"
+#include "../client/dbus/dbusmodel.h"
 #endif
-#include "../server/sparql/sparqlmodel.h"
+#include "../client/sparql/sparqlmodel.h"
 
 #include <signal.h>
 
