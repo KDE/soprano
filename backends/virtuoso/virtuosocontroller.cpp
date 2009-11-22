@@ -167,7 +167,7 @@ int Soprano::VirtuosoController::usedPort() const
 
 bool Soprano::VirtuosoController::shutdown()
 {
-    if ( isRunning() ) {
+    if ( m_virtuosoProcess.state() == QProcess::Running ) {
         qDebug() << "Shutting down virtuoso instance" << m_virtuosoProcess.pid();
         m_status = ShuttingDown;
         m_virtuosoProcess.terminate();
