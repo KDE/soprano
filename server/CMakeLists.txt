@@ -21,23 +21,6 @@ set(soprano_server_SRC
   datastream.cpp
 )
 
-set(soprano_client_SRC
-  tcpclient.h
-  tcpclient.cpp
-  localsocketclient.cpp
-  clientconnection.h
-  clientconnection.cpp
-  clientmodel.cpp
-  clientstatementiteratorbackend.cpp
-  clientnodeiteratorbackend.cpp
-  clientqueryresultiteratorbackend.cpp
-  datastream.cpp
-  sparql/sparqlmodel.cpp
-  sparql/sparqlqueryresult.cpp
-  sparql/sparqlprotocol.cpp
-  sparql/sparqlxmlresultparser.cpp
-)
-
 if(BUILD_DBUS_SUPPORT)
   set(soprano_server_SRC
     ${soprano_server_SRC}
@@ -52,26 +35,6 @@ if(BUILD_DBUS_SUPPORT)
     dbus/dbuscontroller.cpp
     dbus/dbusoperators.cpp
     )
-
-  set(soprano_client_SRC
-    ${soprano_client_SRC}
-    dbus/dbusutil.cpp
-    dbus/dbusabstractinterface.cpp
-    dbus/dbusmodelinterface.cpp
-    dbus/dbusstatementiteratorinterface.cpp
-    dbus/dbusnodeiteratorinterface.cpp
-    dbus/dbusqueryresultiteratorinterface.cpp
-    dbus/dbusserverinterface.cpp
-    dbus/dbusclient.cpp
-    dbus/dbusmodel.cpp
-    dbus/dbusclientnodeiteratorbackend.cpp
-    dbus/dbusclientstatementiteratorbackend.cpp
-    dbus/dbusclientqueryresultiteratorbackend.cpp
-    dbus/dbusoperators.cpp
-    dbus/dbusstatementiterator.cpp
-    dbus/dbusnodeiterator.cpp
-    dbus/dbusqueryresultiterator.cpp
-    )
 endif(BUILD_DBUS_SUPPORT)
 
 configure_file(soprano-server-config.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/soprano-server-config.h)
@@ -82,12 +45,10 @@ configure_file(soprano-server-config.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/soprano
 #)
   
 qt4_automoc(${soprano_server_SRC})
-qt4_automoc(${soprano_client_SRC})
 
 #qt4_automoc(${soprano_serverbackend_SRC})
 
 add_library(sopranoserver SHARED ${soprano_server_SRC})
-add_library(sopranoclient SHARED ${soprano_client_SRC})
 #add_library(soprano_serverclientbackend SHARED ${soprano_serverbackend_SRC})
 
 qt4_automoc(sopranodcore.cpp)
@@ -95,19 +56,11 @@ qt4_automoc(sopranodcore.cpp)
 add_executable(sopranod sopranod.cpp sopranodcore.cpp lockfile.cpp)
 
 set_target_properties(sopranoserver PROPERTIES
-  VERSION 1.0.0
+  VERSION 1.2.0
   SOVERSION 1
   DEFINE_SYMBOL MAKE_SOPRANO_SERVER_LIB
   INSTALL_NAME_DIR ${LIB_DESTINATION}
 )
-
-set_target_properties(sopranoclient PROPERTIES
-  VERSION 1.1.0
-  SOVERSION 1
-  DEFINE_SYMBOL MAKE_SOPRANO_CLIENT_LIB
-  INSTALL_NAME_DIR ${LIB_DESTINATION}
-)
-
 
 target_link_libraries(
   sopranoserver
@@ -118,20 +71,6 @@ target_link_libraries(
 if(BUILD_DBUS_SUPPORT)
   target_link_libraries(
     sopranoserver
-    ${QT_QTDBUS_LIBRARY})
-endif(BUILD_DBUS_SUPPORT)
-
-
-target_link_libraries(
-  sopranoclient
-  soprano
-  ${QT_QTCORE_LIBRARY}
-  ${QT_QTNETWORK_LIBRARY}
-  ${QT_QTXML_LIBRARY}
-)
-if(BUILD_DBUS_SUPPORT)
-  target_link_libraries(
-    sopranoclient
     ${QT_QTDBUS_LIBRARY})
 endif(BUILD_DBUS_SUPPORT)
 
@@ -154,7 +93,7 @@ if(SOPRANO_BUILD_INDEX_LIB)
   )
 endif(SOPRANO_BUILD_INDEX_LIB)
 
-INSTALL(TARGETS sopranoserver sopranoclient sopranod
+INSTALL(TARGETS sopranoserver sopranod
 	LIBRARY DESTINATION ${LIB_DESTINATION}
 	RUNTIME DESTINATION bin
 	ARCHIVE DESTINATION lib
@@ -169,12 +108,9 @@ INSTALL(TARGETS sopranoserver sopranoclient sopranod
 install(
   FILES 
   servercore.h
-  tcpclient.h
-  localsocketclient.h
   DESTINATION include/soprano
 )
 
-add_subdirectory(sparql)
 if(BUILD_DBUS_SUPPORT)
   add_subdirectory(dbus)
 endif(BUILD_DBUS_SUPPORT)
