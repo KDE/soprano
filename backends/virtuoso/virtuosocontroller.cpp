@@ -236,7 +236,7 @@ void Soprano::VirtuosoController::writeConfigFile( const QString& path, const Ba
     if ( isOptionInSettings( settings, BackendOptionUser, "buffers" ) )
         numberOfBuffers = valueInSettings( settings, BackendOptionUser, "buffers" ).toInt();
     if ( isOptionInSettings( settings, BackendOptionUser, "threads" ) )
-        numberOfBuffers = valueInSettings( settings, BackendOptionUser, "threads" ).toInt();
+        numberOfThreads = valueInSettings( settings, BackendOptionUser, "threads" ).toInt();
 
     // although we do not actually use a port Virtuoso uses the port number to create
     // the unix socket name.
