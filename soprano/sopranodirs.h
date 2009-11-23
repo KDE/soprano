@@ -43,7 +43,7 @@ namespace Soprano {
      * searchpaths and \p extraDirs.
      *
      * \return The path to the library file or an emtpy string if no lib
-     * coudl be found.
+     * could be found.
      */
     QString findLibraryPath( const QString& libName,
                              const QStringList& extraDirs = QStringList(),
