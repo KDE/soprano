@@ -165,6 +165,11 @@ void Soprano::Server::ServerConnection::run()
 
     qDebug() << Q_FUNC_INFO << "thread done.";
 
+    // cleanup open iterators
+    d->openStatementIterators.clear();
+    d->openNodeIterators.clear();
+    d->openQueryIterators.clear();
+
     delete d->socket;
     d->socket = 0;
 }
