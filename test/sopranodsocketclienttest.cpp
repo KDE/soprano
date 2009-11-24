@@ -20,7 +20,7 @@
  */
 
 #include "sopranodsocketclienttest.h"
-#include "../server/localsocketclient.h"
+#include "../client/localsocketclient.h"
 #include "../soprano/storagemodel.h"
 
 #include <QtTest/QtTest>

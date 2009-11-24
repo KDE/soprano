@@ -20,8 +20,8 @@
  */
 
 #include "modelsignalspy.h"
-#include "../server/dbus/dbusclient.h"
-#include "../server/dbus/dbusmodel.h"
+#include "../client/dbus/dbusclient.h"
+#include "../client/dbus/dbusmodel.h"
 
 #include <QtCore/QCoreApplication>
 

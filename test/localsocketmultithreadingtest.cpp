@@ -22,7 +22,7 @@
 #include "localsocketmultithreadingtest.h"
 
 #include <soprano.h>
-#include "../server/localsocketclient.h"
+#include "../client/localsocketclient.h"
 
 #include <QtTest/QtTest>
 
