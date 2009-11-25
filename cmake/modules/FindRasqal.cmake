@@ -1,8 +1,9 @@
-# - Try to find Rasqal
+# - Try to find the Rasqal rdf query library (http://librdf.org/rasqal/)
 # Once done this will define
 #
 #  RASQAL_FOUND       - system has Rasqal
 #  RASQAL_LIBRARIES   - Link these to use RASQAL
+#  RASQAL_INCLUDE_DIR - The include directory for using rasqal
 #  RASQAL_DEFINITIONS - Compiler switches required for using RASQAL
 #  RASQAL_VERSION     - The rasqal version string
 
@@ -83,6 +84,7 @@ INCLUDE(MacroEnsureVersion)
       message(FATAL_ERROR "Could NOT find Rasqal")
     endif (Rasqal_FIND_REQUIRED)
   endif (RASQAL_FOUND)
+
 
 mark_as_advanced(RASQAL_INCLUDE_DIR_TMP
                  RASQAL_INCLUDE_DIR 

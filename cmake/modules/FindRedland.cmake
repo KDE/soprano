@@ -1,8 +1,9 @@
-# - Try to find Redland
+# - Try to find the Redland rdf libraries (http://librdf.org/)
 # Once done this will define
 #
 #  REDLAND_FOUND       - system has Redland
 #  REDLAND_LIBRARIES   - Link these to use REDLAND
+#  REDLAND_INCLUDE_DIR - Include directory for using the redland library
 #  REDLAND_DEFINITIONS - Compiler switches required for using REDLAND
 #  REDLAND_VERSION     - The redland version string
 

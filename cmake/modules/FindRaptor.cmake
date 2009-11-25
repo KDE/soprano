@@ -1,10 +1,11 @@
-# - Try to find Raptor
+# - Try to find the Raptor RDF parsing library (http://librdf.org/raptor/)
 # Once done this will define
 #
 #  RAPTOR_FOUND       - system has Raptor
-#  RAPTOR_LIBRARIES   - Link these to use RAPTOR
-#  RAPTOR_DEFINITIONS - Compiler switches required for using RAPTOR
-#  RAPTOR_VERSION     - The raptor version string
+#  RAPTOR_LIBRARIES   - Link these to use Raptor
+#  RAPTOR_INCLUDE_DIR - Include directory for using Raptor
+#  RAPTOR_DEFINITIONS - Compiler switches required for using Raptor
+#  RAPTOR_VERSION     - The Raptor version string
 
 # (c) 2007-2009 Sebastian Trueg <trueg@kde.org>
 #
@@ -21,6 +22,7 @@ FIND_PROGRAM(
   RAPTOR_CONFIG
   NAMES raptor-config
   )
+
 if(RAPTOR_CONFIG)
   EXECUTE_PROCESS(
     COMMAND ${RAPTOR_CONFIG} --version
