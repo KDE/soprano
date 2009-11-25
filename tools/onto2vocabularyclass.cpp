@@ -148,7 +148,9 @@ QString disambiguateKeyword( const QString& name, const QString &className )
 {
     Q_ASSERT( !name.isEmpty() );
     // TODO: add more C++ keywords that are not usable as method names
-    static const QStringList keywords = QStringList() << "class";
+    const QStringList keywords
+        = QStringList() << QLatin1String( "class" )
+                        << QLatin1String( "long" );
     if ( keywords.contains( name ) )
         return className.toLower() + name.left( 1 ).toUpper() + name.mid( 1 );
     return name;
