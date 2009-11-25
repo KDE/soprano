@@ -565,7 +565,7 @@ namespace {
           << "   <parameters>        The parameters to the command as specified above." << endl << endl;
 
         s << "   Nodes are defined in an N-Triples-like notation:" << endl
-          << "   - Resouce nodes are defined in angle brackets." << endl
+          << "   - Resource nodes are defined in angle brackets." << endl
           << "     Example: <http://www.test.org#A>" << endl
           << "   - Blank nodes are defined as \"_:\" followed by their identifier." << endl
           << "     Example: _:a" << endl

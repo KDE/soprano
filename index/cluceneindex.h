@@ -63,7 +63,7 @@ namespace Soprano {
          *
          * <b>Data organization</b>
          *
-         * In the %Soprano index each resouce gets its own clucene document. Only statements with literal
+         * In the %Soprano index each resource gets its own clucene document. Only statements with literal
          * objects are indexed. The clucene is identified through the statements' subject and then a new
          * field is created that uses the statement's predicate as field name and the statement's object
          * as value. The index ignores all context information.
