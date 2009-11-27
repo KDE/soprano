@@ -62,7 +62,7 @@ namespace Soprano {
                 return result;
             }
 
-            QString Unbound::writeElement()
+            QString Unbound::writeElement() const
             {
                 QString xml;
                 xml += indent() + "<unbound/>\n";
@@ -126,7 +126,7 @@ namespace Soprano {
 
 
 
-            QString Literal::writeElement()
+            QString Literal::writeElement() const
             {
                 QString xml;
                 xml += indent() + "<literal datatype=\"" + datatype() + "\" xsi:type=\"" + xsi_type() + "\" xml:lang=\"" + xml_lang() + "\">\n";
@@ -154,7 +154,7 @@ namespace Soprano {
                 return result;
             }
 
-            QString Bnode::writeElement()
+            QString Bnode::writeElement() const
             {
                 QString xml;
                 xml += indent() + "<bnode>\n";
@@ -182,7 +182,7 @@ namespace Soprano {
                 return result;
             }
 
-            QString Uri::writeElement()
+            QString Uri::writeElement() const
             {
                 QString xml;
                 xml += indent() + "<uri>\n";
@@ -292,7 +292,7 @@ namespace Soprano {
                 return result;
             }
 
-            QString Binding::writeElement()
+            QString Binding::writeElement() const
             {
                 QString xml;
                 xml += indent() + "<binding name=\"" + name() + "\">\n";
@@ -373,12 +373,12 @@ namespace Soprano {
                 return result;
             }
 
-            QString Result::writeElement()
+            QString Result::writeElement() const
             {
                 QString xml;
                 xml += indent() + "<result xml:lang=\"" + xml_lang() + "\" index=\"" + index() + "\">\n";
                 indent( 2 );
-                foreach( Binding e, bindingList() ) {
+                foreach( const Binding &e, bindingList() ) {
                     xml += e.writeElement();
                 }
                 indent( -2 );
@@ -412,7 +412,7 @@ namespace Soprano {
                 return result;
             }
 
-            QString Boolean::writeElement()
+            QString Boolean::writeElement() const
             {
                 QString xml;
                 xml += indent() + "<boolean/>\n";
@@ -460,13 +460,13 @@ namespace Soprano {
                 return result;
             }
 
-            QString Results::writeElement()
+            QString Results::writeElement() const
             {
                 QString xml;
                 xml += indent() + "<results>\n";
                 indent( 2 );
                 xml += Boolean().writeElement();
-                foreach( Result e, resultList() ) {
+                foreach( const Result &e, resultList() ) {
                     xml += e.writeElement();
                 }
                 indent( -2 );
@@ -506,7 +506,7 @@ namespace Soprano {
                 return result;
             }
 
-            QString Variable::writeElement()
+            QString Variable::writeElement() const
             {
                 QString xml;
                 xml += indent() + "<variable name=\"" + name() + "\"/>\n";
@@ -554,12 +554,12 @@ namespace Soprano {
                 return result;
             }
 
-            QString Head::writeElement()
+            QString Head::writeElement() const
             {
                 QString xml;
                 xml += indent() + "<head>\n";
                 indent( 2 );
-                foreach( Variable e, variableList() ) {
+                foreach( const Variable &e, variableList() ) {
                     xml += e.writeElement();
                 }
                 indent( -2 );
@@ -656,7 +656,7 @@ namespace Soprano {
                 return result;
             }
 
-            QString Sparql::writeElement()
+            QString Sparql::writeElement() const
             {
                 QString xml;
                 xml += indent() + "<sparql xml:lang=\"" + xml_lang() + "\" xsi:schemaLocation=\"" + xsi_schemaLocation() + "\">\n";

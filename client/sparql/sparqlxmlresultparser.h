@@ -41,7 +41,7 @@ namespace Soprano {
                    Parse XML object from DOM element.
                 */
                 static Unbound parseElement( const QDomElement &element, bool *ok );
-                QString writeElement();
+                QString writeElement() const;
 
             };
 
@@ -62,7 +62,7 @@ namespace Soprano {
                    Parse XML object from DOM element.
                 */
                 static Literal parseElement( const QDomElement &element, bool *ok );
-                QString writeElement();
+                QString writeElement() const;
 
             private:
                 QString mDatatype;
@@ -78,7 +78,7 @@ namespace Soprano {
                    Parse XML object from DOM element.
                 */
                 static Bnode parseElement( const QDomElement &element, bool *ok );
-                QString writeElement();
+                QString writeElement() const;
                 void setId( const QString &v ) { this->mId = v; };
                 QString id() const { return this->mId; }
     
@@ -93,7 +93,7 @@ namespace Soprano {
                    Parse XML object from DOM element.
                 */
                 static Uri parseElement( const QDomElement &element, bool *ok );
-                QString writeElement();
+                QString writeElement() const;
     
                 void setUri( const QUrl &v ) { this->mUri = v; };
                 QUrl uri() const { return this->mUri; }
@@ -131,7 +131,7 @@ namespace Soprano {
                    Parse XML object from DOM element.
                 */
                 static Binding parseElement( const QDomElement &element, bool *ok );
-                QString writeElement();
+                QString writeElement() const;
 
             private:
                 QString mName;
@@ -160,7 +160,7 @@ namespace Soprano {
                    Parse XML object from DOM element.
                 */
                 static Result parseElement( const QDomElement &element, bool *ok );
-                QString writeElement();
+                QString writeElement() const;
 
             private:
                 QString mXml_lang;
@@ -179,7 +179,7 @@ namespace Soprano {
                    Parse XML object from DOM element.
                 */
                 static Boolean parseElement( const QDomElement &element, bool *ok );
-                QString writeElement();
+                QString writeElement() const;
 
                 bool isValid() const { return mIsValid; }
                 bool value() const { return this->mValue; }
@@ -198,7 +198,7 @@ namespace Soprano {
                    Parse XML object from DOM element.
                 */
                 static Results parseElement( const QDomElement &element, bool *ok );
-                QString writeElement();
+                QString writeElement() const;
 
             private:
                 Result::List mResultList;
@@ -216,7 +216,7 @@ namespace Soprano {
                    Parse XML object from DOM element.
                 */
                 static Variable parseElement( const QDomElement &element, bool *ok );
-                QString writeElement();
+                QString writeElement() const;
 
             private:
                 QString mName;
@@ -232,7 +232,7 @@ namespace Soprano {
                    Parse XML object from DOM element.
                 */
                 static Head parseElement( const QDomElement &element, bool *ok );
-                QString writeElement();
+                QString writeElement() const;
 
             private:
                 Variable::List mVariableList;
@@ -255,7 +255,7 @@ namespace Soprano {
                    Parse XML object from DOM element.
                 */
                 static Sparql parseElement( const QDomElement &element, bool *ok );
-                QString writeElement();
+                QString writeElement() const;
                 static Sparql parseFile( const QString &filename, bool *ok );
                 static Sparql parseByteArray( const QByteArray& array, bool *ok );
                 bool writeFile( const QString &filename );
