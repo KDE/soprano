@@ -70,12 +70,6 @@ QString Soprano::findLibraryPath( const QString& libName, const QStringList& ext
     // paths to search for libs
     QStringList dirs = libDirs() + extraDirs;
 
-#ifndef NDEBUG
-    foreach( const QString& dir, dirs ) {
-        Q_ASSERT(!dir.endsWith('/'));
-    }
-#endif
-
     // subdirs to search
     QStringList subDirs;
     foreach( const QString& subDir, subDirs_ ) {
@@ -86,15 +80,6 @@ QString Soprano::findLibraryPath( const QString& libName, const QStringList& ext
     }
     // we add the empty string to be able to handle all in one loop below
     subDirs << QString();
-
-#ifndef NDEBUG
-    foreach( const QString& dir, subDirs ) {
-        if (!dir.isEmpty()) {
-            Q_ASSERT(dir.endsWith('/'));
-            Q_ASSERT(!dir.startsWith('/'));
-        }
-    }
-#endif
 
     QStringList libs = makeLibNames( libName );
     Q_FOREACH( const QString& lib, libs ) {
