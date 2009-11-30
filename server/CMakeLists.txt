@@ -64,9 +64,9 @@ set_target_properties(sopranoserver PROPERTIES
 
 target_link_libraries(
   sopranoserver
-  soprano
   ${QT_QTCORE_LIBRARY}
   ${QT_QTNETWORK_LIBRARY}
+  soprano
 )
 if(BUILD_DBUS_SUPPORT)
   target_link_libraries(
@@ -82,8 +82,8 @@ endif(BUILD_DBUS_SUPPORT)
 
 target_link_libraries(
   sopranod
-  sopranoserver
   soprano
+  sopranoserver
 )
 
 if(SOPRANO_BUILD_INDEX_LIB)

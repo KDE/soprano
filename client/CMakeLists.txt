@@ -64,10 +64,10 @@ set_target_properties(sopranoclient PROPERTIES
 
 target_link_libraries(
   sopranoclient
-  soprano
   ${QT_QTCORE_LIBRARY}
   ${QT_QTNETWORK_LIBRARY}
   ${QT_QTXML_LIBRARY}
+  soprano
 )
 if(BUILD_DBUS_SUPPORT)
   target_link_libraries(

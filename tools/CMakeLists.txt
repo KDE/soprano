@@ -21,9 +21,9 @@ add_executable(onto2vocabularyclass onto2vocabularyclass.cpp)
 
 target_link_libraries(
   sopranocmd
-  sopranoclient
   ${QT_QTCORE_LIBRARY}
   soprano
+  sopranoclient
 )
 if(SOPRANO_BUILD_INDEX_LIB)
   target_link_libraries(
@@ -34,8 +34,8 @@ endif(SOPRANO_BUILD_INDEX_LIB)
 
 target_link_libraries(
   onto2vocabularyclass
-  soprano
   ${QT_QTCORE_LIBRARY}
+  soprano
 )
 
 INSTALL(TARGETS sopranocmd onto2vocabularyclass
