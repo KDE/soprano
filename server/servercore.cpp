@@ -107,13 +107,13 @@ void Soprano::Server::ServerCore::Private::handleIncomingConnection( QIODevice* 
         delete socket;
     }
     else {
-        qDebug() << Q_FUNC_INFO << "New connection. Current count:" << connections.count();
         ServerConnection* conn = new ServerConnection( modelPool, q );
         connections.append( conn );
         connect( conn, SIGNAL(finished()), q, SLOT(serverConnectionFinished()));
         connect( socket, SIGNAL( error( QLocalSocket::LocalSocketError ) ),
                  q, SLOT( _s_localSocketError( QLocalSocket::LocalSocketError ) ) );
         conn->start( socket );
+        qDebug() << Q_FUNC_INFO << "New connection. New count:" << connections.count();
     }
 }
 
