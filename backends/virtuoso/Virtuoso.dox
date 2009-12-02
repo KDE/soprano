@@ -25,8 +25,11 @@
  *                      - \c none - disable the index
  *                      - \c sync - enable syncroneous updates of the index (the index is always in sync. This might give a performace penalty)
  *                      - \c N - The interval in minutes after which the index will be updated.
- * - \c buffers - The number of buffers (8k in size) to be used by Virtuoso. Defaults to 10000.
- * - \c threads - The number of server threads. Defaults to 100.
+ * - \c NumberOfBuffers - The number of buffers (8k in size) to be used by Virtuoso. Defaults to 2000.
+ * - \c ServerThreads   - The number of server threads. Defaults to 100.
+ * - \c CheckpointInterval - The interval in minutes at which Virtuoso will automatically make a database checkpoint. Defaults to 60.
+ * - \c MinAutoCheckpointSize - The minimum size of the Virtuoso transaction log. An automatic checkpoint will not be made if there is
+ *                              less than MinAutoCheckpointSize bytes in the current transaction log. Defaults to 4000000.
  *
  * The two settings above are user settings and have to be provided using Soprano::BackendOptionUser:
  *

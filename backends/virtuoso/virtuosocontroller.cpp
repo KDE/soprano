@@ -231,12 +231,15 @@ void Soprano::VirtuosoController::writeConfigFile( const QString& path, const Ba
 
     // storage dir
     QString dir = valueInSettings( settings, BackendOptionStorageDir ).toString();
-    int numberOfBuffers = 10000;
-    int numberOfThreads = 100;
-    if ( isOptionInSettings( settings, BackendOptionUser, "buffers" ) )
-        numberOfBuffers = valueInSettings( settings, BackendOptionUser, "buffers" ).toInt();
-    if ( isOptionInSettings( settings, BackendOptionUser, "threads" ) )
-        numberOfThreads = valueInSettings( settings, BackendOptionUser, "threads" ).toInt();
+
+    // backwards compatibility
+    int numberOfBuffers = valueInSettings( settings, "buffers", 100 ).toInt();
+    int numberOfThreads = valueInSettings( settings, "threads", 10 ).toInt();
+
+    numberOfBuffers = valueInSettings( settings, "NumberOfBuffers", numberOfBuffers ).toInt();
+    numberOfThreads = valueInSettings( settings, "ServerThreads", numberOfThreads ).toInt();
+    int checkpointInterval = valueInSettings( settings, "CheckpointInterval", -1 ).toInt();
+    int minAutoCheckpointSize = valueInSettings( settings, "MinAutoCheckpointSize", -1 ).toInt();
 
     // although we do not actually use a port Virtuoso uses the port number to create
     // the unix socket name.
@@ -275,9 +278,6 @@ void Soprano::VirtuosoController::writeConfigFile( const QString& path, const Ba
     // FIXME: we have a problem here: soprano server is now multithreaded. Thus, we run out of threads very quickly.
     cfs.setValue( "ServerThreads", numberOfThreads );
 
-    // down from 60
-    cfs.setValue( "CheckpointInterval", "10" );
-
     // Memory used by Virtuoso, 8k buffers
     cfs.setValue( "NumberOfBuffers", numberOfBuffers );
 
@@ -289,6 +289,13 @@ void Soprano::VirtuosoController::writeConfigFile( const QString& path, const Ba
 
     // down from 10000000
     cfs.setValue( "FreeTextBatchSize", "1000" );
+
+    // checkpoint interval in minutes (Virtuoso default: 60)
+    if ( checkpointInterval >= 0 )
+        cfs.setValue( "CheckpointInterval", checkpointInterval );
+    if ( minAutoCheckpointSize >= 0 )
+        cfs.setValue( "MinAutoCheckpointSize", minAutoCheckpointSize );
+
     cfs.endGroup();
 }
 

@@ -170,7 +170,7 @@ Soprano::Error::ErrorCode Soprano::VirtuosoModel::addStatement( const Statement&
 }
 
 
-// TODO: use DB.DBA.SPARQL_SELECT_KNOWN_GRAPHS()
+// TODO: use "select GRAPH_IRI from DB.DBA.SPARQL_SELECT_KNOWN_GRAPHS_T"
 Soprano::NodeIterator Soprano::VirtuosoModel::listContexts() const
 {
 //    qDebug() << Q_FUNC_INFO;
