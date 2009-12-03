@@ -52,6 +52,7 @@ Soprano::ODBC::Connection::~Connection()
     qDeleteAll( d->m_openResults );
 
     if ( d->m_hdbc ) {
+        SQLDisconnect( d->m_hdbc );
         SQLFreeHandle( SQL_HANDLE_DBC, d->m_hdbc );
     }
     delete d->m_env;
