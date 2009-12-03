@@ -233,7 +233,7 @@ void Soprano::VirtuosoController::writeConfigFile( const QString& path, const Ba
     QString dir = valueInSettings( settings, BackendOptionStorageDir ).toString();
 
     // backwards compatibility
-    int numberOfBuffers = valueInSettings( settings, "buffers", 100 ).toInt();
+    int numberOfBuffers = valueInSettings( settings, "buffers", 2000 ).toInt();
     int numberOfThreads = valueInSettings( settings, "threads", 10 ).toInt();
 
     numberOfBuffers = valueInSettings( settings, "NumberOfBuffers", numberOfBuffers ).toInt();
