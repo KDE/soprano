@@ -739,7 +739,8 @@ int main( int argc, char *argv[] )
         s_model = sparqlModel;
         isRemoteModel = true;
     }
-    else if ( args.hasSetting( "port" ) ) {
+    else if ( args.hasSetting( "port" ) &&
+              !args.hasSetting( "backend" ) ) {
         QHostAddress host = QHostAddress::LocalHost;
         quint16 port = Soprano::Client::TcpClient::DEFAULT_PORT;
         port = args.getSetting( "port" ).toInt();
