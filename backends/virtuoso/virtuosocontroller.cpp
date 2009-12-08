@@ -36,11 +36,11 @@
 Q_DECLARE_METATYPE( QProcess::ExitStatus )
 
 namespace {
-	
+    
 #ifdef Q_OS_WIN
-	QMutex portNumberMutex;
+    QMutex portNumberMutex;
 #endif
-	
+    
     quint16 getFreePortNumber() {
 //         QTcpServer server;
 //         if ( server.listen() ) {
@@ -51,9 +51,9 @@ namespace {
 //             return 1111;
 //         }
 #ifdef Q_OS_WIN
-    	static quint16 p = 1111;
-    	QMutexLocker l(&portNumberMutex);
-    	return p++;
+        static quint16 p = 1111;
+        QMutexLocker l(&portNumberMutex);
+        return p++;
 #else
         int p = 1111;
         while ( QFile::exists( QString( "/tmp/virt_%1" ).arg( p ) ) ) {
@@ -71,8 +71,8 @@ Soprano::VirtuosoController::VirtuosoController()
       m_lastExitStatus( NormalExit ),
       m_initializationLoop( 0 )
 {
-	setObjectName("virtuoso_controller");
-	
+    setObjectName("virtuoso_controller");
+    
     connect( &m_virtuosoProcess, SIGNAL(finished(int,QProcess::ExitStatus)),
              this, SLOT(slotProcessFinished(int,QProcess::ExitStatus)) );
     connect( &m_virtuosoProcess, SIGNAL(readyReadStandardError()),
@@ -85,8 +85,8 @@ Soprano::VirtuosoController::VirtuosoController()
 
 Soprano::VirtuosoController::~VirtuosoController()
 {
-	if ( isRunning() )
-		shutdown();
+    if ( isRunning() )
+        shutdown();
 }
 
 
@@ -336,13 +336,13 @@ void Soprano::VirtuosoController::writeConfigFile( const QString& path, const Ba
 // static
 QString Soprano::VirtuosoController::locateVirtuosoBinary()
 {
-	QStringList dirs = Soprano::exeDirs();
+    QStringList dirs = Soprano::exeDirs();
 #ifdef Q_OS_WIN
-	const QString virtuosoHome = qgetenv("VIRTUOSO_HOME");
-	if ( !virtuosoHome.isEmpty() )
-		dirs << (virtuosoHome + QDir::separator() + QLatin1String("bin"));
+    const QString virtuosoHome = qgetenv("VIRTUOSO_HOME");
+    if ( !virtuosoHome.isEmpty() )
+        dirs << (virtuosoHome + QDir::separator() + QLatin1String("bin"));
 #endif
-	
+    
     foreach( const QString& dir, dirs ) {
 #ifdef Q_OS_WIN
         QFileInfo info( dir + QDir::separator() + QLatin1String("virtuoso-t.exe") );

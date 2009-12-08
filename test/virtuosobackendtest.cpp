@@ -64,17 +64,17 @@ void Soprano::VirtuosoBackendTest::deleteModel( Soprano::Model* m )
 {
     const Soprano::Backend* b = Soprano::discoverBackendByName( "virtuosobackend" );
     if ( b ) {
-    	
+        
 #ifdef Q_OS_WIN
-    	// We need to shut down the server before we can remove the test files
-    	// However we don't have access to the controller, so use reflection to trigger the shutdown
-    	// It's quite ugly I know, but it's ok for the unit tests imho
-    	QObject* controller = m->findChild<QObject*>( "virtuoso_controller" );
-    	if ( controller ) {
-    		QMetaObject::invokeMethod( controller, "shutdown" );
-    	}
+        // We need to shut down the server before we can remove the test files
+        // However we don't have access to the controller, so use reflection to trigger the shutdown
+        // It's quite ugly I know, but it's ok for the unit tests imho
+        QObject* controller = m->findChild<QObject*>( "virtuoso_controller" );
+        if ( controller ) {
+            QMetaObject::invokeMethod( controller, "shutdown" );
+        }
 #endif
-    	
+        
         b->deleteModelData( m_settingsHash[m] );
         
 #ifdef Q_OS_WIN

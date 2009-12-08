@@ -206,12 +206,12 @@ bool Soprano::Virtuoso::BackendPlugin::isAvailable() const
 QString Soprano::Virtuoso::BackendPlugin::findVirtuosoDriver() const
 {
 #ifdef Q_OS_WIN
-	QStringList virtuosoDirs;
-	const QString virtuosoHome = qgetenv("VIRTUOSO_HOME");
-	if ( !virtuosoHome.isEmpty() ) {
-		virtuosoDirs << (virtuosoHome + QDir::separator() + QLatin1String("bin"))
-				     << (virtuosoHome + QDir::separator() + QLatin1String("lib"));		
-	}
+    QStringList virtuosoDirs;
+    const QString virtuosoHome = qgetenv("VIRTUOSO_HOME");
+    if ( !virtuosoHome.isEmpty() ) {
+        virtuosoDirs << (virtuosoHome + QDir::separator() + QLatin1String("bin"))
+                     << (virtuosoHome + QDir::separator() + QLatin1String("lib"));
+    }
     return Soprano::findLibraryPath( "virtodbc", virtuosoDirs );
 #else
     return Soprano::findLibraryPath( "virtodbc_r", QStringList(), QStringList() << QLatin1String( "virtuoso/plugins/" ) );
