@@ -56,6 +56,8 @@ public:
     ServerCore* core;
     ModelPool* modelPool;
     QIODevice* socket;
+	
+	quint16 currentCommand;
 
     QHash<quint32, StatementIterator> openStatementIterators;
     QHash<quint32, NodeIterator> openNodeIterators;
@@ -110,6 +112,7 @@ Soprano::Server::ServerConnection::ServerConnection( ModelPool* pool, ServerCore
     d->core = core;
     d->modelPool = pool;
     d->socket = 0;
+	d->currentCommand = 0;
 }
 
 
@@ -177,9 +180,13 @@ void Soprano::Server::ServerConnection::run()
 
 void Soprano::Server::ServerConnection::Private::_s_readNextCommand()
 {
+	if ( currentCommand != 0 )
+		return;
+
     DataStream stream( socket );
     quint16 command = 0;
     stream.readUnsignedInt16( command );
+	currentCommand = command;
     switch( command ) {
     case COMMAND_SUPPORTS_PROTOCOL_VERSION:
         supportsProtocolVersion();
@@ -276,6 +283,8 @@ void Soprano::Server::ServerConnection::Private::_s_readNextCommand()
         q->close();
         break;
     }
+
+	currentCommand = 0;
 }
 
 
