@@ -23,7 +23,9 @@
 #define _SOPRANO_ODBC_ENVIRONMENT_H_
 
 #include "error.h"
-
+#ifdef Q_OS_WIN
+#include <windows.h>
+#endif
 #include <sql.h>
 
 namespace Soprano {

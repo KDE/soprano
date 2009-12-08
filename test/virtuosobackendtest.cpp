@@ -37,12 +37,17 @@ Soprano::Model* Soprano::VirtuosoBackendTest::createModel()
     if ( b ) {
         BackendSettings settings;
         QString dirName( "soprano_virtuoso_backend_test_model_" );
-        QDir tmpDir( "/tmp" );
+#ifdef Q_OS_WIN
+        QString tmp = qgetenv("TEMP");
+#else
+        QString tmp = "/tmp";
+#endif
+        QDir tmpDir( tmp );
         while ( tmpDir.exists( dirName + QString::number( m_modelCnt ) ) )
             ++m_modelCnt;
         dirName += QString::number( m_modelCnt );
         tmpDir.mkdir( dirName );
-        settings << BackendSetting( BackendOptionStorageDir, "/tmp/" + dirName );
+        settings << BackendSetting( BackendOptionStorageDir, tmp + QDir::separator() + dirName );
 //         settings << BackendSetting( BackendOptionHost, "localhost" );
 //         settings << BackendSetting( BackendOptionPort, 1111 );
 //         settings << BackendSetting( BackendOptionUsername, "dba" );
@@ -59,9 +64,26 @@ void Soprano::VirtuosoBackendTest::deleteModel( Soprano::Model* m )
 {
     const Soprano::Backend* b = Soprano::discoverBackendByName( "virtuosobackend" );
     if ( b ) {
+    	
+#ifdef Q_OS_WIN
+    	// We need to shut down the server before we can remove the test files
+    	// However we don't have access to the controller, so use reflection to trigger the shutdown
+    	// It's quite ugly I know, but it's ok for the unit tests imho
+    	QObject* controller = m->findChild<QObject*>( "virtuoso_controller" );
+    	if ( controller ) {
+    		QMetaObject::invokeMethod( controller, "shutdown" );
+    	}
+#endif
+    	
         b->deleteModelData( m_settingsHash[m] );
-        QDir tmpDir( "/tmp" );
-        tmpDir.rmdir( settingInSettings( m_settingsHash[m], BackendOptionStorageDir ).value().toString().section( "/", -1 ) );
+        
+#ifdef Q_OS_WIN
+        QString tmp = qgetenv("TEMP");
+#else
+        QString tmp = "/tmp";
+#endif
+        QDir tmpDir( tmp );
+        tmpDir.rmdir( settingInSettings( m_settingsHash[m], BackendOptionStorageDir ).value().toString().section( QDir::separator(), -1 ) );
         m_settingsHash.remove( m );
     }
     delete m;

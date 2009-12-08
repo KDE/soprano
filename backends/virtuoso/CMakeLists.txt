@@ -30,10 +30,12 @@ qt4_automoc(${SRC})
 
 add_library(soprano_virtuosobackend MODULE ${SRC})
 
-target_link_libraries(soprano_virtuosobackend
-  soprano
-  ${IODBC_LIBRARIES}
-)
+target_link_libraries(soprano_virtuosobackend soprano)
+if(WIN32)
+target_link_libraries(soprano_virtuosobackend odbc32)
+else(WIN32)
+target_link_libraries(soprano_virtuosobackend ${IODBC_LIBRARIES})
+endif(WIN32)
 
 if(WIN32)
 # RUNTIME and ARCHIVE are ignored when the library type is set to MODULE (cf. add_library above)

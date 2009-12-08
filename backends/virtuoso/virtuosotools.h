@@ -22,6 +22,10 @@
 #ifndef _SOPRANO_IODBC_TOOLS_H_
 #define _SOPRANO_IODBC_TOOLS_H_
 
+#include <QtCore/qglobal.h>
+#ifdef Q_OS_WIN
+#include <windows.h>
+#endif
 #include <sql.h>
 #include <sqlext.h>
 

@@ -22,9 +22,13 @@
 #ifndef _SOPRANO_ODBC_CONNECTION_H_
 #define _SOPRANO_ODBC_CONNECTION_H_
 
+#include <QtCore/qglobal.h>
 #include <QtCore/QObject>
 
 #include "error.h"
+#ifdef Q_OS_WIN
+#include <windows.h>
+#endif
 #include <sql.h>
 
 namespace Soprano {

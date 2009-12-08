@@ -30,11 +30,17 @@
 #include <QtCore/QEventLoop>
 #include <QtCore/QDir>
 #include <QtCore/QDebug>
-#include <QtCore/QDebug>
+#include <QtCore/QMutex>
+#include <QtCore/QMutexLocker>
 
 Q_DECLARE_METATYPE( QProcess::ExitStatus )
 
 namespace {
+	
+#ifdef Q_OS_WIN
+	QMutex portNumberMutex;
+#endif
+	
     quint16 getFreePortNumber() {
 //         QTcpServer server;
 //         if ( server.listen() ) {
@@ -44,11 +50,17 @@ namespace {
 //             qDebug() << "Failed to determine free port. Falling back to default 1111.";
 //             return 1111;
 //         }
+#ifdef Q_OS_WIN
+    	static quint16 p = 1111;
+    	QMutexLocker l(&portNumberMutex);
+    	return p++;
+#else
         int p = 1111;
         while ( QFile::exists( QString( "/tmp/virt_%1" ).arg( p ) ) ) {
             ++p;
         }
         return p;
+#endif
     }
 }
 
@@ -59,6 +71,8 @@ Soprano::VirtuosoController::VirtuosoController()
       m_lastExitStatus( NormalExit ),
       m_initializationLoop( 0 )
 {
+	setObjectName("virtuoso_controller");
+	
     connect( &m_virtuosoProcess, SIGNAL(finished(int,QProcess::ExitStatus)),
              this, SLOT(slotProcessFinished(int,QProcess::ExitStatus)) );
     connect( &m_virtuosoProcess, SIGNAL(readyReadStandardError()),
@@ -71,14 +85,15 @@ Soprano::VirtuosoController::VirtuosoController()
 
 Soprano::VirtuosoController::~VirtuosoController()
 {
-    shutdown();
+	if ( isRunning() )
+		shutdown();
 }
 
 
 bool Soprano::VirtuosoController::start( const BackendSettings& settings, RunFlags flags )
 {
     if ( !isRunning() ) {
-        QTemporaryFile tmpFile( QDir::tempPath() + "/virtuoso_XXXXXX.ini" );
+        QTemporaryFile tmpFile( QDir::toNativeSeparators( QDir::tempPath() ) + QDir::separator() + "virtuoso_XXXXXX.ini" );
         tmpFile.setAutoRemove( false );
         tmpFile.open();
         m_configFilePath = tmpFile.fileName();
@@ -97,14 +112,19 @@ bool Soprano::VirtuosoController::start( const BackendSettings& settings, RunFla
         // remove old lock files to be sure
         QString lockFilePath
             = valueInSettings( settings, BackendOptionStorageDir ).toString()
-            + QLatin1String( "/soprano-virtuoso.lck" );
+            + QDir::separator() + QLatin1String( "soprano-virtuoso.lck" );
         if ( QFile::exists( lockFilePath ) )
             QFile::remove( lockFilePath );
 
         QStringList args;
+#ifdef Q_OS_WIN
+        args << "+foreground"
+             << "+configfile" << m_configFilePath;
+#else
         args << "+foreground"
              << "+config" << m_configFilePath
              << "+wait";
+#endif
         qDebug() << "Starting Virtuoso server:" << virtuosoExe << args;
 
         m_virtuosoProcess.start( virtuosoExe, args, QIODevice::ReadOnly );
@@ -149,7 +169,7 @@ void Soprano::VirtuosoController::slotProcessReadyRead()
     // we only wait for the server to tell us that it is ready
     while ( m_virtuosoProcess.canReadLine() ) {
         QString line = QString::fromLatin1( m_virtuosoProcess.readLine() );
-        qDebug() << line;
+        //qDebug() << line;
         if ( line.contains( "Server online at" ) ) {
             m_virtuosoProcess.closeReadChannel( QProcess::StandardError );
             m_status = Running;
@@ -169,6 +189,7 @@ bool Soprano::VirtuosoController::shutdown()
 {
     if ( m_virtuosoProcess.state() == QProcess::Running ) {
         qDebug() << "Shutting down virtuoso instance" << m_virtuosoProcess.pid();
+#ifndef Q_OS_WIN
         m_status = ShuttingDown;
         m_virtuosoProcess.terminate();
         if ( !m_virtuosoProcess.waitForFinished( 30*1000 ) ) {
@@ -183,6 +204,13 @@ bool Soprano::VirtuosoController::shutdown()
             clearError();
             return true;
         }
+#else
+        m_status = Killing;
+        m_virtuosoProcess.kill();
+        m_virtuosoProcess.waitForFinished();
+        clearError();
+        return true;
+#endif
     }
     else {
         setError( "Virtuoso not running. Cannot shutdown." );
@@ -210,7 +238,7 @@ void Soprano::VirtuosoController::slotProcessFinished( int, QProcess::ExitStatus
         m_lastExitStatus = CrashExit;
     else if ( m_status == Killing )
         m_lastExitStatus = ForcedExit;
-    else if ( !m_status != ShuttingDown )
+    else if ( m_status != ShuttingDown )
         m_lastExitStatus = ThirdPartyExit;
 
     m_status = NotRunning;
@@ -230,7 +258,7 @@ void Soprano::VirtuosoController::writeConfigFile( const QString& path, const Ba
     qDebug() << Q_FUNC_INFO << path;
 
     // storage dir
-    QString dir = valueInSettings( settings, BackendOptionStorageDir ).toString();
+    QString dir = QDir::toNativeSeparators( valueInSettings( settings, BackendOptionStorageDir ).toString() );
 
     // backwards compatibility
     int numberOfBuffers = valueInSettings( settings, "buffers", 2000 ).toInt();
@@ -245,8 +273,8 @@ void Soprano::VirtuosoController::writeConfigFile( const QString& path, const Ba
     // the unix socket name.
     m_port = getFreePortNumber();
 
-    if ( !dir.endsWith( '/' ) )
-        dir += '/';
+    if ( !dir.endsWith( QDir::separator() ) )
+        dir += QDir::separator();
 
     QSettings cfs( path, QSettings::IniFormat );
 
@@ -266,8 +294,13 @@ void Soprano::VirtuosoController::writeConfigFile( const QString& path, const Ba
     cfs.beginGroup( "Parameters" );
     cfs.setValue( "LiteMode", "1" );
     cfs.setValue( "ServerPort", QString::number( m_port ) );
+#ifdef Q_OS_WIN
+    cfs.setValue( "DisableUnixSocket", "1" );
+    cfs.setValue( "DisableTcpSocket", "0" );
+#else
     cfs.setValue( "DisableTcpSocket", "1" );
-
+#endif
+    
     // FIXME: what is this?
     //    cfs.setValue( "DirsAllowed", "." );
 
@@ -303,8 +336,19 @@ void Soprano::VirtuosoController::writeConfigFile( const QString& path, const Ba
 // static
 QString Soprano::VirtuosoController::locateVirtuosoBinary()
 {
-    foreach( const QString& dir, Soprano::exeDirs() ) {
-        QFileInfo info( dir + "/virtuoso-t" );
+	QStringList dirs = Soprano::exeDirs();
+#ifdef Q_OS_WIN
+	const QString virtuosoHome = qgetenv("VIRTUOSO_HOME");
+	if ( !virtuosoHome.isEmpty() )
+		dirs << (virtuosoHome + QDir::separator() + QLatin1String("bin"));
+#endif
+	
+    foreach( const QString& dir, dirs ) {
+#ifdef Q_OS_WIN
+        QFileInfo info( dir + QDir::separator() + QLatin1String("virtuoso-t.exe") );
+#else
+        QFileInfo info( dir + QLatin1String("/virtuoso-t") );
+#endif
         if ( info.isExecutable() && !info.isSymLink() ) {
             return info.absoluteFilePath();
         }

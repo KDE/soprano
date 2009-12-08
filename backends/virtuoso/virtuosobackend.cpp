@@ -86,9 +86,13 @@ Soprano::StorageModel* Soprano::Virtuoso::BackendPlugin::createModel( const Back
         return 0;
     }
 
+#ifdef Q_OS_WIN
+    QString connectString = QString( "driver={Virtuoso (Open Source)};host=%1:%2;uid=%3;pwd=%4" )
+                            .arg( host, QString::number( port ), uid, pwd );
+#else
     QString connectString = QString( "host=%1:%2;uid=%3;pwd=%4;driver=%5" )
                             .arg( host, QString::number( port ), uid, pwd, driverPath );
-
+#endif
     ODBC::ConnectionPool* connectionPool = new ODBC::ConnectionPool( connectString );
 
     // FIXME: should configuration only be allowed on spawned servers?
@@ -129,7 +133,7 @@ bool Soprano::Virtuoso::BackendPlugin::deleteModelData( const BackendSettings& s
     QDir dir( path );
     foreach( const QString& suffix, suffixes ) {
         QString file = prefix + suffix;
-        if ( QFile::exists( file ) &&
+        if ( dir.exists( file ) &&
              !dir.remove( file ) ) {
             setError( "Failed to remove file '" + dir.filePath( file ), Error::ErrorUnknown );
             return false;
@@ -201,7 +205,17 @@ bool Soprano::Virtuoso::BackendPlugin::isAvailable() const
 
 QString Soprano::Virtuoso::BackendPlugin::findVirtuosoDriver() const
 {
+#ifdef Q_OS_WIN
+	QStringList virtuosoDirs;
+	const QString virtuosoHome = qgetenv("VIRTUOSO_HOME");
+	if ( !virtuosoHome.isEmpty() ) {
+		virtuosoDirs << (virtuosoHome + QDir::separator() + QLatin1String("bin"))
+				     << (virtuosoHome + QDir::separator() + QLatin1String("lib"));		
+	}
+    return Soprano::findLibraryPath( "virtodbc", virtuosoDirs );
+#else
     return Soprano::findLibraryPath( "virtodbc_r", QStringList(), QStringList() << QLatin1String( "virtuoso/plugins/" ) );
+#endif
 }
 
 #include "virtuosobackend.moc"
