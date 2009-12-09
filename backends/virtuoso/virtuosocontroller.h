@@ -61,7 +61,7 @@ namespace Soprano {
         Q_DECLARE_FLAGS( RunFlags, RunFlag )
 
         bool start( const BackendSettings& settings, RunFlags = NoFlags );
-        Q_INVOKABLE bool shutdown();
+        bool shutdown();
 
         int usedPort() const;
 

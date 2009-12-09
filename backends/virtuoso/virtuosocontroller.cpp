@@ -71,8 +71,6 @@ Soprano::VirtuosoController::VirtuosoController()
       m_lastExitStatus( NormalExit ),
       m_initializationLoop( 0 )
 {
-    setObjectName("virtuoso_controller");
-    
     connect( &m_virtuosoProcess, SIGNAL(finished(int,QProcess::ExitStatus)),
              this, SLOT(slotProcessFinished(int,QProcess::ExitStatus)) );
     connect( &m_virtuosoProcess, SIGNAL(readyReadStandardError()),
