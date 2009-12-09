@@ -93,7 +93,7 @@ Soprano::VirtuosoController::~VirtuosoController()
 bool Soprano::VirtuosoController::start( const BackendSettings& settings, RunFlags flags )
 {
     if ( !isRunning() ) {
-        QTemporaryFile tmpFile( QDir::toNativeSeparators( QDir::tempPath() ) + QDir::separator() + "virtuoso_XXXXXX.ini" );
+        QTemporaryFile tmpFile( QDir::tempPath() + "/virtuoso_XXXXXX.ini" );
         tmpFile.setAutoRemove( false );
         tmpFile.open();
         m_configFilePath = tmpFile.fileName();
@@ -112,14 +112,14 @@ bool Soprano::VirtuosoController::start( const BackendSettings& settings, RunFla
         // remove old lock files to be sure
         QString lockFilePath
             = valueInSettings( settings, BackendOptionStorageDir ).toString()
-            + QDir::separator() + QLatin1String( "soprano-virtuoso.lck" );
+            + QLatin1String( "/soprano-virtuoso.lck" );
         if ( QFile::exists( lockFilePath ) )
             QFile::remove( lockFilePath );
 
         QStringList args;
 #ifdef Q_OS_WIN
         args << "+foreground"
-             << "+configfile" << m_configFilePath;
+             << "+configfile" << QDir::toNativeSeparators(m_configFilePath);
 #else
         args << "+foreground"
              << "+config" << m_configFilePath
@@ -258,7 +258,7 @@ void Soprano::VirtuosoController::writeConfigFile( const QString& path, const Ba
     qDebug() << Q_FUNC_INFO << path;
 
     // storage dir
-    QString dir = QDir::toNativeSeparators( valueInSettings( settings, BackendOptionStorageDir ).toString() );
+    QString dir = valueInSettings( settings, BackendOptionStorageDir ).toString();
 
     // backwards compatibility
     int numberOfBuffers = valueInSettings( settings, "buffers", 2000 ).toInt();
@@ -273,9 +273,10 @@ void Soprano::VirtuosoController::writeConfigFile( const QString& path, const Ba
     // the unix socket name.
     m_port = getFreePortNumber();
 
-    if ( !dir.endsWith( QDir::separator() ) )
-        dir += QDir::separator();
-
+    if ( !dir.endsWith( '/' ) )
+        dir += '/';
+    dir = QDir::toNativeSeparators( dir );
+    
     QSettings cfs( path, QSettings::IniFormat );
 
     cfs.beginGroup( "Database" );
@@ -338,14 +339,14 @@ QString Soprano::VirtuosoController::locateVirtuosoBinary()
 {
     QStringList dirs = Soprano::exeDirs();
 #ifdef Q_OS_WIN
-    const QString virtuosoHome = qgetenv("VIRTUOSO_HOME");
+    const QString virtuosoHome = QDir::fromNativeSeparators( qgetenv("VIRTUOSO_HOME") );
     if ( !virtuosoHome.isEmpty() )
-        dirs << (virtuosoHome + QDir::separator() + QLatin1String("bin"));
+        dirs << virtuosoHome + QLatin1String("/bin");
 #endif
     
     foreach( const QString& dir, dirs ) {
 #ifdef Q_OS_WIN
-        QFileInfo info( dir + QDir::separator() + QLatin1String("virtuoso-t.exe") );
+        QFileInfo info( dir + QLatin1String("/virtuoso-t.exe") );
 #else
         QFileInfo info( dir + QLatin1String("/virtuoso-t") );
 #endif

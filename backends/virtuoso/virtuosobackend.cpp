@@ -207,10 +207,10 @@ QString Soprano::Virtuoso::BackendPlugin::findVirtuosoDriver() const
 {
 #ifdef Q_OS_WIN
     QStringList virtuosoDirs;
-    const QString virtuosoHome = qgetenv("VIRTUOSO_HOME");
+    const QString virtuosoHome = QDir::fromNativeSeparators( qgetenv("VIRTUOSO_HOME") );
     if ( !virtuosoHome.isEmpty() ) {
-        virtuosoDirs << (virtuosoHome + QDir::separator() + QLatin1String("bin"))
-                     << (virtuosoHome + QDir::separator() + QLatin1String("lib"));
+        virtuosoDirs << virtuosoHome + QLatin1String("/bin")
+                     << virtuosoHome + QLatin1String("/lib");
     }
     return Soprano::findLibraryPath( "virtodbc", virtuosoDirs );
 #else

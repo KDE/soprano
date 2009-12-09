@@ -37,17 +37,12 @@ Soprano::Model* Soprano::VirtuosoBackendTest::createModel()
     if ( b ) {
         BackendSettings settings;
         QString dirName( "soprano_virtuoso_backend_test_model_" );
-#ifdef Q_OS_WIN
-        QString tmp = qgetenv("TEMP");
-#else
-        QString tmp = "/tmp";
-#endif
-        QDir tmpDir( tmp );
+        QDir tmpDir( QDir::tempPath() );
         while ( tmpDir.exists( dirName + QString::number( m_modelCnt ) ) )
             ++m_modelCnt;
         dirName += QString::number( m_modelCnt );
         tmpDir.mkdir( dirName );
-        settings << BackendSetting( BackendOptionStorageDir, tmp + QDir::separator() + dirName );
+        settings << BackendSetting( BackendOptionStorageDir, QDir::tempPath() + '/' + dirName );
 //         settings << BackendSetting( BackendOptionHost, "localhost" );
 //         settings << BackendSetting( BackendOptionPort, 1111 );
 //         settings << BackendSetting( BackendOptionUsername, "dba" );
@@ -77,13 +72,8 @@ void Soprano::VirtuosoBackendTest::deleteModel( Soprano::Model* m )
         
         b->deleteModelData( m_settingsHash[m] );
         
-#ifdef Q_OS_WIN
-        QString tmp = qgetenv("TEMP");
-#else
-        QString tmp = "/tmp";
-#endif
-        QDir tmpDir( tmp );
-        tmpDir.rmdir( settingInSettings( m_settingsHash[m], BackendOptionStorageDir ).value().toString().section( QDir::separator(), -1 ) );
+        QDir tmpDir( QDir::tempPath() );
+        tmpDir.rmdir( settingInSettings( m_settingsHash[m], BackendOptionStorageDir ).value().toString().section( '/', -1 ) );
         m_settingsHash.remove( m );
     }
     delete m;
