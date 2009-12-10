@@ -36,11 +36,11 @@
 Q_DECLARE_METATYPE( QProcess::ExitStatus )
 
 namespace {
-    
+
 #ifdef Q_OS_WIN
     QMutex portNumberMutex;
 #endif
-    
+
     quint16 getFreePortNumber() {
 //         QTcpServer server;
 //         if ( server.listen() ) {
@@ -167,7 +167,7 @@ void Soprano::VirtuosoController::slotProcessReadyRead()
     // we only wait for the server to tell us that it is ready
     while ( m_virtuosoProcess.canReadLine() ) {
         QString line = QString::fromLatin1( m_virtuosoProcess.readLine() );
-        //qDebug() << line;
+        qDebug() << line;
         if ( line.contains( "Server online at" ) ) {
             m_virtuosoProcess.closeReadChannel( QProcess::StandardError );
             m_status = Running;
@@ -274,7 +274,7 @@ void Soprano::VirtuosoController::writeConfigFile( const QString& path, const Ba
     if ( !dir.endsWith( '/' ) )
         dir += '/';
     dir = QDir::toNativeSeparators( dir );
-    
+
     QSettings cfs( path, QSettings::IniFormat );
 
     cfs.beginGroup( "Database" );
@@ -299,7 +299,7 @@ void Soprano::VirtuosoController::writeConfigFile( const QString& path, const Ba
 #else
     cfs.setValue( "DisableTcpSocket", "1" );
 #endif
-    
+
     // FIXME: what is this?
     //    cfs.setValue( "DirsAllowed", "." );
 
@@ -341,7 +341,7 @@ QString Soprano::VirtuosoController::locateVirtuosoBinary()
     if ( !virtuosoHome.isEmpty() )
         dirs << virtuosoHome + QLatin1String("/bin");
 #endif
-    
+
     foreach( const QString& dir, dirs ) {
 #ifdef Q_OS_WIN
         QFileInfo info( dir + QLatin1String("/virtuoso-t.exe") );
