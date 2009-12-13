@@ -15,9 +15,9 @@
 # For details see the accompanying COPYING-CMAKE-SCRIPTS file.
 
 
-INCLUDE(MacroEnsureVersion)
+include(MacroEnsureVersion)
 
-FIND_PROGRAM(
+find_program(
   REDLAND_CONFIG
   NAMES redland-config
   )
@@ -28,32 +28,32 @@ if(REDLAND_CONFIG)
     OUTPUT_VARIABLE REDLAND_VERSION
     )
   if(REDLAND_VERSION)
-    STRING(REPLACE "\n" "" REDLAND_VERSION ${REDLAND_VERSION})
+    string(REPLACE "\n" "" REDLAND_VERSION ${REDLAND_VERSION})
     
     # extract include paths from redland-config
-    EXECUTE_PROCESS(
+    execute_process(
       COMMAND ${REDLAND_CONFIG} --cflags
       OUTPUT_VARIABLE redland_LIBS_ARGS)
-    STRING( REPLACE " " ";" redland_LIBS_ARGS ${redland_LIBS_ARGS} )
-    FOREACH( _ARG ${redland_LIBS_ARGS} )
-      IF(${_ARG} MATCHES "^-I")
-        STRING(REGEX REPLACE "^-I" "" _ARG ${_ARG})
-        STRING( REPLACE "\n" "" _ARG ${_ARG} )
-        LIST(APPEND redland_INCLUDE_DIRS ${_ARG})
-      ENDIF(${_ARG} MATCHES "^-I")
-    ENDFOREACH(_ARG)
+    string( REPLACE " " ";" redland_LIBS_ARGS ${redland_LIBS_ARGS} )
+    foreach( _ARG ${redland_LIBS_ARGS} )
+      if(${_ARG} MATCHES "^-I")
+        string(REGEX REPLACE "^-I" "" _ARG ${_ARG})
+        string( REPLACE "\n" "" _ARG ${_ARG} )
+        list(APPEND redland_INCLUDE_DIRS ${_ARG})
+      endif(${_ARG} MATCHES "^-I")
+    endforeach(_ARG)
     
     # extract lib paths from redland-config
-    EXECUTE_PROCESS(
+    execute_process(
       COMMAND ${REDLAND_CONFIG} --libs
       OUTPUT_VARIABLE redland_CFLAGS_ARGS)
-    STRING( REPLACE " " ";" redland_CFLAGS_ARGS ${redland_CFLAGS_ARGS} )
-    FOREACH( _ARG ${redland_CFLAGS_ARGS} )
-      IF(${_ARG} MATCHES "^-L")
-        STRING(REGEX REPLACE "^-L" "" _ARG ${_ARG})
-        LIST(APPEND redland_LIBRARY_DIRS ${_ARG})
-      ENDIF(${_ARG} MATCHES "^-L")
-    ENDFOREACH(_ARG)
+    string( REPLACE " " ";" redland_CFLAGS_ARGS ${redland_CFLAGS_ARGS} )
+    foreach( _ARG ${redland_CFLAGS_ARGS} )
+      if(${_ARG} MATCHES "^-L")
+        string(REGEX REPLACE "^-L" "" _ARG ${_ARG})
+        list(APPEND redland_LIBRARY_DIRS ${_ARG})
+      endif(${_ARG} MATCHES "^-L")
+    endforeach(_ARG)
   endif(REDLAND_VERSION)
 endif(REDLAND_CONFIG)
 
