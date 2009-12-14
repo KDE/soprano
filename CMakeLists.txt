@@ -43,6 +43,8 @@ include(${QT_USE_FILE})
 if(NOT SOPRANO_DISABLE_RAPTOR_PARSER OR NOT SOPRANO_DISABLE_RAPTOR_SERIALIZER OR NOT SOPRANO_DISABLE_REDLAND_BACKEND)
   find_package(Rasqal)
   find_package(Raptor)
+
+  set(REDLAND_AVOID_VERSION_1_0_9 TRUE)
   find_package(Redland)
 
   if(WIN32)
