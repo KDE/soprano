@@ -18,13 +18,13 @@
 include(MacroEnsureVersion)
 
 find_program(
-  REDLAND_CONFIG
+  REDLAND_CONFIG_EXECUTABLE
   NAMES redland-config
   )
 
-if(REDLAND_CONFIG)
+if(REDLAND_CONFIG_EXECUTABLE)
   EXECUTE_PROCESS(
-    COMMAND ${REDLAND_CONFIG} --version
+    COMMAND ${REDLAND_CONFIG_EXECUTABLE} --version
     OUTPUT_VARIABLE REDLAND_VERSION
     )
   if(REDLAND_VERSION)
@@ -32,7 +32,7 @@ if(REDLAND_CONFIG)
     
     # extract include paths from redland-config
     execute_process(
-      COMMAND ${REDLAND_CONFIG} --cflags
+      COMMAND ${REDLAND_CONFIG_EXECUTABLE} --cflags
       OUTPUT_VARIABLE redland_LIBS_ARGS)
     string( REPLACE " " ";" redland_LIBS_ARGS ${redland_LIBS_ARGS} )
     foreach( _ARG ${redland_LIBS_ARGS} )
@@ -45,7 +45,7 @@ if(REDLAND_CONFIG)
     
     # extract lib paths from redland-config
     execute_process(
-      COMMAND ${REDLAND_CONFIG} --libs
+      COMMAND ${REDLAND_CONFIG_EXECUTABLE} --libs
       OUTPUT_VARIABLE redland_CFLAGS_ARGS)
     string( REPLACE " " ";" redland_CFLAGS_ARGS ${redland_CFLAGS_ARGS} )
     foreach( _ARG ${redland_CFLAGS_ARGS} )
@@ -55,18 +55,18 @@ if(REDLAND_CONFIG)
       endif(${_ARG} MATCHES "^-L")
     endforeach(_ARG)
   endif(REDLAND_VERSION)
-endif(REDLAND_CONFIG)
+endif(REDLAND_CONFIG_EXECUTABLE)
 
 
 find_path(REDLAND_INCLUDE_DIR redland.h
-  PATHS
+  HINTS
   ${redland_INCLUDE_DIRS}
   /usr/X11/include
   PATH_SUFFIXES redland
   )
 
 find_library(REDLAND_LIBRARIES NAMES rdf librdf
-  PATHS
+  HINTS
   ${redland_LIBRARY_DIRS}
   )
 
