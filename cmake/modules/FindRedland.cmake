@@ -4,8 +4,10 @@
 #  REDLAND_FOUND       - system has Redland
 #  REDLAND_LIBRARIES   - Link these to use REDLAND
 #  REDLAND_INCLUDE_DIR - Include directory for using the redland library
-#  REDLAND_DEFINITIONS - Compiler switches required for using REDLAND
 #  REDLAND_VERSION     - The redland version string
+
+# Always empty, so remove it from the docs for now, Alex
+#  REDLAND_DEFINITIONS - Compiler switches required for using REDLAND
 
 # (c) 2007-2009 Sebastian Trueg <trueg@kde.org>
 #
@@ -57,6 +59,9 @@ if(REDLAND_CONFIG_EXECUTABLE)
   endif(REDLAND_VERSION)
 endif(REDLAND_CONFIG_EXECUTABLE)
 
+# This one is always empty, Alex
+# set(REDLAND_DEFINITIONS ${redland_CFLAGS})
+
 
 find_path(REDLAND_INCLUDE_DIR redland.h
   HINTS
@@ -70,20 +75,9 @@ find_library(REDLAND_LIBRARIES NAMES rdf librdf
   ${redland_LIBRARY_DIRS}
   )
 
-if (REDLAND_LIBRARIES AND REDLAND_INCLUDE_DIR)
-  set(REDLAND_FOUND TRUE)
-endif (REDLAND_LIBRARIES AND REDLAND_INCLUDE_DIR)
 
-if (REDLAND_FOUND)
-  set(REDLAND_DEFINITIONS ${redland_CFLAGS})
-  if (NOT Redland_FIND_QUIETLY)
-    message(STATUS "Found Redland ${REDLAND_VERSION}: libs - ${REDLAND_LIBRARIES}; includes - ${REDLAND_INCLUDE_DIR}")
-  endif (NOT Redland_FIND_QUIETLY)
-else (REDLAND_FOUND)
-  if (Redland_FIND_REQUIRED)
-    message(FATAL_ERROR "Could NOT find Redland")
-  endif (Redland_FIND_REQUIRED)
-endif (REDLAND_FOUND)
+include(FindPackageHandleStandardArgs)
+find_package_handle_standard_args(Redland  DEFAULT_MSG  REDLAND_LIBRARIES REDLAND_LIBRARIES)
 
 mark_as_advanced(REDLAND_INCLUDE_DIR_TMP
   REDLAND_INCLUDE_DIR
