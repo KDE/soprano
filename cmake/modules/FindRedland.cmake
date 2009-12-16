@@ -5,10 +5,10 @@
 #  REDLAND_LIBRARIES   - Link these to use REDLAND
 #  REDLAND_INCLUDE_DIR - Include directory for using the redland library
 #  REDLAND_VERSION     - The redland version string
-#  REDLAND_AVOID_VERSION_1_0_9 - Avoid version 1.0.9 of Redland, since this 
+#  REDLAND_AVOID_VERSION_1_0_9 - Avoid version 1.0.9 of Redland, since this
 #                                leads to some unresolved references (see http://trueg.wordpress.com/2009/05/01/redland-109-breaks-nepomuk/ )
 #
-# Specifying the minimum required version via the find_package() interface 
+# Specifying the minimum required version via the find_package() interface
 # is also supported by this module.
 
 # Always empty, so remove it from the docs for now, Alex
@@ -47,7 +47,7 @@ if(REDLAND_CONFIG_EXECUTABLE)
         list(APPEND redland_INCLUDE_DIRS ${_ARG})
       endif(${_ARG} MATCHES "^-I")
     endforeach(_ARG)
-    
+
     # extract lib paths from redland-config
     execute_process(
       COMMAND ${REDLAND_CONFIG_EXECUTABLE} --libs
@@ -78,18 +78,49 @@ find_library(REDLAND_LIBRARIES NAMES rdf librdf
   ${redland_LIBRARY_DIRS}
   )
 
-
 set(_REDLAND_VERSION_OK TRUE)
-if (REDLAND_AVOID_VERSION_1_0_9  AND  "${REDLAND_VERSION}" STREQUAL "1.0.9")
-  set(_REDLAND_VERSION_OK FALSE)
-  message(STATUS "Found version 1.0.9 of Redland, but this version should not be used")
-endif (REDLAND_AVOID_VERSION_1_0_9  AND  "${REDLAND_VERSION}" STREQUAL "1.0.9")
+if(NOT WIN32)
 
-if("${Redland_FIND_VERSION}" VERSION_GREATER "${REDLAND_VERSION}")
-  set(_REDLAND_VERSION_OK FALSE)
-  message(STATUS "Found version ${REDLAND_VERSION} of Redland, but ${Redland_FIND_VERSION} is required")
-endif("${Redland_FIND_VERSION}" VERSION_GREATER "${REDLAND_VERSION}")
+  # Look for unresolved symbols in librdf_storage_*
+  find_library(_REDLAND_STORAGE_LIBS
+    NAMES
+    rdf_storage_mysql librdf_storage_mysql
+    rdf_storage_sqlite librdf_storage_sqlite
+    rdf_storage_tstore librdf_storage_tstore
+    rdf_storage_postgresql librdf_storage_postgresql
+    rdf_storage_virtuoso librdf_storage_virtuoso
+    HINTS
+    ${redland_LIBRARY_DIRS}
+    PATH_SUFFIXES redland
+  )
+  if(_REDLAND_STORAGE_LIBS)
+    try_run(_TEST_EXITCODE _TEST_COMPILED
+      "${CMAKE_CURRENT_BINARY_DIR}"
+      "${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules/CheckLibraryLoads.c"
+      CMAKE_FLAGS "-DLINK_LIBRARIES=dl"
+      RUN_OUTPUT_VARIABLE _OUTPUT
+      ARGS ${_REDLAND_STORAGE_LIBS}
+    )
+    if(NOT "${_TEST_EXITCODE}" EQUAL 0)
+      set(_REDLAND_VERSION_OK)
+      message(STATUS "${_OUTPUT}")
+      message(STATUS "Redland with broken NEEDED section detected, disabling")
+    endif(NOT "${_TEST_EXITCODE}" EQUAL 0)
+  endif(_REDLAND_STORAGE_LIBS)
 
+else(NOT WIN32)
+
+  if(REDLAND_AVOID_VERSION_1_0_9 AND "${REDLAND_VERSION}" STREQUAL "1.0.9")
+    set(_REDLAND_VERSION_OK FALSE)
+    message(STATUS "Found version 1.0.9 of Redland, but this version should not be used")
+  endif (REDLAND_AVOID_VERSION_1_0_9 AND "${REDLAND_VERSION}" STREQUAL "1.0.9")
+
+  if("${Redland_FIND_VERSION}" VERSION_GREATER "${REDLAND_VERSION}")
+    set(_REDLAND_VERSION_OK FALSE)
+    message(STATUS "Found version ${REDLAND_VERSION} of Redland, but ${Redland_FIND_VERSION} is required")
+  endif("${Redland_FIND_VERSION}" VERSION_GREATER "${REDLAND_VERSION}")
+
+endif(NOT WIN32)
 
 include(FindPackageHandleStandardArgs)
 find_package_handle_standard_args(Redland  DEFAULT_MSG  REDLAND_LIBRARIES REDLAND_LIBRARIES _REDLAND_VERSION_OK)
