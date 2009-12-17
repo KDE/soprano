@@ -207,7 +207,7 @@ if(BUILD_SESAME2_BACKEND)
   message("   * Sesame2 storage backend (java-based)")
 endif(BUILD_SESAME2_BACKEND)
 if(BUILD_VIRTUOSO_BACKEND)
-  message("   * Virtuoso storage backend (Run-time dependancy: Virtuoso)")
+  message("   * Virtuoso storage backend (Run-time dependency: Virtuoso)")
 endif(BUILD_VIRTUOSO_BACKEND)
 
 if(BUILD_RAPTOR_PARSER)
