@@ -1,8 +1,8 @@
-project(soprano) 
+project(soprano)
 
 cmake_minimum_required(VERSION 2.6.2)
 
-set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules) 
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules)
 
 ##################  Soprano version  ################################
 set(CMAKE_SOPRANO_VERSION_MAJOR 2)
@@ -36,15 +36,13 @@ include(SopranoCPack.cmake)
 ##################  find packages  ################################
 
 set(QT_MIN_VERSION "4.5.0")
-find_package(Qt4 REQUIRED) 
+find_package(Qt4 REQUIRED)
 # properly set up compile flags (QT_DEBUG/QT_NO_DEBUG, ...)
 include(${QT_USE_FILE})
 
 if(NOT SOPRANO_DISABLE_RAPTOR_PARSER OR NOT SOPRANO_DISABLE_RAPTOR_SERIALIZER OR NOT SOPRANO_DISABLE_REDLAND_BACKEND)
   find_package(Rasqal)
   find_package(Raptor)
-
-  set(REDLAND_AVOID_VERSION_1_0_9 TRUE)
   find_package(Redland)
 
   if(WIN32)
@@ -124,7 +122,7 @@ set(PKGCONFIG_INSTALL_PREFIX "${CMAKE_INSTALL_PREFIX}/lib${LIB_SUFFIX}/pkgconfig
 # By default cmake builds the targets with full RPATH to everything in the build directory,
 # but then removes the RPATH when installing.
 # These two options below make it set the RPATH of the installed targets to all
-# RPATH directories outside the current CMAKE_BINARY_DIR and also the library 
+# RPATH directories outside the current CMAKE_BINARY_DIR and also the library
 # install directory. Alex
 set(CMAKE_INSTALL_RPATH_USE_LINK_PATH  TRUE)
 set(CMAKE_INSTALL_RPATH                ${LIB_DESTINATION} )
@@ -150,7 +148,7 @@ endif(MINGW)
 if(BUILD_CLUCENE_INDEX)
    add_subdirectory(index)
 endif(BUILD_CLUCENE_INDEX)
-add_subdirectory(soprano) 
+add_subdirectory(soprano)
 add_subdirectory(backends)
 add_subdirectory(parsers)
 add_subdirectory(serializers)
@@ -160,7 +158,7 @@ add_subdirectory(tools)
 add_subdirectory(rules)
 add_subdirectory(includes)
 if(SOPRANO_BUILD_TESTS)
-  add_subdirectory(test) 
+  add_subdirectory(test)
 endif(SOPRANO_BUILD_TESTS)
 add_subdirectory(cmake)
 
