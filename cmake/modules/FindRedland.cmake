@@ -82,19 +82,22 @@ if(NOT WIN32)
   # Look for unresolved symbols in shared librdf_storage_* libs
   set(_SUFFIXES ${CMAKE_FIND_LIBRARY_SUFFIXES})
   set(CMAKE_FIND_LIBRARY_SUFFIXES ${CMAKE_SHARED_LIBRARY_SUFFIX})
-  find_library(_REDLAND_STORAGE_LIBS
-    NAMES
-    rdf_storage_mysql librdf_storage_mysql
-    rdf_storage_sqlite librdf_storage_sqlite
-    rdf_storage_tstore librdf_storage_tstore
-    rdf_storage_postgresql librdf_storage_postgresql
-    rdf_storage_virtuoso librdf_storage_virtuoso
-    HINTS
-    ${redland_LIBRARY_DIRS}
-    PATH_SUFFIXES redland
-  )
+  set(_REDLAND_STORAGE_LIBS)
+  foreach(_STORAGE_LIB rdf_storage_mysql rdf_storage_sqlite rdf_storage_tstore rdf_storage_postgresql rdf_storage_virtuoso)
+    set(_LIB_PATH NOTFOUND)
+    find_library(_LIB_PATH
+      ${_STORAGE_LIB}
+      HINTS
+      ${redland_LIBRARY_DIRS}
+      PATH_SUFFIXES redland
+    )
+    if(_LIB_PATH)
+      set(_REDLAND_STORAGE_LIBS ${_REDLAND_STORAGE_LIBS} ${_LIB_PATH})
+    endif(_LIB_PATH)
+  endforeach(_STORAGE_LIB)
   set(CMAKE_FIND_LIBRARY_SUFFIXES ${_SUFFIXES})
   if(_REDLAND_STORAGE_LIBS)
+    message(STATUS "Found Redland storage: ${_REDLAND_STORAGE_LIBS}")
     try_run(_TEST_EXITCODE _TEST_COMPILED
       "${CMAKE_CURRENT_BINARY_DIR}"
       "${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules/CheckLibraryLoads.c"
