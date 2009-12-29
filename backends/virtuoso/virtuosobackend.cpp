@@ -214,7 +214,7 @@ QString Soprano::Virtuoso::BackendPlugin::findVirtuosoDriver() const
     }
     return Soprano::findLibraryPath( "virtodbc", virtuosoDirs );
 #else
-    return Soprano::findLibraryPath( "virtodbc_r", QStringList(), QStringList() << QLatin1String( "virtuoso/plugins/" ) );
+    return Soprano::findLibraryPath( "virtodbc_r", QStringList(), QStringList() << QLatin1String( "virtuoso/plugins/" ) << QLatin1String( "odbc/" ) );
 #endif
 }
 
