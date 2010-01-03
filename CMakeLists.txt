@@ -87,7 +87,9 @@ endif(NOT SOPRANO_DISABLE_VIRTUOSO_BACKEND AND NOT WIN32)
 
 
 ##################  setup variables  ################################
-macro_ensure_version( "1.0.5" ${REDLAND_VERSION} REDLAND_VERSION_GOOD )
+if(REDLAND_FOUND)
+   macro_ensure_version( "1.0.5" ${REDLAND_VERSION} REDLAND_VERSION_GOOD )
+endif(REDLAND_FOUND)
 
 if(REDLAND_FOUND AND NOT SOPRANO_DISABLE_REDLAND_BACKEND)
   set(BUILD_REDLAND_BACKEND TRUE)
