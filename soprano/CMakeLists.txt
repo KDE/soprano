@@ -35,6 +35,7 @@ set(soprano_SRCS
   pluginmanager.cpp
   pluginstub.cpp
   plugin.cpp
+  qhashqurlcompat.cpp
   backend.cpp
   backend.h
   global.cpp

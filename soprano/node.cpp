@@ -484,8 +484,16 @@ uint Soprano::qHash( const Soprano::Node& node )
 }
 
 
-uint qHash( const QUrl& url )
-{
-    // implementation taken from KUrl by David Faure
-    return qHash(url.scheme()) ^ qHash(url.path()) ^ qHash(url.fragment()) ^ qHash(url.encodedQuery());
+namespace Soprano {
+    // see qhashqurlcompat.cpp
+    uint soprano_qHash_QUrl(const QUrl &url)
+    {
+#if QT_VERSION < 0x040602
+        // implementation taken from KUrl by David Faure
+        return qHash(url.scheme()) ^ qHash(url.path()) ^ qHash(url.fragment()) ^ qHash(url.encodedQuery());
+#else
+        // implementation from Qt 4.7 to ease transition
+        return qHash(url.toEncoded(QUrl::FormattingOption(0x100)));
+#endif
+    }
 }

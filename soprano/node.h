@@ -464,6 +464,8 @@ SOPRANO_EXPORT QDebug operator<<( QDebug s, const Soprano::Node& );
  */
 SOPRANO_EXPORT QTextStream& operator<<( QTextStream& s, const Soprano::Node& );
 
+#if QT_VERSION < 0x040700
 SOPRANO_EXPORT uint qHash( const QUrl& url );
+#endif
 
 #endif // SOPRANO_NODE_H
