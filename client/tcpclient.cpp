@@ -114,7 +114,8 @@ Soprano::Client::TcpClient::~TcpClient()
 
 bool Soprano::Client::TcpClient::connect( const QHostAddress& address, int port )
 {
-    if ( !d->connection ) {
+    if ( !isConnected() ) {
+        disconnect(); // for cleanup
         d->connection = new TcpClientConnection( address, port, this );
         if ( d->connection->testConnection() &&
              d->connection->checkProtocolVersion() ) {

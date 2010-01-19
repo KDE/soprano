@@ -125,7 +125,8 @@ Soprano::Client::LocalSocketClient::~LocalSocketClient()
 
 bool Soprano::Client::LocalSocketClient::connect( const QString& name )
 {
-    if ( !d->connection ) {
+    if ( !isConnected() ) {
+        disconnect(); // for cleanup
         d->connection = new LocalSocketClientConnection( name, this );
         if ( d->connection->testConnection() &&
              d->connection->checkProtocolVersion() ) {
