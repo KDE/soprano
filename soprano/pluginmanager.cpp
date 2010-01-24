@@ -140,8 +140,6 @@ const Soprano::Backend* Soprano::PluginManager::discoverBackendByName( const QSt
         return qobject_cast<Backend*>( it->plugin() );
     else if ( !name.endsWith( QLatin1String( "backend" ) ) )
         return discoverBackendByName( name + QLatin1String( "backend" ) );
-    else if ( !name.endsWith( QLatin1String( "backend" ) ) )
-        return discoverBackendByName( name + QLatin1String( "backend" ) );
     else
         return 0;
 }
