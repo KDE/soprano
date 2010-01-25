@@ -17,6 +17,7 @@
 	* New class AsyncQuery which will spawn a new thread for real asnycroneous query execution (in contrast
           to AsyncModel which only performs the actual query call in another thread while the iteration is
           syncroneous.)
+	* Removed redland/librdf dependancy from raptor parser.
 
 2.3
 	* New class LanguageTag replacing the old simple string language handling with a sophisticated one
