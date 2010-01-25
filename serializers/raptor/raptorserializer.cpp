@@ -60,9 +60,10 @@ namespace {
             return true;
         }
         else if ( node.isLiteral() ) {
-            *data = strdup( node.identifier().toUtf8().data() );
+            *data = strdup( node.toString().toUtf8().data() );
             if ( node.literal().isPlain() ) {
-                *lang = ( unsigned char* )strdup( ( const char* )node.language().toUtf8().data() );
+                if ( !node.language().isEmpty() )
+                    *lang = ( unsigned char* )strdup( ( const char* )node.language().toUtf8().data() );
             }
             else {
                 *dataType = raptor_new_uri( ( const unsigned char* )node.dataType().toEncoded().data() );
