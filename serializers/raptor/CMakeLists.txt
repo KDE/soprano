@@ -6,8 +6,6 @@ include_directories(
   ${QT_INCLUDE_DIR}
   ${soprano_core_SOURCE_DIR}
   ${soprano_raptor_serializer_BINARY_DIR}
-  ${REDLAND_INCLUDE_DIR}
-  ${RASQAL_INCLUDE_DIR}
   ${RAPTOR_INCLUDE_DIR}
 )
 
@@ -27,9 +25,7 @@ qt4_automoc(${raptor_serializer_SRC})
 
 add_library(soprano_raptorserializer MODULE ${raptor_serializer_SRC})
 
-TARGET_LINK_LIBRARIES(soprano_raptorserializer soprano soprano_redlandcore ${RAPTOR_LIBRARIES})
-
-ADD_DEFINITIONS(${REDLAND_FLAGS})
+TARGET_LINK_LIBRARIES(soprano_raptorserializer soprano ${RAPTOR_LIBRARIES})
 
 set_target_properties(soprano_raptorserializer PROPERTIES
   DEFINE_SYMBOL MAKE_RAPTORSERIALIZER_LIB

@@ -21,19 +21,134 @@
  */
 
 #include "raptorserializer.h"
-#include "../../backends/redland/redlandworld.h"
-#include "../../backends/redland/redlandstatementiterator.h"
 
 #include "statementiterator.h"
 #include "statement.h"
+#include "node.h"
 
-#include <redland.h>
+#include <raptor.h>
+#include <string.h>
 
 #include <QtCore/QUrl>
 #include <QtCore/QtPlugin>
 #include <QtCore/QTextStream>
+#include <QtCore/QStringList>
 #include <QtCore/QDebug>
 
+namespace {
+    class RaptorInitHelper
+    {
+    public:
+        RaptorInitHelper() {
+            raptor_init();
+        }
+        ~RaptorInitHelper() {
+            raptor_finish();
+        }
+    };
+
+    bool convertNode( const Soprano::Node& node, const void** data, raptor_identifier_type* type, raptor_uri** dataType = 0, const unsigned char** lang = 0 )
+    {
+        if ( node.isResource() ) {
+            *data = raptor_new_uri( ( const unsigned char* )node.uri().toEncoded().data() );
+            *type = RAPTOR_IDENTIFIER_TYPE_RESOURCE;
+            return true;
+        }
+        else if ( node.isBlank() ) {
+            *data = strdup( node.identifier().toUtf8().data() );
+            *type = RAPTOR_IDENTIFIER_TYPE_ANONYMOUS;
+            return true;
+        }
+        else if ( node.isLiteral() ) {
+            *data = strdup( node.identifier().toUtf8().data() );
+            if ( node.literal().isPlain() ) {
+                *lang = ( unsigned char* )strdup( ( const char* )node.language().toUtf8().data() );
+            }
+            else {
+                *dataType = raptor_new_uri( ( const unsigned char* )node.dataType().toEncoded().data() );
+            }
+            *type = RAPTOR_IDENTIFIER_TYPE_LITERAL;
+            return true;
+        }
+
+        return false;
+    }
+
+
+    raptor_statement* convertStatement( const Soprano::Statement& statement )
+    {
+        raptor_statement* s = new raptor_statement;
+        memset( s, 0, sizeof( raptor_statement ) );
+        convertNode( statement.subject(), &s->subject, &s->subject_type );
+        convertNode( statement.predicate(), &s->predicate, &s->predicate_type );
+        convertNode( statement.object(), &s->object, &s->object_type, &s->object_literal_datatype, &s->object_literal_language );
+        return s;
+    }
+
+
+    void free_node( const void* data, raptor_identifier_type type )
+    {
+        switch( type ) {
+        case RAPTOR_IDENTIFIER_TYPE_RESOURCE:
+            raptor_free_uri( ( raptor_uri* )data );
+            break;
+        default:
+            free( ( char* )data );
+            break;
+        }
+    }
+
+    void free_statement( raptor_statement* s )
+    {
+        free_node( s->subject, s->subject_type );
+        free_node( s->predicate, s->predicate_type );
+        free_node( s->object, s->object_type );
+        if ( s->object_literal_datatype )
+            raptor_free_uri( ( raptor_uri* )s->object_literal_datatype );
+        if ( s->object_literal_language )
+            free( ( char* )s->object_literal_language );
+        delete s;
+    }
+
+
+    int raptorIOStreamWriteByte( void* data, const int byte )
+    {
+        QTextStream* s = reinterpret_cast<QTextStream*>( data );
+        // an int is not a byte. Strange raptor API!
+        if( s->device() ) {
+            s->device()->putChar( (char)byte );
+        }
+        else {
+            ( *s ) << ( char )byte;
+        }
+        return 0;
+    }
+
+
+    int raptorIOStreamWriteBytes( void* data, const void* ptr, size_t size, size_t nmemb )
+    {
+        // the raptor API is very weird. But it seems that ATM raptor only uses size == 1
+        QTextStream* s = reinterpret_cast<QTextStream*>( data );
+        switch( size ) {
+        case 1: {
+            const char* p = reinterpret_cast<const char*>( ptr );
+            if( s->device() ) {
+                s->device()->write( p, nmemb );
+            }
+            else {
+                for ( unsigned int i = 0; i < nmemb; ++i ) {
+                    raptorIOStreamWriteByte( data, p[i] );
+                }
+            }
+            break;
+        }
+        default:
+            qDebug() << "Unsupported data size: " << size;
+            return -1;
+        }
+        return 0;
+    }
+}
 
 Q_EXPORT_PLUGIN2(soprano_raptorserializer, Soprano::Raptor::Serializer)
 
@@ -76,98 +191,6 @@ QStringList Soprano::Raptor::Serializer::supportedUserSerializations() const
 }
 
 
-int raptorIOStreamWriteByte( void* data, const int byte )
-{
-    QTextStream* s = reinterpret_cast<QTextStream*>( data );
-    // an int is not a byte. Strange raptor API!
-    if( s->device() ) {
-        s->device()->putChar( (char)byte );
-    }
-    else {
-        ( *s ) << ( char )byte;
-    }
-    return 0;
-}
-
-
-int raptorIOStreamWriteBytes( void* data, const void* ptr, size_t size, size_t nmemb )
-{
-    // the raptor API is very weird. But it seems that ATM raptor only uses size == 1
-    QTextStream* s = reinterpret_cast<QTextStream*>( data );
-    switch( size ) {
-    case 1: {
-        const char* p = reinterpret_cast<const char*>( ptr );
-        if( s->device() ) {
-            s->device()->write( p, nmemb );
-        }
-        else {
-            for ( unsigned int i = 0; i < nmemb; ++i ) {
-                raptorIOStreamWriteByte( data, p[i] );
-            }
-        }
-        break;
-    }
-    default:
-        qDebug() << "Unsupported data size: " << size;
-        return -1;
-    }
-    return 0;
-}
-
-
-class StreamData {
-public:
-    StreamData()
-        : world(0),
-          initialized(false),
-          atEnd(false) {}
-
-    Soprano::StatementIterator it;
-    Soprano::Redland::World* world;
-    bool initialized;
-    bool atEnd;
-};
-
-// the raptor API is aweful: it seems that first atEnd is called, then get, and then next until next returns false.
-// So we have to call it.next() manually if we don't want to get the first statement twice
-int streamIsEnd( void* data )
-{
-    StreamData* it = reinterpret_cast<StreamData*>( data );
-    if ( !it->initialized ) {
-        it->initialized = true;
-        it->atEnd = !it->it.next();
-    }
-    return it->atEnd;
-}
-
-
-int streamNext( void* data )
-{
-    StreamData* it = reinterpret_cast<StreamData*>( data );
-    it->atEnd = !it->it.next();
-    return it->atEnd;
-}
-
-
-void* streamGet( void* data, int what )
-{
-    StreamData* it = reinterpret_cast<StreamData*>( data );
-
-    if ( what == 0 ) {
-        // statement (stupid librdf does not export it)
-        return it->world->createStatement( it->it.current() );
-    }
-    else {
-        // context
-        return it->world->createNode( it->it.current().context() );
-    }
-}
-
-
-void streamFinished( void* )
-{}
-
-
 bool Soprano::Raptor::Serializer::serialize( StatementIterator it,
                                              QTextStream& stream,
                                              RdfSerialization serialization,
@@ -175,31 +198,33 @@ bool Soprano::Raptor::Serializer::serialize( StatementIterator it,
 {
     clearError();
 
-    Redland::World world;
+    RaptorInitHelper raptorHelper;
 
-    librdf_serializer* serializer = 0;
+    raptor_serializer* serializer = 0;
     if ( serialization == SerializationRdfXml ) {
-        serializer = librdf_new_serializer( world.worldPtr(),
-                                            "rdfxml-abbrev", // we always want the abbreviated xmlrdf
-                                            0,
-                                            0 );
-    }
-    else if ( serialization == SerializationUser ) {
-        serializer = librdf_new_serializer( world.worldPtr(),
-                                            userSerialization.toLatin1().data(),
-                                            0,
-                                            0 );
+        serializer = raptor_new_serializer( "rdfxml-abbrev" ); // we always want the abbreviated xmlrdf
     }
     else {
-        serializer = librdf_new_serializer( world.worldPtr(),
-                                            0, // all factories
-                                            serializationMimeType( serialization, userSerialization ).toLatin1().data(),
-                                            0 );
+        for ( int i = 0; 1; ++i ) {
+            const char* syntax_name = 0;
+            const char* syntax_label = 0;
+            const char* mime_type = 0;
+            const unsigned char* uri_string = 0;
+            if ( raptor_serializers_enumerate( i,
+                                               &syntax_name,
+                                               &syntax_label,
+                                               &mime_type,
+                                               &uri_string ) )
+                break;
+            if ( !qstrcmp( serializationMimeType( serialization, userSerialization ).toLatin1().data(), mime_type ) ) {
+                serializer = raptor_new_serializer( syntax_name );
+                break;
+            }
+        }
     }
 
     if ( !serializer ) {
         qDebug() << "(Soprano::Raptor::Serializer) no serializer for mimetype " << serializationMimeType( serialization, userSerialization );
-        setError( world.lastError() );
         return false;
     }
 
@@ -207,9 +232,11 @@ bool Soprano::Raptor::Serializer::serialize( StatementIterator it,
     QHash<QString, QUrl> namespaces = prefixes();
     for ( QHash<QString, QUrl>::const_iterator pfit = namespaces.constBegin();
           pfit != namespaces.constEnd(); ++pfit ) {
-        librdf_serializer_set_namespace( serializer,
-                                         librdf_new_uri( world.worldPtr(), reinterpret_cast<unsigned char*>( pfit.value().toEncoded().data() ) ),
-                                         pfit.key().toLatin1().data() );
+        raptor_uri* ns = raptor_new_uri( reinterpret_cast<unsigned char*>( pfit.value().toEncoded().data() ) );
+        raptor_serialize_set_namespace( serializer,
+                                        ns,
+                                        ( unsigned char* )pfit.key().toLatin1().data() );
+        raptor_free_uri( ns );
     }
 
     bool success = true;
@@ -239,43 +266,17 @@ bool Soprano::Raptor::Serializer::serialize( StatementIterator it,
                                                                       &raptorStreamHandler );
 #endif
 
-    if ( !raptorStream ) {
-        qDebug() << "(Soprano::Raptor::Serializer) failed to create Raptor stream.";
-        librdf_free_serializer( serializer );
-        setError( world.lastError() );
-        return false;
+    raptor_serialize_start_to_iostream( serializer, 0, raptorStream );
+
+    while ( it.next() ) {
+        raptor_statement* rs = convertStatement( *it );
+        raptor_serialize_statement( serializer, rs );
+        free_statement( rs );
     }
 
-    StreamData streamData;
-    streamData.it = it;
-    streamData.atEnd = false;
-    streamData.initialized = false;
-    streamData.world = &world;
-    librdf_stream* rdfStream = librdf_new_stream( world.worldPtr(),
-                                                  &streamData,
-                                                  streamIsEnd,
-                                                  streamNext,
-                                                  streamGet,
-                                                  streamFinished );
-
-    if ( !rdfStream ) {
-        qDebug() << "(Soprano::Raptor::Serializer) failed to create librdf stream.";
-        raptor_free_iostream( raptorStream );
-        setError( world.lastError() );
-        return false;
-    }
-
-    if ( librdf_serializer_serialize_stream_to_iostream( serializer,
-                                                         0,
-                                                         rdfStream,
-                                                         raptorStream ) ) {
-        qDebug() << "(Soprano::Raptor::Serializer) serialization failed.";
-        setError( world.lastError() );
-        success = false;
-    }
-
-    librdf_free_stream( rdfStream );
-    librdf_free_serializer( serializer );
+    raptor_serialize_end( serializer );
+    raptor_free_iostream( raptorStream );
+    raptor_free_serializer( serializer );
 
     return success;
 }
