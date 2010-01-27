@@ -2,7 +2,7 @@
  * This file is part of Soprano Project
  *
  * Copyright (C) 2006 Daniele Galdi <daniele.galdi@gmail.com>
- * Copyright (C) 2007 Sebastian Trueg <trueg@kde.org>
+ * Copyright (C) 2007-2010 Sebastian Trueg <trueg@kde.org>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -92,16 +92,17 @@ Soprano::Error::ErrorCode Soprano::Model::removeStatement( const Node& subject, 
 }
 
 
-Soprano::Error::ErrorCode Soprano::Model::removeStatements( const QList<Statement> &statements )
+Soprano::Error::ErrorCode Soprano::Model::removeStatements( const QList<Statement>& statements )
 {
+    Error::ErrorCode rc = Error::ErrorNone;
     for ( QList<Statement>::const_iterator it = statements.constBegin();
           it != statements.constEnd(); ++it ) {
         Error::ErrorCode c = removeStatement( *it );
         if ( c != Error::ErrorNone ) {
-            return c;
+            rc = c;
         }
     }
-    return Error::ErrorNone;
+    return rc;
 }
 
 
