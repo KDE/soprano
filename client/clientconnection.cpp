@@ -77,8 +77,8 @@ Soprano::Client::ClientConnection::ClientConnection( QObject* parent )
 
 Soprano::Client::ClientConnection::~ClientConnection()
 {
-    while( !d->socketHash.isEmpty() )
-        delete d->socketHash.begin().value();
+    QList<SocketHandler*> sockets = d->socketHash.values();
+    qDeleteAll( sockets );
     delete d;
 }
 
