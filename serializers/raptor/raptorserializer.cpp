@@ -267,7 +267,8 @@ bool Soprano::Raptor::Serializer::serialize( StatementIterator it,
                                                                       &raptorStreamHandler );
 #endif
 
-    raptor_serialize_start_to_iostream( serializer, 0, raptorStream );
+    // raptor_serialize_start takes ownership of raptorStream
+    raptor_serialize_start( serializer, 0, raptorStream );
 
     while ( it.next() ) {
         raptor_statement* rs = convertStatement( *it );
@@ -276,7 +277,6 @@ bool Soprano::Raptor::Serializer::serialize( StatementIterator it,
     }
 
     raptor_serialize_end( serializer );
-    raptor_free_iostream( raptorStream );
     raptor_free_serializer( serializer );
 
     return success;
