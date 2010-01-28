@@ -39,9 +39,9 @@ endif(BUILD_REDLAND_BACKEND OR BUILD_RAPTOR_SERIALIZER)
 
 
 if(BUILD_REDLAND_BACKEND)
-  if (RASQAL_VERSION STRLESS "0.9.15")
+  if (RASQAL_VERSION VERSION_LESS "0.9.15")
     message(STATUS "WARNING! - SPARQL ASK queries are broken in rasqal <= 0.9.14. It is recommended to update to at least version 0.9.15.")
-  endif (RASQAL_VERSION STRLESS "0.9.15")
+  endif (RASQAL_VERSION VERSION_LESS "0.9.15")
 
   set(redland_backend_SRC
     redlandbackend.cpp
