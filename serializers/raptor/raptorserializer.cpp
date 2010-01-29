@@ -27,7 +27,6 @@
 #include "node.h"
 
 #include <raptor.h>
-#include <string.h>
 
 #include <QtCore/QUrl>
 #include <QtCore/QtPlugin>
@@ -55,15 +54,15 @@ namespace {
             return true;
         }
         else if ( node.isBlank() ) {
-            *data = strdup( node.identifier().toUtf8().data() );
+            *data = qstrdup( node.identifier().toUtf8().data() );
             *type = RAPTOR_IDENTIFIER_TYPE_ANONYMOUS;
             return true;
         }
         else if ( node.isLiteral() ) {
-            *data = strdup( node.toString().toUtf8().data() );
+            *data = qstrdup( node.toString().toUtf8().data() );
             if ( node.literal().isPlain() ) {
                 if ( !node.language().isEmpty() )
-                    *lang = ( unsigned char* )strdup( ( const char* )node.language().toUtf8().data() );
+                    *lang = ( unsigned char* )qstrdup( ( const char* )node.language().toUtf8().data() );
             }
             else {
                 *dataType = raptor_new_uri( ( const unsigned char* )node.dataType().toEncoded().data() );
