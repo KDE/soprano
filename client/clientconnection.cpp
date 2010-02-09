@@ -1,7 +1,7 @@
 /*
  * This file is part of Soprano Project.
  *
- * Copyright (C) 2007-2008 Sebastian Trueg <trueg@kde.org>
+ * Copyright (C) 2007-2010 Sebastian Trueg <trueg@kde.org>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -57,14 +57,8 @@ Soprano::Client::SocketHandler::SocketHandler( ClientConnectionPrivate* client, 
 Soprano::Client::SocketHandler::~SocketHandler()
 {
     QMutexLocker lock( &m_client->socketMutex );
-    m_client->socketHash.remove( m_client->socketHash.key( this ) );
+    m_client->sockets.removeAll( m_socket );
     delete m_socket;
-}
-
-
-void Soprano::Client::SocketHandler::cleanup()
-{
-    delete this;
 }
 
 
@@ -77,32 +71,27 @@ Soprano::Client::ClientConnection::ClientConnection( QObject* parent )
 
 Soprano::Client::ClientConnection::~ClientConnection()
 {
-    QList<SocketHandler*> sockets = d->socketHash.values();
-    qDeleteAll( sockets );
+    QMutexLocker lock( &d->socketMutex );
+    // the sockets need to be deleted in their respective threads.
+    // this is what d->socketStorage does. We only close them here.
+    foreach( QIODevice* socket, d->sockets ) {
+        socket->close();
+    }
     delete d;
 }
 
 
 QIODevice* Soprano::Client::ClientConnection::socket()
 {
-    QMutexLocker lock( &d->socketMutex );
-
-    QHash<QThread*, SocketHandler*>::iterator it = d->socketHash.find( QThread::currentThread() );
-    if ( it != d->socketHash.end() ) {
-        return it.value()->socket();
+    if ( d->socketStorage.hasLocalData() &&
+         isConnected( d->socketStorage.localData()->socket() ) ) {
+        return d->socketStorage.localData()->socket();
     }
     else if ( QIODevice* socket = newConnection() ) {
+        QMutexLocker lock( &d->socketMutex );
         SocketHandler* cleaner = new SocketHandler( d, socket );
-        d->socketHash.insert( QThread::currentThread(), cleaner );
-        connect( QThread::currentThread(), SIGNAL( finished() ),
-                 cleaner, SLOT( cleanup() ),
-                 Qt::DirectConnection );
-        connect( QThread::currentThread(), SIGNAL( terminated() ),
-                 cleaner, SLOT( cleanup() ),
-                 Qt::DirectConnection );
-        connect( QThread::currentThread(), SIGNAL( destroyed() ),
-                 cleaner, SLOT( cleanup() ),
-                 Qt::DirectConnection );
+        d->sockets.append( socket );
+        d->socketStorage.setLocalData( cleaner );
         return socket;
     }
 
