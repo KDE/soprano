@@ -36,11 +36,6 @@
 Q_DECLARE_METATYPE( QProcess::ExitStatus )
 
 namespace {
-
-#ifdef Q_OS_WIN
-    QMutex portNumberMutex;
-#endif
-
     quint16 getFreePortNumber() {
 //         QTcpServer server;
 //         if ( server.listen() ) {
@@ -51,6 +46,7 @@ namespace {
 //             return 1111;
 //         }
 #ifdef Q_OS_WIN
+        static QMutex portNumberMutex;
         static quint16 p = 1111;
         QMutexLocker l(&portNumberMutex);
         return p++;
@@ -115,14 +111,10 @@ bool Soprano::VirtuosoController::start( const BackendSettings& settings, RunFla
             QFile::remove( lockFilePath );
 
         QStringList args;
-#ifdef Q_OS_WIN
         args << "+foreground"
-             << "+configfile" << QDir::toNativeSeparators(m_configFilePath);
-#else
-        args << "+foreground"
-             << "+config" << m_configFilePath
+             << "+configfile" << QDir::toNativeSeparators(m_configFilePath)
              << "+wait";
-#endif
+
         qDebug() << "Starting Virtuoso server:" << virtuosoExe << args;
 
         m_virtuosoProcess.start( virtuosoExe, args, QIODevice::ReadOnly );
@@ -348,7 +340,7 @@ QString Soprano::VirtuosoController::locateVirtuosoBinary()
 #else
         QFileInfo info( dir + QLatin1String("/virtuoso-t") );
 #endif
-        if ( info.isExecutable() && !info.isSymLink() ) {
+        if ( info.isExecutable() ) {
             return info.absoluteFilePath();
         }
     }
