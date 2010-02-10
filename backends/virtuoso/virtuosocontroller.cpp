@@ -348,7 +348,7 @@ QString Soprano::VirtuosoController::locateVirtuosoBinary()
 #else
         QFileInfo info( dir + QLatin1String("/virtuoso-t") );
 #endif
-        if ( info.isExecutable() && !info.isSymLink() ) {
+        if ( info.isExecutable() ) {
             return info.absoluteFilePath();
         }
     }
