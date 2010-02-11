@@ -71,12 +71,13 @@ Soprano::Client::ClientConnection::ClientConnection( QObject* parent )
 
 Soprano::Client::ClientConnection::~ClientConnection()
 {
-    QMutexLocker lock( &d->socketMutex );
+    d->socketMutex.lock();
     // the sockets need to be deleted in their respective threads.
     // this is what d->socketStorage does. We only close them here.
     foreach( QIODevice* socket, d->sockets ) {
         socket->close();
     }
+    d->socketMutex.unlock();
     delete d;
 }
 
