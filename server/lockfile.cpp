@@ -74,7 +74,7 @@ QString LockFile::fileName() const
 }
 
 
-bool LockFile::aquireLock()
+bool LockFile::aquireLock( int* owningPid )
 {
     releaseLock();
 
@@ -89,8 +89,8 @@ bool LockFile::aquireLock()
         qDebug() << "(LockFile) could not open" << d->path << QString( "(%1)" ).arg( strerror( errno ) );
         return false;
     }
-#ifndef _WIN32
-// flock isn't defined under windows
+    // flock isn't defined under windows
+#if defined (F_SETLK)
     struct flock mlock;
     mlock.l_type = F_WRLCK;
     mlock.l_whence = SEEK_SET;
@@ -99,10 +99,15 @@ bool LockFile::aquireLock()
     int r = fcntl( d->fd, F_SETLK, &mlock );
     if ( r == -1 ) {
         qDebug() << "(LockFile) could not set lock for" << d->path;
+        if ( owningPid ) {
+            // we could not get a lock, so who owns it?
+            fcntl( d->fd, F_GETLK, &mlock );
+            *owningPid = mlock.l_pid;
+        }
         close( d->fd );
         return false;
     }
-#endif /* _WIN32 */
+#endif
     return true;
 }
 
