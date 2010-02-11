@@ -30,8 +30,11 @@
  * - \c CheckpointInterval - The interval in minutes at which Virtuoso will automatically make a database checkpoint. Defaults to 60.
  * - \c MinAutoCheckpointSize - The minimum size of the Virtuoso transaction log. An automatic checkpoint will not be made if there is
  *                              less than MinAutoCheckpointSize bytes in the current transaction log. Defaults to 4000000.
+ * - \c forcedstart - A boolean property which when set will result in the backend killing any Virtuoso instance accessing the
+ *                    data in the storage dir before starting its own instance. This option is ignored when connecting to an already
+ *                    running Virtuoso server.
  *
- * The two settings above are user settings and have to be provided using Soprano::BackendOptionUser:
+ * The settings above are user settings and have to be provided using Soprano::BackendOptionUser:
  *
  * \code
  * Soprano::BackendSettings settings;

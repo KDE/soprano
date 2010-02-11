@@ -21,6 +21,7 @@
 
 #include "virtuosocontroller.h"
 #include "sopranodirs.h"
+#include "lockfile.h"
 
 #include <QtCore/QTemporaryFile>
 #include <QtCore/QProcess>
@@ -32,6 +33,11 @@
 #include <QtCore/QDebug>
 #include <QtCore/QMutex>
 #include <QtCore/QMutexLocker>
+
+#ifndef Q_OS_WIN
+#include <sys/types.h>
+#include <signal.h>
+#endif
 
 Q_DECLARE_METATYPE( QProcess::ExitStatus )
 
@@ -107,12 +113,24 @@ bool Soprano::VirtuosoController::start( const BackendSettings& settings, RunFla
             return false;
         }
 
-        // remove old lock files to be sure
-        QString lockFilePath
-            = valueInSettings( settings, BackendOptionStorageDir ).toString()
-            + QLatin1String( "/soprano-virtuoso.lck" );
-        if ( QFile::exists( lockFilePath ) )
-            QFile::remove( lockFilePath );
+        const QString storageDir = valueInSettings( settings, BackendOptionStorageDir ).toString();
+
+        // check if another instance of Virtuoso is running
+        int pid = pidOfRunningVirtuosoInstance( storageDir );
+        if ( pid > 0 && valueInSettings( settings, "forcedstart", false ).toBool() ) {
+#ifndef Q_OS_WIN
+            qDebug( "Shutting down Virtuoso instance (%d) which is in our way.", pid );
+            kill( pid, SIGTERM );
+#endif
+            pid = 0;
+        }
+
+        // remove old lock files in case Virtuoso crashed
+        if ( !pid ) {
+            QString lockFilePath = storageDir + QLatin1String( "/soprano-virtuoso.lck" );
+            if ( QFile::exists( lockFilePath ) )
+                QFile::remove( lockFilePath );
+        }
 
         QStringList args;
 #ifdef Q_OS_WIN
@@ -300,7 +318,7 @@ void Soprano::VirtuosoController::writeConfigFile( const QString& path, const Ba
     cfs.setValue( "DisableTcpSocket", "1" );
 #endif
 
-    // FIXME: what is this?
+    // TODO: make this configurable to allow the server to read/write from and to a set of folders
     //    cfs.setValue( "DirsAllowed", "." );
 
     // FIXME: what is this?
@@ -353,6 +371,21 @@ QString Soprano::VirtuosoController::locateVirtuosoBinary()
         }
     }
     return QString();
+}
+
+
+// static
+int Soprano::VirtuosoController::pidOfRunningVirtuosoInstance( const QString& storagePath )
+{
+    // try to aquire lock as Virtuoso itself does
+    LockFile lock( storagePath + QLatin1String( "/soprano-virtuoso.db" ) );
+    int pid = 0;
+    if ( !lock.aquireLock( &pid ) ) {
+        return pid;
+    }
+    else {
+        return 0;
+    }
 }
 
 #include "virtuosocontroller.moc"

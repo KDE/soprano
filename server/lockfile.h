@@ -25,7 +25,7 @@ public:
     void setFileName( const QString& path );
     QString fileName() const;
 
-    bool aquireLock();
+    bool aquireLock( int* owningPid = 0 );
     void releaseLock();
 
 private:

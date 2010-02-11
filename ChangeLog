@@ -1,3 +1,8 @@
+2.4.1
+	* Virtuoso backend: new parameter "forcedstart" which when set will make the backend shut down
+	  any running Virtuoso instance already accessing the storage dir (does not work on Windows).
+	* Fixed a bug in the ClientConnection where mutex was deleted before it had been unlocked.
+
 2.4
 	* New methods Client::SparqlModel::listStatementsAsync and Client::SparqlModel::listContextsAsync
 	* Automatic query prefix expansion in NRLModel

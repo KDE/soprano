@@ -8,6 +8,7 @@ include_directories(
   ${soprano_core_BINARY_DIR}
   ${QT_INCLUDES}
   ${soprano_SOURCE_DIR}
+  ${soprano_SOURCE_DIR}/server
   ${virtuoso_BINARY_DIR}
   ${IODBC_INCLUDE_DIR}
 )
@@ -24,6 +25,7 @@ set(SRC
   odbcconnectionpool.cpp
   odbcqueryresult.cpp
   ${soprano_core_SOURCE_DIR}/sopranodirs.cpp
+  ${soprano_SOURCE_DIR}/server/lockfile.cpp
 )
 
 qt4_automoc(${SRC})
