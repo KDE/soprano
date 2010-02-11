@@ -70,6 +70,7 @@ namespace Soprano {
         ExitStatus lastExitStatus() const { return m_lastExitStatus; }
 
         static QString locateVirtuosoBinary();
+        static int pidOfRunningVirtuosoInstance( const QString& storagePath );
 
     Q_SIGNALS:
         void started();
