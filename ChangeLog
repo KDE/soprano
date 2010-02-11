@@ -1,9 +1,11 @@
 2.4.1
 	* Virtuoso backend: new parameter "forcedstart" which when set will make the backend shut down
 	  any running Virtuoso instance already accessing the storage dir (does not work on Windows).
+
+2.4.0.1
 	* Fixed a bug in the ClientConnection where mutex was deleted before it had been unlocked.
 
-2.4
+2.4.0
 	* New methods Client::SparqlModel::listStatementsAsync and Client::SparqlModel::listContextsAsync
 	* Automatic query prefix expansion in NRLModel
 	* Automatic NRL metadata graph removal in NRLModel
@@ -23,6 +25,17 @@
           to AsyncModel which only performs the actual query call in another thread while the iteration is
           syncroneous.)
 	* Removed redland/librdf dependancy from raptor parser.
+
+2.3.2
+	* Do not fail when trying to index empty strings, but ignore them.
+	* Fixed parsing of plain literals with language code in sopranocmd.
+	* Make onto2vocabularyclass work with the redland backend (not using graph SPARQL queries anymore)
+
+2.3.1
+	* Changed installation path of cmake modules (SopranoAppOntology.cmake) to <prefix/share/soprano/cmake
+	* Prevent the redland backend to add one statement multiple times.
+	* Properly handle class names containing a dash '-' in onto2vocabularyclass
+	* sopranocmd: Fail if trying to export a non-graph query
 
 2.3
 	* New class LanguageTag replacing the old simple string language handling with a sophisticated one
