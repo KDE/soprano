@@ -115,7 +115,7 @@ if(NOT WIN32)
 endif(NOT WIN32)
 
 include(FindPackageHandleStandardArgs)
-find_package_handle_standard_args(Redland  DEFAULT_MSG  REDLAND_LIBRARIES REDLAND_LIBRARIES _REDLAND_VERSION_OK)
+find_package_handle_standard_args(Redland  DEFAULT_MSG  REDLAND_CONFIG_EXECUTABLE REDLAND_LIBRARIES REDLAND_LIBRARIES _REDLAND_VERSION_OK)
 
 mark_as_advanced(REDLAND_INCLUDE_DIR_TMP
   REDLAND_INCLUDE_DIR
