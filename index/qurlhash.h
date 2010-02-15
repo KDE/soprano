@@ -25,10 +25,11 @@
 #include <QtCore/QUrl>
 #include <QtCore/QHash>
 
+#if QT_VERSION < 0x040700
 inline uint qHash( const QUrl& url )
 {
     return qHash( url.toString() );
 }
-
+#endif
 
 #endif
