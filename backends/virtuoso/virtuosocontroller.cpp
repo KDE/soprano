@@ -120,7 +120,7 @@ bool Soprano::VirtuosoController::start( const BackendSettings& settings, RunFla
         if ( pid > 0 && valueInSettings( settings, "forcedstart", false ).toBool() ) {
 #ifndef Q_OS_WIN
             qDebug( "Shutting down Virtuoso instance (%d) which is in our way.", pid );
-            kill( pid, SIGTERM );
+            ::kill( pid_t( pid ), SIGINT );
 #endif
             pid = 0;
         }
@@ -207,7 +207,8 @@ bool Soprano::VirtuosoController::shutdown()
         qDebug() << "Shutting down virtuoso instance" << m_virtuosoProcess.pid();
 #ifndef Q_OS_WIN
         m_status = ShuttingDown;
-        m_virtuosoProcess.terminate();
+        // terminate Virtuoso with the SIGINT signal to force it to make a clean shutdown
+        ::kill( pid_t( m_virtuosoProcess.pid() ), SIGINT );
         if ( !m_virtuosoProcess.waitForFinished( 30*1000 ) ) {
             qDebug() << "Killing virtuoso instance" << m_virtuosoProcess.pid();
             setError( "Virtuoso did not shut down after 30 seconds. Process killed." );
