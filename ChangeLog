@@ -4,7 +4,9 @@
 	    any running Virtuoso instance already accessing the storage dir (does not work on Windows).
 	  - Shut down Virtuoso using the SIGINT signal (not available on Windows) to ensure
  	    a checkpoint.
-	
+	* Allow to build Soprano with -fvisibility=hidden -fvisibility-inlines-hidden (thanks to
+	  Modestas Vainius of Debian for the patch)
+
 2.4.0.1
 	* Fixed a bug in the ClientConnection where mutex was deleted before it had been unlocked.
 
