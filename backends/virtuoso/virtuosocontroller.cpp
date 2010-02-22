@@ -37,6 +37,7 @@
 #ifndef Q_OS_WIN
 #include <sys/types.h>
 #include <signal.h>
+#include <wait.h>
 #endif
 
 Q_DECLARE_METATYPE( QProcess::ExitStatus )
@@ -117,6 +118,7 @@ bool Soprano::VirtuosoController::start( const BackendSettings& settings, RunFla
 #ifndef Q_OS_WIN
             qDebug( "Shutting down Virtuoso instance (%d) which is in our way.", pid );
             ::kill( pid_t( pid ), SIGINT );
+            ::waitpid( pid_t( pid ), 0, 0 );
 #endif
             pid = 0;
         }
