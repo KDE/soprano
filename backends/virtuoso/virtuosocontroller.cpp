@@ -37,16 +37,12 @@
 #ifndef Q_OS_WIN
 #include <sys/types.h>
 #include <signal.h>
+#include <sys/wait.h>
 #endif
 
 Q_DECLARE_METATYPE( QProcess::ExitStatus )
 
 namespace {
-
-#ifdef Q_OS_WIN
-    QMutex portNumberMutex;
-#endif
-
     quint16 getFreePortNumber() {
 //         QTcpServer server;
 //         if ( server.listen() ) {
@@ -57,6 +53,7 @@ namespace {
 //             return 1111;
 //         }
 #ifdef Q_OS_WIN
+        static QMutex portNumberMutex;
         static quint16 p = 1111;
         QMutexLocker l(&portNumberMutex);
         return p++;
@@ -121,6 +118,7 @@ bool Soprano::VirtuosoController::start( const BackendSettings& settings, RunFla
 #ifndef Q_OS_WIN
             qDebug( "Shutting down Virtuoso instance (%d) which is in our way.", pid );
             ::kill( pid_t( pid ), SIGINT );
+            ::waitpid( pid_t( pid ), 0, 0 );
 #endif
             pid = 0;
         }
@@ -133,14 +131,10 @@ bool Soprano::VirtuosoController::start( const BackendSettings& settings, RunFla
         }
 
         QStringList args;
-#ifdef Q_OS_WIN
         args << "+foreground"
-             << "+configfile" << QDir::toNativeSeparators(m_configFilePath);
-#else
-        args << "+foreground"
-             << "+config" << m_configFilePath
+             << "+configfile" << QDir::toNativeSeparators(m_configFilePath)
              << "+wait";
-#endif
+
         qDebug() << "Starting Virtuoso server:" << virtuosoExe << args;
 
         m_virtuosoProcess.start( virtuosoExe, args, QIODevice::ReadOnly );
