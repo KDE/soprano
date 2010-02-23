@@ -37,7 +37,7 @@
 #ifndef Q_OS_WIN
 #include <sys/types.h>
 #include <signal.h>
-#include <wait.h>
+#include <sys/wait.h>
 #endif
 
 Q_DECLARE_METATYPE( QProcess::ExitStatus )
