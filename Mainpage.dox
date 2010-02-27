@@ -2,18 +2,18 @@
  * \mainpage Soprano (aka QRDF) - A modular RDF storage framework
  *
  * %Soprano is a <a href="http://www.qtsoftware.com/">Qt</a>-based pluggable framework for <a href="http://www.w3.org/RDF/">RDF</a>
- * storage and parsing. It tries to provide a highly usable interface to several RDF storage solutions.
+ * storage and parsing. It tries to provide a highly usable interface to several Resource Description Framework (RDF) storage solutions.
  *
  * \section overview Overview
  *
  * %Soprano centers around the Soprano::Model class which represents one storage set. A Soprano::Model is basically a set of
  * RDF quadruples, i.e. Soprano::Statement. The actual storage is done via Soprano::Backend plugins. All
- * query operations return Soprano::Iterator instances. Iterator is a explicitely shared class which is very
+ * query operations return Soprano::Iterator instances. Iterator is an explicitly shared class which is very
  * easy to understand and use.
  *
  * %Soprano makes the distinction between two types of Models: Soprano::StorageModel and Soprano::FilterModel.
- * The former one is intended to be the basic Model which actually stores the data while the latter ones can be
- * stacked on top of a Soprano::StorageModel to perform certain filter operations. Thes filter operations can range
+ * The former is intended to be the basic Model which actually stores the data while the latter can be
+ * stacked on top of a Soprano::StorageModel to perform certain filter operations. These filter operations can range
  * from very basic things such as disallowing any write operation (Soprano::Util::ReadOnlyModel) to more complex
  * things such as full text indexing of all literal statements (Soprano::Index::IndexFilterModel) or exporting
  * the Model via D-Bus (Soprano::Server::DBusExportModel).
@@ -21,7 +21,7 @@
  * Apart from storage %Soprano provides a system for RDF parser and serializer plugins. For more details on parsing
  * or serializing RDF data see the Soprano::Parser and Soprano::Serializer classes.
  *
- * %Soprano comes with a builtin \link Soprano::Server Server \endlink and \link Soprano::Client Client \endlink implementations allowing to build remote repositories quickly.
+ * %Soprano comes with a built in \link Soprano::Server Server \endlink and \link Soprano::Client Client \endlink implementations allowing remote repositories to be built quickly.
  * Soprano::Client::SparqlModel provides a client to arbitrary <a href="http://www.w3.org/TR/rdf-sparql-protocol/">SPARQL (SPARQL Protocol and RDF Query Language)</a>
  * Http services.
  *
@@ -85,7 +85,7 @@
  *
  * Model instances are mostly created by the plugin implementations through the
  * Soprano::Backend::createModel() methods. In the most simple case one does not need to bother
- * with Soprano::Backend though as the basic methods are duplicated in the Soprano
+ * with Soprano::Backend though, as the basic methods are duplicated in the Soprano
  * namespace. Thus, to create a simple memory model using the default %Soprano backend:
  *
  * \code
@@ -111,7 +111,7 @@
 /**
  * \page soprano_backends Soprano Backends
  *
- * %Soprano is plug-in based and comes with three backend plug-ins which can be used directly
+ * %Soprano is plugin based and comes with three backend plugins which can be used directly
  * (if they have been built):
  *
  * \li \subpage soprano_backend_redland
@@ -145,8 +145,8 @@
  * }
  * \endcode
  *
- * For methods that do not return an immediate error status Soprano::Error::Error evalutes to a boolean. Thus, one can easily
- * check if an error occured as follows:
+ * For methods that do not return an immediate error status, Soprano::Error::Error evaluates to a boolean. Thus, one can easily
+ * check if an error occurred as follows:
  *
  * \code
  * Soprano::StatementIterator it = model->listStatements();
@@ -190,7 +190,7 @@
  * };
  * \endcode
  *
- * In the implementation file export the plugin so it can be picked up by the
+ * In the implementation file, export the plugin so that it can be picked up by the
  * plugin loading framework:
  *
  * \code
@@ -388,7 +388,7 @@
  *
  * \subsection cmake Using CMake with Soprano
  *
- * Using cmake is as simple. Find required packages \em Qt4 and \em PkgConfig, look for %Soprano via PkgConfig and link to both
+ * Using cmake is simple. Find required packages \em Qt4 and \em PkgConfig, look for %Soprano via PkgConfig and link to both
  * %Soprano and QtCore:
  *
  * \code
@@ -400,12 +400,12 @@
  * target_link_libraries(sopranotest ${Soprano_LIBRARIES} ${QT_QTCORE_LIBRARY})
  * \endcode
  *
- * \warning PkgConfig is not available on Windows. For platform independant development use a typical cmake module like
+ * \warning PkgConfig is not available on Windows. For platform independent development use a typical cmake module like
  * KDE's <a href="http://websvn.kde.org:80/%2Acheckout%2A/trunk/KDE/kdelibs/cmake/modules/FindSoprano.cmake">FindSoprano.cmake</a>.
  *
  * \subsubsection cmake_magic Some CMake Magic
  *
- * %Soprano provides the simple \ref onto2vocabularyclass tool which can generate convinience namespaces such as Soprano::Vocabulary::RDF
+ * %Soprano provides the simple \ref onto2vocabularyclass tool which can generate convenience namespaces such as Soprano::Vocabulary::RDF
  * from ontology files. With CMake it is very simple to generate these namespaces on-the-fly instead of packaging the generated files by
  * using the SopranoAddOntology macro provided by %Soprano:
  *
@@ -418,7 +418,7 @@
  *                      [VISIBLITY VISIBILITY_NAME])
  * \endcode
  *
- * Imagine ones code contains an ontology description in rdf+xml format named Foo (Foo Object Ontology) and you want to make it's classes and
+ * Imagine one's code contains an ontology description in rdf+xml format named Foo (Foo Object Ontology) and you want to make its classes and
  * properties accessible in the <em>MyStuff::Foo</em> namespace. One simply includes the cmake macro provided by Soprano:
  *
  * \code
