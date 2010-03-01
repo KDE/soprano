@@ -183,10 +183,20 @@ endif(SOPRANO_BUILD_TESTS)
 add_subdirectory(cmake)
 
 
-##################  create pkgconfig file  ################################
+##################  create pkgconfig files  ################################
 if(NOT WIN32)
   configure_file(${CMAKE_CURRENT_SOURCE_DIR}/soprano.pc.cmake ${CMAKE_CURRENT_BINARY_DIR}/soprano.pc @ONLY)
-  install(FILES ${CMAKE_CURRENT_BINARY_DIR}/soprano.pc DESTINATION ${PKGCONFIG_INSTALL_PREFIX})
+  configure_file(${CMAKE_CURRENT_SOURCE_DIR}/sopranoclient.pc.cmake ${CMAKE_CURRENT_BINARY_DIR}/sopranoclient.pc @ONLY)
+  configure_file(${CMAKE_CURRENT_SOURCE_DIR}/sopranoserver.pc.cmake ${CMAKE_CURRENT_BINARY_DIR}/sopranoserver.pc @ONLY)
+  configure_file(${CMAKE_CURRENT_SOURCE_DIR}/sopranoindex.pc.cmake ${CMAKE_CURRENT_BINARY_DIR}/sopranoindex.pc @ONLY)
+  install(
+    FILES
+    ${CMAKE_CURRENT_BINARY_DIR}/soprano.pc
+    ${CMAKE_CURRENT_BINARY_DIR}/sopranoclient.pc
+    ${CMAKE_CURRENT_BINARY_DIR}/sopranoserver.pc
+    ${CMAKE_CURRENT_BINARY_DIR}/sopranoindex.pc
+    DESTINATION
+    ${PKGCONFIG_INSTALL_PREFIX})
 endif(NOT WIN32)
 
 

@@ -26,6 +26,8 @@
 // we have no support for a real default/empty graph, thus we fake one, hoping that nobody will ever use this otherwise
 static const char* s_defaultGraph = "sopranofakes:/DEFAULTGRAPH";
 static const char* s_openlinkVirtualGraph = "http://www.openlinksw.com/schemas/virtrdf#";
+static const char* s_fakeBooleanType = "sopranofakes:/booleanHackUntilVirtuosoProblemIsResolved";
+static const char* s_fakeBase64Type = "sopranofakes:/base64BinaryHackUntilVirtuosoProblemIsResolved";
 
 
 Soprano::Error::Error Soprano::Virtuoso::convertSqlError( SQLSMALLINT handleType, SQLHANDLE handle, const QString& extraMessage )
@@ -64,23 +66,23 @@ Soprano::Error::Error Soprano::Virtuoso::convertSqlError( SQLSMALLINT handleType
 
 QUrl Soprano::Virtuoso::defaultGraph()
 {
-    return QUrl::fromEncoded( s_defaultGraph, QUrl::StrictMode );
+    return QUrl::fromEncoded( QByteArray::fromRawData( s_defaultGraph, qstrlen( s_defaultGraph ) ), QUrl::StrictMode );
 }
 
 
 QUrl Soprano::Virtuoso::openlinkVirtualGraph()
 {
-    return QUrl::fromEncoded( s_openlinkVirtualGraph, QUrl::StrictMode );
+    return QUrl::fromEncoded( QByteArray::fromRawData( s_openlinkVirtualGraph, qstrlen( s_openlinkVirtualGraph ) ), QUrl::StrictMode );
 }
 
 
 QUrl Soprano::Virtuoso::fakeBooleanType()
 {
-    return QUrl::fromEncoded( "sopranofakes:/booleanHackUntilVirtuosoProblemIsResolved", QUrl::StrictMode );
+    return QUrl::fromEncoded( QByteArray::fromRawData( s_fakeBooleanType, qstrlen( s_fakeBooleanType ) ), QUrl::StrictMode );
 }
 
 
 QUrl Soprano::Virtuoso::fakeBase64BinaryType()
 {
-    return QUrl::fromEncoded( "sopranofakes:/base64BinaryHackUntilVirtuosoProblemIsResolved", QUrl::StrictMode );
+    return QUrl::fromEncoded( QByteArray::fromRawData( s_fakeBase64Type, qstrlen( s_fakeBase64Type ) ), QUrl::StrictMode );
 }

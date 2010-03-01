@@ -6,6 +6,7 @@
  	    a checkpoint.
 	* Allow to build Soprano with -fvisibility=hidden -fvisibility-inlines-hidden (thanks to
 	  Modestas Vainius of Debian for the patch)
+	* PkgConfig files for sopranoclient, sopranoserver, and sopranoindex.
 
 2.4.0.1
 	* Fixed a bug in the ClientConnection where mutex was deleted before it had been unlocked.
