@@ -126,8 +126,17 @@ Soprano::Client::LocalSocketClient::~LocalSocketClient()
 bool Soprano::Client::LocalSocketClient::connect( const QString& name )
 {
     if ( !isConnected() ) {
-        disconnect(); // for cleanup
-        d->connection = new LocalSocketClientConnection( name, this );
+        //
+        // trueg: This is a hack: we do not disconnect since we essentially re-connect
+        // in every thread anyway. Thus, the whole connect/disconnect API is sort of a lie.
+        // This is something that grew over time and needs to be fixed. The best solution
+        // I see at the moment is to drop Qt for socket communication. QObject is just too
+        // heavy for that.
+        // Another solution would be for Soprano 3 to simply make the client non-thread-safe.
+        // Then each client thread would need to create its own connection manually.
+        //
+        if ( !d->connection )
+            d->connection = new LocalSocketClientConnection( name, this );
         if ( d->connection->connectInCurrentThread() &&
              d->connection->checkProtocolVersion() ) {
             return true;
