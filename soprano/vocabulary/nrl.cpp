@@ -36,6 +36,7 @@ public:
           nrl_GraphMetadata( QUrl::fromEncoded( "http://www.semanticdesktop.org/ontologies/2007/08/15/nrl#GraphMetadata", QUrl::StrictMode ) ),
           nrl_GraphView( QUrl::fromEncoded( "http://www.semanticdesktop.org/ontologies/2007/08/15/nrl#GraphView", QUrl::StrictMode ) ),
           nrl_InstanceBase( QUrl::fromEncoded( "http://www.semanticdesktop.org/ontologies/2007/08/15/nrl#InstanceBase", QUrl::StrictMode ) ),
+          nrl_DiscardableInstanceBase( QUrl::fromEncoded( "http://www.semanticdesktop.org/ontologies/2007/08/15/nrl#DiscardableInstanceBase", QUrl::StrictMode ) ),
           nrl_InverseFunctionalProperty( QUrl::fromEncoded( "http://www.semanticdesktop.org/ontologies/2007/08/15/nrl#InverseFunctionalProperty", QUrl::StrictMode ) ),
           nrl_KnowledgeBase( QUrl::fromEncoded( "http://www.semanticdesktop.org/ontologies/2007/08/15/nrl#KnowledgeBase", QUrl::StrictMode ) ),
           nrl_Ontology( QUrl::fromEncoded( "http://www.semanticdesktop.org/ontologies/2007/08/15/nrl#Ontology", QUrl::StrictMode ) ),
@@ -79,6 +80,7 @@ public:
     QUrl nrl_GraphMetadata;
     QUrl nrl_GraphView;
     QUrl nrl_InstanceBase;
+    QUrl nrl_DiscardableInstanceBase;
     QUrl nrl_InverseFunctionalProperty;
     QUrl nrl_KnowledgeBase;
     QUrl nrl_Ontology;
@@ -170,6 +172,11 @@ QUrl Soprano::Vocabulary::NRL::GraphView()
 QUrl Soprano::Vocabulary::NRL::InstanceBase()
 {
     return s_nrl()->nrl_InstanceBase;
+}
+
+QUrl Soprano::Vocabulary::NRL::DiscardableInstanceBase()
+{
+    return s_nrl()->nrl_DiscardableInstanceBase;
 }
 
 QUrl Soprano::Vocabulary::NRL::InverseFunctionalProperty()
