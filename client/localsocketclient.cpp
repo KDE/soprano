@@ -128,7 +128,7 @@ bool Soprano::Client::LocalSocketClient::connect( const QString& name )
     if ( !isConnected() ) {
         disconnect(); // for cleanup
         d->connection = new LocalSocketClientConnection( name, this );
-        if ( d->connection->testConnection() &&
+        if ( d->connection->connectInCurrentThread() &&
              d->connection->checkProtocolVersion() ) {
             return true;
         }
@@ -146,7 +146,7 @@ bool Soprano::Client::LocalSocketClient::connect( const QString& name )
 
 bool Soprano::Client::LocalSocketClient::isConnected() const
 {
-    return d->connection ? d->connection->testConnection() : false;
+    return d->connection ? d->connection->isConnectedInCurrentThread() : false;
 }
 
 

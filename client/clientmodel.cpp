@@ -42,8 +42,15 @@ Soprano::Client::ClientModel::ClientModel( const Backend* backend, int modelId, 
 
 Soprano::Client::ClientModel::~ClientModel()
 {
-    for ( int i = 0; i < m_openIterators.count(); ++i ) {
-        m_client->iteratorClose( m_openIterators[i] );
+    //
+    // No need to close iterators if we are no longer
+    // connected. In that case the iterators have been
+    // closed by the server anyway.
+    //
+    if ( m_client->isConnectedInCurrentThread() ) {
+        for ( int i = 0; i < m_openIterators.count(); ++i ) {
+            m_client->iteratorClose( m_openIterators[i] );
+        }
     }
 }
 

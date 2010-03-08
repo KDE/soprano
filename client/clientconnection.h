@@ -84,7 +84,11 @@ namespace Soprano {
 
             bool checkProtocolVersion();
 
-            bool testConnection();
+            /// trueg: this is an awful design which simply grew over time.
+            /// At some point this needs fixing a lot. Maybe by simply not
+            /// Using Qt for communication.
+            bool connectInCurrentThread();
+            bool isConnectedInCurrentThread();
 
         protected:
             /**

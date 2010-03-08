@@ -1,3 +1,7 @@
+2.4.2
+	* LocalSocketClient and TcpClient: do not re-establish a connection on model deletion.
+	  (This fixes a crash when using a client as a global static)
+
 2.4.1
 	* Virtuoso backend: 
 	  - new parameter "forcedstart" which when set will make the backend shut down
