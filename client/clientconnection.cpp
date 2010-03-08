@@ -74,6 +74,7 @@ Soprano::Client::ClientConnection::~ClientConnection()
     d->socketMutex.lock();
     // the sockets need to be deleted in their respective threads.
     // this is what d->socketStorage does. We only close them here.
+    // FIXME: QThreadStorage does NOT delete the local data in its destructor!
     foreach( QIODevice* socket, d->sockets ) {
         socket->close();
     }
@@ -84,8 +85,7 @@ Soprano::Client::ClientConnection::~ClientConnection()
 
 QIODevice* Soprano::Client::ClientConnection::socket()
 {
-    if ( d->socketStorage.hasLocalData() &&
-         isConnected( d->socketStorage.localData()->socket() ) ) {
+    if ( isConnectedInCurrentThread() ) {
         return d->socketStorage.localData()->socket();
     }
     else if ( QIODevice* socket = newConnection() ) {
@@ -680,10 +680,16 @@ bool Soprano::Client::ClientConnection::checkProtocolVersion()
 }
 
 
-bool Soprano::Client::ClientConnection::testConnection()
+bool Soprano::Client::ClientConnection::connectInCurrentThread()
 {
-    QIODevice* s = socket();
-    return s ? isConnected( s ) : false;
+    return( socket() != 0 );
+}
+
+
+bool Soprano::Client::ClientConnection::isConnectedInCurrentThread()
+{
+    return ( d->socketStorage.hasLocalData() &&
+             isConnected( d->socketStorage.localData()->socket() ) );
 }
 
 #include "clientconnection.moc"
