@@ -89,9 +89,10 @@ QIODevice* Soprano::Client::ClientConnection::socket()
         return d->socketStorage.localData()->socket();
     }
     else if ( QIODevice* socket = newConnection() ) {
-        QMutexLocker lock( &d->socketMutex );
+        d->socketMutex.lock();
         SocketHandler* cleaner = new SocketHandler( d, socket );
         d->sockets.append( socket );
+        d->socketMutex.unlock();
         d->socketStorage.setLocalData( cleaner );
         return socket;
     }
