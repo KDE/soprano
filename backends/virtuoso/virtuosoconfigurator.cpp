@@ -178,7 +178,7 @@ bool Soprano::Virtuoso::DatabaseConfigurator::updateFulltextIndexState( const QS
     // set the batch updating behaviour:
     // for sync updating batch updating needs to be disabled (second param "OFF")
     // for batch updating the third parameter specifies the interval in minutes.
-    return( m_connection->executeCommand( QString( "DB.DBA.VT_BATCH_UPDATE ('DB.DBA.RDF_OBJ', '%1', %2)" )
+    return( m_connection->executeCommand( QString::fromLatin1( "DB.DBA.VT_BATCH_UPDATE ('DB.DBA.RDF_OBJ', '%1', %2)" )
                                           .arg( ( enableIndexing && !syncUpdating ) ? QLatin1String( "ON" ) : QLatin1String( "OFF" ) )
                                           .arg( ( enableIndexing && updateIntervalSpecified ) ? state : QLatin1String( "null" ) ) )
             == Error::ErrorNone );
@@ -187,7 +187,8 @@ bool Soprano::Virtuoso::DatabaseConfigurator::updateFulltextIndexState( const QS
 
 bool Soprano::Virtuoso::DatabaseConfigurator::updateFulltextIndexRules( bool enable )
 {
-    QString query = QLatin1String( "SELECT ROFR_REASON FROM DB.DBA.RDF_OBJ_FT_RULES WHERE ROFR_G=null AND ROFR_P=null" );
+    // while we are using "null" as parameters to the rule procedures below the table actually stores empty strings
+    QString query = QLatin1String( "SELECT ROFR_REASON FROM DB.DBA.RDF_OBJ_FT_RULES WHERE ROFR_G='' AND ROFR_P=''" );
 
     bool haveRule = false;
 
@@ -206,10 +207,10 @@ bool Soprano::Virtuoso::DatabaseConfigurator::updateFulltextIndexRules( bool ena
     }
 
     if ( enable && !haveRule ) {
-        return m_connection->executeCommand( QString( "DB.DBA.RDF_OBJ_FT_RULE_ADD( null, null, '%1' )" ).arg( ruleName ) ) == Error::ErrorNone;
+        return m_connection->executeCommand( QString::fromLatin1( "DB.DBA.RDF_OBJ_FT_RULE_ADD( null, null, '%1' )" ).arg( ruleName ) ) == Error::ErrorNone;
     }
     else if ( !enable && haveRule ) {
-        return m_connection->executeCommand( QString( "DB.DBA.RDF_OBJ_FT_RULE_DEL( null, null, '%1' )" ).arg( ruleName ) ) == Error::ErrorNone;
+        return m_connection->executeCommand( QString::fromLatin1( "DB.DBA.RDF_OBJ_FT_RULE_DEL( null, null, '%1' )" ).arg( ruleName ) ) == Error::ErrorNone;
     }
     else {
         return true;
