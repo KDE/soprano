@@ -127,7 +127,8 @@ Soprano::Server::ServerConnection::~ServerConnection()
 
 void Soprano::Server::ServerConnection::close()
 {
-    d->socket->close();
+    if ( d->socket )
+        d->socket->close();
 }
 
 

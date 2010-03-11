@@ -61,16 +61,21 @@ void Soprano::Socket::close()
 
 bool Soprano::Socket::waitForReadyRead( int timeout )
 {
-    fd_set fds;
-    FD_ZERO( &fds );
-    FD_SET( m_handle, &fds );
+    if ( isConnected() ) {
+        fd_set fds;
+        FD_ZERO( &fds );
+        FD_SET( m_handle, &fds );
 
-    struct timeval tv;
-    tv.tv_sec = timeout / 1000;
-    tv.tv_usec = (timeout % 1000) * 1000;
+        struct timeval tv;
+        tv.tv_sec = timeout / 1000;
+        tv.tv_usec = (timeout % 1000) * 1000;
 
-    int r = ::select( m_handle + 1, &fds, 0, 0, timeout < 0 ? 0 : &tv);
-    return r > 0;
+        int r = ::select( m_handle + 1, &fds, 0, 0, timeout < 0 ? 0 : &tv);
+        return r > 0;
+    }
+    else {
+        return false;
+    }
 }
 
 
