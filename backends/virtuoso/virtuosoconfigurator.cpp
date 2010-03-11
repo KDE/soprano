@@ -187,7 +187,8 @@ bool Soprano::Virtuoso::DatabaseConfigurator::updateFulltextIndexState( const QS
 
 bool Soprano::Virtuoso::DatabaseConfigurator::updateFulltextIndexRules( bool enable )
 {
-    QString query = QLatin1String( "SELECT ROFR_REASON FROM DB.DBA.RDF_OBJ_FT_RULES WHERE ROFR_G=null AND ROFR_P=null" );
+    // while we are using "null" as parameters to the rule procedures below the table actually stores empty strings
+    QString query = QLatin1String( "SELECT ROFR_REASON FROM DB.DBA.RDF_OBJ_FT_RULES WHERE ROFR_G='' AND ROFR_P=''" );
 
     bool haveRule = false;
 
