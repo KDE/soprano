@@ -1,7 +1,7 @@
 /*
  * This file is part of Soprano Project.
  *
- * Copyright (C) 2007 Sebastian Trueg <trueg@kde.org>
+ * Copyright (C) 2007-2010 Sebastian Trueg <trueg@kde.org>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -47,7 +47,7 @@ Soprano::Client::ClientModel::~ClientModel()
     // connected. In that case the iterators have been
     // closed by the server anyway.
     //
-    if ( m_client->isConnectedInCurrentThread() ) {
+    if ( m_client->isConnected() ) {
         for ( int i = 0; i < m_openIterators.count(); ++i ) {
             m_client->iteratorClose( m_openIterators[i] );
         }

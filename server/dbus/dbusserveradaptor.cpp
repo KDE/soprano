@@ -24,6 +24,7 @@
 #include "../servercore.h"
 #include "dbusmodeladaptor.h"
 #include "dbusexportmodel.h"
+#include "asyncmodel.h"
 
 #include "model.h"
 
@@ -86,6 +87,15 @@ QString Soprano::Server::DBusServerAdaptor::createModel( const QString& name, co
     else {
         Model* model = d->core->model( name );
         if ( model ) {
+
+            // Although the server is now multithreaded we still have the DBus interface which is not
+            // It has its own dedicated thread but a deadlock can still be produced by a write operation
+            // which is issued while an iterator is open. By using the AsyncModel in SingleThreadMode
+            // we make sure that the DBus adaptor never deadlocks.
+            Util::AsyncModel* asyncModel = new Util::AsyncModel( model );
+            asyncModel->setParent( model ); // memory management
+            model = asyncModel;
+
             QString objectPath = d->dbusObjectPath + "/models/" + normalizeModelName( name );
             DBusExportModel* mw = new DBusExportModel( model );
             connect( model, SIGNAL( destroyed( QObject* ) ), mw, SLOT( deleteLater() ) );

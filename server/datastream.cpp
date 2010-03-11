@@ -1,7 +1,7 @@
 /*
  * This file is part of Soprano Project.
  *
- * Copyright (C) 2008 Sebastian Trueg <trueg@kde.org>
+ * Copyright (C) 2008-2010 Sebastian Trueg <trueg@kde.org>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -28,18 +28,19 @@
 #include "literalvalue.h"
 #include "locator.h"
 #include "languagetag.h"
+#include "socket.h"
+#include "error.h"
 
-#include <QtCore/QIODevice>
-
-
-Soprano::DataStream::DataStream( QIODevice* dev )
+Soprano::DataStream::DataStream( Socket* dev )
     : m_device( dev )
 {
+    m_device->lock();
 }
 
 
 Soprano::DataStream::~DataStream()
 {
+    m_device->unlock();
 }
 
 
@@ -56,7 +57,7 @@ bool Soprano::DataStream::writeByteArray( const QByteArray& a )
         int x = qMin( 1024U, len-cnt );
         int r = m_device->write( a.data()+cnt, x );
         if ( r < 0 ) {
-            setError( Error::Error( QString( "Failed to write string after %1 of %2 bytes (%3)." ).arg( cnt ).arg( len ).arg( m_device->errorString() ) ) );
+            setError( Error::Error( QString( "Failed to write string after %1 of %2 bytes (%3)." ).arg( cnt ).arg( len ).arg( m_device->lastError().message() ) ) );
             return false;
         }
         cnt += r;
@@ -243,21 +244,12 @@ bool Soprano::DataStream::read( char* data, qint64 size )
     while ( cnt < size ) {
         qint64 m = qMin( size-cnt, 1024LL );
         qint64 r = m_device->read( data+cnt, m );
-        if ( r < 0 ) {
+        if ( r <= 0 ) {
             setError( Error::Error( QString( "Failed to read after %1 of %2 bytes (%3)." )
                                     .arg( cnt )
                                     .arg( size )
-                                    .arg( m_device->errorString() ) ) );
+                                    .arg( m_device->lastError().message()) ) );
             return false;
-        }
-        else if ( r == 0 && size > 0 ) {
-            if ( !m_device->waitForReadyRead( 30000 ) ) {
-                setError( Error::Error( QString( "Timeout when reading after %1 of %2 bytes (%3)." )
-                                        .arg( cnt )
-                                        .arg( size )
-                                        .arg( m_device->errorString() ) ) );
-                return false;
-            }
         }
 
         cnt += r;

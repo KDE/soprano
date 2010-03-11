@@ -22,7 +22,7 @@
 #include "clientconnection.h"
 #include "clientconnection_p.h"
 #include "commands.h"
-#include "socketdevice.h"
+#include "socket.h"
 #include "datastream.h"
 
 #include "node.h"
@@ -31,7 +31,6 @@
 #include "bindingset.h"
 #include "backend.h"
 
-#include <QtCore/QIODevice>
 #include <QtCore/QThread>
 #include <QtCore/QMutex>
 #include <QtCore/QMutexLocker>
@@ -45,59 +44,28 @@ namespace {
     const int s_defaultTimeout = 600000;
 }
 
-
-Soprano::Client::SocketHandler::SocketHandler( ClientConnectionPrivate* client, QIODevice* socket )
-    : QObject(),
-      m_client( client ),
-      m_socket( socket )
-{
-}
-
-
-Soprano::Client::SocketHandler::~SocketHandler()
-{
-    QMutexLocker lock( &m_client->socketMutex );
-    m_client->sockets.removeAll( m_socket );
-    delete m_socket;
-}
-
-
 Soprano::Client::ClientConnection::ClientConnection( QObject* parent )
     : QObject( parent ),
       d( new ClientConnectionPrivate() )
 {
+    d->socket = 0;
 }
 
 
 Soprano::Client::ClientConnection::~ClientConnection()
 {
-    d->socketMutex.lock();
-    // the sockets need to be deleted in their respective threads.
-    // this is what d->socketStorage does. We only close them here.
-    // FIXME: QThreadStorage does NOT delete the local data in its destructor!
-    foreach( QIODevice* socket, d->sockets ) {
-        socket->close();
-    }
-    d->socketMutex.unlock();
-    delete d;
+    delete d->socket;
+    d->socket = 0;
 }
 
 
-QIODevice* Soprano::Client::ClientConnection::socket()
+Soprano::Socket* Soprano::Client::ClientConnection::socket()
 {
-    if ( isConnectedInCurrentThread() ) {
-        return d->socketStorage.localData()->socket();
+    if ( !isConnected() ) {
+        delete d->socket;
+        d->socket = newConnection();
     }
-    else if ( QIODevice* socket = newConnection() ) {
-        d->socketMutex.lock();
-        SocketHandler* cleaner = new SocketHandler( d, socket );
-        d->sockets.append( socket );
-        d->socketMutex.unlock();
-        d->socketStorage.setLocalData( cleaner );
-        return socket;
-    }
-
-    return 0;
+    return d->socket;
 }
 
 
@@ -681,17 +649,15 @@ bool Soprano::Client::ClientConnection::checkProtocolVersion()
 }
 
 
-bool Soprano::Client::ClientConnection::connectInCurrentThread()
+bool Soprano::Client::ClientConnection::connect()
 {
     return( socket() != 0 );
 }
 
 
-bool Soprano::Client::ClientConnection::isConnectedInCurrentThread()
+bool Soprano::Client::ClientConnection::isConnected()
 {
-    return ( d->socketStorage.hasLocalData() &&
-             isConnected( d->socketStorage.localData()->socket() ) );
+    return( d->socket != 0 );
 }
 
 #include "clientconnection.moc"
-#include "clientconnection_p.moc"

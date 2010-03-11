@@ -19,6 +19,9 @@ set(soprano_server_SRC
   modelpool.cpp
   randomgenerator.cpp
   datastream.cpp
+  socket.cpp
+  socketserver.cpp
+  socketnotifier.cpp
 )
 
 if(BUILD_DBUS_SUPPORT)

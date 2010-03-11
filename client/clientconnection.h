@@ -1,7 +1,7 @@
 /*
  * This file is part of Soprano Project.
  *
- * Copyright (C) 2007-2009 Sebastian Trueg <trueg@kde.org>
+ * Copyright (C) 2007-2010 Sebastian Trueg <trueg@kde.org>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -29,14 +29,13 @@
 #include <QtCore/QList>
 
 
-class QIODevice;
-
 namespace Soprano {
 
     class Node;
     class Statement;
     class BindingSet;
     class BackendSetting;
+    class Socket;
 
     namespace Client {
 
@@ -84,22 +83,17 @@ namespace Soprano {
 
             bool checkProtocolVersion();
 
-            /// trueg: this is an awful design which simply grew over time.
-            /// At some point this needs fixing a lot. Maybe by simply not
-            /// Using Qt for communication.
-            bool connectInCurrentThread();
-            bool isConnectedInCurrentThread();
+            bool connect();
+            bool isConnected();
 
         protected:
             /**
-             * Creates a new IODevice for communication.
-             * ClientConnection will create one for each thread.
+             * Creates a new Socket for communication.
              */
-            virtual QIODevice* newConnection() = 0;
-            virtual bool isConnected( QIODevice* dev ) = 0;
+            virtual Socket* newConnection() = 0;
 
         private:
-            QIODevice* socket();
+            Socket* socket();
 
             ClientConnectionPrivate* const d;
         };

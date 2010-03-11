@@ -1,7 +1,7 @@
 /*
  * This file is part of Soprano Project.
  *
- * Copyright (C) 2007 Sebastian Trueg <trueg@kde.org>
+ * Copyright (C) 2007-2010 Sebastian Trueg <trueg@kde.org>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -20,7 +20,7 @@
  */
 
 #include "socketserver.h"
-#include "socketdevice.h"
+#include "socketnotifier.h"
 
 #include <sys/types.h>
 #include <sys/socket.h>
@@ -30,48 +30,78 @@
 #include <string.h>
 
 #include <QtCore/QFile>
-#include <QtCore/QLinkedList>
 #include <QtCore/QDebug>
-#include <QtCore/QSocketNotifier>
 
 
-class SocketServer::Private
-{
-public:
-    Private()
-        : serverSocket( -1 ),
-          notifier( 0 ) {
-    }
 
-    QString socketName;
-    int serverSocket;
-    QSocketNotifier* notifier;
-
-    QLinkedList<int> connectionCache;
-};
-
-
-SocketServer::SocketServer( QObject* parent )
+Soprano::SocketServer::SocketServer( QObject* parent )
     : QObject( parent ),
-      d( new Private() )
+      m_socket( 0 ),
+      m_socketNotifier( 0 )
 {
 }
 
 
-SocketServer::~SocketServer()
+Soprano::SocketServer::~SocketServer()
 {
     close();
-    delete d;
 }
 
 
-bool SocketServer::listen( const QString& socketName )
+
+void Soprano::SocketServer::close()
+{
+    delete m_socket;
+    m_socket = 0;
+    delete m_socketNotifier;
+    m_socketNotifier = 0;
+}
+
+
+void Soprano::SocketServer::handleOpenedServerSocket( SOCKET_HANDLE handle )
+{
+    m_socket = new Socket( handle );
+    m_socketNotifier = new SocketNotifier( m_socket, SocketNotifier::Read );
+    connect( m_socketNotifier, SIGNAL( activated( int ) ), this, SLOT( slotServerSocketActivated() ) );
+}
+
+
+void Soprano::SocketServer::slotServerSocketActivated()
+{
+    clearError();
+    if ( m_socket->handle() > 0 ) {
+        SOCKET_HANDLE sd = ::accept( m_socket->handle(), 0, 0 );
+        if ( sd <= 0 ) {
+            setError( QString( "Failed to accept new connection (%1)" ).arg( strerror( errno ) ) );
+        }
+        else {
+            emit newConnection( sd );
+        }
+    }
+    else {
+        setError( "Not connected" );
+    }
+}
+
+
+Soprano::LocalSocketServer::LocalSocketServer( QObject* parent )
+    : SocketServer( parent )
+{
+}
+
+
+Soprano::LocalSocketServer::~LocalSocketServer()
+{
+}
+
+
+bool Soprano::LocalSocketServer::listen( const QString& socketName )
 {
     close();
 
     /* create new socket */
-    d->serverSocket = ::socket( AF_UNIX, SOCK_STREAM, 0 );
-    if( d->serverSocket < 0 ) {
+    SOCKET_HANDLE handle = ::socket( AF_UNIX, SOCK_STREAM, 0 );
+    if( handle < 0 ) {
         setError( "Unable to create socket." );
         return false;
     }
@@ -81,8 +111,7 @@ bool SocketServer::listen( const QString& socketName )
     QByteArray s = QFile::encodeName( socketName );
     if ( s.length() > ( int )sizeof(sock.sun_path) + 1 ) {
         setError( "Not enough space to store socket path." );
-        ::close( d->serverSocket );
-        d->serverSocket = -1;
+        ::close( handle );
         return false;
     }
     strncpy( sock.sun_path, s.data(), s.length() );
@@ -90,83 +119,33 @@ bool SocketServer::listen( const QString& socketName )
 
     /* bind server port */
     sock.sun_family = AF_UNIX;
-    if ( ::bind( d->serverSocket, (struct sockaddr *)&sock, sizeof(sock) ) < 0 ) {
-        setError( QString( "Unable to bind socket %1 (%2)" ).arg( d->serverSocket ).arg( strerror( errno ) ) );
-        ::close( d->serverSocket );
-        d->serverSocket = -1;
+    if ( ::bind( handle, (struct sockaddr *)&sock, sizeof(sock) ) < 0 ) {
+        setError( QString( "Unable to bind socket %1 (%2)" ).arg( handle ).arg( strerror( errno ) ) );
+        ::close( handle );
         return false;
     }
 
-    if ( ::listen( d->serverSocket, 5 ) < 0 ) {
-        setError( QString( "Unable to listen on socket %1 (%2)" ).arg( d->serverSocket ).arg( strerror( errno ) ) );
-        ::close( d->serverSocket );
-        d->serverSocket = -1;
+    if ( ::listen( handle, 5 ) < 0 ) {
+        setError( QString( "Unable to listen on socket %1 (%2)" ).arg( handle ).arg( strerror( errno ) ) );
+        ::close( handle );
         QFile::remove( socketName );
         return false;
     }
 
-    d->socketName = socketName;
-    d->notifier = new QSocketNotifier( d->serverSocket, QSocketNotifier::Read, this );
-    connect( d->notifier, SIGNAL( activated( int ) ), this, SLOT( slotServerSocketActivated() ) );
+    m_socketName = socketName;
+
+    handleOpenedServerSocket( handle );
 
     return true;
 }
 
-void SocketServer::close()
+
+void Soprano::LocalSocketServer::close()
 {
-    if ( d->serverSocket > 0 ) {
-        delete d->notifier;
-        d->notifier = 0;
-        ::close( d->serverSocket );
-        d->serverSocket = -1;
-        QFile::remove( d->socketName );
-    }
-}
-
-
-QString SocketServer::socketName() const
-{
-    return d->socketName;
-}
-
-
-SocketDevice* SocketServer::nextPendingConnection()
-{
-    if ( !d->connectionCache.isEmpty() ) {
-        int sd = d->connectionCache.takeFirst();
-        SocketDevice* dev = new SocketDevice();
-        dev->open( sd, QIODevice::ReadWrite );
-        return dev;
-    }
-    else {
-        setError( "No pending connections" );
-        return 0;
-    }
-}
-
-
-void SocketServer::incomingConnection( int socketDescriptor )
-{
-    d->connectionCache.append( socketDescriptor );
-    emit newConnection();
-}
-
-
-void SocketServer::slotServerSocketActivated()
-{
-    clearError();
-    if ( d->serverSocket > 0 ) {
-        int sd = ::accept( d->serverSocket, 0, 0 );
-        if ( sd <= 0 ) {
-            setError( QString( "Failed to accept new connection (%1)" ).arg( strerror( errno ) ) );
-        }
-        else {
-            incomingConnection( sd );
-        }
-    }
-    else {
-        setError( "Not connected" );
-    }
+    SocketServer::close();
+    if ( !m_socketName.isEmpty() &&
+         QFile::exists( m_socketName ) )
+        QFile::remove( m_socketName );
 }
 
 #include "socketserver.moc"

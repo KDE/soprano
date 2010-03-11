@@ -1,7 +1,7 @@
 /*
  * This file is part of Soprano Project.
  *
- * Copyright (C) 2007-2008 Sebastian Trueg <trueg@kde.org>
+ * Copyright (C) 2007-2010 Sebastian Trueg <trueg@kde.org>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -22,14 +22,12 @@
 #include "localsocketclient.h"
 #include "clientconnection.h"
 #include "clientmodel.h"
+#include "socket.h"
 
 #include <QtCore/QDir>
 #include <QtCore/QThread>
 #include <QtNetwork/QLocalSocket>
 
-Q_DECLARE_METATYPE( QLocalSocket::LocalSocketError )
-Q_DECLARE_METATYPE( QAbstractSocket::SocketError )
-Q_DECLARE_METATYPE( QAbstractSocket::SocketState )
 
 namespace Soprano {
     namespace Client {
@@ -40,8 +38,7 @@ namespace Soprano {
             ~LocalSocketClientConnection();
 
         protected:
-            QIODevice* newConnection();
-            bool isConnected( QIODevice* );
+            Socket* newConnection();
 
         private:
             QString m_socketPath;
@@ -57,7 +54,7 @@ namespace Soprano {
         {
         }
 
-        QIODevice* LocalSocketClientConnection::newConnection()
+        Socket* LocalSocketClientConnection::newConnection()
         {
             clearError();
             QString path( m_socketPath );
@@ -65,22 +62,15 @@ namespace Soprano {
                 path = QDir::homePath() + QLatin1String( "/.soprano/socket" );
             }
 
-            QLocalSocket* socket = new QLocalSocket;
-            socket->connectToServer( path, QIODevice::ReadWrite );
-            if ( socket->waitForConnected() ) {
-                QObject::connect( socket, SIGNAL( error( QLocalSocket::LocalSocketError ) ),
-                                  parent(), SLOT( _s_localSocketError( QLocalSocket::LocalSocketError ) ) );
+            LocalSocket* socket = new LocalSocket;
+            if ( socket->open( path ) ) {
                 return socket;
             }
             else {
-                setError( socket->errorString() );
+                setError( socket->lastError() );
                 delete socket;
                 return 0;
             }
-        }
-
-        bool LocalSocketClientConnection::isConnected( QIODevice* device ) {
-            return( device ? static_cast<QLocalSocket*>( device )->state() == QLocalSocket::ConnectedState : false );
         }
     }
 }
@@ -94,15 +84,7 @@ public:
     }
 
     LocalSocketClientConnection* connection;
-
-    void _s_localSocketError( QLocalSocket::LocalSocketError );
 };
-
-
-void Soprano::Client::LocalSocketClient::Private::_s_localSocketError( QLocalSocket::LocalSocketError error )
-{
-    qDebug() << "local socket error:" << error;
-}
 
 
 
@@ -110,9 +92,6 @@ Soprano::Client::LocalSocketClient::LocalSocketClient( QObject* parent )
     : QObject( parent ),
       d( new Private() )
 {
-    qRegisterMetaType<QLocalSocket::LocalSocketError>();
-    qRegisterMetaType<QAbstractSocket::SocketError>();
-    qRegisterMetaType<QAbstractSocket::SocketState>();
 }
 
 
@@ -126,25 +105,9 @@ Soprano::Client::LocalSocketClient::~LocalSocketClient()
 bool Soprano::Client::LocalSocketClient::connect( const QString& name )
 {
     if ( !isConnected() ) {
-        //
-        // trueg: This is a hack: we do not disconnect since we essentially re-connect
-        // in every thread anyway. Thus, the whole connect/disconnect API is sort of a lie.
-        // This is something that grew over time and needs to be fixed. The best solution
-        // I see at the moment is to drop Qt for socket communication. QObject is just too
-        // heavy for that.
-        // Another solution would be for Soprano 3 to simply make the client non-thread-safe.
-        // Then each client thread would need to create its own connection manually.
-        //
         if ( !d->connection )
             d->connection = new LocalSocketClientConnection( name, this );
-        if ( d->connection->connectInCurrentThread() &&
-             d->connection->checkProtocolVersion() ) {
-            return true;
-        }
-        else {
-            disconnect();
-            return false;
-        }
+        return d->connection->connect();
     }
     else {
         setError( "Already connected" );
@@ -155,7 +118,7 @@ bool Soprano::Client::LocalSocketClient::connect( const QString& name )
 
 bool Soprano::Client::LocalSocketClient::isConnected() const
 {
-    return d->connection ? d->connection->isConnectedInCurrentThread() : false;
+    return d->connection ? d->connection->isConnected() : false;
 }
 
 

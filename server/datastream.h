@@ -1,7 +1,7 @@
 /*
  * This file is part of Soprano Project.
  *
- * Copyright (C) 2008 Sebastian Trueg <trueg@kde.org>
+ * Copyright (C) 2008-2010 Sebastian Trueg <trueg@kde.org>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -24,7 +24,6 @@
 
 #include "error.h"
 
-class QIODevice;
 class QUrl;
 class QByteArray;
 
@@ -35,6 +34,7 @@ namespace Soprano {
     class BackendSetting;
     class Node;
     class Statement;
+    class Socket;
     namespace Error {
         class Locator;
     }
@@ -51,7 +51,7 @@ namespace Soprano {
     class DataStream : public Error::ErrorCache
     {
     public:
-        DataStream( QIODevice* dev );
+        DataStream( Socket* dev );
         ~DataStream();
 
         bool writeByteArray( const QByteArray& );
@@ -101,7 +101,7 @@ namespace Soprano {
          */
         bool read( char* data, qint64 size );
 
-        QIODevice* m_device;
+        Socket* m_device;
     };
 }
 

@@ -746,6 +746,7 @@ int main( int argc, char *argv[] )
         s_model = sparqlModel;
         isRemoteModel = true;
     }
+#if 0
     else if ( args.hasSetting( "port" ) &&
               !args.hasSetting( "backend" ) ) {
         QHostAddress host = QHostAddress::LocalHost;
@@ -769,6 +770,7 @@ int main( int argc, char *argv[] )
         }
         isRemoteModel = true;
     }
+#endif
     else if ( args.hasSetting( "socket" ) ) {
         QString socketPath = args.getSetting( "socket" );
         Soprano::Client::LocalSocketClient* localSocketClient = new Soprano::Client::LocalSocketClient();

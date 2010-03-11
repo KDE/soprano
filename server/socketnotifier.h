@@ -1,7 +1,7 @@
 /*
  * This file is part of Soprano Project.
  *
- * Copyright (C) 2007 Sebastian Trueg <trueg@kde.org>
+ * Copyright (C) 2010 Sebastian Trueg <trueg@kde.org>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -19,32 +19,44 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef _SOPRANO_SOCKET_DEVICE_H_
-#define _SOPRANO_SOCKET_DEVICE_H_
+#ifndef _SOPRANO_SOCKET_NOTIFIER_H_
+#define _SOPRANO_SOCKET_NOTIFIER_H_
 
-#include <QtCore/QIODevice>
+#include <QtCore/QObject>
 
-class SocketDevice : public QIODevice
-{
-public:
-    SocketDevice( QObject* parent = 0 );
-    ~SocketDevice();
+#include "socket.h"
 
-    bool open( int sd, OpenMode mode );
-    bool open( const QString& socketName, OpenMode mode );
-    void close();
+class QSocketNotifier;
 
-    bool isValid();
+namespace Soprano {
 
-    bool waitForReadyRead( int msecs = 3000 );
+    class Socket;
 
-protected:
-    qint64 readData( char* data, qint64 maxSize );
-    qint64 writeData( const char* data, qint64 maxSize );
+    /**
+     * A notifier for a socket. Decoupled from the Socket
+     * class to make the latter as simple and lightweight as possible.
+     */
+    class SocketNotifier : public QObject
+    {
+        Q_OBJECT
 
-private:
-    class Private;
-    Private* const d;
-};
+    public:
+        enum Type {
+            Read,
+            Write,
+            Exception
+        };
+        SocketNotifier( Socket* socket, Type type );
+        ~SocketNotifier();
+
+    Q_SIGNALS:
+        void activated( int handle );
+
+    private:
+        Socket* m_socket;
+        Type m_type;
+        QSocketNotifier* m_socketNotifier;
+    };
+}
 
 #endif

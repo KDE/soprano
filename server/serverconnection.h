@@ -1,7 +1,7 @@
 /*
  * This file is part of Soprano Project.
  *
- * Copyright (C) 2007-2009 Sebastian Trueg <trueg@kde.org>
+ * Copyright (C) 2007-2010 Sebastian Trueg <trueg@kde.org>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -25,7 +25,7 @@
 #include <QtCore/QObject>
 #include <QtCore/QThread>
 
-class QIODevice;
+#include "socket.h"
 
 namespace Soprano {
 
@@ -55,7 +55,7 @@ namespace Soprano {
 
             void close();
 
-            void start( QIODevice* socket );
+            void start( Socket* socket );
 
         protected:
             void run();
@@ -63,8 +63,6 @@ namespace Soprano {
         private:
             class Private;
             Private* const d;
-
-            Q_PRIVATE_SLOT( d, void _s_readNextCommand() )
         };
     }
 }

@@ -1,7 +1,7 @@
 /*
  * This file is part of Soprano Project.
  *
- * Copyright (C) 2007-2009 Sebastian Trueg <trueg@kde.org>
+ * Copyright (C) 2007-2010 Sebastian Trueg <trueg@kde.org>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -23,9 +23,10 @@
 #include "servercore.h"
 #include "commands.h"
 #include "randomgenerator.h"
-#include "socketdevice.h"
 #include "datastream.h"
 #include "modelpool.h"
+#include "socket.h"
+#include "socketnotifier.h"
 
 #include "queryresultiterator.h"
 #include "node.h"
@@ -55,15 +56,13 @@ class Soprano::Server::ServerConnection::Private
 public:
     ServerCore* core;
     ModelPool* modelPool;
-    QIODevice* socket;
-
-    quint16 currentCommand;
+    Socket* socket;
 
     QHash<quint32, StatementIterator> openStatementIterators;
     QHash<quint32, NodeIterator> openNodeIterators;
     QHash<quint32, QueryResultIterator> openQueryIterators;
 
-    void _s_readNextCommand();
+    bool readNextCommand();
 
     quint32 generateUniqueId();
     Soprano::Model* getModel();
@@ -112,7 +111,6 @@ Soprano::Server::ServerConnection::ServerConnection( ModelPool* pool, ServerCore
     d->core = core;
     d->modelPool = pool;
     d->socket = 0;
-    d->currentCommand = 0;
 }
 
 
@@ -134,19 +132,9 @@ void Soprano::Server::ServerConnection::close()
 }
 
 
-void Soprano::Server::ServerConnection::start( QIODevice* socket )
+void Soprano::Server::ServerConnection::start( Socket* socket )
 {
     d->socket = socket;
-
-    // "push" the socket to the new thread,
-    // because QTcpSocket::write(...) seems to create children objects, in the new thread, and :
-    // "QObject: Cannot create children for a parent that is in a different thread."
-    d->socket->setParent( 0 );
-    d->socket->moveToThread( this );
-
-    // we move 'this' (ServerConnection object) to the new thread,
-    // the one created by ourselves and it works!
-    moveToThread( this );
 
     // start the thread (call run())
     QThread::start( QThread::InheritPriority );
@@ -154,19 +142,13 @@ void Soprano::Server::ServerConnection::start( QIODevice* socket )
 
 void Soprano::Server::ServerConnection::run()
 {
+    qDebug() << Q_FUNC_INFO;
+
     // we are in the new thread
-
-    connect( d->socket, SIGNAL( readyRead() ),
-             this, SLOT( _s_readNextCommand() ) );
-
-    // quit() emits the signal finished() when the thread is finished
-    connect( d->socket, SIGNAL( disconnected() ),
-             this, SLOT( quit() ) );
-
-    // start the event loop
-    exec();
-
-    qDebug() << Q_FUNC_INFO << "thread done.";
+    while ( d->socket->waitForReadyRead() ) {
+        if ( !d->readNextCommand() )
+            break;
+    }
 
     // cleanup open iterators
     d->openStatementIterators.clear();
@@ -175,18 +157,22 @@ void Soprano::Server::ServerConnection::run()
 
     delete d->socket;
     d->socket = 0;
+
+    qDebug() << Q_FUNC_INFO << "done";
 }
 
 
-void Soprano::Server::ServerConnection::Private::_s_readNextCommand()
+bool Soprano::Server::ServerConnection::Private::readNextCommand()
 {
-    if ( currentCommand != 0 )
-        return;
-
     DataStream stream( socket );
     quint16 command = 0;
-    stream.readUnsignedInt16( command );
-    currentCommand = command;
+    if ( !stream.readUnsignedInt16( command ) ) {
+        // if we could not read after getting a read notification
+        // the other end closed the connection
+        q->quit();
+        return false;
+    }
+
     switch( command ) {
     case COMMAND_SUPPORTS_PROTOCOL_VERSION:
         supportsProtocolVersion();
@@ -284,7 +270,7 @@ void Soprano::Server::ServerConnection::Private::_s_readNextCommand()
         break;
     }
 
-    currentCommand = 0;
+    return true;
 }
 
 

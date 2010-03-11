@@ -162,7 +162,7 @@ int main( int argc, char** argv )
         QFile::remove( socketPath );
     }
 
-    if ( core->start() && core->listen( port ) ) {
+    if ( core->start() || core->listen( port ) ) {
         return app.exec();
     }
     else {

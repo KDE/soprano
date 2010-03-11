@@ -1,7 +1,7 @@
 /*
  * This file is part of Soprano Project.
  *
- * Copyright (C) 2007 Sebastian Trueg <trueg@kde.org>
+ * Copyright (C) 2007-2010 Sebastian Trueg <trueg@kde.org>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -24,38 +24,56 @@
 
 #include <QtCore/QObject>
 
-#include "../soprano/error.h"
+#include "error.h"
+#include "socket.h"
 
 class QString;
-class SocketDevice;
 
-class SocketServer : public QObject, public Soprano::Error::ErrorCache
-{
-    Q_OBJECT
+namespace Soprano {
 
-public:
-    SocketServer( QObject* parent = 0 );
-    virtual ~SocketServer();
+    class Socket;
+    class SocketNotifier;
 
-    bool listen( const QString& socketName );
-    void close();
+    class SocketServer : public QObject, public Error::ErrorCache
+    {
+        Q_OBJECT
 
-    QString socketName() const;
+    public:
+        SocketServer( QObject* parent = 0 );
+        virtual ~SocketServer();
 
-    SocketDevice* nextPendingConnection();
+        virtual void close();
 
-Q_SIGNALS:
-    void newConnection();
+        QString socketName() const;
 
-protected:
-    virtual void incomingConnection( int socketDescriptor );
+    Q_SIGNALS:
+        void newConnection( SOCKET_HANDLE handle );
 
-private Q_SLOTS:
-    void slotServerSocketActivated();
+    protected:
+        void handleOpenedServerSocket( SOCKET_HANDLE handle );
 
-private:
-    class Private;
-    Private* const d;
-};
+        Socket* m_socket;
+
+    private Q_SLOTS:
+        void slotServerSocketActivated();
+
+    private:
+        SocketNotifier* m_socketNotifier;
+    };
+
+
+    class LocalSocketServer : public SocketServer
+    {
+    public:
+        LocalSocketServer( QObject* parent = 0 );
+        ~LocalSocketServer();
+
+        bool listen( const QString& socketName );
+        void close();
+
+    private:
+        QString m_socketName;
+    };
+}
 
 #endif
