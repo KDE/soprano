@@ -118,8 +118,7 @@ Soprano::Server::ServerConnection::~ServerConnection()
 {
     qDebug() << Q_FUNC_INFO << "Removing connection";
 
-    // d->socket deleted when quit()
-    quit();
+    close();
     wait();
 
     delete d;
@@ -169,7 +168,6 @@ bool Soprano::Server::ServerConnection::Private::readNextCommand()
     if ( !stream.readUnsignedInt16( command ) ) {
         // if we could not read after getting a read notification
         // the other end closed the connection
-        q->quit();
         return false;
     }
 
