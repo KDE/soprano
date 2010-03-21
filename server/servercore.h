@@ -25,7 +25,6 @@
 #include <QtCore/QObject>
 
 #include "error.h"
-#include "socket.h"
 #include "soprano_export.h"
 
 namespace Soprano {
@@ -35,6 +34,9 @@ namespace Soprano {
     class BackendSetting;
 
     namespace Server {
+
+        class ServerCorePrivate;
+
         /**
          * \class ServerCore servercore.h Soprano/Server/ServerCore
          *
@@ -221,11 +223,6 @@ namespace Soprano {
              */
             void registerAsDBusObject( const QString& objectPath = QString() );
 
-        private Q_SLOTS:
-            void slotNewTcpConnection();
-            void slotNewSocketConnection( SOCKET_HANDLE handle );
-            void serverConnectionFinished();
-
         protected:
             /**
              * Create a new Model. The default implementation uses the configured Backend
@@ -242,8 +239,8 @@ namespace Soprano {
             virtual Model* createModel( const QList<BackendSetting>& settings );
 
         private:
-            class Private;
-            Private* const d;
+            ServerCorePrivate* const d;
+            friend class ServerCorePrivate;
         };
     }
 }

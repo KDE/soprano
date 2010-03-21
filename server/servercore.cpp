@@ -20,6 +20,7 @@
  */
 
 #include "servercore.h"
+#include "servercore_p.h"
 #include "soprano-server-config.h"
 #include "serverconnection.h"
 #include "socketserver.h"
@@ -41,50 +42,8 @@
 const quint16 Soprano::Server::ServerCore::DEFAULT_PORT = 5000;
 
 
-class Soprano::Server::ServerCore::Private
-{
-public:
-    Private()
-        : maxConnectionCount( 0 ),
-#ifdef BUILD_DBUS_SUPPORT
-          dbusController( 0 ),
-#endif
-          socketServer( 0 )
-    {}
 
-    const Backend* backend;
-    BackendSettings settings;
-
-    int maxConnectionCount;
-
-    QHash<QString, Model*> models;
-    QList<ServerConnection*> connections;
-
-#ifdef BUILD_DBUS_SUPPORT
-    DBusController* dbusController;
-#endif
-
-    LocalSocketServer* socketServer;
-
-    // bridge between ServerCore and ServerConnection
-    ModelPool* modelPool;
-
-    ServerCore* q;
-
-    BackendSettings createBackendSettings( const QString& name ) {
-        BackendSettings newSettings = settings;
-        if ( isOptionInSettings( newSettings, BackendOptionStorageDir ) ) {
-            BackendSetting& setting = settingInSettings( newSettings, BackendOptionStorageDir );
-            setting.setValue( setting.value().toString() + '/' + name );
-        }
-        return newSettings;
-    }
-
-    void handleIncomingConnection( SOCKET_HANDLE handle );
-};
-
-
-void Soprano::Server::ServerCore::Private::handleIncomingConnection( SOCKET_HANDLE handle )
+void Soprano::Server::ServerCorePrivate::handleIncomingConnection( SOCKET_HANDLE handle )
 {
     qDebug() << Q_FUNC_INFO;
     if ( maxConnectionCount > 0 &&
@@ -94,16 +53,27 @@ void Soprano::Server::ServerCore::Private::handleIncomingConnection( SOCKET_HAND
     else {
         ServerConnection* conn = new ServerConnection( modelPool, q );
         connections.append( conn );
-        connect( conn, SIGNAL(finished()), q, SLOT(serverConnectionFinished()));
+        connect( conn, SIGNAL(finished()), this, SLOT(serverConnectionFinished()));
         conn->start( new Socket( handle ) );
         qDebug() << Q_FUNC_INFO << "New connection. New count:" << connections.count();
     }
 }
 
 
+void Soprano::Server::ServerCorePrivate::serverConnectionFinished()
+{
+    qDebug() << Q_FUNC_INFO;
+    ServerConnection* conn = qobject_cast<ServerConnection*>( sender() );
+    connections.removeAll( conn );
+    delete conn;
+    qDebug() << Q_FUNC_INFO << "Connection removed. Current count:" << connections.count();
+}
+
+
+
 Soprano::Server::ServerCore::ServerCore( QObject* parent )
     : QObject( parent ),
-      d( new Private() )
+      d( new ServerCorePrivate() )
 {
     d->q = this;
 
@@ -226,7 +196,7 @@ bool Soprano::Server::ServerCore::start( const QString& name )
     if ( !d->socketServer ) {
         d->socketServer = new LocalSocketServer( this );
         connect( d->socketServer, SIGNAL( newConnection(SOCKET_HANDLE) ),
-                 this, SLOT( slotNewSocketConnection(SOCKET_HANDLE) ) );
+                 d, SLOT( handleIncomingConnection(SOCKET_HANDLE) ) );
     }
 
     QString path( name );
@@ -260,16 +230,6 @@ void Soprano::Server::ServerCore::registerAsDBusObject( const QString& objectPat
 }
 
 
-void Soprano::Server::ServerCore::serverConnectionFinished()
-{
-    qDebug() << Q_FUNC_INFO;
-    ServerConnection* conn = qobject_cast<ServerConnection*>( sender() );
-    d->connections.removeAll( conn );
-    delete conn;
-    qDebug() << Q_FUNC_INFO << "Connection removed. Current count:" << d->connections.count();
-}
-
-
 Soprano::Model* Soprano::Server::ServerCore::createModel( const QList<BackendSetting>& settings )
 {
     Model* m = backend()->createModel( settings );
@@ -291,18 +251,5 @@ QStringList Soprano::Server::ServerCore::allModels() const
     return d->models.keys();
 }
 
-
-void Soprano::Server::ServerCore::slotNewTcpConnection()
-{
-    qDebug() << Q_FUNC_INFO;
-    // FIXME
-}
-
-
-void Soprano::Server::ServerCore::slotNewSocketConnection( SOCKET_HANDLE handle )
-{
-    qDebug() << Q_FUNC_INFO;
-    d->handleIncomingConnection( handle );
-}
-
 #include "servercore.moc"
+#include "servercore_p.moc"

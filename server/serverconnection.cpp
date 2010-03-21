@@ -145,6 +145,7 @@ void Soprano::Server::ServerConnection::run()
     qDebug() << Q_FUNC_INFO;
 
     // we are in the new thread
+#warning THIS SEEMS TO HANG IF THE CLIENT IS STILL ATTACHED! Maybe use a timeout and a cancel variable after all.
     while ( d->socket->waitForReadyRead() ) {
         if ( !d->readNextCommand() )
             break;
