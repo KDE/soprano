@@ -190,7 +190,8 @@ namespace {
             else {
                 *lang = false;
                 if ( pos+3 < s.length() ) {
-                    if ( s.mid( pos+1, 3 ) == "^^<" ) {
+                    if ( s.mid( pos+1, 3 ) == "^^<" ||
+                         s[pos+1].isSpace() ) {
                         return pos;
                     }
                 }
@@ -267,7 +268,7 @@ Soprano::Node Soprano::NQuadParser::parseNode( const QString& s, int& offset ) c
                         offset = langEnd;
                     }
                 }
-                else {
+                else if ( s.length() > literalEndPos+1 && !s[literalEndPos+1].isSpace() ) {
                     int literalTypeEnd = s.indexOf( ">", literalEndPos + 4 );
                     if ( literalTypeEnd > 0 ) {
                         QString literalType = s.mid( literalEndPos + 4, literalTypeEnd - literalEndPos - 4 );
@@ -275,6 +276,10 @@ Soprano::Node Soprano::NQuadParser::parseNode( const QString& s, int& offset ) c
 
                         offset = literalTypeEnd+1;
                     }
+                }
+                else {
+                    node = Node( LiteralValue::createPlainLiteral( value ) );
+                    offset = literalEndPos+1;
                 }
             }
         }
