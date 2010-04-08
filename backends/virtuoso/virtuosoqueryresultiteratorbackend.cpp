@@ -56,11 +56,10 @@ Soprano::Virtuoso::QueryResultIteratorBackend::QueryResultIteratorBackend( ODBC:
     d->bindingCachedFlags = QBitArray( d->bindingNames.count(), false );
     d->bindingCache.resize( d->bindingNames.count() );
 
-
     // ASK queries are rather easy to detect
     // =====================================
     if ( d->bindingNames.count() == 1 &&
-         d->bindingNames[0] == "__ASK_RETVAL" ) {
+         d->bindingNames[0] == QLatin1String( "__ASK_RETVAL" ) ) {
         d->m_resultType = QueryResultIteratorBackendPrivate::AskResult;
         // cache the result
         // virtuoso returns an empty result set for false boolean results
@@ -78,7 +77,7 @@ Soprano::Virtuoso::QueryResultIteratorBackend::QueryResultIteratorBackend( ODBC:
     // Graph queries are a little trickier
     // =====================================
     else if ( d->bindingNames.count() == 1 &&
-              d->bindingNames[0] == "callret-0" ) {
+              d->bindingNames[0] == QLatin1String( "callret-0" ) ) {
         if ( d->m_queryResult->fetchRow() ) {
             Node node = d->m_queryResult->getData( 1 );
             if ( !d->m_queryResult->lastError() ) {
