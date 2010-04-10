@@ -31,6 +31,8 @@
 #include "statementiterator.h"
 #include "queryresultiterator.h"
 
+#include <QtCore/QMutexLocker>
+
 
 Soprano::Client::ClientModel::ClientModel( const Backend* backend, int modelId, ClientConnection* client )
     : StorageModel( backend ),
@@ -47,6 +49,7 @@ Soprano::Client::ClientModel::~ClientModel()
     // connected. In that case the iterators have been
     // closed by the server anyway.
     //
+    QMutexLocker locker( &m_mutex );
     if ( m_client->isConnectedInCurrentThread() ) {
         for ( int i = 0; i < m_openIterators.count(); ++i ) {
             m_client->iteratorClose( m_openIterators[i] );
@@ -57,6 +60,7 @@ Soprano::Client::ClientModel::~ClientModel()
 
 Soprano::Error::ErrorCode Soprano::Client::ClientModel::addStatement( const Statement &statement )
 {
+    QMutexLocker locker( &m_mutex );
     if ( m_client ) {
         Error::ErrorCode c = m_client->addStatement( m_modelId, statement );
         setError( m_client->lastError() );
@@ -71,6 +75,7 @@ Soprano::Error::ErrorCode Soprano::Client::ClientModel::addStatement( const Stat
 
 Soprano::NodeIterator Soprano::Client::ClientModel::listContexts() const
 {
+    QMutexLocker locker( &m_mutex );
     if ( m_client ) {
         int itId = m_client->listContexts( m_modelId );
         if ( itId > 0 ) {
@@ -93,6 +98,7 @@ Soprano::NodeIterator Soprano::Client::ClientModel::listContexts() const
 
 Soprano::QueryResultIterator Soprano::Client::ClientModel::executeQuery( const QString& query, Query::QueryLanguage language, const QString& userQueryLanguage ) const
 {
+    QMutexLocker locker( &m_mutex );
     if ( m_client ) {
         int itId = m_client->executeQuery( m_modelId, query, language, userQueryLanguage );
         if ( itId > 0 ) {
@@ -115,6 +121,7 @@ Soprano::QueryResultIterator Soprano::Client::ClientModel::executeQuery( const Q
 
 Soprano::StatementIterator Soprano::Client::ClientModel::listStatements( const Statement &partial ) const
 {
+    QMutexLocker locker( &m_mutex );
     if ( m_client ) {
         int itId = m_client->listStatements( m_modelId, partial );
         if ( itId > 0 ) {
@@ -137,6 +144,7 @@ Soprano::StatementIterator Soprano::Client::ClientModel::listStatements( const S
 
 Soprano::Error::ErrorCode Soprano::Client::ClientModel::removeStatement( const Statement &statement )
 {
+    QMutexLocker locker( &m_mutex );
     if ( m_client ) {
         Error::ErrorCode c = m_client->removeStatement( m_modelId, statement );
         setError( m_client->lastError() );
@@ -151,6 +159,7 @@ Soprano::Error::ErrorCode Soprano::Client::ClientModel::removeStatement( const S
 
 Soprano::Error::ErrorCode Soprano::Client::ClientModel::removeAllStatements( const Statement &statement )
 {
+    QMutexLocker locker( &m_mutex );
     if ( m_client ) {
         Error::ErrorCode c = m_client->removeAllStatements( m_modelId, statement );
         setError( m_client->lastError() );
@@ -165,6 +174,7 @@ Soprano::Error::ErrorCode Soprano::Client::ClientModel::removeAllStatements( con
 
 int Soprano::Client::ClientModel::statementCount() const
 {
+    QMutexLocker locker( &m_mutex );
     if ( m_client ) {
         int cnt = m_client->statementCount( m_modelId );
         setError( m_client->lastError() );
@@ -179,6 +189,7 @@ int Soprano::Client::ClientModel::statementCount() const
 
 bool Soprano::Client::ClientModel::containsStatement( const Statement &statement ) const
 {
+    QMutexLocker locker( &m_mutex );
     if ( m_client ) {
         bool c = m_client->containsStatement( m_modelId, statement );
         setError( m_client->lastError() );
@@ -193,6 +204,7 @@ bool Soprano::Client::ClientModel::containsStatement( const Statement &statement
 
 bool Soprano::Client::ClientModel::containsAnyStatement( const Statement &statement ) const
 {
+    QMutexLocker locker( &m_mutex );
     if ( m_client ) {
         bool c = m_client->containsAnyStatement( m_modelId, statement );
         setError( m_client->lastError() );
@@ -207,6 +219,7 @@ bool Soprano::Client::ClientModel::containsAnyStatement( const Statement &statem
 
 Soprano::Node Soprano::Client::ClientModel::createBlankNode()
 {
+    QMutexLocker locker( &m_mutex );
     if ( m_client ) {
         Node n = m_client->createBlankNode( m_modelId );
         setError( m_client->lastError() );
@@ -221,6 +234,7 @@ Soprano::Node Soprano::Client::ClientModel::createBlankNode()
 
 void Soprano::Client::ClientModel::closeIterator( int id ) const
 {
+    QMutexLocker locker( &m_mutex );
     if ( m_client ) {
         clearError();
         if ( m_openIterators.contains( id ) ) {

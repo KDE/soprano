@@ -1,4 +1,4 @@
-/* 
+/*
  * This file is part of Soprano Project.
  *
  * Copyright (C) 2007 Sebastian Trueg <trueg@kde.org>
@@ -25,6 +25,7 @@
 #include "storagemodel.h"
 
 #include <QtCore/QList>
+#include <QtCore/QMutex>
 #include <QtCore/QPointer>
 
 #include "clientconnection.h"
@@ -56,6 +57,7 @@ namespace Soprano {
             ClientConnection* client() const { return m_client; }
 
         private:
+            mutable QMutex m_mutex;
             int m_modelId;
             mutable QList<int> m_openIterators;
             QPointer<ClientConnection> m_client;
