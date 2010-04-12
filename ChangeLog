@@ -2,6 +2,7 @@
 	* LocalSocketClient and TcpClient: do not re-establish a connection on model deletion.
 	  (This fixes a crash when using a client as a global static)
 	* Properly protect ErrorCache from multithread clashes. (Thanks to Andreas Hartmetz for the patch)
+	* Slight optimizations in the Virtuoso backend.
 
 2.4.1
 	* Virtuoso backend: 

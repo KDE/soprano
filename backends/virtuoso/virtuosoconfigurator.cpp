@@ -1,7 +1,7 @@
 /*
  * This file is part of Soprano Project
  *
- * Copyright (C) 2009 Sebastian Trueg <trueg@kde.org>
+ * Copyright (C) 2009-2010 Sebastian Trueg <trueg@kde.org>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -178,7 +178,7 @@ bool Soprano::Virtuoso::DatabaseConfigurator::updateFulltextIndexState( const QS
     // set the batch updating behaviour:
     // for sync updating batch updating needs to be disabled (second param "OFF")
     // for batch updating the third parameter specifies the interval in minutes.
-    return( m_connection->executeCommand( QString( "DB.DBA.VT_BATCH_UPDATE ('DB.DBA.RDF_OBJ', '%1', %2)" )
+    return( m_connection->executeCommand( QString::fromLatin1( "DB.DBA.VT_BATCH_UPDATE ('DB.DBA.RDF_OBJ', '%1', %2)" )
                                           .arg( ( enableIndexing && !syncUpdating ) ? QLatin1String( "ON" ) : QLatin1String( "OFF" ) )
                                           .arg( ( enableIndexing && updateIntervalSpecified ) ? state : QLatin1String( "null" ) ) )
             == Error::ErrorNone );
@@ -207,10 +207,10 @@ bool Soprano::Virtuoso::DatabaseConfigurator::updateFulltextIndexRules( bool ena
     }
 
     if ( enable && !haveRule ) {
-        return m_connection->executeCommand( QString( "DB.DBA.RDF_OBJ_FT_RULE_ADD( null, null, '%1' )" ).arg( ruleName ) ) == Error::ErrorNone;
+        return m_connection->executeCommand( QString::fromLatin1( "DB.DBA.RDF_OBJ_FT_RULE_ADD( null, null, '%1' )" ).arg( ruleName ) ) == Error::ErrorNone;
     }
     else if ( !enable && haveRule ) {
-        return m_connection->executeCommand( QString( "DB.DBA.RDF_OBJ_FT_RULE_DEL( null, null, '%1' )" ).arg( ruleName ) ) == Error::ErrorNone;
+        return m_connection->executeCommand( QString::fromLatin1( "DB.DBA.RDF_OBJ_FT_RULE_DEL( null, null, '%1' )" ).arg( ruleName ) ) == Error::ErrorNone;
     }
     else {
         return true;

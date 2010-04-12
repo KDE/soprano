@@ -205,21 +205,25 @@ Soprano::Node Soprano::ODBC::QueryResult::getData( int colNum )
                 return Node();
             }
 
-            QUrl type = QUrl::fromEncoded( QByteArray::fromRawData( reinterpret_cast<const char*>( typeBuf ), typeBufLen ), QUrl::StrictMode );
-            QString lang = QString::fromLatin1( reinterpret_cast<const char*>( langBuf ), langBufLen );
             const char* str = reinterpret_cast<const char*>( data );
+            const char* typeStr = reinterpret_cast<const char*>( typeBuf );
 
-            if ( type == Virtuoso::fakeBooleanType() ) {
-                node = Node( LiteralValue( !qstrcmp( "true", str ) ) );
+            if ( typeBufLen > 0 ) {
+                if ( !qstrncmp( typeStr, Virtuoso::fakeBooleanTypeString(), typeBufLen ) ) {
+                    node = Node( LiteralValue( !qstrcmp( "true", str ) ) );
+                }
+                else {
+                    QUrl type;
+                    if ( !qstrncmp( typeStr, Virtuoso::fakeBase64BinaryTypeString(), typeBufLen ) )
+                        type = Soprano::Vocabulary::XMLSchema::base64Binary();
+                    else
+                        type = QUrl::fromEncoded( QByteArray::fromRawData( typeStr, typeBufLen ), QUrl::StrictMode );
+                    node = Node( LiteralValue::fromString( QString::fromUtf8( str ), type ) );
+                }
             }
             else {
-                if ( type == Virtuoso::fakeBase64BinaryType() )
-                    type = Soprano::Vocabulary::XMLSchema::base64Binary();
-
-                if ( type.isEmpty() )
-                    node = Node( LiteralValue::createPlainLiteral( QString::fromUtf8( str ), lang ) );
-                else
-                    node = Node( LiteralValue::fromString( QString::fromUtf8( str ), type ) );
+                QString lang = QString::fromLatin1( reinterpret_cast<const char*>( langBuf ), langBufLen );
+                node = Node( LiteralValue::createPlainLiteral( QString::fromUtf8( str ), lang ) );
             }
             break;
         }
