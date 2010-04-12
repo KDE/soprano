@@ -22,10 +22,12 @@
 #include "error.h"
 #include "locator.h"
 
-#include <QtCore/QHash>
-#include <QtCore/QThread>
-#include <QtCore/QDebug>
 #include <QtCore/QCoreApplication>
+#include <QtCore/QDebug>
+#include <QtCore/QHash>
+#include <QtCore/QMutex>
+#include <QtCore/QMutexLocker>
+#include <QtCore/QThread>
 
 
 namespace Soprano {
@@ -185,6 +187,7 @@ class Soprano::Error::ErrorCache::Private
 {
 public:
     QHash<QThread*, Error> errorMap;
+    QMutex errorMapMutex;
 };
 
 
@@ -202,6 +205,7 @@ Soprano::Error::ErrorCache::~ErrorCache()
 
 Soprano::Error::Error Soprano::Error::ErrorCache::lastError() const
 {
+    QMutexLocker locker( &d->errorMapMutex );
     return d->errorMap.value( QThread::currentThread() );
 }
 
@@ -218,7 +222,7 @@ void Soprano::Error::ErrorCache::setError( const Error& error ) const
 #endif
                       : QString( "(Soprano)" ) )
                  << "Error in thread" << QThread::currentThreadId() << ":" << error;
-
+        QMutexLocker locker( &d->errorMapMutex );
         d->errorMap[QThread::currentThread()] = error;
     }
     else {
@@ -235,6 +239,7 @@ void Soprano::Error::ErrorCache::setError( const QString& errorMessage, int code
 
 void Soprano::Error::ErrorCache::clearError() const
 {
+    QMutexLocker locker( &d->errorMapMutex );
     if ( !d->errorMap.isEmpty() )
         d->errorMap[QThread::currentThread()] = Error();
 }
