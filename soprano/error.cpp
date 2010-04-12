@@ -205,7 +205,7 @@ Soprano::Error::ErrorCache::~ErrorCache()
 
 Soprano::Error::Error Soprano::Error::ErrorCache::lastError() const
 {
-    QMutexLocker( &d->errorMapMutex );
+    QMutexLocker locker( &d->errorMapMutex );
     return d->errorMap.value( QThread::currentThread() );
 }
 
@@ -222,7 +222,7 @@ void Soprano::Error::ErrorCache::setError( const Error& error ) const
 #endif
                       : QString( "(Soprano)" ) )
                  << "Error in thread" << QThread::currentThreadId() << ":" << error;
-        QMutexLocker( &d->errorMapMutex );
+        QMutexLocker locker( &d->errorMapMutex );
         d->errorMap[QThread::currentThread()] = error;
     }
     else {
@@ -239,7 +239,7 @@ void Soprano::Error::ErrorCache::setError( const QString& errorMessage, int code
 
 void Soprano::Error::ErrorCache::clearError() const
 {
-    QMutexLocker( &d->errorMapMutex );
+    QMutexLocker locker( &d->errorMapMutex );
     if ( !d->errorMap.isEmpty() )
         d->errorMap[QThread::currentThread()] = Error();
 }
