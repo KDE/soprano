@@ -1,7 +1,7 @@
 /*
  * This file is part of Soprano Project.
  *
- * Copyright (C) 2007 Sebastian Trueg <trueg@kde.org>
+ * Copyright (C) 2010 Sebastian Trueg <trueg@kde.org>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -19,32 +19,34 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef _SOPRANO_SOCKET_DEVICE_H_
-#define _SOPRANO_SOCKET_DEVICE_H_
+#ifndef _SOPRANO_LOCAL_SERVER_H_
+#define _SOPRANO_LOCAL_SERVER_H_
 
-#include <QtCore/QIODevice>
+#include <QtNetwork/QLocalServer>
+#include <QtCore/QList>
 
-class SocketDevice : public QIODevice
-{
-public:
-    SocketDevice( QObject* parent = 0 );
-    ~SocketDevice();
+namespace Soprano {
+    namespace Server {
 
-    bool open( int sd, OpenMode mode );
-    bool open( const QString& socketName, OpenMode mode );
-    void close();
+        class ServerConnection;
+        class ModelPool;
+        class ServerCorePrivate;
 
-    bool isValid();
+        class LocalServer : public QLocalServer
+        {
+            Q_OBJECT
 
-    bool waitForReadyRead( int msecs = 3000 );
+        public:
+            LocalServer( ServerCorePrivate* serverCore, QObject* parent );
+            ~LocalServer();
 
-protected:
-    qint64 readData( char* data, qint64 maxSize );
-    qint64 writeData( const char* data, qint64 maxSize );
+        protected:
+            void incomingConnection( quintptr socketDescriptor );
 
-private:
-    class Private;
-    Private* const d;
-};
+        private:
+            ServerCorePrivate* m_serverCore;
+        };
+    }
+}
 
 #endif

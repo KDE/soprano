@@ -1,7 +1,7 @@
 /*
  * This file is part of Soprano Project.
  *
- * Copyright (C) 2007-2009 Sebastian Trueg <trueg@kde.org>
+ * Copyright (C) 2007-2010 Sebastian Trueg <trueg@kde.org>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -23,7 +23,6 @@
 #include "servercore.h"
 #include "commands.h"
 #include "randomgenerator.h"
-#include "socketdevice.h"
 #include "datastream.h"
 #include "modelpool.h"
 
@@ -130,34 +129,19 @@ Soprano::Server::ServerConnection::~ServerConnection()
 
 void Soprano::Server::ServerConnection::close()
 {
-    d->socket->close();
+    if ( d->socket )
+        d->socket->close();
 }
 
-
-void Soprano::Server::ServerConnection::start( QIODevice* socket )
-{
-    d->socket = socket;
-
-    // "push" the socket to the new thread,
-    // because QTcpSocket::write(...) seems to create children objects, in the new thread, and :
-    // "QObject: Cannot create children for a parent that is in a different thread."
-    d->socket->setParent( 0 );
-    d->socket->moveToThread( this );
-
-    // we move 'this' (ServerConnection object) to the new thread,
-    // the one created by ourselves and it works!
-    moveToThread( this );
-
-    // start the thread (call run())
-    QThread::start( QThread::InheritPriority );
-}
 
 void Soprano::Server::ServerConnection::run()
 {
     // we are in the new thread
+    d->socket = createIODevice();
 
     connect( d->socket, SIGNAL( readyRead() ),
-             this, SLOT( _s_readNextCommand() ) );
+             this, SLOT( _s_readNextCommand() ),
+             Qt::DirectConnection );
 
     // quit() emits the signal finished() when the thread is finished
     connect( d->socket, SIGNAL( disconnected() ),

@@ -34,6 +34,9 @@ namespace Soprano {
     class BackendSetting;
 
     namespace Server {
+
+        class ServerCorePrivate;
+
         /**
          * \class ServerCore servercore.h Soprano/Server/ServerCore
          *
@@ -221,8 +224,6 @@ namespace Soprano {
             void registerAsDBusObject( const QString& objectPath = QString() );
 
         private Q_SLOTS:
-            void slotNewTcpConnection();
-            void slotNewSocketConnection();
             void serverConnectionFinished();
 
         protected:
@@ -241,11 +242,7 @@ namespace Soprano {
             virtual Model* createModel( const QList<BackendSetting>& settings );
 
         private:
-            class Private;
-            Private* const d;
-
-            Q_PRIVATE_SLOT( d, void _s_localSocketError( QLocalSocket::LocalSocketError ) )
-            Q_PRIVATE_SLOT( d, void _s_tcpSocketError( QAbstractSocket::SocketError ) )
+            ServerCorePrivate* const d;
         };
     }
 }

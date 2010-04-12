@@ -1,7 +1,7 @@
 /*
  * This file is part of Soprano Project.
  *
- * Copyright (C) 2007-2009 Sebastian Trueg <trueg@kde.org>
+ * Copyright (C) 2007-2010 Sebastian Trueg <trueg@kde.org>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -51,14 +51,14 @@ namespace Soprano {
              * \param socket The connection socket.
              */
             ServerConnection( ModelPool* pool, ServerCore* core );
-            ~ServerConnection();
+            virtual ~ServerConnection();
 
             void close();
 
-            void start( QIODevice* socket );
-
         protected:
             void run();
+
+            virtual QIODevice* createIODevice() = 0;
 
         private:
             class Private;
