@@ -99,7 +99,7 @@ namespace Soprano {
             virtual bool isConnected( QIODevice* dev ) = 0;
 
         private:
-            QIODevice* socket();
+            QIODevice* socketForCurrentThread();
 
             ClientConnectionPrivate* const d;
         };

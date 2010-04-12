@@ -1,7 +1,7 @@
 /*
  * This file is part of Soprano Project.
  *
- * Copyright (C) 2007 Sebastian Trueg <trueg@kde.org>
+ * Copyright (C) 2007-2010 Sebastian Trueg <trueg@kde.org>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -57,9 +57,9 @@ namespace Soprano {
             ClientConnection* client() const { return m_client; }
 
         private:
-            mutable QMutex m_mutex;
             int m_modelId;
             mutable QList<int> m_openIterators;
+            mutable QMutex m_openIteratorsMutex;
             QPointer<ClientConnection> m_client;
         };
     }
