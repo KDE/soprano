@@ -22,7 +22,6 @@
 #include "clientconnection.h"
 #include "clientconnection_p.h"
 #include "commands.h"
-#include "socketdevice.h"
 #include "datastream.h"
 
 #include "node.h"
