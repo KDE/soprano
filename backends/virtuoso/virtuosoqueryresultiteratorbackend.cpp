@@ -77,7 +77,8 @@ Soprano::Virtuoso::QueryResultIteratorBackend::QueryResultIteratorBackend( ODBC:
     // Graph queries are a little trickier
     // =====================================
     else if ( d->bindingNames.count() == 1 &&
-              d->bindingNames[0] == QLatin1String( "callret-0" ) ) {
+              ( d->bindingNames[0] == QLatin1String( "callret-0" ) ||
+                d->bindingNames[0] == QLatin1String( "fmtaggret-" ) ) ) { // try to be 6.1.1 compatible
         if ( d->m_queryResult->fetchRow() ) {
             Node node = d->m_queryResult->getData( 1 );
             if ( !d->m_queryResult->lastError() ) {
