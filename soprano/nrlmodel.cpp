@@ -284,9 +284,7 @@ Soprano::Error::ErrorCode Soprano::NRLModel::removeGraph( const QUrl& graph )
     foreach ( const Node& mg, metadataGraphs ) {
         // we can only use removeAllStatements(Statement) here since all other variants will come back to
         // our version below which in turn calls us again
-        Error::ErrorCode c = FilterModel::removeAllStatements( Statement( Node(), Node(), Node(), mg ) );
-        if ( c != Error::ErrorNone )
-            return c;
+        FilterModel::removeAllStatements( Statement( Node(), Node(), Node(), mg ) );
     }
     // this is where we do not want to be called recursively
     return FilterModel::removeAllStatements( Statement( Node(), Node(), Node(), graph ) );
