@@ -1,7 +1,7 @@
 /*
  * This file is part of Soprano Project
  *
- * Copyright (C) 2009 Sebastian Trueg <trueg@kde.org>
+ * Copyright (C) 2009-2010 Sebastian Trueg <trueg@kde.org>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -52,7 +52,6 @@ Soprano::ODBC::Connection* Soprano::ODBC::ConnectionPoolPrivate::createConnectio
     }
 
     // set the app name
-//    SQLSetConnectAttr( m_hdbc, SQL_ATTR_AUTOCOMMIT, SQL_AUTOCOMMIT_ON, 0 );
 //    SQLSetConnectOption( m_hdbc, SQL_APPLICATION_NAME, "Soprano" );
     SQLSetConnectOption( hdbc, SQL_AUTOCOMMIT, SQL_AUTOCOMMIT_ON );
 
@@ -91,6 +90,7 @@ Soprano::ODBC::ConnectionPool::ConnectionPool( const QString& odbcConnectString,
     : QObject( parent ),
       d( new ConnectionPoolPrivate() )
 {
+    qDebug() << Q_FUNC_INFO << odbcConnectString;
     d->m_odbcConnectString = odbcConnectString;
 }
 

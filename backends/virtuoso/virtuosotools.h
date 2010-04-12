@@ -40,6 +40,11 @@ namespace Soprano {
         QUrl openlinkVirtualGraph();
         QUrl fakeBooleanType();
         QUrl fakeBase64BinaryType();
+
+        const char* defaultGraphString();
+        const char* openlinkVirtualGraphString();
+        const char* fakeBooleanTypeString();
+        const char* fakeBase64BinaryTypeString();
     }
 }
 
