@@ -1,7 +1,7 @@
 /*
  * This file is part of Soprano Project.
  *
- * Copyright (C) 2007 Sebastian Trueg <trueg@kde.org>
+ * Copyright (C) 2007-2010 Sebastian Trueg <trueg@kde.org>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -31,6 +31,8 @@
 #include "statementiterator.h"
 #include "queryresultiterator.h"
 
+#include <QtCore/QMutexLocker>
+
 
 Soprano::Client::ClientModel::ClientModel( const Backend* backend, int modelId, ClientConnection* client )
     : StorageModel( backend ),
@@ -47,6 +49,7 @@ Soprano::Client::ClientModel::~ClientModel()
     // connected. In that case the iterators have been
     // closed by the server anyway.
     //
+    QMutexLocker locker( &m_openIteratorsMutex );
     if ( m_client->isConnectedInCurrentThread() ) {
         for ( int i = 0; i < m_openIterators.count(); ++i ) {
             m_client->iteratorClose( m_openIterators[i] );
@@ -74,6 +77,7 @@ Soprano::NodeIterator Soprano::Client::ClientModel::listContexts() const
     if ( m_client ) {
         int itId = m_client->listContexts( m_modelId );
         if ( itId > 0 ) {
+            QMutexLocker locker( &m_openIteratorsMutex );
             m_openIterators.append( itId );
         }
         setError( m_client->lastError() );
@@ -96,6 +100,7 @@ Soprano::QueryResultIterator Soprano::Client::ClientModel::executeQuery( const Q
     if ( m_client ) {
         int itId = m_client->executeQuery( m_modelId, query, language, userQueryLanguage );
         if ( itId > 0 ) {
+            QMutexLocker locker( &m_openIteratorsMutex );
             m_openIterators.append( itId );
         }
         setError( m_client->lastError() );
@@ -118,6 +123,7 @@ Soprano::StatementIterator Soprano::Client::ClientModel::listStatements( const S
     if ( m_client ) {
         int itId = m_client->listStatements( m_modelId, partial );
         if ( itId > 0 ) {
+            QMutexLocker locker( &m_openIteratorsMutex );
             m_openIterators.append( itId );
         }
         setError( m_client->lastError() );
@@ -223,6 +229,7 @@ void Soprano::Client::ClientModel::closeIterator( int id ) const
 {
     if ( m_client ) {
         clearError();
+        QMutexLocker locker( &m_openIteratorsMutex );
         if ( m_openIterators.contains( id ) ) {
             m_client->iteratorClose( id );
             m_openIterators.removeAll( id );
