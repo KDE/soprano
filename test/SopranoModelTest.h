@@ -55,6 +55,7 @@ private Q_SLOTS:
     void testRemoveStatement();
     void testRemoveStatements();
     void testRemoveAllStatement();
+    void testRemoveGraph();
 
     void testContainsStatement();
     void testContainsStatements();

@@ -411,6 +411,34 @@ void SopranoModelTest::testRemoveAllStatement()
 }
 
 
+void SopranoModelTest::testRemoveGraph()
+{
+    QVERIFY( m_model != 0 );
+
+    QUrl graph1 = createRandomUri();
+    QUrl graph2 = createRandomUri();
+    Statement statementPattern1;
+    statementPattern1.setContext( graph1 );
+    Statement statementPattern2;
+    statementPattern2.setContext( graph2 );
+    QList<Statement> graph1Data = createTestData( statementPattern1, 10 );
+    QList<Statement> graph2Data = createTestData( statementPattern2, 10 );
+
+    m_model->addStatements( graph1Data );
+    m_model->addStatements( graph2Data );
+
+    m_model->removeContext( graph1 );
+
+    foreach( const Statement& s, graph1Data ) {
+        QVERIFY( !m_model->containsStatement( s ) );
+    }
+
+    foreach( const Statement& s, graph2Data ) {
+        QVERIFY( m_model->containsStatement( s ) );
+    }
+}
+
+
 void SopranoModelTest::testContainsStatement()
 {
     QVERIFY( m_model != 0 );
@@ -899,6 +927,8 @@ void SopranoModelTest::testLiteralTypes()
 
     StatementIterator it = m_model->listStatements( Statement( sub, predicate, Node() ) );
     QVERIFY( it.next() );
+    if ( it.current().object().literal() != literal )
+        qDebug() << Node( it.current().object().literal() ).toN3() << Node( literal ).toN3();
     QCOMPARE( it.current().object().literal(), literal );
     it.close();
 
