@@ -1,3 +1,7 @@
+2.4.3
+	* Quick and ugly fix for LocalSocketClient::isConnected which actually tries to connect instead
+	  of checking if a connection has been established in the current thread.
+
 2.4.2
 	* LocalSocketClient and TcpClient: do not re-establish a connection on model deletion.
 	  (This fixes a crash when using a client as a global static)

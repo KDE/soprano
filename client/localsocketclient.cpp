@@ -155,7 +155,7 @@ bool Soprano::Client::LocalSocketClient::connect( const QString& name )
 
 bool Soprano::Client::LocalSocketClient::isConnected() const
 {
-    return d->connection ? d->connection->isConnectedInCurrentThread() : false;
+    return d->connection ? d->connection->connectInCurrentThread() : false;
 }
 
 
