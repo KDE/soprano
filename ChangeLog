@@ -1,3 +1,7 @@
+2.4.4
+	* Fix to FindIODBC.cmake which ensures that the correct locations are searched first. This
+	  allows the usage of a locally installed libiodbc.
+
 2.4.3
 	* Quick and ugly fix for LocalSocketClient::isConnected which actually tries to connect instead
 	  of checking if a connection has been established in the current thread.
