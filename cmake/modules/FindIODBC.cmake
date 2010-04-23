@@ -53,12 +53,12 @@ if(IODBC_CONFIG)
 endif(IODBC_CONFIG)
 
 find_path(IODBC_INCLUDE_DIR sql.h
-  PATHS
+  HINTS
   ${iodbc_INCLUDE_DIRS}
   )
 
 find_library(IODBC_LIBRARIES NAMES iodbc
-  PATHS
+  HINTS
   ${iodbc_LIBRARY_DIRS}
   )
 
