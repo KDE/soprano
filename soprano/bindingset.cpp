@@ -138,6 +138,18 @@ void Soprano::BindingSet::replace( const QString& name, const Node& value )
     }
 }
 
+bool Soprano::BindingSet::operator==( const BindingSet& other ) const
+{
+    return ( d->bindingMap == other.d->bindingMap &&
+             d->names == other.d->names &&
+             d->values == other.d->values );
+}
+
+bool Soprano::BindingSet::operator!=( const BindingSet& other ) const
+{
+    return !operator==( other );
+}
+
 QDebug operator<<( QDebug s, const Soprano::BindingSet& b )
 {
     QStringList n = b.bindingNames();

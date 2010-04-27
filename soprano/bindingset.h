@@ -93,7 +93,7 @@ namespace Soprano {
          * node if offset is out of bounds, i.e. bigger or equal to count().
          *
          * \sa QueryResultIterator::binding(int) const.
-         */    
+         */
         Node value( int offset ) const;
 
         /**
@@ -113,7 +113,7 @@ namespace Soprano {
          *
          * \param name The variable name.
          *
-         * \return \p true if this set contains a binding for the 
+         * \return \p true if this set contains a binding for the
          * variable name, \p false otherwise.
          */
         bool contains( const QString& name ) const;
@@ -143,6 +143,20 @@ namespace Soprano {
          * \since 2.3
          */
         void replace( const QString& name, const Node& value );
+
+        /**
+         * Comparison operator.
+         *
+         * \since 2.5
+         */
+        bool operator==( const BindingSet& other ) const;
+
+        /**
+         * Comparison operator.
+         *
+         * \since 2.5
+         */
+        bool operator!=( const BindingSet& other ) const;
 
     private:
         class Private;
