@@ -27,7 +27,9 @@
 #include <QtCore/QFile>
 #include <QtCore/QDir>
 
-#include <signal.h>
+#ifndef Q_OS_WIN
+    #include <signal.h>
+#endif
 
 
 namespace {

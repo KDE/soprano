@@ -25,14 +25,23 @@
 #include <QtCore/QObject>
 
 #include <stdlib.h>
-#include <time.h>
+#ifndef _WIN32_WCE
+    #include <time.h>
+#endif
 
+#ifdef _WIN32_WCE
+    #include <winbase.h>
+#endif
 
 Q_GLOBAL_STATIC( Soprano::RandomGenerator, s_randomGenerator )
 
 Soprano::RandomGenerator::RandomGenerator()
 {
-    srand( time(0) );
+    #ifndef _WIN32_WCE
+        srand( time(0) );
+    #else
+        srand( GetTickCount() );
+    #endif
 }
 
 

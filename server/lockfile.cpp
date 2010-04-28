@@ -12,6 +12,7 @@
 
 #include "lockfile.h"
 
+#ifndef _WIN32_WCE
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>
@@ -24,6 +25,10 @@
 
 #include <string.h>
 #include <errno.h>
+#else
+#include <Winbase.h>
+#include <atlbase.h>
+#endif
 
 #include <QtCore/QFile>
 #include <QtCore/QDebug>
@@ -84,9 +89,26 @@ bool LockFile::aquireLock( int* owningPid )
         f.setPermissions( f.permissions() | QFile::WriteOwner );
     }
 
+#ifndef _WIN32_WCE
     d->fd = open( QFile::encodeName( d->path ).data(), O_WRONLY|O_CREAT, 0600 );
+#else
+    CA2W wpath( QFile::encodeName( d->path ).data() );
+    d->fd = reinterpret_cast<int>(CreateFile( wpath, GENERIC_WRITE, 0, NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL ));
+#endif
     if ( d->fd == -1 ) {
+#ifndef _WIN32_WCE
         qDebug() << "(LockFile) could not open" << d->path << QString( "(%1)" ).arg( strerror( errno ) );
+#else
+        char *msg;
+
+        FormatMessageW (FORMAT_MESSAGE_ALLOCATE_BUFFER |
+                      FORMAT_MESSAGE_IGNORE_INSERTS |
+                      FORMAT_MESSAGE_FROM_SYSTEM,
+                      NULL, GetLastError(), 0,
+                      (LPWSTR) &msg, 0, NULL);
+                      
+        qDebug() << "(LockFile) could not open" << d->path << QString( "(%1)" ).arg( msg );
+#endif
         return false;
     }
     // flock isn't defined under windows
@@ -115,7 +137,11 @@ bool LockFile::aquireLock( int* owningPid )
 void LockFile::releaseLock()
 {
     if ( d->fd > 0 ) {
+#ifndef _WIN32_WCE
         close( d->fd );
+#else
+        CloseHandle( reinterpret_cast<HANDLE>(d->fd ));
+#endif
     }
     d->fd = -1;
 }

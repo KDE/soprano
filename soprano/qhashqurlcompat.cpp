@@ -46,7 +46,7 @@ namespace Soprano {
     uint soprano_qHash_QUrl(const QUrl &);
 }
 
-#if !(defined(Q_OS_MACX) && QT_VERSION >= 0x040700)
+#if !((defined(Q_OS_MACX) || defined(_WIN32) ) && QT_VERSION >= 0x040700)
 uint qHash(const QUrl &url)
 {
     return Soprano::soprano_qHash_QUrl(url);

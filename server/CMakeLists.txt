@@ -57,6 +57,10 @@ qt4_automoc(sopranodcore.cpp)
 
 add_executable(sopranod sopranod.cpp sopranodcore.cpp lockfile.cpp)
 
+if(WINCE)
+    target_link_libraries(sopranod Coredll)
+endif(WINCE)
+
 set_target_properties(sopranoserver PROPERTIES
   VERSION 1.2.0
   SOVERSION 1

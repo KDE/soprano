@@ -55,7 +55,11 @@
 #endif
 #include "../client/sparql/sparqlmodel.h"
 
+#ifndef _WIN32_WCE
 #include <signal.h>
+#else
+#include <wcecompat/signal.h>
+#endif
 
 using namespace Soprano;
 
