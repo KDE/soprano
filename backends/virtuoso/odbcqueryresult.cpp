@@ -64,19 +64,17 @@ QStringList Soprano::ODBC::QueryResult::resultColumns()
                 SQLTCHAR colName[51];
                 colName[50] = 0;
                 SQLSMALLINT colType;
-                SQLULEN colPrecision;
-                SQLSMALLINT colScale;
-                SQLSMALLINT colNullable;
                 if ( SQLDescribeCol( d->m_hstmt,
                                      col,
                                      (SQLTCHAR *) colName,
                                      50,
                                      0,
                                      &colType,
-                                     &colPrecision,
-                                     &colScale,
-                                     &colNullable) == SQL_SUCCESS ) {
+                                     0,
+                                     0,
+                                     0) == SQL_SUCCESS ) {
                     d->m_columns.append( QString::fromLatin1( ( const char* )colName ) );
+                    d->m_columTypes.append( colType );
                 }
                 else {
                     setError( Virtuoso::convertSqlError( SQL_HANDLE_STMT, d->m_hstmt, QLatin1String( "SQLDescribeCol failed" ) ) );
@@ -303,6 +301,14 @@ Soprano::Node Soprano::ODBC::QueryResult::getData( int colNum )
     else {
         return Node();
     }
+}
+
+
+bool Soprano::ODBC::QueryResult::isBlob( int colNum )
+{
+    return ( d->m_columTypes[colNum-1] == SQL_LONGVARCHAR ||
+             d->m_columTypes[colNum-1] == SQL_LONGVARBINARY ||
+             d->m_columTypes[colNum-1] == SQL_WLONGVARCHAR );
 }
 
 

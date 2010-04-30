@@ -45,6 +45,7 @@ namespace Soprano {
             ConnectionPrivate* m_conn;
 
             QStringList m_columns;
+            QList<SQLSMALLINT> m_columTypes;
         };
     }
 }

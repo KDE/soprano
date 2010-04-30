@@ -82,11 +82,10 @@ Soprano::Virtuoso::QueryResultIteratorBackend::QueryResultIteratorBackend( ODBC:
         if ( d->m_queryResult->fetchRow() ) {
             Node node = d->m_queryResult->getData( 1 );
             if ( !d->m_queryResult->lastError() ) {
-                // FIXME: This is hacky. Better check if the value is a BLOB
-                if ( node.literal().isString() ) {
+                if ( d->m_queryResult->isBlob( 1 ) ) {
+                    QString data = node.toString();
                     d->m_resultType = QueryResultIteratorBackendPrivate::GraphResult;
                     if ( const Parser* parser = PluginManager::instance()->discoverParserForSerialization( SerializationTurtle ) ) {
-                        QString data = node.toString();
                         d->graphIterator = parser->parseString( data, QUrl(), SerializationTurtle );
                         setError( parser->lastError() );
                     }

@@ -47,6 +47,9 @@ namespace Soprano {
             bool fetchRow();
             Node getData( int colNum );
 
+            /// Check if the data in column colNum is a BLOB. used in Virtuoso::QueryResultIteratorBackend
+            bool isBlob( int colNum );
+
         private:
             QueryResult();
 
