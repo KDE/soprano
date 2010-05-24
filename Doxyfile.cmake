@@ -121,12 +121,12 @@ EXCLUDE                = ${soprano_SOURCE_DIR}/soprano/datetime.h \
                          ${soprano_SOURCE_DIR}/soprano/util/mutexstatementiteratorbackend.h \
                          ${soprano_SOURCE_DIR}/soprano/util/mutexqueryresultiteratorbackend.h \
                          ${soprano_SOURCE_DIR}/soprano/util/asynccommand.h \
-                         ${soprano_SOURCE_DIR}/soprano/util/asyncmodel_p.h \
                          ${soprano_SOURCE_DIR}/soprano/util/asynciteratorbackend.h \
+                         ${soprano_SOURCE_DIR}/soprano/util/asyncmodeliteratorbackend.h \
                          ${soprano_SOURCE_DIR}/soprano/util/asyncqueryresultiteratorbackend.h \
                          ${soprano_SOURCE_DIR}/soprano/util/extreadwritelock.h
 EXCLUDE_SYMLINKS       = NO
-EXCLUDE_PATTERNS       = 
+EXCLUDE_PATTERNS       = *_p.h
 EXCLUDE_SYMBOLS        = 
 EXAMPLE_PATH           = 
 EXAMPLE_PATTERNS       = *
