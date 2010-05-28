@@ -33,6 +33,7 @@
 #include <QtCore/QMutexLocker>
 #include <QtCore/QVariant>
 #include <QtCore/QStringList>
+#include <QtCore/QScopedPointer>
 #include <QtCore/QDebug>
 
 
@@ -105,22 +106,6 @@ bool Soprano::ODBC::QueryResult::fetchRow()
 }
 
 
-namespace {
-    class DataArrayPointer
-    {
-    public:
-        DataArrayPointer( SQLCHAR* data )
-            : m_data( data ) {
-        }
-        ~DataArrayPointer() {
-            delete [] m_data;
-        }
-
-    private:
-        SQLCHAR* m_data;
-    };
-}
-
 Soprano::Node Soprano::ODBC::QueryResult::getData( int colNum )
 {
     SQLCHAR* data = 0;
@@ -130,7 +115,7 @@ Soprano::Node Soprano::ODBC::QueryResult::getData( int colNum )
         int dvtype = 0;
 
         // easy mem cleanup: never care about data again below
-        DataArrayPointer dap( data );
+        QScopedPointer<SQLCHAR, QScopedPointerArrayDeleter<SQLCHAR> > dap( data );
 
         //
         // Before we can retrieve the column meta data using SQLGetDescField,
