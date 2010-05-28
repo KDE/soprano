@@ -301,9 +301,9 @@ Soprano::Error::ErrorCode Soprano::VirtuosoModel::removeAllStatements( const Sta
         }
         else {
             query = QString::fromLatin1( "delete from %1 { %2 } where { %3 }" )
-                    .arg( statement.context().isValid() ? statement.context().toN3() : QString( "?g" ) )
-                    .arg( statementToConstructGraphPattern( statement, false ) )
-                    .arg( statementToConstructGraphPattern( statement, true ) );
+                    .arg( statement.context().isValid() ? statement.context().toN3() : QString( "?g" ),
+                          statementToConstructGraphPattern( statement, false ),
+                          statementToConstructGraphPattern( statement, true ) );
 
         }
 //        qDebug() << "removeAllStatements query:" << query;
@@ -323,8 +323,8 @@ Soprano::Error::ErrorCode Soprano::VirtuosoModel::removeAllStatements( const Sta
     else {
         // FIXME: do this in a fancy way, maybe an inner sql query or something
         QList<Node> allContexts = executeQuery( QString::fromLatin1( "select distinct ?g where { %1 . FILTER(?g != <%2>) . }" )
-                                                .arg( statementToConstructGraphPattern( statement, true ) )
-                                                .arg( QLatin1String( Virtuoso::openlinkVirtualGraphString() ) ) )
+                                                .arg( statementToConstructGraphPattern( statement, true ),
+                                                      QLatin1String( Virtuoso::openlinkVirtualGraphString() ) ) )
                                   .iterateBindings( 0 ).allNodes();
         foreach( const Node& node, allContexts ) {
             Statement s( statement );

@@ -1,6 +1,7 @@
 2.4.4
 	* Fix to FindIODBC.cmake which ensures that the correct locations are searched first. This
 	  allows the usage of a locally installed libiodbc.
+	* Fixed a bug in the Virtuoso backend's query construction code.
 
 2.4.3
 	* Quick and ugly fix for LocalSocketClient::isConnected which actually tries to connect instead
