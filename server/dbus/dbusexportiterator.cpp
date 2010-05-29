@@ -41,6 +41,7 @@ public:
           q( parent ) {
             
         serviceWatcher.setConnection( QDBusConnection::sessionBus() );
+        serviceWatcher.setWatchMode( QDBusServiceWatcher::WatchForUnregistration );
         connect( &serviceWatcher, SIGNAL(serviceUnregistered( QString ) ) ,
                  q, SLOT( slotServiceUnregistered( QString ) ) );
     }
