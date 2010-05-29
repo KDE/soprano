@@ -30,6 +30,7 @@
 #include "queryresultiterator.h"
 
 #include <QtDBus/QDBusConnection>
+#include <QtDBus/QDBusServiceWatcher>
 
 
 class Soprano::Server::DBusExportIterator::Private
@@ -38,9 +39,13 @@ public:
     Private( DBusExportIterator* parent )
         : deleteOnClose( false ),
           q( parent ) {
+            
+        serviceWatcher.setConnection( QDBusConnection::sessionBus() );
+        connect( &serviceWatcher, SIGNAL(serviceUnregistered( QString ) ) ,
+                 q, SLOT( slotServiceUnregistered( QString ) ) );
     }
 
-    void slotServiceOwnerChanged( const QString& name, const QString&, const QString& );
+    void slotServiceUnregistered( const QString& name );
 
     StatementIterator statementIterator;
     NodeIterator nodeIterator;
@@ -50,13 +55,15 @@ public:
 
     QString dbusObjectPath;
     QString dbusClient;
+    
+    QDBusServiceWatcher serviceWatcher;
 
 private:
     DBusExportIterator* q;
 };
 
 
-void Soprano::Server::DBusExportIterator::Private::slotServiceOwnerChanged( const QString& name, const QString&, const QString& )
+void Soprano::Server::DBusExportIterator::Private::slotServiceUnregistered( const QString& name )
 {
     if ( name == dbusClient ) {
         if ( statementIterator.isValid() ) {
@@ -151,9 +158,7 @@ bool Soprano::Server::DBusExportIterator::registerIterator( const QString& dbusO
     }
 
     if( QDBusConnection::sessionBus().registerObject( dbusObjectPath, this ) ) {
-        connect( QDBusConnection::sessionBus().interface(), SIGNAL(serviceOwnerChanged(const QString&, const QString&, const QString&)),
-                 this, SLOT(slotServiceOwnerChanged(const QString&, const QString&, const QString&)) );
-
+        d->serviceWatcher.addWatchedService( dbusClient );
         d->dbusObjectPath = dbusObjectPath;
         d->dbusClient = dbusClient;
         return true;
@@ -169,8 +174,7 @@ bool Soprano::Server::DBusExportIterator::registerIterator( const QString& dbusO
 
 void Soprano::Server::DBusExportIterator::unregisterIterator()
 {
-    disconnect( QDBusConnection::sessionBus().interface(), SIGNAL(serviceOwnerChanged(const QString&, const QString&, const QString&)),
-                this, SLOT(slotServiceOwnerChanged(const QString&, const QString&, const QString&)) );
+    d->serviceWatcher.removeWatchedService( d->dbusClient );
     d->dbusObjectPath = QString();
     d->dbusClient = QString();
     QDBusConnection::sessionBus().unregisterObject( d->dbusObjectPath );

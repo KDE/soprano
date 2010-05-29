@@ -157,7 +157,7 @@ namespace Soprano {
             class Private;
             Private* const d;
 
-            Q_PRIVATE_SLOT( d, void slotServiceOwnerChanged( const QString& name, const QString&, const QString& ) )
+            Q_PRIVATE_SLOT( d, void slotServiceUnregistered( const QString& name ) )
         };
     }
 }
