@@ -221,3 +221,9 @@ qt4_automoc(graphtest graphtest.cpp)
 add_executable(graphtest graphtest.cpp)
 target_link_libraries(graphtest sopranomodeltest)
 add_test(graphtest ${EXECUTABLE_OUTPUT_PATH}/graphtest)
+
+# async query test
+qt4_automoc(asyncquerytest asyncquerytest.cpp)
+add_executable(asyncquerytest asyncquerytest.cpp)
+target_link_libraries(asyncquerytest soprano ${QT_QTCORE_LIBRARY} ${QT_QTTEST_LIBRARY})
+add_test(asyncquerytest ${EXECUTABLE_OUTPUT_PATH}/asyncquerytest)
