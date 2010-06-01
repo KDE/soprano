@@ -2,7 +2,8 @@
 	* Fix to FindIODBC.cmake which ensures that the correct locations are searched first. This
 	  allows the usage of a locally installed libiodbc.
 	* Fixed a bug in the Virtuoso backend's query construction code.
-
+	* Fixed value of AsyncQuery::bindingNames().
+	
 2.4.3
 	* Quick and ugly fix for LocalSocketClient::isConnected which actually tries to connect instead
 	  of checking if a connection has been established in the current thread.
