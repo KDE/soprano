@@ -132,9 +132,10 @@ bool Soprano::VirtuosoController::start( const BackendSettings& settings, RunFla
 
         QStringList args;
         args << "+foreground"
-             << "+configfile" << QDir::toNativeSeparators(m_configFilePath)
-             << "+wait";
-
+             << "+configfile" << QDir::toNativeSeparators(m_configFilePath);
+#ifndef Q_OS_WIN
+        args << "+wait";
+#endif
         qDebug() << "Starting Virtuoso server:" << virtuosoExe << args;
 
         m_virtuosoProcess.start( virtuosoExe, args, QIODevice::ReadOnly );
