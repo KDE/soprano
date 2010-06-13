@@ -33,9 +33,6 @@
 
 
 namespace Soprano {
-    uint qHash( const Soprano::Statement& s ) {
-        return qHash( s.subject() ) ^ qHash( s.predicate() ) ^ qHash( s.object() ) ^ qHash( s.context() );
-    }
 }
 
 

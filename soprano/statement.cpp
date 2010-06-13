@@ -158,3 +158,7 @@ QTextStream& operator<<( QTextStream& s, const Soprano::Statement& sm )
     s << sm.subject() << " " << sm.predicate() << " " << sm.object() << " " << sm.context();
     return s;
 }
+
+uint Soprano::qHash( const Soprano::Statement& s ) {
+    return qHash( s.subject() ) ^ qHash( s.predicate() ) ^ qHash( s.object() ) ^ qHash( s.context() );
+    }

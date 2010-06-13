@@ -163,6 +163,7 @@ namespace Soprano
         class Private;
         QSharedDataPointer<Private> d;
     };
+    SOPRANO_EXPORT uint qHash( const Statement& s ); 
 }
 
 /**
