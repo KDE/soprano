@@ -215,13 +215,9 @@ void Soprano::Error::ErrorCache::setError( const Error& error ) const
     if ( error ) {
         QCoreApplication* app = QCoreApplication::instance();
         qDebug() << ( app
-#if QT_VERSION >= 0x040400
                       ? QString( "%1(%2)" ).arg( app->applicationFilePath() ).arg( app->applicationPid() )
-#else
-                      ? app->applicationFilePath()
-#endif
-                      : QString( "(Soprano)" ) )
-                 << "Error in thread" << QThread::currentThreadId() << ":" << error;
+                      : QString() )
+                 << "Soprano:" << error;
         QMutexLocker locker( &d->errorMapMutex );
         d->errorMap[QThread::currentThread()] = error;
     }
