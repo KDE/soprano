@@ -1,0 +1,11 @@
+install(FILES
+  TcpClient
+  LocalSocketClient
+  DBusClient
+  DBusModel
+  DBusStatementIterator
+  DBusNodeIterator
+  DBusQueryResultIterator
+  SparqlModel
+  DESTINATION
+  include/Soprano/Client)

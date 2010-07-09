@@ -1,0 +1,71 @@
+<rdf:RDF
+    xmlns:xsd="http://www.w3.org/2000/10/XMLSchema#"
+    xmlns:wadi="http://model.wadi.nl/rdfs#"
+    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+    xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+    xmlns:owl="http://www.w3.org/2002/07/owl#"
+    xmlns="http://model.wadi.nl/owl#" >
+
+  <rdf:Description rdf:about="uri:wadi:wadi21:74545:11616103568055">
+    <wadi:compartment rdf:resource="http://data.wadi.nl/2005/Compartment/10"/>
+    <rdf:type rdf:resource="http://model.wadi.nl/rdfs#Medium"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="uri:wadi:wadi21:74545:11616103568107">
+    <wadi:domain rdf:resource="http://data.wadi.nl/2005/Domain/Number"/>
+    <wadi:state rdf:resource="http://data.wadi.nl/2005/State/NAP"/>
+    <wadi:quantity rdf:resource="http://data.wadi.nl/2005/Quantity/WATHTE"/>
+    <wadi:unit rdf:resource="http://data.wadi.nl/2005/Unit/cm"/>
+    <rdf:type rdf:resource="http://model.wadi.nl/rdfs#SingleValueDefinition"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="uri:wadi:wadi21:74545:11616103568012">
+    <wadi:compartment rdf:resource="http://data.wadi.nl/2005/Compartment/10"/>
+    <rdf:type rdf:resource="http://model.wadi.nl/rdfs#Medium"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="uri:wadi:wadi21:74545:11616103568076">
+    <wadi:valuationMethod rdf:resource="http://data.wadi.nl/2005/ValuationMethod/F009"/>
+    <wadi:sampleObject rdf:resource="uri:wadi:wadi21:74545:11616103567790"/>
+    <wadi:singleValueDefinition rdf:resource="uri:wadi:wadi21:74545:11616103568107"/>
+    <wadi:isProtected>false</wadi:isProtected>
+    <wadi:valuationAuthority rdf:resource="http://data.wadi.nl/2005/RegularAuthority/RIKZITSDHG"/>
+    <wadi:dataManagementAuthority rdf:resource="http://data.wadi.nl/2005/DataManagementAuthority/RIKZITSDHG"/>
+    <wadi:isPublic>true</wadi:isPublic>
+    <rdf:type rdf:resource="http://model.wadi.nl/rdfs#TimeSeries"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="uri:wadi:wadi21:74545:11616103567891">
+    <wadi:name>Voorbeeld Project</wadi:name>
+    <wadi:commissioningAuthority rdf:resource="http://data.wadi.nl/2005/RegularAuthority/RIKZ_WAT"/>
+    <rdf:type rdf:resource="http://model.wadi.nl/rdfs#Project"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="uri:wadi:wadi21:74545:11616103568054">
+    <wadi:name>Voorbeeld Project</wadi:name>
+    <wadi:commissioningAuthority rdf:resource="http://data.wadi.nl/2005/RegularAuthority/RIKZ_WAT"/>
+    <rdf:type rdf:resource="http://model.wadi.nl/rdfs#Project"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="uri:wadi:wadi21:74545:11616103567790">
+    <wadi:fieldEquipment rdf:resource="http://data.wadi.nl/2005/FieldEquipment/VLOTTNVM"/>
+    <wadi:project rdf:resource="uri:wadi:wadi21:74545:11616103567891"/>
+    <wadi:samplingAuthority rdf:resource="http://data.wadi.nl/2005/RegularAuthority/RIKZITSDHG"/>
+    <wadi:processingMethod rdf:resource="http://data.wadi.nl/2005/ProcessingMethod/NVT"/>
+    <wadi:namedLocation rdf:resource="http://data.wadi.nl/2005/NamedLocation/ABDN"/>
+    <wadi:samplingMethod rdf:resource="http://data.wadi.nl/2005/SamplingMethod/VELDMTG"/>
+    <wadi:medium rdf:resource="uri:wadi:wadi21:74545:11616103568012"/>
+    <rdf:type rdf:resource="http://model.wadi.nl/rdfs#SampleObject"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="uri:wadi:wadi21:74545:11616103568043">
+    <wadi:fieldEquipment rdf:resource="http://data.wadi.nl/2005/FieldEquipment/VLOTTNVM"/>
+    <wadi:project rdf:resource="uri:wadi:wadi21:74545:11616103568054"/>
+    <wadi:samplingAuthority rdf:resource="http://data.wadi.nl/2005/RegularAuthority/RIKZITSDHG"/>
+    <wadi:processingMethod rdf:resource="http://data.wadi.nl/2005/ProcessingMethod/NVT"/>
+    <wadi:namedLocation rdf:resource="http://data.wadi.nl/2005/NamedLocation/ABDN"/>
+    <wadi:samplingMethod rdf:resource="http://data.wadi.nl/2005/SamplingMethod/VELDMTG"/>
+    <wadi:medium rdf:resource="uri:wadi:wadi21:74545:11616103568055"/>
+    <rdf:type rdf:resource="http://model.wadi.nl/rdfs#SampleObject"/>
+  </rdf:Description>
+</rdf:RDF>

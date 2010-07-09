@@ -1,0 +1,139 @@
+2.4.0
+	* New methods Client::SparqlModel::listStatementsAsync and Client::SparqlModel::listContextsAsync
+	* Automatic query prefix expansion in NRLModel
+	* Automatic NRL metadata graph removal in NRLModel
+	* sopranocmd:
+	  - New paramter --nrl for sopranocmd which will trigger automatic query prefix expansion based on
+	    prefixes stored in the underlying model, automatic context creation for imported statements
+	    that do not have one set, and automatic metad ata graph removal on removeContext calls.
+	  - New parameter --graphselect which allows to convert SPARQL select query results into a graph
+	    result. This is very usable since SPARQL construct queries do not support contexts/named graphs.
+	  - New command 'rmgraph' which allows to delete a list of graphs/contexts.
+	  - New parameter --foo which enables scriptable binding results without variable names.
+	* ServerCore is now fully multithreaded allowing two clients perform read-only commands simultaneously.
+	* New Virtuoso storage backend which can either connect to a running Virtuoso instance or spawn one
+          locally.
+	* New convenience methods to handle BackendSettings.
+	* New class AsyncQuery which will spawn a new thread for real asnycroneous query execution (in contrast
+          to AsyncModel which only performs the actual query call in another thread while the iteration is
+          syncroneous.)
+	* Removed redland/librdf dependancy from raptor parser.
+
+2.3.2
+	* Do not fail when trying to index empty strings, but ignore them.
+	* Fixed parsing of plain literals with language code in sopranocmd.
+	* Make onto2vocabularyclass work with the redland backend (not using graph SPARQL queries anymore)
+
+2.3.1
+	* Changed installation path of cmake modules (SopranoAppOntology.cmake) to <prefix/share/soprano/cmake
+	* Prevent the redland backend to add one statement multiple times.
+	* Properly handle class names containing a dash '-' in onto2vocabularyclass
+	* sopranocmd: Fail if trying to export a non-graph query
+
+2.3
+	* New class LanguageTag replacing the old simple string language handling with a sophisticated one
+	  implementing RFC 4647. At the same time Soprano now directly supports plain literals in addition
+	  to typed string literals (compare LiteralValue::createPlainLiteral).
+	  (thanks to Greg Beauchesne for the patch)
+	  CAUTION: This patch changes behaviour: parsers and storage backends will now return plain literals
+	           instead of typed string literals!
+	* New static methods Node::resourceToN3, Node::literalToN3, and Node::blankToN3 for easy N3
+	  formatting without the creation of a Node instance.
+	* Fixed both Node::matches and Statement::matches - now only the paramter is treated as a wildcard
+	* sopranocmd:
+          - new paramter --file which allows to execute commands on files directly without
+	    creating a database on disk.
+          - standard namespace prefixes rdf, rdfs, xsd, nrl, and nao are now added to sparql queries
+            automatically if used.
+	  - construct and describe query results can now be serialized in all supported formats.
+	  - New parameter --index which allows to wrap an IndexFilterModel around the actual Model.
+	  - New command 'monitor' which allows to monitor a remote repository for statementAdded and
+	    statementRemoved signals.
+	* New class Graph which is a simple QSet based container for statements as a quick replacement for Model
+	  in case one wants to handle a small number of statements without query support.
+	* Fixed plugin loading on windows.
+	* Fixed a deadlock in the IndexFilterModel in case a query could not be parsed.
+	* Prevent Model::removeContext to remove empty contexts, i.e. the whole database.
+	* Statement::operator<<(QTextStream) now uses a simpler format (only spaces between nodes and no brackets)
+	* Updated Sesame2 to 2.2.4
+	* Added prefix handling to the Serializer API. For a future Soprano version the Serializer API has to be 
+	  replaced with something more powerful.
+	* Improved inference rule handling in the rule parser
+	
+2.2
+	* The AsyncModel now has a "real" asyncroneous mode which uses multiple threads to execute the
+	  commands.
+        * New class Soprano::Client::SparqlModel which provides a client to http Sparql endpoints.
+        * Added method Node::toN3 to easily build SPARQL queries without having to encode nodes all the time.
+        * New convinience method QueryResultIterator::iterateStatementsFromBindings
+	* Added convinience methods to handle BackendSettings.
+	* Added operator[] to QueryResultIterator to easily access bindings
+	* Added parameters influencing the visibility to onto2vocabularyclass
+	* Soprano::Node now comes with definitions of qHash for both Node and QUrl
+	* Sesame2 updated to 2.1.4
+	* The IndexFilterModel can now optionally index specific URIs (IndexFilterModel::setForceIndexPredicates)
+	* Added method IndexFilterModel::optimizeIndex which optimizes the clucene index on disk
+	* Added method IndexFilterModel::encodeUriForLuceneQuery which encodes/escapes a URI so it can be used
+	  as a field in a clucene query.
+	* SPARQL endpoint query support in sopranocmd
+	* Performace improvements
+
+2.1.2
+        * Better URI encoding in DBus communication, fixes problems with some special characters in URIs.
+
+2.1
+	* SignalCacheModel to restrict the number of emitted statementsAdded and statementsRemoved signals
+	  in a certain timeframe.
+	* Raptor serializer now supports all raptor serializer factory names which are mapped to Soprano
+	  user serialization types.
+	* Changed mimetype of N-Triples to "application/n-triples"
+	* New filter model DBusExportModel which exports a single Model via D-Bus.
+	* The onto2vocabularyclass tool is now installed by default.
+	* New sopranocmd feature: export only part of a model based on a SPARQL construct query.
+	* Added OWL Lite resource instances for easy access to OWL Lite members
+	* Finer grained control over the D-Bus server components:
+	  Soprano::Server::DBusExportModel exports a single model
+	  Soprano::Server::DBusExportIterator exports a single iterator
+	* Finer grained access to objects exported via D-Bus:
+	  the Soprano::Client::DBusXXXIterator classes provide thin wrappers around Soprano iterators
+	  exported via D-Bus
+	* New method IndexFilterModel::rebuildIndex to rebuild the complete index.
+	* New filter model ReadOnlyModel which does exactly what its name suggests: it blocks all writing operations.
+	* The unix socket client has been replaced be the LocalSocketClient based on the QLocalSocket which was
+	  introduced in QT 4.4. As a result of the design on QLocalServer and QLocalSocket the server is not
+	  multithreaded anymore.
+	* New Backend method "deleteModelData"
+	* New AsyncModel to asyncroneously execute commands on any model.
+	* The IndexFilterModel now allows to only index certain predicates and not actually store them
+	* Sesame2 updated to 2.1.2
+
+2.0.1
+	* Fixed method statementCount in Sesame2 backend
+	* Redland backend: Always encode strings as xls:string rather than rdfs:Literal values to match the 
+	  Soprano guidelines.
+	* Always set a dummy base URI in the raptor serializer
+	* Fixed formatting of dateTime values.
+	* Fixed NRL namespace
+	* Fixed NAO namespace
+	* Fixed plugin loading on MAC OS/X
+
+2.0
+	* LiteralValue is not derived from QVariant anymore but uses it internally
+	* ResultSet renamed to QueryResultIterator
+	* Fixed const'ness of many methods
+	* Changed StatementIterator layout to match QueryResultIterator's layout using next() and current() methods.
+	* Added vocabulary namespaces for usage of shared QUrl values for RDF/S and XML Schema URIs.
+	* Added FilterModel class
+	* Added RDF/S wrapper methods for easy access to RDF/S resource statements (RDFSchemaWrapper)
+	* Added "apidox" build target for building the Soprano API documentation.
+	* Added simple inferencing model based on rule files including a rule file parser.
+	* Added an index filter model which creates a CLucene index of all literal statements.
+	* Support for binary data in RDF literals encoded as base64 in LiteralValue
+	* Added Vocabulary namespace containing basic ontology URIs such as RDF, RDFS, XML Schema, and NRL
+	* TriG parser through raptor >= 1.4.16
+	* NQuads (trivial extension of NTriples) parser and serializer
+	* Soprano server library and simple daemon including D-Bus interface.
+	* sopranocmd tool which allows to control the soprano server as well as work on the data directly
+	  through the backends.
+	* Working SPARQL ASK queries with rasqal >= 0.9.15
+	

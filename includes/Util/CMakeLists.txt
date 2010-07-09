@@ -1,0 +1,12 @@
+install(FILES
+  MutexModel
+  SimpleStatementIterator
+  SimpleNodeIterator
+  DummyModel
+  SignalCacheModel
+  ReadOnlyModel
+  AsyncModel
+  AsyncResult
+  AsyncQuery
+  DESTINATION
+  include/Soprano/Util)
