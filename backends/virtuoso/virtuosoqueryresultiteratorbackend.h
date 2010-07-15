@@ -26,7 +26,7 @@
 
 namespace Soprano {
 
-    class VirtuosoModel;
+    class VirtuosoModelPrivate;
 
     namespace ODBC {
         class QueryResult;
@@ -39,7 +39,7 @@ namespace Soprano {
         class QueryResultIteratorBackend : public Soprano::QueryResultIteratorBackend
         {
         public:
-            QueryResultIteratorBackend( ODBC::QueryResult* );
+            QueryResultIteratorBackend( VirtuosoModelPrivate* model, ODBC::QueryResult* );
             ~QueryResultIteratorBackend();
 
             bool next();
@@ -56,8 +56,6 @@ namespace Soprano {
 
         private:
             QueryResultIteratorBackendPrivate* const d;
-
-            friend class ::Soprano::VirtuosoModel;
         };
     }
 }

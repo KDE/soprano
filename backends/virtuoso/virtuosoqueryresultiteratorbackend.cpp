@@ -42,10 +42,12 @@
 #include <QtCore/QDebug>
 
 
-Soprano::Virtuoso::QueryResultIteratorBackend::QueryResultIteratorBackend( ODBC::QueryResult* result )
+Soprano::Virtuoso::QueryResultIteratorBackend::QueryResultIteratorBackend( VirtuosoModelPrivate* model, ODBC::QueryResult* result )
     : Soprano::QueryResultIteratorBackend(),
       d( new QueryResultIteratorBackendPrivate() )
 {
+    d->m_model = model;
+
     // cache binding names
     d->m_queryResult = result;
     d->m_resultType = QueryResultIteratorBackendPrivate::UnknownResult;
@@ -256,9 +258,9 @@ void Soprano::Virtuoso::QueryResultIteratorBackend::close()
     if ( d->m_model ) {
         d->m_model->removeIterator( this );
         d->m_model = 0;
-        d->graphIterator.close();
-        delete d->m_queryResult;
-        d->m_queryResult = 0;
     }
+    d->graphIterator.close();
+    delete d->m_queryResult;
+    d->m_queryResult = 0;
     d->m_closeMutex.unlock();
 }

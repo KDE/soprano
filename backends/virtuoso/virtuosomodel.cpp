@@ -421,8 +421,7 @@ Soprano::QueryResultIterator Soprano::VirtuosoModel::executeQuery( const QString
         ODBC::QueryResult* result = conn->executeQuery( finalQuery );
         if ( result ) {
             clearError();
-            Virtuoso::QueryResultIteratorBackend* backend = new Virtuoso::QueryResultIteratorBackend( result );
-            backend->d->m_model = d;
+            Virtuoso::QueryResultIteratorBackend* backend = new Virtuoso::QueryResultIteratorBackend( d, result );
             d->addIterator( backend );
             return backend;
         }
