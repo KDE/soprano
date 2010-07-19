@@ -23,6 +23,7 @@
 #include "serverconnection.h"
 #include "servercore_p.h"
 
+#include <QtCore/QDebug>
 #include <QtNetwork/QLocalSocket>
 
 namespace {
