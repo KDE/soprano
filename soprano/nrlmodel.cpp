@@ -139,9 +139,11 @@ bool Soprano::NRLModel::ignoreContext() const
 void Soprano::NRLModel::setEnableQueryPrefixExpansion( bool enable )
 {
     if ( enable != d->m_expandQueryPrefixes ) {
-        d->m_expandQueryPrefixes = true;
+        d->m_expandQueryPrefixes = enable;
         if ( enable )
             d->buildPrefixMap();
+        else
+            d->m_prefixes.clear();
     }
 }
 
