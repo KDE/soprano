@@ -23,6 +23,7 @@
 #include "clientconnection.h"
 #include "clientmodel.h"
 
+#include <QtCore/QDebug>
 #include <QtCore/QDir>
 #include <QtCore/QThread>
 #include <QtNetwork/QLocalSocket>
