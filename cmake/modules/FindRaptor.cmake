@@ -18,10 +18,18 @@
 INCLUDE(MacroEnsureVersion)
 
 
+if(WINCE)
+FIND_PROGRAM(
+  RAPTOR_CONFIG
+  NAMES raptor-config
+  PATHS ${HOST_BINDIR} NO_DEFAULT_PATH
+  )
+else(WINCE)
 FIND_PROGRAM(
   RAPTOR_CONFIG
   NAMES raptor-config
   )
+endif(WINCE)
 
 if(RAPTOR_CONFIG)
   EXECUTE_PROCESS(

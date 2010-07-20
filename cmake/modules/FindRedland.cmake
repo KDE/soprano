@@ -19,11 +19,18 @@
 # Redistribution and use is allowed according to the terms of the BSD license.
 # For details see the accompanying COPYING-CMAKE-SCRIPTS file.
 
-
+if(WINCE)
+find_program(
+  REDLAND_CONFIG_EXECUTABLE
+  NAMES redland-config
+  PATHS ${HOST_BINDIR} NO_DEFAULT_PATH
+  )
+else(WINCE)
 find_program(
   REDLAND_CONFIG_EXECUTABLE
   NAMES redland-config
   )
+endif(WINCE)
 
 if(REDLAND_CONFIG_EXECUTABLE)
   EXECUTE_PROCESS(

@@ -17,10 +17,18 @@
 
 INCLUDE(MacroEnsureVersion)
 
+if(WINCE)
+  FIND_PROGRAM(
+    RASQAL_CONFIG
+    NAMES rasqal-config
+    PATHS ${HOST_BINDIR} NO_DEFAULT_PATH
+    )
+else(WINCE)
   FIND_PROGRAM(
     RASQAL_CONFIG
     NAMES rasqal-config
     )
+endif(WINCE)
 
   if(RASQAL_CONFIG)
     EXECUTE_PROCESS(
