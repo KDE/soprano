@@ -116,8 +116,7 @@ Soprano::VirtuosoModel::VirtuosoModel( ODBC::ConnectionPool* connectionPool, con
 
 Soprano::VirtuosoModel::~VirtuosoModel()
 {
-    while ( !d->m_openIterators.isEmpty() )
-        d->m_openIterators.last()->close();
+    d->closeAllIterators();
     delete d->connectionPool;
     delete d;
 }
@@ -422,7 +421,6 @@ Soprano::QueryResultIterator Soprano::VirtuosoModel::executeQuery( const QString
         if ( result ) {
             clearError();
             Virtuoso::QueryResultIteratorBackend* backend = new Virtuoso::QueryResultIteratorBackend( d, result );
-            d->addIterator( backend );
             return backend;
         }
         else {

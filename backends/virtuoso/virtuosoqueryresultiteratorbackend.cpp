@@ -1,7 +1,7 @@
 /*
  * This file is part of Soprano Project
  *
- * Copyright (C) 2008 Sebastian Trueg <trueg@kde.org>
+ * Copyright (C) 2008-2010 Sebastian Trueg <trueg@kde.org>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -47,6 +47,7 @@ Soprano::Virtuoso::QueryResultIteratorBackend::QueryResultIteratorBackend( Virtu
       d( new QueryResultIteratorBackendPrivate() )
 {
     d->m_model = model;
+    d->m_model->addIterator( this );
 
     // cache binding names
     d->m_queryResult = result;
@@ -255,12 +256,17 @@ void Soprano::Virtuoso::QueryResultIteratorBackend::close()
     // which may happen in a different thread indeed.
     //
     d->m_closeMutex.lock();
-    if ( d->m_model ) {
-        d->m_model->removeIterator( this );
-        d->m_model = 0;
-    }
+
+    VirtuosoModelPrivate* model = d->m_model;
+    d->m_model = 0:
+
     d->graphIterator.close();
     delete d->m_queryResult;
     d->m_queryResult = 0;
+
     d->m_closeMutex.unlock();
+
+    if ( model ) {
+        model->removeIterator(this);
+    }
 }

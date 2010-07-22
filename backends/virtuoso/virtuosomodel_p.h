@@ -1,7 +1,7 @@
 /*
  * This file is part of Soprano Project
  *
- * Copyright (C) 2009 Sebastian Trueg <trueg@kde.org>
+ * Copyright (C) 2009-2010 Sebastian Trueg <trueg@kde.org>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -36,7 +36,8 @@ namespace Soprano {
     {
     public:
         VirtuosoModelPrivate()
-            : connectionPool( 0 ) {
+            : connectionPool( 0 ),
+              m_openIteratorMutex( QMutex::Recursive ) {
         }
 
         inline void addIterator( Virtuoso::QueryResultIteratorBackend* iterator ) {
@@ -44,16 +45,23 @@ namespace Soprano {
             m_openIterators.append(iterator);
             m_openIteratorMutex.unlock();
         }
-        
+
         inline void removeIterator( Virtuoso::QueryResultIteratorBackend* iterator ) {
             m_openIteratorMutex.lock();
             m_openIterators.removeAll(iterator);
             m_openIteratorMutex.unlock();
         }
 
+        void closeAllIterators() {
+            m_openIteratorMutex.lock();
+            while ( !m_openIterators.isEmpty() )
+                m_openIterators.last()->close();
+            m_openIteratorMutex.unlock();
+        }
+
         ODBC::ConnectionPool* connectionPool;
         QList<Virtuoso::QueryResultIteratorBackend*> m_openIterators;
-        
+
     private:
         QMutex m_openIteratorMutex;
     };
