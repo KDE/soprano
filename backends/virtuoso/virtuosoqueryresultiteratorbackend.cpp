@@ -258,7 +258,7 @@ void Soprano::Virtuoso::QueryResultIteratorBackend::close()
     d->m_closeMutex.lock();
 
     VirtuosoModelPrivate* model = d->m_model;
-    d->m_model = 0:
+    d->m_model = 0;
 
     d->graphIterator.close();
     delete d->m_queryResult;
