@@ -1,5 +1,11 @@
 2.5.0
+	* New public qHash method for Statement
 	* New Node::fromN3 method and operator>> which allows to parse nodes from N3 encoding.
+	* Updated NRL ontology namespace
+	* New operator== for BindingSet
+	* Ported the DBus service watching to QDBusServiceWatcher
+	* Highly improved server socket handling in the local and tcp socket server implementation.
+	* Several improvements in the Virtuoso backend plugin.
 
 2.4.4
 	* Fix to FindIODBC.cmake which ensures that the correct locations are searched first. This
