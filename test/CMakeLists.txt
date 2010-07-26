@@ -30,6 +30,12 @@ add_executable(nodetest NodeTest.cpp)
 target_link_libraries(nodetest soprano ${QT_QTCORE_LIBRARY} ${QT_QTTEST_LIBRARY})
 add_test(nodetest ${EXECUTABLE_OUTPUT_PATH}/nodetest)
 
+# N3 Node parser
+qt4_automoc(n3nodeparsertest n3nodeparsertest.cpp)
+add_executable(n3nodeparsertest n3nodeparsertest.cpp)
+target_link_libraries(n3nodeparsertest soprano ${QT_QTCORE_LIBRARY} ${QT_QTTEST_LIBRARY})
+add_test(n3nodeparsertest ${EXECUTABLE_OUTPUT_PATH}/n3nodeparsertest)
+
 # Literals
 qt4_automoc(literaltest sopranoliteraltest.cpp)
 add_executable(literaltest sopranoliteraltest.cpp)

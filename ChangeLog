@@ -1,3 +1,36 @@
+2.5.0
+	* New Node::fromN3 method and operator>> which allows to parse nodes from N3 encoding.
+
+2.4.4
+	* Fix to FindIODBC.cmake which ensures that the correct locations are searched first. This
+	  allows the usage of a locally installed libiodbc.
+	* Fixed a bug in the Virtuoso backend's query construction code.
+	* Fixed value of AsyncQuery::bindingNames().
+	
+2.4.3
+	* Quick and ugly fix for LocalSocketClient::isConnected which actually tries to connect instead
+	  of checking if a connection has been established in the current thread.
+
+2.4.2
+	* LocalSocketClient and TcpClient: do not re-establish a connection on model deletion.
+	  (This fixes a crash when using a client as a global static)
+	* Properly protect ErrorCache from multithread clashes. (Thanks to Andreas Hartmetz for the patch)
+	* Slight optimizations in the Virtuoso backend.
+	* Do not crash in ClientModel when the connection is lost.
+
+2.4.1
+	* Virtuoso backend: 
+	  - new parameter "forcedstart" which when set will make the backend shut down
+	    any running Virtuoso instance already accessing the storage dir (does not work on Windows).
+	  - Shut down Virtuoso using the SIGINT signal (not available on Windows) to ensure
+ 	    a checkpoint.
+	* Allow to build Soprano with -fvisibility=hidden -fvisibility-inlines-hidden (thanks to
+	  Modestas Vainius of Debian for the patch)
+	* PkgConfig files for sopranoclient, sopranoserver, and sopranoindex.
+
+2.4.0.1
+	* Fixed a bug in the ClientConnection where mutex was deleted before it had been unlocked.
+
 2.4.0
 	* New methods Client::SparqlModel::listStatementsAsync and Client::SparqlModel::listContextsAsync
 	* Automatic query prefix expansion in NRLModel

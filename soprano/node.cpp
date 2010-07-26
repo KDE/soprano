@@ -21,6 +21,7 @@
  */
 
 #include "node.h"
+#include "n3nodeparser.h"
 
 #include <QtCore/QString>
 #include <QtCore/QUrl>
@@ -349,34 +350,42 @@ bool Soprano::Node::matches( const Node& other ) const
 }
 
 
+// static
 Soprano::Node Soprano::Node::createEmptyNode()
 {
     return Node();
 }
 
 
+// static
 Soprano::Node Soprano::Node::createResourceNode( const QUrl& uri )
 {
     return Node( uri );
 }
 
 
+// static
 Soprano::Node Soprano::Node::createBlankNode( const QString& id )
 {
     return Node( id );
 }
 
+
+// static
 Soprano::Node Soprano::Node::createLiteralNode( const LiteralValue& val )
 {
     return Node( val );
 }
 
+
+// static
 Soprano::Node Soprano::Node::createLiteralNode( const LiteralValue& val, const QString& language )
 {
     return Node( LiteralValue::createPlainLiteral( val.toString(), language ) );
 }
 
 
+// static
 QString Soprano::Node::resourceToN3( const QUrl& uri )
 {
     QByteArray a = uri.toEncoded();
@@ -384,6 +393,7 @@ QString Soprano::Node::resourceToN3( const QUrl& uri )
 }
 
 
+// static
 QString Soprano::Node::blankToN3( const QString& blank )
 {
     if ( blank.isEmpty() )
@@ -393,6 +403,7 @@ QString Soprano::Node::blankToN3( const QString& blank )
 }
 
 
+// static
 QString Soprano::Node::literalToN3( const LiteralValue& literal )
 {
     //
@@ -425,6 +436,16 @@ QString Soprano::Node::literalToN3( const LiteralValue& literal )
 }
 
 
+// static
+Soprano::Node Soprano::Node::fromN3( const QString& s )
+{
+    N3NodeParser p;
+    QString str( s );
+    QTextStream stream( &str );
+    return p.parseNode( stream );
+}
+
+
 QDebug operator<<( QDebug s, const Soprano::Node& n )
 {
     switch( n.type() ) {
@@ -449,6 +470,14 @@ QTextStream& operator<<( QTextStream& s, const Soprano::Node& n )
         s << n.toN3();
         break;
     }
+    return s;
+}
+
+
+QTextStream& operator>>( QTextStream& s, Soprano::Node& n )
+{
+    Soprano::N3NodeParser p;
+    n = p.parseNode( s );
     return s;
 }
 

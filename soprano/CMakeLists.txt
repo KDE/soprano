@@ -80,6 +80,7 @@ set(soprano_SRCS
   desktopfile.cpp
   sopranopluginfile.cpp
   sopranodirs.cpp
+  n3nodeparser.cpp
   util/extreadwritelock.cpp
   util/mutexmodel.cpp
   util/mutexstatementiteratorbackend.cpp

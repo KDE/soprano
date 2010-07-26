@@ -307,7 +307,7 @@ namespace Soprano
          * \return A string representing the node in N3 encoding or an empty
          * string for invalid nodes.
          *
-         * \sa toString()
+         * \sa resourceToN3(), literalToN3(), blankToN3(), fromN3(), toString()
          *
          * \since 2.2
          */
@@ -394,7 +394,7 @@ namespace Soprano
          * <http://soprano.sourceforce.net/>
          * \endcode
          *
-         * \sa toN3
+         * \sa toN3(), fromN3()
          *
          * \since 2.3
          */
@@ -411,7 +411,7 @@ namespace Soprano
          * _:blankNode
          * \endcode
          *
-         * \sa toN3
+         * \sa toN3(), fromN3()
          *
          * \since 2.3
          */
@@ -429,11 +429,28 @@ namespace Soprano
          * "09-08-1977T17:42.234Z"^^<http://www.w3.org/2001/XMLSchema#dateTime>
          * \endcode
          *
-         * \sa toN3
+         * \sa toN3(), fromN3()
          *
          * \since 2.3
          */
         static QString literalToN3( const LiteralValue& literal );
+
+        /**
+         * Convert a node from its N3 representation.
+         *
+         * \param n3 The N3 representation of the node. \p true and \p false are treated as boolean
+         * literals, any string that can be parsed into a number is treated as integer or double
+         * literal, while any other string that is not a resource, blank node, or typed literal
+         * is treated as a plain literal.
+         *
+         * \return A %Node representing the parsed version of \p n3 or an invalid %Node in case
+         * parsing failed.
+         *
+         * \sa resourceToN3(), literalToN3(), blankToN3(), toN3()
+         *
+         * \since 2.5
+         */
+        static Node fromN3( const QString& n3 );
 
     private:
         class NodeData;
@@ -463,6 +480,15 @@ SOPRANO_EXPORT QDebug operator<<( QDebug s, const Soprano::Node& );
  * \relates Soprano::Node
  */
 SOPRANO_EXPORT QTextStream& operator<<( QTextStream& s, const Soprano::Node& );
+
+/**
+ * Read a node from an N3 encoded string.
+ *
+ * \sa Soprano::Node::fromN3()
+ *
+ * \since 2.5
+ */
+SOPRANO_EXPORT QTextStream& operator>>( QTextStream& s, Soprano::Node& );
 
 #if QT_VERSION < 0x040700
 SOPRANO_EXPORT uint qHash( const QUrl& url );
