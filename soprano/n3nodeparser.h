@@ -28,6 +28,7 @@
 #include <QtCore/QFlags>
 
 #include "error.h"
+#include "node.h"
 
 namespace Soprano {
 
@@ -57,34 +58,6 @@ namespace Soprano {
         void setNamespacePrefixes( const QHash<QString, QUrl>& bnames );
         void addNamespacePrefix( const QString& abbr, const QUrl& ns );
 
-        enum ParserFlag {
-            /**
-             * No parsing flags, default behaviour.
-             */
-            NoFlags = 0x0,
-
-            /**
-             * Use strict literal parsing, i.e. do not treat
-             * \p true and \p false as boolean literals or
-             * do not handle numbers as literals if they do
-             * not contain a literal type.
-             */
-            StrictLiteralTypes = 0x1,
-
-            /**
-             * Use strict URI parsing.
-             *
-             * \sa QUrl::StrictMode
-             */
-            StrictUris = 0x2,
-
-            /**
-             * Do not make use of m_prefixes
-             */
-            IgnorePrefixes = 0x4
-        };
-        Q_DECLARE_FLAGS( ParserFlags, ParserFlag )
-
         /**
          * Parse a node from its N3 representation.
          *
@@ -97,14 +70,12 @@ namespace Soprano {
          * on the parsing error. Be aware that the empty string will be treated as an
          * empty node and seen as a successful parse.
          */
-        Soprano::Node parseNode( QTextStream& s, ParserFlags flags = NoFlags ) const;
+        Soprano::Node parseNode( QTextStream& s, Node::N3ParserFlags flags = Node::NoFlags ) const;
 
     private:
         class Private;
         Private* const d;
     };
 }
-
-Q_DECLARE_OPERATORS_FOR_FLAGS( Soprano::N3NodeParser::ParserFlags )
 
 #endif

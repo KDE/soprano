@@ -436,12 +436,43 @@ namespace Soprano
         static QString literalToN3( const LiteralValue& literal );
 
         /**
+         * Parsing flags to infuence the behaviour of the parser in
+         * fromN3() and fromN3Stream().
+         *
+         * \since 2.5
+         */
+        enum N3ParserFlag {
+            /**
+             * No parsing flags, default behaviour.
+             */
+            NoFlags = 0x0,
+
+            /**
+             * Use strict literal parsing, i.e. do not treat
+             * \p true and \p false as boolean literals or
+             * do not handle numbers as literals if they do
+             * not contain a literal type.
+             */
+            StrictLiteralTypes = 0x1,
+
+            /**
+             * Use strict URI parsing.
+             *
+             * \sa QUrl::StrictMode
+             */
+            StrictUris = 0x2,
+
+            /**
+             * Do not make use of m_prefixes
+             */
+            IgnorePrefixes = 0x4
+        };
+        Q_DECLARE_FLAGS( N3ParserFlags, N3ParserFlag )
+
+        /**
          * Convert a node from its N3 representation.
          *
-         * \param n3 The N3 representation of the node. \p true and \p false are treated as boolean
-         * literals, any string that can be parsed into a number is treated as integer or double
-         * literal, while any other string that is not a resource, blank node, or typed literal
-         * is treated as a plain literal.
+         * \param n3 The N3 representation of the node.
          *
          * \return A %Node representing the parsed version of \p n3 or an invalid %Node in case
          * parsing failed.
@@ -450,7 +481,21 @@ namespace Soprano
          *
          * \since 2.5
          */
-        static Node fromN3( const QString& n3 );
+        static Node fromN3( const QString& n3, N3ParserFlags flags = NoFlags );
+
+        /**
+         * Read a node from its N3 representation on a stream.
+         *
+         * \param stream The stream from which the N3 representation of the node will be read.
+         *
+         * \return A %Node representing the parsed version of \p n3 or an invalid %Node in case
+         * parsing failed.
+         *
+         * \sa resourceToN3(), literalToN3(), blankToN3(), toN3()
+         *
+         * \since 2.5
+         */
+        static Node fromN3Stream( QTextStream& stream, N3ParserFlags flags = NoFlags );
 
     private:
         class NodeData;
@@ -493,5 +538,7 @@ SOPRANO_EXPORT QTextStream& operator>>( QTextStream& s, Soprano::Node& );
 #if QT_VERSION < 0x040700
 SOPRANO_EXPORT uint qHash( const QUrl& url );
 #endif
+
+Q_DECLARE_OPERATORS_FOR_FLAGS( Soprano::Node::N3ParserFlags )
 
 #endif // SOPRANO_NODE_H

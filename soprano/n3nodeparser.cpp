@@ -120,7 +120,7 @@ void Soprano::N3NodeParser::addNamespacePrefix( const QString& bname, const QUrl
 }
 
 
-Soprano::Node Soprano::N3NodeParser::parseNode( QTextStream& s, ParserFlags flags ) const
+Soprano::Node Soprano::N3NodeParser::parseNode( QTextStream& s, Node::N3ParserFlags flags ) const
 {
     clearError();
 
@@ -141,7 +141,7 @@ Soprano::Node Soprano::N3NodeParser::parseNode( QTextStream& s, ParserFlags flag
     if ( c == '<' ) {
         QString str;
         if ( scanStream( s, &str, '>' ) ) {
-            node = Soprano::Node( QUrl::fromEncoded( str.toAscii(), flags&StrictUris ? QUrl::StrictMode : QUrl::TolerantMode ) );
+            node = Soprano::Node( QUrl::fromEncoded( str.toAscii(), flags&Node::StrictUris ? QUrl::StrictMode : QUrl::TolerantMode ) );
         }
     }
 
@@ -202,7 +202,7 @@ Soprano::Node Soprano::N3NodeParser::parseNode( QTextStream& s, ParserFlags flag
         if ( token == QLatin1String( "a" ) ) {
             node = Soprano::Vocabulary::RDF::type();
         }
-        else if ( !( flags & StrictLiteralTypes ) ) {
+        else if ( !( flags & Node::StrictLiteralTypes ) ) {
             // boolean values
             if ( token.toLower() == "false" )
                 node = Soprano::LiteralValue( false );
@@ -223,7 +223,7 @@ Soprano::Node Soprano::N3NodeParser::parseNode( QTextStream& s, ParserFlags flag
                 node = LiteralValue::createPlainLiteral( token );
             }
         }
-        else if ( !( flags & IgnorePrefixes ) &&
+        else if ( !( flags & Node::IgnorePrefixes ) &&
                   d->m_prefixedUriRx.exactMatch( token ) ) {
             const QString bname = d->m_prefixedUriRx.cap( 1 );
             const QUrl ns = d->m_prefixes[bname];

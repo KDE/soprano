@@ -437,12 +437,19 @@ QString Soprano::Node::literalToN3( const LiteralValue& literal )
 
 
 // static
-Soprano::Node Soprano::Node::fromN3( const QString& s )
+Soprano::Node Soprano::Node::fromN3( const QString& s, N3ParserFlags flags )
 {
-    N3NodeParser p;
     QString str( s );
     QTextStream stream( &str );
-    return p.parseNode( stream );
+    return fromN3Stream( stream, flags );
+}
+
+
+// static
+Soprano::Node Soprano::Node::fromN3Stream( QTextStream& stream, N3ParserFlags flags )
+{
+    N3NodeParser p;
+    return p.parseNode( stream, flags );
 }
 
 
