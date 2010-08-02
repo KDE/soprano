@@ -96,10 +96,16 @@ Soprano::StorageModel* Soprano::Virtuoso::BackendPlugin::createModel( const Back
     ODBC::ConnectionPool* connectionPool = new ODBC::ConnectionPool( connectString );
 
     // FIXME: should configuration only be allowed on spawned servers?
-    ODBC::Connection* conn = connectionPool->connection();
-    DatabaseConfigurator configurator( conn );
-    configurator.configureServer( settings );
-    delete conn;
+    if ( ODBC::Connection* conn = connectionPool->connection() ) {
+        DatabaseConfigurator configurator( conn );
+        configurator.configureServer( settings );
+        delete conn;
+    }
+    else {
+        qDebug() << Q_FUNC_INFO << "Failed to connect to" << connectString;
+        delete connectionPool;
+        return 0;
+    }
 
     VirtuosoModel* model = new VirtuosoModel( connectionPool, this );
     // mem mangement the ugly way
