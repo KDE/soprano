@@ -53,7 +53,9 @@
 #include "../client/dbus/dbusclient.h"
 #include "../client/dbus/dbusmodel.h"
 #endif
+#ifndef _WIN32_WCE
 #include "../client/sparql/sparqlmodel.h"
+#endif
 
 #ifndef _WIN32_WCE
 #include <signal.h>
@@ -733,6 +735,7 @@ int main( int argc, char *argv[] )
 
     bool isRemoteModel = false;
 
+#ifndef _WIN32_WCE
     if ( args.hasSetting( "sparql" ) ) {
         QUrl sparqlEndPoint = args.getSetting( "sparql" );
         QString userName = args.getSetting( "username", sparqlEndPoint.userName() );
@@ -750,7 +753,9 @@ int main( int argc, char *argv[] )
         s_model = sparqlModel;
         isRemoteModel = true;
     }
-    else if ( args.hasSetting( "port" ) &&
+    else
+#endif
+    if ( args.hasSetting( "port" ) &&
               !args.hasSetting( "backend" ) ) {
         QHostAddress host = QHostAddress::LocalHost;
         quint16 port = Soprano::Client::TcpClient::DEFAULT_PORT;

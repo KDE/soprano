@@ -23,11 +23,17 @@ set(soprano_client_SRC
   clientstatementiteratorbackend.cpp
   clientnodeiteratorbackend.cpp
   clientqueryresultiteratorbackend.cpp
-  sparql/sparqlmodel.cpp
-  sparql/sparqlqueryresult.cpp
-  sparql/sparqlprotocol.cpp
-  sparql/sparqlxmlresultparser.cpp
 )
+
+if(NOT WINCE)
+  set(soprano_client_SRC
+    ${soprano_client_SRC}
+    sparql/sparqlmodel.cpp
+    sparql/sparqlqueryresult.cpp
+    sparql/sparqlprotocol.cpp
+    sparql/sparqlxmlresultparser.cpp
+    )
+endif(NOT WINCE)
 
 if(BUILD_DBUS_SUPPORT)
   set(soprano_client_SRC
