@@ -82,7 +82,7 @@ bool Soprano::DataStream::writeUrl( const QUrl& url )
 
 bool Soprano::DataStream::writeUnsignedInt8( quint8 v )
 {
-    if ( m_device->write( (char*)&v, 1 ) != 1 ) {
+    if ( !m_device || m_device->write( (char*)&v, 1 ) != 1 ) {
         setError( "Failed to write unsigned int8." );
         return false;
     }
@@ -92,7 +92,7 @@ bool Soprano::DataStream::writeUnsignedInt8( quint8 v )
 
 bool Soprano::DataStream::writeUnsignedInt16( quint16 v )
 {
-    if ( m_device->write( (char*)&v, 2 ) != 2 ) {
+    if ( !m_device || m_device->write( (char*)&v, 2 ) != 2 ) {
         setError( "Failed to write unsigned int32." );
         return false;
     }
@@ -102,7 +102,7 @@ bool Soprano::DataStream::writeUnsignedInt16( quint16 v )
 
 bool Soprano::DataStream::writeUnsignedInt32( quint32 v )
 {
-    if ( m_device->write( (char*)&v, sizeof( quint32 ) ) != sizeof( quint32 ) ) {
+    if ( !m_device || m_device->write( (char*)&v, sizeof( quint32 ) ) != sizeof( quint32 ) ) {
         setError( "Failed to write unsigned int32." );
         return false;
     }
@@ -112,7 +112,7 @@ bool Soprano::DataStream::writeUnsignedInt32( quint32 v )
 
 bool Soprano::DataStream::writeInt32( qint32 v )
 {
-    if ( m_device->write( (char*)&v, sizeof( qint32 ) ) != sizeof( qint32 ) ) {
+    if ( !m_device || m_device->write( (char*)&v, sizeof( qint32 ) ) != sizeof( qint32 ) ) {
         setError( "Failed to write int32." );
         return false;
     }
