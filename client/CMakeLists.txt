@@ -59,7 +59,7 @@ endif(BUILD_DBUS_SUPPORT)
 
 qt4_automoc(${soprano_client_SRC})
 
-add_library(sopranoclient SHARED ${soprano_client_SRC})
+add_library(sopranoclient ${LIBRARY_TYPE} ${soprano_client_SRC})
 
 set_target_properties(sopranoclient PROPERTIES
   VERSION 1.2.0

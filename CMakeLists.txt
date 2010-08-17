@@ -163,6 +163,13 @@ if(MINGW)
     set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wnon-virtual-dtor -Wno-long-long -ansi -Wundef -Wcast-align -Wchar-subscripts -Wall -Wpointer-arith -Wformat-security -fno-check-new -fno-common")
 endif(MINGW)
 
+if(WINCE)
+  set(LIBRARY_TYPE STATIC)
+  add_definitions(-DSOPRANO_STATIC_LIBS)
+else(WINCE)
+  set(LIBRARY_TYPE SHARED)
+endif(WINCE)
+
 
 ##################  add subdirectories ################################
 if(BUILD_CLUCENE_INDEX)

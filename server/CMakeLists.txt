@@ -50,7 +50,7 @@ qt4_automoc(${soprano_server_SRC})
 
 #qt4_automoc(${soprano_serverbackend_SRC})
 
-add_library(sopranoserver SHARED ${soprano_server_SRC})
+add_library(sopranoserver ${LIBRARY_TYPE} ${soprano_server_SRC})
 #add_library(soprano_serverclientbackend SHARED ${soprano_serverbackend_SRC})
 
 qt4_automoc(sopranodcore.cpp)

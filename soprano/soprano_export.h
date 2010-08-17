@@ -26,7 +26,10 @@
 #include <QtCore/QtGlobal>
 
 #ifndef SOPRANO_EXPORT
-# if defined(MAKE_SOPRANO_LIB)
+# if defined(SOPRANO_STATIC_LIBS)
+   /* No export/import for static libraries */
+#  define SOPRANO_EXPORT
+# elif defined(MAKE_SOPRANO_LIB)
    /* We are building this library */ 
 #  define SOPRANO_EXPORT Q_DECL_EXPORT
 # else
@@ -36,7 +39,10 @@
 #endif
 
 #ifndef SOPRANO_SERVER_EXPORT
-# if defined(MAKE_SOPRANO_SERVER_LIB)
+# if defined(SOPRANO_STATIC_LIBS)
+   /* No export/import for static libraries */
+#  define SOPRANO_SERVER_EXPORT
+# elif defined(MAKE_SOPRANO_SERVER_LIB)
    /* We are building this library */ 
 #  define SOPRANO_SERVER_EXPORT Q_DECL_EXPORT
 # else
@@ -46,7 +52,10 @@
 #endif
 
 #ifndef SOPRANO_CLIENT_EXPORT
-# if defined(MAKE_SOPRANO_CLIENT_LIB)
+# if defined(SOPRANO_STATIC_LIBS)
+   /* No export/import for static libraries */
+#  define SOPRANO_CLIENT_EXPORT
+# elif defined(MAKE_SOPRANO_CLIENT_LIB)
    /* We are building this library */ 
 #  define SOPRANO_CLIENT_EXPORT Q_DECL_EXPORT
 # else

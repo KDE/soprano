@@ -100,7 +100,7 @@ set(soprano_SRCS
 
 qt4_automoc(${soprano_SRCS})
 
-add_library(soprano SHARED ${soprano_SRCS})
+add_library(soprano ${LIBRARY_TYPE} ${soprano_SRCS})
 
 target_link_libraries(soprano ${QT_QTCORE_LIBRARY})
 
