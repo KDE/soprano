@@ -281,6 +281,7 @@ void Soprano::VirtuosoController::writeConfigFile( const QString& path, const Ba
 
     numberOfBuffers = valueInSettings( settings, "NumberOfBuffers", numberOfBuffers ).toInt();
     numberOfThreads = valueInSettings( settings, "ServerThreads", numberOfThreads ).toInt();
+    int maxDirtyBuffers = valueInSettings( settings, "MaxDirtyBuffers", numberOfBuffers*2/3 ).toInt();
     int checkpointInterval = valueInSettings( settings, "CheckpointInterval", -1 ).toInt();
     int minAutoCheckpointSize = valueInSettings( settings, "MinAutoCheckpointSize", -1 ).toInt();
 
@@ -331,7 +332,7 @@ void Soprano::VirtuosoController::writeConfigFile( const QString& path, const Ba
     cfs.setValue( "NumberOfBuffers", numberOfBuffers );
 
     // down from 1200
-    cfs.setValue( "MaxDirtyBuffers", "50" );
+    cfs.setValue( "MaxDirtyBuffers", maxDirtyBuffers );
 
     // down from 10
     cfs.setValue( "SchedulerInterval", "5" );
