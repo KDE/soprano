@@ -1,7 +1,7 @@
 /*
  * This file is part of Soprano Project
  *
- * Copyright (C) 2008-2009 Sebastian Trueg <trueg@kde.org>
+ * Copyright (C) 2008-2010 Sebastian Trueg <trueg@kde.org>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -80,19 +80,19 @@ Soprano::StorageModel* Soprano::Virtuoso::BackendPlugin::createModel( const Back
         pwd = "dba";
     }
 
-    QString driverPath = findVirtuosoDriver();
-    if ( driverPath.isEmpty() ) {
+#ifdef Q_OS_WIN
+    const QString odbcDriver = QLatin1String( "{Virtuoso (Open Source)}" );
+#else
+    const QString odbcDriver = findVirtuosoDriver();
+    if ( odbcDriver.isEmpty() ) {
         setError( "Could not find Virtuoso ODBC driver" );
         return 0;
     }
-
-#ifdef Q_OS_WIN
-    QString connectString = QString( "driver={Virtuoso (Open Source)};host=%1:%2;uid=%3;pwd=%4" )
-                            .arg( host, QString::number( port ), uid, pwd );
-#else
-    QString connectString = QString( "host=%1:%2;uid=%3;pwd=%4;driver=%5" )
-                            .arg( host, QString::number( port ), uid, pwd, driverPath );
 #endif
+
+    const QString connectString = QString( "host=%1:%2;uid=%3;pwd=%4;driver=%5" )
+                                  .arg( host, QString::number( port ), uid, pwd, odbcDriver );
+
     ODBC::ConnectionPool* connectionPool = new ODBC::ConnectionPool( connectString );
 
     // FIXME: should configuration only be allowed on spawned servers?
@@ -209,19 +209,11 @@ bool Soprano::Virtuoso::BackendPlugin::isAvailable() const
 }
 
 
+#ifndef Q_OS_WIN
 QString Soprano::Virtuoso::BackendPlugin::findVirtuosoDriver() const
 {
-#ifdef Q_OS_WIN
-    QStringList virtuosoDirs;
-    const QString virtuosoHome = QDir::fromNativeSeparators( qgetenv("VIRTUOSO_HOME") );
-    if ( !virtuosoHome.isEmpty() ) {
-        virtuosoDirs << virtuosoHome + QLatin1String("/bin")
-                     << virtuosoHome + QLatin1String("/lib");
-    }
-    return Soprano::findLibraryPath( "virtodbc", virtuosoDirs );
-#else
     return Soprano::findLibraryPath( "virtodbc_r", QStringList(), QStringList() << QLatin1String( "virtuoso/plugins/" ) << QLatin1String( "odbc/" ) );
-#endif
 }
+#endif
 
 #include "virtuosobackend.moc"

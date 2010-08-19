@@ -48,8 +48,10 @@ namespace Soprano {
             BackendFeatures supportedFeatures() const;
             bool isAvailable() const;
 
+#ifndef Q_OS_WIN
         private:
             QString findVirtuosoDriver() const;
+#endif
         };
     }
 }
