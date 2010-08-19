@@ -183,10 +183,12 @@ namespace {
 
 bool Soprano::Virtuoso::BackendPlugin::isAvailable() const
 {
+#ifndef Q_OS_WIN
     if ( findVirtuosoDriver().isEmpty() ) {
         qDebug() << Q_FUNC_INFO << "could not find Virtuoso ODBC driver";
         return false;
     }
+#endif
 
     QString virtuosoBin = VirtuosoController::locateVirtuosoBinary();
     if ( virtuosoBin.isEmpty() ) {
