@@ -106,6 +106,13 @@ namespace {
 }
 
 
+QString Soprano::VirtuosoModelPrivate::replaceFakeTypesInQuery( const QString& query )
+{
+    QMutexLocker lock( &m_fakeBooleanRegExpMutex );
+    return QString(query).replace( m_fakeBooleanRegExp, QString::fromLatin1("'\\2'^^<%1>").arg( Virtuoso::fakeBooleanTypeString() ) );
+}
+
+
 Soprano::VirtuosoModel::VirtuosoModel( ODBC::ConnectionPool* connectionPool, const Backend* b )
     : StorageModel(b),
       d( new VirtuosoModelPrivate() )
@@ -404,7 +411,7 @@ Soprano::QueryResultIterator Soprano::VirtuosoModel::executeQuery( const QString
 {
 //    qDebug() << Q_FUNC_INFO << query;
 
-    QString finalQuery( query );
+    QString finalQuery = d->replaceFakeTypesInQuery( query );
 
     if ( language != Soprano::Query::QueryLanguageSparql ) {
         setError( Error::Error( QString::fromLatin1( "Unsupported query language %1." )

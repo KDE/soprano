@@ -23,6 +23,7 @@
 #define _SOPRANO_IODBC_MODEL_P_H_
 
 #include <QtCore/QMutex>
+#include <QtCore/QRegExp>
 
 #include "virtuosoqueryresultiteratorbackend.h"
 
@@ -37,6 +38,9 @@ namespace Soprano {
     public:
         VirtuosoModelPrivate()
             : connectionPool( 0 ),
+              m_fakeBooleanRegExp( QLatin1String("([\"'])(true|false)\\1\\^\\^(<http\\://www\\.w3\\.org/2001/XMLSchema#boolean>|\\w+\\:boolean)"),
+                                   Qt::CaseInsensitive,
+                                   QRegExp::RegExp2 ),
               m_openIteratorMutex( QMutex::Recursive ) {
         }
 
@@ -59,10 +63,15 @@ namespace Soprano {
             m_openIteratorMutex.unlock();
         }
 
+        QString replaceFakeTypesInQuery( const QString& query );
+
         ODBC::ConnectionPool* connectionPool;
         QList<Virtuoso::QueryResultIteratorBackend*> m_openIterators;
 
     private:
+        QRegExp m_fakeBooleanRegExp;
+        QMutex m_fakeBooleanRegExpMutex;
+
         QMutex m_openIteratorMutex;
     };
 }
