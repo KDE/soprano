@@ -55,6 +55,7 @@ Soprano::StorageModel* Soprano::Virtuoso::BackendPlugin::createModel( const Back
     QString pwd = valueInSettings( settings, BackendOptionPassword ).toString();
     QString path = valueInSettings( settings, BackendOptionStorageDir ).toString();
     bool debugMode = valueInSettings( settings, BackendOptionUser, QLatin1String( "debugmode" ) ).toBool();
+    int queryTimeout = valueInSettings( settings, QLatin1String( "QueryTimeout" ), 0 ).toInt();
 
     VirtuosoController* controller = 0;
     if ( host.isEmpty() &&
@@ -92,8 +93,12 @@ Soprano::StorageModel* Soprano::Virtuoso::BackendPlugin::createModel( const Back
 
     const QString connectString = QString( "host=%1:%2;uid=%3;pwd=%4;driver=%5" )
                                   .arg( host, QString::number( port ), uid, pwd, odbcDriver );
+    QStringList connectionSetupCommands;
+    if ( queryTimeout > 1000 ) {
+        connectionSetupCommands << QString::fromLatin1( "set result_timeout=%1" ).arg( queryTimeout );
+    }
 
-    ODBC::ConnectionPool* connectionPool = new ODBC::ConnectionPool( connectString );
+    ODBC::ConnectionPool* connectionPool = new ODBC::ConnectionPool( connectString, connectionSetupCommands );
 
     // FIXME: should configuration only be allowed on spawned servers?
     if ( ODBC::Connection* conn = connectionPool->connection() ) {

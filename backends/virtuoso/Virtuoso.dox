@@ -33,6 +33,8 @@
  * - \c forcedstart - A boolean property which when set will result in the backend killing any Virtuoso instance accessing the
  *                    data in the storage dir before starting its own instance. This option is ignored when connecting to an already
  *                    running Virtuoso server.
+ * - \c QueryTimeout - The maximum time any query may take in milliseconds. See <a href="http://docs.openlinksw.com/virtuoso/anytimequeries.html">
+ *                     Virtuoso Anytime Queries</a> for details.
  *
  * The settings above are user settings and have to be provided using Soprano::BackendOptionUser:
  *

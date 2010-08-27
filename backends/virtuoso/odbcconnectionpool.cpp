@@ -81,17 +81,30 @@ Soprano::ODBC::Connection* Soprano::ODBC::ConnectionPoolPrivate::createConnectio
     conn->d->m_env = env;
     conn->d->m_hdbc = hdbc;
     conn->d->m_pool = this;
+
+    // run the setup commands
+    Q_FOREACH( const QString& command, m_connectionSetupCommands ) {
+        if ( conn->executeCommand( command ) != Error::ErrorNone ) {
+            setError( conn->lastError() );
+            delete conn;
+            return 0;
+        }
+    }
+
     return conn;
 }
 
 
 
-Soprano::ODBC::ConnectionPool::ConnectionPool( const QString& odbcConnectString, QObject* parent )
+Soprano::ODBC::ConnectionPool::ConnectionPool( const QString& odbcConnectString,
+                                               const QStringList& connectionSetupCommands,
+                                               QObject* parent )
     : QObject( parent ),
       d( new ConnectionPoolPrivate() )
 {
     qDebug() << Q_FUNC_INFO << odbcConnectString;
     d->m_odbcConnectString = odbcConnectString;
+    d->m_connectionSetupCommands = connectionSetupCommands;
 }
 
 

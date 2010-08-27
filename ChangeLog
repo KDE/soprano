@@ -1,5 +1,6 @@
 2.6.0
 	* Fixed handling of xsd:boolean in SPARQL queries in the Virtuoso backend
+	* Added new parameter for the Virtuoso backend: QueryTimeout allows to set a maximum query exeution time.
 
 2.5.0
 	* New public qHash method for Statement
