@@ -33,6 +33,8 @@ namespace Soprano {
         class ConnectionPool;
     }
 
+    class VirtuosoModel;
+
     class VirtuosoModelPrivate
     {
     public:
@@ -63,10 +65,14 @@ namespace Soprano {
             m_openIteratorMutex.unlock();
         }
 
+        QueryResultIterator sparqlQuery( const QString& query );
+
         QString replaceFakeTypesInQuery( const QString& query );
 
         ODBC::ConnectionPool* connectionPool;
         QList<Virtuoso::QueryResultIteratorBackend*> m_openIterators;
+
+        VirtuosoModel* q;
 
     private:
         QRegExp m_fakeBooleanRegExp;

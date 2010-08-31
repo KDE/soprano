@@ -106,6 +106,33 @@ namespace {
 }
 
 
+Soprano::QueryResultIterator Soprano::VirtuosoModelPrivate::sparqlQuery( const QString& query )
+{
+    QString finalQuery( query );
+    finalQuery.prepend( QLatin1String( s_queryPrefix ) + ' ' );
+
+//    qDebug() << Q_FUNC_INFO << finalQuery;
+
+    if ( ODBC::Connection* conn = connectionPool->connection() ) {
+        ODBC::QueryResult* result = conn->executeQuery( finalQuery );
+        if ( result ) {
+            q->clearError();
+            Virtuoso::QueryResultIteratorBackend* backend = new Virtuoso::QueryResultIteratorBackend( this, result );
+            return backend;
+        }
+        else {
+            qDebug() << "Query failed:" << finalQuery;
+            q->setError( conn->lastError() );
+            return 0;
+        }
+    }
+    else {
+        q->setError( connectionPool->lastError() );
+        return 0;
+    }
+}
+
+
 QString Soprano::VirtuosoModelPrivate::replaceFakeTypesInQuery( const QString& query )
 {
     QMutexLocker lock( &m_fakeBooleanRegExpMutex );
@@ -117,6 +144,7 @@ Soprano::VirtuosoModel::VirtuosoModel( ODBC::ConnectionPool* connectionPool, con
     : StorageModel(b),
       d( new VirtuosoModelPrivate() )
 {
+    d->q = this;
     d->connectionPool = connectionPool;
 }
 
@@ -183,11 +211,11 @@ Soprano::NodeIterator Soprano::VirtuosoModel::listContexts() const
 {
 //    qDebug() << Q_FUNC_INFO;
 
-    return executeQuery( QString::fromLatin1( "select distinct ?g where { "
-                                              "graph ?g { ?s ?p ?o . } . "
-                                              "FILTER(?g != <%1> && ?g != <%2>) . }" )
-                         .arg( QLatin1String( Virtuoso::defaultGraphString() ),
-                               QLatin1String( Virtuoso::openlinkVirtualGraphString() ) ) )
+    return d->sparqlQuery( QString::fromLatin1( "select distinct ?g where { "
+                                                "graph ?g { ?s ?p ?o . } . "
+                                                "FILTER(?g != <%1> && ?g != <%2>) . }" )
+                           .arg( QLatin1String( Virtuoso::defaultGraphString() ),
+                                 QLatin1String( Virtuoso::openlinkVirtualGraphString() ) ) )
         .iterateBindings( 0 );
 }
 
@@ -224,7 +252,7 @@ bool Soprano::VirtuosoModel::containsAnyStatement( const Statement& statement ) 
 //         return b;
 //     }
 //     return false;
-    return executeQuery( query, Query::QueryLanguageSparql ).boolValue();
+    return d->sparqlQuery( query ).boolValue();
 }
 
 
@@ -242,7 +270,7 @@ Soprano::StatementIterator Soprano::VirtuosoModel::listStatements( const Stateme
                 .arg( statementToConstructGraphPattern( partial, true ),
                       QLatin1String( Virtuoso::openlinkVirtualGraphString() ) );
 //    qDebug() << "List Statements Query" << query;
-    return executeQuery( query, Query::QueryLanguageSparql )
+    return d->sparqlQuery( query )
         .iterateStatementsFromBindings( partial.subject().isValid() ? QString() : QString( 's' ),
                                         partial.predicate().isValid() ? QString() : QString( 'p' ),
                                         partial.object().isValid() ? QString() : QString( 'o' ),
@@ -328,9 +356,9 @@ Soprano::Error::ErrorCode Soprano::VirtuosoModel::removeAllStatements( const Sta
     }
     else {
         // FIXME: do this in a fancy way, maybe an inner sql query or something
-        QList<Node> allContexts = executeQuery( QString::fromLatin1( "select distinct ?g where { %1 . FILTER(?g != <%2>) . }" )
-                                                .arg( statementToConstructGraphPattern( statement, true ),
-                                                      QLatin1String( Virtuoso::openlinkVirtualGraphString() ) ) )
+        QList<Node> allContexts = d->sparqlQuery( QString::fromLatin1( "select distinct ?g where { %1 . FILTER(?g != <%2>) . }" )
+                                                  .arg( statementToConstructGraphPattern( statement, true ),
+                                                        QLatin1String( Virtuoso::openlinkVirtualGraphString() ) ) )
                                   .iterateBindings( 0 ).allNodes();
         foreach( const Node& node, allContexts ) {
             Statement s( statement );
@@ -385,10 +413,10 @@ int Soprano::VirtuosoModel::statementCount() const
 {
 //    qDebug() << Q_FUNC_INFO;
 
-    QueryResultIterator it = executeQuery( QString::fromLatin1( "select count(*) where { "
-                                                                "graph ?g { ?s ?p ?o . } . "
-                                                                "FILTER(?g != <%1>) . }" )
-                                           .arg( QLatin1String( Virtuoso::openlinkVirtualGraphString() ) ) );
+    QueryResultIterator it = d->sparqlQuery( QString::fromLatin1( "select count(*) where { "
+                                                                  "graph ?g { ?s ?p ?o . } . "
+                                                                  "FILTER(?g != <%1>) . }" )
+                                             .arg( QLatin1String( Virtuoso::openlinkVirtualGraphString() ) ) );
     if ( it.isValid() && it.next() ) {
         return it.binding( 0 ).literal().toInt();
     }
@@ -409,37 +437,13 @@ Soprano::QueryResultIterator Soprano::VirtuosoModel::executeQuery( const QString
                                                                    Query::QueryLanguage language,
                                                                    const QString& userQueryLanguage ) const
 {
-//    qDebug() << Q_FUNC_INFO << query;
-
-    QString finalQuery = d->replaceFakeTypesInQuery( query );
-
     if ( language != Soprano::Query::QueryLanguageSparql ) {
         setError( Error::Error( QString::fromLatin1( "Unsupported query language %1." )
                                 .arg( Query::queryLanguageToString( language, userQueryLanguage ) ) ) );
         return QueryResultIterator();
     }
 
-    finalQuery.prepend( QLatin1String( s_queryPrefix ) + ' ' );
-
-//    qDebug() << Q_FUNC_INFO << finalQuery;
-
-    if ( ODBC::Connection* conn = d->connectionPool->connection() ) {
-        ODBC::QueryResult* result = conn->executeQuery( finalQuery );
-        if ( result ) {
-            clearError();
-            Virtuoso::QueryResultIteratorBackend* backend = new Virtuoso::QueryResultIteratorBackend( d, result );
-            return backend;
-        }
-        else {
-            qDebug() << "Query failed:" << finalQuery;
-            setError( conn->lastError() );
-            return 0;
-        }
-    }
-    else {
-        setError( d->connectionPool->lastError() );
-        return 0;
-    }
+    return d->sparqlQuery( d->replaceFakeTypesInQuery( query ) );
 }
 
 #include "virtuosomodel.moc"
