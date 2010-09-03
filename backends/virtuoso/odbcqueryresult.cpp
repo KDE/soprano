@@ -334,7 +334,7 @@ bool Soprano::ODBC::QueryResult::getCharData( int colNum, SQLCHAR** buffer, SQLL
         }
     }
     else {
-        setError( Virtuoso::convertSqlError( SQL_HANDLE_STMT, d->m_hstmt, QLatin1String( "SQLGetData for data lenght failed" ) ) );
+        setError( Virtuoso::convertSqlError( SQL_HANDLE_STMT, d->m_hstmt, QLatin1String( "SQLGetData for data length failed" ) ) );
         return false;
     }
 }
