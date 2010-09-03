@@ -84,7 +84,7 @@ Soprano::StorageModel* Soprano::Sesame2::BackendPlugin::createModel( const Backe
 
     // FIXME: support inference option
 
-    Q_FOREACH( BackendSetting s, settings ) {
+    Q_FOREACH( const BackendSetting& s, settings ) {
         if ( s.option() == BackendOptionUser ) {
             // no user options ATM
             qDebug() << "(Soprano::Sesame2::BackendPlugin) no user options supported.";
@@ -138,7 +138,7 @@ Soprano::StorageModel* Soprano::Sesame2::BackendPlugin::createModel( const Backe
 bool Soprano::Sesame2::BackendPlugin::deleteModelData( const BackendSettings& settings ) const
 {
     QString path;
-    Q_FOREACH( BackendSetting s, settings ) {
+    Q_FOREACH( const BackendSetting& s, settings ) {
         if ( s.option() == BackendOptionStorageDir ) {
             path = s.value().toString();
             break;
@@ -153,7 +153,7 @@ bool Soprano::Sesame2::BackendPlugin::deleteModelData( const BackendSettings& se
     // FIXME: is there a way to get the actual list of files
     QDir dir( path );
     QStringList files = dir.entryList( QStringList() << "triples*" << "namespaces*" << "values*", QDir::Files );
-    foreach( QString file, files ) {
+    foreach( const QString& file, files ) {
         if ( !dir.remove( file ) ) {
             setError( "Failed to remove file '" + dir.filePath( file ), Error::ErrorUnknown );
             return false;
