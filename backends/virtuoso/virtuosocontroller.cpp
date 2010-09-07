@@ -138,6 +138,9 @@ bool Soprano::VirtuosoController::start( const BackendSettings& settings, RunFla
 #endif
         qDebug() << "Starting Virtuoso server:" << virtuosoExe << args;
 
+        // We need to set the working directory cause virtuoso creates a temp checkpoint_in_progress file
+        // in the directory it was started. 
+        m_virtuosoProcess.setWorkingDirectory( storageDir );
         m_virtuosoProcess.start( virtuosoExe, args, QIODevice::ReadOnly );
         m_virtuosoProcess.setReadChannel( QProcess::StandardError );
         m_virtuosoProcess.closeReadChannel( QProcess::StandardOutput );
