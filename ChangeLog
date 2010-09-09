@@ -1,5 +1,6 @@
 2.5.2
 	* Fixed the Virtuoso backend default value for "ServerThreads" to match the documentation.
+	* Fixed a crash in the local socket client when disconnecting in a multithreaded client.
 
 2.5.1
 	* Properly set the working directory of the Virtuoso process to avoid random 
