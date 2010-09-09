@@ -162,7 +162,7 @@ bool Soprano::Client::LocalSocketClient::isConnected() const
 
 void Soprano::Client::LocalSocketClient::disconnect()
 {
-    delete d->connection;
+    d->connection->deleteLater();
     d->connection = 0;
 }
 
