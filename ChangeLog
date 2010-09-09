@@ -1,3 +1,6 @@
+2.5.2
+	* Fixed the Virtuoso backend default value for "ServerThreads" to match the documentation.
+
 2.5.1
 	* Properly set the working directory of the Virtuoso process to avoid random 
           checkpoint_in_progress files.
