@@ -64,7 +64,7 @@ static const char* LGPL_HEADER = "/*\n"
                                  " */\n";
 
 
-#define VERSION "0.2"
+#define VERSION "1.1"
 
 int version()
 {
@@ -330,8 +330,8 @@ int main( int argc, char *argv[] )
         return 1;
     }
 
-    // We simplify and take it as granted that all resources have the same NS
     QString ontoNamespace;
+    // We simplify and take it as granted that all resources have the same NS
     QUrl namespaceUri( normalizedResources.constBegin().key() );
     if ( namespaceUri.hasFragment() ) {
         namespaceUri.setFragment( QString() );
@@ -341,6 +341,13 @@ int main( int argc, char *argv[] )
         ontoNamespace = namespaceUri.toString().section( "/", 0, -2 ) + '/';
     }
     qDebug() << "namespace: " << ontoNamespace;
+
+    QUrl nrlGraph;
+    it = graph.listStatements( Node(), Vocabulary::RDF::type(), Vocabulary::NRL::Ontology() );
+    if ( it.next() ) {
+        nrlGraph = it.current().subject().uri();
+        it.close();
+    }
     // ----------------------------------------------------
 
 
@@ -377,6 +384,17 @@ int main( int argc, char *argv[] )
     if ( visibilityExport )
         headerStream << QString( "%1_EXPORT " ).arg(exportModule.toUpper());
     headerStream << "QUrl " << className.toLower() << "Namespace();" << endl << endl;
+
+    // the NRL graph
+    if ( !nrlGraph.isEmpty() ) {
+        headerStream << createIndent( indent ) << "/**" << endl
+                     << createIndent( indent ) << " * " << nrlGraph.toString() << endl
+                     << createIndent( indent ) << " */" << endl;
+        headerStream << createIndent( indent );
+        if ( visibilityExport )
+            headerStream << QString( "%1_EXPORT " ).arg(exportModule.toUpper());
+        headerStream << "QUrl nrlOntologyGraph();" << endl << endl;
+    }
 
     for( QMap<QString, QPair<QString, QString> >::const_iterator it = normalizedResources.constBegin();
          it != normalizedResources.constEnd(); ++it ) {
@@ -427,6 +445,9 @@ int main( int argc, char *argv[] )
 
     sourceStream << className.toLower() << "_namespace( QUrl::fromEncoded( \"" << ontoNamespace << "\", QUrl::StrictMode ) )," << endl;
 
+    if ( !nrlGraph.isEmpty() )
+        sourceStream << createIndent( 2 ) << "  nrlOntologyGraph( QUrl::fromEncoded( \"" << nrlGraph.toString() << "\", QUrl::StrictMode ) )," << endl;
+
     for( QMap<QString, QPair<QString, QString> >::const_iterator it = normalizedResources.constBegin();
          it != normalizedResources.constEnd(); ++it ) {
         QString uri = it.key();
@@ -446,6 +467,9 @@ int main( int argc, char *argv[] )
 
     sourceStream << createIndent( 1 ) << "QUrl " << className.toLower() << "_namespace;" << endl;
 
+    if ( !nrlGraph.isEmpty() )
+        sourceStream << createIndent( 1 ) << "QUrl nrlOntologyGraph;" << endl;
+
     for( QMap<QString, QPair<QString, QString> >::const_iterator it = normalizedResources.constBegin();
          it != normalizedResources.constEnd(); ++it ) {
         QString name = normalizeName( it.value().first );
@@ -463,6 +487,17 @@ int main( int argc, char *argv[] )
                  << "{" << endl
                  << createIndent( 1 ) << "return " << singletonName << "()->" << className.toLower() << "_namespace;" << endl
                  << "}" << endl << endl;
+
+    if ( !nrlGraph.isEmpty() ) {
+        sourceStream << "QUrl ";
+        if ( !namespaceName.isEmpty() ) {
+            sourceStream << namespaceName << "::";
+        }
+        sourceStream << className << "::nrlOntologyGraph()" << endl
+                     << "{" << endl
+                     << createIndent( 1 ) << "return " << singletonName << "()->nrlOntologyGraph;" << endl
+                     << "}" << endl << endl;
+    }
 
     for( QMap<QString, QPair<QString, QString> >::const_iterator it = normalizedResources.constBegin();
          it != normalizedResources.constEnd(); ++it ) {
