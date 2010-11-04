@@ -1,7 +1,7 @@
 /*
  * This file is part of Soprano Project.
  *
- * Copyright (C) 2007-2009 Sebastian Trueg <trueg@kde.org>
+ * Copyright (C) 2007-2010 Sebastian Trueg <trueg@kde.org>
  * Copyright (C) 2009 Greg Beauchesne <greg_b@vision-play.com>
  *
  * This library is free software; you can redistribute it and/or
@@ -31,6 +31,85 @@
 #include <QtCore/QHash>
 #include <QtCore/QDebug>
 #include <QtCore/QSharedData>
+#include <QtCore/QMutex>
+#include <QtCore/QMutexLocker>
+
+
+namespace {
+/**
+ * Helper class for thread-safe conversion between QUrl and QVariant::Type.
+ */
+class XsdTypePool
+{
+public:
+    XsdTypePool();
+
+    QVariant::Type typeFromDataTypeUri( const QUrl& dataTypeUri ) const;
+    QUrl dataTypeUriFromType( QVariant::Type type ) const;
+
+private:
+    mutable QMutex m_xsdMutex;
+    mutable QMutex m_variantMutex;
+    QHash<QUrl, QVariant::Type> m_xsdHash;
+    QHash<int, QUrl> m_variantHash;
+};
+
+XsdTypePool::XsdTypePool()
+{
+    m_xsdHash.insert( Soprano::Vocabulary::XMLSchema::xsdInt(), QVariant::Int );
+    m_xsdHash.insert( Soprano::Vocabulary::XMLSchema::integer(), QVariant::Int );
+    m_xsdHash.insert( Soprano::Vocabulary::XMLSchema::negativeInteger(), QVariant::Int );
+    m_xsdHash.insert( Soprano::Vocabulary::XMLSchema::nonNegativeInteger(), QVariant::UInt );
+    m_xsdHash.insert( Soprano::Vocabulary::XMLSchema::decimal(), QVariant::Int );
+    m_xsdHash.insert( Soprano::Vocabulary::XMLSchema::xsdShort(), QVariant::Int );
+    m_xsdHash.insert( Soprano::Vocabulary::XMLSchema::xsdLong(), QVariant::LongLong );
+    m_xsdHash.insert( Soprano::Vocabulary::XMLSchema::unsignedInt(), QVariant::UInt );
+    m_xsdHash.insert( Soprano::Vocabulary::XMLSchema::unsignedShort(), QVariant::UInt );
+    m_xsdHash.insert( Soprano::Vocabulary::XMLSchema::unsignedLong(), QVariant::ULongLong );
+    m_xsdHash.insert( Soprano::Vocabulary::XMLSchema::boolean(), QVariant::Bool );
+    m_xsdHash.insert( Soprano::Vocabulary::XMLSchema::xsdDouble(), QVariant::Double );
+    m_xsdHash.insert( Soprano::Vocabulary::XMLSchema::xsdFloat(), QVariant::Double );
+    m_xsdHash.insert( Soprano::Vocabulary::XMLSchema::string(), QVariant::String );
+    m_xsdHash.insert( Soprano::Vocabulary::XMLSchema::date(), QVariant::Date );
+    m_xsdHash.insert( Soprano::Vocabulary::XMLSchema::time(), QVariant::Time );
+    m_xsdHash.insert( Soprano::Vocabulary::XMLSchema::dateTime(), QVariant::DateTime );
+    m_xsdHash.insert( Soprano::Vocabulary::XMLSchema::base64Binary(), QVariant::ByteArray );
+    m_xsdHash.insert( Soprano::Vocabulary::RDF::XMLLiteral(), QVariant::String );
+
+    m_variantHash.insert( QVariant::Int, Soprano::Vocabulary::XMLSchema::xsdInt() );
+    m_variantHash.insert( QVariant::LongLong, Soprano::Vocabulary::XMLSchema::xsdLong() );
+    m_variantHash.insert( QVariant::UInt, Soprano::Vocabulary::XMLSchema::unsignedInt() );
+    m_variantHash.insert( QVariant::ULongLong, Soprano::Vocabulary::XMLSchema::unsignedLong() );
+    m_variantHash.insert( QVariant::Bool, Soprano::Vocabulary::XMLSchema::boolean() );
+    m_variantHash.insert( QVariant::Double, Soprano::Vocabulary::XMLSchema::xsdDouble() );
+    m_variantHash.insert( QVariant::String, Soprano::Vocabulary::XMLSchema::string() );
+    m_variantHash.insert( QVariant::Date, Soprano::Vocabulary::XMLSchema::date() );
+    m_variantHash.insert( QVariant::Time, Soprano::Vocabulary::XMLSchema::time() );
+    m_variantHash.insert( QVariant::DateTime, Soprano::Vocabulary::XMLSchema::dateTime() );
+    m_variantHash.insert( QVariant::ByteArray, Soprano::Vocabulary::XMLSchema::base64Binary() );
+}
+
+QVariant::Type XsdTypePool::typeFromDataTypeUri( const QUrl& dataTypeUri ) const
+{
+    QMutexLocker lock( &m_xsdMutex );
+    QHash<QUrl, QVariant::Type>::const_iterator it = m_xsdHash.constFind( dataTypeUri );
+    if ( it != m_xsdHash.constEnd() ) {
+        return it.value();
+    }
+    else {
+//        qDebug() << "(Soprano::LiteralValue) unknown literal type uri:" << dataTypeUri;
+        return QVariant::Invalid;
+    }
+}
+
+QUrl XsdTypePool::dataTypeUriFromType( QVariant::Type type ) const
+{
+    QMutexLocker lock( &m_variantMutex );
+    return m_variantHash[type];
+}
+
+Q_GLOBAL_STATIC( XsdTypePool, s_xsdTypePool )
+}
 
 
 class Soprano::LiteralValue::LiteralValueData : public QSharedData
@@ -610,58 +689,13 @@ Soprano::LiteralValue Soprano::LiteralValue::createPlainLiteral( const QString& 
 
 QVariant::Type Soprano::LiteralValue::typeFromDataTypeUri( const QUrl& dataTypeUri )
 {
-    static QHash<QUrl, QVariant::Type> s_xsdTypes;
-    if( s_xsdTypes.isEmpty() ) {
-        s_xsdTypes.insert( Vocabulary::XMLSchema::xsdInt(), QVariant::Int );
-        s_xsdTypes.insert( Vocabulary::XMLSchema::integer(), QVariant::Int );
-        s_xsdTypes.insert( Vocabulary::XMLSchema::negativeInteger(), QVariant::Int );
-        s_xsdTypes.insert( Vocabulary::XMLSchema::nonNegativeInteger(), QVariant::UInt );
-        s_xsdTypes.insert( Vocabulary::XMLSchema::decimal(), QVariant::Int );
-        s_xsdTypes.insert( Vocabulary::XMLSchema::xsdShort(), QVariant::Int );
-        s_xsdTypes.insert( Vocabulary::XMLSchema::xsdLong(), QVariant::LongLong );
-        s_xsdTypes.insert( Vocabulary::XMLSchema::unsignedInt(), QVariant::UInt );
-        s_xsdTypes.insert( Vocabulary::XMLSchema::unsignedShort(), QVariant::UInt );
-        s_xsdTypes.insert( Vocabulary::XMLSchema::unsignedLong(), QVariant::ULongLong );
-        s_xsdTypes.insert( Vocabulary::XMLSchema::boolean(), QVariant::Bool );
-        s_xsdTypes.insert( Vocabulary::XMLSchema::xsdDouble(), QVariant::Double );
-        s_xsdTypes.insert( Vocabulary::XMLSchema::xsdFloat(), QVariant::Double );
-        s_xsdTypes.insert( Vocabulary::XMLSchema::string(), QVariant::String );
-        s_xsdTypes.insert( Vocabulary::XMLSchema::date(), QVariant::Date );
-        s_xsdTypes.insert( Vocabulary::XMLSchema::time(), QVariant::Time );
-        s_xsdTypes.insert( Vocabulary::XMLSchema::dateTime(), QVariant::DateTime );
-        s_xsdTypes.insert( Vocabulary::XMLSchema::base64Binary(), QVariant::ByteArray );
-        s_xsdTypes.insert( Vocabulary::RDF::XMLLiteral(), QVariant::String );
-    }
-
-    QHash<QUrl, QVariant::Type>::const_iterator it = s_xsdTypes.constFind( dataTypeUri );
-    if ( it != s_xsdTypes.constEnd() ) {
-        return it.value();
-    }
-    else {
-//        qDebug() << "(Soprano::LiteralValue) unknown literal type uri:" << dataTypeUri;
-        return QVariant::Invalid;
-    }
+    return s_xsdTypePool()->typeFromDataTypeUri(dataTypeUri);
 }
 
 
 QUrl Soprano::LiteralValue::dataTypeUriFromType( QVariant::Type type )
 {
-    static QHash<int, QUrl> s_variantSchemaTypeHash;
-    if( s_variantSchemaTypeHash.isEmpty() ) {
-        s_variantSchemaTypeHash.insert( QVariant::Int, Vocabulary::XMLSchema::xsdInt() );
-        s_variantSchemaTypeHash.insert( QVariant::LongLong, Vocabulary::XMLSchema::xsdLong() );
-        s_variantSchemaTypeHash.insert( QVariant::UInt, Vocabulary::XMLSchema::unsignedInt() );
-        s_variantSchemaTypeHash.insert( QVariant::ULongLong, Vocabulary::XMLSchema::unsignedLong() );
-        s_variantSchemaTypeHash.insert( QVariant::Bool, Vocabulary::XMLSchema::boolean() );
-        s_variantSchemaTypeHash.insert( QVariant::Double, Vocabulary::XMLSchema::xsdDouble() );
-        s_variantSchemaTypeHash.insert( QVariant::String, Vocabulary::XMLSchema::string() );
-        s_variantSchemaTypeHash.insert( QVariant::Date, Vocabulary::XMLSchema::date() );
-        s_variantSchemaTypeHash.insert( QVariant::Time, Vocabulary::XMLSchema::time() );
-        s_variantSchemaTypeHash.insert( QVariant::DateTime, Vocabulary::XMLSchema::dateTime() );
-        s_variantSchemaTypeHash.insert( QVariant::ByteArray, Vocabulary::XMLSchema::base64Binary() );
-    }
-
-    return s_variantSchemaTypeHash[type];
+    return s_xsdTypePool()->dataTypeUriFromType(type);
 }
 
 

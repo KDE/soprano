@@ -1,3 +1,6 @@
+2.5.3
+	* Made LiteralValue::typeFromDataTypeUri and LiteralValue::dataTypeUriFromType thread-safe.
+
 2.5.2
 	* Fixed the Virtuoso backend default value for "ServerThreads" to match the documentation.
 	* Fixed a crash in the local socket client when disconnecting in a multithreaded client.
