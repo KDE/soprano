@@ -1,5 +1,7 @@
 2.5.3
 	* Made LiteralValue::typeFromDataTypeUri and LiteralValue::dataTypeUriFromType thread-safe.
+	* Reset used variables in SopranoAddOntology.cmake to not interfer with variables used in other
+   	  macros like the Nepomuk ones.
 
 2.5.2
 	* Fixed the Virtuoso backend default value for "ServerThreads" to match the documentation.
