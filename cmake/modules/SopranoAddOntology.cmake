@@ -16,7 +16,7 @@
 # Example:
 #  soprano_add_ontology(pimo_LIB_SRCS ${PIMO_TRIG_SOURCE} "PIMO" "Nepomuk::Vocabulary" "trig" VISIBILITY "nepomuk")
 #
-# Copyright (C) 2009 Sebastian Trueg <trueg@kde.org>
+# Copyright (C) 2009-2010 Sebastian Trueg <trueg@kde.org>
 #
 
 MACRO(SOPRANO_ADD_ONTOLOGY _sources _ontoFile _ontoName _namespace _encoding)
@@ -48,4 +48,11 @@ MACRO(SOPRANO_ADD_ONTOLOGY _sources _ontoFile _ontoName _namespace _encoding)
     )
 
   list(APPEND ${_sources} ${_ontoSourceFile})
+
+  # reset the variables we used
+  set(_visibility "")
+  set(_ontoName "")
+  set(_ontoFilePrefix "")
+  set(_ontoHeaderFile "")
+  set(_ontoSourceFile "")
 ENDMACRO(SOPRANO_ADD_ONTOLOGY)
