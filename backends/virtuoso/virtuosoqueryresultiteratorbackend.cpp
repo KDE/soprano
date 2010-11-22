@@ -129,7 +129,7 @@ bool Soprano::Virtuoso::QueryResultIteratorBackend::next()
 {
     switch( d->m_resultType ) {
     case QueryResultIteratorBackendPrivate::AskResult:
-        return d->m_queryResult != 0;
+        return false;
 
     case QueryResultIteratorBackendPrivate::GraphResult:
         return d->graphIterator.next();
@@ -189,7 +189,10 @@ Soprano::Node Soprano::Virtuoso::QueryResultIteratorBackend::binding( const QStr
 
 Soprano::Node Soprano::Virtuoso::QueryResultIteratorBackend::binding( int offset ) const
 {
-    if ( d->m_queryResult && offset < bindingCount() && offset >= 0 ) {
+    if ( isBinding() &&
+         d->m_queryResult &&
+         offset < bindingCount() &&
+         offset >= 0 ) {
         if ( !d->bindingCachedFlags[offset] ) {
             Node node = d->m_queryResult->getData( offset+1 );
             setError( d->m_queryResult->lastError() );
