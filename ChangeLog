@@ -1,6 +1,10 @@
 2.6.0
 	* Fixed handling of xsd:boolean in SPARQL queries in the Virtuoso backend
 	* Added new parameter for the Virtuoso backend: QueryTimeout allows to set a maximum query exeution time.
+	* QueryResultIterator::next() now always returns false for boolean results. This breaks behaviour
+	  compared to previous versions. However, always returning true as before results in endless loops if
+	  the client does not check the type of the query result. Thus, in the interest of stability this change
+	  has been made anyway.
 
 2.5.0
 	* New public qHash method for Statement
