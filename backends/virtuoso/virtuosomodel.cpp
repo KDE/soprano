@@ -345,7 +345,10 @@ Soprano::Error::ErrorCode Soprano::VirtuosoModel::removeAllStatements( const Sta
             if ( conn->executeCommand( "sparql " + query ) == Error::ErrorNone ) {
                 // FIXME: can this be done with SQL/RDF views?
                 emit statementsRemoved();
-                emit statementRemoved( statement );
+                Statement signalStatement( statement );
+                if( signalStatement.context() == Virtuoso::defaultGraph() )
+                    signalStatement.setContext( Node() );
+                emit statementRemoved( signalStatement );
             }
             setError( conn->lastError() );
         }
