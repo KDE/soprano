@@ -546,16 +546,13 @@ void SopranoModelTest::testBooleanQuery()
     QString query( "ASK where {?a ?b ?c}" );
 
     QueryResultIterator res = m_model->executeQuery( query, Query::QueryLanguageSparql );
-    QVERIFY( res.next() );
-    QVERIFY( res.next() );
+    QVERIFY( !res.next() );
 
     QVERIFY( !res.isGraph() );
     QVERIFY( !res.isBinding() );
     QVERIFY( res.isBool() );
 
     QVERIFY( res.boolValue() );
-
-    QVERIFY( res.next() );
 
     res.close();
 
