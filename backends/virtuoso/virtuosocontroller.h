@@ -1,7 +1,7 @@
 /*
  * This file is part of Soprano Project
  *
- * Copyright (C) 2009 Sebastian Trueg <trueg@kde.org>
+ * Copyright (C) 2009-2011 Sebastian Trueg <trueg@kde.org>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -27,6 +27,7 @@
 
 #include "error.h"
 #include "backend.h"
+#include "lockfile.h"
 
 class QEventLoop;
 
@@ -93,6 +94,8 @@ namespace Soprano {
         ExitStatus m_lastExitStatus;
 
         QEventLoop* m_initializationLoop;
+
+        LockFile m_virtuosoLock;
     };
 }
 

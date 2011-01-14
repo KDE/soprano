@@ -1,7 +1,7 @@
 /*
  * This file is part of Soprano Project
  *
- * Copyright (C) 2009 Sebastian Trueg <trueg@kde.org>
+ * Copyright (C) 2009-2011 Sebastian Trueg <trueg@kde.org>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -112,8 +112,17 @@ bool Soprano::VirtuosoController::start( const BackendSettings& settings, RunFla
 
         const QString storageDir = valueInSettings( settings, BackendOptionStorageDir ).toString();
 
+        // aquire a lock for ourselves
+        m_virtuosoLock.setFileName( storageDir + QLatin1String("soprano-virtuoso.lock") );
+        int pid = 0;
+        if( !m_virtuosoLock.aquireLock( &pid ) ) {
+            setError( QString::fromLatin1("Another instance of Soprano (%1) is already running on the data in '%2'.")
+                     .arg(pid).arg(storageDir));
+            return false;
+        }
+
         // check if another instance of Virtuoso is running
-        int pid = pidOfRunningVirtuosoInstance( storageDir );
+        pid = pidOfRunningVirtuosoInstance( storageDir );
         if ( pid > 0 && valueInSettings( settings, "forcedstart", false ).toBool() ) {
 #ifndef Q_OS_WIN
             qDebug( "Shutting down Virtuoso instance (%d) which is in our way.", pid );
@@ -213,10 +222,12 @@ bool Soprano::VirtuosoController::shutdown()
             m_status = Killing;
             m_virtuosoProcess.kill();
             m_virtuosoProcess.waitForFinished();
+            m_virtuosoLock.releaseLock();
             return false;
         }
         else {
             clearError();
+            m_virtuosoLock.releaseLock();
             return true;
         }
 #else
@@ -224,11 +235,13 @@ bool Soprano::VirtuosoController::shutdown()
         m_virtuosoProcess.kill();
         m_virtuosoProcess.waitForFinished();
         clearError();
+        m_virtuosoLock.releaseLock();
         return true;
 #endif
     }
     else {
         setError( "Virtuoso not running. Cannot shutdown." );
+        m_virtuosoLock.releaseLock();
         return false;
     }
 }
@@ -247,6 +260,9 @@ void Soprano::VirtuosoController::slotProcessFinished( int, QProcess::ExitStatus
          QFile::exists( m_configFilePath ) ) {
         QFile::remove( m_configFilePath );
     }
+
+    // release our lock
+    m_virtuosoLock.releaseLock();
 
     m_lastExitStatus = NormalExit;
     if ( exitStatus == QProcess::CrashExit )
