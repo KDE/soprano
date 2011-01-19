@@ -93,7 +93,7 @@ QString Soprano::Server::DBusServerAdaptor::createModel( const QString& name, co
             // which is issued while an iterator is open. By using the AsyncModel in SingleThreadMode
             // we make sure that the DBus adaptor never deadlocks.
             Util::AsyncModel* asyncModel = new Util::AsyncModel( model );
-            asyncModel->setParent( model ); // memory management
+            connect(model, SIGNAL(destroyed()), asyncModel, SLOT(deleteLater()) ); // memory management even across thread boundaries
             model = asyncModel;
 
             QString objectPath = d->dbusObjectPath + "/models/" + normalizeModelName( name );
