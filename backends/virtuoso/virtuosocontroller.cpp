@@ -113,7 +113,7 @@ bool Soprano::VirtuosoController::start( const BackendSettings& settings, RunFla
         const QString storageDir = valueInSettings( settings, BackendOptionStorageDir ).toString();
 
         // aquire a lock for ourselves
-        m_virtuosoLock.setFileName( storageDir + QLatin1String("soprano-virtuoso.lock") );
+        m_virtuosoLock.setFileName( storageDir + QLatin1String("/soprano-virtuoso.lock") );
         int pid = 0;
         if( !m_virtuosoLock.aquireLock( &pid ) ) {
             setError( QString::fromLatin1("Another instance of Soprano (%1) is already running on the data in '%2'.")
