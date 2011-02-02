@@ -363,6 +363,12 @@ void Soprano::VirtuosoController::writeConfigFile( const QString& path, const Ba
         cfs.setValue( "MinAutoCheckpointSize", minAutoCheckpointSize );
 
     cfs.endGroup();
+
+    // normalize all free-text indexes and bif:contains terms (remove accents)
+    // Only supported by Virtuoso >= 6.2; older versions will simply ignore it
+    cfs.beginGroup( QLatin1String("I18N") );
+    cfs.setValue( QLatin1String("XAnyNormalization"), "3" );
+    cfs.endGroup();
 }
 
 
