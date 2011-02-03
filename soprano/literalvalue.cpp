@@ -1,7 +1,7 @@
 /*
  * This file is part of Soprano Project.
  *
- * Copyright (C) 2007-2010 Sebastian Trueg <trueg@kde.org>
+ * Copyright (C) 2007-2011 Sebastian Trueg <trueg@kde.org>
  * Copyright (C) 2009 Greg Beauchesne <greg_b@vision-play.com>
  *
  * This library is free software; you can redistribute it and/or
@@ -637,28 +637,73 @@ bool Soprano::LiteralValue::operator!=( const LiteralValue& other ) const
 Soprano::LiteralValue Soprano::LiteralValue::fromString( const QString& value, QVariant::Type type )
 {
     switch( type ) {
-    case QVariant::Int:
-        return LiteralValue( value.toInt() );
-    case QVariant::LongLong:
-        return LiteralValue( value.toLongLong() );
-    case QVariant::UInt:
-        return LiteralValue( value.toUInt() );
-    case QVariant::ULongLong:
-        return LiteralValue( value.toULongLong() );
+    case QVariant::Int: {
+        bool ok = false;
+        int val = value.toInt(&ok);
+        if(ok)
+            return LiteralValue( val );
+        else
+            return LiteralValue();
+    }
+    case QVariant::LongLong: {
+        bool ok = false;
+        qlonglong val = value.toLongLong(&ok);
+        if(ok)
+            return LiteralValue( val );
+        else
+            return LiteralValue();
+    }
+    case QVariant::UInt: {
+        bool ok = false;
+        uint val = value.toUInt(&ok);
+        if(ok)
+            return LiteralValue( val );
+        else
+            return LiteralValue();
+    }
+    case QVariant::ULongLong: {
+        bool ok = false;
+        qulonglong val = value.toULongLong(&ok);
+        if(ok)
+            return LiteralValue( val );
+        else
+            return LiteralValue();
+    }
+    case QVariant::Double: {
+        bool ok = false;
+        double val = value.toDouble(&ok);
+        if(ok)
+            return LiteralValue( val );
+        else
+            return LiteralValue();
+    }
+    case QVariant::Date: {
+        QDate date = DateTime::fromDateString( value );
+        if( date.isValid() )
+            return LiteralValue( date );
+        else
+            return LiteralValue();
+    }
+    case QVariant::Time: {
+        QTime date = DateTime::fromTimeString( value );
+        if( date.isValid() )
+            return LiteralValue( date );
+        else
+            return LiteralValue();
+    }
+    case QVariant::DateTime: {
+        QDateTime date = DateTime::fromDateTimeString( value );
+        if( date.isValid() )
+            return LiteralValue( date );
+        else
+            return LiteralValue();
+    }
     case QVariant::Bool:
         return LiteralValue( ( value.toLower() == "true" || value.toLower() == "yes" || value.toInt() != 0 ) );
-    case QVariant::Double:
-        return LiteralValue( value.toDouble() );
-    case QVariant::String:
-        return LiteralValue( value );
-    case QVariant::Date:
-        return LiteralValue( DateTime::fromDateString( value ) );
-    case QVariant::Time:
-        return LiteralValue( DateTime::fromTimeString( value ) );
-    case QVariant::DateTime:
-        return LiteralValue( DateTime::fromDateTimeString( value ) );
     case QVariant::ByteArray:
         return LiteralValue( QByteArray::fromBase64( value.toAscii() ) );
+    case QVariant::String:
+        return LiteralValue( value );
     default:
 //        qDebug() << "(Soprano::LiteralValue) unknown type: " << type << "storing as string value." << endl;
         return LiteralValue( value );
@@ -674,7 +719,9 @@ Soprano::LiteralValue Soprano::LiteralValue::fromString( const QString& value, c
     else {
         LiteralValue v = LiteralValue::fromString( value, typeFromDataTypeUri( type ) );
         Q_ASSERT(!v.isPlain());
-        static_cast<const TypedData*>(v.d.constData())->dtUri = type;
+        if( v.isValid() ) {
+            static_cast<const TypedData*>(v.d.constData())->dtUri = type;
+        }
         return v;
     }
 }
