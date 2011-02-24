@@ -1,7 +1,7 @@
 /*
  * This file is part of Soprano Project
  *
- * Copyright (C) 2007-2010 Sebastian Trueg <trueg@kde.org>
+ * Copyright (C) 2007-2011 Sebastian Trueg <trueg@kde.org>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -64,13 +64,13 @@ static const char* LGPL_HEADER = "/*\n"
                                  " */\n";
 
 
-#define VERSION "1.1"
+#define VERSION "1.2"
 
 int version()
 {
     QTextStream s( stderr );
     s << "onto2vocabularyclass " << VERSION << " (using Soprano " << Soprano::versionString() << ")" << endl;
-    s << "   Copyright (C) 2007-2010 Sebastian Trueg <trueg@kde.org>" << endl;
+    s << "   Copyright (C) 2007-2011 Sebastian Trueg <trueg@kde.org>" << endl;
     s << "   This program is free software; you can redistribute it and/or modify" << endl
       << "   it under the terms of the GNU General Public License as published by" << endl
       << "   the Free Software Foundation; either version 2 of the License, or" << endl
@@ -147,8 +147,11 @@ QString writeComment( const QString& comment, int indent )
 
 QString normalizeName( const QString& name )
 {
+    QString normalized(name);
     // TODO: add more invalid characters here
-    return QString( name ).replace( '-', QString() );
+    normalized.replace( '-', QString() );
+    normalized.replace( '.', QLatin1String("_") );
+    return normalized;
 }
 
 QString disambiguateKeyword( const QString& name, const QString &className )
