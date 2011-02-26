@@ -33,6 +33,7 @@
 #include <QtCore/QDebug>
 #include <QtCore/QMutex>
 #include <QtCore/QMutexLocker>
+#include <QtCore/QCoreApplication>
 
 #ifndef Q_OS_WIN
 #include <sys/types.h>
@@ -380,6 +381,9 @@ QString Soprano::VirtuosoController::locateVirtuosoBinary()
     const QString virtuosoHome = QDir::fromNativeSeparators( qgetenv("VIRTUOSO_HOME") );
     if ( !virtuosoHome.isEmpty() )
         dirs << virtuosoHome + QLatin1String("/bin");
+    else {
+        dirs << QCoreApplication::applicationDirPath();
+    }
 #endif
 
     foreach( const QString& dir, dirs ) {
