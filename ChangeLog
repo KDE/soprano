@@ -1,5 +1,6 @@
 2.6.1
 	* Let onto2vocabularyclass convert dots in entity names to underscores to create valid C++ names.
+	* Register DBus types in Client::DBusModel to make sure it can be used without Client::DBusClient.
 
 2.6.0
 	* Fixed handling of xsd:boolean in SPARQL queries in the Virtuoso backend
