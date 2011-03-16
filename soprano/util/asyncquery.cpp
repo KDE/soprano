@@ -72,6 +72,10 @@ public:
     QStringList m_bindingNames;
     ResultType m_type;
 
+    // we need to cache the error since it needs to jump threads
+    // and ErrorCache does store errors by thread
+    Error::Error m_lastError;
+
     AsyncQuery* q;
 };
 
@@ -121,12 +125,15 @@ void Soprano::Util::AsyncQuery::Private::run()
     }
 
     // finished, set the error, finished will be emitted in _s_finished
-    q->setError( m_model->lastError() );
+    m_lastError = m_model->lastError();
+    if(!m_lastError)
+        m_lastError = it.lastError();
 }
 
 
 void Soprano::Util::AsyncQuery::Private::_s_finished()
 {
+    q->setError(m_lastError);
     emit q->finished( q );
     q->deleteLater();
 }

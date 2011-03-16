@@ -80,6 +80,7 @@ void AsyncQueryHandler::slotNextReady()
 
 void AsyncQueryHandler::slotFinished()
 {
+    setError(m_query->lastError());
     m_finished = true;
     if ( m_finishedLoop ) {
         m_finishedLoop->exit();
@@ -192,8 +193,24 @@ void AsyncQueryTest::testBindingsQuery()
         QCOMPARE( nodes[i++], it[0] );
     }
     QCOMPARE( i, 4 );
+
+    delete model;
 }
 
+
+void AsyncQueryTest::testError()
+{
+    Model* model = Soprano::createModel();
+    QVERIFY( model != 0 );
+
+    // use an invalid query
+    const QString query = QLatin1String("I am an invalid query - I will eat your cat.");
+    AsyncQuery* q = AsyncQuery::executeQuery( model, query, Query::QueryLanguageSparql );
+    QVERIFY( q );
+    AsyncQueryHandler h( q );
+    QVERIFY( h.waitForFinished() );
+    QVERIFY(h.lastError());
+}
 
 QTEST_MAIN( AsyncQueryTest )
 

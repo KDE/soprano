@@ -25,6 +25,8 @@
 #include <QtTest/QtTest>
 #include <QtCore/QObject>
 
+#include "error.h"
+
 namespace Soprano {
     class Model;
     namespace Util {
@@ -33,7 +35,7 @@ namespace Soprano {
 }
 class QEventLoop;
 
-class AsyncQueryHandler : public QObject
+class AsyncQueryHandler : public QObject, public Soprano::Error::ErrorCache
 {
     Q_OBJECT
 
@@ -64,6 +66,7 @@ private Q_SLOTS:
     void testBindingNames();
     void testQueryType();
     void testBindingsQuery();
+    void testError();
 };
 
 #endif
