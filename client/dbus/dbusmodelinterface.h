@@ -1,7 +1,7 @@
 /* 
  * This file is part of Soprano Project.
  *
- * Copyright (C) 2007 Sebastian Trueg <trueg@kde.org>
+ * Copyright (C) 2007-2011 Sebastian Trueg <trueg@kde.org>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -34,9 +34,7 @@
 #include <QtDBus/QtDBus>
 
 #include "statement.h"
-
-Q_DECLARE_METATYPE(Soprano::Statement)
-Q_DECLARE_METATYPE(Soprano::Node)
+#include "dbusoperators.h"
 
 
 namespace Soprano {
