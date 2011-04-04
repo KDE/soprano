@@ -242,13 +242,13 @@ if(DOXYGEN_EXECUTABLE)
 
   add_custom_target(
     stabledox
-    COMMAND rsync -zrtq docs/html/ $ENV{USER},soprano@web.sf.net:/home/groups/s/so/soprano/htdocs/apidox/stable
+    COMMAND rsync -zrtq docs/html/ $ENV{USER},soprano@web.sf.net:/home/project-web/soprano/htdocs/apidox/stable
     DEPENDS onlineapidox
     COMMENT "Uploading stable API docs to Sourceforge...")
 
   add_custom_target(
     trunkdox
-    COMMAND rsync -zrtq docs/html/ $ENV{USER},soprano@web.sf.net:/home/groups/s/so/soprano/htdocs/apidox/trunk
+    COMMAND rsync -zrtq docs/html/ $ENV{USER},soprano@web.sf.net:/home/project-web/soprano/htdocs/apidox/trunk
     DEPENDS onlineapidox
     COMMENT "Uploading trunk API docs to Sourceforge...")
 endif(DOXYGEN_EXECUTABLE)
