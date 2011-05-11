@@ -1,3 +1,7 @@
+2.7.0
+	* Use the new Virtuoso parameter XAnyNormalization to use normalized accents for full-text searching by default.
+	* Updated NAO Vocabulary namespace to include changes from SDO 0.7.
+
 2.6.1
 	* Let onto2vocabularyclass convert dots in entity names to underscores to create valid C++ names.
 	* Register DBus types in Client::DBusModel to make sure it can be used without Client::DBusClient.
