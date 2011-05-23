@@ -1,6 +1,7 @@
 2.7.0
 	* Use the new Virtuoso parameter XAnyNormalization to use normalized accents for full-text searching by default.
 	* Updated NAO Vocabulary namespace to include changes from SDO 0.7.
+        * Added method LiteralValue::fromVariant which provides some useful type conversions.
 
 2.6.1
 	* Let onto2vocabularyclass convert dots in entity names to underscores to create valid C++ names.

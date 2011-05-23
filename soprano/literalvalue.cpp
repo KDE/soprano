@@ -698,8 +698,18 @@ Soprano::LiteralValue Soprano::LiteralValue::fromString( const QString& value, Q
         else
             return LiteralValue();
     }
-    case QVariant::Bool:
-        return LiteralValue( ( value.toLower() == "true" || value.toLower() == "yes" || value.toInt() != 0 ) );
+    case QVariant::Bool: {
+        bool ok = false;
+        int v = value.toInt(&ok);
+        if(ok)
+            return LiteralValue(v != 0);
+        else if( value.toLower() == "true" || value.toLower() == "yes" )
+            return LiteralValue( true );
+        else if( value.toLower() == "false" || value.toLower() == "no" )
+            return LiteralValue( false );
+        else
+            return LiteralValue();
+    }
     case QVariant::ByteArray:
         return LiteralValue( QByteArray::fromBase64( value.toAscii() ) );
     case QVariant::String:
@@ -725,6 +735,69 @@ Soprano::LiteralValue Soprano::LiteralValue::fromString( const QString& value, c
         return v;
     }
 }
+
+
+Soprano::LiteralValue Soprano::LiteralValue::fromVariant( const QVariant& value, const QUrl& dataType )
+{
+    //
+    // Special case: time_t -> datetime
+    //
+    if( dataType == Vocabulary::XMLSchema::dateTime() &&
+        value.canConvert(QVariant::Int) ) {
+        bool ok = false;
+        int time = value.toInt(&ok);
+        if(ok) {
+            return Soprano::LiteralValue( QDateTime::fromTime_t(time) );
+        }
+    }
+
+    const QVariant::Type literalType = typeFromDataTypeUri( dataType );
+    if( value.canConvert(literalType) ) {
+        LiteralValue v;
+        bool ok = false;
+
+        //
+        // We map 5 different XSD types to Int.
+        // Thus, we need to handle them separately since the constructor will fall
+        // back to xsd:int
+        //
+        if( literalType == QVariant::Int ) {
+            v = value.toInt(&ok);
+        }
+
+        //
+        // Handle xsd:unsignedInt and xsd:nonNegativeInteger
+        //
+        else if( literalType == QVariant::UInt ) {
+            v = value.toUInt(&ok);
+        }
+
+        //
+        // Handle xsd:float and xsd:double
+        //
+        else if( literalType == QVariant::Double ) {
+            v = value.toDouble(&ok);
+        }
+
+        //
+        // The perfect match
+        //
+        else if( value.type() == literalType ) {
+            v = value;
+            ok = true;
+        }
+
+        if( v.isValid() && ok ) {
+            // fixup the datatype
+            static_cast<const TypedData*>(v.d.constData())->dtUri = dataType;
+            return v;
+        }
+    }
+
+    // fallback
+    return fromString(value.toString(), dataType);
+}
+
 
 Soprano::LiteralValue Soprano::LiteralValue::createPlainLiteral( const QString& value, const LanguageTag& lang )
 {

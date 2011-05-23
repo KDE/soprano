@@ -1,7 +1,7 @@
 /*
  * This file is part of Soprano Project.
  *
- * Copyright (C) 2007 Sebastian Trueg <trueg@kde.org>
+ * Copyright (C) 2007-2011 Sebastian Trueg <trueg@kde.org>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -86,6 +86,8 @@ namespace Soprano
          * Creates a new LiteralValue from a QVariant.
          * User types are not supported. If v contains an
          * unsupported type an invalid LiteralValue is created.
+         *
+         * \sa fromVariant()
          */
         LiteralValue( const QVariant& v );
 
@@ -393,6 +395,30 @@ namespace Soprano
          * \sa fromString(const QString&, QVariant::Type), Vocabulary::XMLSchema
          */
         static LiteralValue fromString( const QString& value, const QUrl& dataTypeUri );
+
+        /**
+         * Create a LiteralValue object by converting \p value to the given \p dataType.
+         *
+         * If the type of the variant matches the \p dataType this method has the same
+         * effect as the constructor which takes a QVariant as parameter. However, this
+         * method supports automatic conversion for a set of types including:
+         *
+         * \li Conversion of different decimal types
+         * \li Conversion of everything to xsd:string
+         * \li Conversion of decimal types to xsd:dateTime (using QDateTime::fromTime_t())
+         *
+         * \param value The value the created LiteralValue should have. If invalid an
+         * invalid LiteralValue will be created.
+         * \param dataType The RDF literal data type the created LiteralValue should have.
+         * If empty the result will be the same as providing \p value to the constructor
+         * of LiteralValue. No conversion will take place.
+         *
+         * \return A newly created Literalvalue instance based on the given \p value and
+         * \p dataType.
+         *
+         * \since 2.7
+         */
+        static LiteralValue fromVariant( const QVariant& value, const QUrl& dataType );
 
         /**
          * Create a plain LiteralValue object with an optional language tag.

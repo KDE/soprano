@@ -1,7 +1,7 @@
 /*
  * This file is part of Soprano Project.
  *
- * Copyright (C) 2007 Sebastian Trueg <trueg@kde.org>
+ * Copyright (C) 2007-2011 Sebastian Trueg <trueg@kde.org>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -29,6 +29,7 @@
 
 
 using namespace Soprano;
+using namespace Soprano::Vocabulary;
 
 Q_DECLARE_METATYPE(Soprano::LiteralValue)
 
@@ -176,6 +177,142 @@ void SopranoLiteralTest::testToString()
     QCOMPARE( value.toString(), stringValue );
 }
 
+
+void SopranoLiteralTest::testFromVariant_data()
+{
+    QTest::addColumn<QVariant>( "value" );
+    QTest::addColumn<QUrl>( "dataType" );
+    QTest::addColumn<QVariant>( "convertedValue" );
+
+    const QDateTime dt = QDateTime::currentDateTime();
+
+    // simple conversions 1-to-1
+    QTest::newRow( "simple - xsd:int" ) << QVariant(42) << XMLSchema::xsdInt() << QVariant(42);
+    QTest::newRow( "simple - xsd:integer" ) << QVariant(42) << XMLSchema::integer() << QVariant(42);
+    QTest::newRow( "simple - xsd:negativeInteger" ) << QVariant(-42) << XMLSchema::negativeInteger() << QVariant(-42);
+    QTest::newRow( "simple - xsd:decimal" ) << QVariant(42) << XMLSchema::decimal() << QVariant(42);
+    QTest::newRow( "simple - xsd:short" ) << QVariant(42) << XMLSchema::xsdShort() << QVariant(42);
+    QTest::newRow( "simple - xsd:nonNegativeInteger" ) << QVariant(uint(42)) << XMLSchema::nonNegativeInteger() << QVariant(uint(42));
+    QTest::newRow( "simple - xsd:unsignedInt" ) << QVariant(uint(42)) << XMLSchema::unsignedInt() << QVariant(uint(42));
+    QTest::newRow( "simple - xsd:unsignedShort" ) << QVariant(uint(42)) << XMLSchema::unsignedShort() << QVariant(uint(42));
+    QTest::newRow( "simple - xsd:long" ) << QVariant(42) << XMLSchema::xsdLong() << QVariant(42);
+    QTest::newRow( "simple - xsd:unsignedLong" ) << QVariant(uint(42)) << XMLSchema::unsignedLong() << QVariant(uint(42));
+    QTest::newRow( "simple - xsd:boolean (true)" ) << QVariant(true) << XMLSchema::boolean() << QVariant(true);
+    QTest::newRow( "simple - xsd:boolean (false)" ) << QVariant(false) << XMLSchema::boolean() << QVariant(false);
+    QTest::newRow( "simple - xsd:double" ) << QVariant(double(42.5)) << XMLSchema::xsdDouble() << QVariant(double(42.5));
+    QTest::newRow( "simple - xsd:float" ) << QVariant(float(42.5)) << XMLSchema::xsdFloat() << QVariant(float(42.5));
+    QTest::newRow( "simple - xsd:string" ) << QVariant(QLatin1String("foobar")) << XMLSchema::string() << QVariant(QLatin1String("foobar"));
+    QTest::newRow( "simple - xsd:date" ) << QVariant(dt.date()) << XMLSchema::date() << QVariant(dt.date());
+    QTest::newRow( "simple - xsd:time" ) << QVariant(dt.time()) << XMLSchema::time() << QVariant(dt.time());
+    QTest::newRow( "simple - xsd:dateTime" ) << QVariant(dt) << XMLSchema::dateTime() << QVariant(dt);
+
+    // anything to int
+    QTest::newRow( "uint -> xsd:int" ) << QVariant(42) << XMLSchema::xsdInt() << QVariant(42);
+    QTest::newRow( "string -> xsd:int" ) << QVariant("42") << XMLSchema::xsdInt() << QVariant(42);
+
+    // anything to integer
+    QTest::newRow( "uint -> xsd:integer" ) << QVariant(42) << XMLSchema::integer() << QVariant(42);
+    QTest::newRow( "string -> xsd:integer" ) << QVariant("42") << XMLSchema::integer() << QVariant(42);
+
+    // anything to negativeInteger
+    QTest::newRow( "string -> xsd:integer" ) << QVariant("-42") << XMLSchema::negativeInteger() << QVariant(-42);
+
+    // anything to decimal
+    QTest::newRow( "uint -> xsd:decimal" ) << QVariant(42) << XMLSchema::decimal() << QVariant(42);
+    QTest::newRow( "string -> xsd:decimal" ) << QVariant("42") << XMLSchema::decimal() << QVariant(42);
+
+    // anything to short
+    QTest::newRow( "uint -> xsd:short" ) << QVariant(42) << XMLSchema::xsdShort() << QVariant(42);
+    QTest::newRow( "string -> xsd:short" ) << QVariant("42") << XMLSchema::xsdShort() << QVariant(42);
+
+    // anything to unsignedInteger
+    QTest::newRow( "int -> xsd:nonNegativeInteger" ) << QVariant(42) << XMLSchema::nonNegativeInteger() << QVariant(uint(42));
+    QTest::newRow( "string -> xsd:nonNegativeInteger" ) << QVariant("42") << XMLSchema::nonNegativeInteger() << QVariant(uint(42));
+
+    // anything to unsignedInt
+    QTest::newRow( "int -> xsd:unsignedInt" ) << QVariant(42) << XMLSchema::unsignedInt() << QVariant(uint(42));
+    QTest::newRow( "string -> xsd:unsignedInt" ) << QVariant("42") << XMLSchema::unsignedInt() << QVariant(uint(42));
+
+    // anything to unsignedShort
+    QTest::newRow( "int -> xsd:unsignedShort" ) << QVariant(42) << XMLSchema::unsignedShort() << QVariant(uint(42));
+    QTest::newRow( "string -> xsd:unsignedShort" ) << QVariant("42") << XMLSchema::unsignedShort() << QVariant(uint(42));
+
+    // anything to long
+    QTest::newRow( "int -> xsd:long" ) << QVariant(42) << XMLSchema::xsdLong() << QVariant(int(42));
+    QTest::newRow( "uint -> xsd:long" ) << QVariant(uint(42)) << XMLSchema::xsdLong() << QVariant(int(42));
+    QTest::newRow( "long -> xsd:long" ) << QVariant(int(42)) << XMLSchema::xsdLong() << QVariant(int(42));
+    QTest::newRow( "string -> xsd:long" ) << QVariant("42") << XMLSchema::xsdLong() << QVariant(int(42));
+
+    // anything to unsignedLong
+    QTest::newRow( "int -> xsd:unsignedLong" ) << QVariant(42) << XMLSchema::unsignedLong() << QVariant(42);
+    QTest::newRow( "long -> xsd:unsignedLong" ) << QVariant(int(42)) << XMLSchema::unsignedLong() << QVariant(42);
+    QTest::newRow( "uint -> xsd:unsignedLong" ) << QVariant(uint(42)) << XMLSchema::unsignedLong() << QVariant(42);
+    QTest::newRow( "string -> xsd:unsignedLong" ) << QVariant("42") << XMLSchema::unsignedLong() << QVariant(42);
+
+    // anything to boolean
+    QTest::newRow( "int -> xsd:boolean (true)" ) << QVariant(1) << XMLSchema::boolean() << QVariant(true);
+    QTest::newRow( "int -> xsd:boolean (false)" ) << QVariant(0) << XMLSchema::boolean() << QVariant(false);
+    QTest::newRow( "uint -> xsd:boolean (true)" ) << QVariant(uint(1)) << XMLSchema::boolean() << QVariant(true);
+    QTest::newRow( "uint -> xsd:boolean (false)" ) << QVariant(uint(0)) << XMLSchema::boolean() << QVariant(false);
+    QTest::newRow( "string -> xsd:boolean (true)" ) << QVariant("true") << XMLSchema::boolean() << QVariant(true);
+    QTest::newRow( "string -> xsd:boolean (false)" ) << QVariant("false") << XMLSchema::boolean() << QVariant(false);
+    QTest::newRow( "string -> xsd:boolean (1)" ) << QVariant("1") << XMLSchema::boolean() << QVariant(true);
+    QTest::newRow( "string -> xsd:boolean (0)" ) << QVariant("0") << XMLSchema::boolean() << QVariant(false);
+
+    // anything to double
+    QTest::newRow( "float -> xsd:double" ) << QVariant(float(42.5)) << XMLSchema::xsdDouble() << QVariant(double(42.5));
+    QTest::newRow( "string -> xsd:double" ) << QVariant("42.5") << XMLSchema::xsdDouble() << QVariant(double(42.5));
+
+    // anything to float
+    QTest::newRow( "double -> xsd:float" ) << QVariant(double(42.5)) << XMLSchema::xsdFloat() << QVariant(double(42.5));
+    QTest::newRow( "string -> xsd:float" ) << QVariant("42.5") << XMLSchema::xsdFloat() << QVariant(double(42.5));
+
+    // anything to dateTime (we loose accuracy in toTIme_t(), thus, the weird conversion at the end)
+    QTest::newRow( "int -> xsd:dateTime" ) << QVariant(dt.toTime_t()) << XMLSchema::dateTime() << QVariant(QDateTime::fromTime_t(dt.toTime_t()));
+
+    // the special case - rdfs:Literal
+    QTest::newRow("rdfs:Literal") << QVariant(QLatin1String("foobar")) << RDFS::Literal() << QVariant(QLatin1String("foobar"));
+
+    // conversions which should fail and result in invalid LiteralValues
+    QTest::newRow( "from-string-invalid - xsd:int" ) << QVariant(QLatin1String("foobar")) << XMLSchema::xsdInt() << QVariant();
+    QTest::newRow( "from-string-invalid - xsd:integer" ) << QVariant(QLatin1String("foobar")) << XMLSchema::integer() << QVariant();
+    QTest::newRow( "from-string-invalid - xsd:negativeInteger" ) << QVariant(QLatin1String("foobar")) << XMLSchema::negativeInteger() << QVariant();
+    QTest::newRow( "from-string-invalid - xsd:decimal" ) << QVariant(QLatin1String("foobar")) << XMLSchema::decimal() << QVariant();
+    QTest::newRow( "from-string-invalid - xsd:short" ) << QVariant(QLatin1String("foobar")) << XMLSchema::xsdShort() << QVariant();
+    QTest::newRow( "from-string-invalid - xsd:nonNegativeInteger" ) << QVariant(QLatin1String("foobar")) << XMLSchema::nonNegativeInteger() << QVariant();
+    QTest::newRow( "from-string-invalid - xsd:unsignedInt" ) << QVariant(QLatin1String("foobar")) << XMLSchema::unsignedInt() << QVariant();
+    QTest::newRow( "from-string-invalid - xsd:unsignedShort" ) << QVariant(QLatin1String("foobar")) << XMLSchema::unsignedShort() << QVariant();
+    QTest::newRow( "from-string-invalid - xsd:long" ) << QVariant(QLatin1String("foobar")) << XMLSchema::xsdLong() << QVariant();
+    QTest::newRow( "from-string-invalid - xsd:unsignedLong" ) << QVariant(QLatin1String("foobar")) << XMLSchema::unsignedLong() << QVariant();
+    QTest::newRow( "from-string-invalid - xsd:boolean (true)" ) << QVariant(QLatin1String("foobar")) << XMLSchema::boolean() << QVariant();
+    QTest::newRow( "from-string-invalid - xsd:boolean (false)" ) << QVariant(QLatin1String("foobar")) << XMLSchema::boolean() << QVariant();
+    QTest::newRow( "from-string-invalid - xsd:double" ) << QVariant(QLatin1String("foobar")) << XMLSchema::xsdDouble() << QVariant();
+    QTest::newRow( "from-string-invalid - xsd:float" ) << QVariant(QLatin1String("foobar")) << XMLSchema::xsdFloat() << QVariant();
+    QTest::newRow( "from-string-invalid - xsd:date" ) << QVariant(QLatin1String("foobar")) << XMLSchema::date() << QVariant();
+    QTest::newRow( "from-string-invalid - xsd:time" ) << QVariant(QLatin1String("foobar")) << XMLSchema::time() << QVariant();
+    QTest::newRow( "from-string-invalid - xsd:dateTime" ) << QVariant(QLatin1String("foobar")) << XMLSchema::dateTime() << QVariant();
+
+    QTest::newRow( "invalid-type" ) << QVariant(QLatin1String("foobar")) << QUrl() << QVariant(QLatin1String("foobar"));
+    QTest::newRow( "invalid-value" ) << QVariant() << XMLSchema::integer() << QVariant();
+}
+
+
+void SopranoLiteralTest::testFromVariant()
+{
+    QFETCH( QVariant, value );
+    QFETCH( QUrl, dataType );
+    QFETCH( QVariant, convertedValue );
+
+    const LiteralValue v = LiteralValue::fromVariant( value, dataType );
+    if(convertedValue.isValid()) {
+        QCOMPARE(v.variant(), convertedValue);
+        if(dataType.isValid())
+            QCOMPARE(v.dataTypeUri(), dataType);
+    }
+    else {
+        QVERIFY(!v.isValid());
+    }
+}
 
 QTEST_MAIN(SopranoLiteralTest)
 
