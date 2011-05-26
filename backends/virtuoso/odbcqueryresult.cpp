@@ -46,8 +46,7 @@ Soprano::ODBC::QueryResult::QueryResult()
 Soprano::ODBC::QueryResult::~QueryResult()
 {
     d->m_conn->m_openResults.removeAll( this );
-    SQLCloseCursor( d->m_hstmt );
-    SQLFreeHandle( SQL_HANDLE_STMT, d->m_hstmt );
+    SQLFreeStmt( d->m_hstmt, SQL_CLOSE );
     delete d;
 }
 

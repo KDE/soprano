@@ -35,7 +35,7 @@ Soprano::ODBC::Environment::Environment()
 Soprano::ODBC::Environment::~Environment()
 {
     if ( d->m_henv ) {
-        SQLFreeHandle( SQL_HANDLE_ENV, d->m_henv );
+        SQLFreeEnv( d->m_henv );
     }
     delete d;
 }
@@ -53,7 +53,7 @@ Soprano::ODBC::Environment* Soprano::ODBC::Environment::createEnvironment()
     HENV henv;
 
     // allocate sql handle
-    if ( SQLAllocHandle( SQL_HANDLE_ENV, SQL_NULL_HANDLE, &henv ) != SQL_SUCCESS ) {
+    if ( SQLAllocEnv( &henv ) != SQL_SUCCESS ) {
         return 0;
     }
 
