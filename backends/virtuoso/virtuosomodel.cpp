@@ -109,7 +109,7 @@ namespace {
 Soprano::QueryResultIterator Soprano::VirtuosoModelPrivate::sparqlQuery( const QString& query )
 {
     QString finalQuery( query );
-    finalQuery.prepend( QLatin1String( s_queryPrefix ) + ' ' );
+    finalQuery.prepend( QLatin1String( s_queryPrefix )  );
 
 //    qDebug() << Q_FUNC_INFO << finalQuery;
 

@@ -75,10 +75,10 @@ Soprano::StorageModel* Soprano::Virtuoso::BackendPlugin::createModel( const Back
             return 0;
         }
 
-        host = "localhost";
+        host = QLatin1String("localhost");
         port = controller->usedPort();
-        uid = "dba";
-        pwd = "dba";
+        uid = QLatin1String("dba");
+        pwd = QLatin1String("dba");
     }
 
 #ifdef Q_OS_WIN
@@ -91,7 +91,7 @@ Soprano::StorageModel* Soprano::Virtuoso::BackendPlugin::createModel( const Back
     }
 #endif
 
-    const QString connectString = QString( "host=%1:%2;uid=%3;pwd=%4;driver=%5" )
+    const QString connectString = QString::fromLatin1( "host=%1:%2;uid=%3;pwd=%4;driver=%5" )
                                   .arg( host, QString::number( port ), uid, pwd, odbcDriver );
     QStringList connectionSetupCommands;
     if ( queryTimeout > 1000 ) {
