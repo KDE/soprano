@@ -60,6 +60,8 @@ QStringList Soprano::ODBC::QueryResult::resultColumns()
         }
         else {
             clearError();
+            d->m_columns.reserve( numCols );
+            d->m_columTypes.reserve( numCols );
             for ( int col = 1; col <= numCols; ++col ) {
                 SQLTCHAR colName[51];
                 colName[50] = 0;
