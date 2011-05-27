@@ -33,7 +33,7 @@ using namespace Soprano::Vocabulary;
 
 Q_DECLARE_METATYPE(Soprano::LiteralValue)
 
-    void SopranoLiteralTest::initTestCase()
+void SopranoLiteralTest::initTestCase()
 {
     m_model = Soprano::createModel();
     QVERIFY( m_model != 0 );
