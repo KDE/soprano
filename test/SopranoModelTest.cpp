@@ -61,6 +61,17 @@ static QList<Statement> createTestData( const Statement& s, int num )
 }
 
 
+namespace QTest {
+template<>
+char* toString(const Soprano::LiteralValue& v) {
+    return qstrdup( Soprano::Node::literalToN3(v).toUtf8().data() );
+}
+
+char* toString(const Soprano::Node& v) {
+    return qstrdup( v.toN3().toUtf8().data() );
+}
+}
+
 SopranoModelTest::SopranoModelTest()
     : m_model( 0 ),
       m_features( BackendFeatureAll ),
@@ -916,16 +927,12 @@ void SopranoModelTest::testLiteralTypes()
     QFETCH( LiteralValue, literal );
     QFETCH( QUrl, predicate );
 
-    qDebug() << "testing literal: " << literal;
-
     QUrl sub( "http://soprano.org/literalTest#X" );
 
     QVERIFY( m_model->addStatement( Statement( sub, predicate, literal ) ) == Error::ErrorNone );
 
     StatementIterator it = m_model->listStatements( Statement( sub, predicate, Node() ) );
     QVERIFY( it.next() );
-    if ( it.current().object().literal() != literal )
-        qDebug() << Node( it.current().object().literal() ).toN3() << Node( literal ).toN3();
     QCOMPARE( it.current().object().literal(), literal );
     it.close();
 
