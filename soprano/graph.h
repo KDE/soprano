@@ -24,6 +24,7 @@
 
 #include <QtCore/QList>
 #include <QtCore/QSharedDataPointer>
+#include <QtCore/QDebug>
 
 #include "soprano_export.h"
 #include "error.h"
@@ -249,6 +250,13 @@ namespace Soprano
         QList<Statement> toList() const;
         //@}
 
+        //@{
+        /**
+         * Convert the Graph into a set
+         */
+        QSet<Statement> toSet() const;
+        //@}
+
         /**
          * \name Operators
          */
@@ -340,6 +348,8 @@ namespace Soprano
         class Private;
         QSharedDataPointer<Private> d;
     };
+
+    SOPRANO_EXPORT QDebug operator<<(QDebug dbg, const Graph& graph);
 }
 
 #endif

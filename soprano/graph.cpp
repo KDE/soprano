@@ -272,6 +272,12 @@ QList<Soprano::Statement> Soprano::Graph::toList() const
 }
 
 
+QSet<Soprano::Statement> Soprano::Graph::toSet() const
+{
+    return d->statements;
+}
+
+
 Soprano::Graph& Soprano::Graph::operator=( const Graph& other )
 {
     d = other.d;
@@ -359,4 +365,11 @@ bool Soprano::Graph::operator==( const Graph& g ) const
 bool Soprano::Graph::operator!=( const Graph& g ) const
 {
     return d->statements != g.d->statements;
+}
+
+
+QDebug Soprano::operator<<(QDebug dbg, const Soprano::Graph& graph)
+{
+    dbg << graph.toSet();
+    return dbg;
 }
