@@ -103,7 +103,7 @@ Soprano::ODBC::QueryResult* Soprano::ODBC::Connection::executeQuery( const QStri
 HSTMT Soprano::ODBC::Connection::execute( const QString& request )
 {
     HSTMT hstmt;
-    if ( SQLAllocStmt( d->m_hdbc, &hstmt ) != SQL_SUCCESS ) {
+    if ( SQLAllocHandle( SQL_HANDLE_STMT, d->m_hdbc, &hstmt ) != SQL_SUCCESS ) {
         setError( Virtuoso::convertSqlError( SQL_HANDLE_DBC, d->m_hdbc ) );
         return 0;
     }
