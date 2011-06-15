@@ -28,8 +28,12 @@
 #include <QtCore/QCoreApplication>
 #include <QtCore/QDebug>
 
-
-#if defined _WIN32 || defined _WIN64
+#ifdef Q_OS_WIN
+static inline QString getWinPrefix()
+{
+    // returns the parent directory of the application
+    return QDir( QCoreApplication::applicationDirPath() ).absoluteFilePath( ".." );
+}
 #define PATH_SEPARATOR ';'
 #else
 #define PATH_SEPARATOR ':'
@@ -123,6 +127,8 @@ QStringList Soprano::libDirs()
     paths << QLatin1String( SOPRANO_PREFIX"/lib"SOPRANO_LIB_SUFFIX );
 #ifdef Q_OS_WIN
     paths << QLatin1String( SOPRANO_PREFIX"/bin" );
+    paths << getWinPrefix() + QLatin1String( "/bin" );
+    paths << getWinPrefix() + QLatin1String( "/lib"SOPRANO_LIB_SUFFIX );
 #else
     paths << QLatin1String( "/usr/lib"SOPRANO_LIB_SUFFIX );
     paths << QLatin1String( "/usr/local/lib"SOPRANO_LIB_SUFFIX );
@@ -136,6 +142,9 @@ QStringList Soprano::dataDirs()
 {
     QStringList paths;
     paths << QLatin1String( SOPRANO_PREFIX"/share" )
+#ifdef Q_OS_WIN
+          << getWinPrefix() + QLatin1String( "/share" )
+#endif
           << Soprano::envDirList( "SOPRANO_DIRS" )
           << Soprano::envDirList( "XDG_DATA_DIRS" );
     return paths;
@@ -146,6 +155,9 @@ QStringList Soprano::exeDirs()
 {
     QStringList paths;
     paths << QLatin1String( SOPRANO_PREFIX"/bin" )
+#ifdef Q_OS_WIN
+          << getWinPrefix() + QLatin1String( "/bin" )
+#endif
           << envDirList( "PATH" );
     return paths;
 }

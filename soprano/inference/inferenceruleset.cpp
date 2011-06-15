@@ -27,7 +27,10 @@
 
 #include <QtCore/QHash>
 #include <QtCore/QList>
-
+#ifdef Q_OS_WIN
+#include <QtCore/QCoreApplication>
+#include <QtCore/QDir>
+#endif
 
 class Soprano::Inference::RuleSet::Private : public QSharedData
 {
@@ -138,5 +141,22 @@ Soprano::Inference::RuleSet Soprano::Inference::RuleSet::standardRuleSet( Standa
 
     RuleParser parser;
     parser.parseFile( path );
+#ifdef Q_OS_WIN
+    // Additionally try to look up the rules based on the runtime Path if
+    // they can not be found at the install prefix
+    if (!parser.rules().count()) {
+        path = QDir( QCoreApplication::applicationDirPath() ).absoluteFilePath( ".." );
+        path += "/share/soprano/rules/";
+
+        switch( set ) {
+        case RDFS:
+            path += "rdfs.rules";
+            break;
+        case NRL:
+            path += "nrl.rules";
+            break;
+        }
+    }
+#endif
     return parser.rules();
 }
