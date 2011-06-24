@@ -135,6 +135,12 @@ add_executable(parsertest parsertest.cpp)
 target_link_libraries(parsertest soprano ${QT_QTCORE_LIBRARY} ${QT_QTTEST_LIBRARY})
 add_test(parsertest ${EXECUTABLE_OUTPUT_PATH}/parsertest)
 
+# serializer test
+qt4_automoc(serializetest serializetest.cpp)
+add_executable(serializertest serializetest.cpp)
+target_link_libraries(serializertest soprano ${QT_QTCORE_LIBRARY} ${QT_QTTEST_LIBRARY})
+add_test(serializertest ${EXECUTABLE_OUTPUT_PATH}/serializertest)
+
 # Error test
 qt4_automoc(errortest errortest.cpp)
 add_executable(errortest errortest.cpp)

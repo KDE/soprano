@@ -38,54 +38,135 @@ namespace {
     class RaptorInitHelper
     {
     public:
+        raptor_world* world;
+
         RaptorInitHelper() {
-            raptor_init();
+            world = raptor_new_world();
+            raptor_world_open(world);
         }
         ~RaptorInitHelper() {
-            raptor_finish();
+            raptor_free_world(world);
         }
     };
 
-    bool convertNode( const Soprano::Node& node, const void** data, raptor_identifier_type* type, raptor_uri** dataType = 0, const unsigned char** lang = 0 )
+    /* Probably unnecessary for serializer*/
+    /*
+    QString mimeTypeString( Soprano::RdfSerialization s, const QString& userSerialization )
     {
+        if ( s == Soprano::SerializationTurtle ) {
+            return "application/turtle"; // x-turtle does not work....
+        }
+        else {
+            return serializationMimeType( s, userSerialization );
+        }
+    }*/
+
+    raptor_term *  convertNode( raptor_world * world, const Soprano::Node& node)
+    {
+        raptor_term * answer = 0;
+        /* According to documentation, raptor_new_term family takes copy of
+         * all given input parameters
+         */
         if ( node.isResource() ) {
-            *data = raptor_new_uri( ( const unsigned char* )node.uri().toEncoded().data() );
-            *type = RAPTOR_IDENTIFIER_TYPE_RESOURCE;
-            return true;
+            raptor_uri * uri  = raptor_new_uri(world, ( const unsigned char* )node.uri().toEncoded().data() );
+            answer = raptor_new_term_from_uri(world,uri);
+
+            raptor_free_uri(uri);
         }
         else if ( node.isBlank() ) {
-            *data = qstrdup( node.identifier().toUtf8().data() );
-            *type = RAPTOR_IDENTIFIER_TYPE_ANONYMOUS;
-            return true;
+            answer = raptor_new_term_from_blank(
+                    world, (const unsigned char*)node.identifier().toUtf8().data() );
         }
         else if ( node.isLiteral() ) {
-            *data = qstrdup( node.toString().toUtf8().data() );
+            // Because QByteArray.data() is valid as long as QByteArray itself is
+            // alive, we store langBA ( and others _x_BA untill function exits
+
+            //const unsigned char * literal = 0;
+            QByteArray langBA;
+            const unsigned char * lang = 0;
+            raptor_uri * datatype = 0;
+
             if ( node.literal().isPlain() ) {
                 if ( !node.language().isEmpty() )
-                    *lang = ( unsigned char* )qstrdup( ( const char* )node.language().toUtf8().data() );
+                    langBA = node.language().toUtf8();
+                    lang = ( const unsigned char* )( langBA.constData() );
             }
             else {
-                *dataType = raptor_new_uri( ( const unsigned char* )node.dataType().toEncoded().data() );
+                datatype = raptor_new_uri( world, ( const unsigned char* )node.dataType().toEncoded().data() );
             }
-            *type = RAPTOR_IDENTIFIER_TYPE_LITERAL;
-            return true;
+
+            // Now we costructs statement
+            answer = raptor_new_term_from_literal(world,(const unsigned char*)node.literal().toByteArray().constData(),datatype,lang);
+
+            // And free unnecessary resources
+            if ( datatype)
+                raptor_free_uri(datatype);
+
         }
 
-        return false;
+        return answer;
     }
 
 
-    raptor_statement* convertStatement( const Soprano::Statement& statement )
+    raptor_statement* convertStatement(raptor_world * world, const Soprano::Statement& statement )
     {
-        raptor_statement* s = new raptor_statement;
-        memset( s, 0, sizeof( raptor_statement ) );
-        convertNode( statement.subject(), &s->subject, &s->subject_type );
-        convertNode( statement.predicate(), &s->predicate, &s->predicate_type );
-        convertNode( statement.object(), &s->object, &s->object_type, &s->object_literal_datatype, &s->object_literal_language );
+        // Get terms
+        raptor_term * subject_term = 0, *object_term = 0, * predicate_term = 0;
+        raptor_term * graph_term = 0;
+
+        subject_term = convertNode(world,statement.subject());
+        if ( !subject_term) {
+            qDebug() << "Failed to convert subject to raptor_term";
+            return 0;
+        }
+
+        predicate_term = convertNode(world,statement.predicate());
+        if (!predicate_term) {
+            qDebug() << "Failed to convert predicate to raptor_term";
+            raptor_free_term(subject_term);
+            return 0;
+        }
+
+        object_term = convertNode(world,statement.object());
+        if (!object_term) {
+            qDebug() << "Failed to convert object to raptor_term";
+            raptor_free_term(subject_term);
+            raptor_free_term(predicate_term);
+            return 0;
+        }
+
+        if ( !statement.context().isEmpty() ) {
+            graph_term = convertNode(world,statement.context());
+            if(!graph_term) {
+                qDebug() << "Failed to convert graph/context to raptor_term. Node is" << statement.context();
+                raptor_free_term(subject_term);
+                raptor_free_term(predicate_term);
+                raptor_free_term(object_term);
+                return 0;
+            }
+        }
+
+
+        raptor_statement* s = raptor_new_statement_from_nodes(
+                world,
+                subject_term,
+                predicate_term,
+                object_term,
+                graph_term);
+
+        if (!s) {
+            qDebug() << "Failed to build raptor_statement from terms";
+            raptor_free_term(subject_term);
+            raptor_free_term(predicate_term);
+            raptor_free_term(object_term);
+            raptor_free_term(graph_term);
+        }
+
         return s;
     }
 
 
+    /*
     void free_node( const void* data, raptor_identifier_type type )
     {
         switch( type ) {
@@ -109,6 +190,7 @@ namespace {
             free( ( char* )s->object_literal_language );
         delete s;
     }
+    */
 
 
     int raptorIOStreamWriteByte( void* data, const int byte )
@@ -121,6 +203,7 @@ namespace {
         else {
             ( *s ) << ( char )byte;
         }
+        //qDebug() << "Write char:" << (char)(byte);
         return 0;
     }
 
@@ -140,6 +223,7 @@ namespace {
                     raptorIOStreamWriteByte( data, p[i] );
                 }
             }
+            //qDebug() << "Write string: " << p;
             break;
         }
         default:
@@ -153,15 +237,36 @@ namespace {
 Q_EXPORT_PLUGIN2(soprano_raptorserializer, Soprano::Raptor::Serializer)
 
 
+
+/* We can not rely on RaptorInitHelper anymore because
+ * we need raptor_world in supportedUserSerializations.
+ * Instead of constantly creating new raptor_world just to
+ * detect user supported serializations, it is easier to
+ * embed raptor_world into class.
+ * And we can not declare raptor_world as a member of
+ * Serializer directly, because raptor_world is a typedef,
+ * not a class. So it can not be forward declarated
+ */
+class Soprano::Raptor::Serializer::Private
+{
+    public:
+        raptor_world * world;
+};
+
 Soprano::Raptor::Serializer::Serializer()
     : QObject(),
       Soprano::Serializer( "raptor" )
 {
+    this->d = new Private();
+    this->d->world = raptor_new_world();
+    raptor_world_open(d->world);
 }
 
 
 Soprano::Raptor::Serializer::~Serializer()
 {
+    raptor_free_world(d->world);
+    delete d;
 }
 
 
@@ -174,17 +279,19 @@ Soprano::RdfSerializations Soprano::Raptor::Serializer::supportedSerializations(
 QStringList Soprano::Raptor::Serializer::supportedUserSerializations() const
 {
     QStringList sl;
-    int i = 0;
-    const char* name = 0;
-    const char* label = 0;
-    const char* mimeType = 0;
-    const unsigned char* uri = 0;
-    while ( !raptor_serializers_enumerate( i,
-                                           &name,
-                                           &label,
-                                           &mimeType,
-                                           &uri ) ) {
-        sl << QString::fromUtf8( name );
+    const raptor_syntax_description * serializer_descr = 0;
+    for ( int i = 0; 1; ++i ) {
+        serializer_descr =
+            raptor_world_get_serializer_description(d->world,i);
+
+        /* raptor_world_get_serializer_description will return
+         * NULL when conter runs out of bonds and there is no
+         * more serializers
+         */
+        if (!serializer_descr)
+            break;
+
+        sl << QString::fromUtf8( serializer_descr->names[0] );
         ++i;
     }
     return sl;
@@ -198,28 +305,43 @@ bool Soprano::Raptor::Serializer::serialize( StatementIterator it,
 {
     clearError();
 
-    RaptorInitHelper raptorHelper;
+    raptor_world * world = this->d->world;
 
     raptor_serializer* serializer = 0;
+    QString mimeType = serializationMimeType(serialization,userSerialization);
+
     if ( serialization == SerializationRdfXml ) {
-        serializer = raptor_new_serializer( "rdfxml-abbrev" ); // we always want the abbreviated xmlrdf
+        serializer = raptor_new_serializer( world, "rdfxml-abbrev" ); // we always want the abbreviated xmlrdf
     }
     else {
+        const raptor_syntax_description * serializer_descr = 0;
         for ( int i = 0; 1; ++i ) {
-            const char* syntax_name = 0;
-            const char* syntax_label = 0;
-            const char* mime_type = 0;
-            const unsigned char* uri_string = 0;
-            if ( raptor_serializers_enumerate( i,
-                                               &syntax_name,
-                                               &syntax_label,
-                                               &mime_type,
-                                               &uri_string ) )
+            serializer_descr =
+                raptor_world_get_serializer_description(world,i);
+
+            /* raptor_world_get_serializer_description will return
+             * NULL when conter runs out of bonds and there is no
+             * more serializers
+             */
+            if (!serializer_descr)
                 break;
-            if ( !qstrcmp( serializationMimeType( serialization, userSerialization ).toLatin1().data(), mime_type ) ) {
-                serializer = raptor_new_serializer( syntax_name );
-                break;
+
+            /* In serializer_descr->mime_types we have a array of pairs
+             * (mime_type,Q) of mime_type for this syntax. It looks like
+             * we can ignore Q value in this case
+             * Acording to documentation, this array can have zero elements
+             */
+            for( int mt_number = 0; mt_number < serializer_descr->mime_types_count;
+                    mt_number++)
+            {
+                const char * mime_type_N = serializer_descr->mime_types[mt_number].mime_type;
+                if ( !qstrcmp( serializationMimeType( serialization, userSerialization ).toLatin1().data(), mime_type_N ) ) {
+                    serializer = raptor_new_serializer( world, serializer_descr->names[0] );
+                    break;
+                }
             }
+            if ( serializer )
+                break;
         }
     }
 
@@ -232,8 +354,8 @@ bool Soprano::Raptor::Serializer::serialize( StatementIterator it,
     QHash<QString, QUrl> namespaces = prefixes();
     for ( QHash<QString, QUrl>::const_iterator pfit = namespaces.constBegin();
           pfit != namespaces.constEnd(); ++pfit ) {
-        raptor_uri* ns = raptor_new_uri( reinterpret_cast<unsigned char*>( pfit.value().toEncoded().data() ) );
-        raptor_serialize_set_namespace( serializer,
+        raptor_uri* ns = raptor_new_uri( world,reinterpret_cast<unsigned char*>( pfit.value().toEncoded().data() ) );
+        raptor_serializer_set_namespace( serializer,
                                         ns,
                                         ( unsigned char* )pfit.key().toLatin1().data() );
         raptor_free_uri( ns );
@@ -241,42 +363,50 @@ bool Soprano::Raptor::Serializer::serialize( StatementIterator it,
 
     bool success = true;
 
-#ifdef HAVE_IOSTREAM_HANDLER2
-    raptor_iostream_handler2 raptorStreamHandler = {
-        2,
-        0,
-        0,
-        raptorIOStreamWriteByte,
-        raptorIOStreamWriteBytes,
-        0,
-        0,
-        0
-    };
-    raptor_iostream* raptorStream = raptor_new_iostream_from_handler2( &stream,
-                                                                       &raptorStreamHandler );
-#else
-    raptor_iostream_handler raptorStreamHandler = {
-        0,
-        0,
-        raptorIOStreamWriteByte,
-        raptorIOStreamWriteBytes,
-        0
-    };
-    raptor_iostream* raptorStream = raptor_new_iostream_from_handler( &stream,
-                                                                      &raptorStreamHandler );
-#endif
+    raptor_iostream_handler raptorStreamHandler;
+    // ATTENTION: Raptor documentation is incorrect! Always set
+    // version to 2 and raptor_iostream_calculate_modes internal
+    // call will correctly determine operation mode ( read,write,readwrite)
+    raptorStreamHandler.version = 2;
+    raptorStreamHandler.init = 0;
+    raptorStreamHandler.finish = 0;
+    raptorStreamHandler.write_byte = raptorIOStreamWriteByte;
+    raptorStreamHandler.write_bytes = raptorIOStreamWriteBytes;
+    raptorStreamHandler.write_end = 0;
+    raptorStreamHandler.read_bytes = 0;
+    raptorStreamHandler.read_eof = 0;
 
-    // raptor_serialize_start takes ownership of raptorStream
-    raptor_serialize_start( serializer, 0, raptorStream );
+    raptor_iostream* raptorStream = raptor_new_iostream_from_handler(
+            world,
+            &stream,
+            &raptorStreamHandler
+            );
 
-    while ( it.next() ) {
-        raptor_statement* rs = convertStatement( *it );
-        raptor_serialize_statement( serializer, rs );
-        free_statement( rs );
+    if (!raptorStream) {
+        qDebug() << "Can not create raptor iostream";
+        raptor_free_serializer(serializer);
+        return false;
     }
 
-    raptor_serialize_end( serializer );
+    // raptor_serialize_start takes ownership of raptorStream
+    raptor_serializer_start_to_iostream( serializer,0, raptorStream );
+
+    while ( it.next() ) {
+        raptor_statement * rs = convertStatement(world, *it );
+        if (rs) {
+            raptor_serializer_serialize_statement(serializer, rs );
+            raptor_free_statement( rs );
+        }
+        else {
+            qDebug() << "Fail to convert Soprano::Statement " <<
+                *it << 
+                " to raptor_statement";
+        }
+    }
+
+    raptor_serializer_serialize_end( serializer );
     raptor_free_serializer( serializer );
+    raptor_free_iostream(raptorStream);
 
     return success;
 }

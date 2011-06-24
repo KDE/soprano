@@ -28,7 +28,6 @@
 
 #include "serializer.h"
 
-
 namespace Soprano {
     namespace Raptor {
         class Serializer : public QObject, public Soprano::Serializer
@@ -47,6 +46,12 @@ namespace Soprano {
                             QTextStream& stream, 
                             RdfSerialization serialization,
                             const QString& userSerialization = QString() ) const;
+	private:
+	    /* See source file comments, that explain why it is necessary to 
+	     * use Private class and RaptorInitHelper is not succifient anymore
+	     */
+	   class Private;
+	   Private * d;
         };
     }
 }
