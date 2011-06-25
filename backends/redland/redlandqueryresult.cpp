@@ -77,9 +77,10 @@ Soprano::Redland::RedlandQueryResult::RedlandQueryResult( const RedlandModel* mo
     d->model = model;
 
     const char** names = 0;
+    int number = librdf_query_results_get_bindings_count(d->result);
     if ( !librdf_query_results_get_bindings( d->result, &names, 0 ) ) {
-        for ( ; *names; names++ ) {
-            d->names.append( QString::fromUtf8( *names ) );
+        for ( int i  = 0; i < number; i++ ) {
+            d->names.append( QString::fromUtf8( names[i] ) );
         }
     }
 }
