@@ -394,6 +394,7 @@ bool Soprano::Raptor::Serializer::serialize( StatementIterator it,
     while ( it.next() ) {
         raptor_statement * rs = convertStatement(world, *it );
         if (rs) {
+            //qDebug() << "Serializing statement: " << *it;
             raptor_serializer_serialize_statement(serializer, rs );
             raptor_free_statement( rs );
         }
@@ -401,6 +402,8 @@ bool Soprano::Raptor::Serializer::serialize( StatementIterator it,
             qDebug() << "Fail to convert Soprano::Statement " <<
                 *it << 
                 " to raptor_statement";
+            success = false;
+            break;
         }
     }
 

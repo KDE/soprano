@@ -96,7 +96,7 @@ void SerializerTest::testSerializer()
 
             // Now serialize reference data
             QByteArray data_array;
-            QTextStream serializationStorage(&data_array);
+            QTextStream serializationStorage(&data_array,QIODevice::ReadWrite);
 
             bool result = serializer->serialize(
                     /*what*/Util::SimpleStatementIterator(referenceStatements),
@@ -105,9 +105,12 @@ void SerializerTest::testSerializer()
                     );
             QVERIFY(result);
 
+            //qDebug() << "Serialization storage: " << data_array;
+
             // Now parse gained text stream back
+            QTextStream readStorageStream(&data_array, QIODevice::ReadOnly);
             StatementIterator it = back_parser->parseStream( 
-                    serializationStorage, 
+                    readStorageStream, 
                     QUrl("http://soprano.sf.net/testdata/"), 
                     serialization);
 

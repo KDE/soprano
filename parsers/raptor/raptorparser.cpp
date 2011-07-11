@@ -85,7 +85,7 @@ namespace {
         else {
             p->setError( Soprano::Error::Error( QString::fromUtf8( message->text ), Soprano::Error::ErrorUnknown ) );
         }
-        qDebug() << "Error: " << message->text;
+        //qDebug() << "Error: " << message->text;
     }
 
     void raptorLogNamespaceHandler(void * userData, raptor_namespace *nspace)
@@ -98,11 +98,12 @@ namespace {
     {
         if ( graph ) {
             const char * str = (const char*)raptor_uri_as_string(graph);
-            if ( str )
+            if ( str ) {
                 if ( flags & RAPTOR_GRAPH_MARK_START )
                     qDebug() << "Start graph: " << str;
                 else
                    qDebug() << "End graph: " << str ;
+            }
         }
     }
 
@@ -302,13 +303,13 @@ Soprano::StatementIterator
                                               RdfSerialization serialization,
                                               const QString& userSerialization ) const
 {
-    //qDebug() << "parseStream";
     QMutexLocker lock( &(d->mutex) );
 
     clearError();
 
     raptor_parser* parser = createParser( serialization, userSerialization );
     if ( !parser ) {
+        //qDebug() << "Failed to create a parser";
         return StatementIterator();
     }
 
@@ -320,7 +321,6 @@ Soprano::StatementIterator
     //raptor_parser_set_graph_mark_handler( parser, &data, raptorLogGraphHandler );
 
     // start the atual parsing
-    //qDebug() << "Start parsing";
     raptor_uri* raptorBaseUri = 0;
     if ( baseUri.isValid() ) {
         raptorBaseUri = raptor_new_uri( d->world,(unsigned char *) baseUri.toString().toUtf8().data() );
@@ -330,7 +330,7 @@ Soprano::StatementIterator
     }
 
     clearError();
-    if ( raptor_parser_parse_start( parser, raptorBaseUri ) ) {
+    if ( raptor_parser_parse_start( parser, raptorBaseUri ) != 0 ) {
         if ( !lastError() ) {
             ErrorCache::setError( QLatin1String( "Failed to start parsing." ) );
         }
@@ -338,6 +338,7 @@ Soprano::StatementIterator
         if ( raptorBaseUri ) {
             raptor_free_uri( raptorBaseUri );
         }
+        //qDebug() << "Failed to start parsing";
         return StatementIterator();
     }
 
@@ -357,6 +358,7 @@ Soprano::StatementIterator
                 if ( raptorBaseUri ) {
                     raptor_free_uri( raptorBaseUri );
                 }
+                //qDebug() << "Raptor refuses to parse a chunk";
                 return StatementIterator();
             }
         }
@@ -373,6 +375,7 @@ Soprano::StatementIterator
                 if ( raptorBaseUri ) {
                     raptor_free_uri( raptorBaseUri );
                 }
+                //qDebug() << "Raptor refuses to parse a chunk";
                 return StatementIterator();
             }
         }
