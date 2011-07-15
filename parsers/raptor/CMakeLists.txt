@@ -13,13 +13,11 @@ set(raptor_parser_SRC
   raptorparser.cpp
 )
 
-configure_file(raptor-config.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/raptor-config.h)
-
 qt4_automoc(${raptor_parser_SRC})
 
-add_library(soprano_raptorparser MODULE ${raptor_parser_SRC})
+add_library(soprano_raptorparser  MODULE ${raptor_parser_SRC})
 
-TARGET_LINK_LIBRARIES(soprano_raptorparser soprano ${RAPTOR_LIBRARIES})
+TARGET_LINK_LIBRARIES(soprano_raptorparser soprano raptor2 ${RAPTOR_LIBRARIES})
 
 set_target_properties(soprano_raptorparser PROPERTIES
   DEFINE_SYMBOL MAKE_RAPTORPARSER_LIB

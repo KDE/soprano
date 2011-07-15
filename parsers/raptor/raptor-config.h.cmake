@@ -1,1 +1,0 @@
-#cmakedefine RAPTOR_HAVE_TRIG

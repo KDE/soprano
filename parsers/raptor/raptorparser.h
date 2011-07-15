@@ -29,13 +29,11 @@
 
 #include "parser.h"
 
-#include <raptor.h>
-
+#include<raptor2/raptor.h>
 
 namespace Soprano {
     namespace Raptor {
-    class Parser : public QObject, public Soprano::Parser
-    {
+      class Parser : public QObject, public Soprano::Parser { 
         Q_OBJECT
         Q_INTERFACES(Soprano::Parser)
 
@@ -43,7 +41,7 @@ namespace Soprano {
         Parser();
         ~Parser();
 
-        RdfSerializations supportedSerializations() const;
+	RdfSerializations supportedSerializations() const;
 
         StatementIterator parseFile( const QString& filename, 
                      const QUrl& baseUri, 
@@ -64,7 +62,10 @@ namespace Soprano {
         raptor_parser* createParser( RdfSerialization serialization,
                      const QString& userSerialization = QString() ) const;
 
-        mutable QMutex m_mutex;
+	class Private;
+	Private * d;
+
+
     };
     }
 }
