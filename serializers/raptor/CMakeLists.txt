@@ -9,13 +9,8 @@ include_directories(
   ${RAPTOR_INCLUDE_DIR}
 )
 
-include(CheckFunctionExists)
 set(CMAKE_REQUIRED_INCLUDES ${RAPTOR_INCLUDE_DIR})
 set(CMAKE_REQUIRED_LIBRARIES ${RAPTOR_LIBRARIES})
-check_function_exists( raptor_new_iostream_from_handler2 HAVE_IOSTREAM_HANDLER2 )
-if(HAVE_IOSTREAM_HANDLER2)
-  add_definitions(-DHAVE_IOSTREAM_HANDLER2)
-endif(HAVE_IOSTREAM_HANDLER2)
 
 set(raptor_serializer_SRC
   raptorserializer.cpp
