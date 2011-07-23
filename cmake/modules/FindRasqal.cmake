@@ -78,9 +78,11 @@ endif(WINCE)
     ${rasqal_LIBRARY_DIRS}
   )
 
-  if (RASQAL_LIBRARIES AND RASQAL_INCLUDE_DIR)
-    set(RASQAL_FOUND TRUE)
-  endif (RASQAL_LIBRARIES AND RASQAL_INCLUDE_DIR)
+  include(FindPackageHandleStandardArgs)
+  find_package_handle_standard_args(
+      Rasqal
+      VERSION_VAR   RASQAL_VERSION
+      REQUIRED_VARS RASQAL_LIBRARIES RASQAL_INCLUDE_DIR)
 
   if (RASQAL_FOUND)
     set(RASQAL_DEFINITIONS ${rasqal_CFLAGS})
