@@ -29,7 +29,7 @@
 
 #include "parser.h"
 
-#include<raptor2/raptor.h>
+#include <raptor2/raptor.h>
 
 namespace Soprano {
     namespace Raptor {
