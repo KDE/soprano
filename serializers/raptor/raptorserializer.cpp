@@ -26,7 +26,7 @@
 #include "statement.h"
 #include "node.h"
 
-#include <raptor2/raptor.h>
+#include <raptor.h>
 
 #include <QtCore/QUrl>
 #include <QtCore/QtPlugin>

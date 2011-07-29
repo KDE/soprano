@@ -26,7 +26,7 @@ MACRO ( FIND_RAPTOR libname libhints includehints )
         NAMES ${libname}
         HINTS ${libhints})
     find_path(
-        RAPTOR_INCLUDE_DIR raptor2/raptor.h
+        RAPTOR_INCLUDE_DIR raptor.h
         HINTS ${includehints}
         PATH_SUFFIXES ${libname})
 ENDMACRO ()
