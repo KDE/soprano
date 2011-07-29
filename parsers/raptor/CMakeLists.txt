@@ -17,7 +17,7 @@ qt4_automoc(${raptor_parser_SRC})
 
 add_library(soprano_raptorparser  MODULE ${raptor_parser_SRC})
 
-TARGET_LINK_LIBRARIES(soprano_raptorparser soprano ${RAPTOR_LIBRARIES})
+TARGET_LINK_LIBRARIES(soprano_raptorparser soprano ${RAPTOR_LIBS})
 
 set_target_properties(soprano_raptorparser PROPERTIES
   DEFINE_SYMBOL MAKE_RAPTORPARSER_LIB
