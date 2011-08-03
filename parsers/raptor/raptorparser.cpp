@@ -28,8 +28,6 @@
 #include "locator.h"
 #include "error.h"
 
-#include <raptor2/raptor.h>
-
 #include <QtCore/QUrl>
 #include <QtCore/QFile>
 #include <QtCore/QtPlugin>
