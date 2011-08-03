@@ -51,7 +51,7 @@ namespace Soprano
      * RDF data serialization:
      *
      * \code
-     * Soprano::Parser* p = Soprano::PluginManager::instance()->discoverParserForSerialization( Soprano::SerializationRdfXml );
+     * const Soprano::Parser* p = Soprano::PluginManager::instance()->discoverParserForSerialization( Soprano::SerializationRdfXml );
      * \endcode
      *
      * Then parsing RDF data is done in a single method call resulting in a StatementIterator over

@@ -51,7 +51,7 @@ namespace Soprano
      * RDF data serialization:
      *
      * \code
-     * Soprano::Serializer* s = Soprano::PluginManager::instance()->discoverSerializerForSerialization( Soprano::SerializationRdfXml );
+     * const Soprano::Serializer* s = Soprano::PluginManager::instance()->discoverSerializerForSerialization( Soprano::SerializationRdfXml );
      * \endcode
      *
      * Then serializing RDF data is done in a single method call which writes the serialized data to a QTextStream:
