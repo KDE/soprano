@@ -42,7 +42,10 @@ include(${QT_USE_FILE})
 
 if(NOT SOPRANO_DISABLE_RAPTOR_PARSER OR NOT SOPRANO_DISABLE_RAPTOR_SERIALIZER OR NOT SOPRANO_DISABLE_REDLAND_BACKEND)
   find_package(Rasqal)
-  find_package(Raptor)
+  ## Dear packagers! There were serious bug that was fixed in 2.0.4. comparing to 2.0.3
+  ## But, if for some reasons you can' ship 2.0.4, there is|are backport(s) of this fix to 2.0.3
+  ## One of such backports was created by ArchLinux team. You may wish to contact them for it.
+  find_package(Raptor 2.0.4)
   find_package(Redland)
 
   if(WIN32)
@@ -95,13 +98,6 @@ endif(NOT SOPRANO_DISABLE_VIRTUOSO_BACKEND)
 if(REDLAND_FOUND)
    macro_ensure_version( "1.0.5" ${REDLAND_VERSION} REDLAND_VERSION_GOOD )
 endif(REDLAND_FOUND)
-
-## Dear packagers! There were serious bug that was fixed in 2.0.4. comparing to 2.0.3
-## But, if for some reasons you can' ship 2.0.4, there is|are backport(s) of this fix to 2.0.3
-## One of such backports was created by ArchLinux team. You may wish to contact them for it.
-if(RAPTOR_FOUND)
-	macro_ensure_version( "2.0.4" ${RAPTOR_VERSION} RAPTOR_HAVE_TRIG )
-endif(RAPTOR_FOUND)
 
 if(REDLAND_FOUND AND NOT SOPRANO_DISABLE_REDLAND_BACKEND)
   set(BUILD_REDLAND_BACKEND TRUE)
@@ -316,7 +312,6 @@ endif(NOT BUILD_VIRTUOSO_BACKEND)
 
 if(NOT BUILD_RAPTOR_PARSER)
   message("   * Raptor RDF parser (missing libraptor - http://librdf.org)")
-  message("     !! The Raptor RDF parser is required to build KDELIBS !!")
 endif(NOT BUILD_RAPTOR_PARSER)
 
 if(NOT BUILD_RAPTOR_SERIALIZER)
