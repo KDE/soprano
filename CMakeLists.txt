@@ -316,7 +316,6 @@ endif(NOT BUILD_VIRTUOSO_BACKEND)
 
 if(NOT BUILD_RAPTOR_PARSER)
   message("   * Raptor RDF parser (missing libraptor - http://librdf.org)")
-  message("     !! The Raptor RDF parser is required to build KDELIBS !!")
 endif(NOT BUILD_RAPTOR_PARSER)
 
 if(NOT BUILD_RAPTOR_SERIALIZER)
