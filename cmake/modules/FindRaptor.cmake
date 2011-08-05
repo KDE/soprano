@@ -32,7 +32,6 @@ MACRO ( FIND_RAPTOR libname libhints includehints )
 ENDMACRO ()
 
 
-
 # Check if we have cached results in case the last round was successful.
 if ( NOT( RAPTOR_INCLUDE_DIR AND RAPTOR_LIBRARIES ) OR NOT RAPTOR_FOUND )
 
@@ -40,44 +39,14 @@ if ( NOT( RAPTOR_INCLUDE_DIR AND RAPTOR_LIBRARIES ) OR NOT RAPTOR_FOUND )
     include(MacroEnsureVersion)
     find_package(PkgConfig)
 
-    # Vy default look for version 2.0
-    if (NOT Raptor_FIND_VERSION )
-        set( Raptor_FIND_VERSION "2.0")
-        set( Raptor_FIND_VERSION_MAJOR "2" )
-        set( Raptor_FIND_VERSION_MINOR "0" )
+    if ( NOT WIN32 )
+        pkg_check_modules(PC_RAPTOR2 QUIET raptor2)
+        if ( PC_RAPTOR2_FOUND )
+            set(RAPTOR_DEFINITIONS ${PC_RAPTOR2_CFLAGS_OTHER})
+            set(RAPTOR_VERSION ${PC_RAPTOR2_VERSION} CACHE STRING "Raptor Version found" )
+        endif ()
     endif ()
-
-    if ( Raptor_FIND_VERSION_MAJOR EQUAL "2" )
-
-        if ( NOT WIN32 )
-            pkg_check_modules(PC_RAPTOR2 QUIET raptor2)
-            if ( PC_RAPTOR2_FOUND )
-                set(RAPTOR_DEFINITIONS ${PC_RAPTOR2_CFLAGS_OTHER})
-                set(RAPTOR_VERSION ${PC_RAPTOR2_VERSION} CACHE STRING "Raptor Version found" )
-            endif ()
-        endif ()
-        find_raptor( raptor2 "${PC_RAPTOR2_LIBDIR};${PC_RAPTOR2_LIBRARY_DIRS}" "${PC_RAPTOR2_INCLUDEDIR};${PC_RAPTOR2_INCLUDE_DIRS}")
-
-    elseif ( Raptor_FIND_VERSION_MAJOR EQUAL "1" )
-
-        if ( NOT WIN32 )
-            pkg_check_modules(PC_RAPTOR QUIET raptor)
-            if ( PC_RAPTOR_FOUND )
-                set(RAPTOR_DEFINITIONS ${PC_RAPTOR_CFLAGS_OTHER})
-                set(RAPTOR_VERSION ${PC_RAPTOR_VERSION} CACHE STRING "Raptor Version found" )
-            endif ()
-        endif ()
-        find_raptor( raptor "${PC_RAPTOR_LIBDIR};${PC_RAPTOR_LIBRARY_DIRS}" "${PC_RAPTOR_INCLUDEDIR};${PC_RAPTOR_INCLUDE_DIRS}")
-
-    else ()
-
-        message( FATAL_ERROR "No idea how to check for version : ${Raptor_FIND_VERSION}")
-
-    endif()
-
-    if (RAPTOR_VERSION)
-        MACRO_ENSURE_VERSION("1.4.16" ${RAPTOR_VERSION} RAPTOR_HAVE_TRIG)
-    endif (RAPTOR_VERSION)
+    find_raptor( raptor2 "${PC_RAPTOR2_LIBDIR};${PC_RAPTOR2_LIBRARY_DIRS}" "${PC_RAPTOR2_INCLUDEDIR};${PC_RAPTOR2_INCLUDE_DIRS}")
 
     mark_as_advanced(RAPTOR_INCLUDE_DIR RAPTOR_LIBRARIES)
 
@@ -92,7 +61,7 @@ find_package_handle_standard_args(
 
 mark_as_advanced(RAPTOR_VERSION)
 
-if (NOT RAPTOR_FOUND AND Raptor_FIND_VERSION_MAJOR EQUAL "2" AND NOT Raptor_FIND_QUIET )
+if (NOT RAPTOR_FOUND )
     pkg_check_modules(PC_RAPTOR QUIET raptor)
     if (PC_RAPTOR_FOUND)
         message( STATUS "You have raptor1 version ${PC_RAPTOR_VERSION} installed. Please update." )
