@@ -70,7 +70,7 @@ endif(WINCE)
     ${redland_INCLUDE_DIRS}
     ${rasqal_INCLUDE_DIRS}
     /usr/X11/include
-    PATH_SUFFIXES redland
+    PATH_SUFFIXES redland rasqal
   )
 
   find_library(RASQAL_LIBRARIES NAMES rasqal librasqal
