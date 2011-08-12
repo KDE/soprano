@@ -1,3 +1,6 @@
+2.7.1
+	* Lowered the min Raptor version to 2.0.0 since it was only a runtime dependancy for KDE.
+
 2.7.0
 	* Use the new Virtuoso parameter XAnyNormalization to use normalized accents for full-text searching by default.
 	* Updated NAO Vocabulary namespace to include changes from SDO 0.7.
