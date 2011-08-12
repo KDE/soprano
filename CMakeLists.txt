@@ -42,10 +42,7 @@ include(${QT_USE_FILE})
 
 if(NOT SOPRANO_DISABLE_RAPTOR_PARSER OR NOT SOPRANO_DISABLE_RAPTOR_SERIALIZER OR NOT SOPRANO_DISABLE_REDLAND_BACKEND)
   find_package(Rasqal)
-  ## Dear packagers! There were serious bug that was fixed in 2.0.4. comparing to 2.0.3
-  ## But, if for some reasons you can' ship 2.0.4, there is|are backport(s) of this fix to 2.0.3
-  ## One of such backports was created by ArchLinux team. You may wish to contact them for it.
-  find_package(Raptor 2.0.4)
+  find_package(Raptor 2.0.0)
   find_package(Redland)
 
   if(WIN32)
