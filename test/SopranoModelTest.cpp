@@ -987,6 +987,10 @@ void SopranoModelTest::testUriEncoding()
     QCOMPARE( it.current().subject().uri(), sub );
     it.close();
 
+    /* The following code requires quering feature */
+    if ( !( m_features&BackendFeatureQuery ) )
+        return;
+
     QueryResultIterator it2 = m_model->executeQuery( QString( "select ?p where { "
                                                               "%1 ?p %2 . }" )
                                                      .arg( Node::resourceToN3( sub ) )

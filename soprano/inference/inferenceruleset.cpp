@@ -21,16 +21,14 @@
 
 #include "soprano-config.h"
 
+#include "sopranodirs.h"
 #include "inferenceruleset.h"
 #include "inferencerule.h"
 #include "inferenceruleparser.h"
 
 #include <QtCore/QHash>
 #include <QtCore/QList>
-#ifdef Q_OS_WIN
-#include <QtCore/QCoreApplication>
-#include <QtCore/QDir>
-#endif
+#include <QtCore/QFile>
 
 class Soprano::Inference::RuleSet::Private : public QSharedData
 {
@@ -127,36 +125,23 @@ QStringList Soprano::Inference::RuleSet::ruleNames() const
 
 Soprano::Inference::RuleSet Soprano::Inference::RuleSet::standardRuleSet( StandardRuleSet set )
 {
-    QString path( SOPRANO_PREFIX );
-    path += "/share/soprano/rules/";
+    QString path;
 
-    switch( set ) {
-    case RDFS:
-        path += "rdfs.rules";
-        break;
-    case NRL:
-        path += "nrl.rules";
-        break;
-    }
-
-    RuleParser parser;
-    parser.parseFile( path );
-#ifdef Q_OS_WIN
-    // Additionally try to look up the rules based on the runtime Path if
-    // they can not be found at the install prefix
-    if (!parser.rules().count()) {
-        path = QDir( QCoreApplication::applicationDirPath() ).absoluteFilePath( ".." );
-        path += "/share/soprano/rules/";
-
+    foreach( const QString &p, Soprano::dataDirs() ) {
         switch( set ) {
         case RDFS:
-            path += "rdfs.rules";
+            path = p + QLatin1String( "/soprano/rules/rdfs.rules" );
             break;
         case NRL:
-            path += "nrl.rules";
+            path = p + QLatin1String( "/soprano/rules/nrl.rules" );
             break;
         }
+        if (QFile::exists(path)) {
+            RuleParser parser;
+            if( parser.parseFile( path ) )
+                return parser.rules();
+        }
     }
-#endif
-    return parser.rules();
+
+    return Soprano::Inference::RuleSet();
 }
