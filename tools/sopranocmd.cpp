@@ -551,7 +551,7 @@ namespace {
           << "                             RDFS, NRL, etc. if used in a SPARQL query with the --nrl parameter." << endl
           << endl
           << "   --graphselect <variablelist>" << endl
-          << "                       This parameter allows to emulate construct queries using a select query. This has the advantage that one" << endl
+          << "                       This parameter allows one to emulate construct queries using a select query. This has the advantage that one" << endl
           << "                       can construct statements including the context/named graph which is not supported by SPARQL construct." << endl
           << "                       <variablelist> contains the four variables bould to subject, predicate, object, and context in that order." << endl
           << "                       It is a list separated by semicolon. Example: --graphselect 's;p;o;g'" << endl
@@ -568,7 +568,7 @@ namespace {
           << "                       - 'monitor': Monitor a remote model. sopranocmd will continue listing added and removed statements" << endl
           << "                                    matching the statement pattern specified via the parameters until it is stopped. Be aware" << endl
           << "                                    that some backends do not report every removed statement but only the remove pattern." << endl
-          << "                       - 'query':   Execute a query on the model and print the results. The paramter is the actual query to perform." << endl
+          << "                       - 'query':   Execute a query on the model and print the results. The parameter is the actual query to perform." << endl
           << "                       - 'import':  Import a set of statements into the model. The parameter is a local filename to read the" << endl
           << "                                    statements to import from. If the option --nrl is given imported statements are added to a new" << endl
           << "                                    context/named graph if they do not have one already." << endl
