@@ -195,15 +195,19 @@ if(NOT WIN32)
   configure_file(${CMAKE_CURRENT_SOURCE_DIR}/soprano.pc.cmake ${CMAKE_CURRENT_BINARY_DIR}/soprano.pc @ONLY)
   configure_file(${CMAKE_CURRENT_SOURCE_DIR}/sopranoclient.pc.cmake ${CMAKE_CURRENT_BINARY_DIR}/sopranoclient.pc @ONLY)
   configure_file(${CMAKE_CURRENT_SOURCE_DIR}/sopranoserver.pc.cmake ${CMAKE_CURRENT_BINARY_DIR}/sopranoserver.pc @ONLY)
-  configure_file(${CMAKE_CURRENT_SOURCE_DIR}/sopranoindex.pc.cmake ${CMAKE_CURRENT_BINARY_DIR}/sopranoindex.pc @ONLY)
+
   install(
     FILES
     ${CMAKE_CURRENT_BINARY_DIR}/soprano.pc
     ${CMAKE_CURRENT_BINARY_DIR}/sopranoclient.pc
     ${CMAKE_CURRENT_BINARY_DIR}/sopranoserver.pc
-    ${CMAKE_CURRENT_BINARY_DIR}/sopranoindex.pc
     DESTINATION
     ${PKGCONFIG_INSTALL_PREFIX})
+
+  if(BUILD_CLUCENE_INDEX)
+    configure_file(${CMAKE_CURRENT_SOURCE_DIR}/sopranoindex.pc.cmake ${CMAKE_CURRENT_BINARY_DIR}/sopranoindex.pc @ONLY)
+    install(FILES ${CMAKE_CURRENT_BINARY_DIR}/sopranoindex.pc DESTINATION ${PKGCONFIG_INSTALL_PREFIX})
+  endif(BUILD_CLUCENE_INDEX)
 endif(NOT WIN32)
 
 
