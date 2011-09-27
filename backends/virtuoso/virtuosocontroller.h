@@ -66,7 +66,6 @@ namespace Soprano {
 
         int usedPort() const;
 
-        bool isRunning() const;
         Status status() const { return m_status; }
         ExitStatus lastExitStatus() const { return m_lastExitStatus; }
 
