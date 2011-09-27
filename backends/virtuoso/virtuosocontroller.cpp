@@ -87,86 +87,95 @@ Soprano::VirtuosoController::VirtuosoController()
 
 Soprano::VirtuosoController::~VirtuosoController()
 {
-    if ( isRunning() )
+    if ( m_virtuosoProcess.state() == QProcess::Running )
         shutdown();
 }
 
 
 bool Soprano::VirtuosoController::start( const BackendSettings& settings, RunFlags flags )
 {
-    if ( !isRunning() ) {
-        QTemporaryFile tmpFile( QDir::tempPath() + "/virtuoso_XXXXXX.ini" );
-        tmpFile.setAutoRemove( false );
-        tmpFile.open();
-        m_configFilePath = tmpFile.fileName();
-        tmpFile.close();
-        writeConfigFile( m_configFilePath, settings );
-        m_runFlags = flags;
-
-        m_status = StartingUp;
-
-        QString virtuosoExe = locateVirtuosoBinary();
-        if ( virtuosoExe.isEmpty() ) {
-            setError( "Unable to find the Virtuoso binary." );
+    switch( m_status ) {
+        case NotRunning:
+            break; // Try to start server
+        case StartingUp:
+            setError( "Virtuoso is already starting up.");
             return false;
-        }
-
-        const QString storageDir = valueInSettings( settings, BackendOptionStorageDir ).toString();
-
-        // aquire a lock for ourselves
-        m_virtuosoLock.setFileName( storageDir + QLatin1String("/soprano-virtuoso.lock") );
-        int pid = 0;
-        if( !m_virtuosoLock.aquireLock( &pid ) ) {
-            setError( QString::fromLatin1("Another instance of Soprano (%1) is already running on the data in '%2'.")
-                     .arg(pid).arg(storageDir));
+        case Running:
+            setError( "Virtuoso is already running." );
             return false;
-        }
+        case ShuttingDown:
+        case Killing:
+            setError( "Virtuoso is not stopped yet." );
+            return false;
+    }
 
-        // check if another instance of Virtuoso is running
-        pid = pidOfRunningVirtuosoInstance( storageDir );
-        if ( pid > 0 && valueInSettings( settings, "forcedstart", false ).toBool() ) {
+    QTemporaryFile tmpFile( QDir::tempPath() + "/virtuoso_XXXXXX.ini" );
+    tmpFile.setAutoRemove( false );
+    tmpFile.open();
+    m_configFilePath = tmpFile.fileName();
+    tmpFile.close();
+    writeConfigFile( m_configFilePath, settings );
+    m_runFlags = flags;
+
+    m_status = StartingUp;
+
+    QString virtuosoExe = locateVirtuosoBinary();
+    if ( virtuosoExe.isEmpty() ) {
+        setError( "Unable to find the Virtuoso binary." );
+        return false;
+    }
+
+    const QString storageDir = valueInSettings( settings, BackendOptionStorageDir ).toString();
+
+    // aquire a lock for ourselves
+    m_virtuosoLock.setFileName( storageDir + QLatin1String("/soprano-virtuoso.lock") );
+    int pid = 0;
+    if( !m_virtuosoLock.aquireLock( &pid ) ) {
+        setError( QString::fromLatin1("Another instance of Soprano (%1) is already running on the data in '%2'.")
+                    .arg(pid).arg(storageDir));
+        return false;
+    }
+
+    // check if another instance of Virtuoso is running
+    pid = pidOfRunningVirtuosoInstance( storageDir );
+    if ( pid > 0 && valueInSettings( settings, "forcedstart", false ).toBool() ) {
 #ifndef Q_OS_WIN
-            qDebug( "Shutting down Virtuoso instance (%d) which is in our way.", pid );
-            ::kill( pid_t( pid ), SIGINT );
-            ::waitpid( pid_t( pid ), 0, 0 );
+        qDebug( "Shutting down Virtuoso instance (%d) which is in our way.", pid );
+        ::kill( pid_t( pid ), SIGINT );
+        ::waitpid( pid_t( pid ), 0, 0 );
 #endif
-            pid = 0;
-        }
+        pid = 0;
+    }
 
-        // remove old lock files in case Virtuoso crashed
-        if ( !pid ) {
-            QString lockFilePath = storageDir + QLatin1String( "/soprano-virtuoso.lck" );
-            if ( QFile::exists( lockFilePath ) )
-                QFile::remove( lockFilePath );
-        }
+    // remove old lock files in case Virtuoso crashed
+    if ( !pid ) {
+        QString lockFilePath = storageDir + QLatin1String( "/soprano-virtuoso.lck" );
+        if ( QFile::exists( lockFilePath ) )
+            QFile::remove( lockFilePath );
+    }
 
-        QStringList args;
-        args << "+foreground"
-             << "+configfile" << QDir::toNativeSeparators(m_configFilePath);
+    QStringList args;
+    args << "+foreground"
+            << "+configfile" << QDir::toNativeSeparators(m_configFilePath);
 #ifndef Q_OS_WIN
-        args << "+wait";
+    args << "+wait";
 #endif
-        qDebug() << "Starting Virtuoso server:" << virtuosoExe << args;
+    qDebug() << "Starting Virtuoso server:" << virtuosoExe << args;
 
-        // We need to set the working directory cause virtuoso creates a temp checkpoint_in_progress file
-        // in the directory it was started.
-        m_virtuosoProcess.setWorkingDirectory( storageDir );
-        m_virtuosoProcess.start( virtuosoExe, args, QIODevice::ReadOnly );
-        m_virtuosoProcess.setReadChannel( QProcess::StandardError );
-        m_virtuosoProcess.closeReadChannel( QProcess::StandardOutput );
-        if ( waitForVirtuosoToInitialize() ) {
-            clearError();
-            m_status = Running;
-            qDebug() << "Virtuoso started:" << m_virtuosoProcess.pid();
-            return true;
-        }
-        else {
-            setError( "Failed to start Virtuoso" );
-            return false;
-        }
+    // We need to set the working directory cause virtuoso creates a temp checkpoint_in_progress file
+    // in the directory it was started.
+    m_virtuosoProcess.setWorkingDirectory( storageDir );
+    m_virtuosoProcess.start( virtuosoExe, args, QIODevice::ReadOnly );
+    m_virtuosoProcess.setReadChannel( QProcess::StandardError );
+    m_virtuosoProcess.closeReadChannel( QProcess::StandardOutput );
+    if ( waitForVirtuosoToInitialize() ) {
+        clearError();
+        m_status = Running;
+        qDebug() << "Virtuoso started:" << m_virtuosoProcess.pid();
+        return true;
     }
     else {
-        setError( "Virtuoso is already running." );
+        setError( "Failed to start Virtuoso" );
         return false;
     }
 }
@@ -245,12 +254,6 @@ bool Soprano::VirtuosoController::shutdown()
         m_virtuosoLock.releaseLock();
         return false;
     }
-}
-
-
-bool Soprano::VirtuosoController::isRunning() const
-{
-    return m_status == Running;
 }
 
 
