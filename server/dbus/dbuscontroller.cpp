@@ -48,7 +48,7 @@ void Soprano::Server::DBusController::run()
 
     ( void )new Soprano::Server::DBusServerAdaptor( dummy, m_core, m_dbusObjectPath );
 
-    QDBusConnection::connectToBus(QDBusConnection::SessionBus, QLatin1String("SopranoServerDBusControllerConnection")).registerObject( m_dbusObjectPath, dummy );
+    QDBusConnection::sessionBus().registerObject( m_dbusObjectPath, dummy );
 
     // start the event loop
     exec();
