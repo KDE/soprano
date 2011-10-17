@@ -1,6 +1,7 @@
 2.7.2
 	* Reverted a change which was introduced in 2.7.1 to use a separate QDBusConnection for the 
           DBusExportModel. It made things worse.
+        * Fixed a crash in NRLModel caused by a non-mutex-protected hash.
 
 2.7.1
 	* Lowered the min Raptor version to 2.0.0 since it was only a runtime dependancy for KDE.
