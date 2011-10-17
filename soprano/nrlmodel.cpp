@@ -1,7 +1,7 @@
 /*
  * This file is part of Soprano Project.
  *
- * Copyright (C) 2007-2009 Sebastian Trueg <trueg@kde.org>
+ * Copyright (C) 2007-2011 Sebastian Trueg <trueg@kde.org>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -62,7 +62,7 @@ public:
      */
     void buildPrefixMap()
     {
-        QMutexLocker lock( &m_mutex );
+        QMutexLocker lock( &m_prefixMapMutex );
 
         m_prefixes.clear();
 
@@ -98,8 +98,7 @@ public:
 
     NRLModel* q;
 
-private:
-    QMutex m_mutex;
+    QMutex m_prefixMapMutex;
 };
 
 Soprano::NRLModel::NRLModel()
@@ -299,8 +298,11 @@ Soprano::QueryResultIterator Soprano::NRLModel::executeQuery( const QString& que
 
     if ( language == Query::QueryLanguageSparql &&
          d->m_expandQueryPrefixes ) {
-        for ( QHash<QString, QUrl>::const_iterator it = d->m_prefixes.constBegin();
-              it != d->m_prefixes.constEnd(); ++it ) {
+        d->m_prefixMapMutex.lock();
+        QHash<QString, QUrl> prefixes = d->m_prefixes;
+        d->m_prefixMapMutex.unlock();
+        for ( QHash<QString, QUrl>::const_iterator it = prefixes.constBegin();
+              it != prefixes.constEnd(); ++it ) {
             QString prefix = it.key();
             QUrl ns = it.value();
 
