@@ -54,7 +54,8 @@ class Soprano::NRLModel::Private
 public:
     Private()
         : ignoreContext( true ),
-          m_expandQueryPrefixes( false ) {
+          m_expandQueryPrefixes( false ),
+          m_prefixMapMutex( QMutex::Recursive ) {
     }
 
     /**
