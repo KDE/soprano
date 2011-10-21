@@ -142,7 +142,13 @@ bool Soprano::VirtuosoController::start( const BackendSettings& settings, RunFla
 #ifndef Q_OS_WIN
         qDebug( "Shutting down Virtuoso instance (%d) which is in our way.", pid );
         ::kill( pid_t( pid ), SIGINT );
-        ::waitpid( pid_t( pid ), 0, 0 );
+
+        // wait for at max 30 seconds for the old instance to go down
+        int maxWaitSecs = 30;
+        while(pidOfRunningVirtuosoInstance( storageDir ) > 0 &&
+              --maxWaitSecs > 0) {
+            ::sleep(1);
+        }
 #endif
         pid = 0;
     }
