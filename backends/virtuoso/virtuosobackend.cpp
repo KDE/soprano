@@ -1,7 +1,7 @@
 /*
  * This file is part of Soprano Project
  *
- * Copyright (C) 2008-2010 Sebastian Trueg <trueg@kde.org>
+ * Copyright (C) 2008-2011 Sebastian Trueg <trueg@kde.org>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -115,8 +115,10 @@ Soprano::StorageModel* Soprano::Virtuoso::BackendPlugin::createModel( const Back
     VirtuosoModel* model = new VirtuosoModel( connectionPool, this );
     // mem mangement the ugly way
     // FIXME: improve
-    if ( controller )
+    if ( controller ) {
         controller->setParent( model );
+        connect(controller, SIGNAL(stopped(Soprano::VirtuosoController::ExitStatus)), model, SLOT(slotVirtuosoStopped(Soprano::VirtuosoController::ExitStatus)));
+    }
     return model;
 }
 

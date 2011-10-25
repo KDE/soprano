@@ -74,7 +74,7 @@ namespace Soprano {
 
     Q_SIGNALS:
         void started();
-        void stopped( ExitStatus status );
+        void stopped( Soprano::VirtuosoController::ExitStatus status );
 
     private Q_SLOTS:
         void slotProcessFinished( int exitCode, QProcess::ExitStatus exitStatus );

@@ -60,6 +60,19 @@
  * \li Soprano::BackendOptionPassword - Set the password to connect to the Virtuoso server.
  *
  *
+ * \section soprano_backend_vituoso_additions Additional Features
+ *
+ * Models created by the Virtuoso backend emit a non-standard signal which informs the client that the Virtuoso server went down.
+ * This signal is only emitted for Virtuoso instances that were started by the backend and has the following signature:
+ *
+ * \code
+ * void virtuosoStopped(bool normalExit);
+ * \endcode
+ *
+ * The parameter \p normalExit is \p true if the instance went down as scheduled (deletion of the model) and \p false if the
+ * Virtuoso instance crashed or was killed by a third party. Typically a client would connect to the signal to properly re-create the model.
+ *
+ *
  * \section soprano_backend_vituoso_specialities Virtuoso Specialities
  *
  * Since Virtuoso is an SQL server and, thus, does store all RDF data in SQL tables it

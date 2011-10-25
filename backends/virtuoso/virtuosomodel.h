@@ -1,7 +1,7 @@
 /*
  * This file is part of Soprano Project
  *
- * Copyright (C) 2008-2010 Sebastian Trueg <trueg@kde.org>
+ * Copyright (C) 2008-2011 Sebastian Trueg <trueg@kde.org>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -19,10 +19,11 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef _SOPRANO_IODBC_MODEL_H_
-#define _SOPRANO_IODBC_MODEL_H_
+#ifndef _SOPRANO_VIRTUOSO_MODEL_H_
+#define _SOPRANO_VIRTUOSO_MODEL_H_
 
 #include "storagemodel.h"
+#include "virtuosocontroller.h"
 
 namespace Soprano {
     namespace ODBC {
@@ -54,6 +55,14 @@ namespace Soprano {
         Soprano::QueryResultIterator executeQuery( const QString &query,
                                                    Query::QueryLanguage language = Query::QueryLanguageSparql,
                                                    const QString& userQueryLanguage = QString() ) const;
+
+    public Q_SLOTS:
+        /// a public slot since it is connected from the backend on creation time
+        void slotVirtuosoStopped(Soprano::VirtuosoController::ExitStatus status);
+
+    Q_SIGNALS:
+        /// \param normalExit \p true if the shutdown of Virtuoso was initialized by deleting the model
+        void virtuosoStopped(bool normalExit);
 
     private:
         VirtuosoModelPrivate* const d;
