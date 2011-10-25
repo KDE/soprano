@@ -1,7 +1,7 @@
 /*
  * This file is part of Soprano Project
  *
- * Copyright (C) 2008-2010 Sebastian Trueg <trueg@kde.org>
+ * Copyright (C) 2008-2011 Sebastian Trueg <trueg@kde.org>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -447,6 +447,19 @@ Soprano::QueryResultIterator Soprano::VirtuosoModel::executeQuery( const QString
     }
 
     return d->sparqlQuery( d->replaceFakeTypesInQuery( query ) );
+}
+
+
+void Soprano::VirtuosoModel::slotVirtuosoStopped(VirtuosoController::ExitStatus status)
+{
+    // inform clients about a non-scheduled exit of the server so they can act accordingly
+    // typically this would mean to re-create the model from the backend
+    // We do this async in case clients react by directly deleting us
+    QMetaObject::invokeMethod(this,
+                              "virtuosoStopped",
+                              Qt::QueuedConnection,
+                              Q_ARG(bool, (!(status == VirtuosoController::CrashExit ||
+                                             status == VirtuosoController::ThirdPartyExit))));
 }
 
 #include "virtuosomodel.moc"
