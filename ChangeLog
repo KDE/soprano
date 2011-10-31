@@ -1,5 +1,6 @@
 2.7.3
 	* Added new signal in the Virtuoso backend which signals when the server goes down.
+	* Enabled large file support (_FILE_OFFSET_BITS=64) to fix large DB file locking on 32bit machines.
 
 2.7.2
 	* Reverted a change which was introduced in 2.7.1 to use a separate QDBusConnection for the 

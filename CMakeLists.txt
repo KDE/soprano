@@ -170,6 +170,9 @@ else(WINCE)
   set(LIBRARY_TYPE SHARED)
 endif(WINCE)
 
+# Soprano will handle large files in LockFile (Virtuoso DB files)
+add_definitions(-D_FILE_OFFSET_BITS=64)
+
 
 ##################  add subdirectories ################################
 if(BUILD_CLUCENE_INDEX)
