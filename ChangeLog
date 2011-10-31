@@ -1,5 +1,6 @@
 2.7.3
 	* Added new signal in the Virtuoso backend which signals when the server goes down.
+	* Soprano can be built with cmake 2.6.4 again.
 
 2.7.2
 	* Reverted a change which was introduced in 2.7.1 to use a separate QDBusConnection for the 
