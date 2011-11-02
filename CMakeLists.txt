@@ -7,7 +7,7 @@ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/cmake/mod
 ##################  Soprano version  ################################
 set(CMAKE_SOPRANO_VERSION_MAJOR 2)
 set(CMAKE_SOPRANO_VERSION_MINOR 7)
-set(CMAKE_SOPRANO_VERSION_RELEASE 51)
+set(CMAKE_SOPRANO_VERSION_RELEASE 52)
 set(CMAKE_SOPRANO_VERSION_STRING "${CMAKE_SOPRANO_VERSION_MAJOR}.${CMAKE_SOPRANO_VERSION_MINOR}.${CMAKE_SOPRANO_VERSION_RELEASE}")
 
 
@@ -169,6 +169,9 @@ if(WINCE)
 else(WINCE)
   set(LIBRARY_TYPE SHARED)
 endif(WINCE)
+
+# Soprano will handle large files in LockFile (Virtuoso DB files)
+add_definitions(-D_FILE_OFFSET_BITS=64)
 
 
 ##################  add subdirectories ################################

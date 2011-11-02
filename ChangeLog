@@ -1,3 +1,6 @@
+2.7.4
+	* Enabled large file support (_FILE_OFFSET_BITS=64) to fix large DB file locking on 32bit machines.
+
 2.7.3
 	* Added new signal in the Virtuoso backend which signals when the server goes down.
 	* Soprano can be built with cmake 2.6.4 again.
