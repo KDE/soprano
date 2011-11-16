@@ -78,7 +78,6 @@ namespace Soprano {
 
     private Q_SLOTS:
         void slotProcessFinished( int exitCode, QProcess::ExitStatus exitStatus );
-        void slotProcessReadyRead();
 
     private:
         void writeConfigFile( const QString& path, const BackendSettings& settings );
@@ -91,8 +90,6 @@ namespace Soprano {
         quint16 m_port;
         Status m_status;
         ExitStatus m_lastExitStatus;
-
-        QEventLoop* m_initializationLoop;
 
         LockFile m_virtuosoLock;
     };

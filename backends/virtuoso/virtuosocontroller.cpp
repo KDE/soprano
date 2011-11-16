@@ -72,8 +72,7 @@ Soprano::VirtuosoController::VirtuosoController()
     : QObject( 0 ),
       m_port( 0 ),
       m_status( NotRunning ),
-      m_lastExitStatus( NormalExit ),
-      m_initializationLoop( 0 )
+      m_lastExitStatus( NormalExit )
 {
     connect( &m_virtuosoProcess, SIGNAL(finished(int,QProcess::ExitStatus)),
              this, SLOT(slotProcessFinished(int,QProcess::ExitStatus)) );
@@ -191,29 +190,21 @@ bool Soprano::VirtuosoController::waitForVirtuosoToInitialize()
 {
     // FIXME: timeout
     if ( m_virtuosoProcess.waitForStarted() ) {
-        QEventLoop loop;
-        m_initializationLoop = &loop;
-        loop.exec();
-        m_initializationLoop = 0;
+        while( m_virtuosoProcess.waitForReadyRead(-1) ) {
+            while( m_virtuosoProcess.canReadLine() ) {
+                QString line = QString::fromLatin1( m_virtuosoProcess.readLine() );
+                qDebug() << line;
+                if ( line.contains( "Server online at" ) ) {
+                    m_virtuosoProcess.closeReadChannel( QProcess::StandardError );
+                    m_status = Running;
+                    return true;
+                }
+            }
+        }
         return( m_status == Running );
     }
     else {
         return false;
-    }
-}
-
-
-void Soprano::VirtuosoController::slotProcessReadyRead()
-{
-    // we only wait for the server to tell us that it is ready
-    while ( m_virtuosoProcess.canReadLine() ) {
-        QString line = QString::fromLatin1( m_virtuosoProcess.readLine() );
-        qDebug() << line;
-        if ( line.contains( "Server online at" ) ) {
-            m_virtuosoProcess.closeReadChannel( QProcess::StandardError );
-            m_status = Running;
-            m_initializationLoop->exit();
-        }
     }
 }
 
@@ -287,9 +278,6 @@ void Soprano::VirtuosoController::slotProcessFinished( int, QProcess::ExitStatus
     qDebug() << "Virtuoso server stopped:" << m_lastExitStatus;
 
     emit stopped( m_lastExitStatus );
-
-    if ( m_initializationLoop )
-        m_initializationLoop->exit();
 }
 
 
