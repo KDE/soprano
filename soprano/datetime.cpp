@@ -181,20 +181,24 @@ QDate Soprano::DateTime::fromDateString( const QString& s )
 
 QDateTime Soprano::DateTime::fromDateTimeString( const QString& s )
 {
-    int pos = s.indexOf('T');
-    if( pos > 0 ) {
-        QDate date = fromDateString( s.mid( 0, pos ) );
-        if( !date.isValid() )
-            return QDateTime();
-        QTime time = fromTimeString( s.mid( pos+1 ) );
-        if( !time.isValid() )
-            return QDateTime();
-        return QDateTime( date, time, Qt::UTC );
-    }
-    else {
+    const int pos = s.indexOf('T');
+
+    QDate date = fromDateString( s.mid( 0, pos ) );
+    if( !date.isValid() ) {
         qDebug() << Q_FUNC_INFO << " invalid formatted datetime string: " << s << endl;
         return QDateTime();
     }
+
+    QTime time;
+    if( pos > 0 ) {
+        time = fromTimeString( s.mid( pos+1 ) );
+        if( !time.isValid() ) {
+            qDebug() << Q_FUNC_INFO << " invalid formatted datetime string: " << s << endl;
+            return QDateTime();
+        }
+    }
+
+    return QDateTime( date, time, Qt::UTC );
 }
 
 
