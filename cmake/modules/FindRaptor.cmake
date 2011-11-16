@@ -40,7 +40,7 @@ if ( NOT( RAPTOR_INCLUDE_DIR AND RAPTOR_LIBRARIES ) OR NOT RAPTOR_FOUND )
     include(MacroEnsureVersion)
     find_package(PkgConfig)
 
-    # Vy default look for version 2.0
+    # By default look for version 2.0
     if (NOT Raptor_FIND_VERSION )
         set( Raptor_FIND_VERSION "2.0")
         set( Raptor_FIND_VERSION_MAJOR "2" )
