@@ -76,8 +76,6 @@ Soprano::VirtuosoController::VirtuosoController()
 {
     connect( &m_virtuosoProcess, SIGNAL(finished(int,QProcess::ExitStatus)),
              this, SLOT(slotProcessFinished(int,QProcess::ExitStatus)) );
-    connect( &m_virtuosoProcess, SIGNAL(readyReadStandardError()),
-             this, SLOT(slotProcessReadyRead()) );
 
     // necessary in case we are started from a thread != the main thread
     qRegisterMetaType<QProcess::ExitStatus>();
