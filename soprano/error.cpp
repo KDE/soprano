@@ -242,13 +242,14 @@ void Soprano::Error::ErrorCache::clearError() const
 
 
 namespace {
-    const int s_maxErr = 4;
+    const int s_maxErr = 5;
     const char* s_errorMessages[] = {
         "Success",
         "Invalid argument",
         "Unsupported operation",
         "Parsing failed",
         "Permission denied",
+        "Timeout",
         0
     };
 }

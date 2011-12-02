@@ -1,6 +1,8 @@
 2.7.4
 	* Enabled large file support (_FILE_OFFSET_BITS=64) to fix large DB file locking on 32bit machines.
 	* Do not use an event loop when waiting for Virtuoso to initialize.
+	* In the socket client: simply close the connection in case of a timeout. We cannot recover from it
+	  anyway.
 
 2.7.3
 	* Added new signal in the Virtuoso backend which signals when the server goes down.
