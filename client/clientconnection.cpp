@@ -114,7 +114,9 @@ int Soprano::Client::ClientConnection::createModel( const QString& name, const Q
     Q_UNUSED( settings );
 
     if ( !socket->waitForReadyRead(s_defaultTimeout) ) {
-        setError( "Command timed out." );
+        setError( "Command timed out.", Soprano::Error::ErrorTimeout );
+        // We cannot recover from a timeout, thus we force a reconnect
+        socket->close();
         return 0;
     }
 
@@ -143,7 +145,9 @@ void Soprano::Client::ClientConnection::removeModel( const QString& name )
     stream.writeString( name );
 
     if ( !socket->waitForReadyRead(s_defaultTimeout) ) {
-        setError( "Command timed out." );
+        setError( "Command timed out.", Soprano::Error::ErrorTimeout );
+        // We cannot recover from a timeout, thus we force a reconnect
+        socket->close();
         return;
     }
 
@@ -168,7 +172,9 @@ Soprano::BackendFeatures Soprano::Client::ClientConnection::supportedFeatures()
     stream.writeUnsignedInt16( COMMAND_SUPPORTED_FEATURES );
 
     if ( !socket->waitForReadyRead(s_defaultTimeout) ) {
-        setError( "Command timed out." );
+        setError( "Command timed out.", Soprano::Error::ErrorTimeout );
+        // We cannot recover from a timeout, thus we force a reconnect
+        socket->close();
         return 0;
     }
 
@@ -198,7 +204,9 @@ Soprano::Error::ErrorCode Soprano::Client::ClientConnection::addStatement( int m
     stream.writeStatement( statement );
 
     if ( !socket->waitForReadyRead(s_defaultTimeout) ) {
-        setError( "Command timed out." );
+        setError( "Command timed out.", Soprano::Error::ErrorTimeout );
+        // We cannot recover from a timeout, thus we force a reconnect
+        socket->close();
         return Error::ErrorUnknown;
     }
 
@@ -226,7 +234,9 @@ int Soprano::Client::ClientConnection::listContexts( int modelId )
     stream.writeUnsignedInt32( ( quint32 )modelId );
 
     if ( !socket->waitForReadyRead(s_defaultTimeout) ) {
-        setError( "Command timed out." );
+        setError( "Command timed out.", Soprano::Error::ErrorTimeout );
+        // We cannot recover from a timeout, thus we force a reconnect
+        socket->close();
         return 0;
     }
 
@@ -257,7 +267,9 @@ int Soprano::Client::ClientConnection::executeQuery( int modelId, const QString 
     stream.writeString( userQueryLanguage );
 
     if ( !socket->waitForReadyRead(s_defaultTimeout) ) {
-        setError( "Command timed out." );
+        setError( "Command timed out.", Soprano::Error::ErrorTimeout );
+        // We cannot recover from a timeout, thus we force a reconnect
+        socket->close();
         return 0;
     }
 
@@ -286,7 +298,9 @@ int Soprano::Client::ClientConnection::listStatements( int modelId, const Statem
     stream.writeStatement( partial );
 
     if ( !socket->waitForReadyRead(s_defaultTimeout) ) {
-        setError( "Command timed out." );
+        setError( "Command timed out.", Soprano::Error::ErrorTimeout );
+        // We cannot recover from a timeout, thus we force a reconnect
+        socket->close();
         return 0;
     }
 
@@ -315,7 +329,9 @@ Soprano::Error::ErrorCode Soprano::Client::ClientConnection::removeAllStatements
     stream.writeStatement( statement );
 
     if ( !socket->waitForReadyRead(s_defaultTimeout) ) {
-        setError( "Command timed out." );
+        setError( "Command timed out.", Soprano::Error::ErrorTimeout );
+        // We cannot recover from a timeout, thus we force a reconnect
+        socket->close();
         return Error::ErrorUnknown;
     }
 
@@ -344,7 +360,9 @@ Soprano::Error::ErrorCode Soprano::Client::ClientConnection::removeStatement( in
     stream.writeStatement( statement );
 
     if ( !socket->waitForReadyRead(s_defaultTimeout) ) {
-        setError( "Command timed out." );
+        setError( "Command timed out.", Soprano::Error::ErrorTimeout );
+        // We cannot recover from a timeout, thus we force a reconnect
+        socket->close();
         return Error::ErrorUnknown;
     }
 
@@ -372,7 +390,9 @@ int Soprano::Client::ClientConnection::statementCount( int modelId )
     stream.writeUnsignedInt32( ( quint32 )modelId );
 
     if ( !socket->waitForReadyRead(s_defaultTimeout) ) {
-        setError( "Command timed out." );
+        setError( "Command timed out.", Soprano::Error::ErrorTimeout );
+        // We cannot recover from a timeout, thus we force a reconnect
+        socket->close();
         return -1;
     }
 
@@ -401,7 +421,9 @@ bool Soprano::Client::ClientConnection::containsStatement( int modelId, const St
     stream.writeStatement( statement );
 
     if ( !socket->waitForReadyRead(s_defaultTimeout) ) {
-        setError( "Command timed out." );
+        setError( "Command timed out.", Soprano::Error::ErrorTimeout );
+        // We cannot recover from a timeout, thus we force a reconnect
+        socket->close();
         return false;
     }
 
@@ -430,7 +452,9 @@ bool Soprano::Client::ClientConnection::containsAnyStatement( int modelId, const
     stream.writeStatement( statement );
 
     if ( !socket->waitForReadyRead(s_defaultTimeout) ) {
-        setError( "Command timed out." );
+        setError( "Command timed out.", Soprano::Error::ErrorTimeout );
+        // We cannot recover from a timeout, thus we force a reconnect
+        socket->close();
         return false;
     }
 
@@ -458,7 +482,9 @@ bool Soprano::Client::ClientConnection::isEmpty( int modelId )
     stream.writeUnsignedInt32( ( quint32 )modelId );
 
     if ( !socket->waitForReadyRead(s_defaultTimeout) ) {
-        setError( "Command timed out." );
+        setError( "Command timed out.", Soprano::Error::ErrorTimeout );
+        // We cannot recover from a timeout, thus we force a reconnect
+        socket->close();
         return false;
     }
 
@@ -486,7 +512,9 @@ Soprano::Node Soprano::Client::ClientConnection::createBlankNode( int modelId )
     stream.writeUnsignedInt32( ( quint32 )modelId );
 
     if ( !socket->waitForReadyRead(s_defaultTimeout) ) {
-        setError( "Command timed out." );
+        setError( "Command timed out.", Soprano::Error::ErrorTimeout );
+        // We cannot recover from a timeout, thus we force a reconnect
+        socket->close();
         return Node();
     }
 
@@ -514,7 +542,9 @@ bool Soprano::Client::ClientConnection::iteratorNext( int id )
     stream.writeUnsignedInt32( ( quint32 )id );
 
     if ( !socket->waitForReadyRead(s_defaultTimeout) ) {
-        setError( "Command timed out." );
+        setError( "Command timed out.", Soprano::Error::ErrorTimeout );
+        // We cannot recover from a timeout, thus we force a reconnect
+        socket->close();
         return false;
     }
 
@@ -542,7 +572,9 @@ Soprano::Node Soprano::Client::ClientConnection::nodeIteratorCurrent( int id )
     stream.writeUnsignedInt32( ( quint32 )id );
 
     if ( !socket->waitForReadyRead(s_defaultTimeout) ) {
-        setError( "Command timed out." );
+        setError( "Command timed out.", Soprano::Error::ErrorTimeout );
+        // We cannot recover from a timeout, thus we force a reconnect
+        socket->close();
         return Node();
     }
 
@@ -570,7 +602,9 @@ Soprano::Statement Soprano::Client::ClientConnection::statementIteratorCurrent( 
     stream.writeUnsignedInt32( ( quint32 )id );
 
     if ( !socket->waitForReadyRead(s_defaultTimeout) ) {
-        setError( "Command timed out." );
+        setError( "Command timed out.", Soprano::Error::ErrorTimeout );
+        // We cannot recover from a timeout, thus we force a reconnect
+        socket->close();
         return Statement();
     }
 
@@ -598,7 +632,9 @@ Soprano::BindingSet Soprano::Client::ClientConnection::queryIteratorCurrent( int
     stream.writeUnsignedInt32( ( quint32 )id );
 
     if ( !socket->waitForReadyRead(s_defaultTimeout) ) {
-        setError( "Command timed out." );
+        setError( "Command timed out.", Soprano::Error::ErrorTimeout );
+        // We cannot recover from a timeout, thus we force a reconnect
+        socket->close();
         return BindingSet();
     }
 
@@ -626,7 +662,9 @@ Soprano::Statement Soprano::Client::ClientConnection::queryIteratorCurrentStatem
     stream.writeUnsignedInt32( ( quint32 )id );
 
     if ( !socket->waitForReadyRead(s_defaultTimeout) ) {
-        setError( "Command timed out." );
+        setError( "Command timed out.", Soprano::Error::ErrorTimeout );
+        // We cannot recover from a timeout, thus we force a reconnect
+        socket->close();
         return Statement();
     }
 
@@ -653,7 +691,9 @@ int Soprano::Client::ClientConnection::queryIteratorType( int id )
     stream.writeUnsignedInt32( ( quint32 )id );
 
     if ( !socket->waitForReadyRead(s_defaultTimeout) ) {
-        setError( "Command timed out." );
+        setError( "Command timed out.", Soprano::Error::ErrorTimeout );
+        // We cannot recover from a timeout, thus we force a reconnect
+        socket->close();
         return 0;
     }
 
@@ -681,7 +721,9 @@ bool Soprano::Client::ClientConnection::queryIteratorBoolValue( int id )
     stream.writeUnsignedInt32( ( quint32 )id );
 
     if ( !socket->waitForReadyRead(s_defaultTimeout) ) {
-        setError( "Command timed out." );
+        setError( "Command timed out.", Soprano::Error::ErrorTimeout );
+        // We cannot recover from a timeout, thus we force a reconnect
+        socket->close();
         return false;
     }
 
@@ -708,7 +750,9 @@ void Soprano::Client::ClientConnection::iteratorClose( int id )
     stream.writeUnsignedInt32( ( quint32 )id );
 
     if ( !socket->waitForReadyRead(s_defaultTimeout) ) {
-        setError( "Command timed out." );
+        setError( "Command timed out.", Soprano::Error::ErrorTimeout );
+        // We cannot recover from a timeout, thus we force a reconnect
+        socket->close();
         return;
     }
 
@@ -732,7 +776,9 @@ bool Soprano::Client::ClientConnection::checkProtocolVersion()
 
     // wait for a reply, but not forever, in case we are connected to something unknown
     if ( !socket->waitForReadyRead(s_defaultTimeout) ) {
-        setError( "Command timed out." );
+        setError( "Command timed out.", Soprano::Error::ErrorTimeout );
+        // We cannot recover from a timeout, thus we force a reconnect
+        socket->close();
         return false;
     }
 
