@@ -39,6 +39,7 @@
 #include <sys/types.h>
 #include <signal.h>
 #include <sys/wait.h>
+#include <unistd.h>
 #endif
 
 Q_DECLARE_METATYPE( QProcess::ExitStatus )
