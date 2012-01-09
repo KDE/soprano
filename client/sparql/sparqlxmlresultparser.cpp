@@ -174,7 +174,7 @@ namespace Soprano {
                 }
 
                 Uri result = Uri();
-                result.setUri(element.text());
+                result.setUri(QUrl::fromEncoded(element.text().toUtf8()));
 
 
 
