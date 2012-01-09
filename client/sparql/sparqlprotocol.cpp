@@ -82,7 +82,7 @@ int Soprano::Client::SparqlProtocol::query( const QString& queryS )
     int id = get( url.toEncoded(), buffer );
     m_resultsData[id] = buffer;
 
-    qDebug() << Q_FUNC_INFO << url << id;
+//    qDebug() << Q_FUNC_INFO << url << id;
 
     return id;
 }
@@ -102,7 +102,7 @@ QByteArray Soprano::Client::SparqlProtocol::blockingQuery( const QString& queryS
     delete m_resultsData[id];
     m_resultsData.remove( id );
 
-    qDebug() << Q_FUNC_INFO << data;
+//    qDebug() << Q_FUNC_INFO << data;
 
     return data;
 }
@@ -119,7 +119,7 @@ void Soprano::Client::SparqlProtocol::waitForRequest( int id )
 
 void Soprano::Client::SparqlProtocol::slotRequestFinished( int id, bool error )
 {
-    qDebug() << Q_FUNC_INFO << id << error;
+//    qDebug() << Q_FUNC_INFO << id << error;
 
     // we ignore all the other requests such as setting the user and so on
     if ( m_resultsData.contains( id ) ) {

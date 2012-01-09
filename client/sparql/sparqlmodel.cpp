@@ -339,7 +339,7 @@ Soprano::StatementIterator Soprano::Client::SparqlModel::listStatements( const S
 {
     // we cannot use a construct query due to missing graph support
     QString query = QString( "select * where { %1 }" ).arg( statementToConstructGraphPattern( partial, true ) );
-    qDebug() << "List Statements Query" << query;
+
     return executeQuery( query, Query::QueryLanguageSparql )
         .iterateStatementsFromBindings( partial.subject().isValid() ? QString() : QString( 's' ),
                                         partial.predicate().isValid() ? QString() : QString( 'p' ),
