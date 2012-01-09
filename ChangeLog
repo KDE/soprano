@@ -1,6 +1,10 @@
+2.7.5
+	* Be less strict when converting a string to a QDateTime:
+          - Allow an empty time part, ie. "2011-10-04".
+          - Allow the usage of a space instead of "T" to separate date from time.
+
 2.7.4
 	* Enabled large file support (_FILE_OFFSET_BITS=64) to fix large DB file locking on 32bit machines.
-	* Be less strict when converting a string to a QDateTime: allow an empty time part, ie. "2011-10-04"
 
 2.7.3
 	* Added new signal in the Virtuoso backend which signals when the server goes down.

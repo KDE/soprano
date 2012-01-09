@@ -181,7 +181,12 @@ QDate Soprano::DateTime::fromDateString( const QString& s )
 
 QDateTime Soprano::DateTime::fromDateTimeString( const QString& s )
 {
-    const int pos = s.indexOf('T');
+    // we support both the standard form and the often seen form which uses
+    // a space instead of the T.
+    int pos = s.indexOf('T');
+    if(pos < 0) {
+        pos = s.indexOf(' ');
+    }
 
     QDate date = fromDateString( s.mid( 0, pos ) );
     if( !date.isValid() ) {
