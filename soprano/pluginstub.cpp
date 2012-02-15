@@ -93,6 +93,10 @@ QObject* Soprano::PluginStub::plugin()
         QPluginLoader loader( d->libPath );
         d->plugin = loader.instance();
 
+        if (d->plugin == 0) {
+            qDebug() << "Could not load plugin at " << loader.fileName() << ". " << loader.errorString();
+            return d->plugin;
+        }
         Plugin* plugin = 0;
         if ( Backend* backend = qobject_cast<Backend*>( d->plugin ) ) {
             plugin = backend;
