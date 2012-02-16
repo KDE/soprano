@@ -1,3 +1,6 @@
+2.8.0
+	* Made LiteralValue(QVariant) constructor explicit.
+
 2.7.5
 	* Be less strict when converting a string to a QDateTime:
           - Allow an empty time part, ie. "2011-10-04".

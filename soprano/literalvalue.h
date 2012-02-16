@@ -1,7 +1,7 @@
 /*
  * This file is part of Soprano Project.
  *
- * Copyright (C) 2007-2011 Sebastian Trueg <trueg@kde.org>
+ * Copyright (C) 2007-2012 Sebastian Trueg <trueg@kde.org>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -86,10 +86,12 @@ namespace Soprano
          * Creates a new LiteralValue from a QVariant.
          * User types are not supported. If v contains an
          * unsupported type an invalid LiteralValue is created.
+         * This includes QUrl which is not supported. Use
+         * Node directly instead.
          *
          * \sa fromVariant()
          */
-        LiteralValue( const QVariant& v );
+        explicit LiteralValue( const QVariant& v );
 
         /**
          * Creates a literal value of type int (i.e.
