@@ -162,6 +162,15 @@ namespace {
                 // graph result
                 return new StatementIteratorQueryResultBackend( it );
             }
+
+            // also try parsing as Turtle - the default result form by dbpedia. FIXME: simply ask for a specific serialization instead
+            else if ( const Soprano::Parser* parser = Soprano::PluginManager::instance()->discoverParserForSerialization( Soprano::SerializationTurtle ) ) {
+                Soprano::StatementIterator it = parser->parseString( data, QUrl(), Soprano::SerializationTurtle );
+                if ( it.isValid() ) {
+                    // graph result
+                    return new StatementIteratorQueryResultBackend( it );
+                }
+            }
         }
 
         return Soprano::QueryResultIterator();

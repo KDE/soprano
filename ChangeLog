@@ -4,6 +4,8 @@
           - Allow the usage of a space instead of "T" to separate date from time.
 	* Fixed URI parsing in the SparqlModel.
 	* Fixed an endless loop in the VirtuosoModel destruction which can happen in rare error cases.
+	* Fixed serialization of non-string literal values.
+	* Support Turtle result encoding in the SPARQL model.
 
 2.7.4
 	* Enabled large file support (_FILE_OFFSET_BITS=64) to fix large DB file locking on 32bit machines.
