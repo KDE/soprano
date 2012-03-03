@@ -1,3 +1,6 @@
+
+#include <QDateTime>
+
 static QList<Soprano::Statement> testData( bool withContext )
 {
 
@@ -22,6 +25,10 @@ static QList<Soprano::Statement> testData( bool withContext )
     sl.append( Soprano::Statement( QUrl("http://soprano.sf.net/testdata/Soprano"),
                                    QUrl("http://soprano.sf.net/test#author"),
                                    QUrl("http://soprano.sf.net/testdata/SebastianTrueg"),
+                                   withContext ? mainContext : Node() ) );
+    sl.append( Soprano::Statement( QUrl("http://soprano.sf.net/testdata/Soprano"),
+                                   QUrl("http://soprano.sf.net/test#creationDate"),
+                                   LiteralValue(QDateTime::currentDateTime()),
                                    withContext ? mainContext : Node() ) );
 
     sl.append( Soprano::Statement( QUrl("http://soprano.sf.net/testdata/DanieleGaldi"),

@@ -61,50 +61,42 @@ namespace {
         }
     }*/
 
-    raptor_term *  convertNode( raptor_world * world, const Soprano::Node& node)
+    raptor_term*  convertNode( raptor_world * world, const Soprano::Node& node)
     {
-        raptor_term * answer = 0;
-        /* According to documentation, raptor_new_term family takes copy of
-         * all given input parameters
-         */
-        if ( node.isResource() ) {
-            raptor_uri * uri  = raptor_new_uri(world, ( const unsigned char* )node.uri().toEncoded().data() );
-            answer = raptor_new_term_from_uri(world,uri);
+        raptor_term* term = 0;
 
+        // According to documentation, raptor_new_term family creates deep copies of
+        // all given input parameters
+        if ( node.isResource() ) {
+            raptor_uri* uri  = raptor_new_uri(world, ( const unsigned char* )node.uri().toEncoded().data() );
+            term = raptor_new_term_from_uri(world, uri);
             raptor_free_uri(uri);
         }
         else if ( node.isBlank() ) {
-            answer = raptor_new_term_from_blank(
-                    world, (const unsigned char*)node.identifier().toUtf8().data() );
+            term = raptor_new_term_from_blank(world, (const unsigned char*)node.identifier().toUtf8().data() );
         }
         else if ( node.isLiteral() ) {
-            // Because QByteArray.data() is valid as long as QByteArray itself is
-            // alive, we store langBA ( and others _x_BA untill function exits
-
-            //const unsigned char * literal = 0;
-            QByteArray langBA;
-            const unsigned char * lang = 0;
-            raptor_uri * datatype = 0;
+            QByteArray lang;
+            raptor_uri* datatype = 0;
 
             if ( node.literal().isPlain() ) {
-                if ( !node.language().isEmpty() )
-                    langBA = node.language().toUtf8();
-                    lang = ( const unsigned char* )( langBA.constData() );
+                lang = node.language().toUtf8();
             }
             else {
                 datatype = raptor_new_uri( world, ( const unsigned char* )node.dataType().toEncoded().data() );
             }
 
-            // Now we costructs statement
-            answer = raptor_new_term_from_literal(world,(const unsigned char*)node.literal().toByteArray().constData(),datatype,lang);
+            term = raptor_new_term_from_literal(world,
+                                                reinterpret_cast<const unsigned char*>(node.literal().toString().toUtf8().constData()),
+                                                datatype,
+                                                reinterpret_cast<const unsigned char*>(lang.constData()));
 
-            // And free unnecessary resources
-            if ( datatype)
-                raptor_free_uri(datatype);
-
+            if( datatype ) {
+                raptor_free_uri( datatype );
+            }
         }
 
-        return answer;
+        return term;
     }
 
 
@@ -331,7 +323,7 @@ bool Soprano::Raptor::Serializer::serialize( StatementIterator it,
              * we can ignore Q value in this case
              * Acording to documentation, this array can have zero elements
              */
-            for( int mt_number = 0; mt_number < serializer_descr->mime_types_count;
+            for( unsigned int mt_number = 0; mt_number < serializer_descr->mime_types_count;
                     mt_number++)
             {
                 const char * mime_type_N = serializer_descr->mime_types[mt_number].mime_type;
