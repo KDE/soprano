@@ -1,7 +1,7 @@
 /*
  * This file is part of Soprano Project
  *
- * Copyright (C) 2008-2011 Sebastian Trueg <trueg@kde.org>
+ * Copyright (C) 2008-2012 Sebastian Trueg <trueg@kde.org>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -35,6 +35,26 @@
 
 Q_EXPORT_PLUGIN2(soprano_virtuosobackend, Soprano::Virtuoso::BackendPlugin)
 
+namespace {
+    QString parseVirtuosoVersion( const QByteArray& data ) {
+        QString erroutput = QString::fromLocal8Bit( data );
+        int vp = erroutput.indexOf( QLatin1String("Version" ) );
+        if ( vp > 0 ) {
+            vp += 8;
+            return erroutput.mid( vp, erroutput.indexOf( ' ', vp ) - vp );
+        }
+        return QString();
+    }
+
+    QString determineVirtuosoVersion( const QString& virtuosoBin ) {
+        QProcess p;
+        p.start( virtuosoBin, QStringList() << QLatin1String( "--version" ), QIODevice::ReadOnly );
+        p.waitForFinished();
+        return parseVirtuosoVersion( p.readAllStandardError() );
+    }
+}
+
+
 Soprano::Virtuoso::BackendPlugin::BackendPlugin()
     : Backend( "virtuosobackend" )
 {
@@ -58,6 +78,7 @@ Soprano::StorageModel* Soprano::Virtuoso::BackendPlugin::createModel( const Back
     int queryTimeout = valueInSettings( settings, QLatin1String( "QueryTimeout" ), 0 ).toInt();
 
     VirtuosoController* controller = 0;
+    QString virtuosoVersion = QLatin1String("1.0.0"); // a default low version in case we connect to a running server
     if ( host.isEmpty() &&
          port == 0 &&
          uid.isEmpty() &&
@@ -67,9 +88,21 @@ Soprano::StorageModel* Soprano::Virtuoso::BackendPlugin::createModel( const Back
             return 0;
         }
 
+        const QString virtuosoExe = locateVirtuosoBinary();
+        if ( virtuosoExe.isEmpty() ) {
+            setError( "Unable to find the Virtuoso binary." );
+            return 0;
+        }
+
+        virtuosoVersion = determineVirtuosoVersion(virtuosoExe);
+        if ( virtuosoVersion.isEmpty() ) {
+            setError( QString::fromLatin1("Failed to determine version of Virtuoso binary at %1").arg(virtuosoExe) );
+            return 0;
+        }
+
         // start local server
         controller = new VirtuosoController();
-        if ( !controller->start( settings, debugMode ? VirtuosoController::DebugMode : VirtuosoController::NoFlags ) ) {
+        if ( !controller->start( virtuosoExe, settings, debugMode ? VirtuosoController::DebugMode : VirtuosoController::NoFlags ) ) {
             setError( controller->lastError() );
             delete controller;
             return 0;
@@ -112,7 +145,7 @@ Soprano::StorageModel* Soprano::Virtuoso::BackendPlugin::createModel( const Back
         return 0;
     }
 
-    VirtuosoModel* model = new VirtuosoModel( connectionPool, this );
+    VirtuosoModel* model = new VirtuosoModel( virtuosoVersion, connectionPool, this );
     // mem mangement the ugly way
     // FIXME: improve
     if ( controller ) {
@@ -169,25 +202,6 @@ Soprano::BackendFeatures Soprano::Virtuoso::BackendPlugin::supportedFeatures() c
 }
 
 
-namespace {
-    QString parseVirtuosoVersion( const QByteArray& data ) {
-        QString erroutput = QString::fromLocal8Bit( data );
-        int vp = erroutput.indexOf( QLatin1String("Version" ) );
-        if ( vp > 0 ) {
-            vp += 8;
-            return erroutput.mid( vp, erroutput.indexOf( ' ', vp ) - vp );
-        }
-        return QString();
-    }
-
-    QString determineVirtuosoVersion( const QString& virtuosoBin ) {
-        QProcess p;
-        p.start( virtuosoBin, QStringList() << QLatin1String( "--version" ), QIODevice::ReadOnly );
-        p.waitForFinished();
-        return parseVirtuosoVersion( p.readAllStandardError() );
-    }
-}
-
 bool Soprano::Virtuoso::BackendPlugin::isAvailable() const
 {
 #ifndef Q_OS_WIN
@@ -197,7 +211,7 @@ bool Soprano::Virtuoso::BackendPlugin::isAvailable() const
     }
 #endif
 
-    QString virtuosoBin = VirtuosoController::locateVirtuosoBinary();
+    QString virtuosoBin = locateVirtuosoBinary();
     if ( virtuosoBin.isEmpty() ) {
         qDebug() << Q_FUNC_INFO << "could not find virtuoso-t binary";
         return false;
@@ -215,6 +229,33 @@ bool Soprano::Virtuoso::BackendPlugin::isAvailable() const
 
     qDebug() << "Using Virtuoso Version:" << vs;
     return true;
+}
+
+
+// static
+QString Soprano::Virtuoso::BackendPlugin::locateVirtuosoBinary()
+{
+    QStringList dirs = Soprano::exeDirs();
+#ifdef Q_OS_WIN
+    const QString virtuosoHome = QDir::fromNativeSeparators( qgetenv("VIRTUOSO_HOME") );
+    if ( !virtuosoHome.isEmpty() )
+        dirs << virtuosoHome + QLatin1String("/bin");
+    else {
+        dirs << QCoreApplication::applicationDirPath();
+    }
+#endif
+
+    foreach( const QString& dir, dirs ) {
+#ifdef Q_OS_WIN
+        QFileInfo info( dir + QLatin1String("/virtuoso-t.exe") );
+#else
+        QFileInfo info( dir + QLatin1String("/virtuoso-t") );
+#endif
+        if ( info.isExecutable() ) {
+            return info.absoluteFilePath();
+        }
+    }
+    return QString();
 }
 
 

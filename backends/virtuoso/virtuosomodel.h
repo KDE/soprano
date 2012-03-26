@@ -1,7 +1,7 @@
 /*
  * This file is part of Soprano Project
  *
- * Copyright (C) 2008-2011 Sebastian Trueg <trueg@kde.org>
+ * Copyright (C) 2008-2012 Sebastian Trueg <trueg@kde.org>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -40,7 +40,7 @@ namespace Soprano {
         /**
          * \param connection The base connection used for non-transaction requests
          */
-        VirtuosoModel( ODBC::ConnectionPool* connectionPool, const Backend* );
+        VirtuosoModel( const QString& virtuosoVersion, ODBC::ConnectionPool* connectionPool, const Backend* );
         ~VirtuosoModel();
 
         Error::ErrorCode addStatement( const Statement &statement );

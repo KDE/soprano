@@ -1,7 +1,7 @@
 /*
  * This file is part of Soprano Project
  *
- * Copyright (C) 2009-2011 Sebastian Trueg <trueg@kde.org>
+ * Copyright (C) 2009-2012 Sebastian Trueg <trueg@kde.org>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -90,7 +90,7 @@ Soprano::VirtuosoController::~VirtuosoController()
 }
 
 
-bool Soprano::VirtuosoController::start( const BackendSettings& settings, RunFlags flags )
+bool Soprano::VirtuosoController::start( const QString &virtuosoExe, const BackendSettings &settings, RunFlags flags )
 {
     switch( m_status ) {
         case NotRunning:
@@ -116,12 +116,6 @@ bool Soprano::VirtuosoController::start( const BackendSettings& settings, RunFla
     m_runFlags = flags;
 
     m_status = StartingUp;
-
-    QString virtuosoExe = locateVirtuosoBinary();
-    if ( virtuosoExe.isEmpty() ) {
-        setError( "Unable to find the Virtuoso binary." );
-        return false;
-    }
 
     const QString storageDir = valueInSettings( settings, BackendOptionStorageDir ).toString();
 
@@ -366,33 +360,6 @@ void Soprano::VirtuosoController::writeConfigFile( const QString& path, const Ba
     cfs.beginGroup( QLatin1String("I18N") );
     cfs.setValue( QLatin1String("XAnyNormalization"), "3" );
     cfs.endGroup();
-}
-
-
-// static
-QString Soprano::VirtuosoController::locateVirtuosoBinary()
-{
-    QStringList dirs = Soprano::exeDirs();
-#ifdef Q_OS_WIN
-    const QString virtuosoHome = QDir::fromNativeSeparators( qgetenv("VIRTUOSO_HOME") );
-    if ( !virtuosoHome.isEmpty() )
-        dirs << virtuosoHome + QLatin1String("/bin");
-    else {
-        dirs << QCoreApplication::applicationDirPath();
-    }
-#endif
-
-    foreach( const QString& dir, dirs ) {
-#ifdef Q_OS_WIN
-        QFileInfo info( dir + QLatin1String("/virtuoso-t.exe") );
-#else
-        QFileInfo info( dir + QLatin1String("/virtuoso-t") );
-#endif
-        if ( info.isExecutable() ) {
-            return info.absoluteFilePath();
-        }
-    }
-    return QString();
 }
 
 
