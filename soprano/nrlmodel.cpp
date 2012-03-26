@@ -302,18 +302,25 @@ Soprano::QueryResultIterator Soprano::NRLModel::executeQuery( const QString& que
         d->m_prefixMapMutex.lock();
         QHash<QString, QUrl> prefixes = d->m_prefixes;
         d->m_prefixMapMutex.unlock();
-        for ( QHash<QString, QUrl>::const_iterator it = prefixes.constBegin();
-              it != prefixes.constEnd(); ++it ) {
-            QString prefix = it.key();
-            QUrl ns = it.value();
 
-            // very stupid check for the prefix usage
-            if ( expandedQuery.contains( prefix + ':' ) ) {
-                // if the prefix is not defined add it
-                if ( !expandedQuery.contains( QRegExp( QString( "[pP][rR][eE][fF][iI][xX]\\s*%1\\s*:\\s*<%2>" )
-                                                       .arg( prefix )
-                                                       .arg( QRegExp::escape( ns.toString() ) ) ) ) ) {
-                    expandedQuery.prepend( QString( "prefix %1: <%2> " ).arg( prefix ).arg( ns.toString() ) );
+        // find position in the query to add the prefixes to: directly before the actual query start
+        // certain backends like the virtuoso one support SPARQL extensions which need to be before the
+        // prefixes
+        const int pos = expandedQuery.indexOf(QRegExp(QLatin1String("select|describe|construct|ask"), Qt::CaseInsensitive));
+        if(pos >= 0) {
+            for ( QHash<QString, QUrl>::const_iterator it = prefixes.constBegin();
+                  it != prefixes.constEnd(); ++it ) {
+                QString prefix = it.key();
+                QUrl ns = it.value();
+
+                // very stupid check for the prefix usage
+                if ( expandedQuery.contains( prefix + ':' ) ) {
+                    // if the prefix is not defined add it
+                    if ( !expandedQuery.contains( QRegExp( QString::fromLatin1( "[pP][rR][eE][fF][iI][xX]\\s*%1\\s*:\\s*<%2>" )
+                                                           .arg( prefix )
+                                                           .arg( QRegExp::escape( ns.toString() ) ) ) ) ) {
+                        expandedQuery.insert( pos, QString( "prefix %1: <%2> " ).arg( prefix ).arg( ns.toString() ) );
+                    }
                 }
             }
         }

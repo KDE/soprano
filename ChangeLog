@@ -1,3 +1,6 @@
+2.8.0
+	* Improved NRLModel query prefix expansion.
+
 2.7.6
 	* Support for the new SPARQL 1.1 DELETE statement which omits the graph to delete from
 	  for faster removeAllStatement execution.
