@@ -1,7 +1,7 @@
 /*
  * This file is part of Soprano Project
  *
- * Copyright (C) 2008-2011 Sebastian Trueg <trueg@kde.org>
+ * Copyright (C) 2008-2012 Sebastian Trueg <trueg@kde.org>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -67,9 +67,15 @@ Soprano::StorageModel* Soprano::Virtuoso::BackendPlugin::createModel( const Back
             return 0;
         }
 
+        const QString virtuosoExe = locateVirtuosoBinary();
+        if ( virtuosoExe.isEmpty() ) {
+            setError( "Unable to find the Virtuoso binary." );
+            return 0;
+        }
+
         // start local server
         controller = new VirtuosoController();
-        if ( !controller->start( settings, debugMode ? VirtuosoController::DebugMode : VirtuosoController::NoFlags ) ) {
+        if ( !controller->start( virtuosoExe, settings, debugMode ? VirtuosoController::DebugMode : VirtuosoController::NoFlags ) ) {
             setError( controller->lastError() );
             delete controller;
             return 0;
@@ -197,7 +203,7 @@ bool Soprano::Virtuoso::BackendPlugin::isAvailable() const
     }
 #endif
 
-    QString virtuosoBin = VirtuosoController::locateVirtuosoBinary();
+    QString virtuosoBin = locateVirtuosoBinary();
     if ( virtuosoBin.isEmpty() ) {
         qDebug() << Q_FUNC_INFO << "could not find virtuoso-t binary";
         return false;
@@ -215,6 +221,33 @@ bool Soprano::Virtuoso::BackendPlugin::isAvailable() const
 
     qDebug() << "Using Virtuoso Version:" << vs;
     return true;
+}
+
+
+// static
+QString Soprano::Virtuoso::BackendPlugin::locateVirtuosoBinary()
+{
+    QStringList dirs = Soprano::exeDirs();
+#ifdef Q_OS_WIN
+    const QString virtuosoHome = QDir::fromNativeSeparators( qgetenv("VIRTUOSO_HOME") );
+    if ( !virtuosoHome.isEmpty() )
+        dirs << virtuosoHome + QLatin1String("/bin");
+    else {
+        dirs << QCoreApplication::applicationDirPath();
+    }
+#endif
+
+    foreach( const QString& dir, dirs ) {
+#ifdef Q_OS_WIN
+        QFileInfo info( dir + QLatin1String("/virtuoso-t.exe") );
+#else
+        QFileInfo info( dir + QLatin1String("/virtuoso-t") );
+#endif
+        if ( info.isExecutable() ) {
+            return info.absoluteFilePath();
+        }
+    }
+    return QString();
 }
 
 
