@@ -1,7 +1,7 @@
 /*
  * This file is part of Soprano Project
  *
- * Copyright (C) 2009-2011 Sebastian Trueg <trueg@kde.org>
+ * Copyright (C) 2009-2012 Sebastian Trueg <trueg@kde.org>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -61,7 +61,7 @@ namespace Soprano {
         };
         Q_DECLARE_FLAGS( RunFlags, RunFlag )
 
-        bool start( const BackendSettings& settings, RunFlags = NoFlags );
+        bool start( const QString& virtuosoBinary, const BackendSettings& settings, RunFlags flags = NoFlags );
         bool shutdown();
 
         int usedPort() const;
@@ -69,7 +69,6 @@ namespace Soprano {
         Status status() const { return m_status; }
         ExitStatus lastExitStatus() const { return m_lastExitStatus; }
 
-        static QString locateVirtuosoBinary();
         static int pidOfRunningVirtuosoInstance( const QString& storagePath );
 
     Q_SIGNALS:

@@ -69,7 +69,6 @@ Soprano::Virtuoso::QueryResultIteratorBackend::QueryResultIteratorBackend( Virtu
         // otherwise a single row is returned
         if ( d->m_queryResult->fetchRow() ) {
             Node askVal = d->m_queryResult->getData( 1 );
-//            qDebug() << Q_FUNC_INFO << d->m_queryResult->resultColumns() << askVal;
             d->askResult = askVal.literal().toInt() != 0;
         }
         else {
@@ -171,7 +170,22 @@ bool Soprano::Virtuoso::QueryResultIteratorBackend::next()
 
 Soprano::Statement Soprano::Virtuoso::QueryResultIteratorBackend::currentStatement() const
 {
-    return d->graphIterator.current();
+    //
+    // More graph result hacking: starting with version 6.1.5 Virtuoso will return graph results
+    // as three columns S, P, O. While this makes way more sense than the serialized data in one
+    // blob it is harder to handle as a client could perfectly write a select query with variables
+    // S, P, and O.
+    // Thus, the only way to go is to allow both a binding and a graph handling of the result.
+    //
+    if( d->m_resultType == QueryResultIteratorBackendPrivate::GraphResult ) {
+        return d->graphIterator.current();
+    }
+    else if( isGraph() ) {
+        return Statement(binding(0), binding(1), binding(2));
+    }
+    else {
+        return Statement();
+    }
 }
 
 
@@ -228,7 +242,17 @@ QStringList Soprano::Virtuoso::QueryResultIteratorBackend::bindingNames() const
 
 bool Soprano::Virtuoso::QueryResultIteratorBackend::isGraph() const
 {
-    return d->m_resultType == QueryResultIteratorBackendPrivate::GraphResult;
+    //
+    // More graph result hacking: starting with version 6.1.5 Virtuoso will return graph results
+    // as three columns S, P, O. While this makes way more sense than the serialized data in one
+    // blob it is harder to handle as a client could perfectly write a select query with variables
+    // S, P, and O.
+    // Thus, the only way to go is to allow both a binding and a graph handling of the result.
+    //
+    return( d->m_resultType == QueryResultIteratorBackendPrivate::GraphResult ||
+            ( d->m_resultType == QueryResultIteratorBackendPrivate::BindingResult &&
+              d->bindingNames.count() == 3 &&
+              d->bindingNames == QStringList() << QLatin1String("S") << QLatin1String("P") << QLatin1String("O") ) );
 }
 
 

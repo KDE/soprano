@@ -1,7 +1,7 @@
 /*
  * This file is part of Soprano Project
  *
- * Copyright (C) 2008 Sebastian Trueg <trueg@kde.org>
+ * Copyright (C) 2008-2012 Sebastian Trueg <trueg@kde.org>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -48,9 +48,11 @@ namespace Soprano {
             BackendFeatures supportedFeatures() const;
             bool isAvailable() const;
 
+            static QString locateVirtuosoBinary();
+
 #ifndef Q_OS_WIN
         private:
-            QString findVirtuosoDriver() const;
+            static QString findVirtuosoDriver();
 #endif
         };
     }
