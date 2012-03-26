@@ -106,22 +106,17 @@ namespace {
 }
 
 
-Soprano::QueryResultIterator Soprano::VirtuosoModelPrivate::sparqlQuery( const QString& query )
+Soprano::QueryResultIterator Soprano::VirtuosoModelPrivate::sqlQuery( const QString& query )
 {
-    QString finalQuery( query );
-    finalQuery.prepend( QLatin1String( s_queryPrefix )  );
-
-//    qDebug() << Q_FUNC_INFO << finalQuery;
-
     if ( ODBC::Connection* conn = connectionPool->connection() ) {
-        ODBC::QueryResult* result = conn->executeQuery( finalQuery );
+        ODBC::QueryResult* result = conn->executeQuery( query );
         if ( result ) {
             q->clearError();
             Virtuoso::QueryResultIteratorBackend* backend = new Virtuoso::QueryResultIteratorBackend( this, result );
             return backend;
         }
         else {
-            qDebug() << "Query failed:" << finalQuery;
+            qDebug() << "Query failed:" << query;
             q->setError( conn->lastError() );
             return 0;
         }
@@ -130,6 +125,11 @@ Soprano::QueryResultIterator Soprano::VirtuosoModelPrivate::sparqlQuery( const Q
         q->setError( connectionPool->lastError() );
         return 0;
     }
+}
+
+Soprano::QueryResultIterator Soprano::VirtuosoModelPrivate::sparqlQuery( const QString& query )
+{
+    return sqlQuery( QLatin1String( s_queryPrefix ) + query );
 }
 
 
@@ -416,13 +416,20 @@ Soprano::QueryResultIterator Soprano::VirtuosoModel::executeQuery( const QString
                                                                    Query::QueryLanguage language,
                                                                    const QString& userQueryLanguage ) const
 {
-    if ( language != Soprano::Query::QueryLanguageSparql ) {
+    if ( language == Soprano::Query::QueryLanguageSparql ) {
+        return d->sparqlQuery( d->replaceFakeTypesInQuery( query ) );
+    }
+
+    else if( language == Soprano::Query::QueryLanguageUser &&
+             userQueryLanguage.toLower() == QLatin1String("sql") ) {
+        return d->sqlQuery( d->replaceFakeTypesInQuery( query ) );
+    }
+
+    else {
         setError( Error::Error( QString::fromLatin1( "Unsupported query language %1." )
                                 .arg( Query::queryLanguageToString( language, userQueryLanguage ) ) ) );
         return QueryResultIterator();
     }
-
-    return d->sparqlQuery( d->replaceFakeTypesInQuery( query ) );
 }
 
 
