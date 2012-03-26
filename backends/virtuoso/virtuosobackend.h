@@ -50,7 +50,7 @@ namespace Soprano {
 
 #ifndef Q_OS_WIN
         private:
-            QString findVirtuosoDriver() const;
+            static QString findVirtuosoDriver();
 #endif
         };
     }

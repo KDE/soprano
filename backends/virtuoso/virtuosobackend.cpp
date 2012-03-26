@@ -219,7 +219,8 @@ bool Soprano::Virtuoso::BackendPlugin::isAvailable() const
 
 
 #ifndef Q_OS_WIN
-QString Soprano::Virtuoso::BackendPlugin::findVirtuosoDriver() const
+// static
+QString Soprano::Virtuoso::BackendPlugin::findVirtuosoDriver()
 {
     return Soprano::findLibraryPath( "virtodbc_r", QStringList(), QStringList() << QLatin1String( "virtuoso/plugins/" ) << QLatin1String( "odbc/" ) );
 }
