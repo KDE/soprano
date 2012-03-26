@@ -62,6 +62,8 @@
  *
  * \section soprano_backend_vituoso_additions Additional Features
  *
+ * \subsection soprano_backend_virtuoso_stopped_signal Server Stopped Signal
+ *
  * Models created by the Virtuoso backend emit a non-standard signal which informs the client that the Virtuoso server went down.
  * This signal is only emitted for Virtuoso instances that were started by the backend and has the following signature:
  *
@@ -72,8 +74,16 @@
  * The parameter \p normalExit is \p true if the instance went down as scheduled (deletion of the model) and \p false if the
  * Virtuoso instance crashed or was killed by a third party. Typically a client would connect to the signal to properly re-create the model.
  *
+ * \subsection soprano_backend_virtuoso_sql_queries SQL Queries
  *
- * \section soprano_backend_vituoso_specialities Virtuoso Specialities
+ * It is possible to perform plain SQL queries through the %Soprano API by using the \p sql user query language in Model::executeQuery:
+ *
+ * \code
+ * QString query = "select * from DB.DBA.RDF_GRAPH_GROUP";
+ * Soprano::QueryResultIterator it = model->executeQuery(query, Soprano::Query::QueryLanguageUser, "sql");
+ * \endcode
+ *
+ * \section soprano_backend_virtuoso_specialities Virtuoso Specialities
  *
  * Since Virtuoso is an SQL server and, thus, does store all RDF data in SQL tables it
  * has some characteristics that are worth mentioning:

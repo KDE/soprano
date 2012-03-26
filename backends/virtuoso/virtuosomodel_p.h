@@ -65,6 +65,7 @@ namespace Soprano {
             m_openIteratorMutex.unlock();
         }
 
+        QueryResultIterator sqlQuery( const QString& query );
         QueryResultIterator sparqlQuery( const QString& query );
 
         QString replaceFakeTypesInQuery( const QString& query );
