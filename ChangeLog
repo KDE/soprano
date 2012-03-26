@@ -1,6 +1,7 @@
 2.7.6
 	* Support for the new SPARQL 1.1 DELETE statement which omits the graph to delete from
 	  for faster removeAllStatement execution.
+	* Support for the new default graph query result format of Virtuoso >= 6.1.5
 
 2.7.5
 	* Be less strict when converting a string to a QDateTime:
