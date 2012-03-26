@@ -1,3 +1,6 @@
+2.7.6
+	* Support for the new default graph query result format of Virtuoso >= 6.1.5
+
 2.7.5
 	* Be less strict when converting a string to a QDateTime:
           - Allow an empty time part, ie. "2011-10-04".
