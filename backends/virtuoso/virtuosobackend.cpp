@@ -35,6 +35,26 @@
 
 Q_EXPORT_PLUGIN2(soprano_virtuosobackend, Soprano::Virtuoso::BackendPlugin)
 
+namespace {
+    QString parseVirtuosoVersion( const QByteArray& data ) {
+        QString erroutput = QString::fromLocal8Bit( data );
+        int vp = erroutput.indexOf( QLatin1String("Version" ) );
+        if ( vp > 0 ) {
+            vp += 8;
+            return erroutput.mid( vp, erroutput.indexOf( ' ', vp ) - vp );
+        }
+        return QString();
+    }
+
+    QString determineVirtuosoVersion( const QString& virtuosoBin ) {
+        QProcess p;
+        p.start( virtuosoBin, QStringList() << QLatin1String( "--version" ), QIODevice::ReadOnly );
+        p.waitForFinished();
+        return parseVirtuosoVersion( p.readAllStandardError() );
+    }
+}
+
+
 Soprano::Virtuoso::BackendPlugin::BackendPlugin()
     : Backend( "virtuosobackend" )
 {
@@ -58,6 +78,7 @@ Soprano::StorageModel* Soprano::Virtuoso::BackendPlugin::createModel( const Back
     int queryTimeout = valueInSettings( settings, QLatin1String( "QueryTimeout" ), 0 ).toInt();
 
     VirtuosoController* controller = 0;
+    QString virtuosoVersion = QLatin1String("1.0.0"); // a default low version in case we connect to a running server
     if ( host.isEmpty() &&
          port == 0 &&
          uid.isEmpty() &&
@@ -70,6 +91,12 @@ Soprano::StorageModel* Soprano::Virtuoso::BackendPlugin::createModel( const Back
         const QString virtuosoExe = locateVirtuosoBinary();
         if ( virtuosoExe.isEmpty() ) {
             setError( "Unable to find the Virtuoso binary." );
+            return 0;
+        }
+
+        virtuosoVersion = determineVirtuosoVersion(virtuosoExe);
+        if ( virtuosoVersion.isEmpty() ) {
+            setError( QString::fromLatin1("Failed to determine version of Virtuoso binary at %1").arg(virtuosoExe) );
             return 0;
         }
 
@@ -118,7 +145,7 @@ Soprano::StorageModel* Soprano::Virtuoso::BackendPlugin::createModel( const Back
         return 0;
     }
 
-    VirtuosoModel* model = new VirtuosoModel( connectionPool, this );
+    VirtuosoModel* model = new VirtuosoModel( virtuosoVersion, connectionPool, this );
     // mem mangement the ugly way
     // FIXME: improve
     if ( controller ) {
@@ -174,25 +201,6 @@ Soprano::BackendFeatures Soprano::Virtuoso::BackendPlugin::supportedFeatures() c
             BackendFeatureContext );
 }
 
-
-namespace {
-    QString parseVirtuosoVersion( const QByteArray& data ) {
-        QString erroutput = QString::fromLocal8Bit( data );
-        int vp = erroutput.indexOf( QLatin1String("Version" ) );
-        if ( vp > 0 ) {
-            vp += 8;
-            return erroutput.mid( vp, erroutput.indexOf( ' ', vp ) - vp );
-        }
-        return QString();
-    }
-
-    QString determineVirtuosoVersion( const QString& virtuosoBin ) {
-        QProcess p;
-        p.start( virtuosoBin, QStringList() << QLatin1String( "--version" ), QIODevice::ReadOnly );
-        p.waitForFinished();
-        return parseVirtuosoVersion( p.readAllStandardError() );
-    }
-}
 
 bool Soprano::Virtuoso::BackendPlugin::isAvailable() const
 {

@@ -140,11 +140,12 @@ QString Soprano::VirtuosoModelPrivate::replaceFakeTypesInQuery( const QString& q
 }
 
 
-Soprano::VirtuosoModel::VirtuosoModel( ODBC::ConnectionPool* connectionPool, const Backend* b )
+Soprano::VirtuosoModel::VirtuosoModel( const QString &virtuosoVersion, ODBC::ConnectionPool* connectionPool, const Backend* b )
     : StorageModel(b),
       d( new VirtuosoModelPrivate() )
 {
     d->q = this;
+    d->m_virtuosoVersion = virtuosoVersion;
     d->connectionPool = connectionPool;
 }
 
@@ -319,13 +320,13 @@ Soprano::Error::ErrorCode Soprano::VirtuosoModel::removeAllStatements( const Sta
 {
 //    qDebug() << Q_FUNC_INFO << statement;
 
+    QString query;
     if ( statement.context().isValid() ) {
         if ( statement.context().uri() == Virtuoso::openlinkVirtualGraph() ) {
             setError( "Cannot remove statements from the virtual openlink graph. Virtuoso would not like that.", Error::ErrorInvalidArgument );
             return Error::ErrorInvalidArgument;
         }
 
-        QString query;
         if ( statement.context().isValid() &&
              !statement.subject().isValid() &&
              !statement.predicate().isValid() &&
@@ -340,75 +341,50 @@ Soprano::Error::ErrorCode Soprano::VirtuosoModel::removeAllStatements( const Sta
                           statementToConstructGraphPattern( statement, true ) );
 
         }
-//        qDebug() << "removeAllStatements query:" << query;
-        if ( ODBC::Connection* conn = d->connectionPool->connection() ) {
-            if ( conn->executeCommand( "sparql " + query ) == Error::ErrorNone ) {
-                // FIXME: can this be done with SQL/RDF views?
-                emit statementsRemoved();
-                Statement signalStatement( statement );
-                if( signalStatement.context() == Virtuoso::defaultGraph() )
-                    signalStatement.setContext( Node() );
-                emit statementRemoved( signalStatement );
-            }
-            setError( conn->lastError() );
-        }
-        else {
-            setError( d->connectionPool->lastError() );
-        }
-        return Error::convertErrorCode( lastError().code() );
     }
     else {
-        // FIXME: do this in a fancy way, maybe an inner sql query or something
-        QList<Node> allContexts = d->sparqlQuery( QString::fromLatin1( "select distinct ?g where { %1 . FILTER(?g != <%2>) . }" )
-                                                  .arg( statementToConstructGraphPattern( statement, true ),
-                                                        QLatin1String( Virtuoso::openlinkVirtualGraphString() ) ) )
-                                  .iterateBindings( 0 ).allNodes();
-        foreach( const Node& node, allContexts ) {
-            Statement s( statement );
-            if ( node.isValid() )
-                s.setContext( node );
-            else
-                s.setContext( Virtuoso::defaultGraph() );
-            Error::ErrorCode c = removeAllStatements( s );
-            if ( c != Error::ErrorNone )
-                return c;
-        }
-
-// the code below is not finished yet, still missing is a literal comparison. But then it should be much faster
-#if 0
-QStringList conditions;
-        if ( statement.subject().isValid() )
-            conditions << QString::fromLatin1( "s=iri_to_id ('')" ).arg( QString::fromAscii( statement.subject().uri().toEncoded() ) );
-        if ( statement.predicate().isValid() )
-            conditions << QString::fromLatin1( "p=iri_to_id ('')" ).arg( QString::fromAscii( statement.predicate().uri().toEncoded() ) );
-        if ( statement.object().isValid() ) {
-            if ( statement.object().isResource() ) {
-                conditions << QString::fromLatin1( "o=iri_to_id ('')" ).arg( QString::fromAscii( statement.object().uri().toEncoded() ) );
-            }
-            else {
-                Q_ASSERT( 0 );
-            }
-        }
-
-        QString query = QLatin1String( "delete from DB.DBA.RDF_QUAD where " ) + conditions.join( QLatin1String( " AND " ) ) + ';';
-
-        if ( ODBC::Connection* conn = d->connectionPool->connection() ) {
-            if ( ODBC::QueryResult* sh = conn->executeQuery( query ) ) {
-                bool b = sh->fetchScroll();
-                delete sh;
-                return Error::ErrorUnknown;
-            }
-            else {
-                setError( conn->lastError() );
-            }
+        //
+        // Starting with version 6.1.5 Virtuoso now supports the SPARQL 1.1 delete variant which allows to omit
+        // the graph from the delete pattern.
+        // For versions before we need to use the old hacky method which requires iterating all graph candidates.
+        //
+        if( d->m_virtuosoVersion >= QLatin1String("6.1.5") ) {
+            query = QString::fromLatin1("delete { %1 } where { %1 }").arg( statementToConstructGraphPattern(statement, true) );
         }
         else {
-            setError( d->connectionPool->lastError() );
+            QList<Node> allContexts = d->sparqlQuery( QString::fromLatin1( "select distinct ?g where { %1 . FILTER(?g != <%2>) . }" )
+                                                      .arg( statementToConstructGraphPattern( statement, true ),
+                                                            QLatin1String( Virtuoso::openlinkVirtualGraphString() ) ) )
+                                      .iterateBindings( 0 ).allNodes();
+            foreach( const Node& node, allContexts ) {
+                Statement s( statement );
+                if ( node.isValid() )
+                    s.setContext( node );
+                else
+                    s.setContext( Virtuoso::defaultGraph() );
+                Error::ErrorCode c = removeAllStatements( s );
+                if ( c != Error::ErrorNone )
+                    return c;
+            }
+            return Error::ErrorNone;
         }
-#endif
-
-        return Error::ErrorNone;
     }
+
+    if ( ODBC::Connection* conn = d->connectionPool->connection() ) {
+        if ( conn->executeCommand( "sparql " + query ) == Error::ErrorNone ) {
+            // FIXME: can this be done with SQL/RDF views?
+            emit statementsRemoved();
+            Statement signalStatement( statement );
+            if( signalStatement.context() == Virtuoso::defaultGraph() )
+                signalStatement.setContext( Node() );
+            emit statementRemoved( signalStatement );
+        }
+        setError( conn->lastError() );
+    }
+    else {
+        setError( d->connectionPool->lastError() );
+    }
+    return Error::convertErrorCode( lastError().code() );
 }
 
 
