@@ -32,6 +32,9 @@
 #include <QtCore/QtPlugin>
 #include <QtCore/QDir>
 
+#ifdef Q_OS_WIN
+#include <QtCore/QCoreApplication>
+#endif
 
 Q_EXPORT_PLUGIN2(soprano_virtuosobackend, Soprano::Virtuoso::BackendPlugin)
 
