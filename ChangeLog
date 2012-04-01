@@ -1,6 +1,9 @@
 2.8.0
 	* Improved NRLModel query prefix expansion.
 	* Support for plain SQL queries in the Virtuoso backend.
+	* Introduced new query language flag QueryLanguageSparqlNoInference. This language is
+          not supported by any backends. It is supposed to be used in clients like Nepomuk
+          to avoid the usage of long user types which are harder to read.
 
 2.7.6
 	* Support for the new SPARQL 1.1 DELETE statement which omits the graph to delete from

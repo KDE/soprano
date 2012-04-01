@@ -1,7 +1,7 @@
 /* This file is part of Soprano
  *
  * Copyright (C) 2006 Daniele Galdi <daniele.galdi@gmail.com>
- * Copyright (C) 2007 Sebastian Trueg <trueg@kde.org>
+ * Copyright (C) 2007-2012 Sebastian Trueg <trueg@kde.org>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -131,6 +131,11 @@ namespace Soprano
             QueryLanguageSparql = 0x1,  /**< The SPARQL query language: http://www.w3.org/TR/rdf-sparql-query/ */
             QueryLanguageRdql = 0x2,    /**< The RDQL RDF query language: http://www.w3.org/Submission/2004/SUBM-RDQL-20040109/ */
             QueryLanguageSerql = 0x4,   /**< Sesame RDF %Query Language: http://openrdf.org/doc/sesame2/users/ch05.html */
+            QueryLanguageSparqlNoInference = 0x8, /**< The SPARQL query language without any inference. This special language was
+                                                       introduced in %Soprano 2.8 to level the fact that no support for query flags
+                                                       exists. It is not supported by any backend yet but can be used in FilterModels.
+                                                       A possible implementation would be a FilterModel which enables Virtuoso inference
+                                                       through special SPARQL extensions as done in Nepomuk. */
             QueryLanguageUser = 0x1000, /**< The user type can be used to introduce unknown query lanaguages by name */
             QUERY_LANGUAGE_NONE = QueryLanguageNone,   /**< \deprecated use Soprano::Query::QueryLanguageNone */
             QUERY_LANGUAGE_SPARQL = QueryLanguageSparql, /**< \deprecated use Soprano::Query::QueryLanguageSparql */

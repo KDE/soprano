@@ -1,7 +1,7 @@
 /* This file is part of Soprano
  *
  * Copyright (C) 2006 Daniele Galdi <daniele.galdi@gmail.com>
- * Copyright (C) 2007 Sebastian Trueg <trueg@kde.org>
+ * Copyright (C) 2007-2012 Sebastian Trueg <trueg@kde.org>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -99,6 +99,8 @@ QString Soprano::Query::queryLanguageToString( QueryLanguage lang, const QString
         return QLatin1String( "RDQL" );
     case QueryLanguageSerql:
         return QLatin1String( "SERQL" );
+    case QueryLanguageSparqlNoInference:
+        return QLatin1String( "SPARQL_NO_INFERENCE" );
     default:
         return userQueryLanguage;
     }
@@ -114,6 +116,8 @@ Soprano::Query::QueryLanguage Soprano::Query::queryLanguageFromString( const QSt
         return QueryLanguageRdql;
     else if ( ql == "SERQL" )
         return QueryLanguageSerql;
+    else if ( ql == QLatin1String( "SPARQL_NO_INFERENCE" ) )
+        return QueryLanguageSparqlNoInference;
     else
         return QueryLanguageUser;
 }
