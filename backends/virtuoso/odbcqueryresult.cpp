@@ -265,11 +265,12 @@ Soprano::Node Soprano::ODBC::QueryResult::getData( int colNum )
             //
             // node is an IRI ID
             //
-            // This type is only returned in output:valmode "LONG"
-            // It needs to be translated into a literal string using the
+            // It needs to be translated into a URIusing the
             // ID_TO_IRI() function as the value is database specific.
             //
-            setError( QLatin1String( "IRI_ID is not supported yet." ) );
+            // For now, we simply pass it on as a string literal
+            //
+            node = LiteralValue(QString::fromLatin1(reinterpret_cast<const char*>(data), length));
             break;
 
         case 204:
