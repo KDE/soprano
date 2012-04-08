@@ -6,6 +6,8 @@
           to avoid the usage of long user types which are harder to read.
 	* Convert Virtuoso IRI_ID values into simple literal strings. At some point if the
           need arises we might call ID_TO_IRI() to convert them into URIs.
+	* New boolean option "noStatementSignals" in the Virtuoso backend which will disable
+	  Model::statementsAdded() and friends.
 
 2.7.6
 	* Support for the new SPARQL 1.1 DELETE statement which omits the graph to delete from

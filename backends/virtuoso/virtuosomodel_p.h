@@ -40,6 +40,7 @@ namespace Soprano {
     public:
         VirtuosoModelPrivate()
             : connectionPool( 0 ),
+              m_noStatementSignals( false ),
               m_fakeBooleanRegExp( QLatin1String("([\"'])(true|false)\\1\\^\\^(<http\\://www\\.w3\\.org/2001/XMLSchema#boolean>|\\w+\\:boolean)"),
                                    Qt::CaseInsensitive,
                                    QRegExp::RegExp2 ),
@@ -74,6 +75,8 @@ namespace Soprano {
         QList<Virtuoso::QueryResultIteratorBackend*> m_openIterators;
 
         QString m_virtuosoVersion;
+
+        bool m_noStatementSignals;
 
         VirtuosoModel* q;
 

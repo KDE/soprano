@@ -35,6 +35,8 @@
  *                    running Virtuoso server.
  * - \c QueryTimeout - The maximum time any query may take in milliseconds. See <a href="http://docs.openlinksw.com/virtuoso/anytimequeries.html">
  *                     Virtuoso Anytime Queries</a> for details.
+ * - \c noStatementSignals - A boolean property which when set will disable the statement signals like Model::statementsAdded(). The default
+ *                           is \p false, ie. to emit the signals.
  *
  * The settings above are user settings and have to be provided using Soprano::BackendOptionUser:
  *

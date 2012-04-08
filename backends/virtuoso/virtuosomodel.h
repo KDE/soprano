@@ -68,6 +68,7 @@ namespace Soprano {
         VirtuosoModelPrivate* const d;
 
         friend class VirtuosoModelPrivate;
+        friend class VirtuosoBackend;
     };
 }
 
