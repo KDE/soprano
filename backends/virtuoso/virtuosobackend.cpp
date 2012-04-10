@@ -22,6 +22,7 @@
 #include "virtuosobackend.h"
 #include "virtuosocontroller.h"
 #include "virtuosomodel.h"
+#include "virtuosomodel_p.h"
 #include "virtuosoconfigurator.h"
 #include "odbcconnection.h"
 #include "odbcconnectionpool.h"
@@ -79,6 +80,7 @@ Soprano::StorageModel* Soprano::Virtuoso::BackendPlugin::createModel( const Back
     QString path = valueInSettings( settings, BackendOptionStorageDir ).toString();
     bool debugMode = valueInSettings( settings, BackendOptionUser, QLatin1String( "debugmode" ) ).toBool();
     int queryTimeout = valueInSettings( settings, QLatin1String( "QueryTimeout" ), 0 ).toInt();
+    bool disableStatementSignals = valueInSettings( settings, QLatin1String( "noStatementSignals" ), false ).toBool();
 
     VirtuosoController* controller = 0;
     QString virtuosoVersion = QLatin1String("1.0.0"); // a default low version in case we connect to a running server
@@ -149,6 +151,7 @@ Soprano::StorageModel* Soprano::Virtuoso::BackendPlugin::createModel( const Back
     }
 
     VirtuosoModel* model = new VirtuosoModel( virtuosoVersion, connectionPool, this );
+    model->d->m_noStatementSignals = disableStatementSignals;
     // mem mangement the ugly way
     // FIXME: improve
     if ( controller ) {

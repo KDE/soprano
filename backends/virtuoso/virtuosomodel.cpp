@@ -1,7 +1,7 @@
 /*
  * This file is part of Soprano Project
  *
- * Copyright (C) 2008-2011 Sebastian Trueg <trueg@kde.org>
+ * Copyright (C) 2008-2012 Sebastian Trueg <trueg@kde.org>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -190,9 +190,11 @@ Soprano::Error::ErrorCode Soprano::VirtuosoModel::addStatement( const Statement&
         if ( conn->executeCommand( insert ) == Error::ErrorNone ) {
             clearError();
 
-            // FIXME: can this be done with SQL/RDF views?
-            emit statementAdded( statement );
-            emit statementsAdded();
+            if(!d->m_noStatementSignals) {
+                // FIXME: can this be done with SQL/RDF views?
+                emit statementAdded( statement );
+                emit statementsAdded();
+            }
 
             return Error::ErrorNone;
         }
@@ -303,9 +305,11 @@ Soprano::Error::ErrorCode Soprano::VirtuosoModel::removeStatement( const Stateme
 //    qDebug() << "removeStatement query:" << query;
     if ( ODBC::Connection* conn = d->connectionPool->connection() ) {
         if ( conn->executeCommand( QLatin1String( "sparql " ) + query ) == Error::ErrorNone ) {
-            // FIXME: can this be done with SQL/RDF views?
-            emit statementRemoved( statement );
-            emit statementsRemoved();
+            if(!d->m_noStatementSignals) {
+                // FIXME: can this be done with SQL/RDF views?
+                emit statementRemoved( statement );
+                emit statementsRemoved();
+            }
         }
         setError( conn->lastError() );
     }
@@ -372,12 +376,14 @@ Soprano::Error::ErrorCode Soprano::VirtuosoModel::removeAllStatements( const Sta
 
     if ( ODBC::Connection* conn = d->connectionPool->connection() ) {
         if ( conn->executeCommand( "sparql " + query ) == Error::ErrorNone ) {
-            // FIXME: can this be done with SQL/RDF views?
-            emit statementsRemoved();
-            Statement signalStatement( statement );
-            if( signalStatement.context() == Virtuoso::defaultGraph() )
-                signalStatement.setContext( Node() );
-            emit statementRemoved( signalStatement );
+            if(!d->m_noStatementSignals) {
+                // FIXME: can this be done with SQL/RDF views?
+                emit statementsRemoved();
+                Statement signalStatement( statement );
+                if( signalStatement.context() == Virtuoso::defaultGraph() )
+                    signalStatement.setContext( Node() );
+                emit statementRemoved( signalStatement );
+            }
         }
         setError( conn->lastError() );
     }
