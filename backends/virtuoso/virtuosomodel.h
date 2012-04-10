@@ -31,6 +31,9 @@ namespace Soprano {
     }
 
     class VirtuosoModelPrivate;
+    namespace Virtuoso {
+        class BackendPlugin;
+    }
 
     class VirtuosoModel : public StorageModel
     {
@@ -69,6 +72,7 @@ namespace Soprano {
 
         friend class VirtuosoModelPrivate;
         friend class VirtuosoBackend;
+        friend class Virtuoso::BackendPlugin;
     };
 }
 
