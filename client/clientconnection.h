@@ -24,6 +24,7 @@
 
 #include "error.h"
 #include "sopranotypes.h"
+#include "socket.h"
 
 #include <QtCore/QObject>
 #include <QtCore/QList>
@@ -87,19 +88,19 @@ namespace Soprano {
             /// trueg: this is an awful design which simply grew over time.
             /// At some point this needs fixing a lot. Maybe by simply not
             /// Using Qt for communication.
-            bool connectInCurrentThread();
-            bool isConnectedInCurrentThread();
+            bool connect();
+            bool isConnected();
 
         protected:
             /**
              * Creates a new IODevice for communication.
              * ClientConnection will create one for each thread.
              */
-            virtual QIODevice* newConnection() = 0;
-            virtual bool isConnected( QIODevice* dev ) = 0;
+            virtual Socket* newConnection() = 0;
+            virtual bool isConnected( Socket* ) { return false; }
 
         private:
-            QIODevice* socketForCurrentThread();
+            Socket* getSocket();
 
             ClientConnectionPrivate* const d;
         };
