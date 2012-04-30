@@ -159,7 +159,7 @@ bool Soprano::Client::LocalSocketClient::connect( const QString& name )
     }
     else {
         setError( "Already connected" );
-        return false;
+        return true;
     }
 }
 
