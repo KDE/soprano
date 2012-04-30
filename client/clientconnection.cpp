@@ -821,7 +821,7 @@ bool Soprano::Client::ClientConnection::isConnected()
     return ( d->socketStorage.hasLocalData() &&
              isConnected( d->socketStorage.localData()->socket() ) );
 #else
-    return( d->socket != 0 );
+    return( d->socket != 0 && d->socket.isConnected() );
 #endif
 }
 
