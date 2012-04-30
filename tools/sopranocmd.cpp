@@ -757,6 +757,7 @@ int main( int argc, char *argv[] )
 #endif
     if ( args.hasSetting( "port" ) &&
               !args.hasSetting( "backend" ) ) {
+        /*
         QHostAddress host = QHostAddress::LocalHost;
         quint16 port = Soprano::Client::TcpClient::DEFAULT_PORT;
         port = args.getSetting( "port" ).toInt();
@@ -777,6 +778,10 @@ int main( int argc, char *argv[] )
             return 2;
         }
         isRemoteModel = true;
+        */
+        errStream << "TCP client/server support has been disabled in Soprano 2.8 due to internal changes" << endl
+                  << "and the lack of interest and time from the developers." << endl;
+        return 1;
     }
     else if ( args.hasSetting( "socket" ) ) {
         QString socketPath = args.getSetting( "socket" );

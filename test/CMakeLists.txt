@@ -170,12 +170,6 @@ if(BUILD_CLUCENE_INDEX)
   add_test(indexmodelmultithreadingtest ${EXECUTABLE_OUTPUT_PATH}/indexmodelmultithreadingtest)
 endif(BUILD_CLUCENE_INDEX)
 
-# Server test
-qt4_automoc(sopranodclienttest sopranodclienttest.cpp)
-add_executable(sopranodclienttest sopranodclienttest.cpp)
-target_link_libraries(sopranodclienttest sopranomodeltest sopranoclient ${QT_QTCORE_LIBRARY} ${QT_QTTEST_LIBRARY} ${QT_QTNETWORK_LIBRARY})
-add_test(sopranodclienttest ${EXECUTABLE_OUTPUT_PATH}/sopranodclienttest)
-
 # LocalSocketClient multithreading test
 qt4_automoc(localsocketmultithreadtest localsocketmultithreadingtest.cpp)
 add_executable(localsocketmultithreadtest localsocketmultithreadingtest.cpp)
