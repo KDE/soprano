@@ -1,7 +1,7 @@
 /*
  * This file is part of Soprano Project.
  *
- * Copyright (C) 2010 Sebastian Trueg <trueg@kde.org>
+ * Copyright (C) 2010-2012 Sebastian Trueg <trueg@kde.org>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -33,7 +33,6 @@
 
 Soprano::Socket::Socket( SOCKET_HANDLE fd )
     : m_handle( fd ),
-      m_autoReConnect( fd == -1 ),
       m_mutex( QMutex::Recursive )
 {
 }
@@ -83,13 +82,6 @@ qint64 Soprano::Socket::read( char* buffer, qint64 max )
 {
     qint64 r = ::read( m_handle, buffer, max );
     if ( r < 0 ) {
-        if ( errno == EBADF &&
-             m_autoReConnect ) {
-            qDebug() << Q_FUNC_INFO << "Trying re-connect";
-            if ( open() ) {
-                return read( buffer, max );
-            }
-        }
         setError( QString::fromLatin1( "Failed to read from fd %1 (%2)" ).arg( m_handle ).arg( QLatin1String( strerror( errno ) ) ) );
     }
     return r;
@@ -100,14 +92,6 @@ qint64 Soprano::Socket::write( const char* buffer, qint64 max )
 {
     qint64 r = ::write( m_handle, buffer, max );
     if ( r < 0 ) {
-        if ( ( errno == EBADF ||
-               errno == EPIPE ) &&
-             m_autoReConnect ) {
-            qDebug() << Q_FUNC_INFO << "Trying re-connect";
-            if ( open() ) {
-                return write( buffer, max );
-            }
-        }
         setError( QString::fromLatin1( "Failed to write to fd %1 (%2)" ).arg( m_handle ).arg( QLatin1String( strerror( errno ) ) ) );
     }
     return r;
