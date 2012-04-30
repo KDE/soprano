@@ -50,7 +50,7 @@ Soprano::Client::ClientModel::~ClientModel()
     // closed by the server anyway.
     //
     QMutexLocker locker( &m_openIteratorsMutex );
-    if ( m_client->isConnectedInCurrentThread() ) {
+    if ( m_client->isConnected() ) {
         for ( int i = 0; i < m_openIterators.count(); ++i ) {
             m_client->iteratorClose( m_openIterators[i] );
         }

@@ -8,7 +8,10 @@
           need arises we might call ID_TO_IRI() to convert them into URIs.
 	* New boolean option "noStatementSignals" in the Virtuoso backend which will disable
 	  Model::statementsAdded() and friends.
-
+	* Improved local unix socket communication in the server/client system:
+          A custom socket implementation as a replacment for QLocalSocket makes it possible to
+          use one socket across threads.
+ 
 2.7.6
 	* Support for the new SPARQL 1.1 DELETE statement which omits the graph to delete from
 	  for faster removeAllStatement execution.

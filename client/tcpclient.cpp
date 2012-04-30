@@ -117,7 +117,7 @@ bool Soprano::Client::TcpClient::connect( const QHostAddress& address, int port 
     if ( !isConnected() ) {
         if ( !d->connection )
             d->connection = new TcpClientConnection( address, port, this );
-        if ( d->connection->connectInCurrentThread() &&
+        if ( d->connection->connect() &&
              d->connection->checkProtocolVersion() ) {
             return true;
         }
@@ -135,7 +135,7 @@ bool Soprano::Client::TcpClient::connect( const QHostAddress& address, int port 
 
 bool Soprano::Client::TcpClient::isConnected()
 {
-    return d->connection ? d->connection->isConnectedInCurrentThread() : false;
+    return d->connection ? d->connection->isConnected() : false;
 }
 
 

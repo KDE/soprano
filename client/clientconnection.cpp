@@ -1,7 +1,7 @@
 /*
  * This file is part of Soprano Project.
  *
- * Copyright (C) 2007-2010 Sebastian Trueg <trueg@kde.org>
+ * Copyright (C) 2007-2012 Sebastian Trueg <trueg@kde.org>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -22,7 +22,8 @@
 #include "clientconnection.h"
 #include "clientconnection_p.h"
 #include "commands.h"
-#include "datastream.h"
+#include "socketstream.h"
+#include "socket.h"
 
 #include "node.h"
 #include "statement.h"
@@ -30,7 +31,6 @@
 #include "bindingset.h"
 #include "backend.h"
 
-#include <QtCore/QIODevice>
 #include <QtCore/QThread>
 #include <QtCore/QMutex>
 #include <QtCore/QMutexLocker>
@@ -45,7 +45,8 @@ namespace {
 }
 
 
-Soprano::Client::SocketHandler::SocketHandler( ClientConnectionPrivate* client, QIODevice* socket )
+#ifdef Q_OS_WIN
+Soprano::Client::SocketHandler::SocketHandler( ClientConnectionPrivate* client, Socket* socket )
     : QObject(),
       m_client( client ),
       m_socket( socket )
@@ -59,17 +60,21 @@ Soprano::Client::SocketHandler::~SocketHandler()
     m_client->sockets.removeAll( m_socket );
     delete m_socket;
 }
-
+#endif
 
 Soprano::Client::ClientConnection::ClientConnection( QObject* parent )
     : QObject( parent ),
       d( new ClientConnectionPrivate() )
 {
+#ifndef Q_OS_WIN
+    d->socket = 0;
+#endif
 }
 
 
 Soprano::Client::ClientConnection::~ClientConnection()
 {
+#ifdef Q_OS_WIN
     d->socketMutex.lock();
     // the sockets need to be deleted in their respective threads.
     // this is what d->socketStorage does. We only close them here.
@@ -78,25 +83,29 @@ Soprano::Client::ClientConnection::~ClientConnection()
         socket->close();
     }
     d->socketMutex.unlock();
+#else
+    delete d->socket;
+#endif
     delete d;
 }
 
 
-QIODevice* Soprano::Client::ClientConnection::socketForCurrentThread()
+Soprano::Socket *Soprano::Client::ClientConnection::getSocket()
 {
-    if ( isConnectedInCurrentThread() ) {
+#ifdef Q_OS_WIN
+    if ( isConnected() ) {
         return d->socketStorage.localData()->socket();
     }
-    else if ( QIODevice* socket = newConnection() ) {
+    else if ( Socket* socket = newConnection() ) {
         d->socketMutex.lock();
         SocketHandler* cleaner = new SocketHandler( d, socket );
         d->sockets.append( socket );
         d->socketMutex.unlock();
         d->socketStorage.setLocalData( cleaner );
-        return socket;
     }
-
-    return 0;
+#else
+    return d->socket;
+#endif
 }
 
 
@@ -104,10 +113,10 @@ int Soprano::Client::ClientConnection::createModel( const QString& name, const Q
 {
     //qDebug() << this << QTime::currentTime().toString( "hh:mm:ss.zzz" ) << QThread::currentThreadId() << "(ClientConnection::createModel)";
 
-    QIODevice* socket = socketForCurrentThread();
+    Socket* socket = getSocket();
     if ( !socket )
         return 0;
-    DataStream stream( socket );
+    SocketStream stream( socket );
 
     stream.writeUnsignedInt16( COMMAND_CREATE_MODEL );
     stream.writeString( name );
@@ -136,10 +145,10 @@ void Soprano::Client::ClientConnection::removeModel( const QString& name )
 {
     //qDebug() << this << QTime::currentTime().toString( "hh:mm:ss.zzz" ) << QThread::currentThreadId() << "(ClientConnection::removeModel)";
 
-    QIODevice* socket = socketForCurrentThread();
+    Socket* socket = getSocket();
     if ( !socket )
         return;
-    DataStream stream( socket );
+    SocketStream stream( socket );
 
     stream.writeUnsignedInt16( COMMAND_REMOVE_MODEL );
     stream.writeString( name );
@@ -164,10 +173,10 @@ Soprano::BackendFeatures Soprano::Client::ClientConnection::supportedFeatures()
 {
     //qDebug() << this << QTime::currentTime().toString( "hh:mm:ss.zzz" ) << QThread::currentThreadId() << "(ClientConnection::supportedFeatures)";
 
-    QIODevice* socket = socketForCurrentThread();
+    Socket* socket = getSocket();
     if ( !socket )
         return BackendFeatureNone;
-    DataStream stream( socket );
+    SocketStream stream( socket );
 
     stream.writeUnsignedInt16( COMMAND_SUPPORTED_FEATURES );
 
@@ -194,10 +203,10 @@ Soprano::Error::ErrorCode Soprano::Client::ClientConnection::addStatement( int m
 {
     //qDebug() << this << QTime::currentTime().toString( "hh:mm:ss.zzz" ) << QThread::currentThreadId() << "(ClientConnection::addStatement)";
 
-    QIODevice* socket = socketForCurrentThread();
+    Socket* socket = getSocket();
     if ( !socket )
         return Error::convertErrorCode( lastError().code() );
-    DataStream stream( socket );
+    SocketStream stream( socket );
 
     stream.writeUnsignedInt16( COMMAND_MODEL_ADD_STATEMENT );
     stream.writeUnsignedInt32( ( quint32 )modelId );
@@ -225,10 +234,10 @@ int Soprano::Client::ClientConnection::listContexts( int modelId )
 {
     //qDebug() << this << QTime::currentTime().toString( "hh:mm:ss.zzz" ) << QThread::currentThreadId() << "(ClientConnection::listContexts)";
 
-    QIODevice* socket = socketForCurrentThread();
+    Socket* socket = getSocket();
     if ( !socket )
         return 0;
-    DataStream stream( socket );
+    SocketStream stream( socket );
 
     stream.writeUnsignedInt16( COMMAND_MODEL_LIST_CONTEXTS );
     stream.writeUnsignedInt32( ( quint32 )modelId );
@@ -255,10 +264,10 @@ int Soprano::Client::ClientConnection::executeQuery( int modelId, const QString 
 {
     //qDebug() << this << QTime::currentTime().toString( "hh:mm:ss.zzz" ) << QThread::currentThreadId() << "(ClientConnection::executeQuery)";
 
-    QIODevice* socket = socketForCurrentThread();
+    Socket* socket = getSocket();
     if ( !socket )
         return 0;
-    DataStream stream( socket );
+    SocketStream stream( socket );
 
     stream.writeUnsignedInt16( COMMAND_MODEL_QUERY );
     stream.writeUnsignedInt32( ( quint32 )modelId );
@@ -288,10 +297,10 @@ int Soprano::Client::ClientConnection::listStatements( int modelId, const Statem
 {
     //qDebug() << this << QTime::currentTime().toString( "hh:mm:ss.zzz" ) << QThread::currentThreadId() << "(ClientConnection::listStatements)";
 
-    QIODevice* socket = socketForCurrentThread();
+    Socket* socket = getSocket();
     if ( !socket )
         return 0;
-    DataStream stream( socket );
+    SocketStream stream( socket );
 
     stream.writeUnsignedInt16( COMMAND_MODEL_LIST_STATEMENTS );
     stream.writeUnsignedInt32( ( quint32 )modelId );
@@ -319,10 +328,10 @@ Soprano::Error::ErrorCode Soprano::Client::ClientConnection::removeAllStatements
 {
     //qDebug() << this << QTime::currentTime().toString( "hh:mm:ss.zzz" ) << QThread::currentThreadId() << "(ClientConnection::removeAllStatements)";
 
-    QIODevice* socket = socketForCurrentThread();
+    Socket* socket = getSocket();
     if ( !socket )
         return Error::convertErrorCode( lastError().code() );
-    DataStream stream( socket );
+    SocketStream stream( socket );
 
     stream.writeUnsignedInt16( COMMAND_MODEL_REMOVE_ALL_STATEMENTS );
     stream.writeUnsignedInt32( ( quint32 )modelId );
@@ -350,10 +359,10 @@ Soprano::Error::ErrorCode Soprano::Client::ClientConnection::removeStatement( in
 {
     //qDebug() << this << QTime::currentTime().toString( "hh:mm:ss.zzz" ) << QThread::currentThreadId() << "(ClientConnection::removeStatement)";
 
-    QIODevice* socket = socketForCurrentThread();
+    Socket* socket = getSocket();
     if ( !socket )
         return Error::convertErrorCode( lastError().code() );
-    DataStream stream( socket );
+    SocketStream stream( socket );
 
     stream.writeUnsignedInt16( COMMAND_MODEL_REMOVE_STATEMENT );
     stream.writeUnsignedInt32( ( quint32 )modelId );
@@ -381,10 +390,10 @@ int Soprano::Client::ClientConnection::statementCount( int modelId )
 {
     //qDebug() << this << QTime::currentTime().toString( "hh:mm:ss.zzz" ) << QThread::currentThreadId() << "(ClientConnection::statementCount)";
 
-    QIODevice* socket = socketForCurrentThread();
+    Socket* socket = getSocket();
     if ( !socket )
         return -1;
-    DataStream stream( socket );
+    SocketStream stream( socket );
 
     stream.writeUnsignedInt16( COMMAND_MODEL_STATEMENT_COUNT );
     stream.writeUnsignedInt32( ( quint32 )modelId );
@@ -411,10 +420,10 @@ bool Soprano::Client::ClientConnection::containsStatement( int modelId, const St
 {
     //qDebug() << this << QTime::currentTime().toString( "hh:mm:ss.zzz" ) << QThread::currentThreadId() << "(ClientConnection::containsStatement)";
 
-    QIODevice* socket = socketForCurrentThread();
+    Socket* socket = getSocket();
     if ( !socket )
         return false;
-    DataStream stream( socket );
+    SocketStream stream( socket );
 
     stream.writeUnsignedInt16( COMMAND_MODEL_CONTAINS_STATEMENT );
     stream.writeUnsignedInt32( ( quint32 )modelId );
@@ -442,10 +451,10 @@ bool Soprano::Client::ClientConnection::containsAnyStatement( int modelId, const
 {
     //qDebug() << this << QTime::currentTime().toString( "hh:mm:ss.zzz" ) << QThread::currentThreadId() << "(ClientConnection::containsAnyStatement)";
 
-    QIODevice* socket = socketForCurrentThread();
+    Socket* socket = getSocket();
     if ( !socket )
         return false;
-    DataStream stream( socket );
+    SocketStream stream( socket );
 
     stream.writeUnsignedInt16( COMMAND_MODEL_CONTAINS_ANY_STATEMENT );
     stream.writeUnsignedInt32( ( quint32 )modelId );
@@ -473,10 +482,10 @@ bool Soprano::Client::ClientConnection::isEmpty( int modelId )
 {
     //qDebug() << this << QTime::currentTime().toString( "hh:mm:ss.zzz" ) << QThread::currentThreadId() << "(ClientConnection::isEmpty)";
 
-    QIODevice* socket = socketForCurrentThread();
+    Socket* socket = getSocket();
     if ( !socket )
         return false;
-    DataStream stream( socket );
+    SocketStream stream( socket );
 
     stream.writeUnsignedInt16( COMMAND_MODEL_IS_EMPTY );
     stream.writeUnsignedInt32( ( quint32 )modelId );
@@ -503,10 +512,10 @@ Soprano::Node Soprano::Client::ClientConnection::createBlankNode( int modelId )
 {
     //qDebug() << this << QTime::currentTime().toString( "hh:mm:ss.zzz" ) << QThread::currentThreadId() << "(ClientConnection::createBlankNode)";
 
-    QIODevice* socket = socketForCurrentThread();
+    Socket* socket = getSocket();
     if ( !socket )
         return Node();
-    DataStream stream( socket );
+    SocketStream stream( socket );
 
     stream.writeUnsignedInt16( COMMAND_MODEL_CREATE_BLANK_NODE );
     stream.writeUnsignedInt32( ( quint32 )modelId );
@@ -533,10 +542,10 @@ bool Soprano::Client::ClientConnection::iteratorNext( int id )
 {
     //qDebug() << this << QTime::currentTime().toString( "hh:mm:ss.zzz" ) << QThread::currentThreadId() << "(ClientConnection::iteratorNext)";
 
-    QIODevice* socket = socketForCurrentThread();
+    Socket* socket = getSocket();
     if ( !socket )
         return false;
-    DataStream stream( socket );
+    SocketStream stream( socket );
 
     stream.writeUnsignedInt16( COMMAND_ITERATOR_NEXT );
     stream.writeUnsignedInt32( ( quint32 )id );
@@ -563,10 +572,10 @@ Soprano::Node Soprano::Client::ClientConnection::nodeIteratorCurrent( int id )
 {
     //qDebug() << this << QTime::currentTime().toString( "hh:mm:ss.zzz" ) << QThread::currentThreadId() << "(ClientConnection::nodeIteratorCurrent)";
 
-    QIODevice* socket = socketForCurrentThread();
+    Socket* socket = getSocket();
     if ( !socket )
         return Node();
-    DataStream stream( socket );
+    SocketStream stream( socket );
 
     stream.writeUnsignedInt16( COMMAND_ITERATOR_CURRENT_NODE );
     stream.writeUnsignedInt32( ( quint32 )id );
@@ -593,10 +602,10 @@ Soprano::Statement Soprano::Client::ClientConnection::statementIteratorCurrent( 
 {
     //qDebug() << this << QTime::currentTime().toString( "hh:mm:ss.zzz" ) << QThread::currentThreadId() << "(ClientConnection::statementIteratorCurrent)";
 
-    QIODevice* socket = socketForCurrentThread();
+    Socket* socket = getSocket();
     if ( !socket )
         return Statement();
-    DataStream stream( socket );
+    SocketStream stream( socket );
 
     stream.writeUnsignedInt16( COMMAND_ITERATOR_CURRENT_STATEMENT );
     stream.writeUnsignedInt32( ( quint32 )id );
@@ -623,10 +632,10 @@ Soprano::BindingSet Soprano::Client::ClientConnection::queryIteratorCurrent( int
 {
     //qDebug() << this << QTime::currentTime().toString( "hh:mm:ss.zzz" ) << QThread::currentThreadId() << "(ClientConnection::queryIteratorCurrent)";
 
-    QIODevice* socket = socketForCurrentThread();
+    Socket* socket = getSocket();
     if ( !socket )
         return BindingSet();
-    DataStream stream( socket );
+    SocketStream stream( socket );
 
     stream.writeUnsignedInt16( COMMAND_ITERATOR_CURRENT_BINDINGSET );
     stream.writeUnsignedInt32( ( quint32 )id );
@@ -653,10 +662,10 @@ Soprano::Statement Soprano::Client::ClientConnection::queryIteratorCurrentStatem
 {
     //qDebug() << this << QTime::currentTime().toString( "hh:mm:ss.zzz" ) << QThread::currentThreadId() << "(ClientConnection::queryIteratorCurrentStatement)";
 
-    QIODevice* socket = socketForCurrentThread();
+    Socket* socket = getSocket();
     if ( !socket )
         return Statement();
-    DataStream stream( socket );
+    SocketStream stream( socket );
 
     stream.writeUnsignedInt16( COMMAND_ITERATOR_CURRENT_STATEMENT );
     stream.writeUnsignedInt32( ( quint32 )id );
@@ -682,10 +691,10 @@ int Soprano::Client::ClientConnection::queryIteratorType( int id )
 {
     //qDebug() << this << QTime::currentTime().toString( "hh:mm:ss.zzz" ) << QThread::currentThreadId() << "(ClientConnection::queryIteratorType)";
 
-    QIODevice* socket = socketForCurrentThread();
+    Socket* socket = getSocket();
     if ( !socket )
         return 0;
-    DataStream stream( socket );
+    SocketStream stream( socket );
 
     stream.writeUnsignedInt16( COMMAND_ITERATOR_QUERY_TYPE );
     stream.writeUnsignedInt32( ( quint32 )id );
@@ -712,10 +721,10 @@ bool Soprano::Client::ClientConnection::queryIteratorBoolValue( int id )
 {
     //qDebug() << this << QTime::currentTime().toString( "hh:mm:ss.zzz" ) << QThread::currentThreadId() << "(ClientConnection::queryIteratorBoolValue)";
 
-    QIODevice* socket = socketForCurrentThread();
+    Socket* socket = getSocket();
     if ( !socket )
         return false;
-    DataStream stream( socket );
+    SocketStream stream( socket );
 
     stream.writeUnsignedInt16( COMMAND_ITERATOR_QUERY_BOOL_VALUE );
     stream.writeUnsignedInt32( ( quint32 )id );
@@ -741,10 +750,10 @@ void Soprano::Client::ClientConnection::iteratorClose( int id )
 {
     //qDebug() << this << QTime::currentTime().toString( "hh:mm:ss.zzz" ) << QThread::currentThreadId() << "(ClientConnection::iteratorClose)";
 
-    QIODevice* socket = socketForCurrentThread();
+    Socket* socket = getSocket();
     if ( !socket )
         return;
-    DataStream stream( socket );
+    SocketStream stream( socket );
 
     stream.writeUnsignedInt16( COMMAND_ITERATOR_CLOSE );
     stream.writeUnsignedInt32( ( quint32 )id );
@@ -766,10 +775,10 @@ void Soprano::Client::ClientConnection::iteratorClose( int id )
 
 bool Soprano::Client::ClientConnection::checkProtocolVersion()
 {
-    QIODevice* socket = socketForCurrentThread();
+    Socket* socket = getSocket();
     if ( !socket )
         return false;
-    DataStream stream( socket );
+    SocketStream stream( socket );
 
     stream.writeUnsignedInt16( COMMAND_SUPPORTS_PROTOCOL_VERSION );
     stream.writeUnsignedInt32( ( quint32 )PROTOCOL_VERSION );
@@ -795,17 +804,28 @@ bool Soprano::Client::ClientConnection::checkProtocolVersion()
 }
 
 
-bool Soprano::Client::ClientConnection::connectInCurrentThread()
+bool Soprano::Client::ClientConnection::connect()
 {
-    return( socketForCurrentThread() != 0 );
+#ifndef Q_OS_WIN
+    if(!d->socket) {
+        d->socket = newConnection();
+    }
+#endif
+    return( getSocket() != 0 );
 }
 
 
-bool Soprano::Client::ClientConnection::isConnectedInCurrentThread()
+bool Soprano::Client::ClientConnection::isConnected()
 {
+#ifdef Q_OS_WIN
     return ( d->socketStorage.hasLocalData() &&
              isConnected( d->socketStorage.localData()->socket() ) );
+#else
+    return( d->socket != 0 && d->socket.isConnected() );
+#endif
 }
 
 #include "clientconnection.moc"
+#ifdef Q_OS_WIN
 #include "clientconnection_p.moc"
+#endif
