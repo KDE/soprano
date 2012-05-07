@@ -75,6 +75,11 @@ target_link_libraries(
   ${QT_QTXML_LIBRARY}
   soprano
 )
+
+if(WIN32)
+   target_link_libraries(sopranoclient ws2_32)
+endif(WIN32)
+
 if(BUILD_DBUS_SUPPORT)
   target_link_libraries(
     sopranoclient

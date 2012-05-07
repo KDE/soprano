@@ -120,9 +120,6 @@ namespace Soprano {
         private:
             class Private;
             Private* const d;
-#ifdef Q_OS_WIN
-            Q_PRIVATE_SLOT( d, void _s_localSocketError( QLocalSocket::LocalSocketError ) )
-#endif
         };
     }
 }

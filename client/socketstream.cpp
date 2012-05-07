@@ -33,17 +33,13 @@
 Soprano::SocketStream::SocketStream( Soprano::Socket* dev )
     : m_device( dev )
 {
-#ifndef Q_OS_WIN
     m_device->lock();
-#endif
 }
 
 
 Soprano::SocketStream::~SocketStream()
 {
-#ifndef Q_OS_WIN
     m_device->unlock();
-#endif
 }
 
 
@@ -60,11 +56,7 @@ bool Soprano::SocketStream::writeByteArray( const QByteArray& a )
         int x = qMin( 1024U, len-cnt );
         int r = m_device->write( a.data()+cnt, x );
         if ( r < 0 ) {
-#ifdef Q_OS_WIN
-            setError( Error::Error( QString( "Failed to write string after %1 of %2 bytes (%3)." ).arg( cnt ).arg( len ).arg( m_device->errorString() ) ) );
-#else
             setError(m_device->lastError());
-#endif
             return false;
         }
         cnt += r;
@@ -255,11 +247,7 @@ bool Soprano::SocketStream::read( char* data, qint64 size )
             setError( Error::Error( QString( "Failed to read after %1 of %2 bytes (%3)." )
                                     .arg( cnt )
                                     .arg( size )
-#ifdef Q_OS_WIN
-                                    .arg( m_device->errorString ) ) );
-#else
                                     .arg( m_device->lastError().message() ) ) );
-#endif
             return false;
         }
         else if ( r == 0 && size > 0 ) {
@@ -267,11 +255,7 @@ bool Soprano::SocketStream::read( char* data, qint64 size )
                 setError( Error::Error( QString( "Timeout when reading after %1 of %2 bytes (%3)." )
                                         .arg( cnt )
                                         .arg( size )
-#ifdef Q_OS_WIN
-                                        .arg( m_device->errorString ) ) );
-#else
                                         .arg( m_device->lastError().message() ) ) );
-#endif
                 return false;
             }
         }

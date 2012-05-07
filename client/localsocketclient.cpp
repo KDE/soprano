@@ -29,12 +29,6 @@
 #include <QtCore/QThread>
 #include <QtNetwork/QLocalSocket>
 
-#ifdef Q_OS_WIN
-Q_DECLARE_METATYPE( QLocalSocket::LocalSocketError )
-Q_DECLARE_METATYPE( QAbstractSocket::SocketError )
-Q_DECLARE_METATYPE( QAbstractSocket::SocketState )
-#endif
-
 namespace Soprano {
     namespace Client {
         class LocalSocketClientConnection : public ClientConnection
@@ -45,9 +39,6 @@ namespace Soprano {
 
         protected:
             Socket *newConnection();
-#ifdef Q_OS_WIN
-            bool isConnected( Socket* );
-#endif
 
         private:
             QString m_socketPath;
@@ -71,34 +62,16 @@ namespace Soprano {
                 path = QDir::homePath() + QLatin1String( "/.soprano/socket" );
             }
 
-#ifndef Q_OS_WIN
             LocalSocket* socket = new LocalSocket;
             if ( socket->open( path ) ) {
                 return socket;
             }
             else {
                 setError( socket->lastError() );
-#else
-            QLocalSocket* socket = new QLocalSocket;
-            socket->connectToServer( path, QIODevice::ReadWrite );
-            if ( socket->waitForConnected() ) {
-                QObject::connect( socket, SIGNAL( error( QLocalSocket::LocalSocketError ) ),
-                                  parent(), SLOT( _s_localSocketError( QLocalSocket::LocalSocketError ) ) );
-                return socket;
-            }
-            else {
-                setError( socket->errorString() );
-#endif
                 delete socket;
                 return 0;
             }
         }
-
-#ifdef Q_OS_WIN
-        bool LocalSocketClientConnection::isConnected( Socket *device ) {
-            return( device ? static_cast<QLocalSocket*>( device )->state() == QLocalSocket::ConnectedState : false );
-        }
-#endif
     }
 }
 
@@ -111,28 +84,12 @@ public:
     }
 
     LocalSocketClientConnection* connection;
-#ifdef Q_OS_WIN
-    void _s_localSocketError( QLocalSocket::LocalSocketError );
-#endif
 };
-
-#ifdef Q_OS_WIN
-void Soprano::Client::LocalSocketClient::Private::_s_localSocketError( QLocalSocket::LocalSocketError error )
-{
-    qDebug() << "local socket error:" << error;
-}
-#endif
-
 
 Soprano::Client::LocalSocketClient::LocalSocketClient( QObject* parent )
     : QObject( parent ),
       d( new Private() )
 {
-#ifdef Q_OS_WIN
-    qRegisterMetaType<QLocalSocket::LocalSocketError>();
-    qRegisterMetaType<QAbstractSocket::SocketError>();
-    qRegisterMetaType<QAbstractSocket::SocketState>();
-#endif
 }
 
 

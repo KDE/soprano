@@ -22,14 +22,26 @@
 #include "socket.h"
 
 #include <sys/types.h>
-#include <sys/socket.h>
-#include <sys/un.h>
 #include <unistd.h>
 #include <errno.h>
 #include <string.h>
 
 #include <QtCore/QFile>
 #include <QtCore/QDebug>
+
+#ifndef Q_OS_WIN
+#include <sys/socket.h>
+#include <sys/un.h>
+#else
+#include <winsock2.h>
+/* POSIX requires only at least 100 bytes */
+#define UNIX_PATH_LEN   108
+
+struct sockaddr_un {
+  unsigned short sun_family;              /* address family AF_LOCAL/AF_UNIX */
+  char           sun_path[UNIX_PATH_LEN]; /* 108 bytes of socket address     */
+};
+#endif
 
 Soprano::Socket::Socket( SOCKET_HANDLE fd )
     : m_handle( fd ),

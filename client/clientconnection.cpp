@@ -45,67 +45,24 @@ namespace {
 }
 
 
-#ifdef Q_OS_WIN
-Soprano::Client::SocketHandler::SocketHandler( ClientConnectionPrivate* client, Socket* socket )
-    : QObject(),
-      m_client( client ),
-      m_socket( socket )
-{
-}
-
-
-Soprano::Client::SocketHandler::~SocketHandler()
-{
-    QMutexLocker lock( &m_client->socketMutex );
-    m_client->sockets.removeAll( m_socket );
-    delete m_socket;
-}
-#endif
-
 Soprano::Client::ClientConnection::ClientConnection( QObject* parent )
     : QObject( parent ),
       d( new ClientConnectionPrivate() )
 {
-#ifndef Q_OS_WIN
     d->socket = 0;
-#endif
 }
 
 
 Soprano::Client::ClientConnection::~ClientConnection()
 {
-#ifdef Q_OS_WIN
-    d->socketMutex.lock();
-    // the sockets need to be deleted in their respective threads.
-    // this is what d->socketStorage does. We only close them here.
-    // FIXME: QThreadStorage does NOT delete the local data in its destructor!
-    foreach( QIODevice* socket, d->sockets ) {
-        socket->close();
-    }
-    d->socketMutex.unlock();
-#else
     delete d->socket;
-#endif
     delete d;
 }
 
 
 Soprano::Socket *Soprano::Client::ClientConnection::getSocket()
 {
-#ifdef Q_OS_WIN
-    if ( isConnected() ) {
-        return d->socketStorage.localData()->socket();
-    }
-    else if ( Socket* socket = newConnection() ) {
-        d->socketMutex.lock();
-        SocketHandler* cleaner = new SocketHandler( d, socket );
-        d->sockets.append( socket );
-        d->socketMutex.unlock();
-        d->socketStorage.setLocalData( cleaner );
-    }
-#else
     return d->socket;
-#endif
 }
 
 
@@ -806,26 +763,16 @@ bool Soprano::Client::ClientConnection::checkProtocolVersion()
 
 bool Soprano::Client::ClientConnection::connect()
 {
-#ifndef Q_OS_WIN
     if(!d->socket) {
         d->socket = newConnection();
     }
-#endif
     return( getSocket() != 0 );
 }
 
 
 bool Soprano::Client::ClientConnection::isConnected()
 {
-#ifdef Q_OS_WIN
-    return ( d->socketStorage.hasLocalData() &&
-             isConnected( d->socketStorage.localData()->socket() ) );
-#else
     return( d->socket != 0 && d->socket->isConnected() );
-#endif
 }
 
 #include "clientconnection.moc"
-#ifdef Q_OS_WIN
-#include "clientconnection_p.moc"
-#endif

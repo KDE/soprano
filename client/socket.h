@@ -29,9 +29,6 @@
 typedef int SOCKET_HANDLE;
 
 namespace Soprano {
-#ifdef Q_OS_WIN
-    typedef QIODevice Socket;
-#else
     /**
      * A thread-safe socket without the QObject overhead of Qt's own socket
      * implementations.
@@ -97,7 +94,6 @@ namespace Soprano {
 
         QString m_path;
     };
-#endif
 }
 
 #endif

@@ -22,51 +22,14 @@
 #ifndef _SOPRANO_SERVER_CLIENT_CONNECTION_P_H_
 #define _SOPRANO_SERVER_CLIENT_CONNECTION_P_H_
 
-#include <QtCore/QMutex>
-#include <QtCore/QList>
-#include <QtCore/QThreadStorage>
-#include <QtCore/QIODevice>
 #include "socket.h"
-
-class QThread;
 
 namespace Soprano {
     namespace Client {
-#ifdef Q_OS_WIN
-        class ClientConnectionPrivate;
-
-        /**
-         * A simple wrapper class which makes sure that
-         * sockets are closed and deleted once their
-         * spawning thread goes down.
-         */
-        class SocketHandler : public QObject
-        {
-            Q_OBJECT
-
-        public:
-            SocketHandler( ClientConnectionPrivate*, QIODevice* socket );
-            ~SocketHandler();
-
-            QIODevice* socket() const { return m_socket; }
-            void close() { m_socket->close(); }
-
-        private:
-            ClientConnectionPrivate* m_client;
-            QIODevice* m_socket;
-        };
-#endif
-
         class ClientConnectionPrivate
         {
         public:
-#ifndef Q_OS_WIN
             Socket* socket;
-#else
-            QList<QIODevice*> sockets;
-            QMutex socketMutex;
-            QThreadStorage<Soprano::Client::SocketHandler*> socketStorage;
-#endif
         };
     }
 }
