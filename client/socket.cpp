@@ -22,7 +22,6 @@
 #include "socket.h"
 
 #include <sys/types.h>
-#include <unistd.h>
 #include <errno.h>
 #include <string.h>
 
@@ -30,9 +29,11 @@
 #include <QtCore/QDebug>
 
 #ifndef Q_OS_WIN
+#include <unistd.h>
 #include <sys/socket.h>
 #include <sys/un.h>
 #else
+#include <io.h>
 #include <winsock2.h>
 /* POSIX requires only at least 100 bytes */
 #define UNIX_PATH_LEN   108
