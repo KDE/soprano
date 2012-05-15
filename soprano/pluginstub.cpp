@@ -114,7 +114,7 @@ QObject* Soprano::PluginStub::plugin()
             }
         }
         else {
-            qDebug() << "(Soprano::PluginManager) found no soprano plugin at " << loader.fileName();
+            qDebug() << "(Soprano::PluginManager) found no soprano plugin at " << loader.fileName() << "- error:" << loader.errorString();
             delete d->plugin;
             d->plugin = 0;
         }
