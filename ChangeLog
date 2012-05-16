@@ -2,6 +2,7 @@
 	* Support for the new SPARQL 1.1 DELETE statement which omits the graph to delete from
 	  for faster removeAllStatement execution.
 	* Support for the new default graph query result format of Virtuoso >= 6.1.5
+	* Fixed apidox generation with Doxygen 1.8.0.
 
 2.7.5
 	* Be less strict when converting a string to a QDateTime:

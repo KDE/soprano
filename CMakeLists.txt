@@ -222,33 +222,35 @@ endif(NOT WIN32)
 find_package(Doxygen)
 
 if(DOXYGEN_EXECUTABLE)
-  configure_file(${soprano_SOURCE_DIR}/Doxyfile.cmake ${soprano_BINARY_DIR}/Doxyfile)
-  set(QTDOCS_ONLINE "http://doc.qt.nokia.com/latest/")
+  set(QTDOCS_ONLINE "http://qt-project.org/doc/qt-4.8/")
 
   if(EXISTS ${QT_DOC_DIR}/html)
-    set(QTDOCS "${QT_DOC_DIR}/html")
+    set(QTDOCS_LOCAL "${QT_DOC_DIR}/html")
   else(EXISTS ${QT_DOC_DIR}/html)
-    set(QTDOCS ${QTDOCS_ONLINE})
+    set(QTDOCS_LOCAL ${QTDOCS_ONLINE})
   endif(EXISTS ${QT_DOC_DIR}/html)
+
+  set(QTDOCS ${QTDOCS_LOCAL})
+  configure_file(${soprano_SOURCE_DIR}/Doxyfile.cmake ${soprano_BINARY_DIR}/Doxyfile.local)
+
+  set(QTDOCS ${QTDOCS_ONLINE})
+  configure_file(${soprano_SOURCE_DIR}/Doxyfile.cmake ${soprano_BINARY_DIR}/Doxyfile.online)
 
   if(SOPRANO_BUILD_API_DOCS)
     add_custom_target(
       apidox ALL
-      COMMAND ${DOXYGEN_EXECUTABLE} Doxyfile
-      COMMAND docs/html/installdox -q -l qt4.tag@${QTDOCS} docs/html/*.html
+      COMMAND ${DOXYGEN_EXECUTABLE} Doxyfile.local
       COMMENT "Building Soprano API docs...")
   else(SOPRANO_BUILD_API_DOCS)
     add_custom_target(
       apidox
-      COMMAND ${DOXYGEN_EXECUTABLE} Doxyfile
-      COMMAND docs/html/installdox -q -l qt4.tag@${QTDOCS} docs/html/*.html
+      COMMAND ${DOXYGEN_EXECUTABLE} Doxyfile.local
       COMMENT "Building Soprano API docs...")
   endif(SOPRANO_BUILD_API_DOCS)
 
   add_custom_target(
     onlineapidox
-    COMMAND ${DOXYGEN_EXECUTABLE} Doxyfile
-    COMMAND docs/html/installdox -q -l qt4.tag@${QTDOCS_ONLINE} docs/html/*.html
+    COMMAND ${DOXYGEN_EXECUTABLE} Doxyfile.online
     COMMENT "Building Soprano API docs...")
 
   add_custom_target(
