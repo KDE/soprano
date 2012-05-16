@@ -238,7 +238,7 @@ SKIP_FUNCTION_MACROS   = YES
 #---------------------------------------------------------------------------
 # Configuration::additions related to external references   
 #---------------------------------------------------------------------------
-TAGFILES               = ${soprano_SOURCE_DIR}/qt4.tag
+TAGFILES               = ${soprano_SOURCE_DIR}/qt4.tag=${QTDOCS}
 GENERATE_TAGFILE       = 
 ALLEXTERNALS           = NO
 EXTERNAL_GROUPS        = YES
