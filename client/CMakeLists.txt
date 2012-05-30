@@ -14,6 +14,8 @@ include_directories(
 )
 
 set(soprano_client_SRC
+  ${soprano_server_SOURCE_DIR}/datastream.cpp
+  tcpclient.cpp
   socket.cpp
   socketstream.cpp
   localsocketclient.cpp
@@ -94,6 +96,7 @@ INSTALL(TARGETS sopranoclient
 
 install(
   FILES 
+  tcpclient.h
   localsocketclient.h
   DESTINATION include/soprano
 )
