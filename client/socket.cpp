@@ -53,6 +53,7 @@ Soprano::Socket::Socket( SOCKET_HANDLE fd )
 
 Soprano::Socket::~Socket()
 {
+    close();
 }
 
 
