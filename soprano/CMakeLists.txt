@@ -1,6 +1,8 @@
 project(soprano_core)
 
-include_directories(
+# overriding QT_USE_FILE since that includes QT_INCLUDE_DIR before soprano headers
+set(CMAKE_INCLUDE_DIRECTORIES_BEFORE ON)
+include_directories(BEFORE
   ${soprano_SOURCE_DIR}
   ${soprano_core_BINARY_DIR}
   ${soprano_core_SOURCE_DIR}
@@ -9,6 +11,7 @@ include_directories(
   ${soprano_core_SOURCE_DIR}/vocabulary
   ${QT_QTCORE_INCLUDE_DIR}
   ${QT_INCLUDE_DIR}
+  ${soprano_core_SOURCE_DIR}
   )
 
 configure_file(soprano-config.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/soprano-config.h)
