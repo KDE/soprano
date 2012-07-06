@@ -252,15 +252,11 @@ bool Soprano::SocketStream::read( char* data, qint64 size )
         }
         else if ( r == 0 && size > 0 ) {
             // If virtuoso is killed, read returns 0, but select returns ok. This means end of file.
-            // ### TODO: check with Thiago
-            //if ( !m_device->waitForReadyRead( 30000 ) ) {
-            qWarning() << "GOT 0 BYTES -> TIMEOUT";
-                setError( Error::Error( QString( "Timeout when reading after %1 of %2 bytes (%3)." )
-                                        .arg( cnt )
-                                        .arg( size )
-                                        .arg( m_device->lastError().message() ) ) );
-                return false;
-            //}
+            setError( Error::Error( QString( "Timeout when reading after %1 of %2 bytes (%3)." )
+                                    .arg( cnt )
+                                    .arg( size )
+                                    .arg( m_device->lastError().message() ) ) );
+            return false;
         }
 
         cnt += r;
