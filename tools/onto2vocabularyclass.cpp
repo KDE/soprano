@@ -63,6 +63,13 @@ static const char* LGPL_HEADER = "/*\n"
                                  " * Boston, MA 02110-1301, USA.\n"
                                  " */\n";
 
+#if QT_VERSION < QT_VERSION_CHECK(5, 0, 0)
+// In Qt4, QUrl is not threadsafe, even for "readonly" concurrent accesses from multiple threads,
+// because the parsing happens on demand, internally in QUrl.
+#define USE_THREAD_STORAGE 1
+#else
+#define USE_THREAD_STORAGE 0
+#endif
 
 #define VERSION "1.2"
 
@@ -435,7 +442,11 @@ int main( int argc, char *argv[] )
     // write source
     // ----------------------------------------------------
     sourceStream << LGPL_HEADER << endl;
-    sourceStream << "#include \"" << headerFile.fileName() << "\"" << endl << endl;
+    sourceStream << "#include \"" << headerFile.fileName() << "\"" << endl;
+#if USE_THREAD_STORAGE
+    sourceStream << "#include <QThreadStorage>" << endl;
+#endif
+    sourceStream << endl;
 
     QString privateClassName = className[0].toUpper() + className.mid( 1 ).toLower() + "Private";
     QString singletonName = "s_" + className.toLower();
@@ -480,7 +491,19 @@ int main( int argc, char *argv[] )
     }
     sourceStream << "};" << endl << endl;
 
-    sourceStream << "Q_GLOBAL_STATIC( " << privateClassName << ", " << singletonName << " )" << endl << endl;
+#if USE_THREAD_STORAGE
+    const QString qtsName = "qt" + singletonName;
+    sourceStream << "QThreadStorage<" << privateClassName << " *> " << qtsName << ";" << endl;
+    sourceStream << privateClassName << "* " << singletonName << "()" << endl
+                 << "{" << endl
+                 << createIndent( 1 ) << "if (!" << qtsName << ".hasLocalData())" << endl
+                 << createIndent( 2 ) << qtsName << ".setLocalData(new " << privateClassName << ");" << endl
+                 << createIndent( 1 ) << "return " << qtsName << ".localData();" << endl
+                 << "}" << endl;
+#else
+    sourceStream << "Q_GLOBAL_STATIC( " << privateClassName << ", " << singletonName << " )" << endl;
+#endif
+    sourceStream << endl;
 
     sourceStream << "QUrl ";
     if ( !namespaceName.isEmpty() ) {
