@@ -28,7 +28,6 @@
 #include <QtCore/QMutex>
 #include <QtCore/QMutexLocker>
 #include <QtCore/QThread>
-#include <QtCore/QThreadStorage>
 
 
 namespace Soprano {
@@ -187,7 +186,8 @@ Soprano::Error::Locator Soprano::Error::ParserError::locator() const
 class Soprano::Error::ErrorCache::Private
 {
 public:
-    QThreadStorage<Error> errorStorage;
+    QHash<QThread*, Error> errorMap;
+    QMutex errorMapMutex;
 };
 
 
@@ -205,7 +205,8 @@ Soprano::Error::ErrorCache::~ErrorCache()
 
 Soprano::Error::Error Soprano::Error::ErrorCache::lastError() const
 {
-    return d->errorStorage.localData();
+    QMutexLocker locker( &d->errorMapMutex );
+    return d->errorMap.value( QThread::currentThread() );
 }
 
 
@@ -217,8 +218,8 @@ void Soprano::Error::ErrorCache::setError( const Error& error ) const
                       ? QString( "%1(%2)" ).arg( app->applicationFilePath() ).arg( app->applicationPid() )
                       : QString() )
                  << "Soprano:" << error;
-        Q_UNUSED( app ); // when compiled with release mode
-        d->errorStorage.setLocalData( error );
+        QMutexLocker locker( &d->errorMapMutex );
+        d->errorMap[QThread::currentThread()] = error;
     }
     else {
         clearError();
@@ -234,7 +235,9 @@ void Soprano::Error::ErrorCache::setError( const QString& errorMessage, int code
 
 void Soprano::Error::ErrorCache::clearError() const
 {
-    d->errorStorage.setLocalData( Error() );
+    QMutexLocker locker( &d->errorMapMutex );
+    if ( !d->errorMap.isEmpty() )
+        d->errorMap[QThread::currentThread()] = Error();
 }
 
 
