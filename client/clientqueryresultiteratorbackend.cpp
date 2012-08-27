@@ -45,6 +45,13 @@ bool Soprano::Client::ClientQueryResultIteratorBackend::next()
     if ( m_model ) {
         bool r = m_model->client()->iteratorNext( m_iteratorId );
         setError( m_model->client()->lastError() );
+        if( r ) {
+            m_currentBinding = m_model->client()->queryIteratorCurrent( m_iteratorId );
+            setError( m_model->client()->lastError() );
+        }
+        else {
+            m_currentBinding = Soprano::BindingSet();
+        }
         return r;
     }
     else {
@@ -57,9 +64,7 @@ bool Soprano::Client::ClientQueryResultIteratorBackend::next()
 Soprano::BindingSet Soprano::Client::ClientQueryResultIteratorBackend::current() const
 {
     if ( m_model ) {
-        BindingSet s = m_model->client()->queryIteratorCurrent( m_iteratorId );
-        setError( m_model->client()->lastError() );
-        return s;
+        return m_currentBinding;
     }
     else {
         setError( "Connection to server closed." );
@@ -96,28 +101,24 @@ Soprano::Statement Soprano::Client::ClientQueryResultIteratorBackend::currentSta
 
 Soprano::Node Soprano::Client::ClientQueryResultIteratorBackend::binding( const QString &name ) const
 {
-    // FIXME: use an extra method for performance
     return current()[name];
 }
 
 
 Soprano::Node Soprano::Client::ClientQueryResultIteratorBackend::binding( int offset ) const
 {
-    // FIXME: use an extra method for performance
     return current()[offset];
 }
 
 
 int Soprano::Client::ClientQueryResultIteratorBackend::bindingCount() const
 {
-    // FIXME: use an extra method for performance
     return current().count();
 }
 
 
 QStringList Soprano::Client::ClientQueryResultIteratorBackend::bindingNames() const
 {
-    // FIXME: use an extra method for performance
     return current().bindingNames();
 }
 

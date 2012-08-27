@@ -55,6 +55,7 @@ namespace Soprano
 
         private:
             int m_iteratorId;
+            BindingSet m_currentBinding;
             QPointer<ClientModel> m_model;
         };
     }
