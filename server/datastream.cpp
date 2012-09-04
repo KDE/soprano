@@ -177,8 +177,29 @@ bool Soprano::DataStream::writeLiteralValue( const LiteralValue& value )
                 writeString( value.language().toString() ) );
     }
     else {
-        return( writeString( value.toString() ) &&
-                writeUrl( value.dataTypeUri() ) );
+        QVariant var = value.variant();
+        bool status = writeInt32( var.type() );
+        switch( var.type() ) {
+            case QVariant::String:
+                status &= writeString( var.toString() );
+                break;
+            case QVariant::Url:
+                status &= writeUrl( var.toUrl() );
+                break;
+            case QVariant::Int:
+                status &= writeInt32( var.toInt() );
+                break;
+            case QVariant::Bool:
+                status &= writeBool( var.toBool() );
+                break;
+            case QVariant::ByteArray:
+                status &= writeByteArray( var.toByteArray() );
+                break;
+            default:
+                status &= writeString( value.toString() );
+                status &= writeUrl( value.dataTypeUri() );
+        }
+        return status;
     }
 }
 
@@ -467,12 +488,54 @@ bool Soprano::DataStream::readLiteralValue( LiteralValue& val )
             }
         }
         else {
-            QUrl dt;
-            if ( readString( v ) &&
-                 readUrl( dt ) ) {
-                val = LiteralValue::fromString( v, dt );
-                return true;
+            int t;
+            bool status = readInt32( t );
+            if( !status )
+                return false;
+
+            QVariant::Type type = static_cast<QVariant::Type>( t );
+            switch( type ) {
+                case QVariant::String: {
+                    QString str;
+                    status &= readString( str );
+                    val = LiteralValue( str );
+                    break;
+                }
+                case QVariant::Url: {
+                    QUrl url;
+                    status &= readUrl( url );
+                    val = LiteralValue( url );
+                    break;
+                }
+                case QVariant::Int: {
+                    int integer;
+                    status &= readInt32( integer );
+                    val = LiteralValue( integer );
+                    break;
+                }
+                case QVariant::Bool: {
+                    bool boolean;
+                    status &= readBool( boolean );
+                    val = LiteralValue( boolean );
+                    break;
+                }
+                case QVariant::ByteArray: {
+                    QByteArray array;
+                    status &= readByteArray( array );
+                    val = LiteralValue( array );
+                    break;
+                }
+                default: {
+                    QString str;
+                    QUrl dt;
+                    status &= readString( str );
+                    status &= readUrl( dt );
+                    val = LiteralValue::fromString( str, dt );
+                    break;
+                }
             }
+
+            return status;
         }
     }
 
