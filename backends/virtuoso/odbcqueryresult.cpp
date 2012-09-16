@@ -242,16 +242,16 @@ Soprano::Node Soprano::ODBC::QueryResult::getData( int colNum )
                 setError( Virtuoso::convertSqlError( SQL_HANDLE_STMT, d->m_hstmt, QLatin1String( "SQLGetDescField SQL_DESC_COL_DT_DT_TYPE failed" ) ) );
                 return Node();
             }
-            QUrl type;
+            QVariant::Type type;
             switch( dv_dt_type ) {
             case VIRTUOSO_DT_TYPE_DATE:
-                type = Vocabulary::XMLSchema::date();
+                type = QVariant::Date;
                 break;
             case VIRTUOSO_DT_TYPE_TIME:
-                type = Vocabulary::XMLSchema::time();
+                type = QVariant::Time;
                 break;
             default:
-                type = Vocabulary::XMLSchema::dateTime();
+                type = QVariant::DateTime;
                 break;
             }
             QString dts = QString::fromUtf8( reinterpret_cast<const char*>( data ) );
