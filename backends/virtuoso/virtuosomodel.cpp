@@ -47,62 +47,63 @@ namespace {
         }
     }
 
-    QString statementToConstructGraphPattern( const Soprano::Statement& s, bool withContext = false )
-    {
-        QString query;
-
-        if ( withContext ) {
-            query += QLatin1String( "graph " );
-            if ( s.context().isValid() ) {
-                query += nodeToN3( s.context() );
-            }
-            else {
-                query += QLatin1String( "?g" );
-            }
-            query += QLatin1String( " { " );
-        }
-
-        if ( s.subject().isValid() ) {
-            query += nodeToN3( s.subject() ) + ' ';
-        }
-        else {
-            query += QLatin1String( "?s " );
-        }
-
-        if ( s.predicate().isValid() ) {
-            query += nodeToN3( s.predicate() ) + ' ';
-        }
-        else {
-            query += QLatin1String( "?p " );
-        }
-
-        if ( s.object().isValid() ) {
-            if ( s.object().literal().isBool() )
-                query += Soprano::Node( Soprano::LiteralValue::fromString( s.object().literal().toBool() ? QString( QLatin1String( "true" ) ) : QLatin1String("false"),
-                                                                           Soprano::Virtuoso::fakeBooleanType() ) ).toN3();
-            else if ( s.object().literal().isByteArray() )
-                query += Soprano::Node( Soprano::LiteralValue::fromString( s.object().literal().toString(),
-                                                                           Soprano::Virtuoso::fakeBase64BinaryType() ) ).toN3();
-            else
-                query += nodeToN3( s.object() );
-        }
-        else {
-            query += QLatin1String( "?o" );
-        }
-
-        if ( withContext ) {
-            query += QLatin1String( " . }" );
-        }
-
-        return query;
-    }
-
     // there is still a bug in Virtuoso which makes the define prefix unusable: if a query defines the
     // graph the result will be empty if the exclude graph is specified.
     const char* s_queryPrefix =
         "sparql ";
 //         "define input:default-graph-exclude <http://www.openlinksw.com/schemas/virtrdf#> "
 //         "define input:named-graph-exclude <http://www.openlinksw.com/schemas/virtrdf#>";
+}
+
+QString Soprano::VirtuosoModelPrivate::statementToConstructGraphPattern( const Soprano::Statement& s,
+                                                                         bool withContext ) const
+{
+    QString query;
+
+    if ( withContext ) {
+        query += QLatin1String( "graph " );
+        if ( s.context().isValid() ) {
+            query += nodeToN3( s.context() );
+        }
+        else {
+            query += QLatin1String( "?g" );
+        }
+        query += QLatin1String( " { " );
+    }
+
+    if ( s.subject().isValid() ) {
+        query += nodeToN3( s.subject() ) + ' ';
+    }
+    else {
+        query += QLatin1String( "?s " );
+    }
+
+    if ( s.predicate().isValid() ) {
+        query += nodeToN3( s.predicate() ) + ' ';
+    }
+    else {
+        query += QLatin1String( "?p " );
+    }
+
+    if ( s.object().isValid() ) {
+        if ( m_fakeBooleans && s.object().literal().isBool() )
+            query += Soprano::Node( Soprano::LiteralValue::fromString( s.object().literal().toBool() ? QString( QLatin1String( "true" ) ) : QLatin1String("false"),
+                                                                        Soprano::Virtuoso::fakeBooleanType() ) ).toN3();
+        else if ( s.object().literal().isByteArray() )
+            query += Soprano::Node( Soprano::LiteralValue::fromString( s.object().literal().toString(),
+                                                                        Soprano::Virtuoso::fakeBase64BinaryType() ) ).toN3();
+        else
+            query += nodeToN3( s.object() );
+    }
+    else {
+        query += QLatin1String( "?o" );
+    }
+
+    if ( withContext ) {
+        query += QLatin1String( " . }" );
+    }
+
+    return query;
 }
 
 
@@ -135,18 +136,23 @@ Soprano::QueryResultIterator Soprano::VirtuosoModelPrivate::sparqlQuery( const Q
 
 QString Soprano::VirtuosoModelPrivate::replaceFakeTypesInQuery( const QString& query )
 {
+    if( !m_fakeBooleans )
+        return query;
+
     QMutexLocker lock( &m_fakeBooleanRegExpMutex );
     return QString(query).replace( m_fakeBooleanRegExp, QString::fromLatin1("'\\2'^^<%1>").arg( Virtuoso::fakeBooleanTypeString() ) );
 }
 
 
-Soprano::VirtuosoModel::VirtuosoModel( const QString &virtuosoVersion, ODBC::ConnectionPool* connectionPool, const Backend* b )
+Soprano::VirtuosoModel::VirtuosoModel( const QString &virtuosoVersion, ODBC::ConnectionPool* connectionPool,
+                                       bool supportFakeBooleans, const Backend* b )
     : StorageModel(b),
       d( new VirtuosoModelPrivate() )
 {
     d->q = this;
     d->m_virtuosoVersion = virtuosoVersion;
     d->connectionPool = connectionPool;
+    d->m_fakeBooleans = supportFakeBooleans;
 }
 
 
@@ -184,7 +190,7 @@ Soprano::Error::ErrorCode Soprano::VirtuosoModel::addStatement( const Statement&
     }
 
     QString insert = QString::fromLatin1("sparql insert into %1")
-                     .arg( statementToConstructGraphPattern( s, true ) );
+                     .arg( d->statementToConstructGraphPattern( s, true ) );
 
     if ( ODBC::Connection* conn = d->connectionPool->connection() ) {
         if ( conn->executeCommand( insert ) == Error::ErrorNone ) {
@@ -246,9 +252,9 @@ bool Soprano::VirtuosoModel::containsAnyStatement( const Statement& statement ) 
 
     QString query;
     if ( statement.context().isValid() )
-        query = QString::fromLatin1( "ask from %1 where { %2 . }" ).arg( statement.context().toN3(), statementToConstructGraphPattern( statement, false ) );
+        query = QString::fromLatin1( "ask from %1 where { %2 . }" ).arg( statement.context().toN3(), d->statementToConstructGraphPattern( statement, false ) );
     else
-        query = QString::fromLatin1( "ask where { %1 . }" ).arg( statementToConstructGraphPattern( statement, true ) );
+        query = QString::fromLatin1( "ask where { %1 . }" ).arg( d->statementToConstructGraphPattern( statement, true ) );
 //     if ( VirtuosoStatementHandler* sh = d->connection.execute( "sparql " + query ) ) {
 //         bool b = sh->fetchScroll();
 //         delete sh;
@@ -267,10 +273,10 @@ Soprano::StatementIterator Soprano::VirtuosoModel::listStatements( const Stateme
     QString query;
     if ( partial.context().isValid() )
         query = QString::fromLatin1( "select * from %1 where { %2 . }" )
-                .arg( partial.context().toN3(), statementToConstructGraphPattern( partial, false ) );
+                .arg( partial.context().toN3(), d->statementToConstructGraphPattern( partial, false ) );
     else
         query = QString::fromLatin1( "select * where { %1 . FILTER(?g != <%2>) . }" )
-                .arg( statementToConstructGraphPattern( partial, true ),
+                .arg( d->statementToConstructGraphPattern( partial, true ),
                       QLatin1String( Virtuoso::openlinkVirtualGraphString() ) );
 //    qDebug() << "List Statements Query" << query;
     return d->sparqlQuery( query )
@@ -301,7 +307,7 @@ Soprano::Error::ErrorCode Soprano::VirtuosoModel::removeStatement( const Stateme
     }
 
     QString query = QString::fromLatin1( "delete from %1" )
-                    .arg( statementToConstructGraphPattern( s, true ) );
+                    .arg( d->statementToConstructGraphPattern( s, true ) );
 //    qDebug() << "removeStatement query:" << query;
     if ( ODBC::Connection* conn = d->connectionPool->connection() ) {
         if ( conn->executeCommand( QLatin1String( "sparql " ) + query ) == Error::ErrorNone ) {
@@ -341,8 +347,8 @@ Soprano::Error::ErrorCode Soprano::VirtuosoModel::removeAllStatements( const Sta
         else {
             query = QString::fromLatin1( "delete from %1 { %2 } where { %3 }" )
                     .arg( statement.context().isValid() ? statement.context().toN3() : QString( "?g" ),
-                          statementToConstructGraphPattern( statement, false ),
-                          statementToConstructGraphPattern( statement, true ) );
+                          d->statementToConstructGraphPattern( statement, false ),
+                          d->statementToConstructGraphPattern( statement, true ) );
 
         }
     }
@@ -353,11 +359,11 @@ Soprano::Error::ErrorCode Soprano::VirtuosoModel::removeAllStatements( const Sta
         // For versions before we need to use the old hacky method which requires iterating all graph candidates.
         //
         if( d->m_virtuosoVersion >= QLatin1String("6.1.5") ) {
-            query = QString::fromLatin1("delete { %1 } where { %1 }").arg( statementToConstructGraphPattern(statement, true) );
+            query = QString::fromLatin1("delete { %1 } where { %1 }").arg( d->statementToConstructGraphPattern(statement, true) );
         }
         else {
             QList<Node> allContexts = d->sparqlQuery( QString::fromLatin1( "select distinct ?g where { %1 . FILTER(?g != <%2>) . }" )
-                                                      .arg( statementToConstructGraphPattern( statement, true ),
+                                                      .arg( d->statementToConstructGraphPattern( statement, true ),
                                                             QLatin1String( Virtuoso::openlinkVirtualGraphString() ) ) )
                                       .iterateBindings( 0 ).allNodes();
             foreach( const Node& node, allContexts ) {

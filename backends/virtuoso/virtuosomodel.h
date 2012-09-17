@@ -43,7 +43,8 @@ namespace Soprano {
         /**
          * \param connection The base connection used for non-transaction requests
          */
-        VirtuosoModel( const QString& virtuosoVersion, ODBC::ConnectionPool* connectionPool, const Backend* );
+        VirtuosoModel( const QString& virtuosoVersion, ODBC::ConnectionPool* connectionPool,
+                       bool supportFakeBooleans , const Backend* );
         ~VirtuosoModel();
 
         Error::ErrorCode addStatement( const Statement &statement );

@@ -81,6 +81,7 @@ Soprano::StorageModel* Soprano::Virtuoso::BackendPlugin::createModel( const Back
     bool debugMode = valueInSettings( settings, BackendOptionUser, QLatin1String( "debugmode" ) ).toBool();
     int queryTimeout = valueInSettings( settings, QLatin1String( "QueryTimeout" ), 0 ).toInt();
     bool disableStatementSignals = valueInSettings( settings, QLatin1String( "noStatementSignals" ), false ).toBool();
+    bool enableFakeBookleans = valueInSettings( settings, QLatin1String( "fakeBooleans" ), true ).toBool();
 
     VirtuosoController* controller = 0;
     QString virtuosoVersion = QLatin1String("1.0.0"); // a default low version in case we connect to a running server
@@ -150,7 +151,7 @@ Soprano::StorageModel* Soprano::Virtuoso::BackendPlugin::createModel( const Back
         return 0;
     }
 
-    VirtuosoModel* model = new VirtuosoModel( virtuosoVersion, connectionPool, this );
+    VirtuosoModel* model = new VirtuosoModel( virtuosoVersion, connectionPool, enableFakeBookleans, this );
     model->d->m_noStatementSignals = disableStatementSignals;
     // mem mangement the ugly way
     // FIXME: improve
