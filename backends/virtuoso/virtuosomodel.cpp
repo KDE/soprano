@@ -145,7 +145,7 @@ QString Soprano::VirtuosoModelPrivate::replaceFakeTypesInQuery( const QString& q
 
 
 Soprano::VirtuosoModel::VirtuosoModel( const QString &virtuosoVersion, ODBC::ConnectionPool* connectionPool,
-                                       bool supportFakeBooleans, const Backend* b )
+                                       bool supportFakeBooleans, bool emptyGraphs, const Backend* b )
     : StorageModel(b),
       d( new VirtuosoModelPrivate() )
 {
@@ -153,6 +153,7 @@ Soprano::VirtuosoModel::VirtuosoModel( const QString &virtuosoVersion, ODBC::Con
     d->m_virtuosoVersion = virtuosoVersion;
     d->connectionPool = connectionPool;
     d->m_fakeBooleans = supportFakeBooleans;
+    d->m_supportEmptyGraphs = emptyGraphs;
 }
 
 
@@ -185,8 +186,15 @@ Soprano::Error::ErrorCode Soprano::VirtuosoModel::addStatement( const Statement&
     }
 
     Statement s( statement );
-    if ( !s.context().isValid() ) {
-        s.setContext( Virtuoso::defaultGraph() );
+    if( !s.context().isValid() ) {
+        if ( d->m_supportEmptyGraphs ) {
+            s.setContext( Virtuoso::defaultGraph() );
+        }
+        else {
+            qDebug() << Q_FUNC_INFO << "Cannot add invalid statement:" << statement;
+            setError( "Cannot add statement with invalid context", Error::ErrorInvalidArgument );
+            return Error::ErrorInvalidArgument;
+        }
     }
 
     QString insert = QString::fromLatin1("sparql insert into %1")
@@ -240,8 +248,16 @@ bool Soprano::VirtuosoModel::containsStatement( const Statement& statement ) con
     }
 
     Statement s( statement );
-    if ( !statement.context().isValid() )
-        s.setContext( Virtuoso::defaultGraph() );
+    if( !statement.context().isValid() ) {
+        if ( d->m_supportEmptyGraphs ) {
+            s.setContext( Virtuoso::defaultGraph() );
+        } else {
+            qDebug() << Q_FUNC_INFO << "Invalid Context " << statement;
+            setError( "Found invalid context", Error::ErrorInvalidArgument );
+            return Error::ErrorInvalidArgument;
+        }
+    }
+
     return containsAnyStatement( s );
 }
 
@@ -298,8 +314,14 @@ Soprano::Error::ErrorCode Soprano::VirtuosoModel::removeStatement( const Stateme
     }
 
     Statement s( statement );
-    if ( !s.context().isValid() ) {
-        s.setContext( Virtuoso::defaultGraph() );
+    if( !s.context().isValid() ) {
+        if ( d->m_supportEmptyGraphs ) {
+            s.setContext( Virtuoso::defaultGraph() );
+        } else {
+            qDebug() << Q_FUNC_INFO << "Cannot remove invalid statement:" << statement;
+            setError( "Cannot remove statement with invalid context", Error::ErrorInvalidArgument );
+            return Error::ErrorInvalidArgument;
+        }
     }
     else if ( s.context().uri() == Virtuoso::openlinkVirtualGraph() ) {
         setError( "Cannot remove statements from the virtual openlink graph. Virtuoso would not like that.", Error::ErrorInvalidArgument );
@@ -370,8 +392,15 @@ Soprano::Error::ErrorCode Soprano::VirtuosoModel::removeAllStatements( const Sta
                 Statement s( statement );
                 if ( node.isValid() )
                     s.setContext( node );
-                else
-                    s.setContext( Virtuoso::defaultGraph() );
+                else {
+                    if( d->m_supportEmptyGraphs ) {
+                        s.setContext( Virtuoso::defaultGraph() );
+                    } else {
+                        qDebug() << Q_FUNC_INFO << "Cannot remove invalid statement:" << statement;
+                        setError( "Cannot remove statement with invalid context", Error::ErrorInvalidArgument );
+                        return Error::ErrorInvalidArgument;
+                    }
+                }
                 Error::ErrorCode c = removeAllStatements( s );
                 if ( c != Error::ErrorNone )
                     return c;
@@ -386,8 +415,16 @@ Soprano::Error::ErrorCode Soprano::VirtuosoModel::removeAllStatements( const Sta
                 // FIXME: can this be done with SQL/RDF views?
                 emit statementsRemoved();
                 Statement signalStatement( statement );
-                if( signalStatement.context() == Virtuoso::defaultGraph() )
-                    signalStatement.setContext( Node() );
+                if( signalStatement.context() == Virtuoso::defaultGraph() ) {
+                    if( d->m_supportEmptyGraphs ) {
+                        signalStatement.setContext( Node() );
+                    } else {
+                        qDebug() << Q_FUNC_INFO << "Cannot remove invalid statement:" << statement;
+                        setError( "Cannot remove statement with invalid context", Error::ErrorInvalidArgument );
+                        return Error::ErrorInvalidArgument;
+                    }
+                }
+
                 emit statementRemoved( signalStatement );
             }
         }

@@ -80,6 +80,7 @@ namespace Soprano {
 
         bool m_noStatementSignals;
         bool m_fakeBooleans;
+        bool m_supportEmptyGraphs;
 
         VirtuosoModel* q;
 

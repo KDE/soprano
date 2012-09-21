@@ -212,7 +212,7 @@ Soprano::Node Soprano::Virtuoso::QueryResultIteratorBackend::binding( int offset
             setError( d->m_queryResult->lastError() );
 
             // convert the default graph back to the empty graph (hacky but should work in most situations)
-            if ( node == Virtuoso::defaultGraph() )
+            if ( d->m_model->m_supportEmptyGraphs && node == Virtuoso::defaultGraph() )
                 node = Node();
 
             d->bindingCache[offset] = node;
