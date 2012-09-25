@@ -14,7 +14,6 @@ include_directories(
 )
 
 set(soprano_client_SRC
-  ${soprano_server_SOURCE_DIR}/datastream.cpp
   tcpclient.cpp
   socket.cpp
   socketstream.cpp

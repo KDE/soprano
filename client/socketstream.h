@@ -22,22 +22,11 @@
 #ifndef _SOPRANO_SOCKET_STREAM_H_
 #define _SOPRANO_SOCKET_STREAM_H_
 
-#include "error.h"
 #include "socket.h"
-
-class QUrl;
-class QByteArray;
+#include "datastream.h"
 
 namespace Soprano {
 
-    class LiteralValue;
-    class BindingSet;
-    class BackendSetting;
-    class Node;
-    class Statement;
-    namespace Error {
-        class Locator;
-    }
 
     /**
      * Provides streaming methods for all %Soprano
@@ -48,59 +37,17 @@ namespace Soprano {
      *
      * \author Sebastian Trueg <trueg@kde.org>
      */
-    class SocketStream : public Error::ErrorCache
+    class SocketStream : public DataStream
     {
     public:
         SocketStream( Socket* dev );
         ~SocketStream();
 
-        bool writeByteArray( const QByteArray& );
-        bool writeString( const QString& );
-        bool writeUrl( const QUrl& );
-//        bool writeVariant( const QVariant& );
-        bool writeUnsignedInt8( quint8 );
-        bool writeUnsignedInt16( quint16 );
-        bool writeUnsignedInt32( quint32 );
-        bool writeInt32( qint32 );
-        bool writeBool( bool );
-
-        bool writeErrorCode( Error::ErrorCode code );
-        bool writeLocator( const Error::Locator& );
-        bool writeError( const Error::Error& );
-//        bool writeBackendSetting( const BackendSetting& );
-        bool writeLiteralValue( const LiteralValue& );
-        bool writeNode( const Node& );
-        bool writeStatement( const Statement& );
-        bool writeBindingSet( const BindingSet& );
-
-        bool readByteArray( QByteArray& );
-        bool readString( QString& );
-        bool readUrl( QUrl& );
-//        bool readVariant( QVariant& );
-        bool readUnsignedInt8( quint8& );
-        bool readUnsignedInt16( quint16& );
-        bool readUnsignedInt32( quint32& );
-        bool readInt32( qint32& );
-        bool readBool( bool& );
-
-        bool readErrorCode( Error::ErrorCode& code );
-        bool readLocator( Error::Locator& );
-        bool readError( Error::Error& );
-//        bool readBackendSetting( BackendSetting& );
-        bool readLiteralValue( LiteralValue& );
-        bool readNode( Node& );
-        bool readStatement( Statement& );
-        bool readBindingSet( BindingSet& );
+    protected:
+        virtual bool read( char* data, qint64 size );
+        virtual bool write( const char* data, qint64 size );
 
     private:
-        /**
-         * Read from the device including waiting for data
-         * to be ready.
-         *
-         * \sa Socket::read, Socket::waitForReadyRead
-         */
-        bool read( char* data, qint64 size );
-
         Socket* m_device;
     };
 }

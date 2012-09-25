@@ -22,9 +22,9 @@
 #ifndef _SOPRANO_DATA_STREAM_H_
 #define _SOPRANO_DATA_STREAM_H_
 
+#include "soprano_export.h"
 #include "error.h"
 
-class QIODevice;
 class QUrl;
 class QByteArray;
 
@@ -44,15 +44,19 @@ namespace Soprano {
      * types. Compared to QDataStream's operators
      * it provides error handling and automatically
      * fills the buffer if more data needs to be
-     * requested (QIODevice::waitForReadyRead)
+     * requested.
+     *
+     * It provides a common interface and exposes the high
+     * level operations, while letting the subclasses implement
+     * the low level operations.
      *
      * \author Sebastian Trueg <trueg@kde.org>
      */
-    class DataStream : public Error::ErrorCache
+    class SOPRANO_EXPORT DataStream : public Error::ErrorCache
     {
     public:
-        DataStream( QIODevice* dev );
-        ~DataStream();
+        DataStream();
+        virtual ~DataStream();
 
         bool writeByteArray( const QByteArray& );
         bool writeString( const QString& );
@@ -92,16 +96,18 @@ namespace Soprano {
         bool readStatement( Statement& );
         bool readBindingSet( BindingSet& );
 
-    private:
+    protected:
         /**
          * Read from the device including waiting for data
          * to be ready.
-         *
-         * \sa QIODevice::read, QIODevice::waitForReadyRead
          */
-        bool read( char* data, qint64 size );
+        virtual bool read( char* data, qint64 size ) = 0;
 
-        QIODevice* m_device;
+        /**
+         * Write to the device including waiting for data
+         * to be ready.
+         */
+        virtual bool write( const char* data, qint64 size ) = 0;
     };
 }
 

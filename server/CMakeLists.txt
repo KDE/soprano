@@ -16,9 +16,9 @@ set(soprano_server_SRC
   servercore.cpp
   serverconnection.h
   serverconnection.cpp
+  serverdatastream.cpp
   modelpool.cpp
   randomgenerator.cpp
-  datastream.cpp
   localserver.cpp
   tcpserver.cpp
 )

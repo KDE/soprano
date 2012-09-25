@@ -1,7 +1,7 @@
 /*
  * This file is part of Soprano Project.
  *
- * Copyright (C) 2008-2012 Sebastian Trueg <trueg@kde.org>
+ * Copyright (C) 2008 Sebastian Trueg <trueg@kde.org>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -19,31 +19,23 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#include "socketstream.h"
+#include "serverdatastream.h"
 
-#include "node.h"
-#include "statement.h"
-#include "bindingset.h"
-#include "backend.h"
-#include "literalvalue.h"
-#include "locator.h"
-#include "languagetag.h"
-#include <qdebug.h>
+#include <QtCore/QIODevice>
 
-Soprano::SocketStream::SocketStream( Soprano::Socket* dev )
+
+Soprano::Server::DataStream::DataStream( QIODevice* dev )
     : m_device( dev )
 {
-    m_device->lock();
 }
 
 
-Soprano::SocketStream::~SocketStream()
+Soprano::Server::DataStream::~DataStream()
 {
-    m_device->unlock();
 }
 
 
-bool Soprano::SocketStream::read( char* data, qint64 size )
+bool Soprano::Server::DataStream::read( char* data, qint64 size )
 {
     qint64 cnt = 0;
     while ( cnt < size ) {
@@ -53,32 +45,36 @@ bool Soprano::SocketStream::read( char* data, qint64 size )
             setError( Error::Error( QString( "Failed to read after %1 of %2 bytes (%3)." )
                                     .arg( cnt )
                                     .arg( size )
-                                    .arg( m_device->lastError().message() ) ) );
+                                    .arg( m_device->errorString() ) ) );
             return false;
         }
         else if ( r == 0 && size > 0 ) {
-            // If virtuoso is killed, read returns 0, but select returns ok. This means end of file.
-            setError( Error::Error( QString( "Timeout when reading after %1 of %2 bytes (%3)." )
-                                    .arg( cnt )
-                                    .arg( size )
-                                    .arg( m_device->lastError().message() ) ) );
-            return false;
+            if ( !m_device->waitForReadyRead( 30000 ) ) {
+                setError( Error::Error( QString( "Timeout when reading after %1 of %2 bytes (%3)." )
+                                        .arg( cnt )
+                                        .arg( size )
+                                        .arg( m_device->errorString() ) ) );
+                return false;
+            }
         }
 
         cnt += r;
     }
 
+    // vHanda: Is this clearError() really required?
+    // clearError();
     return true;
 }
 
-bool Soprano::SocketStream::write(const char* data, qint64 len)
+
+bool Soprano::Server::DataStream::write(const char* data, qint64 len)
 {
     quint32 cnt = 0;
     while ( cnt < len ) {
         int x = qMin( (qint64)1024, len-cnt );
         int r = m_device->write( data+cnt, x );
         if ( r < 0 ) {
-            setError( m_device->lastError() );
+            setError( Error::Error( QString( "Failed to write string after %1 of %2 bytes (%3)." ).arg( cnt ).arg( len ).arg( m_device->errorString() ) ) );
             return false;
         }
         cnt += r;
@@ -86,3 +82,5 @@ bool Soprano::SocketStream::write(const char* data, qint64 len)
 
     return true;
 }
+
+

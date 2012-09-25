@@ -32,9 +32,9 @@
 #include <QtCore/QIODevice>
 
 
-Soprano::DataStream::DataStream( QIODevice* dev )
-    : m_device( dev )
+Soprano::DataStream::DataStream()
 {
+
 }
 
 
@@ -51,18 +51,10 @@ bool Soprano::DataStream::writeByteArray( const QByteArray& a )
         return false;
     }
 
-    quint32 cnt = 0;
-    while ( cnt < len ) {
-        int x = qMin( 1024U, len-cnt );
-        int r = m_device->write( a.data()+cnt, x );
-        if ( r < 0 ) {
-            setError( Error::Error( QString( "Failed to write string after %1 of %2 bytes (%3)." ).arg( cnt ).arg( len ).arg( m_device->errorString() ) ) );
-            return false;
-        }
-        cnt += r;
+    if( !write( a.data(), a.size() ) ) {
+        return false;
     }
 
-    clearError();
     return true;
 }
 
@@ -82,7 +74,7 @@ bool Soprano::DataStream::writeUrl( const QUrl& url )
 
 bool Soprano::DataStream::writeUnsignedInt8( quint8 v )
 {
-    if ( !m_device || m_device->write( (char*)&v, 1 ) != 1 ) {
+    if( !write( (char*)&v, 1 ) ) {
         setError( "Failed to write unsigned int8." );
         return false;
     }
@@ -92,7 +84,7 @@ bool Soprano::DataStream::writeUnsignedInt8( quint8 v )
 
 bool Soprano::DataStream::writeUnsignedInt16( quint16 v )
 {
-    if ( !m_device || m_device->write( (char*)&v, 2 ) != 2 ) {
+    if( !write( (char*)&v, sizeof( quint16 ) ) ) {
         setError( "Failed to write unsigned int32." );
         return false;
     }
@@ -102,7 +94,7 @@ bool Soprano::DataStream::writeUnsignedInt16( quint16 v )
 
 bool Soprano::DataStream::writeUnsignedInt32( quint32 v )
 {
-    if ( !m_device || m_device->write( (char*)&v, sizeof( quint32 ) ) != sizeof( quint32 ) ) {
+    if( !write( (char*)&v, sizeof( quint32 ) ) ) {
         setError( "Failed to write unsigned int32." );
         return false;
     }
@@ -112,7 +104,7 @@ bool Soprano::DataStream::writeUnsignedInt32( quint32 v )
 
 bool Soprano::DataStream::writeInt32( qint32 v )
 {
-    if ( !m_device || m_device->write( (char*)&v, sizeof( qint32 ) ) != sizeof( qint32 ) ) {
+    if( !write( (char*)&v, sizeof( qint32 ) ) ) {
         setError( "Failed to write int32." );
         return false;
     }
@@ -254,37 +246,6 @@ bool Soprano::DataStream::writeBindingSet( const BindingSet& set )
             return false;
         }
     }
-    return true;
-}
-
-
-bool Soprano::DataStream::read( char* data, qint64 size )
-{
-    qint64 cnt = 0;
-    while ( cnt < size ) {
-        qint64 m = qMin( size-cnt, 1024LL );
-        qint64 r = m_device->read( data+cnt, m );
-        if ( r < 0 ) {
-            setError( Error::Error( QString( "Failed to read after %1 of %2 bytes (%3)." )
-                                    .arg( cnt )
-                                    .arg( size )
-                                    .arg( m_device->errorString() ) ) );
-            return false;
-        }
-        else if ( r == 0 && size > 0 ) {
-            if ( !m_device->waitForReadyRead( 30000 ) ) {
-                setError( Error::Error( QString( "Timeout when reading after %1 of %2 bytes (%3)." )
-                                        .arg( cnt )
-                                        .arg( size )
-                                        .arg( m_device->errorString() ) ) );
-                return false;
-            }
-        }
-
-        cnt += r;
-    }
-
-    clearError();
     return true;
 }
 

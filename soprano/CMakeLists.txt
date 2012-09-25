@@ -60,6 +60,7 @@ set(soprano_SRCS
   bindingset.cpp
   sopranotypes.cpp
   graph.cpp
+  datastream.cpp
   vocabulary/rdf.cpp
   vocabulary/rdfs.cpp
   vocabulary/xsd.cpp
@@ -150,6 +151,7 @@ install(FILES
   iteratorbackend.h
   nrlmodel.h
   graph.h
+  datastream.h
   vocabulary/rdf.h
   vocabulary/rdfs.h
   vocabulary/xsd.h

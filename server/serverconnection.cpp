@@ -20,10 +20,10 @@
  */
 
 #include "serverconnection.h"
+#include "serverdatastream.h"
 #include "servercore.h"
 #include "commands.h"
 #include "randomgenerator.h"
-#include "datastream.h"
 #include "modelpool.h"
 
 #include "queryresultiterator.h"
