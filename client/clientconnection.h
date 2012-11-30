@@ -43,6 +43,11 @@ namespace Soprano {
 
         class ClientConnectionPrivate;
 
+        /**
+         * A ClientConnection is just a wrapper class over a socket, which can be used to send
+         * commands over the socket. That is all it is.
+         *
+         */
         class ClientConnection : public QObject, public Error::ErrorCache
         {
             Q_OBJECT
@@ -85,23 +90,19 @@ namespace Soprano {
 
             bool checkProtocolVersion();
 
-            /// trueg: this is an awful design which simply grew over time.
-            /// At some point this needs fixing a lot. Maybe by simply not
-            /// Using Qt for communication.
-            bool connect();
-            bool isConnected();
+            virtual bool connect() = 0;
+            virtual bool disconnect() = 0;
+            virtual bool isConnected() = 0;
 
         protected:
             /**
-             * Creates a new IODevice for communication.
-             * ClientConnection will create one for each thread.
+             * Returns the underlying socket that is used for communication.
+             *
+             * This should never return 0.
              */
-            virtual Socket* newConnection() = 0;
-            virtual bool isConnected( Socket* ) { return false; }
+            virtual Socket* getSocket() = 0;
 
         private:
-            Socket* getSocket();
-
             ClientConnectionPrivate* const d;
         };
     }

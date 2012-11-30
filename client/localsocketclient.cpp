@@ -2,6 +2,7 @@
  * This file is part of Soprano Project.
  *
  * Copyright (C) 2007-2012 Sebastian Trueg <trueg@kde.org>
+ * Copyright (C) 2012      Vishesh Handa <me@vhanda.in>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -34,19 +35,31 @@ namespace Soprano {
         class LocalSocketClientConnection : public ClientConnection
         {
         public:
-            LocalSocketClientConnection( const QString& path, QObject* parent );
+            LocalSocketClientConnection( QObject* parent = 0 );
             ~LocalSocketClientConnection();
 
+            void setSocketPath( const QString& path ) {
+                m_socketPath = path;
+            }
+
+            virtual bool connect();
+            virtual bool disconnect();
+
+            virtual bool isConnected() {
+                return m_localSocket.isConnected();
+            }
         protected:
-            Socket *newConnection();
+            virtual Socket* getSocket() {
+                return &m_localSocket;
+            }
 
         private:
             QString m_socketPath;
+            LocalSocket m_localSocket;
         };
 
-        LocalSocketClientConnection::LocalSocketClientConnection( const QString& path, QObject* parent )
-            : ClientConnection( parent ),
-              m_socketPath( path )
+        LocalSocketClientConnection::LocalSocketClientConnection( QObject* parent )
+            : ClientConnection( parent )
         {
         }
 
@@ -54,23 +67,32 @@ namespace Soprano {
         {
         }
 
-        Socket* LocalSocketClientConnection::newConnection()
+        bool LocalSocketClientConnection::connect()
         {
-            clearError();
-            QString path( m_socketPath );
-            if ( path.isEmpty() ) {
-                path = QDir::homePath() + QLatin1String( "/.soprano/socket" );
+            if( m_localSocket.isConnected() ) {
+                setError( "Already connected" );
+                return false;
             }
 
-            LocalSocket* socket = new LocalSocket;
-            if ( socket->open( path ) ) {
-                return socket;
+            if( m_socketPath.isEmpty() ) {
+                m_socketPath = QDir::homePath() + QLatin1String( "/.soprano/socket" );
             }
-            else {
-                setError( socket->lastError() );
-                delete socket;
-                return 0;
+
+            if ( !m_localSocket.open( m_socketPath ) ) {
+                setError( m_localSocket.lastError() );
+                return false;
             }
+
+            return true;
+        }
+
+        bool LocalSocketClientConnection::disconnect()
+        {
+            if( m_localSocket.isConnected() ) {
+                m_localSocket.close();
+                return true;
+            }
+            return false;
         }
     }
 }
@@ -83,7 +105,7 @@ public:
         : connection( 0 ) {
     }
 
-    LocalSocketClientConnection* connection;
+    LocalSocketClientConnection connection;
 };
 
 Soprano::Client::LocalSocketClient::LocalSocketClient( QObject* parent )
@@ -103,14 +125,12 @@ Soprano::Client::LocalSocketClient::~LocalSocketClient()
 bool Soprano::Client::LocalSocketClient::connect( const QString& name )
 {
     if ( !isConnected() ) {
-        if ( !d->connection )
-            d->connection = new LocalSocketClientConnection( name, this );
-        if ( d->connection->connect() &&
-             d->connection->checkProtocolVersion() ) {
+        d->connection.setSocketPath( name );
+        if ( d->connection.connect() &&
+             d->connection.checkProtocolVersion() ) {
             return true;
         }
         else {
-            disconnect();
             return false;
         }
     }
@@ -123,26 +143,23 @@ bool Soprano::Client::LocalSocketClient::connect( const QString& name )
 
 bool Soprano::Client::LocalSocketClient::isConnected() const
 {
-    return d->connection ? d->connection->isConnected() : false;
+    return d->connection.isConnected();
 }
 
 
 void Soprano::Client::LocalSocketClient::disconnect()
 {
-    if (d->connection) {
-        d->connection->deleteLater();
-        d->connection = 0;
-    }
+    d->connection.disconnect();
 }
 
 
 Soprano::Model* Soprano::Client::LocalSocketClient::createModel( const QString& name, const QList<BackendSetting>& settings )
 {
-    if ( d->connection ) {
-        int modelId = d->connection->createModel( name, settings );
-        setError( d->connection->lastError() );
+    if ( d->connection.isConnected() ) {
+        int modelId = d->connection.createModel( name, settings );
+        setError( d->connection.lastError() );
         if ( modelId > 0 ) {
-            StorageModel* model = new ClientModel( 0, modelId, d->connection );
+            StorageModel* model = new ClientModel( 0, modelId, &d->connection );
             return model;
         }
     }
@@ -156,9 +173,9 @@ Soprano::Model* Soprano::Client::LocalSocketClient::createModel( const QString& 
 
 void Soprano::Client::LocalSocketClient::removeModel( const QString& name )
 {
-    if ( d->connection ) {
-        d->connection->removeModel( name );
-        setError( d->connection->lastError() );
+    if ( d->connection.isConnected() ) {
+        d->connection.removeModel( name );
+        setError( d->connection.lastError() );
     }
     else {
         setError( "Not connected" );

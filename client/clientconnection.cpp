@@ -852,19 +852,4 @@ bool Soprano::Client::ClientConnection::checkProtocolVersion()
     return reply;
 }
 
-
-bool Soprano::Client::ClientConnection::connect()
-{
-    if(!d->socket) {
-        d->socket = newConnection();
-    }
-    return( getSocket() != 0 );
-}
-
-
-bool Soprano::Client::ClientConnection::isConnected()
-{
-    return( d->socket != 0 && d->socket->isConnected() );
-}
-
 #include "clientconnection.moc"
