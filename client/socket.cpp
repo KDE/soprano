@@ -2,6 +2,7 @@
  * This file is part of Soprano Project.
  *
  * Copyright (C) 2010-2012 Sebastian Trueg <trueg@kde.org>
+ * Copyright (C) 2012      Vishesh Handa <me@vhanda.in>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -84,6 +85,11 @@ bool Soprano::Socket::waitForReadyRead( int timeout )
         tv.tv_usec = (timeout % 1000) * 1000;
 
         int r = ::select( m_handle + 1, &fds, 0, 0, timeout < 0 ? 0 : &tv);
+        if ( r == -1 ) {
+            if ( errno == EINTR /* Interrupted system call */ )
+                return waitForReadyRead( timeout );
+        }
+
         return r > 0;
     }
     else {
@@ -92,23 +98,56 @@ bool Soprano::Socket::waitForReadyRead( int timeout )
 }
 
 
-qint64 Soprano::Socket::read( char* buffer, qint64 max )
+qint64 Soprano::Socket::read( char* buffer, qint64 size )
 {
-    qint64 r = ::read( m_handle, buffer, max );
-    if ( r < 0 ) {
-        setError( QString::fromLatin1( "Failed to read from fd %1 (%2)" ).arg( m_handle ).arg( QLatin1String( strerror( errno ) ) ) );
+    int total = 0;
+    while ( size > 0 ) {
+        int bytesRead = ::read( m_handle, buffer, size );
+        if( bytesRead == -1 ) {
+            if (errno == EINTR) {
+                continue;
+            }
+            else {
+                QString error = QString::fromLatin1( "Failed to read from fd %1 (%2)")
+                                .arg( m_handle )
+                                .arg( QLatin1String( strerror( errno) ) );
+                setError( error );
+                return -1;
+            }
+        }
+
+        buffer += bytesRead;
+        total += bytesRead;
+        size -= bytesRead;
     }
-    return r;
+
+    return total;
 }
 
 
-qint64 Soprano::Socket::write( const char* buffer, qint64 max )
+qint64 Soprano::Socket::write( const char* buffer, qint64 size )
 {
-    qint64 r = ::write( m_handle, buffer, max );
-    if ( r < 0 ) {
-        setError( QString::fromLatin1( "Failed to write to fd %1 (%2)" ).arg( m_handle ).arg( QLatin1String( strerror( errno ) ) ) );
+    int total = 0;
+    while ( size > 0 ) {
+        int written = ::write( m_handle, buffer, size );
+        if (written == -1) {
+            if (errno == EINTR) {
+                continue;
+            }
+            else {
+                QString error = QString::fromLatin1( "Failed to write fd %1 (%2)")
+                                .arg( m_handle )
+                                .arg( QLatin1String( strerror( errno) ) );
+                setError( error );
+                return -1;
+            }
+        }
+        buffer += written;
+        total += written;
+        size -= written;
     }
-    return r;
+
+    return total;
 }
 
 

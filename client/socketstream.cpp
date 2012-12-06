@@ -45,27 +45,12 @@ Soprano::SocketStream::~SocketStream()
 
 bool Soprano::SocketStream::read( char* data, qint64 size )
 {
-    qint64 cnt = 0;
-    while ( cnt < size ) {
-        qint64 m = qMin( size-cnt, 1024LL );
-        qint64 r = m_device->read( data+cnt, m );
-        if ( r < 0 ) {
-            setError( Error::Error( QString( "Failed to read after %1 of %2 bytes (%3)." )
-                                    .arg( cnt )
-                                    .arg( size )
-                                    .arg( m_device->lastError().message() ) ) );
-            return false;
-        }
-        else if ( r == 0 && size > 0 ) {
-            // If virtuoso is killed, read returns 0, but select returns ok. This means end of file.
-            setError( Error::Error( QString( "Timeout when reading after %1 of %2 bytes (%3)." )
-                                    .arg( cnt )
-                                    .arg( size )
-                                    .arg( m_device->lastError().message() ) ) );
-            return false;
-        }
+    if( size <= 0 )
+        return true;
 
-        cnt += r;
+    if ( !m_device->read( data, size ) ) {
+        setError( m_device->lastError() );
+        return false;
     }
 
     return true;
@@ -73,15 +58,12 @@ bool Soprano::SocketStream::read( char* data, qint64 size )
 
 bool Soprano::SocketStream::write(const char* data, qint64 len)
 {
-    quint32 cnt = 0;
-    while ( cnt < len ) {
-        int x = qMin( (qint64)1024, len-cnt );
-        int r = m_device->write( data+cnt, x );
-        if ( r < 0 ) {
-            setError( m_device->lastError() );
-            return false;
-        }
-        cnt += r;
+    if( len <= 0 )
+        return true;
+
+    if( !m_device->write( data, len ) ) {
+        setError( m_device->lastError() );
+        return false;
     }
 
     return true;
