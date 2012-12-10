@@ -48,8 +48,10 @@ bool Soprano::SocketStream::read( char* data, qint64 size )
     if( size <= 0 )
         return true;
 
-    if ( !m_device->read( data, size ) ) {
-        setError( m_device->lastError() );
+    m_device->read( data, size );
+    Error::Error err = m_device->lastError();
+    if( err ) {
+        setError( err );
         return false;
     }
 
@@ -61,8 +63,10 @@ bool Soprano::SocketStream::write(const char* data, qint64 len)
     if( len <= 0 )
         return true;
 
-    if( !m_device->write( data, len ) ) {
-        setError( m_device->lastError() );
+    m_device->write( data, len );
+    Error::Error err = m_device->lastError();
+    if( err ) {
+        setError( err );
         return false;
     }
 

@@ -115,6 +115,12 @@ qint64 Soprano::Socket::read( char* buffer, qint64 size )
                 return -1;
             }
         }
+        else if( bytesRead == 0 ) {
+            QString error = QString::fromLatin1( "Timeout after reading %1 of %2 bytes" )
+                            .arg( total ).arg( total + size );
+            setError( error );
+            break;
+        }
 
         buffer += bytesRead;
         total += bytesRead;
@@ -142,6 +148,13 @@ qint64 Soprano::Socket::write( const char* buffer, qint64 size )
                 return -1;
             }
         }
+        else if( written == 0 ) {
+            QString error = QString::fromLatin1( "Timeout after writing %1 of %2 bytes" )
+                            .arg( total ).arg( total + size );
+            setError( error );
+            break;
+        }
+
         buffer += written;
         total += written;
         size -= written;
