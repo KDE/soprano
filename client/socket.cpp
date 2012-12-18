@@ -220,6 +220,7 @@ bool Soprano::LocalSocket::open()
     if ( ::connect( m_handle, (struct sockaddr *)&servAddr, sizeof( servAddr ) ) < 0 ) {
         setError( QString::fromLatin1( "Could not connect to server at %1 (%2)" ).arg( m_path ).arg( strerror(errno) ) );
         ::close( m_handle );
+        m_handle = -1;
         return false;
     }
 

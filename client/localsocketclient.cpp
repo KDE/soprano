@@ -131,6 +131,7 @@ bool Soprano::Client::LocalSocketClient::connect( const QString& name )
             return true;
         }
         else {
+            setError( d->connection.lastError() );
             return false;
         }
     }
