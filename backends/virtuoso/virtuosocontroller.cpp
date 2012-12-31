@@ -56,11 +56,11 @@ namespace {
 //         }
 #ifdef Q_OS_WIN
         static QMutex portNumberMutex;
-        static quint16 p = 1111;
+        static quint16 p = 1113;
         QMutexLocker l(&portNumberMutex);
         return p++;
 #else
-        int p = 1111;
+        int p = 1113;
         while ( QFile::exists( QString( "/tmp/virt_%1" ).arg( p ) ) ) {
             ++p;
         }
