@@ -20,7 +20,7 @@
  */
 
 #include "serveroperatortest.h"
-#include "../server/datastream.h"
+#include "../server/serverdatastream.h"
 
 #include "../soprano/soprano.h"
 
@@ -61,7 +61,7 @@ void ServerOperatorTest::testInt32()
     QByteArray data;
     QBuffer buffer( &data );
     buffer.open( QIODevice::ReadWrite );
-    DataStream s( &buffer );
+    Server::DataStream s( &buffer );
 
     s.writeInt32( original );
 
@@ -90,7 +90,7 @@ void ServerOperatorTest::testUnsignedInt32()
     QByteArray data;
     QBuffer buffer( &data );
     buffer.open( QIODevice::ReadWrite );
-    DataStream s( &buffer );
+    Server::DataStream s( &buffer );
 
     s.writeUnsignedInt32( original );
 
@@ -119,7 +119,7 @@ void ServerOperatorTest::testUnsignedInt16()
     QByteArray data;
     QBuffer buffer( &data );
     buffer.open( QIODevice::ReadWrite );
-    DataStream s( &buffer );
+    Server::DataStream s( &buffer );
 
     s.writeUnsignedInt16( original );
 
@@ -147,7 +147,7 @@ void ServerOperatorTest::testUnsignedInt8()
     QByteArray data;
     QBuffer buffer( &data );
     buffer.open( QIODevice::ReadWrite );
-    DataStream s( &buffer );
+    Server::DataStream s( &buffer );
 
     s.writeUnsignedInt8( original );
 
@@ -175,7 +175,7 @@ void ServerOperatorTest::testBool()
     QByteArray data;
     QBuffer buffer( &data );
     buffer.open( QIODevice::ReadWrite );
-    DataStream s( &buffer );
+    Server::DataStream s( &buffer );
 
     s.writeBool( original );
 
@@ -204,7 +204,7 @@ void ServerOperatorTest::testString()
     QByteArray data;
     QBuffer buffer( &data );
     buffer.open( QIODevice::ReadWrite );
-    DataStream s( &buffer );
+    Server::DataStream s( &buffer );
 
     s.writeString( original );
 
@@ -234,7 +234,7 @@ void ServerOperatorTest::testUrl()
     QByteArray data;
     QBuffer buffer( &data );
     buffer.open( QIODevice::ReadWrite );
-    DataStream s( &buffer );
+    Server::DataStream s( &buffer );
 
     s.writeUrl( original );
 
@@ -263,7 +263,7 @@ void ServerOperatorTest::testLocator()
     QByteArray data;
     QBuffer buffer( &data );
     buffer.open( QIODevice::ReadWrite );
-    DataStream s( &buffer );
+    Server::DataStream s( &buffer );
 
     s.writeLocator( original );
 
@@ -298,7 +298,7 @@ void ServerOperatorTest::testError()
     QByteArray data;
     QBuffer buffer( &data );
     buffer.open( QIODevice::ReadWrite );
-    DataStream s( &buffer );
+    Server::DataStream s( &buffer );
 
     // empty object
     s.writeError( error );
@@ -330,7 +330,7 @@ void ServerOperatorTest::testErrorCode()
     QByteArray data;
     QBuffer buffer( &data );
     buffer.open( QIODevice::ReadWrite );
-    DataStream s( &buffer );
+    Server::DataStream s( &buffer );
 
     QVERIFY( s.writeErrorCode( errorCode ) );
 
@@ -398,7 +398,7 @@ void ServerOperatorTest::testLiteralValue()
     QByteArray data;
     QBuffer buffer( &data );
     buffer.open( QIODevice::ReadWrite );
-    DataStream s( &buffer );
+    Server::DataStream s( &buffer );
 
     QVERIFY( s.writeLiteralValue( original ) );
 
@@ -429,7 +429,7 @@ void ServerOperatorTest::testNode()
     QByteArray data;
     QBuffer buffer( &data );
     buffer.open( QIODevice::ReadWrite );
-    DataStream s( &buffer );
+    Server::DataStream s( &buffer );
 
     QVERIFY( s.writeNode( original ) );
 
@@ -467,7 +467,7 @@ void ServerOperatorTest::testStatement()
     QByteArray data;
     QBuffer buffer( &data );
     buffer.open( QIODevice::ReadWrite );
-    DataStream s( &buffer );
+    Server::DataStream s( &buffer );
 
     QVERIFY( s.writeStatement( original ) );
 
@@ -499,7 +499,7 @@ void ServerOperatorTest::testBinding()
     QByteArray data;
     QBuffer buffer( &data );
     buffer.open( QIODevice::ReadWrite );
-    DataStream s( &buffer );
+    Server::DataStream s( &buffer );
 
     QVERIFY( s.writeBindingSet( original ) );
 

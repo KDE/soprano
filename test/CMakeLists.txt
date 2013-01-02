@@ -206,7 +206,7 @@ add_test(nrlmodeltest ${EXECUTABLE_OUTPUT_PATH}/nrlmodeltest)
 
 # Server QDataStream operators
 qt4_automoc(serveroperatortest.cpp)
-add_executable(serveroperatortest serveroperatortest.cpp ../server/datastream.cpp)
+add_executable(serveroperatortest serveroperatortest.cpp ../server/serverdatastream.cpp)
 target_link_libraries(serveroperatortest soprano ${QT_QTCORE_LIBRARY} ${QT_QTTEST_LIBRARY})
 
 # async model test
