@@ -1,3 +1,12 @@
+2.9.0
+	* Better error handling on the Client::LocalSocketClient
+	* New DataStream class which shares code between the server and client
+	* New boolean option "emptyGraphs" in the Virtuoso backend, which can
+		enable/disable checks for empty graphs
+	* New boolean option "fakeBooleans" in the virtuoso backend, which can
+		enable/disable fake boolean support
+	* Client and Server code optimizations
+
 2.8.0
 	* Improved NRLModel query prefix expansion.
 	* Support for plain SQL queries in the Virtuoso backend.
