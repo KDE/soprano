@@ -20,6 +20,7 @@
  */
 
 #include "xsd.h"
+#include <QThreadStorage>
 
 
 class XMLSchema
@@ -68,8 +69,12 @@ public:
     QUrl xsdBase64Binary;
 };
 
-
-Q_GLOBAL_STATIC( XMLSchema, xsd )
+QThreadStorage<XMLSchema*> qts_xsd;
+XMLSchema* xsd() {
+    if( !qts_xsd.hasLocalData() )
+        qts_xsd.setLocalData( new XMLSchema );
+    return qts_xsd.localData();
+}
 
 
 QUrl Soprano::Vocabulary::XMLSchema::xsdNamespace()

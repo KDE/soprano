@@ -19,6 +19,7 @@
  */
 
 #include "rdf.h"
+#include <QThreadStorage>
 
 class RdfPrivate
 {
@@ -60,7 +61,12 @@ public:
     QUrl rdf_value;
 };
 
-Q_GLOBAL_STATIC( RdfPrivate, s_rdf )
+QThreadStorage<RdfPrivate*> qts_rdf;
+RdfPrivate* s_rdf() {
+    if( !qts_rdf.hasLocalData() )
+        qts_rdf.setLocalData( new RdfPrivate );
+    return qts_rdf.localData();
+}
 
 QUrl Soprano::Vocabulary::RDF::rdfNamespace()
 {

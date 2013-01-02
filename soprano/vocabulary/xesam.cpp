@@ -19,6 +19,7 @@
  */
 
 #include "xesam.h"
+#include <QThreadStorage>
 
 class XesamPrivate
 {
@@ -572,7 +573,12 @@ public:
     QUrl xesam_workPostalAddress;
 };
 
-Q_GLOBAL_STATIC( XesamPrivate, s_xesam )
+QThreadStorage<XesamPrivate*> qts_xesam;
+XesamPrivate* s_xesam() {
+    if( !qts_xesam.hasLocalData() )
+        qts_xesam.setLocalData( new XesamPrivate );
+    return qts_xesam.localData();
+}
 
 QUrl Soprano::Vocabulary::Xesam::xesamNamespace()
 {

@@ -19,6 +19,7 @@
  */
 
 #include "nao.h"
+#include <QThreadStorage>
 
 class NaoPrivate
 {
@@ -114,7 +115,12 @@ public:
     QUrl nao_maintainedBy;
 };
 
-Q_GLOBAL_STATIC( NaoPrivate, s_nao )
+QThreadStorage<NaoPrivate*> qts_nao;
+NaoPrivate* s_nao() {
+    if( !qts_nao.hasLocalData() )
+        qts_nao.setLocalData( new NaoPrivate );
+    return qts_nao.localData();
+}
 
 QUrl Soprano::Vocabulary::NAO::naoNamespace()
 {

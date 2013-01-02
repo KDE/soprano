@@ -19,6 +19,7 @@
  */
 
 #include "rdfs.h"
+#include <QThreadStorage>
 
 class RdfsPrivate
 {
@@ -60,7 +61,12 @@ public:
     QUrl rdfs_subPropertyOf;
 };
 
-Q_GLOBAL_STATIC( RdfsPrivate, s_rdfs )
+QThreadStorage<RdfsPrivate*> qts_rdfs;
+RdfsPrivate* s_rdfs() {
+    if( !qts_rdfs.hasLocalData() )
+        qts_rdfs.setLocalData( new RdfsPrivate );
+    return qts_rdfs.localData();
+}
 
 QUrl Soprano::Vocabulary::RDFS::rdfsNamespace()
 {

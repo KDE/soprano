@@ -19,6 +19,7 @@
  */
 
 #include "nrl.h"
+#include <QThreadStorage>
 
 class NrlPrivate
 {
@@ -116,7 +117,12 @@ public:
     QUrl nrl_viewOn;
 };
 
-Q_GLOBAL_STATIC( NrlPrivate, s_nrl )
+QThreadStorage<NrlPrivate*> qts_nrl;
+NrlPrivate* s_nrl() {
+    if( !qts_nrl.hasLocalData() )
+        qts_nrl.setLocalData( new NrlPrivate );
+    return qts_nrl.localData();
+}
 
 QUrl Soprano::Vocabulary::NRL::nrlNamespace()
 {

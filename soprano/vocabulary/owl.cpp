@@ -19,6 +19,7 @@
  */
 
 #include "owl.h"
+#include <QThreadStorage>
 
 class OwlPrivate
 {
@@ -110,7 +111,12 @@ public:
     QUrl owl_versionInfo;
 };
 
-Q_GLOBAL_STATIC( OwlPrivate, s_owl )
+QThreadStorage<OwlPrivate*> qts_owl;
+OwlPrivate* s_owl() {
+    if( !qts_owl.hasLocalData() )
+        qts_owl.setLocalData( new OwlPrivate );
+    return qts_owl.localData();
+}
 
 QUrl Soprano::Vocabulary::OWL::owlNamespace()
 {
