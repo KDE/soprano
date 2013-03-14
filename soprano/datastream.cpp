@@ -30,6 +30,7 @@
 #include "languagetag.h"
 
 #include <QtCore/QIODevice>
+#include <QtCore/QDateTime>
 
 
 Soprano::DataStream::DataStream()
@@ -186,6 +187,9 @@ bool Soprano::DataStream::writeLiteralValue( const LiteralValue& value )
                 break;
             case QVariant::ByteArray:
                 status &= writeByteArray( var.toByteArray() );
+                break;
+            case QVariant::DateTime :
+                status &= writeUnsignedInt32( var.toDateTime().toTime_t() );
                 break;
             default:
                 status &= writeString( value.toString() );
@@ -484,6 +488,12 @@ bool Soprano::DataStream::readLiteralValue( LiteralValue& val )
                     QByteArray array;
                     status &= readByteArray( array );
                     val = LiteralValue( array );
+                    break;
+                }
+                case QVariant::DateTime : {
+                    quint32 timet;
+                    status &= readUnsignedInt32( timet );
+                    val = LiteralValue( QDateTime::fromTime_t(timet) );
                     break;
                 }
                 default: {
