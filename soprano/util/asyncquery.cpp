@@ -89,7 +89,6 @@ void Soprano::Util::AsyncQuery::Private::run()
             m_type = GraphResult;
         else if( it.isBinding() ) {
             m_type = BindingResult;
-            m_bindingNames = it.bindingNames();
         }
         else {
             m_type = BooleanResult;
@@ -106,8 +105,11 @@ void Soprano::Util::AsyncQuery::Private::run()
                     // cache the next result
                     if( m_type == GraphResult )
                         m_currentStatement = it.currentStatement();
-                    else
+                    else {
                         m_currentBindings = it.currentBindings();
+                        if( m_bindingNames.isEmpty() )
+                            m_bindingNames = it.bindingNames();
+                    }
 
                     // inform the client
                     QMetaObject::invokeMethod( q, "_s_emitNextReady", Qt::QueuedConnection );
