@@ -196,6 +196,8 @@ bool Soprano::LocalSocket::open( const QString& path )
 
 bool Soprano::LocalSocket::open()
 {
+    clearError();
+
     // create a socket
     m_handle = ::socket( AF_UNIX, SOCK_STREAM, 0 );
     if ( m_handle < 0 ) {
