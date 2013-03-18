@@ -32,7 +32,10 @@
 // Protocol version 4:
 //     Soprano 2.3
 //     literal language is now stored in LiteralValue
-#define PROTOCOL_VERSION 4
+// Protocol version 5:
+//     Soprano 2.9
+//     Literal values are now sent in their native types
+#define PROTOCOL_VERSION 5
 
 namespace Soprano {
     namespace Server {
