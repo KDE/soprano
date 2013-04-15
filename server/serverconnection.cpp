@@ -146,6 +146,8 @@ void Soprano::Server::ServerConnection::run()
     // quit() emits the signal finished() when the thread is finished
     connect( d->socket, SIGNAL( disconnected() ),
              this, SLOT( quit() ) );
+    connect( this, SIGNAL(finished()),
+             this, SLOT(deleteLater()) );
 
     // start the event loop
     exec();
