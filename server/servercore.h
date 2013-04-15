@@ -201,6 +201,14 @@ namespace Soprano {
             bool listen( quint16 port = DEFAULT_PORT );
 
             /**
+             * Stops listening on all connections. This includes the local socket
+             * connection, the tcp connection and dbus, depending on which all are listening.
+             *
+             * This does not destroy the internal model
+             */
+            void stop();
+
+            /**
              * \return The port this server is listening on or 0 if listen has not
              * been called successfully.
              *
@@ -224,7 +232,7 @@ namespace Soprano {
             void registerAsDBusObject( const QString& objectPath = QString() );
 
         private Q_SLOTS:
-            void serverConnectionFinished();
+            void serverConnectionFinished(QObject* obj);
 
         protected:
             /**

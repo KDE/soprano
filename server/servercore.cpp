@@ -50,7 +50,7 @@ const quint16 Soprano::Server::ServerCore::DEFAULT_PORT = 5000;
 void Soprano::Server::ServerCorePrivate::addConnection( ServerConnection* conn )
 {
     connections.append( conn );
-    QObject::connect( conn, SIGNAL(finished()), q, SLOT(serverConnectionFinished()));
+    QObject::connect( conn, SIGNAL(destroyed(QObject*)), q, SLOT(serverConnectionFinished(QObject*)) );
     conn->start();
     qDebug() << Q_FUNC_INFO << "New connection. New count:" << connections.count();
 }
@@ -179,6 +179,24 @@ bool Soprano::Server::ServerCore::listen( quint16 port )
     }
 }
 
+void Soprano::Server::ServerCore::stop()
+{
+    qDeleteAll( d->connections );
+    qDeleteAll( d->models );
+
+    delete d->tcpServer;
+    d->tcpServer = 0;
+
+    delete d->socketServer;
+    d->socketServer = 0;
+
+#ifdef BUILD_DBUS_SUPPORT
+    delete d->dbusController;
+    d->dbusController = 0;
+#endif
+}
+
+
 
 quint16 Soprano::Server::ServerCore::serverPort() const
 {
@@ -229,12 +247,12 @@ void Soprano::Server::ServerCore::registerAsDBusObject( const QString& objectPat
 }
 
 
-void Soprano::Server::ServerCore::serverConnectionFinished()
+void Soprano::Server::ServerCore::serverConnectionFinished(QObject* obj)
 {
-    qDebug() << Q_FUNC_INFO;
-    ServerConnection* conn = qobject_cast<ServerConnection*>( sender() );
+    qDebug() << Q_FUNC_INFO << d->connections.count();
+    // We use static_cast cause qobject_case will fail since the object has been destroyed
+    ServerConnection* conn = static_cast<ServerConnection*>( obj );
     d->connections.removeAll( conn );
-    delete conn;
     qDebug() << Q_FUNC_INFO << "Connection removed. Current count:" << d->connections.count();
 }
 
