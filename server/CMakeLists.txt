@@ -40,18 +40,10 @@ if(BUILD_DBUS_SUPPORT)
 endif(BUILD_DBUS_SUPPORT)
 
 configure_file(soprano-server-config.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/soprano-server-config.h)
-
-#set(soprano_serverbackend_SRC
-#  serverbackend.h
-#  serverbackend.cpp
-#)
   
 qt4_automoc(${soprano_server_SRC})
 
-#qt4_automoc(${soprano_serverbackend_SRC})
-
 add_library(sopranoserver ${LIBRARY_TYPE} ${soprano_server_SRC})
-#add_library(soprano_serverclientbackend SHARED ${soprano_serverbackend_SRC})
 
 qt4_automoc(sopranodcore.cpp)
 
@@ -81,11 +73,6 @@ if(BUILD_DBUS_SUPPORT)
 endif(BUILD_DBUS_SUPPORT)
 
 
-#target_link_libraries(
-#  soprano_serverclientbackend
-#  sopranoclient
-#)
-
 target_link_libraries(
   sopranod
   soprano
@@ -105,12 +92,6 @@ INSTALL(TARGETS sopranoserver sopranod
 	RUNTIME DESTINATION bin
 	ARCHIVE DESTINATION lib
 )
-
-#INSTALL(TARGETS soprano_serverclientbackend
-#	LIBRARY DESTINATION ${LIB_DESTINATION}/soprano
-#	RUNTIME DESTINATION bin/soprano
-#	ARCHIVE DESTINATION lib/soprano
-#)
 
 install(
   FILES 
