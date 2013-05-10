@@ -73,7 +73,10 @@ Soprano::Server::ServerCore::~ServerCore()
 #ifdef BUILD_DBUS_SUPPORT
     delete d->dbusController;
 #endif
-    qDeleteAll( d->connections );
+    // We avoid using qDeleteAll because d->connections is modified by each delete operation
+    foreach(const Soprano::Server::ServerConnection* con, d->connections) {
+        delete con;
+    }
     qDeleteAll( d->models );
     delete d->modelPool;
     delete d;
@@ -181,7 +184,11 @@ bool Soprano::Server::ServerCore::listen( quint16 port )
 
 void Soprano::Server::ServerCore::stop()
 {
-    qDeleteAll( d->connections );
+    qDebug() << "Stopping and deleting";
+    // We avoid using qDeleteAll because d->connections is modified by each delete operation
+    foreach(const Soprano::Server::ServerConnection* con, d->connections) {
+        delete con;
+    }
     qDeleteAll( d->models );
 
     delete d->tcpServer;
