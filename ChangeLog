@@ -1,3 +1,8 @@
+2.9.2
+	* Fix a crash in ServerCore on shutdown
+	* Do no require X11 - not needed for compilation
+	* Generate tag file for API docs
+
 2.9.1
     * Faster streaming for datetime literals
 	* Add a stop method in the LocalServer
