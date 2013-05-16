@@ -73,14 +73,21 @@ void Soprano::FilterModel::setParentModel( Model* model )
 
     if ( model != d->parent ) {
         if ( d->parent ) {
-            d->parent->disconnect( this );
+            disconnect( d->parent, SIGNAL(statementsAdded()), this, SLOT(slotStatementsAdded()) );
+            disconnect( d->parent, SIGNAL(statementsRemoved()), this, SLOT(slotStatementsRemoved()) );
+            disconnect( d->parent, SIGNAL(statementAdded(Soprano::Statement)),
+                        this, SLOT(slotStatementAdded(Soprano::Statement)) );
+            disconnect( d->parent, SIGNAL(statementRemoved(Soprano::Statement)),
+                        this, SLOT(slotStatementRemoved(Soprano::Statement)) );
         }
         d->parent = model;
         if ( d->parent ) {
             connect( d->parent, SIGNAL(statementsAdded()), this, SLOT(slotStatementsAdded()) );
             connect( d->parent, SIGNAL(statementsRemoved()), this, SLOT(slotStatementsRemoved()) );
-            connect( d->parent, SIGNAL(statementAdded(const Soprano::Statement&)), this, SLOT(slotStatementAdded(const Soprano::Statement&)) );
-            connect( d->parent, SIGNAL(statementRemoved(const Soprano::Statement&)), this, SLOT(slotStatementRemoved(const Soprano::Statement&)) );
+            connect( d->parent, SIGNAL(statementAdded(Soprano::Statement)),
+                     this, SLOT(slotStatementAdded(Soprano::Statement)) );
+            connect( d->parent, SIGNAL(statementRemoved(Soprano::Statement)),
+                     this, SLOT(slotStatementRemoved(Soprano::Statement)) );
         }
     }
 }
