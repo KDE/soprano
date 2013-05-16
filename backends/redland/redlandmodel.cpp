@@ -242,11 +242,12 @@ Soprano::Error::ErrorCode Soprano::Redland::RedlandModel::addStatement( const St
         // there is a bug (at least IMHO it is a bug) in redland which allows to add the same statement to one graph
         // multiple times.
         //
+        // However, calling redlandContainsStatement each time is very expensive so I'm skipping it
         librdf_node* redlandContext = d->world->createNode( statement.context() );
-        if ( d->redlandContainsStatement( redlandStatement, redlandContext ) > 0 ) {
+        /*if ( d->redlandContainsStatement( redlandStatement, redlandContext ) > 0 ) {
             added = false;
         }
-        else {
+        else {*/
             if ( librdf_model_context_add_statement( d->model, redlandContext, redlandStatement ) ) {
                 d->world->freeStatement( redlandStatement );
                 d->world->freeNode( redlandContext );
@@ -255,7 +256,7 @@ Soprano::Error::ErrorCode Soprano::Redland::RedlandModel::addStatement( const St
                 d->readWriteLock.unlock();
                 return Error::ErrorUnknown;
             }
-        }
+        //}
 
         d->world->freeNode( redlandContext );
     }
