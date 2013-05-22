@@ -37,7 +37,7 @@ if(BUILD_DBUS_SUPPORT)
     dbus/dbuscontroller.cpp
     dbus/dbusoperators.cpp
     )
-endif(BUILD_DBUS_SUPPORT)
+endif()
 
 configure_file(soprano-server-config.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/soprano-server-config.h)
   
@@ -51,7 +51,7 @@ add_executable(sopranod sopranod.cpp sopranodcore.cpp lockfile.cpp)
 
 if(WINCE)
     target_link_libraries(sopranod Coredll)
-endif(WINCE)
+endif()
 
 set_target_properties(sopranoserver PROPERTIES
   VERSION 1.2.0
@@ -70,7 +70,7 @@ if(BUILD_DBUS_SUPPORT)
   target_link_libraries(
     sopranoserver
     ${QT_QTDBUS_LIBRARY})
-endif(BUILD_DBUS_SUPPORT)
+endif()
 
 
 target_link_libraries(
@@ -85,7 +85,7 @@ if(SOPRANO_BUILD_INDEX_LIB)
     sopranod
     sopranoindex
   )
-endif(SOPRANO_BUILD_INDEX_LIB)
+endif()
 
 INSTALL(TARGETS sopranoserver sopranod
 	LIBRARY DESTINATION ${LIB_DESTINATION}
@@ -101,4 +101,4 @@ install(
 
 if(BUILD_DBUS_SUPPORT)
   add_subdirectory(dbus)
-endif(BUILD_DBUS_SUPPORT)
+endif()

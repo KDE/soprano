@@ -2,7 +2,7 @@ project(soprano_sesame2)
 
 if("${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION}.${CMAKE_PATCH_VERSION}" VERSION_LESS "2.6.2")
    set(JNI_INCLUDE_DIRS ${JAVA_INCLUDE_PATH} ${JAVA_INCLUDE_PATH2})
-endif("${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION}.${CMAKE_PATCH_VERSION}" VERSION_LESS "2.6.2")
+endif()
 
 include_directories(
   ${QT_QTCORE_INCLUDE_DIR}
@@ -44,13 +44,13 @@ if(WIN32)
 # RUNTIME and ARCHIVE are ignored when the library type is set to MODULE (cf. add_library above)
 # so specify the bin directory explicitely. Only the .dll will be copied.
   INSTALL(TARGETS soprano_sesame2backend DESTINATION bin/soprano)
-else(WIN32)
+else()
   INSTALL(TARGETS soprano_sesame2backend
     LIBRARY DESTINATION ${LIB_DESTINATION}/soprano
     RUNTIME DESTINATION bin/soprano
     ARCHIVE DESTINATION lib/soprano
     )
-endif(WIN32)
+endif()
 
 install(FILES
   openrdf-sesame-2.2.4-onejar.jar

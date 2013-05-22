@@ -84,7 +84,7 @@ if(BUILD_REDLAND_BACKEND)
   add_executable(redlandmultithreadtest redlandmultithreadtest.cpp)
   target_link_libraries(redlandmultithreadtest soprano multithreadingtest ${QT_QTCORE_LIBRARY} ${QT_QTTEST_LIBRARY})
   add_test(redlandmultithreadtest ${EXECUTABLE_OUTPUT_PATH}/redlandmultithreadtest)
-endif(BUILD_REDLAND_BACKEND)
+endif()
 
 # scaling
 qt4_automoc(storagescalingtest storagescalingtest.cpp)
@@ -121,7 +121,7 @@ if(BUILD_SESAME2_BACKEND)
   add_executable(sesame2multithreadtest sesame2multithreadtest.cpp)
   target_link_libraries(sesame2multithreadtest soprano multithreadingtest ${QT_QTCORE_LIBRARY} ${QT_QTTEST_LIBRARY})
   add_test(sesame2multithreadtest ${EXECUTABLE_OUTPUT_PATH}/sesame2multithreadtest)
-endif(BUILD_SESAME2_BACKEND)
+endif()
 
 # parser test
 qt4_automoc(parsertest parsertest.cpp)
@@ -162,7 +162,7 @@ if(BUILD_CLUCENE_INDEX)
   add_executable(indexmodelmultithreadingtest indexmodelmultithreadingtest.cpp)
   target_link_libraries(indexmodelmultithreadingtest soprano sopranoindex multithreadingtest ${QT_QTCORE_LIBRARY} ${QT_QTTEST_LIBRARY})
   add_test(indexmodelmultithreadingtest ${EXECUTABLE_OUTPUT_PATH}/indexmodelmultithreadingtest)
-endif(BUILD_CLUCENE_INDEX)
+endif()
 
 # LocalSocketClient multithreading test
 qt4_automoc(localsocketmultithreadtest localsocketmultithreadingtest.cpp)
@@ -190,7 +190,7 @@ add_test(sopranodbusmultithreadtest ${EXECUTABLE_OUTPUT_PATH}/sopranodbusmultith
 qt4_automoc(sopranodbussignalspy modelsignalspy.cpp)
 add_executable(sopranodbussignalspy modelsignalspy.cpp sopranodbussignalspy.cpp)
 target_link_libraries(sopranodbussignalspy sopranoclient ${QT_QTCORE_LIBRARY})
-endif(BUILD_DBUS_SUPPORT)
+endif()
 
 # NRL Model test
 qt4_automoc(nrlmodeltest nrlmodeltest.cpp)
@@ -214,7 +214,7 @@ if(BUILD_VIRTUOSO_BACKEND)
   add_executable(virtuosobackendtest virtuosobackendtest.cpp)
   target_link_libraries(virtuosobackendtest sopranomodeltest)
   add_test(virtuosobackendtest virtuosobackendtest)
-endif(BUILD_VIRTUOSO_BACKEND)
+endif()
 
 # graph model tests
 qt4_automoc(graphtest graphtest.cpp)

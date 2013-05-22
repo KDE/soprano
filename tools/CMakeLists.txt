@@ -31,7 +31,7 @@ if(SOPRANO_BUILD_INDEX_LIB)
     sopranocmd
     sopranoindex
   )
-endif(SOPRANO_BUILD_INDEX_LIB)
+endif()
 
 target_link_libraries(
   onto2vocabularyclass

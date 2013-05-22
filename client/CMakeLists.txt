@@ -34,7 +34,7 @@ if(NOT WINCE)
     sparql/sparqlprotocol.cpp
     sparql/sparqlxmlresultparser.cpp
     )
-endif(NOT WINCE)
+endif()
 
 if(BUILD_DBUS_SUPPORT)
   set(soprano_client_SRC
@@ -56,7 +56,7 @@ if(BUILD_DBUS_SUPPORT)
     dbus/dbusnodeiterator.cpp
     dbus/dbusqueryresultiterator.cpp
     )
-endif(BUILD_DBUS_SUPPORT)
+endif()
 
 qt4_automoc(${soprano_client_SRC})
 
@@ -79,13 +79,13 @@ target_link_libraries(
 
 if(WIN32)
    target_link_libraries(sopranoclient ws2_32)
-endif(WIN32)
+endif()
 
 if(BUILD_DBUS_SUPPORT)
   target_link_libraries(
     sopranoclient
     ${QT_QTDBUS_LIBRARY})
-endif(BUILD_DBUS_SUPPORT)
+endif()
 
 INSTALL(TARGETS sopranoclient
 	LIBRARY DESTINATION ${LIB_DESTINATION}
@@ -103,4 +103,4 @@ install(
 add_subdirectory(sparql)
 if(BUILD_DBUS_SUPPORT)
   add_subdirectory(dbus)
-endif(BUILD_DBUS_SUPPORT)
+endif()
