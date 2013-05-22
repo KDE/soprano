@@ -42,6 +42,7 @@ include(SopranoCPack.cmake)
 
 ##################  find packages  ################################
 
+set(QT_USE_IMPORTED_TARGETS TRUE)
 set(QT_MIN_VERSION "4.5.0")
 find_package(Qt4 REQUIRED)
 # properly set up compile flags (QT_DEBUG/QT_NO_DEBUG, ...)
