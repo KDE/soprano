@@ -8,6 +8,9 @@ endif(POLICY CMP0017)
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules)
 
+# Used to report the packages we found
+include(FeatureSummary)
+
 include(CTest)
 include(CTestConfig.cmake)
 
@@ -45,6 +48,7 @@ include(SopranoCPack.cmake)
 set(QT_USE_IMPORTED_TARGETS TRUE)
 set(QT_MIN_VERSION "4.5.0")
 find_package(Qt4 REQUIRED)
+
 # properly set up compile flags (QT_DEBUG/QT_NO_DEBUG, ...)
 if(CMAKE_BUILD_TYPE)
     string(TOLOWER ${CMAKE_BUILD_TYPE} CMAKE_BUILD_TYPE_TOLOWER)
