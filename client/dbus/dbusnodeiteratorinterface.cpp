@@ -30,4 +30,4 @@ Soprano::Client::DBusNodeIteratorInterface::~DBusNodeIteratorInterface()
 {
 }
 
-#include "dbusnodeiteratorinterface.moc"
+#include "moc_dbusnodeiteratorinterface.cpp"

@@ -51,4 +51,3 @@ QDBusMessage Soprano::Client::DBusAbstractInterface::callWithArgumentListAndBigT
     return reply;
 }
 
-#include "dbusabstractinterface.moc"

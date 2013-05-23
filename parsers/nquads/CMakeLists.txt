@@ -11,7 +11,6 @@ include_directories(
 set(nquadparser_SRC
   nquadparser.cpp)
 
-qt4_automoc(${nquadparser_SRC})
 
 add_library(soprano_nquadparser MODULE ${nquadparser_SRC})
 

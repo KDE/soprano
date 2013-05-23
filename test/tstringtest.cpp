@@ -110,4 +110,3 @@ void TStringTest::testLength()
 
 QTEST_MAIN( TStringTest )
 
-#include "tstringtest.moc"

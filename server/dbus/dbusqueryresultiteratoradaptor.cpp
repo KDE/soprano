@@ -162,4 +162,4 @@ void Soprano::Server::DBusQueryResultIteratorAdaptor::close( const QDBusMessage&
     }
 }
 
-#include "dbusqueryresultiteratoradaptor.moc"
+#include "moc_dbusqueryresultiteratoradaptor.cpp"

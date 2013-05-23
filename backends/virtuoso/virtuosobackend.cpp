@@ -276,4 +276,3 @@ QString Soprano::Virtuoso::BackendPlugin::findVirtuosoDriver()
 }
 #endif
 
-#include "virtuosobackend.moc"

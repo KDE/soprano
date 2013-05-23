@@ -146,4 +146,3 @@ Soprano::ODBC::Connection* Soprano::ODBC::ConnectionPool::connection()
     return conn;
 }
 
-#include "odbcconnectionpool.moc"

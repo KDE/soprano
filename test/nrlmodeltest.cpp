@@ -82,4 +82,3 @@ void NRLModelTest::testAddStatement()
 
 QTEST_MAIN( NRLModelTest )
 
-#include "nrlmodeltest.moc"

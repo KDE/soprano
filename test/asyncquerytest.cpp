@@ -214,4 +214,3 @@ void AsyncQueryTest::testError()
 
 QTEST_MAIN( AsyncQueryTest )
 
-#include "asyncquerytest.moc"

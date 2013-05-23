@@ -94,4 +94,3 @@ void Soprano::Client::TcpClient::slotError( QAbstractSocket::SocketError error )
 
 // }
 
-#include "tcpclient.moc"

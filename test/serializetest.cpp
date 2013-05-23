@@ -163,5 +163,4 @@ void SerializerTest::testEncoding()
 
 QTEST_MAIN( SerializerTest )
 
-#include "serializetest.moc"
 

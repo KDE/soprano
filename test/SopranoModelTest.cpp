@@ -1262,4 +1262,3 @@ void SopranoModelTest::testPerformance()
     qDebug() << "Time for adding " << sl.count() << " statements one after the other: " << e;
 }
 
-#include "SopranoModelTest.moc"

@@ -97,4 +97,3 @@ Soprano::Node Soprano::Util::AsyncResult::node() const
     return value().value<Node>();
 }
 
-#include "asyncresult.moc"

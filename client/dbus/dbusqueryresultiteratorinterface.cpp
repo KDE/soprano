@@ -30,4 +30,4 @@ Soprano::Client::DBusQueryResultIteratorInterface::~DBusQueryResultIteratorInter
 {
 }
 
-#include "dbusqueryresultiteratorinterface.moc"
+#include "moc_dbusqueryresultiteratorinterface.cpp"

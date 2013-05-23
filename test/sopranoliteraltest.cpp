@@ -316,4 +316,3 @@ void SopranoLiteralTest::testFromVariant()
 
 QTEST_MAIN(SopranoLiteralTest)
 
-#include "sopranoliteraltest.moc"

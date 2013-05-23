@@ -139,4 +139,3 @@ void NodeTest::testToN3()
 
 QTEST_MAIN(NodeTest)
 
-#include "NodeTest.moc"

@@ -73,4 +73,3 @@ void Soprano::Server::TcpServer::incomingConnection( int socketDescriptor )
     }
 }
 
-#include "tcpserver.moc"

@@ -145,5 +145,4 @@ void GraphTest::testCloseStatementIteratorOnModelDelete()
 
 QTEST_MAIN( GraphTest )
 
-#include "graphtest.moc"
 

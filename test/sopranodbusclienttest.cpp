@@ -71,4 +71,3 @@ void SopranoDBusClientTest::testCloseStatementIteratorOnModelDelete()
 
 QTEST_MAIN( SopranoDBusClientTest )
 
-#include "sopranodbusclienttest.moc"

@@ -217,4 +217,3 @@ Soprano::Node Soprano::Client::DBusModel::createBlankNode()
     return reply.value();
 }
 
-#include "dbusmodel.moc"

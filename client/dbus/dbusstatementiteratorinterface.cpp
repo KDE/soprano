@@ -30,4 +30,4 @@ Soprano::Client::DBusStatementIteratorInterface::~DBusStatementIteratorInterface
 {
 }
 
-#include "dbusstatementiteratorinterface.moc"
+#include "moc_dbusstatementiteratorinterface.cpp"

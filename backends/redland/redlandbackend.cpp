@@ -182,4 +182,3 @@ Soprano::BackendFeatures Soprano::Redland::BackendPlugin::supportedFeatures() co
              BackendFeatureContext );
 }
 
-#include "redlandbackend.moc"

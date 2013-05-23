@@ -121,4 +121,3 @@ HSTMT Soprano::ODBC::Connection::execute( const QString& request )
     }
 }
 
-#include "odbcconnection.moc"

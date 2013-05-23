@@ -55,4 +55,3 @@ void N3NodeParserTest::testToFromN3()
 
 QTEST_MAIN( N3NodeParserTest )
 
-#include "n3nodeparsertest.moc"

@@ -423,4 +423,3 @@ void InferenceModelTest::testLiteralEffect()
 
 QTEST_MAIN( InferenceModelTest )
 
-#include "inferencemodeltest.moc"

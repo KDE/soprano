@@ -91,4 +91,3 @@ void Soprano::Util::SignalCacheModel::timerEvent( QTimerEvent* event )
     }
 }
 
-#include "signalcachemodel.moc"

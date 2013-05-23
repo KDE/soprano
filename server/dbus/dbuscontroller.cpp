@@ -56,4 +56,3 @@ void Soprano::Server::DBusController::run()
     delete dummy;
 }
 
-#include "dbuscontroller.moc"

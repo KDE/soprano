@@ -241,4 +241,3 @@ void Soprano::Client::ClientModel::closeIterator( int id ) const
     }
 }
 
-#include "clientmodel.moc"

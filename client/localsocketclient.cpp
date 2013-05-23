@@ -183,4 +183,3 @@ void Soprano::Client::LocalSocketClient::removeModel( const QString& name )
     }
 }
 
-#include "localsocketclient.moc"

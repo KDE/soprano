@@ -117,4 +117,3 @@ void Soprano::NQuadSerializer::serializeNode( const Node& node, QTextStream& str
     }
 }
 
-#include "nquadserializer.moc"

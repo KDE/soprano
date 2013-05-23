@@ -73,4 +73,3 @@ void Soprano::Server::LocalServer::incomingConnection( quintptr socketDescriptor
     }
 }
 
-#include "localserver.moc"

@@ -170,4 +170,3 @@ Soprano::Error::ErrorCode Soprano::Model::write( QTextStream &os ) const
     return Error::ErrorNone;
 }
 
-#include "model.moc"

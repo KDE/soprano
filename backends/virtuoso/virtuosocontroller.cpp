@@ -377,4 +377,3 @@ int Soprano::VirtuosoController::pidOfRunningVirtuosoInstance( const QString& st
     }
 }
 
-#include "virtuosocontroller.moc"

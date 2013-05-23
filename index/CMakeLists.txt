@@ -38,7 +38,6 @@ IF(NOT WIN32)
     ENDIF()
 ENDIF()
 
-qt4_automoc(${SOPRANO_INDEX_SRCS})
 
 add_library(sopranoindex SHARED ${SOPRANO_INDEX_SRCS})
 

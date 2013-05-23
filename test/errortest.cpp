@@ -109,4 +109,3 @@ void ErrorTest::testParserErrorConversion()
 
 QTEST_MAIN( ErrorTest )
 
-#include "errortest.moc"

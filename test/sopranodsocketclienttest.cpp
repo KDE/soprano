@@ -63,4 +63,3 @@ void SopranodSocketClientTest::deleteModel( Soprano::Model* m )
 
 QTEST_MAIN( SopranodSocketClientTest )
 
-#include "sopranodsocketclienttest.moc"

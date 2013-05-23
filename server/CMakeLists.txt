@@ -41,11 +41,9 @@ endif()
 
 configure_file(soprano-server-config.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/soprano-server-config.h)
   
-qt4_automoc(${soprano_server_SRC})
 
 add_library(sopranoserver ${LIBRARY_TYPE} ${soprano_server_SRC})
 
-qt4_automoc(sopranodcore.cpp)
 
 add_executable(sopranod sopranod.cpp sopranodcore.cpp lockfile.cpp)
 

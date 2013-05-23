@@ -40,4 +40,3 @@ Soprano::Model* RedlandMultiThreadTest::createModel()
 
 QTEST_MAIN( RedlandMultiThreadTest )
 
-#include "redlandmultithreadtest.moc"

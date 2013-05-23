@@ -138,4 +138,4 @@ void StatementIteratorTest::testConsistency()
     }
 }
 
-#include "StatementIteratorTest.moc"
+#include "moc_StatementIteratorTest.cpp"

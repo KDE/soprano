@@ -30,4 +30,3 @@ Soprano::Client::DBusServerInterface::~DBusServerInterface()
 {
 }
 
-#include "dbusserverinterface.moc"

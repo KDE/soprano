@@ -15,7 +15,6 @@ configure_file(soprano-tools-config.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/soprano-
 
 add_executable(sopranocmd sopranocmd.cpp modelmonitor.cpp)
 
-qt4_automoc(modelmonitor.cpp)
 
 add_executable(onto2vocabularyclass onto2vocabularyclass.cpp)
 

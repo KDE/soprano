@@ -83,4 +83,3 @@ void Soprano::Client::DBusClient::removeModel( const QString& name )
     setError( DBus::convertError( d->interface->removeModel( name ).error() ) );
 }
 
-#include "dbusclient.moc"

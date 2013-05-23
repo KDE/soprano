@@ -806,4 +806,4 @@ void Soprano::Server::ServerConnection::Private::supportsProtocolVersion()
     //qDebug() << "(ServerConnection::supportsProtocolVersion) done";
 }
 
-#include "serverconnection.moc"
+#include "moc_serverconnection.cpp"

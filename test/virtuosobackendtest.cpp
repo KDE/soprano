@@ -73,4 +73,3 @@ void Soprano::VirtuosoBackendTest::deleteModel( Soprano::Model* m )
 
 QTEST_MAIN( Soprano::VirtuosoBackendTest )
 
-#include "virtuosobackendtest.moc"

@@ -406,4 +406,3 @@ bool Soprano::Raptor::Serializer::serialize( StatementIterator it,
     return success;
 }
 
-#include "raptorserializer.moc"

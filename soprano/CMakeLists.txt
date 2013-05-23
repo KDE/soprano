@@ -102,7 +102,6 @@ set(soprano_SRCS
   util/asyncquery.cpp
   )
 
-qt4_automoc(${soprano_SRCS})
 
 add_library(soprano ${LIBRARY_TYPE} ${soprano_SRCS})
 

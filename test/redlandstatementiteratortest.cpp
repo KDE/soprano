@@ -39,5 +39,4 @@ Soprano::Model* RedlandStatementIteratorTest::createModel()
 
 QTEST_MAIN(RedlandStatementIteratorTest)
 
-#include "redlandstatementiteratortest.moc"
-
+#include "moc_redlandstatementiteratortest.cpp"

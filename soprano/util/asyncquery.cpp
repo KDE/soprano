@@ -277,4 +277,4 @@ Soprano::Util::AsyncQuery* Soprano::Util::AsyncQuery::executeQuery( Soprano::Mod
     }
 }
 
-#include "asyncquery.moc"
+#include "moc_asyncquery.cpp"

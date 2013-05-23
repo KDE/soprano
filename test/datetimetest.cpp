@@ -161,4 +161,3 @@ void DateTimeTest::testDateTimeToString()
 
 QTEST_MAIN( DateTimeTest )
 
-#include "datetimetest.moc"

@@ -252,4 +252,3 @@ void IndexTest::testMassAddStatement()
 
 QTEST_MAIN( IndexTest )
 
-#include "cluceneindextest.moc"

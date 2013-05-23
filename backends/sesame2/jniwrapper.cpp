@@ -192,4 +192,3 @@ Soprano::Error::Error JNIWrapper::convertAndClearException()
     }
 }
 
-#include "jniwrapper.moc"

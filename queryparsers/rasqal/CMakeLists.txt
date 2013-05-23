@@ -18,7 +18,6 @@ set(rasqalqueryparser_SRC
   rasqalqueryparser.h
 )
 
-qt4_automoc(${rasqalqueryparser_SRC})
 
 add_library(soprano_rasqalqueryparser MODULE ${rasqalqueryparser_SRC})
 

@@ -129,4 +129,3 @@ Soprano::Error::ErrorCode Soprano::StorageModel::removeAllStatements( const Stat
 //     }
 // }
 
-#include "storagemodel.moc"

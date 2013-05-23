@@ -138,4 +138,3 @@ void ParserTest::testEncoding()
 
 QTEST_MAIN( ParserTest )
 
-#include "parsertest.moc"

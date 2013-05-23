@@ -58,4 +58,3 @@ Soprano::Model* SopranodCore::createModel( const QList<Soprano::BackendSetting>&
     return ServerCore::createModel( settings );
 }
 
-#include "sopranodcore.moc"

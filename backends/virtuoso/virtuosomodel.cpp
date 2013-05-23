@@ -494,4 +494,3 @@ void Soprano::VirtuosoModel::slotVirtuosoStopped(VirtuosoController::ExitStatus 
                                              status == VirtuosoController::ThirdPartyExit))));
 }
 
-#include "virtuosomodel.moc"

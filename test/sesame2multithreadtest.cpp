@@ -40,4 +40,3 @@ Soprano::Model* Sesame2MultiThreadTest::createModel()
 
 QTEST_MAIN( Sesame2MultiThreadTest )
 
-#include "sesame2multithreadtest.moc"

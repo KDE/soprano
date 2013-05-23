@@ -150,4 +150,3 @@ Soprano::BackendFeatures Soprano::Client::ServerBackend::supportedFeatures() con
     return BackendFeatureNone;
 }
 
-#include "serverbackend.moc"

@@ -296,4 +296,5 @@ Soprano::QueryResultIterator Soprano::Util::AsyncModel::executeQuery( const QStr
     return new SyncQueryResultIteratorBackend( d, FilterModel::executeQuery( query, language, userQueryLanguage ) );
 }
 
-#include "asyncmodel.moc"
+#include "moc_asyncmodel.cpp"
+

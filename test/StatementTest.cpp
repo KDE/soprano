@@ -67,4 +67,3 @@ void StatementTest::testStatementInvariant()
 
 QTEST_MAIN(StatementTest)
 
-#include "StatementTest.moc"

@@ -343,4 +343,4 @@ Soprano::Error::ErrorCode Soprano::NRLModel::removeAllStatements( const Statemen
     }
 }
 
-#include "nrlmodel.moc"
+#include "moc_nrlmodel.cpp"

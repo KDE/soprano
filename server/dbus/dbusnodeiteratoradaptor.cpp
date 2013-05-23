@@ -68,4 +68,4 @@ void Soprano::Server::DBusNodeIteratorAdaptor::close( const QDBusMessage& m )
     }
 }
 
-#include "dbusnodeiteratoradaptor.moc"
+#include "moc_dbusnodeiteratoradaptor.cpp"

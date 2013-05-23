@@ -175,4 +175,3 @@ Soprano::BackendFeatures Soprano::Sesame2::BackendPlugin::supportedFeatures() co
              BackendFeatureContext );
 }
 
-#include "sesame2backend.moc"

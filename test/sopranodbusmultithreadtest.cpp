@@ -65,4 +65,3 @@ void SopranoDBusMultiThreadingTest::deleteModel( Soprano::Model* model )
 
 QTEST_MAIN( SopranoDBusMultiThreadingTest )
 
-#include "sopranodbusmultithreadtest.moc"

@@ -44,4 +44,3 @@ Soprano::Model* LocalSocketMultiThreadingTest::createModel()
 
 QTEST_MAIN( LocalSocketMultiThreadingTest )
 
-#include "localsocketmultithreadingtest.moc"

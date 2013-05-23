@@ -58,7 +58,6 @@ if(BUILD_DBUS_SUPPORT)
     )
 endif()
 
-qt4_automoc(${soprano_client_SRC})
 
 add_library(sopranoclient ${LIBRARY_TYPE} ${soprano_client_SRC})
 

@@ -420,4 +420,3 @@ Soprano::PluginManager* Soprano::PluginManager::instance()
     return &s_pluginManagerFactory()->manager;
 }
 
-#include "pluginmanager.moc"

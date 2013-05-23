@@ -323,4 +323,3 @@ void MultiThreadingTest::deleteModel( Model* m )
     delete m;
 }
 
-#include "multithreadingtest.moc"

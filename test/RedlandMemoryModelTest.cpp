@@ -39,5 +39,4 @@ Soprano::Model* RedlandMemoryModelTest::createModel()
 
 QTEST_MAIN(RedlandMemoryModelTest)
 
-#include "RedlandMemoryModelTest.moc"
 

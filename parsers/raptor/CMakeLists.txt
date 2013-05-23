@@ -13,7 +13,6 @@ set(raptor_parser_SRC
   raptorparser.cpp
 )
 
-qt4_automoc(${raptor_parser_SRC})
 
 add_library(soprano_raptorparser  MODULE ${raptor_parser_SRC})
 

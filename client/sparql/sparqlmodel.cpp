@@ -489,4 +489,3 @@ void Soprano::Client::SparqlModel::slotRequestFinished( int id, bool error, cons
     }
 }
 
-#include "sparqlmodel.moc"

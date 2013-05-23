@@ -141,4 +141,3 @@ void QueryResultStatementIteratorTest::testIteration()
 
 QTEST_MAIN(QueryResultStatementIteratorTest)
 
-#include "queryresultstatementiteratortest.moc"

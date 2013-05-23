@@ -34,7 +34,6 @@ set(sesame2_backend_SRC
   jobjectref.cpp
   )
 
-qt4_automoc(${sesame2_backend_SRC})
 
 add_library(soprano_sesame2backend MODULE ${sesame2_backend_SRC})
 

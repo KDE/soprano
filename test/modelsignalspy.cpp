@@ -83,4 +83,3 @@ void Soprano::ModelSignalSpy::slotStatementRemoved( const Soprano::Statement& st
 
 
 
-#include "modelsignalspy.moc"

@@ -79,4 +79,3 @@ void StorageScalingTest::testScaling()
 
 QTEST_MAIN( StorageScalingTest )
 
-#include "storagescalingtest.moc"

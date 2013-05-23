@@ -62,4 +62,3 @@ QVariant Soprano::Util::AsyncResultWaiter::waitForResult( AsyncResult* result )
     return waiter.d->value;
 }
 
-#include "asyncresultwaiter.moc"

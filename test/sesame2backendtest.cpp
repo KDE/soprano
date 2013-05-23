@@ -57,4 +57,3 @@ void Sesame2BackendTest::testIteratorClose()
 
 QTEST_MAIN( Sesame2BackendTest )
 
-#include "sesame2backendtest.moc"

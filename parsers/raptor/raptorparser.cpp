@@ -309,4 +309,3 @@ void Soprano::Raptor::Parser::setError( const Soprano::Error::Error& error ) con
     ErrorCache::setError( error );
 }
 
-#include "raptorparser.moc"

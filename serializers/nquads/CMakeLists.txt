@@ -11,7 +11,6 @@ include_directories(
 set(nquadserializer_SRC
   nquadserializer.cpp)
 
-qt4_automoc(${nquadserializer_SRC})
 
 add_library(soprano_nquadserializer MODULE ${nquadserializer_SRC})
 

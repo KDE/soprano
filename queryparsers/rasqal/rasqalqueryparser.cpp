@@ -219,7 +219,6 @@ void Soprano::Rasqal::QueryParser::emitSyntaxError( const Error::Locator& locato
     setError( Error::ParserError( locator, message ) );
 }
 
-#include "rasqalqueryparser.moc"
 
 /*Soprano::Query::Query *Soprano::Query::Parser::RasqalQueryParser::parseQuery( const QString &query )
 {

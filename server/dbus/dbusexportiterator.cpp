@@ -181,4 +181,4 @@ void Soprano::Server::DBusExportIterator::unregisterIterator()
     QDBusConnection::sessionBus().unregisterObject( d->dbusObjectPath );
 }
 
-#include "dbusexportiterator.moc"
+#include "moc_dbusexportiterator.cpp"

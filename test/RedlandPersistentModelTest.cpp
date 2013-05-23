@@ -62,5 +62,4 @@ void RedlandPersistentModelTest::deleteModel( Soprano::Model* m )
 
 QTEST_MAIN(RedlandPersistentModelTest)
 
-#include "RedlandPersistentModelTest.moc"
 

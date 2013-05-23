@@ -852,4 +852,3 @@ bool Soprano::Client::ClientConnection::checkProtocolVersion()
     return reply;
 }
 
-#include "clientconnection.moc"

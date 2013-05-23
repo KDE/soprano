@@ -223,4 +223,3 @@ void AsyncModelTest::testMultiAdd()
 
 QTEST_MAIN( AsyncModelTest )
 
-#include "asyncmodeltest.moc"

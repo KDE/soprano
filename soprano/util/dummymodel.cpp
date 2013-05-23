@@ -174,4 +174,3 @@ Soprano::Error::ErrorCode Soprano::Util::DummyModel::write( QTextStream& ) const
     return Error::ErrorNotSupported;
 }
 
-#include "dummymodel.moc"

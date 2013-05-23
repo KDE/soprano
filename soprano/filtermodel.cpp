@@ -286,4 +286,3 @@ void Soprano::FilterModel::slotStatementRemoved( const Statement& s )
     parentStatementRemoved( s );
 }
 
-#include "filtermodel.moc"

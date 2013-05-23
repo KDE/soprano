@@ -339,4 +339,3 @@ void QueryAPITest::testQueryCreation()
 
 QTEST_MAIN(QueryAPITest)
 
-#include "queryapitest.moc"

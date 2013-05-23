@@ -59,4 +59,3 @@ void IndexMultiThreadTest::deleteModel( Soprano::Model* model )
 
 QTEST_MAIN( IndexMultiThreadTest )
 
-#include "indexmodelmultithreadingtest.moc"

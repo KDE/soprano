@@ -47,7 +47,6 @@ if(BUILD_REDLAND_BACKEND)
     redlandbackend.cpp
     )
 
-  qt4_automoc(${redland_backend_SRC})
 
   add_library(soprano_redlandbackend MODULE ${redland_backend_SRC})
 

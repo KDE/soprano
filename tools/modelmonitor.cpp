@@ -102,4 +102,3 @@ void Soprano::ModelMonitor::slotStatementRemoved( const Soprano::Statement& s )
     }
 }
 
-#include "modelmonitor.moc"

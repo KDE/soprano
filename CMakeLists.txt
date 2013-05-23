@@ -7,6 +7,9 @@ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/cmake/mod
 # Used to report the packages we found
 include(FeatureSummary)
 
+# Enable CMake's Automoc
+set(CMAKE_AUTOMOC ON)
+
 include(CTest)
 include(CTestConfig.cmake)
 

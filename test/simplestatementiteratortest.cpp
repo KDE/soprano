@@ -104,4 +104,3 @@ void SimpleStatementIteratorTest::testAssignment()
 
 QTEST_MAIN(SimpleStatementIteratorTest)
 
-#include "simplestatementiteratortest.moc"

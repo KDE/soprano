@@ -288,4 +288,3 @@ Soprano::Node Soprano::NQuadParser::parseNode( const QString& s, int& offset ) c
     return node;
 }
 
-#include "nquadparser.moc"

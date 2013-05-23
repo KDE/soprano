@@ -285,4 +285,3 @@ QStringList Soprano::Server::ServerCore::allModels() const
     return d->models.keys();
 }
 
-#include "servercore.moc"

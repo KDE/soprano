@@ -515,4 +515,3 @@ void ServerOperatorTest::testBinding()
 
 QTEST_MAIN( ServerOperatorTest )
 
-#include "serveroperatortest.moc"

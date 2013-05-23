@@ -430,4 +430,4 @@ int Soprano::Server::DBusModelAdaptor::statementCount( const QDBusMessage& m )
     }
 }
 
-#include "dbusmodeladaptor.moc"
+#include "moc_dbusmodeladaptor.cpp"

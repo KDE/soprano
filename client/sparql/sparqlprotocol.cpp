@@ -147,4 +147,3 @@ void Soprano::Client::SparqlProtocol::slotRequestFinished( int id, bool error )
     }
 }
 
-#include "sparqlprotocol.moc"

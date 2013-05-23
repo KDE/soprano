@@ -228,4 +228,3 @@ void Soprano::Util::MutexModel::removeIterator( MutexIteratorBase* it ) const
     d->unlock();
 }
 
-#include "mutexmodel.moc"

@@ -16,7 +16,6 @@ set(raptor_serializer_SRC
   raptorserializer.cpp
 )
 
-qt4_automoc(${raptor_serializer_SRC})
 
 add_library(soprano_raptorserializer MODULE ${raptor_serializer_SRC})
 

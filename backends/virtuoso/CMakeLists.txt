@@ -28,7 +28,6 @@ set(SRC
   ${soprano_SOURCE_DIR}/server/lockfile.cpp
 )
 
-qt4_automoc(${SRC})
 
 add_library(soprano_virtuosobackend MODULE ${SRC})
 

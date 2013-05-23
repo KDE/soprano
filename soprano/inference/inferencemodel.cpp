@@ -442,4 +442,3 @@ QUrl Soprano::Inference::InferenceModel::storeUncompressedSourceStatement( const
     return sourceStatementUri;
 }
 
-#include "inferencemodel.moc"

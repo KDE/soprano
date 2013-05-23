@@ -165,4 +165,3 @@ bool Soprano::Util::ReadOnlyModel::isEmpty() const
     return b;
 }
 
-#include "readonlymodel.moc"

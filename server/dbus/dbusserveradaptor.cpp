@@ -122,4 +122,3 @@ void Soprano::Server::DBusServerAdaptor::removeModel( const QString& name, const
     }
 }
 
-#include "dbusserveradaptor.moc"

@@ -73,4 +73,4 @@ QString Soprano::Server::DBusExportModel::dbusObjectPath() const
     return d->dbusPath;
 }
 
-#include "dbusexportmodel.moc"
+#include "moc_dbusexportmodel.cpp"
