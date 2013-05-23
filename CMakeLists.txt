@@ -16,6 +16,9 @@ set(CMAKE_INCLUDE_CURRENT_DIR TRUE)
 # Used to set some generic paths
 include(GNUInstallDirs)
 
+# Used to create CMake config files
+include(CMakePackageConfigHelpers)
+
 include(CTest)
 include(CTestConfig.cmake)
 
@@ -24,7 +27,6 @@ set(CMAKE_SOPRANO_VERSION_MAJOR 2)
 set(CMAKE_SOPRANO_VERSION_MINOR 9)
 set(CMAKE_SOPRANO_VERSION_RELEASE 2)
 set(CMAKE_SOPRANO_VERSION_STRING "${CMAKE_SOPRANO_VERSION_MAJOR}.${CMAKE_SOPRANO_VERSION_MINOR}.${CMAKE_SOPRANO_VERSION_RELEASE}")
-
 
 ##################  User options  ################################
 
@@ -412,3 +414,25 @@ endif()
 message("---------------------------------------------------------------------------------------")
 
 feature_summary(WHAT ALL)
+
+##################  Write SopranoConfigVersion.cmake ##################
+write_basic_package_version_file(${soprano_BINARY_DIR}/SopranoConfigVersion.cmake
+                                 VERSION ${CMAKE_SOPRANO_VERSION_STRING}
+                                 COMPATIBILITY SameMajorVersion
+                                )
+
+##################  Write SopranoConfig.cmake ##################
+# Create the CMake Config files
+configure_package_config_file(SopranoConfig.cmake.in
+                              ${soprano_BINARY_DIR}/SopranoConfig.cmake
+                              INSTALL_DESTINATION ${LIB_INSTALL_DIR}/cmake/Soprano
+                              PATH_VARS BIN_INSTALL_DIR DATA_INSTALL_DIR INCLUDE_INSTALL_DIR LIB_INSTALL_DIR
+)
+
+install(FILES ${soprano_BINARY_DIR}/SopranoConfig.cmake
+              ${soprano_BINARY_DIR}/SopranoConfigVersion.cmake
+        DESTINATION ${LIB_INSTALL_DIR}/cmake/Soprano
+       )
+
+install(EXPORT SopranoExport FILE SopranoTargets.cmake
+        DESTINATION ${LIB_INSTALL_DIR}/cmake/Soprano)
