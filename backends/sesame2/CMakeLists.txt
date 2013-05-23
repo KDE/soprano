@@ -42,12 +42,12 @@ target_link_libraries(soprano_sesame2backend soprano ${JAVA_JVM_LIBRARY})
 if(WIN32)
 # RUNTIME and ARCHIVE are ignored when the library type is set to MODULE (cf. add_library above)
 # so specify the bin directory explicitely. Only the .dll will be copied.
-  INSTALL(TARGETS soprano_sesame2backend DESTINATION bin/soprano)
+  INSTALL(TARGETS soprano_sesame2backend DESTINATION ${BIN_INSTALL_DIR}/soprano)
 else()
   INSTALL(TARGETS soprano_sesame2backend
-    LIBRARY DESTINATION ${LIB_DESTINATION}/soprano
-    RUNTIME DESTINATION bin/soprano
-    ARCHIVE DESTINATION lib/soprano
+    LIBRARY DESTINATION ${LIB_INSTALL_DIR}/soprano
+    RUNTIME DESTINATION ${BIN_INSTALL_DIR}/soprano
+    ARCHIVE DESTINATION ${LIB_INSTALL_DIR}/soprano
     )
 endif()
 
@@ -56,12 +56,12 @@ install(FILES
   slf4j-api-1.5.5.jar
   slf4j-simple-1.5.5.jar
   SopranoSesame2Wrapper.class
-  DESTINATION share/soprano/sesame2
+  DESTINATION ${DATA_INSTALL_DIR}/soprano/sesame2
   )
 
 configure_file(sesame2backend.desktop.cmake ${CMAKE_CURRENT_BINARY_DIR}/sesame2backend.desktop)
 
 install(FILES
   ${CMAKE_CURRENT_BINARY_DIR}/sesame2backend.desktop
-  DESTINATION share/soprano/plugins
+  DESTINATION ${DATA_INSTALL_DIR}/soprano/plugins
   )

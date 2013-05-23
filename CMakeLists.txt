@@ -13,6 +13,9 @@ set(CMAKE_AUTOMOC ON)
 # Automatically add the current source and build directories
 set(CMAKE_INCLUDE_CURRENT_DIR TRUE)
 
+# Used to set some generic paths
+include(GNUInstallDirs)
+
 include(CTest)
 include(CTestConfig.cmake)
 
@@ -155,7 +158,6 @@ if(NOT SOPRANO_DISABLE_VIRTUOSO_BACKEND)
   endif()
 endif()
 
-
 ##################  setup variables  ################################
 
 if(REDLAND_FOUND AND NOT SOPRANO_DISABLE_REDLAND_BACKEND)
@@ -184,12 +186,13 @@ endif()
 set(HAVE_DBUS BUILD_DBUS_SUPPORT)
 
 ##################  setup install directories  ################################
-set (LIB_SUFFIX "" CACHE STRING "Define suffix of directory name (32/64)" )
-set (LIB_DESTINATION "${CMAKE_INSTALL_PREFIX}/lib${LIB_SUFFIX}" CACHE STRING "Library directory name")
-## the following are directories where stuff will be installed to
-set(INCLUDE_INSTALL_DIR      "${CMAKE_INSTALL_PREFIX}/include/" CACHE PATH "The subdirectory to the header prefix")
-set(PKGCONFIG_INSTALL_PREFIX "${CMAKE_INSTALL_PREFIX}/lib${LIB_SUFFIX}/pkgconfig/" CACHE STRING "Base directory for pkgconfig files")
 
+# the following are directories where stuff will be installed to
+set(BIN_INSTALL_DIR          "${CMAKE_INSTALL_FULL_BINDIR}" CACHE PATH "The binaries directory")
+set(DATA_INSTALL_DIR         "${CMAKE_INSTALL_FULL_DATADIR}" CACHE PATH "The data directory")
+set(INCLUDE_INSTALL_DIR      "${CMAKE_INSTALL_FULL_INCLUDEDIR}" CACHE PATH "The subdirectory to the header prefix")
+set(LIB_INSTALL_DIR         "${CMAKE_INSTALL_FULL_LIBDIR}" CACHE STRING "Library directory name")
+set(PKGCONFIG_INSTALL_PREFIX "${LIB_INSTALL_DIR}/pkgconfig/" CACHE STRING "Base directory for pkgconfig files")
 
 # Set up RPATH handling, so the libs are found if they are installed to a non-standard location.
 # By default cmake builds the targets with full RPATH to everything in the build directory,
@@ -197,16 +200,16 @@ set(PKGCONFIG_INSTALL_PREFIX "${CMAKE_INSTALL_PREFIX}/lib${LIB_SUFFIX}/pkgconfig
 # These two options below make it set the RPATH of the installed targets to all
 # RPATH directories outside the current CMAKE_BINARY_DIR and also the library
 # install directory. Alex
-list(FIND CMAKE_PLATFORM_IMPLICIT_LINK_DIRECTORIES "${LIB_DESTINATION}" _isSystemPlatformLibDir)
-list(FIND CMAKE_C_IMPLICIT_LINK_DIRECTORIES "${LIB_DESTINATION}" _isSystemCLibDir)
-list(FIND CMAKE_CXX_IMPLICIT_LINK_DIRECTORIES "${LIB_DESTINATION}" _isSystemCxxLibDir)
+list(FIND CMAKE_PLATFORM_IMPLICIT_LINK_DIRECTORIES "${LIB_INSTALL_DIR}" _isSystemPlatformLibDir)
+list(FIND CMAKE_C_IMPLICIT_LINK_DIRECTORIES "${LIB_INSTALL_DIR}" _isSystemCLibDir)
+list(FIND CMAKE_CXX_IMPLICIT_LINK_DIRECTORIES "${LIB_INSTALL_DIR}" _isSystemCxxLibDir)
 set(CMAKE_INSTALL_RPATH_USE_LINK_PATH  TRUE)
 if("${_isSystemPlatformLibDir}" STREQUAL "-1" AND "${_isSystemCLibDir}" STREQUAL "-1" AND "${_isSystemCxxLibDir}" STREQUAL "-1")
-set(CMAKE_INSTALL_RPATH                ${LIB_DESTINATION} )
+set(CMAKE_INSTALL_RPATH                ${LIB_INSTALL_DIR} )
 endif()
 
 if(APPLE)
-   set(CMAKE_INSTALL_NAME_DIR ${LIB_DESTINATION})
+   set(CMAKE_INSTALL_NAME_DIR ${LIB_INSTALL_DIR})
 endif()
 
 

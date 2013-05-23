@@ -9,4 +9,4 @@ install(FILES
   AsyncResult
   AsyncQuery
   DESTINATION
-  include/Soprano/Util)
+  ${INCLUDE_INSTALL_DIR}/Soprano/Util)

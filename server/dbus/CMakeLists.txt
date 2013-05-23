@@ -4,7 +4,7 @@ install(
   FILES 
   dbusexportmodel.h
   dbusexportiterator.h
-  DESTINATION include/soprano
+  DESTINATION ${INCLUDE_INSTALL_DIR}/soprano
 )
 
 install(
@@ -14,5 +14,5 @@ install(
   org.soprano.QueryResultIterator.xml
   org.soprano.Server.xml
   org.soprano.StatementIterator.xml
-  DESTINATION share/dbus-1/interfaces
+  DESTINATION ${DATA_INSTALL_DIR}/dbus-1/interfaces
 )

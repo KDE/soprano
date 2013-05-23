@@ -8,4 +8,4 @@ install(FILES
   DBusQueryResultIterator
   SparqlModel
   DESTINATION
-  include/Soprano/Client)
+  ${INCLUDE_INSTALL_DIR}/Soprano/Client)

@@ -7,4 +7,4 @@ install(FILES
   RuleParser
   StandardRuleSet
   DESTINATION
-  include/Soprano/Inference)
+  ${INCLUDE_INSTALL_DIR}/Soprano/Inference)

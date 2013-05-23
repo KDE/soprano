@@ -7,5 +7,5 @@ install(
   dbusstatementiterator.h
   dbusnodeiterator.h
   dbusqueryresultiterator.h
-  DESTINATION include/soprano
+  DESTINATION ${INCLUDE_INSTALL_DIR}/soprano
 )

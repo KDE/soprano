@@ -3,4 +3,4 @@ install(FILES
   DBusExportModel
   DBusExportIterator
   DESTINATION
-  include/Soprano/Server)
+  ${INCLUDE_INSTALL_DIR}/Soprano/Server)

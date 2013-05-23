@@ -1,5 +1,5 @@
 install(
   FILES 
   sparqlmodel.h
-  DESTINATION include/soprano
+  DESTINATION ${INCLUDE_INSTALL_DIR}/soprano
 )

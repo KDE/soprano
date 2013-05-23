@@ -32,7 +32,7 @@ install(FILES
   NRLModel
   Graph
   DESTINATION
-  include/Soprano)
+  ${INCLUDE_INSTALL_DIR}/Soprano)
 
 add_subdirectory(Error)
 add_subdirectory(Server)

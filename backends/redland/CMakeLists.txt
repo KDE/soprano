@@ -59,12 +59,12 @@ if(BUILD_REDLAND_BACKEND)
 if(WIN32)
 # RUNTIME and ARCHIVE are ignored when the library type is set to MODULE (cf. add_library above)
 # so specify the bin directory explicitely. Only the .dll will be copied.
-  INSTALL(TARGETS soprano_redlandbackend DESTINATION bin/soprano)
+  INSTALL(TARGETS soprano_redlandbackend DESTINATION ${BIN_INSTALL_DIR}/soprano)
 else()
   INSTALL(TARGETS soprano_redlandbackend
-    LIBRARY DESTINATION ${LIB_DESTINATION}/soprano
-    RUNTIME DESTINATION bin/soprano
-    ARCHIVE DESTINATION lib/soprano
+    LIBRARY DESTINATION ${LIB_INSTALL_DIR}/soprano
+    RUNTIME DESTINATION ${BIN_INSTALL_DIR}/soprano
+    ARCHIVE DESTINATION ${LIB_INSTALL_DIR}/soprano
     )
 endif()
 
@@ -72,7 +72,7 @@ endif()
 
   INSTALL(FILES
     ${CMAKE_CURRENT_BINARY_DIR}/redlandbackend.desktop
-    DESTINATION share/soprano/plugins
+    DESTINATION ${DATA_INSTALL_DIR}/soprano/plugins
     )
 endif()
 

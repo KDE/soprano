@@ -8,4 +8,4 @@ install(FILES
   OWL
   Xesam
   DESTINATION
-  include/Soprano/Vocabulary)
+  ${INCLUDE_INSTALL_DIR}/Soprano/Vocabulary)
