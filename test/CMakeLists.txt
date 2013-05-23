@@ -1,5 +1,7 @@
 project(soprano_tests)
 
+set(EXECUTABLE_OUTPUT_PATH ${CMAKE_CURRENT_BINARY_DIR})
+
 # QTEST_MAIN is using QApplication when QT_GUI_LIB is defined
 remove_definitions(-DQT_GUI_LIB)
 
@@ -13,7 +15,6 @@ include_directories(
   ${soprano_core_SOURCE_DIR}/vocabulary
   ${soprano_core_BINARY_DIR}
   ${QT_INCLUDES}
-  ${CMAKE_CURRENT_BINARY_DIR}
 )
 
 configure_file(config-testdata.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/config-testdata.h)

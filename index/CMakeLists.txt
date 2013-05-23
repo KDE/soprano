@@ -8,7 +8,6 @@ include_directories(
   ${soprano_SOURCE_DIR}
   ${CLUCENE_INCLUDE_DIR}
   ${CLUCENE_LIBRARY_DIR}
-  ${CMAKE_CURRENT_BINARY_DIR}
 )
 
 set( SOPRANO_INDEX_SRCS

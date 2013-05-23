@@ -10,6 +10,9 @@ include(FeatureSummary)
 # Enable CMake's Automoc
 set(CMAKE_AUTOMOC ON)
 
+# Automatically add the current source and build directories
+set(CMAKE_INCLUDE_CURRENT_DIR TRUE)
+
 include(CTest)
 include(CTestConfig.cmake)
 
