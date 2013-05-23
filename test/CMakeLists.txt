@@ -173,13 +173,13 @@ add_test(localsocketmultithreadtest ${EXECUTABLE_OUTPUT_PATH}/localsocketmultith
 qt4_automoc(sopranodsocketclienttest sopranodsocketclienttest.cpp)
 add_executable(sopranodsocketclienttest sopranodsocketclienttest.cpp)
 target_link_libraries(sopranodsocketclienttest sopranomodeltest sopranoclient ${QT_QTCORE_LIBRARY} ${QT_QTTEST_LIBRARY} ${QT_QTNETWORK_LIBRARY})
-add_test(sopranodsocketclienttest ${EXECUTABLE_OUTPUT_PATH}/sopranodclienttest)
+add_test(sopranodsocketclienttest ${EXECUTABLE_OUTPUT_PATH}/sopranodsocketclienttest)
 
 if(BUILD_DBUS_SUPPORT)
 qt4_automoc(sopranodbusclienttest sopranodbusclienttest.cpp)
 add_executable(sopranodbusclienttest sopranodbusclienttest.cpp)
 target_link_libraries(sopranodbusclienttest sopranomodeltest sopranoclient ${QT_QTCORE_LIBRARY} ${QT_QTTEST_LIBRARY} ${QT_QTNETWORK_LIBRARY})
-add_test(sopranodbusclienttest ${EXECUTABLE_OUTPUT_PATH}/sopranodclienttest)
+add_test(sopranodbusclienttest ${EXECUTABLE_OUTPUT_PATH}/sopranodbusclienttest)
 
 qt4_automoc(sopranodbusmultithreadtest sopranodbusmultithreadtest.cpp)
 add_executable(sopranodbusmultithreadtest sopranodbusmultithreadtest.cpp)
