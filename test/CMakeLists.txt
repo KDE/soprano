@@ -150,12 +150,12 @@ if(BUILD_CLUCENE_INDEX)
   # TString test
   qt4_automoc(tstringtest tstringtest.cpp)
   add_executable(tstringtest tstringtest.cpp stringpool.cpp ../index/tstring.cpp)
-  target_link_libraries(tstringtest ${QT_QTCORE_LIBRARY} ${QT_QTTEST_LIBRARY} ${CLUCENE_LIBRARY})
+  target_link_libraries(tstringtest ${QT_QTCORE_LIBRARY} ${QT_QTTEST_LIBRARY} ${CLUCENE_LIBRARIES})
   add_test(tstringtest ${EXECUTABLE_OUTPUT_PATH}/tstringtest)
 
   qt4_automoc(cluceneindextest cluceneindextest.cpp)
   add_executable(cluceneindextest cluceneindextest.cpp stringpool.cpp)
-  target_link_libraries(cluceneindextest soprano sopranoindex ${QT_QTCORE_LIBRARY} ${QT_QTTEST_LIBRARY} ${CLUCENE_LIBRARY})
+  target_link_libraries(cluceneindextest soprano sopranoindex ${QT_QTCORE_LIBRARY} ${QT_QTTEST_LIBRARY} ${CLUCENE_LIBRARIES})
   add_test(cluceneindextest ${EXECUTABLE_OUTPUT_PATH}/cluceneindextest)
 
   qt4_automoc(indexmodelmultithreadingtest indexmodelmultithreadingtest.cpp)

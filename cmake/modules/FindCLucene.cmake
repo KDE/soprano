@@ -4,7 +4,8 @@
 #
 # CLUCENE_INCLUDE_DIR  = where CLucene/StdHeader.h can be found
 # CLUCENE_LIBRARY_DIR  = where CLucene/clucene-config.h can be found
-# CLUCENE_LIBRARY      = the library to link against CLucene
+# CLUCENE_LIBRARY      = the library to link against CLucene - DEPRECATED Use CLUCENE_LIBRARIES
+# CLUCENE_LIBRARIES    = the libraries to link against CLucene
 # CLUCENE_VERSION      = The CLucene version string
 # CLucene_FOUND        = set to 1 if clucene is found
 #
@@ -37,13 +38,27 @@ set(TRIAL_INCLUDE_PATHS
   /sw/include
   /usr/pkg/include
   )
+
 find_library_with_debug(CLUCENE_LIBRARY
   WIN32_DEBUG_POSTFIX d
   NAMES clucene clucene-core
   PATHS ${TRIAL_LIBRARY_PATHS})
 
-if(CLUCENE_LIBRARY)
-  message(STATUS "Found CLucene library: ${CLUCENE_LIBRARY}")
+# On Linux, Soprano needs both clucene-core and clucene-shared
+# CLUCENE_LIBRARIES contains both entries if available
+set(CLUCENE_LIBRARIES ${CLUCENE_LIBRARY})
+
+find_library(CLUCENE_SHARED_LIBRARY
+  NAMES clucene-shared
+  HINTS ${TRIAL_LIBRARY_PATHS}
+)
+
+if(CLUCENE_SHARED_LIBRARY)
+  set(CLUCENE_LIBRARIES ${CLUCENE_LIBRARIES} ${CLUCENE_SHARED_LIBRARY})
+endif()
+
+if(CLUCENE_LIBRARIES)
+  message(STATUS "Found CLucene: ${CLUCENE_LIBRARIES}")
 endif()
 
 find_path(CLUCENE_INCLUDE_DIR
@@ -80,13 +95,13 @@ if(CLUCENE_LIBRARY_DIR)
   endif()
 endif()
 
-if(CLUCENE_INCLUDE_DIR AND CLUCENE_LIBRARY AND CLUCENE_LIBRARY_DIR AND CLUCENE_GOOD_VERSION)
+if(CLUCENE_INCLUDE_DIR AND CLUCENE_LIBRARIES AND CLUCENE_LIBRARY_DIR AND CLUCENE_GOOD_VERSION)
   set(CLucene_FOUND TRUE)
 endif()
 
 if(CLucene_FOUND)
   if(NOT CLucene_FIND_QUIETLY)
-    message(STATUS "Found CLucene: ${CLUCENE_LIBRARY}")
+    message(STATUS "Found CLucene: ${CLUCENE_LIBRARIES}")
   endif()
 else()
   if(CLucene_FIND_REQUIRED)
@@ -97,5 +112,7 @@ endif()
 mark_as_advanced(
   CLUCENE_INCLUDE_DIR
   CLUCENE_LIBRARY_DIR
+  CLUCENE_SHARED_LIBRARY
   CLUCENE_LIBRARY
+  CLUCENE_LIBRARIES
   )

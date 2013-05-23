@@ -77,7 +77,7 @@ target_link_libraries(
   sopranod
   soprano
   sopranoserver
-  ${CLUCENE_LIBRARY}
+  ${CLUCENE_LIBRARIES}
 )
 
 if(SOPRANO_BUILD_INDEX_LIB)
