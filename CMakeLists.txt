@@ -46,8 +46,12 @@ include(SopranoCPack.cmake)
 ##################  find packages  ################################
 
 set(QT_USE_IMPORTED_TARGETS TRUE)
-set(QT_MIN_VERSION "4.5.0")
-find_package(Qt4 REQUIRED)
+find_package(Qt4 4.5.0)
+set_package_properties(Qt4 PROPERTIES
+                       DESCRIPTION "The Qt4 libraries"
+                       URL "http://qt-project.org/"
+                       TYPE REQUIRED
+)
 
 # properly set up compile flags (QT_DEBUG/QT_NO_DEBUG, ...)
 if(CMAKE_BUILD_TYPE)
@@ -62,8 +66,28 @@ include(${QT_USE_FILE})
 
 if(NOT SOPRANO_DISABLE_RAPTOR_PARSER OR NOT SOPRANO_DISABLE_RAPTOR_SERIALIZER OR NOT SOPRANO_DISABLE_REDLAND_BACKEND)
   find_package(Rasqal)
+  set_package_properties(Rasqal PROPERTIES
+                         URL "http://librdf.org/rasqal"
+                         DESCRIPTION "Rasqal RDF Query Library"
+                         TYPE RECOMMENDED
+                         PURPOSE "Needed to build the Raptor parser and Redland backend"
+  )
+
   find_package(Raptor 2.0.0)
+  set_package_properties(Raptor PROPERTIES
+                         URL "http://librdf.org/raptor"
+                         DESCRIPTION "Raptor RDF Syntax Library"
+                         TYPE RECOMMENDED
+                         PURPOSE "Needed to build the Raptor parser and Redland backend"
+  )
+
   find_package(Redland)
+  set_package_properties(Redland PROPERTIES
+                         URL "http://librdf.org"
+                         DESCRIPTION "Support for the Resource Description Framework (RDF)"
+                         TYPE RECOMMENDED
+                         PURPOSE "Needed to build the Raptor parser and Redland backend"
+  )
 
   if(WIN32)
     if(NOT REDLAND_VERSION)
@@ -77,6 +101,12 @@ endif()
 set(SOPRANO_BUILD_INDEX_LIB 0 CACHE INTERNAL "Soprano Index is not built" FORCE)
 if(NOT SOPRANO_DISABLE_CLUCENE_INDEX)
   find_package(CLucene)
+  set_package_properties(CLucene PROPERTIES
+                         URL "http://clucene.sourceforge.net/"
+                         DESCRIPTION "High-performance indexing and searching API"
+                         TYPE OPTIONAL
+  )
+
   if(CLucene_FOUND)
     if(CLUCENE_VERSION AND CLUCENE_VERSION VERSION_GREATER "0.9.19" OR CLUCENE_VERSION VERSION_EQUAL "0.9.19")
       set(CL_VERSION_19_OR_GREATER TRUE)
@@ -87,6 +117,11 @@ endif()
 
 if(NOT SOPRANO_DISABLE_SESAME2_BACKEND)
   find_package(JNI)
+  set_package_properties(JNI PROPERTIES
+                         URL "https://www.java.com"
+                         DESCRIPTION "Java libraries"
+  )
+
   if(JAVA_INCLUDE_PATH AND JAVA_JVM_LIBRARY)
     file(READ ${JAVA_INCLUDE_PATH}/jni.h jni_header_data)
     string(REGEX MATCH "JNI_VERSION_1_4" JNI_1_4_FOUND "${jni_header_data}")
@@ -104,12 +139,18 @@ if(NOT SOPRANO_DISABLE_SESAME2_BACKEND)
 endif()
 
 if(NOT SOPRANO_DISABLE_VIRTUOSO_BACKEND)
-if(WIN32)
-  include(CheckIncludeFiles)
-  check_include_files("windows.h;sql.h" HAVE_SQL_H)
-else()
-  find_package(IODBC)
-endif()
+  if(WIN32)
+    include(CheckIncludeFiles)
+    check_include_files("windows.h;sql.h" HAVE_SQL_H)
+  else()
+    find_package(IODBC)
+    set_package_properties(IODBC PROPERTIES
+                          URL "http://www.iodbc.org"
+                          DESCRIPTION "The iODBC Driver Manager"
+                          TYPE RECOMMENDED
+                          PURPOSE "Needed to build the Virtuoso backend"
+    )
+  endif()
 endif()
 
 
@@ -243,6 +284,10 @@ endif()
 
 ##################  apidox ################################
 find_package(Doxygen)
+set_package_properties(Doxygen PROPERTIES
+                       URL "http://www.stack.nl/~dimitri/doxygen/"
+                       DESCRIPTION "Automated C, C++, and Java Documentation Generator"
+)
 
 if(DOXYGEN_EXECUTABLE)
   set(QTDOCS_ONLINE "http://qt-project.org/doc/qt-4.8/")
@@ -363,3 +408,5 @@ if(NOT BUILD_DBUS_SUPPORT)
 endif()
 
 message("---------------------------------------------------------------------------------------")
+
+feature_summary(WHAT ALL)
