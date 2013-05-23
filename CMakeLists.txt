@@ -81,7 +81,7 @@ if(NOT SOPRANO_DISABLE_RAPTOR_PARSER OR NOT SOPRANO_DISABLE_RAPTOR_SERIALIZER OR
                          PURPOSE "Needed to build the Raptor parser and Redland backend"
   )
 
-  find_package(Redland)
+  find_package(Redland 1.0.5)
   set_package_properties(Redland PROPERTIES
                          URL "http://librdf.org"
                          DESCRIPTION "Support for the Resource Description Framework (RDF)"
@@ -155,9 +155,6 @@ endif()
 
 
 ##################  setup variables  ################################
-if(REDLAND_FOUND)
-   macro_ensure_version( "1.0.5" ${REDLAND_VERSION} REDLAND_VERSION_GOOD )
-endif()
 
 if(REDLAND_FOUND AND NOT SOPRANO_DISABLE_REDLAND_BACKEND)
   set(BUILD_REDLAND_BACKEND TRUE)
