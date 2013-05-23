@@ -1,10 +1,6 @@
 project(soprano)
 
 cmake_minimum_required(VERSION 2.8.9)
-# disable warning about shadowing CMakeParseArguments.cmake
-if(POLICY CMP0017)
-  cmake_policy(SET CMP0017 NEW)
-endif()
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules)
 
