@@ -8,5 +8,5 @@ Description: Soprano's RDF server implementation
 URL=http://soprano.sourceforge.net/
 Requires: QtCore
 Version: @CMAKE_SOPRANO_VERSION_STRING@
-Libs: -L@LIB_INSTALL_DIR@ -lsopranoserver
-Cflags: -I@INCLUDE_INSTALL_DIR@ -@INCLUDE_INSTALL_DIR@/soprano
+Libs: -L${libdir} -lsopranoserver
+Cflags: -I${includedir} -I${includedir}/soprano
