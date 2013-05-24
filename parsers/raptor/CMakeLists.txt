@@ -20,17 +20,7 @@ set_target_properties(soprano_raptorparser PROPERTIES
   DEFINE_SYMBOL MAKE_RAPTORPARSER_LIB
 )
 
-if(WIN32)
-# RUNTIME and ARCHIVE are ignored when the library type is set to MODULE (cf. add_library above)
-# so specify the bin directory explicitely. Only the .dll will be copied.
-  install(TARGETS soprano_raptorparser DESTINATION ${BIN_INSTALL_DIR}/soprano)
-else()
-  install(TARGETS soprano_raptorparser
-    LIBRARY DESTINATION ${LIB_INSTALL_DIR}/soprano
-    RUNTIME DESTINATION ${BIN_INSTALL_DIR}/soprano
-    ARCHIVE DESTINATION ${LIB_INSTALL_DIR}/soprano
-    )
-endif()
+install(TARGETS soprano_raptorparser ${PLUGIN_INSTALL_DIR})
 
 configure_file(raptorparser.desktop.cmake ${CMAKE_CURRENT_BINARY_DIR}/raptorparser.desktop)
 

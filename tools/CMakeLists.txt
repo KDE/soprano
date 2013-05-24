@@ -37,8 +37,6 @@ target_link_libraries(
   soprano
 )
 
-INSTALL(TARGETS sopranocmd onto2vocabularyclass
-        LIBRARY DESTINATION ${LIB_INSTALL_DIR}
-        RUNTIME DESTINATION ${BIN_INSTALL_DIR}
-        ARCHIVE DESTINATION ${LIB_INSTALL_DIR}
+install(TARGETS sopranocmd onto2vocabularyclass 
+        DESTINATION ${INSTALL_TARGETS_DEFAULT_ARGS}
 )

@@ -85,11 +85,7 @@ if(BUILD_DBUS_SUPPORT)
     ${QT_QTDBUS_LIBRARY})
 endif()
 
-install(TARGETS sopranoclient EXPORT SopranoExport
-        LIBRARY DESTINATION ${LIB_INSTALL_DIR}
-        RUNTIME DESTINATION ${BIN_INSTALL_DIR}
-        ARCHIVE DESTINATION ${LIB_INSTALL_DIR}
-)
+install(TARGETS sopranoclient EXPORT SopranoExport ${INSTALL_TARGETS_DEFAULT_ARGS})
 
 install(
   FILES

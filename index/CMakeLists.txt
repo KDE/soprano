@@ -56,11 +56,7 @@ set_target_properties(
   INSTALL_NAME_DIR ${LIB_INSTALL_DIR}
 )
 
-install(TARGETS sopranoindex EXPORT SopranoExport
-        LIBRARY DESTINATION ${LIB_INSTALL_DIR}
-        RUNTIME DESTINATION ${BIN_INSTALL_DIR}
-        ARCHIVE DESTINATION ${LIB_INSTALL_DIR}
-)
+install(TARGETS sopranoindex EXPORT SopranoExport ${INSTALL_TARGETS_DEFAULT_ARGS})
 
 install(
   FILES

@@ -196,6 +196,23 @@ set(INCLUDE_INSTALL_DIR      "${CMAKE_INSTALL_FULL_INCLUDEDIR}" CACHE PATH "The 
 set(LIB_INSTALL_DIR         "${CMAKE_INSTALL_FULL_LIBDIR}" CACHE STRING "Library directory name")
 set(PKGCONFIG_INSTALL_PREFIX "${LIB_INSTALL_DIR}/pkgconfig/" CACHE STRING "Base directory for pkgconfig files")
 
+# Where to install libraries and binaries
+set(INSTALL_TARGETS_DEFAULT_ARGS RUNTIME DESTINATION "${BIN_INSTALL_DIR}"
+                                 LIBRARY DESTINATION "${LIB_INSTALL_DIR}"
+                                 ARCHIVE DESTINATION "${LIB_INSTALL_DIR}" COMPONENT Devel
+   )
+
+# Where to install plugins
+if(WIN32)
+  # On Windows, plugins are installed somewhere in the binary dir
+  set(PLUGIN_INSTALL_DIR DESTINATION ${BIN_INSTALL_DIR}/soprano)
+else()
+  set(PLUGIN_INSTALL_DIR RUNTIME DESTINATION "${BIN_INSTALL_DIR}/soprano"
+                         LIBRARY DESTINATION "${LIB_INSTALL_DIR}/soprano"
+                         ARCHIVE DESTINATION "${LIB_INSTALL_DIR}/soprano"
+     )
+endif()
+
 # Set up RPATH handling, so the libs are found if they are installed to a non-standard location.
 # By default cmake builds the targets with full RPATH to everything in the build directory,
 # but then removes the RPATH when installing.
