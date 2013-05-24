@@ -16,6 +16,15 @@
 # SOPRANO_ONTO2VOCABULARYCLASS_EXECUTABLE - The onto2vocabularyclass program.
 # SOPRANO_SOPRANOCMD_EXECUTABLE           - The sopranocmd program.
 #
+# Additionally, the following components are supported:
+#   PLUGIN_NQUADPARSER
+#   PLUGIN_NQUADSERIALIZER
+#   PLUGIN_RAPTORPARSER
+#   PLUGIN_RAPTORSERIALIZER
+#   PLUGIN_REDLANDBACKEND
+#   PLUGIN_SESAME2BACKEND
+#   PLUGIN_VIRTUOSOBACKEND
+#
 # The following variables are defined for compatibility purpose.
 # They should be considered deprecated.
 # SOPRANO_FOUND       - True if Soprano has been found.
@@ -29,39 +38,47 @@
 
 @PACKAGE_INIT@
 
-# Set the Soprano version
+########## The Soprano version ##########
 set(Soprano_VERSION_MAJOR @SOPRANO_VERSION_MAJOR@)
 set(Soprano_VERSION_MINOR @SOPRANO_VERSION_MINOR@)
 set(Soprano_VERSION_PATCH @SOPRANO_VERSION_RELEASE@)
 set(Soprano_VERSION       @SOPRANO_VERSION_STRING@)
+#########################################
 
-# install locations
+########## Install dirs ##########
 set_and_check(Soprano_BINARY_DIR  "@PACKAGE_BIN_INSTALL_DIR@")
 set_and_check(Soprano_DATA_DIR    "@PACKAGE_DATA_INSTALL_DIR@")
 set_and_check(Soprano_INCLUDE_DIR "@PACKAGE_INCLUDE_INSTALL_DIR@")
 set_and_check(Soprano_LIBRARY_DIR "@PACKAGE_LIB_INSTALL_DIR@")
 set_and_check(Soprano_MACRO_DIR   "${Soprano_DATA_DIR}/soprano/cmake")
+##################################
 
-# Soprano Executables needed at build type
+########## Soprano programs ##########
 set_and_check(SOPRANO_ONTO2VOCABULARYCLASS_EXECUTABLE "@PACKAGE_BIN_INSTALL_DIR@/onto2vocabularyclass")
 set_and_check(SOPRANO_SOPRANOCMD_EXECUTABLE "@PACKAGE_BIN_INSTALL_DIR@/sopranocmd")
+######################################
 
+########## The Soprano libraries ##########
 # Load the exported targets.
 include("${CMAKE_CURRENT_LIST_DIR}/SopranoTargets.cmake")
-
-# The Soprano libraries
 set(Soprano_LIBRARIES        Soprano::soprano)
 set(Soprano_client_LIBRARIES Soprano::sopranoclient)
 set(Soprano_index_LIBRARIES  Soprano::sopranoindex)
 set(Soprano_server_LIBRARIES Soprano::sopranoserver)
+###########################################
 
 # Load the SopranoAddOntology.cmake file
 include(${Soprano_MACRO_DIR}/SopranoAddOntology.cmake)
 
-# Components handling.
-check_required_components(Soprano)
+########## Components handling ##########
+set(Soprano_PLUGIN_REDLANDBACKEND_FOUND   @Soprano_PLUGIN_REDLANDBACKEND_FOUND@)
+set(Soprano_PLUGIN_SESAME2BACKEND_FOUND   @Soprano_PLUGIN_SESAME2BACKEND_FOUND@)
+set(Soprano_PLUGIN_VIRTUOSOBACKEND_FOUND  @Soprano_PLUGIN_VIRTUOSOBACKEND_FOUND@)
+set(Soprano_PLUGIN_RAPTORPARSER_FOUND     @Soprano_PLUGIN_RAPTORPARSER_FOUND@)
+set(Soprano_PLUGIN_RAPTORSERIALIZER_FOUND @Soprano_PLUGIN_RAPTORSERIALIZER_FOUND@)
+#########################################
 
-# Backward compatibility variables
+########## Backward compatibility variables ##########
 set(SOPRANO_FOUND            ${Soprano_FOUND})
 set(SOPRANO_INCLUDE_DIR      ${Soprano_INCLUDE_DIR})
 set(SOPRANO_VERSION          ${Soprano_VERSION})
@@ -78,3 +95,17 @@ endif()
 # FindSoprano.cmake used to change CMAKE_MODULE_PATH in order to allow loading
 # SopranoAddOntology.cmake.
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${Soprano_MACRO_DIR})
+
+# The following components are defined in FindSoprano.cmake. However, these plugins
+# are always built. The components are consequently always found.
+set(Soprano_PLUGIN_NQUADPARSER_FOUND TRUE)
+set(Soprano_PLUGIN_NQUADSERIALIZER_FOUND TRUE)
+
+# FindSoprano.cmake did set SOPRANO_${COMPONENT}_FOUND (all uppercase)
+foreach(COMPONENT ${Soprano_FIND_COMPONENTS})
+  set(SOPRANO_${COMPONENT}_FOUND ${Soprano_${COMPONENT}_FOUND})
+endforeach()
+######################################################
+
+# The following line *must* be at the end of the file
+check_required_components(Soprano)
