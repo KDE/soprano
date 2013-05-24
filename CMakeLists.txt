@@ -25,7 +25,7 @@ include(CTestConfig.cmake)
 ##################  Soprano version  ################################
 set(SOPRANO_VERSION_MAJOR 2)
 set(SOPRANO_VERSION_MINOR 9)
-set(SOPRANO_VERSION_RELEASE 2)
+set(SOPRANO_VERSION_RELEASE 40)
 set(SOPRANO_VERSION_STRING "${SOPRANO_VERSION_MAJOR}.${SOPRANO_VERSION_MINOR}.${SOPRANO_VERSION_RELEASE}")
 
 ##################  User options  ################################
