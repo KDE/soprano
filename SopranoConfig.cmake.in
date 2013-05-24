@@ -16,3 +16,6 @@ set_and_check(Soprano_LIBRARY_DIR "@PACKAGE_LIB_INSTALL_DIR@")
 
 # Load the exported targets.
 include("${CMAKE_CURRENT_LIST_DIR}/SopranoTargets.cmake")
+
+# Components handling.
+check_required_components(Soprano)
