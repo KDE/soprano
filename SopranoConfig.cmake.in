@@ -40,6 +40,7 @@ set_and_check(Soprano_BINARY_DIR  "@PACKAGE_BIN_INSTALL_DIR@")
 set_and_check(Soprano_DATA_DIR    "@PACKAGE_DATA_INSTALL_DIR@")
 set_and_check(Soprano_INCLUDE_DIR "@PACKAGE_INCLUDE_INSTALL_DIR@")
 set_and_check(Soprano_LIBRARY_DIR "@PACKAGE_LIB_INSTALL_DIR@")
+set_and_check(Soprano_MACRO_DIR   "${Soprano_DATA_DIR}/soprano/cmake")
 
 # Soprano Executables needed at build type
 set_and_check(SOPRANO_ONTO2VOCABULARYCLASS_EXECUTABLE "@PACKAGE_BIN_INSTALL_DIR@/onto2vocabularyclass")
@@ -53,6 +54,9 @@ set(Soprano_LIBRARIES        Soprano::soprano)
 set(Soprano_client_LIBRARIES Soprano::sopranoclient)
 set(Soprano_index_LIBRARIES  Soprano::sopranoindex)
 set(Soprano_server_LIBRARIES Soprano::sopranoserver)
+
+# Load the SopranoAddOntology.cmake file
+include(${Soprano_MACRO_DIR}/SopranoAddOntology.cmake)
 
 # Components handling.
 check_required_components(Soprano)
@@ -71,3 +75,6 @@ if(SOPRANO_MIN_VERSION)
   set(Soprano_FIND_VERSION ${SOPRANO_MIN_VERSION})
 endif()
 
+# FindSoprano.cmake used to change CMAKE_MODULE_PATH in order to allow loading
+# SopranoAddOntology.cmake.
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${Soprano_MACRO_DIR})
