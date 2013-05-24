@@ -7,8 +7,14 @@
 # Soprano_DATA_DIR    - The data directory.
 # Soprano_INCLUDE_DIR - The include directory.
 # Soprano_LIBRARY_DIR - The libraries directory.
+#
+# Soprano_LIBRARIES        - The Soprano core library to link to (libsoprano).
+# Soprano_client_LIBRARIES - The Soprano client library (libsopranoclient).
+# Soprano_index_LIBRARIES  - The Soprano index library (libsopranoindex).
+# Soprano_server_LIBRARIES - The Soprano server library (libsopranoserver).
+#
 # SOPRANO_ONTO2VOCABULARYCLASS_EXECUTABLE - The onto2vocabularyclass program.
-# SOPRANO_SOPRANOCMD_EXECUTABLE - The sopranocmd program
+# SOPRANO_SOPRANOCMD_EXECUTABLE           - The sopranocmd program.
 #
 # The following variables are defined for compatibility purpose.
 # They should be considered deprecated.
@@ -16,6 +22,10 @@
 # SOPRANO_INCLUDE_DIR - The include directory.
 # SOPRANO_MIN_VERSION - The minimum version to look for.
 # SOPRANO_VERSION     - The Soprano version.
+# SOPRANO_LIBRARIES        - The Soprano core library to link to (libsoprano).
+# SOPRANO_CLIENT_LIBRARIES - The Soprano client library (libsopranoclient).
+# SOPRANO_INDEX_LIBRARIES  - The Soprano index library (libsopranoindex).
+# SOPRANO_SERVER_LIBRARIES - The Soprano server library (libsopranoserver).
 
 @PACKAGE_INIT@
 
@@ -31,19 +41,30 @@ set_and_check(Soprano_DATA_DIR    "@PACKAGE_DATA_INSTALL_DIR@")
 set_and_check(Soprano_INCLUDE_DIR "@PACKAGE_INCLUDE_INSTALL_DIR@")
 set_and_check(Soprano_LIBRARY_DIR "@PACKAGE_LIB_INSTALL_DIR@")
 
+# Soprano Executables needed at build type
 set_and_check(SOPRANO_ONTO2VOCABULARYCLASS_EXECUTABLE "@PACKAGE_BIN_INSTALL_DIR@/onto2vocabularyclass")
 set_and_check(SOPRANO_SOPRANOCMD_EXECUTABLE "@PACKAGE_BIN_INSTALL_DIR@/sopranocmd")
 
 # Load the exported targets.
 include("${CMAKE_CURRENT_LIST_DIR}/SopranoTargets.cmake")
 
+# The Soprano libraries
+set(Soprano_LIBRARIES        Soprano::soprano)
+set(Soprano_client_LIBRARIES Soprano::sopranoclient)
+set(Soprano_index_LIBRARIES  Soprano::sopranoindex)
+set(Soprano_server_LIBRARIES Soprano::sopranoserver)
+
 # Components handling.
 check_required_components(Soprano)
 
 # Backward compatibility variables
-set(SOPRANO_FOUND ${Soprano_FOUND})
-set(SOPRANO_INCLUDE_DIR ${Soprano_INCLUDE_DIR})
-set(SOPRANO_VERSION ${Soprano_VERSION})
+set(SOPRANO_FOUND            ${Soprano_FOUND})
+set(SOPRANO_INCLUDE_DIR      ${Soprano_INCLUDE_DIR})
+set(SOPRANO_VERSION          ${Soprano_VERSION})
+set(SOPRANO_LIBRARIES        ${Soprano_LIBRARIES})
+set(SOPRANO_CLIENT_LIBRARIES ${Soprano_client_LIBRARIES})
+set(SOPRANO_INDEX_LIBRARIES  ${Soprano_index_LIBRARIES})
+set(SOPRANO_SERVER_LIBRARIES ${Soprano_server_LIBRARIES})
 
 # DEPRECATED: Use find_package(Soprano x.y.z) instead
 if(SOPRANO_MIN_VERSION)

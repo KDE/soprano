@@ -435,4 +435,5 @@ install(FILES ${soprano_BINARY_DIR}/SopranoConfig.cmake
        )
 
 install(EXPORT SopranoExport FILE SopranoTargets.cmake
-        DESTINATION ${LIB_INSTALL_DIR}/cmake/Soprano)
+        DESTINATION ${LIB_INSTALL_DIR}/cmake/Soprano
+        NAMESPACE Soprano::)
