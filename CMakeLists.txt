@@ -340,82 +340,51 @@ endif()
 
 
 ##################  status messages ################################
-message("---------------------------------------------------------------------------------------")
-message("-- Soprano Components that will be built:")
-if(NOT BUILD_REDLAND_BACKEND AND NOT BUILD_SESAME2_BACKEND AND NOT BUILD_VIRTUOSO_BACKEND)
-  message("   WARNING: No Soprano backends will be compiled!")
-  message("   WARNING: Soprano will not be very useful without storage backends!")
-endif()
 if(BUILD_REDLAND_BACKEND)
   set(Soprano_PLUGIN_REDLANDBACKEND_FOUND TRUE)
-  message("   * Redland storage backend")
 endif()
 if(BUILD_SESAME2_BACKEND)
   set(Soprano_PLUGIN_SESAME2BACKEND_FOUND TRUE)
-  message("   * Sesame2 storage backend (java-based)")
 endif()
 if(BUILD_VIRTUOSO_BACKEND)
   set(Soprano_PLUGIN_VIRTUOSOBACKEND_FOUND TRUE)
-  message("   * Virtuoso storage backend (Run-time dependency: Virtuoso)")
 endif()
-
 if(BUILD_RAPTOR_PARSER)
   set(Soprano_PLUGIN_RAPTORPARSER_FOUND TRUE)
-  message("   * Raptor RDF parser")
-  if(RAPTOR_HAVE_TRIG)
-    message("     (including TriG parser)")
-  endif()
 endif()
-
 if(BUILD_RAPTOR_SERIALIZER)
   set(Soprano_PLUGIN_RAPTORSERIALIZER_FOUND TRUE)
-  message("   * Raptor RDF serializer")
 endif()
 
-if(BUILD_CLUCENE_INDEX)
-  message("   * The CLucene-based full-text search index library")
-endif()
+add_feature_info("Redland storage backend" BUILD_REDLAND_BACKEND
+                 "STRONGLY RECOMMENDED: The redland backend is required to build Nepomuk."
+                )
 
-if(BUILD_DBUS_SUPPORT)
-  message("   * D-Bus server/client support")
+if(WIN32)
+  set(_virtuoso_extra_feature_info "Requires the ODBC headers - http://msdn.microsoft.com/en-us/windows/bb980924.aspx")
 endif()
+add_feature_info("Virtuoso storage backend" BUILD_VIRTUOSO_BACKEND
+                 "STRONGLY RECOMMENDED: The Virtuoso backend is required to build Nepomuk.
+                 ${_virtuoso_extra_feature_info}"
+                )
 
-message("")
-message("-- Soprano Components that will NOT be built:")
-if(NOT BUILD_REDLAND_BACKEND)
-  message("   * Redland storage backend (missing librdf/redland - http://librdf.org)")
-endif()
-if(NOT BUILD_SESAME2_BACKEND)
-  message("   * Sesame2 storage backend (java-based)")
-endif()
-if(NOT BUILD_VIRTUOSO_BACKEND)
-  if(WIN32)
-    message("   * Virtuoso storage backend (missing ODBC headers - http://msdn.microsoft.com/en-us/windows/bb980924.aspx)")
-  else()
-    message("   * Virtuoso storage backend (missing libiodbc - http://www.iodbc.org)")
-  endif()
-endif()
+add_feature_info("Raptor RDF parser" BUILD_RAPTOR_PARSER
+                 "STRONGLY RECOMMENDED: The Raptor RDF parser is required to build Nepomuk."
+                )
 
-if(NOT BUILD_RAPTOR_PARSER)
-  message("   * Raptor RDF parser (missing libraptor - http://librdf.org)")
-endif()
+add_feature_info("Raptor RDF serializer" BUILD_RAPTOR_SERIALIZER
+                 "Raptor RDF serializer"
+                )
 
-if(NOT BUILD_RAPTOR_SERIALIZER)
-  message("   * Raptor RDF serializer (missing libraptor - http://librdf.org)")
-  if(NOT SOPRANO_DISABLE_RAPTOR_PARSER AND REDLAND_FOUND AND REDLAND_VERSION VERSION_LESS "1.0.6")
-    message("     (The Raptor serializer depends on librdf/redland 1.0.6 or greater.")
-  endif()
-endif()
+add_feature_info("CLucene library" BUILD_CLUCENE_INDEX
+                 "The CLucene-based full-text search index library"
+                )
 
-if(NOT BUILD_CLUCENE_INDEX)
-  message("   * The CLucene-based full-text search index library")
-endif()
+add_feature_info("Sesame2 storage backend (java-based)" BUILD_SESAME2_BACKEND
+                 "Optional: The Virtuoso backend should be used instead.")
 
-if(NOT BUILD_DBUS_SUPPORT)
-  message("   * D-Bus server/client support")
-endif()
+add_feature_info("D-Bus server/client support" BUILD_DBUS_SUPPORT "")
 
-message("---------------------------------------------------------------------------------------")
 
 feature_summary(WHAT ALL)
 
