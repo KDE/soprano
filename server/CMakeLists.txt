@@ -1,7 +1,6 @@
 project(soprano_server)
 
 include_directories(
-  ${soprano_server_BINARY_DIR}
   ${soprano_core_SOURCE_DIR}
   ${soprano_core_BINARY_DIR}
   ${soprano_core_SOURCE_DIR}/util
@@ -40,10 +39,8 @@ if(BUILD_DBUS_SUPPORT)
 endif()
 
 configure_file(soprano-server-config.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/soprano-server-config.h)
-  
 
 add_library(sopranoserver ${LIBRARY_TYPE} ${soprano_server_SRC})
-
 
 add_executable(sopranod sopranod.cpp sopranodcore.cpp lockfile.cpp)
 
@@ -64,12 +61,12 @@ target_link_libraries(
   ${QT_QTNETWORK_LIBRARY}
   soprano
 )
+
 if(BUILD_DBUS_SUPPORT)
   target_link_libraries(
     sopranoserver
     ${QT_QTDBUS_LIBRARY})
 endif()
-
 
 target_link_libraries(
   sopranod
@@ -98,9 +95,10 @@ install(TARGETS sopranod
 )
 
 install(
-  FILES 
+  FILES
   servercore.h
   DESTINATION ${INCLUDE_INSTALL_DIR}/soprano
+  COMPONENT Devel
 )
 
 if(BUILD_DBUS_SUPPORT)

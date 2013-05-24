@@ -2,5 +2,6 @@ install(FILES
   CLuceneIndex
   IndexFilterModel
   QueryHit
-  DESTINATION
-  ${INCLUDE_INSTALL_DIR}/Soprano/Index)
+  DESTINATION ${INCLUDE_INSTALL_DIR}/Soprano/Index
+  COMPONENT Devel
+)

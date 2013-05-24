@@ -9,7 +9,6 @@ include_directories(
   ${QT_INCLUDES}
   ${soprano_SOURCE_DIR}
   ${soprano_SOURCE_DIR}/server
-  ${virtuoso_BINARY_DIR}
   ${IODBC_INCLUDE_DIR}
 )
 
@@ -41,9 +40,9 @@ endif()
 if(WIN32)
 # RUNTIME and ARCHIVE are ignored when the library type is set to MODULE (cf. add_library above)
 # so specify the bin directory explicitely. Only the .dll will be copied.
-  INSTALL(TARGETS soprano_virtuosobackend DESTINATION ${BIN_INSTALL_DIR}/soprano)
+  install(TARGETS soprano_virtuosobackend DESTINATION ${BIN_INSTALL_DIR}/soprano)
 else()
-  INSTALL(TARGETS soprano_virtuosobackend
+  install(TARGETS soprano_virtuosobackend
     LIBRARY DESTINATION ${LIB_INSTALL_DIR}/soprano
     RUNTIME DESTINATION ${BIN_INSTALL_DIR}/soprano
     ARCHIVE DESTINATION ${LIB_INSTALL_DIR}/soprano

@@ -1,11 +1,12 @@
 project(soprano_client_dbus)
 
 install(
-  FILES 
+  FILES
   dbusclient.h
   dbusmodel.h
-  dbusstatementiterator.h
   dbusnodeiterator.h
   dbusqueryresultiterator.h
+  dbusstatementiterator.h
   DESTINATION ${INCLUDE_INSTALL_DIR}/soprano
+  COMPONENT Devel
 )

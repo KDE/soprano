@@ -6,7 +6,6 @@ include_directories(
   ${soprano_core_SOURCE_DIR}/query
   ${soprano_core_SOURCE_DIR}/vocabulary
   ${soprano_core_BINARY_DIR}
-  ${soprano_tools_BINARY_DIR}
   ${QT_INCLUDES}
   ${soprano_SOURCE_DIR}
 )
@@ -39,7 +38,7 @@ target_link_libraries(
 )
 
 INSTALL(TARGETS sopranocmd onto2vocabularyclass
-	LIBRARY DESTINATION ${LIB_INSTALL_DIR}
-	RUNTIME DESTINATION ${BIN_INSTALL_DIR}
-	ARCHIVE DESTINATION ${LIB_INSTALL_DIR}
+        LIBRARY DESTINATION ${LIB_INSTALL_DIR}
+        RUNTIME DESTINATION ${BIN_INSTALL_DIR}
+        ARCHIVE DESTINATION ${LIB_INSTALL_DIR}
 )

@@ -1,38 +1,39 @@
 project(soprano_includes)
 
 install(FILES
-  Soprano
-  Model
-  Statement
-  Node
-  LanguageTag
-  StatementIterator
-  NodeIterator
-  Iterator
-  QueryResultIterator
-  QueryResultIteratorBackend
-  IteratorBackend
   Backend
-  BindingSet
+  BackendFeature
+  BackendOption
   BackendSetting
   BackendSettings
-  BackendOption
-  BackendFeature
-  RdfSerialization
+  BindingSet
   FilterModel
-  LiteralValue
-  Parser
-  PluginManager
-  Plugin
-  Serializer
-  RdfSchemaModel
-  StorageModel
   Global
-  Version
-  NRLModel
   Graph
-  DESTINATION
-  ${INCLUDE_INSTALL_DIR}/Soprano)
+  Iterator
+  IteratorBackend
+  LanguageTag
+  LiteralValue
+  Model
+  NRLModel
+  Node
+  NodeIterator
+  Parser
+  Plugin
+  PluginManager
+  QueryResultIterator
+  QueryResultIteratorBackend
+  RdfSchemaModel
+  RdfSerialization
+  Serializer
+  Soprano
+  Statement
+  StatementIterator
+  StorageModel
+  Version
+  DESTINATION ${INCLUDE_INSTALL_DIR}/Soprano
+  COMPONENT Devel
+)
 
 add_subdirectory(Error)
 add_subdirectory(Server)

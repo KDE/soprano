@@ -10,7 +10,7 @@ include_directories(
   ${CLUCENE_LIBRARY_DIR}
 )
 
-set( SOPRANO_INDEX_SRCS
+set(SOPRANO_INDEX_SRCS
   cluceneindex.cpp
   clucenedocumentwrapper.cpp
   cluceneutils.cpp
@@ -25,8 +25,8 @@ configure_file(clucene-config.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/clucene-config
 
 # CLucene requires exception support and has no support for visibility=hidden
 # so we must use the default (i.e. public) value for -fvisibility
-IF(NOT WIN32)
-    IF(CMAKE_COMPILER_IS_GNUCXX)
+if(NOT WIN32)
+    if(CMAKE_COMPILER_IS_GNUCXX)
         set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fexceptions")
         if(__SOPRANO_HAVE_GCC_VISIBILITY)
             set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fvisibility=default")
@@ -34,8 +34,8 @@ IF(NOT WIN32)
         if(__SOPRANO_HAVE_GCC_INLINE_VISIBILITY)
             set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fno-visibility-inlines-hidden")
         endif()
-    ENDIF()
-ENDIF()
+    endif()
+endif()
 
 
 add_library(sopranoindex SHARED ${SOPRANO_INDEX_SRCS})
@@ -56,16 +56,17 @@ set_target_properties(
   INSTALL_NAME_DIR ${LIB_INSTALL_DIR}
 )
 
-INSTALL(TARGETS sopranoindex EXPORT SopranoExport
+install(TARGETS sopranoindex EXPORT SopranoExport
         LIBRARY DESTINATION ${LIB_INSTALL_DIR}
         RUNTIME DESTINATION ${BIN_INSTALL_DIR}
         ARCHIVE DESTINATION ${LIB_INSTALL_DIR}
 )
 
 install(
-  FILES 
-  indexfiltermodel.h
+  FILES
   cluceneindex.h
+  indexfiltermodel.h
   indexqueryhit.h
   DESTINATION ${INCLUDE_INSTALL_DIR}/soprano
+  COMPONENT Devel
 )

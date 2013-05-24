@@ -1,11 +1,12 @@
 install(FILES
-  TcpClient
-  LocalSocketClient
   DBusClient
   DBusModel
-  DBusStatementIterator
   DBusNodeIterator
   DBusQueryResultIterator
+  DBusStatementIterator
+  LocalSocketClient
   SparqlModel
-  DESTINATION
-  ${INCLUDE_INSTALL_DIR}/Soprano/Client)
+  TcpClient
+  DESTINATION ${INCLUDE_INSTALL_DIR}/Soprano/Client
+  COMPONENT Devel
+)

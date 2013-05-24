@@ -1,10 +1,11 @@
 project(soprano_server_dbus)
 
 install(
-  FILES 
-  dbusexportmodel.h
+  FILES
   dbusexportiterator.h
+  dbusexportmodel.h
   DESTINATION ${INCLUDE_INSTALL_DIR}/soprano
+  COMPONENT Devel
 )
 
 install(

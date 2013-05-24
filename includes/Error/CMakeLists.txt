@@ -1,8 +1,9 @@
 install(FILES
   Error
-  ParserError
+  ErrorCache
   ErrorCode
   Locator
-  ErrorCache
-  DESTINATION
-  ${INCLUDE_INSTALL_DIR}/Soprano/Error)
+  ParserError
+  DESTINATION ${INCLUDE_INSTALL_DIR}/Soprano/Error
+  COMPONENT Devel
+)

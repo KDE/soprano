@@ -1,16 +1,11 @@
 project(soprano_sesame2)
 
-if("${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION}.${CMAKE_PATCH_VERSION}" VERSION_LESS "2.6.2")
-   set(JNI_INCLUDE_DIRS ${JAVA_INCLUDE_PATH} ${JAVA_INCLUDE_PATH2})
-endif()
-
 include_directories(
   ${QT_QTCORE_INCLUDE_DIR}
   ${soprano_SOURCE_DIR}
   ${QT_INCLUDE_DIR}
   ${soprano_core_SOURCE_DIR}
   ${soprano_core_BINARY_DIR}
-  ${soprano_sesame2_BINARY_DIR}
   ${JNI_INCLUDE_DIRS}
 )
 
@@ -34,7 +29,6 @@ set(sesame2_backend_SRC
   jobjectref.cpp
   )
 
-
 add_library(soprano_sesame2backend MODULE ${sesame2_backend_SRC})
 
 target_link_libraries(soprano_sesame2backend soprano ${JAVA_JVM_LIBRARY})
@@ -42,9 +36,9 @@ target_link_libraries(soprano_sesame2backend soprano ${JAVA_JVM_LIBRARY})
 if(WIN32)
 # RUNTIME and ARCHIVE are ignored when the library type is set to MODULE (cf. add_library above)
 # so specify the bin directory explicitely. Only the .dll will be copied.
-  INSTALL(TARGETS soprano_sesame2backend DESTINATION ${BIN_INSTALL_DIR}/soprano)
+  install(TARGETS soprano_sesame2backend DESTINATION ${BIN_INSTALL_DIR}/soprano)
 else()
-  INSTALL(TARGETS soprano_sesame2backend
+  install(TARGETS soprano_sesame2backend
     LIBRARY DESTINATION ${LIB_INSTALL_DIR}/soprano
     RUNTIME DESTINATION ${BIN_INSTALL_DIR}/soprano
     ARCHIVE DESTINATION ${LIB_INSTALL_DIR}/soprano

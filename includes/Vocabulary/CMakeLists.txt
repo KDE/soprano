@@ -1,11 +1,12 @@
 install(FILES
+  NAO
+  NRL
+  OWL
   RDF
   RDFS
-  XMLSchema
   SIL
-  NRL
-  NAO
-  OWL
+  XMLSchema
   Xesam
-  DESTINATION
-  ${INCLUDE_INSTALL_DIR}/Soprano/Vocabulary)
+  DESTINATION ${INCLUDE_INSTALL_DIR}/Soprano/Vocabulary
+  COMPONENT Devel
+)

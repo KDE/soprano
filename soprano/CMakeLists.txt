@@ -4,14 +4,11 @@ project(soprano_core)
 set(CMAKE_INCLUDE_DIRECTORIES_BEFORE ON)
 include_directories(BEFORE
   ${soprano_SOURCE_DIR}
-  ${soprano_core_BINARY_DIR}
-  ${soprano_core_SOURCE_DIR}
   ${soprano_core_SOURCE_DIR}/util
   ${soprano_core_SOURCE_DIR}/query
   ${soprano_core_SOURCE_DIR}/vocabulary
   ${QT_QTCORE_INCLUDE_DIR}
   ${QT_INCLUDE_DIR}
-  ${soprano_core_SOURCE_DIR}
   )
 
 configure_file(soprano-config.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/soprano-config.h)
@@ -102,7 +99,6 @@ set(soprano_SRCS
   util/asyncquery.cpp
   )
 
-
 add_library(soprano ${LIBRARY_TYPE} ${soprano_SRCS})
 
 target_link_libraries(soprano ${QT_QTCORE_LIBRARY})
@@ -121,59 +117,61 @@ install(TARGETS soprano EXPORT SopranoExport
   )
 
 install(FILES
-  sopranomacros.h
-  parser.h
-  queryresultiterator.h
-  queryresultiteratorbackend.h
-  node.h
-  statement.h
-  statementiterator.h
-  nodeiterator.h
-  model.h
-  filtermodel.h
-  storagemodel.h
-  plugin.h
-  pluginmanager.h
-  global.h
-  soprano_export.h
-  backend.h
-  error.h
-  locator.h
-  literalvalue.h
-  languagetag.h
   ${CMAKE_CURRENT_BINARY_DIR}/version.h
-  rdfschemamodel.h
+  backend.h
   bindingset.h
-  serializer.h
-  sopranotypes.h
-  iterator.h
-  iteratorbackend.h
-  nrlmodel.h
-  graph.h
   datastream.h
-  vocabulary/rdf.h
-  vocabulary/rdfs.h
-  vocabulary/xsd.h
-  vocabulary/nrl.h
-  vocabulary/nao.h
-  vocabulary/xesam.h
-  vocabulary/owl.h
+  error.h
+  filtermodel.h
+  global.h
+  graph.h
   inference/inferencemodel.h
   inference/inferencerule.h
+  inference/inferenceruleparser.h
   inference/inferenceruleset.h
   inference/nodepattern.h
-  inference/statementpattern.h
   inference/sil.h
-  inference/inferenceruleparser.h
+  inference/statementpattern.h
+  iterator.h
+  iteratorbackend.h
+  languagetag.h
+  literalvalue.h
+  locator.h
+  model.h
+  node.h
+  nodeiterator.h
+  nrlmodel.h
+  parser.h
+  plugin.h
+  pluginmanager.h
+  queryresultiterator.h
+  queryresultiteratorbackend.h
+  rdfschemamodel.h
+  serializer.h
   soprano.h
-  vocabulary.h
+  soprano_export.h
+  sopranomacros.h
+  sopranotypes.h
+  statement.h
+  statementiterator.h
+  storagemodel.h
+  util/asyncmodel.h
+  util/asyncquery.h
+  util/asyncresult.h
   util/dummymodel.h
   util/mutexmodel.h
-  util/simplestatementiterator.h
-  util/simplenodeiterator.h
-  util/signalcachemodel.h
   util/readonlymodel.h
-  util/asyncmodel.h
-  util/asyncresult.h
-  util/asyncquery.h
-  DESTINATION ${INCLUDE_INSTALL_DIR}/soprano)
+  util/signalcachemodel.h
+  util/simplenodeiterator.h
+  util/simplestatementiterator.h
+  vocabulary.h
+  vocabulary/nao.h
+  vocabulary/nrl.h
+  vocabulary/owl.h
+  vocabulary/rdf.h
+  vocabulary/rdfs.h
+  vocabulary/xesam.h
+  vocabulary/xsd.h
+  DESTINATION ${INCLUDE_INSTALL_DIR}/soprano
+  COMPONENT Devel
+)

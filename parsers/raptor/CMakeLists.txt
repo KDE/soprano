@@ -5,7 +5,6 @@ include_directories(
   ${soprano_SOURCE_DIR}
   ${QT_INCLUDE_DIR}
   ${soprano_core_SOURCE_DIR}
-  ${soprano_raptor_parser_BINARY_DIR}
   ${RAPTOR_INCLUDE_DIR}
 )
 
@@ -13,10 +12,9 @@ set(raptor_parser_SRC
   raptorparser.cpp
 )
 
-
 add_library(soprano_raptorparser  MODULE ${raptor_parser_SRC})
 
-TARGET_LINK_LIBRARIES(soprano_raptorparser soprano ${RAPTOR_LIBRARIES})
+target_link_libraries(soprano_raptorparser soprano ${RAPTOR_LIBRARIES})
 
 set_target_properties(soprano_raptorparser PROPERTIES
   DEFINE_SYMBOL MAKE_RAPTORPARSER_LIB
@@ -25,9 +23,9 @@ set_target_properties(soprano_raptorparser PROPERTIES
 if(WIN32)
 # RUNTIME and ARCHIVE are ignored when the library type is set to MODULE (cf. add_library above)
 # so specify the bin directory explicitely. Only the .dll will be copied.
-  INSTALL(TARGETS soprano_raptorparser DESTINATION ${BIN_INSTALL_DIR}/soprano)
+  install(TARGETS soprano_raptorparser DESTINATION ${BIN_INSTALL_DIR}/soprano)
 else()
-  INSTALL(TARGETS soprano_raptorparser
+  install(TARGETS soprano_raptorparser
     LIBRARY DESTINATION ${LIB_INSTALL_DIR}/soprano
     RUNTIME DESTINATION ${BIN_INSTALL_DIR}/soprano
     ARCHIVE DESTINATION ${LIB_INSTALL_DIR}/soprano
@@ -36,7 +34,7 @@ endif()
 
 configure_file(raptorparser.desktop.cmake ${CMAKE_CURRENT_BINARY_DIR}/raptorparser.desktop)
 
-INSTALL(FILES
+install(FILES
   ${CMAKE_CURRENT_BINARY_DIR}/raptorparser.desktop
   DESTINATION ${DATA_INSTALL_DIR}/soprano/plugins
   )

@@ -1,10 +1,11 @@
 install(FILES
   InferenceModel
-  RuleSet
-  Rule
   NodePattern
-  StatementPattern
+  Rule
   RuleParser
+  RuleSet
   StandardRuleSet
-  DESTINATION
-  ${INCLUDE_INSTALL_DIR}/Soprano/Inference)
+  StatementPattern
+  DESTINATION ${INCLUDE_INSTALL_DIR}/Soprano/Inference
+  COMPONENT Devel
+)

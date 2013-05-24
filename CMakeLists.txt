@@ -286,7 +286,7 @@ if(NOT WIN32)
 endif()
 
 
-##################  apidox ################################
+##################  apidox ##################
 find_package(Doxygen)
 set_package_properties(Doxygen PROPERTIES
                        URL "http://www.stack.nl/~dimitri/doxygen/"
@@ -379,7 +379,6 @@ endif()
 if(BUILD_DBUS_SUPPORT)
   message("   * D-Bus server/client support")
 endif()
-
 
 message("")
 message("-- Soprano Components that will NOT be built:")

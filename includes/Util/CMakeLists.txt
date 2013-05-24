@@ -1,12 +1,13 @@
 install(FILES
-  MutexModel
-  SimpleStatementIterator
-  SimpleNodeIterator
-  DummyModel
-  SignalCacheModel
-  ReadOnlyModel
   AsyncModel
-  AsyncResult
   AsyncQuery
-  DESTINATION
-  ${INCLUDE_INSTALL_DIR}/Soprano/Util)
+  AsyncResult
+  DummyModel
+  MutexModel
+  ReadOnlyModel
+  SignalCacheModel
+  SimpleNodeIterator
+  SimpleStatementIterator
+  DESTINATION ${INCLUDE_INSTALL_DIR}/Soprano/Util
+  COMPONENT Devel
+)

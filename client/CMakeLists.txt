@@ -1,7 +1,6 @@
 project(soprano_client)
 
 include_directories(
-  ${soprano_client_BINARY_DIR}
   ${soprano_server_SOURCE_DIR}
   ${soprano_server_dbus_SOURCE_DIR}
   ${soprano_core_SOURCE_DIR}
@@ -86,20 +85,22 @@ if(BUILD_DBUS_SUPPORT)
     ${QT_QTDBUS_LIBRARY})
 endif()
 
-INSTALL(TARGETS sopranoclient EXPORT SopranoExport
+install(TARGETS sopranoclient EXPORT SopranoExport
         LIBRARY DESTINATION ${LIB_INSTALL_DIR}
         RUNTIME DESTINATION ${BIN_INSTALL_DIR}
         ARCHIVE DESTINATION ${LIB_INSTALL_DIR}
 )
 
 install(
-  FILES 
-  tcpclient.h
+  FILES
   localsocketclient.h
+  tcpclient.h
   DESTINATION ${INCLUDE_INSTALL_DIR}/soprano
+  COMPONENT Devel
 )
 
 add_subdirectory(sparql)
+
 if(BUILD_DBUS_SUPPORT)
   add_subdirectory(dbus)
 endif()

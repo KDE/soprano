@@ -2,7 +2,8 @@ project(soprano_rules)
 
 install(
   FILES
-  rdfs.rules
   nrl.rules
+  rdfs.rules
   DESTINATION
-  share/soprano/rules)
+  share/soprano/rules
+  )
