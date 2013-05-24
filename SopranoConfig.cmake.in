@@ -19,3 +19,8 @@ include("${CMAKE_CURRENT_LIST_DIR}/SopranoTargets.cmake")
 
 # Components handling.
 check_required_components(Soprano)
+
+# Backward compatibility variables
+set(SOPRANO_FOUND ${Soprano_FOUND})
+set(SOPRANO_INCLUDE_DIR ${Soprano_INCLUDE_DIR})
+set(SOPRANO_VERSION ${Soprano_VERSION})
