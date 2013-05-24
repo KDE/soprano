@@ -12,6 +12,7 @@
 # They should be considered deprecated.
 # SOPRANO_FOUND       - True if Soprano has been found.
 # SOPRANO_INCLUDE_DIR - The include directory.
+# SOPRANO_MIN_VERSION - The minimum version to look for.
 # SOPRANO_VERSION     - The Soprano version.
 
 @PACKAGE_INIT@
@@ -38,3 +39,9 @@ check_required_components(Soprano)
 set(SOPRANO_FOUND ${Soprano_FOUND})
 set(SOPRANO_INCLUDE_DIR ${Soprano_INCLUDE_DIR})
 set(SOPRANO_VERSION ${Soprano_VERSION})
+
+# DEPRECATED: Use find_package(Soprano x.y.z) instead
+if(SOPRANO_MIN_VERSION)
+  set(Soprano_FIND_VERSION ${SOPRANO_MIN_VERSION})
+endif()
+
