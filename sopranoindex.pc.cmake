@@ -7,6 +7,6 @@ Name: Sopranoindex
 Description: Soprano's RDF full text index
 URL=http://soprano.sourceforge.net/
 Requires: QtCore
-Version: @CMAKE_SOPRANO_VERSION_STRING@
+Version: @SOPRANO_VERSION_STRING@
 Libs: -L${libdir} -lsopranoindex
 Cflags: -I${includedir} -I${includedir}/soprano

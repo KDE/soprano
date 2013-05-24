@@ -25,16 +25,16 @@
 #include "soprano_export.h"
 
 /// @brief Soprano version as string at compile time.
-#define SOPRANO_VERSION_STRING "${CMAKE_SOPRANO_VERSION_STRING}"
+#define SOPRANO_VERSION_STRING "${SOPRANO_VERSION_STRING}"
 
 /// @brief The major Soprano version number at compile time
-#define SOPRANO_VERSION_MAJOR ${CMAKE_SOPRANO_VERSION_MAJOR}
+#define SOPRANO_VERSION_MAJOR ${SOPRANO_VERSION_MAJOR}
 
 /// @brief The minor Soprano version number at compile time
-#define SOPRANO_VERSION_MINOR ${CMAKE_SOPRANO_VERSION_MINOR}
+#define SOPRANO_VERSION_MINOR ${SOPRANO_VERSION_MINOR}
 
 /// @brief The Soprano release version number at compile time
-#define SOPRANO_VERSION_RELEASE ${CMAKE_SOPRANO_VERSION_RELEASE}
+#define SOPRANO_VERSION_RELEASE ${SOPRANO_VERSION_RELEASE}
 
 /**
  * \brief Create a unique number from the major, minor and release number of a %Soprano version

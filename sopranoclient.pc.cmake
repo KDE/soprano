@@ -7,6 +7,6 @@ Name: Sopranoclient
 Description: Client for Soprano
 URL=http://soprano.sourceforge.net/
 Requires: QtCore
-Version: @CMAKE_SOPRANO_VERSION_STRING@
+Version: @SOPRANO_VERSION_STRING@
 Libs: -L${libdir} -lsopranoclient
 Cflags: -I${includedir} -I${includedir}/soprano

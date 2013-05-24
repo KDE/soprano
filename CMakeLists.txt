@@ -23,10 +23,10 @@ include(CTest)
 include(CTestConfig.cmake)
 
 ##################  Soprano version  ################################
-set(CMAKE_SOPRANO_VERSION_MAJOR 2)
-set(CMAKE_SOPRANO_VERSION_MINOR 9)
-set(CMAKE_SOPRANO_VERSION_RELEASE 2)
-set(CMAKE_SOPRANO_VERSION_STRING "${CMAKE_SOPRANO_VERSION_MAJOR}.${CMAKE_SOPRANO_VERSION_MINOR}.${CMAKE_SOPRANO_VERSION_RELEASE}")
+set(SOPRANO_VERSION_MAJOR 2)
+set(SOPRANO_VERSION_MINOR 9)
+set(SOPRANO_VERSION_RELEASE 2)
+set(SOPRANO_VERSION_STRING "${SOPRANO_VERSION_MAJOR}.${SOPRANO_VERSION_MINOR}.${SOPRANO_VERSION_RELEASE}")
 
 ##################  User options  ################################
 
@@ -417,7 +417,7 @@ feature_summary(WHAT ALL)
 
 ##################  Write SopranoConfigVersion.cmake ##################
 write_basic_package_version_file(${soprano_BINARY_DIR}/SopranoConfigVersion.cmake
-                                 VERSION ${CMAKE_SOPRANO_VERSION_STRING}
+                                 VERSION ${SOPRANO_VERSION_STRING}
                                  COMPATIBILITY SameMajorVersion
                                 )
 

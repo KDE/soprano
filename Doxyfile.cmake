@@ -5,7 +5,7 @@
 #---------------------------------------------------------------------------
 DOXYFILE_ENCODING      = UTF-8
 PROJECT_NAME           = Soprano
-PROJECT_NUMBER         = ${CMAKE_SOPRANO_VERSION_STRING}
+PROJECT_NUMBER         = ${SOPRANO_VERSION_STRING}
 OUTPUT_DIRECTORY       = docs
 CREATE_SUBDIRS         = NO
 OUTPUT_LANGUAGE        = English
