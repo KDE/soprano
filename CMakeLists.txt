@@ -1,6 +1,6 @@
 project(soprano)
 
-cmake_minimum_required(VERSION 2.8.9)
+cmake_minimum_required(VERSION 2.8.9 FATAL_ERROR)
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules)
 
@@ -342,18 +342,28 @@ endif()
 ##################  status messages ################################
 if(BUILD_REDLAND_BACKEND)
   set(Soprano_PLUGIN_REDLANDBACKEND_FOUND TRUE)
+else()
+  set(Soprano_PLUGIN_REDLANDBACKEND_FOUND FALSE)
 endif()
 if(BUILD_SESAME2_BACKEND)
   set(Soprano_PLUGIN_SESAME2BACKEND_FOUND TRUE)
+else()
+  set(Soprano_PLUGIN_SESAME2BACKEND_FOUND FALSE)
 endif()
 if(BUILD_VIRTUOSO_BACKEND)
   set(Soprano_PLUGIN_VIRTUOSOBACKEND_FOUND TRUE)
+else()
+  set(Soprano_PLUGIN_VIRTUOSOBACKEND_FOUND FALSE)
 endif()
 if(BUILD_RAPTOR_PARSER)
   set(Soprano_PLUGIN_RAPTORPARSER_FOUND TRUE)
+else()
+    set(Soprano_PLUGIN_RAPTORPARSER_FOUND FALSE)
 endif()
 if(BUILD_RAPTOR_SERIALIZER)
   set(Soprano_PLUGIN_RAPTORSERIALIZER_FOUND TRUE)
+else()
+  set(Soprano_PLUGIN_RAPTORSERIALIZER_FOUND FALSE)
 endif()
 
 add_feature_info("Redland storage backend" BUILD_REDLAND_BACKEND
