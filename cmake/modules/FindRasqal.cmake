@@ -31,18 +31,19 @@ endif()
     execute_process(
       COMMAND ${RASQAL_CONFIG} --version
       OUTPUT_VARIABLE RASQAL_VERSION
+      OUTPUT_STRIP_TRAILING_WHITESPACE
       )
     if(RASQAL_VERSION)
-      string(REPLACE "\n" "" RASQAL_VERSION ${RASQAL_VERSION})
       # extract include paths from rasqal-config
       execute_process(
         COMMAND ${RASQAL_CONFIG} --cflags
-        OUTPUT_VARIABLE rasqal_CFLAGS_ARGS)
+        OUTPUT_VARIABLE rasqal_CFLAGS_ARGS
+        OUTPUT_STRIP_TRAILING_WHITESPACE
+        )
       string(REPLACE " " ";" rasqal_CFLAGS_ARGS ${rasqal_CFLAGS_ARGS})
       foreach(_ARG ${rasqal_CFLAGS_ARGS})
         if(${_ARG} MATCHES "^-I")
           string(REGEX REPLACE "^-I" "" _ARG ${_ARG})
-          string( REPLACE "\n" "" _ARG ${_ARG})
           list(APPEND rasqal_INCLUDE_DIRS ${_ARG})
         endif()
       endforeach()
@@ -82,13 +83,6 @@ endif()
 
   if (RASQAL_FOUND)
     set(RASQAL_DEFINITIONS ${rasqal_CFLAGS})
-    if (NOT Rasqal_FIND_QUIETLY)
-      message(STATUS "Found Rasqal ${RASQAL_VERSION}: libs - ${RASQAL_LIBRARIES}; includes - ${RASQAL_INCLUDE_DIR}")
-    endif()
-  else()
-    if (Rasqal_FIND_REQUIRED)
-      message(FATAL_ERROR "Could NOT find Rasqal")
-    endif()
   endif()
 
 mark_as_advanced(RASQAL_INCLUDE_DIR_TMP
