@@ -51,26 +51,34 @@ endif()
 
 include(SopranoCPack.cmake)
 
-##################  find packages  ################################
-
-set(QT_USE_IMPORTED_TARGETS TRUE)
-find_package(Qt4 4.5.0)
-set_package_properties(Qt4 PROPERTIES
-                       DESCRIPTION "The Qt4 libraries"
-                       URL "http://qt-project.org/"
-                       TYPE REQUIRED
-)
-
 # properly set up compile flags (QT_DEBUG/QT_NO_DEBUG, ...)
 if(CMAKE_BUILD_TYPE)
     string(TOLOWER ${CMAKE_BUILD_TYPE} CMAKE_BUILD_TYPE_TOLOWER)
 endif()
 
-if (NOT CMAKE_BUILD_TYPE_TOLOWER MATCHES "debug") 
-   add_definitions(-DQT_NO_DEBUG_OUTPUT) 
-endif()
+##################  find packages  ################################
 
-include(${QT_USE_FILE})
+if(QT5_BUILD)
+  find_package(Qt5 COMPONENTS Core REQUIRED CONFIG)
+  if(Qt5_POSITION_INDEPENDENT_CODE)
+    set(CMAKE_POSITION_INDEPENDENT_CODE ON)
+  endif()
+  include_directories(${Qt5Core_INCLUDE_DIRS})
+else()
+  set(QT_USE_IMPORTED_TARGETS TRUE)
+  find_package(Qt4 4.5.0)
+  set_package_properties(Qt4 PROPERTIES
+                        DESCRIPTION "The Qt4 libraries"
+                        URL "http://qt-project.org/"
+                        TYPE REQUIRED
+  )
+
+  if (NOT CMAKE_BUILD_TYPE_TOLOWER MATCHES "debug")
+    add_definitions(-DQT_NO_DEBUG_OUTPUT)
+  endif()
+
+  include(${QT_USE_FILE})
+endif()
 
 if(NOT SOPRANO_DISABLE_RAPTOR_PARSER OR NOT SOPRANO_DISABLE_RAPTOR_SERIALIZER OR NOT SOPRANO_DISABLE_REDLAND_BACKEND)
   find_package(Rasqal)
