@@ -280,7 +280,7 @@ namespace {
     QUrl parseUri( const QString& s ) {
         // try to be a little smart about user input
         if ( s.contains( '%' ) ) {
-            QByteArray b = s.toAscii();
+            QByteArray b = s.toLatin1();
             if ( !b.isEmpty() ) {
                 return QUrl::fromEncoded( b );
             }

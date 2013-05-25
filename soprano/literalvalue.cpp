@@ -516,7 +516,7 @@ QString Soprano::LiteralValue::toString() const
             else if( isDateTime() )
                 d->stringCache = DateTime::toString( toDateTime() );
             else if ( isByteArray() )
-                d->stringCache = QString::fromAscii( toByteArray().toBase64() );
+                d->stringCache = QString::fromLatin1( toByteArray().toBase64() );
             else
                 d->stringCache = d->value.toString();
 
@@ -711,7 +711,7 @@ Soprano::LiteralValue Soprano::LiteralValue::fromString( const QString& value, Q
             return LiteralValue();
     }
     case QVariant::ByteArray:
-        return LiteralValue( QByteArray::fromBase64( value.toAscii() ) );
+        return LiteralValue( QByteArray::fromBase64( value.toLatin1() ) );
     case QVariant::String:
         return LiteralValue( value );
     default:

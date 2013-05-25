@@ -236,7 +236,7 @@ Soprano::Node Soprano::NQuadParser::parseNode( const QString& s, int& offset ) c
         if ( s[offset] == '<' ) {
             int pos = s.indexOf( '>', offset+1 );
             if ( pos > 0 ) {
-                node = Soprano::Node( QUrl::fromEncoded( s.mid( offset+1, pos-offset-1 ).toAscii() ) );
+                node = Soprano::Node( QUrl::fromEncoded( s.mid( offset+1, pos-offset-1 ).toLatin1() ) );
                 offset = pos+1;
             }
         }
@@ -272,7 +272,7 @@ Soprano::Node Soprano::NQuadParser::parseNode( const QString& s, int& offset ) c
                     int literalTypeEnd = s.indexOf( ">", literalEndPos + 4 );
                     if ( literalTypeEnd > 0 ) {
                         QString literalType = s.mid( literalEndPos + 4, literalTypeEnd - literalEndPos - 4 );
-                        node = Soprano::LiteralValue::fromString( value, QUrl::fromEncoded( literalType.toAscii() ) );
+                        node = Soprano::LiteralValue::fromString( value, QUrl::fromEncoded( literalType.toLatin1() ) );
 
                         offset = literalTypeEnd+1;
                     }

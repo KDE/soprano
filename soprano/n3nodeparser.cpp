@@ -141,7 +141,7 @@ Soprano::Node Soprano::N3NodeParser::parseNode( QTextStream& s, Node::N3ParserFl
     if ( c == '<' ) {
         QString str;
         if ( scanStream( s, &str, '>' ) ) {
-            node = Soprano::Node( QUrl::fromEncoded( str.toAscii(), flags&Node::StrictUris ? QUrl::StrictMode : QUrl::TolerantMode ) );
+            node = Soprano::Node( QUrl::fromEncoded( str.toLatin1(), flags&Node::StrictUris ? QUrl::StrictMode : QUrl::TolerantMode ) );
         }
     }
 
