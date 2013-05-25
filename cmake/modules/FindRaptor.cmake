@@ -42,7 +42,7 @@ if ( NOT( RAPTOR_INCLUDE_DIR AND RAPTOR_LIBRARIES ) OR NOT RAPTOR_FOUND )
         set( Raptor_FIND_VERSION "2.0")
         set( Raptor_FIND_VERSION_MAJOR "2" )
         set( Raptor_FIND_VERSION_MINOR "0" )
-    endif ()
+    endif()
 
     if ( Raptor_FIND_VERSION_MAJOR EQUAL "2" )
 
@@ -51,8 +51,8 @@ if ( NOT( RAPTOR_INCLUDE_DIR AND RAPTOR_LIBRARIES ) OR NOT RAPTOR_FOUND )
             if ( PC_RAPTOR2_FOUND )
                 set(RAPTOR_DEFINITIONS ${PC_RAPTOR2_CFLAGS_OTHER})
                 set(RAPTOR_VERSION ${PC_RAPTOR2_VERSION} CACHE STRING "Raptor Version found" )
-            endif ()
-        endif ()
+            endif()
+        endif()
         find_raptor( raptor2 "${PC_RAPTOR2_LIBDIR};${PC_RAPTOR2_LIBRARY_DIRS}" "${PC_RAPTOR2_INCLUDEDIR};${PC_RAPTOR2_INCLUDE_DIRS}")
 
     elseif ( Raptor_FIND_VERSION_MAJOR EQUAL "1" )
@@ -62,11 +62,11 @@ if ( NOT( RAPTOR_INCLUDE_DIR AND RAPTOR_LIBRARIES ) OR NOT RAPTOR_FOUND )
             if ( PC_RAPTOR_FOUND )
                 set(RAPTOR_DEFINITIONS ${PC_RAPTOR_CFLAGS_OTHER})
                 set(RAPTOR_VERSION ${PC_RAPTOR_VERSION} CACHE STRING "Raptor Version found" )
-            endif ()
-        endif ()
+            endif()
+        endif()
         find_raptor( raptor "${PC_RAPTOR_LIBDIR};${PC_RAPTOR_LIBRARY_DIRS}" "${PC_RAPTOR_INCLUDEDIR};${PC_RAPTOR_INCLUDE_DIRS}")
 
-    else ()
+    else()
 
         message( FATAL_ERROR "No idea how to check for version : ${Raptor_FIND_VERSION}")
 
@@ -76,11 +76,11 @@ if ( NOT( RAPTOR_INCLUDE_DIR AND RAPTOR_LIBRARIES ) OR NOT RAPTOR_FOUND )
         if(NOT ${RAPTOR_VERSION} VERSION_LESS 1.4.16)
             set(RAPTOR_HAVE_TRIG TRUE)
         endif()
-    endif (RAPTOR_VERSION)
+    endif()
 
     mark_as_advanced(RAPTOR_INCLUDE_DIR RAPTOR_LIBRARIES)
 
-endif () # Check for cached values
+endif() # Check for cached values
 
 include(FindPackageHandleStandardArgs)
 
@@ -95,6 +95,6 @@ if (NOT RAPTOR_FOUND AND Raptor_FIND_VERSION_MAJOR EQUAL "2" AND NOT Raptor_FIND
     pkg_check_modules(PC_RAPTOR QUIET raptor)
     if (PC_RAPTOR_FOUND)
         message( STATUS "You have raptor1 version ${PC_RAPTOR_VERSION} installed. Please update." )
-    endif ()
-endif ()
+    endif()
+endif()
 

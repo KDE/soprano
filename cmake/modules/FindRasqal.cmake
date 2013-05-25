@@ -20,12 +20,12 @@ if(WINCE)
     NAMES rasqal-config
     PATHS ${HOST_BINDIR} NO_DEFAULT_PATH
     )
-else(WINCE)
+else()
   FIND_PROGRAM(
     RASQAL_CONFIG
     NAMES rasqal-config
     )
-endif(WINCE)
+endif()
 
   if(RASQAL_CONFIG)
     EXECUTE_PROCESS(
@@ -59,8 +59,8 @@ endif(WINCE)
           LIST(APPEND rasqal_LIBRARY_DIRS ${_ARG})
         ENDIF(${_ARG} MATCHES "^-L")
       ENDFOREACH(_ARG)
-    endif(RASQAL_VERSION)
-  endif(RASQAL_CONFIG)
+    endif()
+  endif()
 
   find_path(RASQAL_INCLUDE_DIR rasqal.h
     PATHS
@@ -85,12 +85,12 @@ endif(WINCE)
     set(RASQAL_DEFINITIONS ${rasqal_CFLAGS})
     if (NOT Rasqal_FIND_QUIETLY)
       message(STATUS "Found Rasqal ${RASQAL_VERSION}: libs - ${RASQAL_LIBRARIES}; includes - ${RASQAL_INCLUDE_DIR}")
-    endif (NOT Rasqal_FIND_QUIETLY)
-  else (RASQAL_FOUND)
+    endif()
+  else()
     if (Rasqal_FIND_REQUIRED)
       message(FATAL_ERROR "Could NOT find Rasqal")
-    endif (Rasqal_FIND_REQUIRED)
-  endif (RASQAL_FOUND)
+    endif()
+  endif()
 
 
 mark_as_advanced(RASQAL_INCLUDE_DIR_TMP

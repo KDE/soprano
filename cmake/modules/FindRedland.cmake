@@ -25,12 +25,12 @@ find_program(
   NAMES redland-config
   PATHS ${HOST_BINDIR} NO_DEFAULT_PATH
   )
-else(WINCE)
+else()
 find_program(
   REDLAND_CONFIG_EXECUTABLE
   NAMES redland-config
   )
-endif(WINCE)
+endif()
 
 if(REDLAND_CONFIG_EXECUTABLE)
   EXECUTE_PROCESS(
@@ -50,7 +50,7 @@ if(REDLAND_CONFIG_EXECUTABLE)
         string(REGEX REPLACE "^-I" "" _ARG ${_ARG})
         string( REPLACE "\n" "" _ARG ${_ARG} )
         list(APPEND redland_INCLUDE_DIRS ${_ARG})
-      endif(${_ARG} MATCHES "^-I")
+      endif()
     endforeach(_ARG)
 
     # extract lib paths from redland-config
@@ -62,10 +62,10 @@ if(REDLAND_CONFIG_EXECUTABLE)
       if(${_ARG} MATCHES "^-L")
         string(REGEX REPLACE "^-L" "" _ARG ${_ARG})
         list(APPEND redland_LIBRARY_DIRS ${_ARG})
-      endif(${_ARG} MATCHES "^-L")
+      endif()
     endforeach(_ARG)
-  endif(REDLAND_VERSION)
-endif(REDLAND_CONFIG_EXECUTABLE)
+  endif()
+endif()
 
 # This one is always empty, Alex
 # set(REDLAND_DEFINITIONS ${redland_CFLAGS})
@@ -100,7 +100,7 @@ if(NOT WIN32)
     )
     if(_LIB_PATH)
       set(_REDLAND_STORAGE_LIBS ${_REDLAND_STORAGE_LIBS} ${_LIB_PATH})
-    endif(_LIB_PATH)
+    endif()
   endforeach(_STORAGE_LIB)
   set(CMAKE_FIND_LIBRARY_SUFFIXES ${_SUFFIXES})
   if(_REDLAND_STORAGE_LIBS)
@@ -116,10 +116,10 @@ if(NOT WIN32)
       set(_REDLAND_VERSION_OK)
       message(STATUS "${_OUTPUT}")
       message(STATUS "Redland with broken NEEDED section detected, disabling")
-    endif(NOT "${_TEST_EXITCODE}" EQUAL 0)
-  endif(_REDLAND_STORAGE_LIBS)
+    endif()
+  endif()
 
-endif(NOT WIN32)
+endif()
 
 include(FindPackageHandleStandardArgs)
 find_package_handle_standard_args(Redland  DEFAULT_MSG  REDLAND_CONFIG_EXECUTABLE REDLAND_LIBRARIES REDLAND_LIBRARIES _REDLAND_VERSION_OK)

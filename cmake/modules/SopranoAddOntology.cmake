@@ -27,9 +27,9 @@ MACRO(SOPRANO_ADD_ONTOLOGY _sources _ontoFile _ontoName _namespace _encoding)
 
   if(${_arg0} STREQUAL "VISIBILITY")
     set(_visibility "--export-module" ${_arg1})
-  else(${_arg0} STREQUAL "VISIBILITY")
+  else()
     set(_visibility "--no-visibility-export")
-  endif(${_arg0} STREQUAL "VISIBILITY")
+  endif()
 
   string(TOLOWER ${_ontoName} _ontoFilePrefix)
   set(_ontoHeaderFile "${CMAKE_CURRENT_BINARY_DIR}/${_ontoFilePrefix}.h")
@@ -40,7 +40,7 @@ MACRO(SOPRANO_ADD_ONTOLOGY _sources _ontoFile _ontoName _namespace _encoding)
   # an older kdelibs:
   if (NOT SOPRANO_ONTO2VOCABULARYCLASS_EXECUTABLE)
      set(SOPRANO_ONTO2VOCABULARYCLASS_EXECUTABLE onto2vocabularyclass)
-  endif (NOT SOPRANO_ONTO2VOCABULARYCLASS_EXECUTABLE)
+  endif()
   add_custom_command(OUTPUT ${_ontoHeaderFile} ${_ontoSourceFile}
     COMMAND ${SOPRANO_ONTO2VOCABULARYCLASS_EXECUTABLE} --name ${_ontoName} --encoding ${_encoding} --namespace ${_namespace} ${_visibility} ${_ontoFile}
     MAIN_DEPENDENCY ${_ontoFile}
