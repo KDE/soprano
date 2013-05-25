@@ -174,6 +174,14 @@ void Soprano::Server::ServerConnection::Private::_s_readNextCommand()
     stream.readUnsignedInt16( command );
     currentCommand = command;
     switch( command ) {
+    case COMMAND_ITERATOR_NEXT:
+        iteratorNext();
+        break;
+
+    case COMMAND_ITERATOR_CURRENT_BINDINGSET:
+        queryIteratorCurrent();
+        break;
+
     case COMMAND_SUPPORTS_PROTOCOL_VERSION:
         supportsProtocolVersion();
         break;
@@ -230,20 +238,12 @@ void Soprano::Server::ServerConnection::Private::_s_readNextCommand()
         query();
         break;
 
-    case COMMAND_ITERATOR_NEXT:
-        iteratorNext();
-        break;
-
     case COMMAND_ITERATOR_CURRENT_STATEMENT:
         statementIteratorCurrent();
         break;
 
     case COMMAND_ITERATOR_CURRENT_NODE:
         nodeIteratorCurrent();
-        break;
-
-    case COMMAND_ITERATOR_CURRENT_BINDINGSET:
-        queryIteratorCurrent();
         break;
 
     case COMMAND_ITERATOR_CLOSE:
