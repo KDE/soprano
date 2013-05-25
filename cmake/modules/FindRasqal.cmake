@@ -15,50 +15,49 @@
 # For details see the accompanying COPYING-CMAKE-SCRIPTS file.
 
 if(WINCE)
-  FIND_PROGRAM(
+  find_program(
     RASQAL_CONFIG
     NAMES rasqal-config
     PATHS ${HOST_BINDIR} NO_DEFAULT_PATH
     )
 else()
-  FIND_PROGRAM(
+  find_program(
     RASQAL_CONFIG
     NAMES rasqal-config
     )
 endif()
 
   if(RASQAL_CONFIG)
-    EXECUTE_PROCESS(
+    execute_process(
       COMMAND ${RASQAL_CONFIG} --version
       OUTPUT_VARIABLE RASQAL_VERSION
       )
     if(RASQAL_VERSION)
-      STRING(REPLACE "\n" "" RASQAL_VERSION ${RASQAL_VERSION})
-  
+      string(REPLACE "\n" "" RASQAL_VERSION ${RASQAL_VERSION})
       # extract include paths from rasqal-config
-      EXECUTE_PROCESS(
+      execute_process(
         COMMAND ${RASQAL_CONFIG} --cflags
         OUTPUT_VARIABLE rasqal_CFLAGS_ARGS)
-      STRING( REPLACE " " ";" rasqal_CFLAGS_ARGS ${rasqal_CFLAGS_ARGS} )
-      FOREACH( _ARG ${rasqal_CFLAGS_ARGS} )
-        IF(${_ARG} MATCHES "^-I")
-          STRING(REGEX REPLACE "^-I" "" _ARG ${_ARG})
-          STRING( REPLACE "\n" "" _ARG ${_ARG} )
-          LIST(APPEND rasqal_INCLUDE_DIRS ${_ARG})
-        ENDIF(${_ARG} MATCHES "^-I")
-      ENDFOREACH(_ARG)
-  
+      string(REPLACE " " ";" rasqal_CFLAGS_ARGS ${rasqal_CFLAGS_ARGS})
+      foreach(_ARG ${rasqal_CFLAGS_ARGS})
+        if(${_ARG} MATCHES "^-I")
+          string(REGEX REPLACE "^-I" "" _ARG ${_ARG})
+          string( REPLACE "\n" "" _ARG ${_ARG})
+          list(APPEND rasqal_INCLUDE_DIRS ${_ARG})
+        endif()
+      endforeach()
+
       # extract lib paths from rasqal-config
-      EXECUTE_PROCESS(
+      execute_process(
         COMMAND ${RASQAL_CONFIG} --libs
         OUTPUT_VARIABLE rasqal_CFLAGS_ARGS)
-      STRING( REPLACE " " ";" rasqal_CFLAGS_ARGS ${rasqal_CFLAGS_ARGS} )
-      FOREACH( _ARG ${rasqal_CFLAGS_ARGS} )
-        IF(${_ARG} MATCHES "^-L")
-          STRING(REGEX REPLACE "^-L" "" _ARG ${_ARG})
-          LIST(APPEND rasqal_LIBRARY_DIRS ${_ARG})
-        ENDIF(${_ARG} MATCHES "^-L")
-      ENDFOREACH(_ARG)
+      string(REPLACE " " ";" rasqal_CFLAGS_ARGS ${rasqal_CFLAGS_ARGS})
+      foreach(_ARG ${rasqal_CFLAGS_ARGS})
+        if(${_ARG} MATCHES "^-L")
+          string(REGEX REPLACE "^-L" "" _ARG ${_ARG})
+          list(APPEND rasqal_LIBRARY_DIRS ${_ARG})
+        endif()
+      endforeach()
     endif()
   endif()
 
@@ -92,7 +91,6 @@ endif()
     endif()
   endif()
 
-
 mark_as_advanced(RASQAL_INCLUDE_DIR_TMP
-                 RASQAL_INCLUDE_DIR 
+                 RASQAL_INCLUDE_DIR
                  RASQAL_LIBRARIES)
