@@ -22,22 +22,25 @@ if(IODBC_CONFIG)
   EXECUTE_PROCESS(
     COMMAND ${IODBC_CONFIG} --version
     OUTPUT_VARIABLE IODBC_VERSION
+    OUTPUT_STRIP_TRAILING_WHITESPACE
     )
+
   if(IODBC_VERSION)
-    STRING(REPLACE "\n" "" IODBC_VERSION ${IODBC_VERSION})
     # extract include paths from iodbc-config
     EXECUTE_PROCESS(
       COMMAND ${IODBC_CONFIG} --cflags
-      OUTPUT_VARIABLE iodbc_LIBS_ARGS)
-    STRING( REPLACE " " ";" iodbc_LIBS_ARGS ${iodbc_LIBS_ARGS} )
-    FOREACH( _ARG ${iodbc_LIBS_ARGS} )
-      IF(${_ARG} MATCHES "^-I")
-        STRING(REGEX REPLACE "^-I" "" _ARG ${_ARG})
-        STRING( REPLACE "\n" "" _ARG ${_ARG} )
-        LIST(APPEND iodbc_INCLUDE_DIRS ${_ARG})
-      ENDIF(${_ARG} MATCHES "^-I")
-    ENDFOREACH(_ARG)
-    
+      OUTPUT_VARIABLE iodbc_LIBS_ARGS
+      OUTPUT_STRIP_TRAILING_WHITESPACE
+      )
+    if(iodbc_LIBS_ARGS)
+      STRING( REPLACE " " ";" iodbc_LIBS_ARGS ${iodbc_LIBS_ARGS} )
+      FOREACH( _ARG ${iodbc_LIBS_ARGS} )
+        IF(${_ARG} MATCHES "^-I")
+          STRING(REGEX REPLACE "^-I" "" _ARG ${_ARG})
+          LIST(APPEND iodbc_INCLUDE_DIRS ${_ARG})
+        ENDIF(${_ARG} MATCHES "^-I")
+      ENDFOREACH(_ARG)
+    endif()
     # extract lib paths from iodbc-config
     EXECUTE_PROCESS(
       COMMAND ${IODBC_CONFIG} --libs
