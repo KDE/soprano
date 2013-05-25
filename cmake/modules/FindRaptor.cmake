@@ -31,13 +31,10 @@ MACRO ( FIND_RAPTOR libname libhints includehints )
         PATH_SUFFIXES ${libname})
 ENDMACRO ()
 
-
-
 # Check if we have cached results in case the last round was successful.
 if ( NOT( RAPTOR_INCLUDE_DIR AND RAPTOR_LIBRARIES ) OR NOT RAPTOR_FOUND )
 
     include(FindLibraryWithDebug)
-    include(MacroEnsureVersion)
     find_package(PkgConfig)
 
     # By default look for version 2.0
@@ -76,7 +73,9 @@ if ( NOT( RAPTOR_INCLUDE_DIR AND RAPTOR_LIBRARIES ) OR NOT RAPTOR_FOUND )
     endif()
 
     if (RAPTOR_VERSION)
-        MACRO_ENSURE_VERSION("1.4.16" ${RAPTOR_VERSION} RAPTOR_HAVE_TRIG)
+        if(NOT ${RAPTOR_VERSION} VERSION_LESS 1.4.16)
+            set(RAPTOR_HAVE_TRIG TRUE)
+        endif()
     endif (RAPTOR_VERSION)
 
     mark_as_advanced(RAPTOR_INCLUDE_DIR RAPTOR_LIBRARIES)
