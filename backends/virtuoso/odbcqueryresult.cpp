@@ -180,25 +180,24 @@ Soprano::Node Soprano::ODBC::QueryResult::getData( int colNum )
             //
             // Retrieve lang and type strings which are cached in the server for faster lookups
             //
-            SQLCHAR langBuf[100];
             SQLCHAR typeBuf[100];
-            SQLINTEGER langBufLen = 0;
             SQLINTEGER typeBufLen = 0;
-            if ( !SQL_SUCCEEDED( SQLGetDescField( hdesc, colNum, SQL_DESC_COL_LITERAL_LANG, langBuf, sizeof( langBuf ), &langBufLen ) ) ||
-                 !SQL_SUCCEEDED( SQLGetDescField( hdesc, colNum, SQL_DESC_COL_LITERAL_TYPE, typeBuf, sizeof( typeBuf ), &typeBufLen ) ) ) {
-                setError( Virtuoso::convertSqlError( SQL_HANDLE_STMT, d->m_hstmt, QLatin1String( "SQLGetDescField SQL_DESC_COL_LITERAL_* failed" ) ) );
-                return Node();
-            }
+
+            bool fetchTypeSucceded = SQL_SUCCEEDED( SQLGetDescField( hdesc, colNum,
+                                                                     SQL_DESC_COL_LITERAL_TYPE,
+                                                                     typeBuf, sizeof( typeBuf ), &typeBufLen ) );
 
             const char* str = reinterpret_cast<const char*>( data );
-            const char* typeStr = reinterpret_cast<const char*>( typeBuf );
 
-            if ( typeBufLen > 0 ) {
+            if( fetchTypeSucceded ) {
+                const char* typeStr = reinterpret_cast<const char*>( typeBuf );
+
                 if ( !qstrncmp( typeStr, Virtuoso::fakeBooleanTypeString(), typeBufLen ) ) {
                     node = Node( LiteralValue( !qstrcmp( "true", str ) ) );
                 }
                 else {
                     QUrl type;
+                    // FIXME: Disable these checks based on the backend settings!
                     if ( !qstrncmp( typeStr, Virtuoso::fakeBase64BinaryTypeString(), typeBufLen ) )
                         type = Soprano::Vocabulary::XMLSchema::base64Binary();
                     else
@@ -207,8 +206,22 @@ Soprano::Node Soprano::ODBC::QueryResult::getData( int colNum )
                 }
             }
             else {
-                QString lang = QString::fromLatin1( reinterpret_cast<const char*>( langBuf ), langBufLen );
-                node = Node( LiteralValue::createPlainLiteral( QString::fromUtf8( str ), lang ) );
+                SQLCHAR langBuf[100];
+                SQLINTEGER langBufLen = 0;
+
+                bool fetchLangSucceded = SQL_SUCCEEDED( SQLGetDescField( hdesc, colNum,
+                                                                         SQL_DESC_COL_LITERAL_LANG,
+                                                                         langBuf, sizeof( langBuf ), &langBufLen ) );
+
+                if( fetchLangSucceded ) {
+                    QString lang = QString::fromLatin1( reinterpret_cast<const char*>( langBuf ), langBufLen );
+                    node = Node( LiteralValue::createPlainLiteral( QString::fromUtf8( str ), lang ) );
+                }
+                else {
+                    setError( Virtuoso::convertSqlError( SQL_HANDLE_STMT, d->m_hstmt,
+                                                         QLatin1String( "SQLGetDescField SQL_DESC_COL_LITERAL_* failed" ) ) );
+                    return Node();
+                }
             }
             break;
         }
