@@ -194,7 +194,7 @@ Soprano::Node Soprano::Redland::World::createNode( librdf_node *node )
         librdf_uri* datatype = librdf_node_get_literal_value_datatype_uri( node );
         if ( !datatype ) {
             return Soprano::Node( Soprano::LiteralValue::createPlainLiteral( QString::fromUtf8( (const char *)librdf_node_get_literal_value( node ) ),
-                                                                             QString::fromAscii( librdf_node_get_literal_value_language( node ) ) ) );
+                                                                             QString::fromLatin1( librdf_node_get_literal_value_language( node ) ) ) );
         }
         else {
             return Soprano::Node( Soprano::LiteralValue::fromString( QString::fromUtf8( (const char *)librdf_node_get_literal_value( node ) ),

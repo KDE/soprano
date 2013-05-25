@@ -389,7 +389,7 @@ Soprano::Node Soprano::Node::createLiteralNode( const LiteralValue& val, const Q
 QString Soprano::Node::resourceToN3( const QUrl& uri )
 {
     QByteArray a = uri.toEncoded();
-    return '<' + QString::fromAscii( a ) + '>';
+    return '<' + QString::fromLatin1( a ) + '>';
 }
 
 
@@ -431,7 +431,7 @@ QString Soprano::Node::literalToN3( const LiteralValue& literal )
     }
     else {
         return QString( "\"%1\"^^<%2>" )
-            .arg( s, QString::fromAscii( literal.dataTypeUri().toEncoded() ) );
+            .arg( s, QString::fromLatin1( literal.dataTypeUri().toEncoded() ) );
     }
 }
 

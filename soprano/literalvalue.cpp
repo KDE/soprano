@@ -516,7 +516,7 @@ QString Soprano::LiteralValue::toString() const
             else if( isDateTime() )
                 d->stringCache = DateTime::toString( toDateTime() );
             else if ( isByteArray() )
-                d->stringCache = QString::fromAscii( toByteArray().toBase64() );
+                d->stringCache = QString::fromLatin1( toByteArray().toBase64() );
             else
                 d->stringCache = d->value.toString();
 

@@ -148,7 +148,7 @@ public:
 
     QString getId( const Soprano::Node& node ) {
         if ( node.isResource() ) {
-            return QString::fromAscii( node.uri().toEncoded() );
+            return QString::fromLatin1( node.uri().toEncoded() );
         }
         else if ( node.isBlank() ) {
             return bnodeIdPrefix() + node.toString();
@@ -440,9 +440,9 @@ Soprano::Error::ErrorCode Soprano::Index::CLuceneIndex::addStatement( const Sopr
 
     clearError();
 
-    QString field = QString::fromAscii( statement.predicate().uri().toEncoded() );
+    QString field = QString::fromLatin1( statement.predicate().uri().toEncoded() );
     QString text = statement.object().isResource()
-                   ? QString::fromAscii( statement.object().uri().toEncoded() )
+                   ? QString::fromLatin1( statement.object().uri().toEncoded() )
                    : statement.object().toString();
 
     if( text.isEmpty() ) {
@@ -493,9 +493,9 @@ Soprano::Error::ErrorCode Soprano::Index::CLuceneIndex::removeStatement( const S
 
     bool success = false;
 
-    QString field = QString::fromAscii( statement.predicate().uri().toEncoded() );
+    QString field = QString::fromLatin1( statement.predicate().uri().toEncoded() );
     QString text = statement.object().isResource()
-                   ? QString::fromAscii( statement.object().uri().toEncoded() )
+                   ? QString::fromLatin1( statement.object().uri().toEncoded() )
                    : statement.object().toString();
 
     if( text.isEmpty() ) {

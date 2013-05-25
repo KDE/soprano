@@ -151,7 +151,7 @@ void SopranoLiteralTest::testToString_data()
     QTest::newRow( "dateTime2 (from constructor)" ) << LiteralValue( QDateTime( QDate( 1977, 8, 9 ), QTime( 17, 38, 2, 23 ), Qt::UTC ) ) << QString( "1977-08-09T17:38:02.023Z" );
     QTest::newRow( "boolean-false (from constructor)" ) << LiteralValue( false ) << QString( "false" );
     QTest::newRow( "boolean-true (from constructor)" ) << LiteralValue( true ) << QString( "true" );
-    QTest::newRow( "binaryData (from constructor)" ) << LiteralValue( QByteArray( "Hello World" ) ) << QString::fromAscii( QByteArray( "Hello World" ).toBase64() );
+    QTest::newRow( "binaryData (from constructor)" ) << LiteralValue( QByteArray( "Hello World" ) ) << QString::fromLatin1( QByteArray( "Hello World" ).toBase64() );
 
     QTest::newRow( "int (from operator=)" ) << ( LiteralValue() = (int)-17 ) << QString( "-17" );
     QTest::newRow( "long (from operator=)" ) << ( LiteralValue() = (qlonglong)17927948235235LL ) << QString("17927948235235");
@@ -165,7 +165,7 @@ void SopranoLiteralTest::testToString_data()
     QTest::newRow( "dateTime2 (from constructor)" ) << ( LiteralValue() = QDateTime( QDate( 1977, 8, 9 ), QTime( 17, 38, 2, 23 ), Qt::UTC ) ) << QString( "1977-08-09T17:38:02.023Z" );
     QTest::newRow( "boolean-false (from operator=)" ) << ( LiteralValue() = false ) << QString( "false" );
     QTest::newRow( "boolean-true (from operator=)" ) << ( LiteralValue() = true ) << QString( "true" );
-    QTest::newRow( "binaryData (from operator=)" ) << ( LiteralValue() = QByteArray( "Hello World" ) ) << QString::fromAscii( QByteArray( "Hello World" ).toBase64() );
+    QTest::newRow( "binaryData (from operator=)" ) << ( LiteralValue() = QByteArray( "Hello World" ) ) << QString::fromLatin1( QByteArray( "Hello World" ).toBase64() );
 }
 
 

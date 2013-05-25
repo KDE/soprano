@@ -123,7 +123,7 @@ QString Soprano::Inference::NodePattern::createSparqlNodePattern( const BindingS
             }
         }
         else if( d->node.isResource() ) {
-            return '<' + QString::fromAscii( d->node.uri().toEncoded() ) + '>';
+            return '<' + QString::fromLatin1( d->node.uri().toEncoded() ) + '>';
         }
         else {
             return "_:" + d->node.toString();

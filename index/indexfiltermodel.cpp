@@ -320,5 +320,5 @@ QString Soprano::Index::IndexFilterModel::encodeStringForLuceneQuery( const QStr
 
 QString Soprano::Index::IndexFilterModel::encodeUriForLuceneQuery( const QUrl& uri )
 {
-    return encodeStringForLuceneQuery( QString::fromAscii( uri.toEncoded() ) );
+    return encodeStringForLuceneQuery( QString::fromLatin1( uri.toEncoded() ) );
 }

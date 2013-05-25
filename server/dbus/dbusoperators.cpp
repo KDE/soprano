@@ -27,12 +27,12 @@ QDBusArgument& operator<<( QDBusArgument& arg, const Soprano::Node& node )
     arg.beginStructure();
     arg << ( int )node.type();
     if ( node.type() == Soprano::Node::ResourceNode ) {
-        arg << QString::fromAscii( node.uri().toEncoded() );
+        arg << QString::fromLatin1( node.uri().toEncoded() );
     }
     else {
         arg << node.toString();
     }
-    arg << node.language() << QString::fromAscii( node.dataType().toEncoded() );
+    arg << node.language() << QString::fromLatin1( node.dataType().toEncoded() );
     arg.endStructure();
     return arg;
 }
