@@ -3,6 +3,7 @@
  *
  * Copyright (C) 2006-2007 Daniele Galdi <daniele.galdi@gmail.com>
  * Copyright (C) 2007-2009 Sebastian Trueg <trueg@kde.org>
+ * Copyright (C) 2012 Vishesh Handa <me@vhanda.in>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -26,6 +27,7 @@
 #include <QtCore/QString>
 #include <QtCore/QUrl>
 #include <QtCore/QDebug>
+#include <QMutex>
 
 
 
@@ -402,24 +404,48 @@ QString Soprano::Node::blankToN3( const QString& blank )
         return "_:" + blank;
 }
 
+namespace {
+    QHash<QChar, QString> createEscapeHash() {
+        QHash<QChar, QString> escapeHash;
+        escapeHash.insert( QChar::fromLatin1('\\'), QString::fromLatin1("\\\\") );
+        escapeHash.insert( QChar::fromLatin1('\n'), QString::fromLatin1("\\n") );
+        escapeHash.insert( QChar::fromLatin1('\r'), QString::fromLatin1("\\r") );
+        escapeHash.insert( QChar::fromLatin1('\b'), QString::fromLatin1("\\b") );
+        escapeHash.insert( QChar::fromLatin1('\t'), QString::fromLatin1("\\t") );
+        escapeHash.insert( QChar::fromLatin1('\f'), QString::fromLatin1("\\f") );
+        escapeHash.insert( QChar::fromLatin1('\"'), QString::fromLatin1("\\\"") );
+        escapeHash.insert( QChar::fromLatin1('\''), QString::fromLatin1("\\\'") );
+
+        return escapeHash;
+    }
+
+    QHash<QVariant::Type, QString> typeHash;
+    QMutex typeMutex;
+}
+
+typedef QHash<QChar, QString> CharStringHash;
+Q_GLOBAL_STATIC_WITH_ARGS( CharStringHash, g_escapeHash, (createEscapeHash()) );
 
 // static
 QString Soprano::Node::literalToN3( const LiteralValue& literal )
 {
+    QString str = literal.toString();
+
+    QString s;
+    s.reserve( str.size() );
+
     //
     // Escape control chars:  \t \b \n \r \f \\ \" \'
     //
-    QString s = literal.toString();
-
-    // FIXME: this can be done faster by running through the string only once.
-    s.replace( '\\', "\\\\" );
-    s.replace( '\"', "\\\"" );
-    s.replace( '\'', "\\\'" );
-    s.replace( '\n', "\\n" );
-    s.replace( '\r', "\\r" );
-    s.replace( '\b', "\\b" );
-    s.replace( '\t', "\\t" );
-    s.replace( '\f', "\\f" );
+    foreach(const QChar& ch, str) {
+        QHash< QChar, QString >::const_iterator it = g_escapeHash()->constFind( ch );
+        if( it == g_escapeHash()->constEnd() ) {
+            s.append( ch );
+        }
+        else {
+            s.append( it.value() );
+        }
+    }
 
     if( literal.isPlain() ) {
         if ( literal.language().isEmpty() ) {
@@ -430,8 +456,19 @@ QString Soprano::Node::literalToN3( const LiteralValue& literal )
         }
     }
     else {
-        return QString( "\"%1\"^^<%2>" )
-            .arg( s, QString::fromLatin1( literal.dataTypeUri().toEncoded() ) );
+        QString type;
+
+        QMutexLocker lock( &typeMutex );
+        QHash<QVariant::Type, QString>::const_iterator it = typeHash.constFind( literal.type() );
+        if( it == typeHash.constEnd() ) {
+            type = QString::fromAscii( literal.dataTypeUri().toEncoded() );
+            typeHash.insert( literal.type(), type );
+        }
+        else {
+            type = it.value();
+        }
+
+        return QString::fromLatin1( "\"%1\"^^<%2>" ) .arg( s, type );
     }
 }
 
