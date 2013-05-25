@@ -65,18 +65,16 @@ find_library(IODBC_LIBRARIES NAMES iodbc
   ${iodbc_LIBRARY_DIRS}
   )
 
-if (IODBC_LIBRARIES AND IODBC_INCLUDE_DIR)
-#  set(IODBC_INCLUDE_DIR "${IODBC_INCLUDE_DIR}/iodbc")
-  set(IODBC_FOUND TRUE)
-endif (IODBC_LIBRARIES AND IODBC_INCLUDE_DIR)
+include(FindPackageHandleStandardArgs)
+find_package_handle_standard_args(IODBC
+                      REQUIRED_VARS IODBC_INCLUDE_DIR IODBC_LIBRARIES
+                      VERSION_VAR IODBC_VERSION
+                      )
 
-if (IODBC_FOUND)
+mark_as_advanced(IODBC_INCLUDE_DIR
+                 IODBC_LIBRARIES
+                )
+
+if(IODBC_FOUND)
   set(IODBC_DEFINITIONS ${iodbc_CFLAGS})
-  if (NOT IODBC_FIND_QUIETLY)
-    message(STATUS "Found iODBC ${IODBC_VERSION}: libs - ${IODBC_LIBRARIES}; includes - ${IODBC_INCLUDE_DIR}")
-  endif (NOT IODBC_FIND_QUIETLY)
-else (IODBC_FOUND)
-  if (IODBC_FIND_REQUIRED)
-    message(FATAL_ERROR "Could NOT find Iodbc")
-  endif (IODBC_FIND_REQUIRED)
-endif (IODBC_FOUND)
+endif(IODBC_FOUND)
