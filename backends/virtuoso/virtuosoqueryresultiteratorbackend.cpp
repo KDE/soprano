@@ -146,8 +146,9 @@ bool Soprano::Virtuoso::QueryResultIteratorBackend::next()
                 d->bindingCache[i] = d->m_queryResult->getData( i+1 );
                 d->bindingCachedFlags.setBit( i );
 
-                setError( d->m_queryResult->lastError() );
-                if ( lastError() ) {
+                Error::Error error = d->m_queryResult->lastError();
+                if( error ) {
+                    setError( error );
                     return false;
                 }
             }
