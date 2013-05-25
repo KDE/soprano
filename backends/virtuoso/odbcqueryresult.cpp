@@ -302,28 +302,39 @@ bool Soprano::ODBC::QueryResult::isBlob( int colNum )
 
 bool Soprano::ODBC::QueryResult::getCharData( int colNum, SQLCHAR** buffer, SQLLEN* length )
 {
-    SQLCHAR dummyBuffer[1]; // dummy buffer only used to determine length
+    // We pre alocate a buffer which can hold most of the values that we get.
+    // If it cannot, only then do we allocate the proper size
+    // This way we avoid the extra SQLGetData call
+    const static int bufSize = 100;
+    *buffer = new SQLCHAR[ bufSize ];
 
-    int r = SQLGetData( d->m_hstmt, colNum, SQL_C_CHAR, dummyBuffer, 0, length );
+    int r = SQLGetData( d->m_hstmt, colNum, SQL_C_CHAR, *buffer, bufSize, length );
 
     if ( SQL_SUCCEEDED( r ) ) {
         //
         // Treat a 0 length and null data as an empty node
         //
         if ( *length == SQL_NULL_DATA || *length == 0 ) {
+            delete [] *buffer;
             *buffer = 0;
             *length = 0;
             clearError();
             return true;
         }
 
-        //
-        // again with real length buffer
-        //
-        else {
-            *buffer = new SQLCHAR[*length+4]; // FIXME: why +4 (I got this from the redland plugin)
-            r = SQLGetData ( d->m_hstmt, colNum, SQL_C_CHAR, *buffer, *length+4, length );
-            if ( SQL_SUCCEEDED( r ) ) {
+        if( *length > bufSize ) {
+            SQLCHAR* oldBuffer = *buffer;
+
+            *buffer = new SQLCHAR[ *length + 4 ]; // FIXME: Why the +4 (I got this from the redland plugin)
+            memcpy( *buffer, oldBuffer, bufSize );
+            delete [] oldBuffer;
+
+            // The -1 is cause SQLGetData returns a null terminated string
+            SQLCHAR* newBuffer = (*buffer) + bufSize - 1;
+            int len = *length - ( bufSize - 1 ) + 1; // The +1 is for the null char
+
+            int r = SQLGetData( d->m_hstmt, colNum, SQL_C_CHAR, newBuffer, len, length );
+            if( SQL_SUCCEEDED( r ) ) {
                 clearError();
                 return true;
             }
@@ -331,13 +342,22 @@ bool Soprano::ODBC::QueryResult::getCharData( int colNum, SQLCHAR** buffer, SQLL
                 delete [] *buffer;
                 *buffer = 0;
                 *length = 0;
-                setError( Virtuoso::convertSqlError( SQL_HANDLE_STMT, d->m_hstmt, QLatin1String( "SQLGetData failed" ) ) );
+                setError( Virtuoso::convertSqlError( SQL_HANDLE_STMT, d->m_hstmt,
+                                                     QLatin1String( "SQLGetData failed" ) ) );
                 return false;
             }
         }
+        else {
+            clearError();
+            return true;
+        }
     }
     else {
-        setError( Virtuoso::convertSqlError( SQL_HANDLE_STMT, d->m_hstmt, QLatin1String( "SQLGetData for data length failed" ) ) );
+        delete [] *buffer;
+        *buffer = 0;
+        *length = 0;
+        setError( Virtuoso::convertSqlError( SQL_HANDLE_STMT, d->m_hstmt,
+                                             QLatin1String( "SQLGetData failed" ) ) );
         return false;
     }
 }
