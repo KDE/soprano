@@ -98,7 +98,7 @@ QString Soprano::Server::DBusServerAdaptor::createModel( const QString& name, co
 
             QString objectPath = d->dbusObjectPath + "/models/" + normalizeModelName( name );
             DBusExportModel* mw = new DBusExportModel( model );
-            connect( model, SIGNAL( destroyed( QObject* ) ), mw, SLOT( deleteLater() ) );
+            connect( model, SIGNAL(destroyed(QObject*)), mw, SLOT(deleteLater()) );
             mw->registerModel( objectPath );
             d->modelDBusObjectPaths.insert( name, mw );
             return objectPath;

@@ -68,8 +68,8 @@ void Soprano::Util::ReadOnlyModel::setParentModel( Model* model )
         if ( d->parent ) {
             connect( d->parent, SIGNAL(statementsAdded()), this, SIGNAL(statementsAdded()) );
             connect( d->parent, SIGNAL(statementsRemoved()), this, SIGNAL(statementsRemoved()) );
-            connect( d->parent, SIGNAL(statementAdded(const Soprano::Statement&)), this, SIGNAL(statementAdded(const Soprano::Statement&)) );
-            connect( d->parent, SIGNAL(statementRemoved(const Soprano::Statement&)), this, SIGNAL(statementRemoved(const Soprano::Statement&)) );
+            connect( d->parent, SIGNAL(statementAdded(Soprano::Statement)), this, SIGNAL(statementAdded(Soprano::Statement)) );
+            connect( d->parent, SIGNAL(statementRemoved(Soprano::Statement)), this, SIGNAL(statementRemoved(Soprano::Statement)) );
         }
     }
 }

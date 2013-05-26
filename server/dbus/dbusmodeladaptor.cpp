@@ -163,14 +163,14 @@ Soprano::Server::DBusModelAdaptor::DBusModelAdaptor( DBusExportModel* dbusModel 
 
     // we cannot use setAutoRelaySignals here since that would connect (non-existing)
     // signals from parent instead of model
-    connect( dbusModel->parentModel(), SIGNAL( statementsAdded() ),
-             this, SIGNAL( statementsAdded() ) );
-    connect( dbusModel->parentModel(), SIGNAL( statementsRemoved() ),
-             this, SIGNAL( statementsRemoved() ) );
-    connect( dbusModel->parentModel(), SIGNAL( statementAdded(const Soprano::Statement&) ),
-             this, SIGNAL( statementAdded(const Soprano::Statement&) ) );
-    connect( dbusModel->parentModel(), SIGNAL( statementRemoved(const Soprano::Statement&) ),
-             this, SIGNAL( statementRemoved(const Soprano::Statement&) ) );
+    connect( dbusModel->parentModel(), SIGNAL(statementsAdded()),
+             this, SIGNAL(statementsAdded()) );
+    connect( dbusModel->parentModel(), SIGNAL(statementsRemoved()),
+             this, SIGNAL(statementsRemoved()) );
+    connect( dbusModel->parentModel(), SIGNAL(statementAdded(Soprano::Statement)),
+             this, SIGNAL(statementAdded(Soprano::Statement)) );
+    connect( dbusModel->parentModel(), SIGNAL(statementRemoved(Soprano::Statement)),
+             this, SIGNAL(statementRemoved(Soprano::Statement)) );
 }
 
 Soprano::Server::DBusModelAdaptor::~DBusModelAdaptor()
@@ -183,8 +183,8 @@ int Soprano::Server::DBusModelAdaptor::addStatement( const Soprano::Statement& s
     // handle method call org.soprano.Model.addStatement
     if ( Util::AsyncModel* am = qobject_cast<Util::AsyncModel*>( d->model->parentModel() ) ) {
         Util::AsyncResult* result = am->addStatementAsync( statement );
-        connect( result, SIGNAL( resultReady( Soprano::Util::AsyncResult* ) ),
-                 this, SLOT( _s_delayedResultReady( Soprano::Util::AsyncResult* ) ) );
+        connect( result, SIGNAL(resultReady(Soprano::Util::AsyncResult*)),
+                 this, SLOT(_s_delayedResultReady(Soprano::Util::AsyncResult*)) );
 
         // create a delayed dummy result
         m.setDelayedReply( true );
@@ -205,8 +205,8 @@ bool Soprano::Server::DBusModelAdaptor::containsAnyStatement( const Soprano::Sta
     // handle method call org.soprano.Model.containsAnyStatement
     if ( Util::AsyncModel* am = qobject_cast<Util::AsyncModel*>( d->model->parentModel() ) ) {
         Util::AsyncResult* result = am->containsAnyStatementAsync( statement );
-        connect( result, SIGNAL( resultReady( Soprano::Util::AsyncResult* ) ),
-                 this, SLOT( _s_delayedResultReady( Soprano::Util::AsyncResult* ) ) );
+        connect( result, SIGNAL(resultReady(Soprano::Util::AsyncResult*)),
+                 this, SLOT(_s_delayedResultReady(Soprano::Util::AsyncResult*)) );
 
         // create a delayed dummy result
         m.setDelayedReply( true );
@@ -227,8 +227,8 @@ bool Soprano::Server::DBusModelAdaptor::containsStatement( const Soprano::Statem
     // handle method call org.soprano.Model.containsStatement
     if ( Util::AsyncModel* am = qobject_cast<Util::AsyncModel*>( d->model->parentModel() ) ) {
         Util::AsyncResult* result = am->containsStatementAsync( statement );
-        connect( result, SIGNAL( resultReady( Soprano::Util::AsyncResult* ) ),
-                 this, SLOT( _s_delayedResultReady( Soprano::Util::AsyncResult* ) ) );
+        connect( result, SIGNAL(resultReady(Soprano::Util::AsyncResult*)),
+                 this, SLOT(_s_delayedResultReady(Soprano::Util::AsyncResult*)) );
 
         // create a delayed dummy result
         m.setDelayedReply( true );
@@ -249,8 +249,8 @@ Soprano::Node Soprano::Server::DBusModelAdaptor::createBlankNode( const QDBusMes
     // handle method call org.soprano.Model.createBlankNode
     if ( Util::AsyncModel* am = qobject_cast<Util::AsyncModel*>( d->model->parentModel() ) ) {
         Util::AsyncResult* result = am->createBlankNodeAsync();
-        connect( result, SIGNAL( resultReady( Soprano::Util::AsyncResult* ) ),
-                 this, SLOT( _s_delayedResultReady( Soprano::Util::AsyncResult* ) ) );
+        connect( result, SIGNAL(resultReady(Soprano::Util::AsyncResult*)),
+                 this, SLOT(_s_delayedResultReady(Soprano::Util::AsyncResult*)) );
 
         // create a delayed dummy result
         m.setDelayedReply( true );
@@ -271,8 +271,8 @@ QString Soprano::Server::DBusModelAdaptor::executeQuery( const QString &query, c
     // handle method call org.soprano.Model.executeQuery
     if ( Util::AsyncModel* am = qobject_cast<Util::AsyncModel*>( d->model->parentModel() ) ) {
         Util::AsyncResult* result = am->executeQueryAsync( query, Query::queryLanguageFromString( queryLanguage ), queryLanguage );
-        connect( result, SIGNAL( resultReady( Soprano::Util::AsyncResult* ) ),
-                 this, SLOT( _s_delayedResultReady( Soprano::Util::AsyncResult* ) ) );
+        connect( result, SIGNAL(resultReady(Soprano::Util::AsyncResult*)),
+                 this, SLOT(_s_delayedResultReady(Soprano::Util::AsyncResult*)) );
 
         // create a delayed dummy result
         m.setDelayedReply( true );
@@ -296,8 +296,8 @@ bool Soprano::Server::DBusModelAdaptor::isEmpty( const QDBusMessage& m )
     // handle method call org.soprano.Model.isEmpty
     if ( Util::AsyncModel* am = qobject_cast<Util::AsyncModel*>( d->model->parentModel() ) ) {
         Util::AsyncResult* result = am->isEmptyAsync();
-        connect( result, SIGNAL( resultReady( Soprano::Util::AsyncResult* ) ),
-                 this, SLOT( _s_delayedResultReady( Soprano::Util::AsyncResult* ) ) );
+        connect( result, SIGNAL(resultReady(Soprano::Util::AsyncResult*)),
+                 this, SLOT(_s_delayedResultReady(Soprano::Util::AsyncResult*)) );
 
         // create a delayed dummy result
         m.setDelayedReply( true );
@@ -319,8 +319,8 @@ QString Soprano::Server::DBusModelAdaptor::listContexts( const QDBusMessage& m )
     // handle method call org.soprano.Model.listContexts
     if ( Util::AsyncModel* am = qobject_cast<Util::AsyncModel*>( d->model->parentModel() ) ) {
         Util::AsyncResult* result = am->listContextsAsync();
-        connect( result, SIGNAL( resultReady( Soprano::Util::AsyncResult* ) ),
-                 this, SLOT( _s_delayedResultReady( Soprano::Util::AsyncResult* ) ) );
+        connect( result, SIGNAL(resultReady(Soprano::Util::AsyncResult*)),
+                 this, SLOT(_s_delayedResultReady(Soprano::Util::AsyncResult*)) );
 
         // create a delayed dummy result
         m.setDelayedReply( true );
@@ -344,8 +344,8 @@ QString Soprano::Server::DBusModelAdaptor::listStatements( const Soprano::Statem
     // handle method call org.soprano.Model.listStatements
     if ( Util::AsyncModel* am = qobject_cast<Util::AsyncModel*>( d->model->parentModel() ) ) {
         Util::AsyncResult* result = am->listStatementsAsync( statement );
-        connect( result, SIGNAL( resultReady( Soprano::Util::AsyncResult* ) ),
-                 this, SLOT( _s_delayedResultReady( Soprano::Util::AsyncResult* ) ) );
+        connect( result, SIGNAL(resultReady(Soprano::Util::AsyncResult*)),
+                 this, SLOT(_s_delayedResultReady(Soprano::Util::AsyncResult*)) );
 
         // create a delayed dummy result
         m.setDelayedReply( true );
@@ -369,8 +369,8 @@ int Soprano::Server::DBusModelAdaptor::removeAllStatements( const Soprano::State
     // handle method call org.soprano.Model.removeAllStatements
     if ( Util::AsyncModel* am = qobject_cast<Util::AsyncModel*>( d->model->parentModel() ) ) {
         Util::AsyncResult* result = am->removeAllStatementsAsync( statement );
-        connect( result, SIGNAL( resultReady( Soprano::Util::AsyncResult* ) ),
-                 this, SLOT( _s_delayedResultReady( Soprano::Util::AsyncResult* ) ) );
+        connect( result, SIGNAL(resultReady(Soprano::Util::AsyncResult*)),
+                 this, SLOT(_s_delayedResultReady(Soprano::Util::AsyncResult*)) );
 
         // create a delayed dummy result
         m.setDelayedReply( true );
@@ -391,8 +391,8 @@ int Soprano::Server::DBusModelAdaptor::removeStatement( const Soprano::Statement
     // handle method call org.soprano.Model.removeStatement
     if ( Util::AsyncModel* am = qobject_cast<Util::AsyncModel*>( d->model->parentModel() ) ) {
         Util::AsyncResult* result = am->removeStatementAsync( statement );
-        connect( result, SIGNAL( resultReady( Soprano::Util::AsyncResult* ) ),
-                 this, SLOT( _s_delayedResultReady( Soprano::Util::AsyncResult* ) ) );
+        connect( result, SIGNAL(resultReady(Soprano::Util::AsyncResult*)),
+                 this, SLOT(_s_delayedResultReady(Soprano::Util::AsyncResult*)) );
 
         // create a delayed dummy result
         m.setDelayedReply( true );
@@ -413,8 +413,8 @@ int Soprano::Server::DBusModelAdaptor::statementCount( const QDBusMessage& m )
     // handle method call org.soprano.Model.statementCount
     if ( Util::AsyncModel* am = qobject_cast<Util::AsyncModel*>( d->model->parentModel() ) ) {
         Util::AsyncResult* result = am->statementCountAsync();
-        connect( result, SIGNAL( resultReady( Soprano::Util::AsyncResult* ) ),
-                 this, SLOT( _s_delayedResultReady( Soprano::Util::AsyncResult* ) ) );
+        connect( result, SIGNAL(resultReady(Soprano::Util::AsyncResult*)),
+                 this, SLOT(_s_delayedResultReady(Soprano::Util::AsyncResult*)) );
 
         // create a delayed dummy result
         m.setDelayedReply( true );

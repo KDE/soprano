@@ -1108,7 +1108,7 @@ void SopranoModelTest::testStatementsAddedSignal()
     // clear out any dangling signals from previous calls
     waitForSignals();
 
-    QSignalSpy spy( m_model, SIGNAL( statementsAdded() ) );
+    QSignalSpy spy( m_model, SIGNAL(statementsAdded()) );
 
     m_model->addStatement( m_st1 );
 
@@ -1131,7 +1131,7 @@ void SopranoModelTest::testStatementAddedSignal()
     waitForSignals();
 
     qRegisterMetaType<Soprano::Statement>( "Soprano::Statement" );
-    QSignalSpy spy( m_model, SIGNAL( statementAdded( const Soprano::Statement& ) ) );
+    QSignalSpy spy( m_model, SIGNAL(statementAdded(Soprano::Statement)) );
 
     m_model->addStatement( m_st1 );
     m_model->addStatement( m_st2 );
@@ -1160,7 +1160,7 @@ void SopranoModelTest::testStatementsRemovedSignal()
 
     waitForSignals();
 
-    QSignalSpy spy( m_model, SIGNAL( statementsRemoved() ) );
+    QSignalSpy spy( m_model, SIGNAL(statementsRemoved()) );
 
     m_model->addStatement( m_st1 );
     m_model->removeStatement( m_st1 );
@@ -1193,7 +1193,7 @@ void SopranoModelTest::testStatementRemovedSignal()
     waitForSignals();
 
     qRegisterMetaType<Soprano::Statement>( "Soprano::Statement" );
-    QSignalSpy spy( m_model, SIGNAL( statementRemoved( const Soprano::Statement& ) ) );
+    QSignalSpy spy( m_model, SIGNAL(statementRemoved(Soprano::Statement)) );
 
     QVERIFY( m_model->addStatement( m_st1 ) == Error::ErrorNone );
     QVERIFY( m_model->addStatement( m_st2 ) == Error::ErrorNone );

@@ -56,8 +56,8 @@ void Soprano::Util::AsyncResultWaiter::slotResultReady( AsyncResult* result )
 QVariant Soprano::Util::AsyncResultWaiter::waitForResult( AsyncResult* result )
 {
     AsyncResultWaiter waiter;
-    connect( result, SIGNAL( resultReady( Soprano::Util::AsyncResult* ) ),
-             &waiter, SLOT( slotResultReady( Soprano::Util::AsyncResult* ) ) );
+    connect( result, SIGNAL(resultReady(Soprano::Util::AsyncResult*)),
+             &waiter, SLOT(slotResultReady(Soprano::Util::AsyncResult*)) );
     waiter.d->loop.exec();
     return waiter.d->value;
 }

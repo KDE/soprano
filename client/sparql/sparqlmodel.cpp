@@ -215,8 +215,8 @@ Soprano::Client::SparqlModel::SparqlModel( const QString& endpoint,
     d->client = new SparqlProtocol( this );
     d->client->setHost( endpoint, port );
     d->client->setUser( user, password );
-    connect( d->client, SIGNAL( requestFinished( int, bool, const QByteArray& ) ),
-             this, SLOT( slotRequestFinished( int, bool, const QByteArray& ) ) );
+    connect( d->client, SIGNAL(requestFinished(int,bool,QByteArray)),
+             this, SLOT(slotRequestFinished(int,bool,QByteArray)) );
 }
 
 

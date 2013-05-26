@@ -133,14 +133,14 @@ Soprano::ODBC::Connection* Soprano::ODBC::ConnectionPool::connection()
     if(conn) {
         d->m_openConnections.insert( QThread::currentThread(), conn );
         // using the cleanup slot rather than deleteLater to not depend on any event loop
-        connect( QThread::currentThread(), SIGNAL( finished() ),
-                 conn, SLOT( cleanup() ),
+        connect( QThread::currentThread(), SIGNAL(finished()),
+                 conn, SLOT(cleanup()),
                  Qt::DirectConnection );
-        connect( QThread::currentThread(), SIGNAL( terminated() ),
-                 conn, SLOT( cleanup() ),
+        connect( QThread::currentThread(), SIGNAL(terminated()),
+                 conn, SLOT(cleanup()),
                  Qt::DirectConnection );
-        connect( QThread::currentThread(), SIGNAL( destroyed() ),
-                 conn, SLOT( cleanup() ),
+        connect( QThread::currentThread(), SIGNAL(destroyed()),
+                 conn, SLOT(cleanup()),
                  Qt::DirectConnection );
     }
     return conn;

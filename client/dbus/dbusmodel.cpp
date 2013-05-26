@@ -51,14 +51,14 @@ Soprano::Client::DBusModel::DBusModel( const QString& serviceName, const QString
 
     d->interface = new DBusModelInterface( serviceName, dbusObject, QDBusConnection::sessionBus(), this );
     d->callMode = QDBus::Block;
-    connect( d->interface, SIGNAL( statementsAdded() ),
-             this, SIGNAL( statementsAdded() ) );
-    connect( d->interface, SIGNAL( statementsRemoved() ),
-             this, SIGNAL( statementsRemoved() ) );
-    connect( d->interface, SIGNAL( statementAdded(const Soprano::Statement&) ),
-             this, SIGNAL( statementAdded(const Soprano::Statement&) ) );
-    connect( d->interface, SIGNAL( statementRemoved(const Soprano::Statement&) ),
-             this, SIGNAL( statementRemoved(const Soprano::Statement&) ) );
+    connect( d->interface, SIGNAL(statementsAdded()),
+             this, SIGNAL(statementsAdded()) );
+    connect( d->interface, SIGNAL(statementsRemoved()),
+             this, SIGNAL(statementsRemoved()) );
+    connect( d->interface, SIGNAL(statementAdded(Soprano::Statement)),
+             this, SIGNAL(statementAdded(Soprano::Statement)) );
+    connect( d->interface, SIGNAL(statementRemoved(Soprano::Statement)),
+             this, SIGNAL(statementRemoved(Soprano::Statement)) );
 }
 
 

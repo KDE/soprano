@@ -35,8 +35,8 @@ Soprano::Client::SparqlProtocol::SparqlProtocol( QObject* parent )
     : QHttp( parent ),
       m_path( QLatin1String( "/sparql" ) )
 {
-    connect( this, SIGNAL( requestFinished( int, bool ) ),
-             this, SLOT( slotRequestFinished( int, bool ) ) );
+    connect( this, SIGNAL(requestFinished(int,bool)),
+             this, SLOT(slotRequestFinished(int,bool)) );
 }
 
 

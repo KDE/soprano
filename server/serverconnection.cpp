@@ -139,13 +139,13 @@ void Soprano::Server::ServerConnection::run()
     // we are in the new thread
     d->socket = createIODevice();
 
-    connect( d->socket, SIGNAL( readyRead() ),
-             this, SLOT( _s_readNextCommand() ),
+    connect( d->socket, SIGNAL(readyRead()),
+             this, SLOT(_s_readNextCommand()),
              Qt::DirectConnection );
 
     // quit() emits the signal finished() when the thread is finished
-    connect( d->socket, SIGNAL( disconnected() ),
-             this, SLOT( quit() ) );
+    connect( d->socket, SIGNAL(disconnected()),
+             this, SLOT(quit()) );
     connect( this, SIGNAL(finished()),
              this, SLOT(deleteLater()) );
 

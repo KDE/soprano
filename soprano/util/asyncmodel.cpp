@@ -65,7 +65,7 @@ void Soprano::Util::AsyncModelPrivate::removeIterator( AsyncIteratorHandle* it )
 {
     Q_ASSERT( openIterators.contains( it ) );
     openIterators.removeAll( it );
-    QTimer::singleShot( 0, m_model, SLOT( _s_executeNextCommand() ) );
+    QTimer::singleShot( 0, m_model, SLOT(_s_executeNextCommand()) );
 }
 
 
@@ -76,7 +76,7 @@ void Soprano::Util::AsyncModelPrivate::enqueueCommand( Command* command )
 
         // it is important to not call _s_executeNextCommand directly to let
         // the client the time to connect to the resultReady signal
-        QTimer::singleShot( 0, m_model, SLOT( _s_executeNextCommand() ) );
+        QTimer::singleShot( 0, m_model, SLOT(_s_executeNextCommand()) );
     }
     else {
         // the underlying model is thread-safe
@@ -99,7 +99,7 @@ void Soprano::Util::AsyncModelPrivate::_s_executeNextCommand()
 
             // let's see if there are more commands to be executed
             if ( !commandQueue.isEmpty() ) {
-                QTimer::singleShot( 0, m_model, SLOT( _s_executeNextCommand() ) );
+                QTimer::singleShot( 0, m_model, SLOT(_s_executeNextCommand()) );
             }
             return;
         }

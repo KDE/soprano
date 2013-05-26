@@ -102,8 +102,8 @@ JNIEnv* JNIWrapper::env() const
         Q_ASSERT( env != 0 );
         d->jniEnvMap[QThread::currentThread()] = env;
 
-        connect( QThread::currentThread(), SIGNAL( finished() ),
-                 this, SLOT( slotThreadFinished() ),
+        connect( QThread::currentThread(), SIGNAL(finished()),
+                 this, SLOT(slotThreadFinished()),
                  Qt::DirectConnection );
 
         return env;

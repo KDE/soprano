@@ -47,8 +47,8 @@ void Soprano::ModelSignalSpy::setModel( Model* model )
         if ( model ) {
             connect( model, SIGNAL(statementsAdded()), this, SLOT(slotStatementsAdded()) );
             connect( model, SIGNAL(statementsRemoved()), this, SLOT(slotStatementsRemoved()) );
-            connect( model, SIGNAL(statementAdded(const Soprano::Statement&)), this, SLOT(slotStatementAdded(const Soprano::Statement&)) );
-            connect( model, SIGNAL(statementRemoved(const Soprano::Statement&)), this, SLOT(slotStatementRemoved(const Soprano::Statement&)) );
+            connect( model, SIGNAL(statementAdded(Soprano::Statement)), this, SLOT(slotStatementAdded(Soprano::Statement)) );
+            connect( model, SIGNAL(statementRemoved(Soprano::Statement)), this, SLOT(slotStatementRemoved(Soprano::Statement)) );
         }
     }
 }

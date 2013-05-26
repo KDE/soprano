@@ -36,10 +36,10 @@ AsyncQueryHandler::AsyncQueryHandler( Soprano::Util::AsyncQuery* query )
       m_nextReady( false ),
       m_finished( false )
 {
-    connect( query, SIGNAL( nextReady( Soprano::Util::AsyncQuery* ) ),
-             this, SLOT( slotNextReady() ) );
-    connect( query, SIGNAL( finished( Soprano::Util::AsyncQuery* ) ),
-             this, SLOT( slotFinished() ) );
+    connect( query, SIGNAL(nextReady(Soprano::Util::AsyncQuery*)),
+             this, SLOT(slotNextReady()) );
+    connect( query, SIGNAL(finished(Soprano::Util::AsyncQuery*)),
+             this, SLOT(slotFinished()) );
 }
 
 bool AsyncQueryHandler::waitForNext()
@@ -50,7 +50,7 @@ bool AsyncQueryHandler::waitForNext()
     m_nextReady = false;
     QEventLoop loop;
     m_nextLoop = &loop;
-    QTimer::singleShot( 20000, &loop, SLOT( quit() ) );
+    QTimer::singleShot( 20000, &loop, SLOT(quit()) );
     loop.exec();
     m_nextLoop = 0;
     return m_nextReady;
@@ -64,7 +64,7 @@ bool AsyncQueryHandler::waitForFinished()
     m_finished = false;
     QEventLoop loop;
     m_finishedLoop = &loop;
-    QTimer::singleShot( 20000, &loop, SLOT( quit() ) );
+    QTimer::singleShot( 20000, &loop, SLOT(quit()) );
     loop.exec();
     m_finishedLoop = 0;
     return m_finished;

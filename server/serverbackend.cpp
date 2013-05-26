@@ -124,7 +124,7 @@ Soprano::StorageModel* Soprano::Client::ServerBackend::createModel( const QList<
     setError( client->lastError() );
     if ( modelId > 0 ) {
         ClientModel* model = new ClientModel( 0, modelId, client );
-        connect( model, SIGNAL( destroyed(QObject*) ), this, SLOT( modelDeleted() ) );
+        connect( model, SIGNAL(destroyed(QObject*)), this, SLOT(modelDeleted()) );
         d->openModels[client].append( model );
         return model;
     }

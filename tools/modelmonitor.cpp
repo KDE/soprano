@@ -52,10 +52,10 @@ void Soprano::ModelMonitor::monitor( const Statement& pattern )
     d->pattern = pattern;
     d->addedCnt = 0;
     d->removedCnt = 0;
-    connect( d->model, SIGNAL( statementAdded( Soprano::Statement ) ),
-             this, SLOT( slotStatementAdded( Soprano::Statement ) ) );
-    connect( d->model, SIGNAL( statementRemoved( Soprano::Statement ) ),
-             this, SLOT( slotStatementRemoved( Soprano::Statement ) ) );
+    connect( d->model, SIGNAL(statementAdded(Soprano::Statement)),
+             this, SLOT(slotStatementAdded(Soprano::Statement)) );
+    connect( d->model, SIGNAL(statementRemoved(Soprano::Statement)),
+             this, SLOT(slotStatementRemoved(Soprano::Statement)) );
     loop.exec();
     d->model->disconnect( this );
 
