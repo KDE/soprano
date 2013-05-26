@@ -53,7 +53,7 @@ namespace Soprano
      *
      * \param serialization The serialization the mimetype is wanted for.
      * \param userSerialization If \p serialization is SerializationUser then this is the user defined serialization.
-     *        (this parameter is added for convinience to avoid having an additional check before using this method.)
+     *        (this parameter is added for convenience to avoid having an additional check before using this method.)
      *
      * \return The mimetype of serialization, an empty string is serialization is SerializationUnknown, or
      * \p userSerialization if \p serialization is SerializationUser.

@@ -47,7 +47,7 @@ namespace Soprano
      * to be used where one needs a quick way to exchange or store a small number
      * of statements. It is basically a fancy QSet of statements.
      *
-     * In comparision to Model it does not support queries, it does not use a specific
+     * In comparison to Model it does not support queries, it does not use a specific
      * backend plugin, and it is not optimized in any way.
      *
      * One graph does not represent one named graph, i.e. one context, it can contain
@@ -108,7 +108,7 @@ namespace Soprano
          * \param statement The statement that should be removed. This has to be a valid statement.
          *
          * \return Error::ErrorNone on success and an error code if statement was invalid or an error
-         * occured.
+         * occurred.
          */
         void removeStatement( const Statement& statement );
 

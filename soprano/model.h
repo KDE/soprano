@@ -124,7 +124,7 @@ namespace Soprano
          * \param statement The statement that should be removed. This has to be a valid statement.
          *
          * \return Error::ErrorNone on success and an error code if statement was invalid or an error
-         * occured.
+         * occurred.
          */
         virtual Error::ErrorCode removeStatement( const Statement &statement ) = 0;
 

@@ -106,7 +106,7 @@ namespace Soprano {
             /**
              * Tries to connect to the %Soprano server.
              *
-             * \return \p true on success, \p false if an error occured.
+             * \return \p true on success, \p false if an error occurred.
              * Check lastError() for details.
              */
             bool connect( const QString& name = QString() );

@@ -247,7 +247,7 @@ void Soprano::Index::IndexFilterModel::rebuildIndex()
         int id = d->index->startTransaction();
         Node res = it.binding( "r" );
 
-        // and re-add all the literal statements and those in forceIndexPredicates (we can savely ignore the context here)
+        // and re-add all the literal statements and those in forceIndexPredicates (we can safely ignore the context here)
         QStringList filters("(isLiteral(?o) && str(?o)!='')");
         foreach( const QUrl& p, d->forceIndexPredicates ) {
             filters << QString("?p = %1").arg(Soprano::Node(p).toN3());

@@ -128,7 +128,7 @@ namespace Soprano {
             /**
              * The maximum number of incoming connections that are served.
              *
-             * \return The maxium number of connections the server will handle
+             * \return The maximum number of connections the server will handle
              * or 0 if there is no restriction.
              *
              * \sa setMaximumConnectionCount.

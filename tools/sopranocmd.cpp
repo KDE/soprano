@@ -216,7 +216,7 @@ namespace {
             }
 
             if ( it.lastError() ) {
-                errStream << "Error occured: " << it.lastError() << endl;
+                errStream << "Error occurred: " << it.lastError() << endl;
                 return 2;
             }
             errStream << "Total results: " << cnt << endl;
@@ -268,7 +268,7 @@ namespace {
             }
             QTextStream stderrStream(stderr);
             if ( it.lastError() ) {
-                stderrStream << "Error occured: " << it.lastError() << endl;
+                stderrStream << "Error occurred: " << it.lastError() << endl;
                 return 2;
             }
             stderrStream << "Total results: " << cnt << endl;

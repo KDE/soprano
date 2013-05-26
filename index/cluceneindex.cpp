@@ -378,7 +378,7 @@ lucene::document::Document* Soprano::Index::CLuceneIndex::documentForResource( c
         return d->getDocument( resource );
     }
     catch( CLuceneError& err ) {
-        qDebug() << "(Soprano::Index::CLuceneIndex) Exception occured: " << err.what();
+        qDebug() << "(Soprano::Index::CLuceneIndex) Exception occurred: " << err.what();
         setError( exceptionToError( err ) );
         return 0;
     }
@@ -514,7 +514,7 @@ Soprano::Error::ErrorCode Soprano::Index::CLuceneIndex::removeStatement( const S
         }
     }
     catch( CLuceneError& err ) {
-        qDebug() << "(Soprano::Index::CLuceneIndex::removeStatement) Exception occured: " << err.what();
+        qDebug() << "(Soprano::Index::CLuceneIndex::removeStatement) Exception occurred: " << err.what();
         setError( exceptionToError( err ) );
         success = false;
     }

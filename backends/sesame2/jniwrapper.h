@@ -49,12 +49,12 @@ public:
     bool exceptionOccured();
 
     /**
-     * If an exception occured, converts it to a Soprano::Error instance.
+     * If an exception occurred, converts it to a Soprano::Error instance.
      */
     Soprano::Error::Error convertAndClearException();
 
     /**
-     * If an exception occured, prints and then clears it
+     * If an exception occurred, prints and then clears it
      * for debugging purposes.
      */
     void debugException();

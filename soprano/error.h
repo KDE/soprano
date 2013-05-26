@@ -38,14 +38,14 @@ namespace Soprano {
          * \sa Error::Error::code(), Error::convertErrorCode
          */
         enum ErrorCode {
-            ErrorNone = 0x0,             /**< No error occured, i.e. success. */
+            ErrorNone = 0x0,             /**< No error occurred, i.e. success. */
             ErrorInvalidArgument = 0x1,  /**< Error indicating that a method argument was invalid. For example an invalid Statement in Model::addStatement(). */
             ErrorInvalidStatement = ErrorInvalidArgument, /**< \deprecated: use ErrorInvalidArgument */
             ErrorNotSupported = 0x2,     /**< Error indicating that a certain functionality is not supported. */
             ErrorParsingFailed = 0x3,    /**< Parsing a query or an RDF serialization failed. */
             ErrorPermissionDenied = 0x4, /**< Permission is denied. \since 2.1 */
             ErrorTimeout = 0x5,          /**< The command timed out. \since 2.7.4 */
-            ErrorUnknown = 0x1000        /**< An unknown error occured. */
+            ErrorUnknown = 0x1000        /**< An unknown error occurred. */
         };
 
         /**
@@ -105,7 +105,7 @@ namespace Soprano {
             Error& operator=( const Error& );
 
             /**
-             * An %Error evalutes to a boolean, indicating if an %Error is "set".
+             * An %Error evaluates to a boolean, indicating if an %Error is "set".
              *
              * \return \p false if code() == #ErrorNone, \p true otherwise.
              *
@@ -237,7 +237,7 @@ namespace Soprano {
             virtual ~ErrorCache();
 
             /**
-             * Get the last error that occured in the current thread.
+             * Get the last error that occurred in the current thread.
              */
             virtual Error lastError() const;
 
@@ -250,7 +250,7 @@ namespace Soprano {
             void clearError() const;
 
             /**
-             * Set the last occured error. This method is const to allow setting
+             * Set the last occurred error. This method is const to allow setting
              * of errors in all types of methods. The last error is as such a
              * mutable property.
              */

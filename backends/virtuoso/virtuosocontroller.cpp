@@ -119,7 +119,7 @@ bool Soprano::VirtuosoController::start( const QString &virtuosoExe, const Backe
 
     const QString storageDir = valueInSettings( settings, BackendOptionStorageDir ).toString();
 
-    // aquire a lock for ourselves
+    // acquire a lock for ourselves
     m_virtuosoLock.setFileName( storageDir + QLatin1String("/soprano-virtuoso.lock") );
     int pid = 0;
     if( !m_virtuosoLock.aquireLock( &pid ) ) {
@@ -366,7 +366,7 @@ void Soprano::VirtuosoController::writeConfigFile( const QString& path, const Ba
 // static
 int Soprano::VirtuosoController::pidOfRunningVirtuosoInstance( const QString& storagePath )
 {
-    // try to aquire lock as Virtuoso itself does
+    // try to acquire lock as Virtuoso itself does
     LockFile lock( storagePath + QLatin1String( "/soprano-virtuoso.db" ) );
     int pid = 0;
     if ( !lock.aquireLock( &pid ) ) {

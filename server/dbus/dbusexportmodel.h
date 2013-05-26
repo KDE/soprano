@@ -34,7 +34,7 @@ namespace Soprano {
          * \brief Exports a %Soprano Model via D-Bus.
          *
          * DBusExportModel is a FilterModel like any other. As such,
-         * it can occure anywhere in a stack of models. However,
+         * it can occur anywhere in a stack of models. However,
          * the model exported via D-Bus is actually the FilterModel::parentModel,
          * not the DBusExportModel itself. Thus, subclassing DBusExportModel
          * to modify the behaviour of methods called via D-Bus does not 

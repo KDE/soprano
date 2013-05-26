@@ -208,7 +208,7 @@ namespace Soprano {
              * The last call in a connected slot should be next() to trigger
              * iteration to the next element.
              *
-             * \param query The query itself for convinience.
+             * \param query The query itself for convenience.
              */
             void nextReady( Soprano::Util::AsyncQuery* query );
 
@@ -221,7 +221,7 @@ namespace Soprano {
              * In a slot connected to this signal ErrorCache::lastError() can be
              * used to retrieve information about the success of the query.
              *
-             * \param query The query itself for convinience.
+             * \param query The query itself for convenience.
              */
             void finished( Soprano::Util::AsyncQuery* query );
 

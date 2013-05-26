@@ -266,7 +266,7 @@ void InferenceModelTest::testPerformance()
     Statement xb( QUrl( "http://soprano.sf.net/test#X" ), Vocabulary::RDFS::subClassOf(), QUrl( "http://soprano.sf.net/test#C" ) );
     Statement xa( QUrl( "http://soprano.sf.net/test#X" ), Vocabulary::RDFS::subClassOf(), QUrl( "http://soprano.sf.net/test#A" ) );
 
-    // we just do some performance comparision
+    // we just do some performance comparison
     QTime timer;
 
     // performance with uncompressed source statements

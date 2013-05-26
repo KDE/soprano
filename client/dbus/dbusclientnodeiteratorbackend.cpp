@@ -63,7 +63,7 @@ Soprano::Node Soprano::Client::DBusClientNodeIteratorBackend::current() const
 void Soprano::Client::DBusClientNodeIteratorBackend::close()
 {
     // the DBus adaptor closes and removes the iterator once done. So
-    // we supress error messages here
+    // we suppress error messages here
     if ( !m_done ) {
         m_done = true;
         QDBusReply<void> reply = m_interface->close();

@@ -164,7 +164,7 @@ namespace Soprano {
              * \param id The transaction ID as returned by startTransaction()
              *
              * \return \p true if the transaction was closed,  false if no transaction was started,
-             * a wrong transaction id has been supplied, or a clucene error occured.
+             * a wrong transaction id has been supplied, or a clucene error occurred.
              */
             bool closeTransaction( int id );
             //@}
@@ -190,7 +190,7 @@ namespace Soprano {
              * \param resource The resource for which a document is requested.
              *
              * \return The document representing the resource or 0 if no transaction has been started or
-             * a clucene error occured.
+             * a clucene error occurred.
              *
              * \warning This is an advanced method. Calling this method is thread-safe but using the
              * returned document is not.

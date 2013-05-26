@@ -124,7 +124,7 @@ void ParserTest::testEncoding()
         QList<Statement> utf8Statements = parser->parseFile( utf8File, QUrl(), SerializationRdfXml ).allStatements();
         QList<Statement> isoStatements = parser->parseFile( isoFile, QUrl(), SerializationRdfXml ).allStatements();
 
-        // brute force comparision, time is not an issue, no need to get inventive. ;)
+        // brute force comparison, time is not an issue, no need to get inventive. ;)
         foreach( const Statement& s, utf8Statements ) {
             if ( !isoStatements.contains( s ) ) qDebug() << s;
             QVERIFY( isoStatements.contains( s ) );

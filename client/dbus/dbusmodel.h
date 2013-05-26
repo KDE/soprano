@@ -69,8 +69,8 @@ namespace Soprano {
             ~DBusModel();
 
             /**
-             * Configure DBusModel to use asyncronous calls over DBus.
-             * With asyncronous calls DBusModel will enter local event
+             * Configure DBusModel to use asynchronous calls over DBus.
+             * With asynchronous calls DBusModel will enter local event
              * loops while waiting for the reply. This way multiple calls
              * can be performed interweaved. However, the application does 
              * not block, i.e. events (such as signals and slots) are handled
@@ -78,9 +78,9 @@ namespace Soprano {
              * If that is the case it is better to use Util::MutexModel
              * instead.
              *
-             * \param b If true asyncronous calls are enabled.
+             * \param b If true asynchronous calls are enabled.
              *
-             * Per default asyncronous calls are disabled.
+             * Per default asynchronous calls are disabled.
              *
              * \warning Asyncronous calls only work in combination with a QCoreApplication
              * instance.
@@ -90,7 +90,7 @@ namespace Soprano {
             void setAsyncCalls( bool b );
 
             /**
-             * \return \p true if asyncronous calls are enabled.
+             * \return \p true if asynchronous calls are enabled.
              */
             bool asyncCalls() const;
 

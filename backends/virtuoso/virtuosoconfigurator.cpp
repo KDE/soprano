@@ -103,7 +103,7 @@ bool Soprano::Virtuoso::DatabaseConfigurator::updateIndexes( const QString& inde
     if ( indexes.isEmpty() )
         indexes = defaultIndexes();
 
-    // sort them for comparision
+    // sort them for comparison
     qSort( indexes );
     qSort( currentIndexes );
 

@@ -321,7 +321,7 @@ bool Soprano::Raptor::Serializer::serialize( StatementIterator it,
             /* In serializer_descr->mime_types we have a array of pairs
              * (mime_type,Q) of mime_type for this syntax. It looks like
              * we can ignore Q value in this case
-             * Acording to documentation, this array can have zero elements
+             * According to documentation, this array can have zero elements
              */
             for( unsigned int mt_number = 0; mt_number < serializer_descr->mime_types_count;
                     mt_number++)

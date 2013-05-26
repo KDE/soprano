@@ -38,7 +38,7 @@
 //          then one for strings and one or numericals and so on
 //        - String operations such as concat
 //        - We have no way of representing OFFSET or LIMIT yet
-//        - There is no way to convert a numerical into string for comparision
+//        - There is no way to convert a numerical into string for comparison
 //        - Numerical is completely useless ATM as there is no way to compare it
 //          to anything but other numericals, i.e. const expressions.
 

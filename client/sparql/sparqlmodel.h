@@ -112,7 +112,7 @@ namespace Soprano {
              * \param statement The Statement to add.
              *
              * \return Error::ErrorNone on success and an error code if statement was invalid or an error
-             * occured. Check Error::ErrorCache::lastError for detailed error information.
+             * occurred. Check Error::ErrorCache::lastError for detailed error information.
              */
             Error::ErrorCode addStatement( const Statement& statement );
 
@@ -125,7 +125,7 @@ namespace Soprano {
              * \param statement The Statement to remove.
              *
              * \return Error::ErrorNone on success and an error code if statement was invalid or an error
-             * occured. Check Error::ErrorCache::lastError for detailed error information.
+             * occurred. Check Error::ErrorCache::lastError for detailed error information.
              */
             Error::ErrorCode removeStatement( const Statement& statement );
 
@@ -140,7 +140,7 @@ namespace Soprano {
              * a filter for all statements that should be removed.
              *
              * \return Error::ErrorNone on success and an error code if statement was invalid or an error
-             * occured. Check Error::ErrorCache::lastError for detailed error information.
+             * occurred. Check Error::ErrorCache::lastError for detailed error information.
              */
             Error::ErrorCode removeAllStatements( const Statement& statement );
             //@}

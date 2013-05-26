@@ -34,7 +34,7 @@ namespace Soprano
         /**
          * \brief Backend to access RDF storage models through the %Soprano daemon.
          *
-         * Additonal BackendOptions supported:
+         * Additional BackendOptions supported:
          * \li name - The name for the Model to be created. The daemon handles a set of models which are identified by a unique name.
          * This option has to be specified.
          * \li port - The port the Backend is supposed to try to connect to the soprano server.

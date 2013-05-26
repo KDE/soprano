@@ -100,7 +100,7 @@ namespace Soprano {
              *
              * \return true if statement matches any of the patterns, false otherwise.
              * Be aware that createSparqlQuery() might still return an empty string
-             * since it does perform some aditional optimization checks based on the
+             * since it does perform some additional optimization checks based on the
              * bound statement.
              */
             bool match( const Statement& statement ) const;

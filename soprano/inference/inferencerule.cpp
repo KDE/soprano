@@ -164,7 +164,7 @@ QString Soprano::Inference::Rule::createSparqlQuery( bool bindStatement ) const
 
                 // ========================================================================================
                 // The following code is deactivated but kept for informational purposes:
-                // the aditional filters make sure we never get invalid statements in InferenceModel::inferRule
+                // the additional filters make sure we never get invalid statements in InferenceModel::inferRule
                 // but the computational overhead of applying the filter in the Model overshadows
                 // the overhead of enumerating and checking invalid statements.
 #if 0
