@@ -27,7 +27,6 @@
 #include "node.h"
 #include "statementiterator.h"
 #include "redlandstatementiterator.h"
-#include "redlandworld.h"
 #include "redlandmodel.h"
 
 #include <redland.h>

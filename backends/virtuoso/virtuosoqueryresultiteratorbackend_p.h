@@ -30,7 +30,6 @@
 #include "queryresultiterator.h"
 #include "literalvalue.h"
 #include "node.h"
-#include "statementiterator.h"
 
 #include <QtCore/QVector>
 #include <QtCore/QBitArray>
