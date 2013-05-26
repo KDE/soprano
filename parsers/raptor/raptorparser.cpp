@@ -36,8 +36,9 @@
 #include <QtCore/QLatin1String>
 #include <QtCore/QMutexLocker>
 
-
+#if QT_VERSION < QT_VERSION_CHECK(5, 0, 0)
 Q_EXPORT_PLUGIN2(soprano_raptorparser, Soprano::Raptor::Parser)
+#endif
 
 namespace {
     void raptorLogHandler(void *userData,raptor_log_message *message)

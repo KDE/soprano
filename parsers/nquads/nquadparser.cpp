@@ -32,9 +32,9 @@
 #include <QtCore/QRegExp>
 #include <QtCore/QTextStream>
 
-
+#if QT_VERSION < QT_VERSION_CHECK(5, 0, 0)
 Q_EXPORT_PLUGIN2(soprano_nquadparser, Soprano::NQuadParser)
-
+#endif
 
 Soprano::NQuadParser::NQuadParser()
     : QObject(),

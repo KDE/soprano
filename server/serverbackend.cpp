@@ -29,8 +29,9 @@
 #include <QtCore/QPointer>
 #include <QtCore/QtPlugin>
 
+#if QT_VERSION < QT_VERSION_CHECK(5, 0, 0)
 Q_EXPORT_PLUGIN2(soprano_serverclientbackend, Soprano::Client::ServerBackend)
-
+#endif
 
 class Soprano::Client::ServerBackend::Private
 {

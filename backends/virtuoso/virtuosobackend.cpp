@@ -37,7 +37,9 @@
 #include <QtCore/QCoreApplication>
 #endif
 
+#if QT_VERSION < QT_VERSION_CHECK(5, 0, 0)
 Q_EXPORT_PLUGIN2(soprano_virtuosobackend, Soprano::Virtuoso::BackendPlugin)
+#endif
 
 namespace {
     QString parseVirtuosoVersion( const QByteArray& data ) {

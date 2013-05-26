@@ -29,8 +29,9 @@
 
 #include <QtCore/QtPlugin>
 
-
+#if QT_VERSION < QT_VERSION_CHECK(5, 0, 0)
 Q_EXPORT_PLUGIN2(soprano_nquadserializer, Soprano::NQuadSerializer)
+#endif
 
 Soprano::NQuadSerializer::NQuadSerializer()
     : QObject(),

@@ -26,9 +26,9 @@
 #include <QtNetwork/QTcpSocket>
 #include <QDebug>
 
-
+#if QT_VERSION < QT_VERSION_CHECK(5, 0, 0)
 Q_DECLARE_METATYPE( QAbstractSocket::SocketError )
-
+#endif
 
 const quint16 Soprano::Client::TcpClient::DEFAULT_PORT = 5000;
 

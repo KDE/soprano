@@ -32,7 +32,9 @@
 
 #include "rasqalqueryparser.h"
 
+#if QT_VERSION < QT_VERSION_CHECK(5, 0, 0)
 Q_EXPORT_PLUGIN2(soprano_rasqalqueryparser, Soprano::Rasqal::QueryParser)
+#endif
 
 static Soprano::Query::Prefix convert_rasqal_prefix( rasqal_prefix* rprefix )
 {

@@ -29,8 +29,9 @@
 #include <QtCore/QDebug>
 #include <QtCore/QDir>
 
-
+#if QT_VERSION < QT_VERSION_CHECK(5, 0, 0)
 Q_EXPORT_PLUGIN2(soprano_sesame2backend, Soprano::Sesame2::BackendPlugin)
+#endif
 
 Soprano::Sesame2::BackendPlugin::BackendPlugin()
   : QObject(),

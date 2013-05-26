@@ -35,9 +35,9 @@
 #include <QtCore/QDir>
 #include <QtCore/QMutexLocker>
 
-
+#if QT_VERSION < QT_VERSION_CHECK(5, 0, 0)
 Q_EXPORT_PLUGIN2(soprano_redlandbackend, Soprano::Redland::BackendPlugin)
-
+#endif
 
 static QString createRedlandOptionString( const QHash<QString, QString>& options )
 {
