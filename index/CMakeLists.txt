@@ -4,7 +4,6 @@ project(sopranoindex)
 
 include_directories(
   ${soprano_SOURCE_DIR}/soprano
-  ${QT_INCLUDES}
   ${soprano_SOURCE_DIR}
   ${CLUCENE_INCLUDE_DIR}
   ${CLUCENE_LIBRARY_DIR}
@@ -42,10 +41,14 @@ add_library(sopranoindex SHARED ${SOPRANO_INDEX_SRCS})
 
 target_link_libraries(
   sopranoindex
-  ${QT_QTCORE_LIBRARY}
   soprano
   ${CLUCENE_LIBRARIES}
 )
+if(QT5_BUILD)
+  target_link_libraries(sopranoindex ${Qt5Core_LIBRARIES})
+else()
+  target_link_libraries(sopranoindex ${QT_QTCORE_LIBRARY})
+endif()
 
 set_target_properties(
   sopranoindex

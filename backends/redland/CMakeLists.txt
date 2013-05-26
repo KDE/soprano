@@ -1,9 +1,7 @@
 project(soprano_redland)
 
 include_directories(
-  ${QT_QTCORE_INCLUDE_DIR}
   ${soprano_SOURCE_DIR}
-  ${QT_INCLUDE_DIR}
   ${soprano_core_SOURCE_DIR}
   ${REDLAND_INCLUDE_DIR}
   ${RASQAL_INCLUDE_DIR}
@@ -60,6 +58,3 @@ if(BUILD_REDLAND_BACKEND)
     DESTINATION ${DATA_INSTALL_DIR}/soprano/plugins
     )
 endif()
-
-
-

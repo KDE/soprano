@@ -3,8 +3,6 @@ project(nquads_parser)
 include_directories(
   ${soprano_SOURCE_DIR}
   ${soprano_core_SOURCE_DIR}
-  ${QT_INCLUDE_DIR}
-  ${QT_QTCORE_INCLUDE_DIR}
 )
 
 set(nquadparser_SRC

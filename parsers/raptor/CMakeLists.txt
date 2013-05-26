@@ -1,9 +1,7 @@
 project(soprano_raptor_parser)
 
 include_directories(
-  ${QT_QTCORE_INCLUDE_DIR}
   ${soprano_SOURCE_DIR}
-  ${QT_INCLUDE_DIR}
   ${soprano_core_SOURCE_DIR}
   ${RAPTOR_INCLUDE_DIR}
 )

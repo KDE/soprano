@@ -6,7 +6,6 @@ include_directories(
   ${soprano_core_SOURCE_DIR}/vocabulary
   ${soprano_core_SOURCE_DIR}/util
   ${soprano_core_BINARY_DIR}
-  ${QT_INCLUDES}
   ${soprano_SOURCE_DIR}
   ${soprano_SOURCE_DIR}/server
   ${IODBC_INCLUDE_DIR}
@@ -32,9 +31,9 @@ add_library(soprano_virtuosobackend MODULE ${SRC})
 
 target_link_libraries(soprano_virtuosobackend soprano)
 if(WIN32)
-target_link_libraries(soprano_virtuosobackend odbc32)
+  target_link_libraries(soprano_virtuosobackend odbc32)
 else()
-target_link_libraries(soprano_virtuosobackend ${IODBC_LIBRARIES})
+  target_link_libraries(soprano_virtuosobackend ${IODBC_LIBRARIES})
 endif()
 
 install(TARGETS soprano_virtuosobackend ${PLUGIN_INSTALL_DIR})

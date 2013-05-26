@@ -7,8 +7,6 @@ include_directories(BEFORE
   ${soprano_core_SOURCE_DIR}/util
   ${soprano_core_SOURCE_DIR}/query
   ${soprano_core_SOURCE_DIR}/vocabulary
-  ${QT_QTCORE_INCLUDE_DIR}
-  ${QT_INCLUDE_DIR}
   )
 
 configure_file(soprano-config.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/soprano-config.h)
@@ -101,7 +99,11 @@ set(soprano_SRCS
 
 add_library(soprano ${LIBRARY_TYPE} ${soprano_SRCS})
 
-target_link_libraries(soprano ${QT_QTCORE_LIBRARY})
+if(QT5_BUILD)
+  target_link_libraries(soprano ${Qt5Core_LIBRARIES})
+else()
+  target_link_libraries(soprano ${QT_QTCORE_LIBRARY})
+endif()
 
 set_target_properties(soprano PROPERTIES
   VERSION 4.3.0

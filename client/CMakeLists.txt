@@ -8,7 +8,6 @@ include_directories(
   ${soprano_core_SOURCE_DIR}/util
   ${soprano_core_SOURCE_DIR}/query
   ${soprano_core_SOURCE_DIR}/vocabulary
-  ${QT_INCLUDES}
   ${soprano_SOURCE_DIR}
 )
 
@@ -69,20 +68,35 @@ set_target_properties(sopranoclient PROPERTIES
 
 target_link_libraries(
   sopranoclient
-  ${QT_QTCORE_LIBRARY}
-  ${QT_QTNETWORK_LIBRARY}
-  ${QT_QTXML_LIBRARY}
   soprano
 )
+
+if(QT5_BUILD)
+  target_link_libraries(
+    sopranoclient
+    ${Qt5Core_LIBRARIES}
+    ${Qt5Network_LIBRARIES}
+    ${Qt5Xml_LIBRARIES}
+  )
+else()
+  target_link_libraries(
+    sopranoclient
+    ${QT_QTCORE_LIBRARY}
+    ${QT_QTNETWORK_LIBRARY}
+    ${QT_QTXML_LIBRARY}
+  )
+endif()
 
 if(WIN32)
    target_link_libraries(sopranoclient ws2_32)
 endif()
 
 if(BUILD_DBUS_SUPPORT)
-  target_link_libraries(
-    sopranoclient
-    ${QT_QTDBUS_LIBRARY})
+  if(QT5_BUILD)
+    target_link_libraries(sopranoclient ${Qt5DBus_LIBRARIES})
+  else()
+    target_link_libraries(sopranoclient ${QT_QTDBUS_LIBRARY})
+  endif()
 endif()
 
 install(TARGETS sopranoclient EXPORT SopranoExport ${INSTALL_TARGETS_DEFAULT_ARGS})

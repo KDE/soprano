@@ -1,9 +1,7 @@
 project(soprano_sesame2)
 
 include_directories(
-  ${QT_QTCORE_INCLUDE_DIR}
   ${soprano_SOURCE_DIR}
-  ${QT_INCLUDE_DIR}
   ${soprano_core_SOURCE_DIR}
   ${soprano_core_BINARY_DIR}
   ${JNI_INCLUDE_DIRS}

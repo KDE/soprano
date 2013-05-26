@@ -14,7 +14,6 @@ include_directories(
   ${soprano_core_SOURCE_DIR}/query
   ${soprano_core_SOURCE_DIR}/vocabulary
   ${soprano_core_BINARY_DIR}
-  ${QT_INCLUDES}
 )
 
 configure_file(config-testdata.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/config-testdata.h)

@@ -6,7 +6,6 @@ include_directories(
   ${soprano_core_SOURCE_DIR}/util
   ${soprano_core_SOURCE_DIR}/query
   ${soprano_core_SOURCE_DIR}/vocabulary
-  ${QT_INCLUDES}
   ${soprano_SOURCE_DIR}
 )
 
@@ -57,15 +56,24 @@ set_target_properties(sopranoserver PROPERTIES
 
 target_link_libraries(
   sopranoserver
-  ${QT_QTCORE_LIBRARY}
-  ${QT_QTNETWORK_LIBRARY}
   soprano
 )
+if(QT5_BUILD)
+  target_link_libraries(sopranoserver ${Qt5Core_LIBRARIES}
+                                      ${Qt5Network_LIBRARIES}
+                       )
+else()
+  target_link_libraries(sopranoserver ${QT_QTCORE_LIBRARY}
+                                      ${QT_QTNETWORK_LIBRARY}
+                       )
+endif()
 
 if(BUILD_DBUS_SUPPORT)
-  target_link_libraries(
-    sopranoserver
-    ${QT_QTDBUS_LIBRARY})
+  if(QT5_BUILD)
+    target_link_libraries(sopranoserver ${Qt5DBus_LIBRARIES})
+  else()
+    target_link_libraries(sopranoserver ${QT_QTDBUS_LIBRARY})
+  endif()
 endif()
 
 target_link_libraries(
