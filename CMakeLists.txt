@@ -60,6 +60,14 @@ if(CMAKE_BUILD_TYPE)
     string(TOLOWER ${CMAKE_BUILD_TYPE} CMAKE_BUILD_TYPE_TOLOWER)
 endif()
 
+# Place the built executables/libraries in the same directory
+set(EXECUTABLE_OUTPUT_PATH ${CMAKE_BINARY_DIR}/bin)
+if(WIN32)
+  set(LIBRARY_OUTPUT_PATH   ${EXECUTABLE_OUTPUT_PATH})
+else()
+  set(LIBRARY_OUTPUT_PATH   ${CMAKE_BINARY_DIR}/lib)
+endif()
+
 ##################  find packages  ################################
 
 if(QT5_BUILD)
