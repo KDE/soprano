@@ -61,7 +61,7 @@ add_library(sopranoclient ${LIBRARY_TYPE} ${soprano_client_SRC})
 
 set_target_properties(sopranoclient PROPERTIES
   VERSION 1.2.0
-  SOVERSION 1
+  SOVERSION ${SOPRANO_GENERIC_SOVERSION}
   DEFINE_SYMBOL MAKE_SOPRANO_CLIENT_LIB
   INSTALL_NAME_DIR ${LIB_INSTALL_DIR}
 )
