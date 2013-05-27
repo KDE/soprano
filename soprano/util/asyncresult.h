@@ -91,7 +91,7 @@ namespace Soprano {
             QVariant value() const { return m_result; }
 
             /**
-             * Convinience method which converts value() into
+             * Convenience method which converts value() into
              * a Error::ErrorCode as returned for the following AsyncModel methods:
              * \li AsyncModel::addStatementAsync
              * \li AsyncModel::removeStatementAsync
@@ -104,7 +104,7 @@ namespace Soprano {
             Error::ErrorCode errorCode() const;
 
             /**
-             * Convinience method which converts value() into
+             * Convenience method which converts value() into
              * a StatementIterator as returned AsyncModel::listStatementsAsync.
              *
              * \sa value()
@@ -114,7 +114,7 @@ namespace Soprano {
             StatementIterator statementIterator() const;
 
             /**
-             * Convinience method which converts value() into
+             * Convenience method which converts value() into
              * a StatementIterator as returned AsyncModel::listContextsAsync.
              *
              * \sa value()
@@ -124,7 +124,7 @@ namespace Soprano {
             NodeIterator nodeIterator() const;
 
             /**
-             * Convinience method which converts value() into
+             * Convenience method which converts value() into
              * a StatementIterator as returned AsyncModel::executeQueryAsync.
              *
              * \sa value()
@@ -134,7 +134,7 @@ namespace Soprano {
             QueryResultIterator queryResultIterator() const;
 
             /**
-             * Convinience method which converts value() into
+             * Convenience method which converts value() into
              * a StatementIterator as returned AsyncModel::createBlankNodeAsync.
              *
              * \sa value()

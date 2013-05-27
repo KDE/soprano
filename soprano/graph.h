@@ -328,7 +328,7 @@ namespace Soprano
         Graph& operator<<( const Statement& );
 
         /**
-         * Comparision operator.
+         * Comparison operator.
          *
          * \return \p true if this graph and \a g contain the
          * same statements, \p false otherwise.
@@ -336,7 +336,7 @@ namespace Soprano
         bool operator==( const Graph& g ) const;
 
         /**
-         * Comparision operator.
+         * Comparison operator.
          *
          * \return \p true if this graph contains a statement
          * \a g does not contain or the other way around, \p false otherwise.

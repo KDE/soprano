@@ -145,26 +145,26 @@ namespace Soprano
         Node& operator=( const LiteralValue& literal );
 
         /**
-         * Comparision operator.
+         * Comparison operator.
          * \return \p true if this node and \p other are equal.
          */
         bool operator==( const Node& other ) const;
 
         /**
-         * Comparision operator.
+         * Comparison operator.
          * \return \p true if this node and \p other differ.
          */
         bool operator!=( const Node& other ) const;
 
         /**
-         * Comparision operator.
+         * Comparison operator.
          * \return \p true if this node is a ResourceNode and
          * has URI \p uri.
          */
         bool operator==( const QUrl& uri ) const;
 
         /**
-         * Comparision operator.
+         * Comparison operator.
          * \return \p true if this node is a LiteralNode and
          * has literal value \p other.
          */
