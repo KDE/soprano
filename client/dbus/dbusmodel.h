@@ -82,7 +82,7 @@ namespace Soprano {
              *
              * Per default asynchronous calls are disabled.
              *
-             * \warning Asyncronous calls only work in combination with a QCoreApplication
+             * \warning Asynchronous calls only work in combination with a QCoreApplication
              * instance.
              *
              * \sa QDBus::BlockWithGui

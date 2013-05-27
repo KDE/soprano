@@ -8,7 +8,7 @@
 #            ONTOLOGY_NAME
 #            NAMESPACE
 #            ENCODING
-#            [VISIBLITY VISIBILITY_NAME]
+#            [VISIBILITY VISIBILITY_NAME]
 # )
 #
 # As an optional argument one can add VISIBILITY <visibility-name>

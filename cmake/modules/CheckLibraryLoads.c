@@ -5,7 +5,7 @@
  * Attempts to load shared libraries
  * @param argc
  * @param argv files to check (pass only shared libs)
- * @return 0 - all shared libs loaded, 1 - error occured (invalid or broken files passed)
+ * @return 0 - all shared libs loaded, 1 - error occurred (invalid or broken files passed)
  */
 int main(int argc, char* argv[])
 {
