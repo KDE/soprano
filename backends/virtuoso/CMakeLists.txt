@@ -44,3 +44,27 @@ install(FILES
   ${CMAKE_CURRENT_BINARY_DIR}/virtuosobackend.desktop
   DESTINATION ${DATA_INSTALL_DIR}/soprano/plugins
   )
+
+if(SOPRANO_BUILD_TESTS)
+    add_executable(odbctest
+        test.cpp
+        virtuosomodel.cpp
+        virtuosobackend.cpp
+        virtuosocontroller.cpp
+        virtuosotools.cpp
+        virtuosoqueryresultiteratorbackend.cpp
+        virtuosoconfigurator.cpp
+        odbcenvironment.cpp
+        odbcconnection.cpp
+        odbcconnectionpool.cpp
+        odbcqueryresult.cpp
+        ${soprano_core_SOURCE_DIR}/sopranodirs.cpp
+        ${soprano_SOURCE_DIR}/server/lockfile.cpp
+    )
+
+    target_link_libraries(odbctest
+        soprano
+        ${QT_QTCORE_LIBRARY}
+        ${IODBC_LIBRARIES}
+    )
+endif()

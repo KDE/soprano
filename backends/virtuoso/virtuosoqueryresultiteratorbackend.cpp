@@ -141,8 +141,13 @@ bool Soprano::Virtuoso::QueryResultIteratorBackend::next()
             // we need to cache the values already here since there are situations where
             // the query succeeds but getting values fails
             for ( int i = 0; i < bindingCount(); ++i ) {
-                binding( i );
-                if ( lastError() ) {
+                // Avoid calling binding since it is more expensive!
+                d->bindingCache[i] = d->m_queryResult->getData( i+1 );
+                d->bindingCachedFlags.setBit( i );
+
+                Error::Error error = d->m_queryResult->lastError();
+                if( error ) {
+                    setError( error );
                     return false;
                 }
             }

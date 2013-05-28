@@ -637,6 +637,15 @@ bool Soprano::LiteralValue::operator!=( const LiteralValue& other ) const
 Soprano::LiteralValue Soprano::LiteralValue::fromString( const QString& value, QVariant::Type type )
 {
     switch( type ) {
+    case QVariant::String:
+        return LiteralValue( value );
+    case QVariant::DateTime: {
+        QDateTime date = DateTime::fromDateTimeString( value );
+        if( date.isValid() )
+            return LiteralValue( date );
+        else
+            return LiteralValue();
+    }
     case QVariant::Int: {
         bool ok = false;
         int val = value.toInt(&ok);
@@ -691,13 +700,6 @@ Soprano::LiteralValue Soprano::LiteralValue::fromString( const QString& value, Q
         else
             return LiteralValue();
     }
-    case QVariant::DateTime: {
-        QDateTime date = DateTime::fromDateTimeString( value );
-        if( date.isValid() )
-            return LiteralValue( date );
-        else
-            return LiteralValue();
-    }
     case QVariant::Bool: {
         bool ok = false;
         int v = value.toInt(&ok);
@@ -711,9 +713,7 @@ Soprano::LiteralValue Soprano::LiteralValue::fromString( const QString& value, Q
             return LiteralValue();
     }
     case QVariant::ByteArray:
-        return LiteralValue( QByteArray::fromBase64( value.toLatin1() ) );
-    case QVariant::String:
-        return LiteralValue( value );
+        return LiteralValue( QByteArray::fromBase64( value.toAscii() ) );
     default:
 //        qDebug() << "(Soprano::LiteralValue) unknown type: " << type << "storing as string value." << endl;
         return LiteralValue( value );
