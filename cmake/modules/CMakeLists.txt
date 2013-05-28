@@ -1,5 +1,5 @@
 install(FILES
   SopranoAddOntology.cmake
   DESTINATION
-  share/soprano/cmake
+  ${DATA_INSTALL_DIR}/soprano/cmake
 )

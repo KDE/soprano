@@ -5,5 +5,5 @@ install(
   nrl.rules
   rdfs.rules
   DESTINATION
-  share/soprano/rules
+  ${DATA_INSTALL_DIR}/soprano/rules
   )
