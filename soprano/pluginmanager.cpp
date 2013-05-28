@@ -43,7 +43,7 @@ namespace {
         fileSearchPaths << file.fileName().section( '/', 0, -2 );
 #ifndef Q_OS_WIN
         // the lib folder in the same prefix
-        fileSearchPaths << file.fileName().section( "/", 0, -5, QString::SectionIncludeTrailingSep ) + QLatin1String( "lib"SOPRANO_LIB_SUFFIX );
+        fileSearchPaths << file.fileName().section( "/", 0, -5, QString::SectionIncludeTrailingSep ) + QLatin1String( SOPRANO_LIB_DIR );
 #endif
         return Soprano::findLibraryPath( file.library(), fileSearchPaths, QStringList() << QLatin1String( "soprano" ) );
     }

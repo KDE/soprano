@@ -124,14 +124,14 @@ QStringList Soprano::envDirList( const char* var )
 QStringList Soprano::libDirs()
 {
     QStringList paths = QCoreApplication::libraryPaths();
-    paths << QLatin1String( SOPRANO_PREFIX"/lib"SOPRANO_LIB_SUFFIX );
+    paths << QLatin1String( SOPRANO_FULL_LIB_DIR );
 #ifdef Q_OS_WIN
-    paths << QLatin1String( SOPRANO_PREFIX"/bin" );
+    paths << QLatin1String( SOPRANO_BIN_DIR );
     paths << getWinPrefix() + QLatin1String( "/bin" );
-    paths << getWinPrefix() + QLatin1String( "/lib"SOPRANO_LIB_SUFFIX );
+    paths << getWinPrefix() + QLatin1String( SOPRANO_FULL_LIB_DIR );
 #else
-    paths << QLatin1String( "/usr/lib"SOPRANO_LIB_SUFFIX );
-    paths << QLatin1String( "/usr/local/lib"SOPRANO_LIB_SUFFIX );
+    paths << QLatin1String( "/usr/"SOPRANO_LIB_DIR );
+    paths << QLatin1String( "/usr/local/"SOPRANO_LIB_DIR );
     paths += Soprano::envDirList( "LD_LIBRARY_PATH" );
 #endif
     return paths;
@@ -141,7 +141,7 @@ QStringList Soprano::libDirs()
 QStringList Soprano::dataDirs()
 {
     QStringList paths;
-    paths << QLatin1String( SOPRANO_PREFIX"/share" )
+    paths << QLatin1String( SOPRANO_DATA_DIR )
 #ifdef Q_OS_WIN
           << getWinPrefix() + QLatin1String( "/share" )
 #endif
@@ -154,7 +154,7 @@ QStringList Soprano::dataDirs()
 QStringList Soprano::exeDirs()
 {
     QStringList paths;
-    paths << QLatin1String( SOPRANO_PREFIX"/bin" )
+    paths << QLatin1String( SOPRANO_BIN_DIR )
 #ifdef Q_OS_WIN
           << getWinPrefix() + QLatin1String( "/bin" )
 #endif
