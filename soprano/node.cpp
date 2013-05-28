@@ -461,7 +461,7 @@ QString Soprano::Node::literalToN3( const LiteralValue& literal )
         QMutexLocker lock( &typeMutex );
         QHash<QVariant::Type, QString>::const_iterator it = typeHash.constFind( literal.type() );
         if( it == typeHash.constEnd() ) {
-            type = QString::fromAscii( literal.dataTypeUri().toEncoded() );
+            type = QString::fromLatin1( literal.dataTypeUri().toEncoded() );
             typeHash.insert( literal.type(), type );
         }
         else {

@@ -713,7 +713,7 @@ Soprano::LiteralValue Soprano::LiteralValue::fromString( const QString& value, Q
             return LiteralValue();
     }
     case QVariant::ByteArray:
-        return LiteralValue( QByteArray::fromBase64( value.toAscii() ) );
+        return LiteralValue( QByteArray::fromBase64( value.toLatin1() ) );
     default:
 //        qDebug() << "(Soprano::LiteralValue) unknown type: " << type << "storing as string value." << endl;
         return LiteralValue( value );
