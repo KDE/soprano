@@ -335,7 +335,8 @@ bool Soprano::ODBC::QueryResult::getCharData( int colNum, SQLCHAR** buffer, SQLL
             return true;
         }
 
-        if( *length > bufSize ) {
+        // The -1 is because it is a null terminated string
+        if( *length > bufSize-1 ) {
             SQLCHAR* oldBuffer = *buffer;
 
             *buffer = new SQLCHAR[ *length + 4 ]; // FIXME: Why the +4 (I got this from the redland plugin)
