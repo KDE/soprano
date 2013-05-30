@@ -80,13 +80,13 @@ target_link_libraries(
   sopranod
   soprano
   sopranoserver
-  ${CLUCENE_LIBRARIES}
 )
 
 if(SOPRANO_BUILD_INDEX_LIB)
   target_link_libraries(
     sopranod
     sopranoindex
+    ${CLUCENE_LIBRARIES}
   )
 endif()
 

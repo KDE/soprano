@@ -20,7 +20,6 @@ else()
     sopranocmd
     soprano
     sopranoclient
-    ${CLUCENE_LIBRARY}
   )
 
   if(QT5_BUILD)
