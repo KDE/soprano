@@ -236,8 +236,7 @@ void Soprano::Error::ErrorCache::setError( const QString& errorMessage, int code
 void Soprano::Error::ErrorCache::clearError() const
 {
     QMutexLocker locker( &d->errorMapMutex );
-    if ( !d->errorMap.isEmpty() )
-        d->errorMap[QThread::currentThread()] = Error();
+    d->errorMap.remove( QThread::currentThread() );
 }
 
 
