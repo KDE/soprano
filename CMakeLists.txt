@@ -444,7 +444,10 @@ add_feature_info("Sesame2 storage backend (java-based)" BUILD_SESAME2_BACKEND
 add_feature_info("D-Bus server/client support" BUILD_DBUS_SUPPORT "")
 
 
-feature_summary(WHAT ALL)
+feature_summary(WHAT ALL
+                     INCLUDE_QUIET_PACKAGES
+                     FATAL_ON_MISSING_REQUIRED_PACKAGES
+               )
 
 ##################  Write SopranoConfigVersion.cmake ##################
 write_basic_package_version_file(${soprano_BINARY_DIR}/SopranoConfigVersion.cmake
