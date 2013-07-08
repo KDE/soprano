@@ -161,6 +161,9 @@ Soprano::StorageModel* Soprano::Virtuoso::BackendPlugin::createModel( const Back
         controller->setParent( model );
         connect(controller, SIGNAL(stopped(Soprano::VirtuosoController::ExitStatus)), model, SLOT(slotVirtuosoStopped(Soprano::VirtuosoController::ExitStatus)));
     }
+
+    // HACK: Ideally we need a better way of communicating what parameters have been set
+    emit virtuosoInitParameters( port, virtuosoVersion );
     return model;
 }
 

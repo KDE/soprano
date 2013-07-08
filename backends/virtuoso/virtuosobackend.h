@@ -50,6 +50,12 @@ namespace Soprano {
 
             static QString locateVirtuosoBinary();
 
+        signals:
+            // This is a hack so that Nepomuk can be informed of the port number which virtuoso
+            // has been started on and which version of virtuoso is running so that runtime checks
+            // can be performed
+            void virtuosoInitParameters( int port, const QString& version ) const;
+
 #ifndef Q_OS_WIN
         private:
             static QString findVirtuosoDriver();
