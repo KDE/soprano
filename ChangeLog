@@ -1,3 +1,9 @@
+2.9.3
+	* Fix bugs in FilterModel
+	* Optimize literal to N3 conversion
+	* Virtuoso Backend - Optimize by around 5x
+	* Fix potential memory leak in ErrorCache
+
 2.9.2
 	* Fix a crash in ServerCore on shutdown
 	* Do no require X11 - not needed for compilation
