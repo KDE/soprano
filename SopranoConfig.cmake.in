@@ -55,7 +55,7 @@ set_and_check(Soprano_MACRO_DIR   "${Soprano_DATA_DIR}/soprano/cmake")
 
 ########## Soprano programs ##########
 set_and_check(SOPRANO_ONTO2VOCABULARYCLASS_EXECUTABLE "@PACKAGE_BIN_INSTALL_DIR@/onto2vocabularyclass")
-set_and_check(SOPRANO_SOPRANOCMD_EXECUTABLE "@PACKAGE_BIN_INSTALL_DIR@/sopranocmd")
+set(SOPRANO_SOPRANOCMD_EXECUTABLE "@PACKAGE_BIN_INSTALL_DIR@/sopranocmd")
 ######################################
 
 ########## The Soprano libraries ##########
