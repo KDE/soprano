@@ -66,7 +66,7 @@ namespace Soprano {
             m_openIteratorMutex.unlock();
         }
 
-        QString statementToConstructGraphPattern( const Soprano::Statement& s, bool withContext = false ) const;
+        QString statementToConstructGraphPattern( const Soprano::Statement& s, bool withContext = false, bool parameterized = false ) const;
 
         QueryResultIterator sqlQuery( const QString& query );
         QueryResultIterator sparqlQuery( const QString& query );

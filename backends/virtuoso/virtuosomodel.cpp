@@ -56,14 +56,18 @@ namespace {
 }
 
 QString Soprano::VirtuosoModelPrivate::statementToConstructGraphPattern( const Soprano::Statement& s,
-                                                                         bool withContext ) const
+                                                                         bool withContext,
+                                                                         bool parameterized) const
 {
     QString query;
 
     if ( withContext ) {
         query += QLatin1String( "graph " );
         if ( s.context().isValid() ) {
-            query += nodeToN3( s.context() );
+            if (parameterized && !s.context().isBlank())
+                query += QLatin1String("bif:__rdf_long_from_batch_params(\?\?,\?\?,\?\?)");
+            else
+                query += nodeToN3( s.context() );
         }
         else {
             query += QLatin1String( "?g" );
@@ -72,28 +76,39 @@ QString Soprano::VirtuosoModelPrivate::statementToConstructGraphPattern( const S
     }
 
     if ( s.subject().isValid() ) {
-        query += nodeToN3( s.subject() ) + ' ';
+        if (parameterized && !s.subject().isBlank())
+            query += QLatin1String("`bif:__rdf_long_from_batch_params(\?\?,\?\?,\?\?)` ");
+        else
+            query += nodeToN3( s.subject() ) + ' ';
     }
     else {
         query += QLatin1String( "?s " );
     }
 
     if ( s.predicate().isValid() ) {
-        query += nodeToN3( s.predicate() ) + ' ';
+        if (parameterized)
+            query += QLatin1String("`bif:__rdf_long_from_batch_params(\?\?,\?\?,\?\?)` ");
+        else
+            query += nodeToN3( s.predicate() ) + ' ';
     }
     else {
         query += QLatin1String( "?p " );
     }
 
     if ( s.object().isValid() ) {
-        if ( m_fakeBooleans && s.object().literal().isBool() )
-            query += Soprano::Node( Soprano::LiteralValue::fromString( s.object().literal().toBool() ? QString( QLatin1String( "true" ) ) : QLatin1String("false"),
-                                                                        Soprano::Virtuoso::fakeBooleanType() ) ).toN3();
-        else if ( s.object().literal().isByteArray() )
-            query += Soprano::Node( Soprano::LiteralValue::fromString( s.object().literal().toString(),
-                                                                        Soprano::Virtuoso::fakeBase64BinaryType() ) ).toN3();
-        else
-            query += nodeToN3( s.object() );
+        if (parameterized && !s.object().isBlank()) {
+            query += QLatin1String("`bif:__rdf_long_from_batch_params(\?\?,\?\?,\?\?)`");
+        }
+        else {
+            if ( m_fakeBooleans && s.object().literal().isBool() )
+                query += Soprano::Node( Soprano::LiteralValue::fromString( s.object().literal().toBool() ? QString( QLatin1String( "true" ) ) : QLatin1String("false"),
+                                                                            Soprano::Virtuoso::fakeBooleanType() ) ).toN3();
+            else if ( s.object().literal().isByteArray() )
+                query += Soprano::Node( Soprano::LiteralValue::fromString( s.object().literal().toString(),
+                                                                            Soprano::Virtuoso::fakeBase64BinaryType() ) ).toN3();
+            else
+                query += nodeToN3( s.object() );
+        }
     }
     else {
         query += QLatin1String( "?o" );
@@ -165,16 +180,6 @@ Soprano::VirtuosoModel::~VirtuosoModel()
 }
 
 
-//
-// Patrick van Kleef <pkleef@openlinksw.com> says:
-// You may  want to concider using the TTLP_MT stored procedure to load
-// either large number of triples or large triples, since this is much more
-// efficient. You can call this with:
-//
-//         TTLP_MT( ?, 'graphname', 'graphname', 255);
-//
-// and bind with a blob parameter that holds the triples.
-//
 Soprano::Error::ErrorCode Soprano::VirtuosoModel::addStatement( const Statement& statement )
 {
 //    qDebug() << Q_FUNC_INFO << statement;
@@ -197,15 +202,26 @@ Soprano::Error::ErrorCode Soprano::VirtuosoModel::addStatement( const Statement&
         }
     }
 
-    QString insert = QString::fromLatin1("sparql insert into %1")
-                     .arg( d->statementToConstructGraphPattern( s, true ) );
+    // for adding statements we use ODBC parameters which are way more efficient than plain query strings, especially for long values
+    QString insert = QLatin1String("sparql insert into ") + d->statementToConstructGraphPattern( s, true, true );
+    QList<Node> paramNodes;
+    if(statement.context().isValid() && !statement.context().isBlank())
+        paramNodes << statement.context();
+    else
+        paramNodes << Virtuoso::defaultGraph();
+    if(statement.subject().isValid() && !statement.subject().isBlank())
+        paramNodes << statement.subject();
+    if(statement.predicate().isValid())
+        paramNodes << statement.predicate();
+    if(statement.object().isValid() && !statement.object().isBlank())
+        paramNodes << statement.object();
 
     if ( ODBC::Connection* conn = d->connectionPool->connection() ) {
-        if ( conn->executeCommand( insert ) == Error::ErrorNone ) {
+
+        if ( conn->executeCommand( insert, paramNodes ) == Error::ErrorNone ) {
             clearError();
 
             if(!d->m_noStatementSignals) {
-                // FIXME: can this be done with SQL/RDF views?
                 emit statementAdded( statement );
                 emit statementsAdded();
             }
