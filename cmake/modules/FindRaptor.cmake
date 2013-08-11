@@ -32,7 +32,7 @@ MACRO ( FIND_RAPTOR libname libhints includehints )
 ENDMACRO ()
 
 # Check if we have cached results in case the last round was successful.
-if ( NOT( RAPTOR_INCLUDE_DIR AND RAPTOR_LIBRARIES ) OR NOT RAPTOR_FOUND )
+if ( NOT ( RAPTOR_INCLUDE_DIR AND RAPTOR_LIBRARIES ) OR NOT RAPTOR_FOUND )
 
     include(FindLibraryWithDebug)
     find_package(PkgConfig)
