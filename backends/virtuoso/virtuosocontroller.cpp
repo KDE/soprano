@@ -166,7 +166,7 @@ bool Soprano::VirtuosoController::start( const QString &virtuosoExe, const Backe
     m_virtuosoProcess.start( virtuosoExe, args, QIODevice::ReadOnly );
     m_virtuosoProcess.setReadChannel( QProcess::StandardError );
     m_virtuosoProcess.closeReadChannel( QProcess::StandardOutput );
-    if ( waitForVirtuosoToInitialize() ) {
+    if ( waitForVirtuosoToInitialize(virtuosoExe, args) ) {
         clearError();
         m_status = Running;
         qDebug() << "Virtuoso started:" << m_virtuosoProcess.pid();
@@ -179,7 +179,7 @@ bool Soprano::VirtuosoController::start( const QString &virtuosoExe, const Backe
 }
 
 
-bool Soprano::VirtuosoController::waitForVirtuosoToInitialize()
+bool Soprano::VirtuosoController::waitForVirtuosoToInitialize(const QString& exe, const QStringList& args)
 {
     // FIXME: timeout
     if ( m_virtuosoProcess.waitForStarted() ) {
@@ -187,7 +187,25 @@ bool Soprano::VirtuosoController::waitForVirtuosoToInitialize()
             while( m_virtuosoProcess.canReadLine() ) {
                 QString line = QString::fromLatin1( m_virtuosoProcess.readLine() );
                 qDebug() << line;
-                if ( line.contains( "Server online at" ) ) {
+                if ( line.contains( "Delete translation log" ) ) {
+                    // Close virtuoso and restart -
+                    disconnect( &m_virtuosoProcess, SIGNAL(finished(int,QProcess::ExitStatus)),
+                            this, SLOT(slotProcessFinished(int,QProcess::ExitStatus)) );
+                    m_virtuosoProcess.close();
+                    m_virtuosoProcess.waitForFinished();
+                    QString storagePath = m_virtuosoProcess.workingDirectory();
+                    QFile::remove( storagePath + "/soprano-virtuoso.trx" );
+
+                    connect( &m_virtuosoProcess, SIGNAL(finished(int,QProcess::ExitStatus)),
+                            this, SLOT(slotProcessFinished(int,QProcess::ExitStatus)) );
+                    m_virtuosoProcess.setWorkingDirectory(storagePath);
+                    m_virtuosoProcess.start(exe, args, QIODevice::ReadOnly);
+                    m_virtuosoProcess.setReadChannel( QProcess::StandardError );
+                    m_virtuosoProcess.closeReadChannel( QProcess::StandardOutput );
+                    m_virtuosoProcess.waitForStarted();
+                    m_virtuosoProcess.waitForReadyRead(-1);
+                }
+                else if ( line.contains( "Server online at" ) ) {
                     m_virtuosoProcess.closeReadChannel( QProcess::StandardError );
                     m_status = Running;
                     return true;
