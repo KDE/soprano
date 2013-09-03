@@ -80,7 +80,9 @@ namespace Soprano {
 
     private:
         void writeConfigFile( const QString& path, const BackendSettings& settings );
-        bool waitForVirtuosoToInitialize();
+        // The exe and args are passed in the event that virtuoso has a corrupted transaction
+        // file and needs to be restarted after deleting the transaction file
+        bool waitForVirtuosoToInitialize(const QString& exe, const QStringList& args);
 
         QProcess m_virtuosoProcess;
         QString m_configFilePath;
