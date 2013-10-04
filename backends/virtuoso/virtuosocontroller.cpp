@@ -187,7 +187,7 @@ bool Soprano::VirtuosoController::waitForVirtuosoToInitialize(const QString& exe
             while( m_virtuosoProcess.canReadLine() ) {
                 QString line = QString::fromLatin1( m_virtuosoProcess.readLine() );
                 qDebug() << line;
-                if ( line.contains( "Delete translation log" ) ) {
+                if ( line.contains( "Delete transaction log" ) ) {
                     // Close virtuoso and restart -
                     disconnect( &m_virtuosoProcess, SIGNAL(finished(int,QProcess::ExitStatus)),
                             this, SLOT(slotProcessFinished(int,QProcess::ExitStatus)) );
