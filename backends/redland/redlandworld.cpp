@@ -96,7 +96,7 @@ static QString redlandLogLevelToString( int level )
 }
 
 
-int redlandLogHandler( void* user, librdf_log_message* msg )
+int REDLAND_CALLBACK_STDCALL redlandLogHandler( void* user, librdf_log_message* msg )
 {
     Soprano::Redland::World* w = reinterpret_cast<Soprano::Redland::World*>( user );
 

@@ -110,12 +110,6 @@ add_executable(inferencemodeltest inferencemodeltest.cpp)
 target_link_libraries(inferencemodeltest soprano ${QT_QTCORE_LIBRARY} ${QT_QTTEST_LIBRARY})
 add_test(inferencemodeltest ${EXECUTABLE_OUTPUT_PATH}/inferencemodeltest)
 
-# QueryAPITest
-#qt4_automoc(queryapitest queryapitest.cpp)
-#add_executable(queryapitest queryapitest.cpp)
-#target_link_libraries(queryapitest soprano ${QT_QTCORE_LIBRARY} ${QT_QTTEST_LIBRARY})
-#add_test(queryapitest ${EXECUTABLE_OUTPUT_PATH}/queryapitest)
-
 if(BUILD_SESAME2_BACKEND)
   # Sesame2 model tests
   qt4_automoc(sesame2backendtest sesame2backendtest.cpp)
@@ -156,12 +150,12 @@ if(BUILD_CLUCENE_INDEX)
   # TString test
   qt4_automoc(tstringtest tstringtest.cpp)
   add_executable(tstringtest tstringtest.cpp stringpool.cpp ../index/tstring.cpp)
-  target_link_libraries(tstringtest ${QT_QTCORE_LIBRARY} ${QT_QTTEST_LIBRARY} ${CLUCENE_LIBRARY})
+  target_link_libraries(tstringtest ${QT_QTCORE_LIBRARY} ${QT_QTTEST_LIBRARY} ${CLUCENE_LIBRARIES})
   add_test(tstringtest ${EXECUTABLE_OUTPUT_PATH}/tstringtest)
 
   qt4_automoc(cluceneindextest cluceneindextest.cpp)
   add_executable(cluceneindextest cluceneindextest.cpp stringpool.cpp)
-  target_link_libraries(cluceneindextest soprano sopranoindex ${QT_QTCORE_LIBRARY} ${QT_QTTEST_LIBRARY} ${CLUCENE_LIBRARY})
+  target_link_libraries(cluceneindextest soprano sopranoindex ${QT_QTCORE_LIBRARY} ${QT_QTTEST_LIBRARY} ${CLUCENE_LIBRARIES})
   add_test(cluceneindextest ${EXECUTABLE_OUTPUT_PATH}/cluceneindextest)
 
   qt4_automoc(indexmodelmultithreadingtest indexmodelmultithreadingtest.cpp)
@@ -179,13 +173,13 @@ add_test(localsocketmultithreadtest ${EXECUTABLE_OUTPUT_PATH}/localsocketmultith
 qt4_automoc(sopranodsocketclienttest sopranodsocketclienttest.cpp)
 add_executable(sopranodsocketclienttest sopranodsocketclienttest.cpp)
 target_link_libraries(sopranodsocketclienttest sopranomodeltest sopranoclient ${QT_QTCORE_LIBRARY} ${QT_QTTEST_LIBRARY} ${QT_QTNETWORK_LIBRARY})
-add_test(sopranodsocketclienttest ${EXECUTABLE_OUTPUT_PATH}/sopranodclienttest)
+add_test(sopranodsocketclienttest ${EXECUTABLE_OUTPUT_PATH}/sopranodsocketclienttest)
 
 if(BUILD_DBUS_SUPPORT)
 qt4_automoc(sopranodbusclienttest sopranodbusclienttest.cpp)
 add_executable(sopranodbusclienttest sopranodbusclienttest.cpp)
 target_link_libraries(sopranodbusclienttest sopranomodeltest sopranoclient ${QT_QTCORE_LIBRARY} ${QT_QTTEST_LIBRARY} ${QT_QTNETWORK_LIBRARY})
-add_test(sopranodbusclienttest ${EXECUTABLE_OUTPUT_PATH}/sopranodclienttest)
+add_test(sopranodbusclienttest ${EXECUTABLE_OUTPUT_PATH}/sopranodbusclienttest)
 
 qt4_automoc(sopranodbusmultithreadtest sopranodbusmultithreadtest.cpp)
 add_executable(sopranodbusmultithreadtest sopranodbusmultithreadtest.cpp)

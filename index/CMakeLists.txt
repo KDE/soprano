@@ -46,7 +46,7 @@ target_link_libraries(
   sopranoindex
   ${QT_QTCORE_LIBRARY}
   soprano
-  ${CLUCENE_LIBRARY}
+  ${CLUCENE_LIBRARIES}
 )
 
 set_target_properties(

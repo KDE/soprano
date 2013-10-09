@@ -24,6 +24,7 @@ target_link_libraries(
   ${QT_QTCORE_LIBRARY}
   soprano
   sopranoclient
+  ${CLUCENE_LIBRARY}
 )
 if(SOPRANO_BUILD_INDEX_LIB)
   target_link_libraries(
