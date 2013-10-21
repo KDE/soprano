@@ -67,13 +67,13 @@ void Soprano::ODBC::Connection::cleanup()
 }
 
 
-Soprano::Error::ErrorCode Soprano::ODBC::Connection::executeCommand( const QString& command )
+Soprano::Error::ErrorCode Soprano::ODBC::Connection::executeCommand( const QString& command, const QList<Soprano::Node>& params )
 {
 //    qDebug() << Q_FUNC_INFO << command;
 
     Error::ErrorCode result = Error::ErrorNone;
 
-    HSTMT hstmt = execute( command );
+    HSTMT hstmt = execute( command, params );
     if ( hstmt ) {
         SQLCloseCursor( hstmt );
         SQLFreeHandle( SQL_HANDLE_STMT, hstmt );
@@ -100,7 +100,7 @@ Soprano::ODBC::QueryResult* Soprano::ODBC::Connection::executeQuery( const QStri
 }
 
 
-HSTMT Soprano::ODBC::Connection::execute( const QString& request )
+HSTMT Soprano::ODBC::Connection::execute( const QString& request, const QList<Soprano::Node>& params )
 {
     HSTMT hstmt;
     if ( SQLAllocHandle( SQL_HANDLE_STMT, d->m_hdbc, &hstmt ) != SQL_SUCCESS ) {
@@ -108,6 +108,52 @@ HSTMT Soprano::ODBC::Connection::execute( const QString& request )
         return 0;
     }
     else {
+        // counter for the parameter index
+        int i = 1;
+        // counter for the node index
+        int ni = 0;
+
+        // each parameter requires its own variable which can be referenced by a pointer
+        // since we never use more than 4 nodes for now (we only use parameters for adding statements)
+        // we can stick to a fixed number of variables
+        SQLSMALLINT mode[4];
+        QVector<QByteArray> values(4);
+        QVector<QByteArray> dtOrLangs(4);
+
+        // the type vars can be shared as they do not change
+        SQLLEN cbInt = 0;
+        SQLLEN cbChar = SQL_NTS;
+
+        // run through all nodes and create the parameters
+        // We do *not* parameterize blank nodes
+        foreach(const Soprano::Node& node, params) {
+            if(node.isResource()) {
+                mode[ni] = 1;
+                values[ni] = node.uri().toEncoded();
+                SQLBindParameter( hstmt, i++, SQL_PARAM_INPUT, SQL_C_SSHORT, SQL_SMALLINT, 0, 0, &(mode[ni]), 0, &cbInt);
+                SQLBindParameter( hstmt, i++, SQL_PARAM_INPUT, SQL_C_CHAR, SQL_CHAR, values[ni].length(), 0, values[ni].data(), 0, &cbChar);
+                SQLBindParameter( hstmt, i++, SQL_PARAM_INPUT, SQL_C_CHAR, SQL_CHAR, values[ni].length(), 0, values[ni].data(), 0, &cbChar); // ignored
+            }
+            else if(node.isLiteral()) {
+                values[ni] = node.literal().toString().toUtf8();
+                if(!node.literal().dataTypeUri().isEmpty()) {
+                    mode[ni] = 4;
+                    dtOrLangs[ni] = node.literal().dataTypeUri().toEncoded();
+                }
+                else if(node.literal().language().isValid()) {
+                    mode[ni] = 5;
+                    dtOrLangs[ni] = node.literal().language().toString().toUtf8();
+                }
+                else {
+                    mode[ni] = 3;
+                }
+                SQLBindParameter( hstmt, i++, SQL_PARAM_INPUT, SQL_C_SSHORT, SQL_SMALLINT, 0, 0, &(mode[ni]), 0, &cbInt);
+                SQLBindParameter( hstmt, i++, SQL_PARAM_INPUT, SQL_C_CHAR, SQL_CHAR, values[ni].length(), 0, values[ni].data(), 0, &cbChar);
+                SQLBindParameter( hstmt, i++, SQL_PARAM_INPUT, SQL_C_CHAR, SQL_CHAR, dtOrLangs[ni].length(), 0, dtOrLangs[ni].data(), 0, &cbChar);
+            }
+
+            ++ni;
+        }
         QByteArray utf8Request = request.toUtf8();
         if ( !SQL_SUCCEEDED( SQLExecDirect( hstmt, ( UCHAR* )utf8Request.data(), utf8Request.length() ) ) ) {
             setError( Virtuoso::convertSqlError( SQL_HANDLE_STMT, hstmt, QLatin1String( "SQLExecDirect failed on query '" ) + request + '\'' ) );

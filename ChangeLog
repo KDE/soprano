@@ -1,3 +1,7 @@
+2.9.4
+	* Automatically delete fault transaction logs
+	* Virtuoso backend supports parameterized queries which seem to consume
+	  less memory when inserting large amounts of plain text
 2.9.3
 	* Fix bugs in FilterModel
 	* Optimize literal to N3 conversion

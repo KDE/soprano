@@ -24,12 +24,15 @@
 
 #include <QtCore/qglobal.h>
 #include <QtCore/QObject>
+#include <QtCore/QList>
 
 #include "error.h"
 #ifdef Q_OS_WIN
 #include <windows.h>
 #endif
 #include <sql.h>
+
+#include "node.h"
 
 namespace Soprano {
     namespace ODBC {
@@ -45,7 +48,7 @@ namespace Soprano {
         public:
             ~Connection();
 
-            Error::ErrorCode executeCommand( const QString& command );
+            Error::ErrorCode executeCommand( const QString& command, const QList<Soprano::Node>& params = QList<Soprano::Node>() );
             QueryResult* executeQuery( const QString& request );
 
         public Q_SLOTS:
@@ -54,7 +57,7 @@ namespace Soprano {
         private:
             Connection();
 
-            HSTMT execute( const QString& query );
+            HSTMT execute( const QString& query, const QList<Soprano::Node>& params = QList<Soprano::Node>() );
 
             ConnectionPrivate* const d;
 
