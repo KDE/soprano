@@ -66,7 +66,7 @@ JNIWrapper* JNIWrapper::instance()
         // prepare the VM options
         JavaVMInitArgs vmArgs;
         JavaVMOption vmOptions[4];
-        vmOptions[0].optionString = ( char* )"-Djava.class.path="SESAME2_CLASSPATH;
+        vmOptions[0].optionString = ( char* )"-Djava.class.path=" SESAME2_CLASSPATH;
         vmOptions[1].optionString = ( char* )"-verbose:jni,gc,class";
         vmOptions[2].optionString = ( char* )"-Xms256m";
         vmOptions[3].optionString = ( char* )"-Xmx256m";
@@ -182,7 +182,7 @@ Soprano::Error::Error JNIWrapper::convertAndClearException()
     if ( exception ) {
         env()->ExceptionDescribe();
         JNIObjectWrapper exWr( exception );
-        jmethodID id = exWr.getMethodID( "getMessage", "()L"JAVA_LANG_STRING";" );
+        jmethodID id = exWr.getMethodID( "getMessage", "()L" JAVA_LANG_STRING ";" );
         QString message = JStringRef( exWr.callObjectMethod( id ) ).toQString();
         env()->ExceptionClear();
         return Soprano::Error::Error( "Sesame2 backend error: '" + message + "'", Soprano::Error::ErrorUnknown );

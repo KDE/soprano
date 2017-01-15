@@ -47,7 +47,7 @@ public:
     jmethodID IDcreateURI() {
         if ( !m_IDcreateURI ) {
             m_IDcreateURI = m_parent->getMethodID( "createURI",
-                                                   "(L"JAVA_LANG_STRING";)L"ORG_OPENRDF_MODEL_URI";" );
+                                                   "(L" JAVA_LANG_STRING ";)L" ORG_OPENRDF_MODEL_URI ";" );
             JNIWrapper::instance()->debugException();
         }
         return m_IDcreateURI;
@@ -56,7 +56,7 @@ public:
     jmethodID IDcreateBNode() {
         if ( !m_IDcreateBNode ) {
             m_IDcreateBNode = m_parent->getMethodID( "createBNode",
-                                                     "()L"ORG_OPENRDF_MODEL_BNODE";" );
+                                                     "()L" ORG_OPENRDF_MODEL_BNODE ";" );
             JNIWrapper::instance()->debugException();
         }
         return m_IDcreateBNode;
@@ -65,7 +65,7 @@ public:
     jmethodID IDcreateBNodeFromString() {
         if ( !m_IDcreateBNodeFromString ) {
             m_IDcreateBNodeFromString = m_parent->getMethodID( "createBNode",
-                                                               "(L"JAVA_LANG_STRING";)L"ORG_OPENRDF_MODEL_BNODE";" );
+                                                               "(L" JAVA_LANG_STRING ";)L" ORG_OPENRDF_MODEL_BNODE ";" );
             JNIWrapper::instance()->debugException();
         }
         return m_IDcreateBNodeFromString;
@@ -74,7 +74,7 @@ public:
     jmethodID IDcreateLiteralWithLang() {
         if ( !m_IDcreateLiteralWithLang ) {
             m_IDcreateLiteralWithLang = m_parent->getMethodID( "createLiteral",
-                                                               "(L"JAVA_LANG_STRING";L"JAVA_LANG_STRING";)L"ORG_OPENRDF_MODEL_LITERAL";" );
+                                                               "(L" JAVA_LANG_STRING ";L" JAVA_LANG_STRING ";)L" ORG_OPENRDF_MODEL_LITERAL ";" );
             JNIWrapper::instance()->debugException();
         }
         return m_IDcreateLiteralWithLang;
@@ -83,7 +83,7 @@ public:
     jmethodID IDcreateLiteralWithDataType() {
         if ( !m_IDcreateLiteralWithDataType ) {
             m_IDcreateLiteralWithDataType = m_parent->getMethodID( "createLiteral",
-                                                                   "(L"JAVA_LANG_STRING";L"ORG_OPENRDF_MODEL_URI";)L"ORG_OPENRDF_MODEL_LITERAL";" );
+                                                                   "(L" JAVA_LANG_STRING ";L" ORG_OPENRDF_MODEL_URI ";)L" ORG_OPENRDF_MODEL_LITERAL ";" );
             JNIWrapper::instance()->debugException();
         }
         return m_IDcreateLiteralWithDataType;
@@ -92,7 +92,7 @@ public:
     jmethodID IDcreateStatement() {
         if ( !m_IDcreateStatement ) {
             m_IDcreateStatement = m_parent->getMethodID( "createStatement",
-                                                         "(L"ORG_OPENRDF_MODEL_RESOURCE";L"ORG_OPENRDF_MODEL_URI";L"ORG_OPENRDF_MODEL_VALUE";)L"ORG_OPENRDF_MODEL_STATEMENT";" );
+                                                         "(L" ORG_OPENRDF_MODEL_RESOURCE ";L" ORG_OPENRDF_MODEL_URI ";L" ORG_OPENRDF_MODEL_VALUE ";)L" ORG_OPENRDF_MODEL_STATEMENT ";" );
             JNIWrapper::instance()->debugException();
         }
         return m_IDcreateStatement;
@@ -101,7 +101,7 @@ public:
     jmethodID IDcreateStatementWithContext() {
         if ( !m_IDcreateStatementWithContext ) {
             m_IDcreateStatementWithContext = m_parent->getMethodID( "createStatement",
-                                                                    "(L"ORG_OPENRDF_MODEL_RESOURCE";L"ORG_OPENRDF_MODEL_URI";L"ORG_OPENRDF_MODEL_VALUE";L"ORG_OPENRDF_MODEL_RESOURCE";)L"ORG_OPENRDF_MODEL_STATEMENT";" );
+                                                                    "(L" ORG_OPENRDF_MODEL_RESOURCE ";L" ORG_OPENRDF_MODEL_URI ";L" ORG_OPENRDF_MODEL_VALUE ";L" ORG_OPENRDF_MODEL_RESOURCE ";)L" ORG_OPENRDF_MODEL_STATEMENT ";" );
             JNIWrapper::instance()->debugException();
         }
         return m_IDcreateStatementWithContext;

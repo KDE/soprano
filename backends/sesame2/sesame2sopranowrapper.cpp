@@ -35,7 +35,7 @@ public:
     jmethodID IDremoveFromDefaultContext() {
         if ( !m_IDremoveFromDefaultContext ) {
             m_IDremoveFromDefaultContext = m_parent->getMethodID( "removeFromDefaultContext",
-                                                                  "(L"ORG_OPENRDF_MODEL_RESOURCE";L"ORG_OPENRDF_MODEL_URI";L"ORG_OPENRDF_MODEL_VALUE";)V" );
+                                                                  "(L" ORG_OPENRDF_MODEL_RESOURCE ";L" ORG_OPENRDF_MODEL_URI ";L" ORG_OPENRDF_MODEL_VALUE ";)V" );
             JNIWrapper::instance()->debugException();
         }
         return m_IDremoveFromDefaultContext;

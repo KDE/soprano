@@ -65,7 +65,7 @@ Soprano::Sesame2::RepositoryWrapper* Soprano::Sesame2::RepositoryWrapper::create
 
     // put the path into a java.io.File
     JObjectRef file = JNIWrapper::instance()->constructObject( JAVA_IO_FILE,
-                                                               "(L"JAVA_LANG_STRING";)V",
+                                                               "(L" JAVA_LANG_STRING ";)V",
                                                                path.data() );
     if ( !file ) {
         return 0;
@@ -77,7 +77,7 @@ Soprano::Sesame2::RepositoryWrapper* Soprano::Sesame2::RepositoryWrapper::create
 
     // create an instance of org.openrdf.sail.nativerdf.NativeStore;
     JObjectRef store = JNIWrapper::instance()->constructObject( ORG_OPENRDF_SAIL_NATIVERDF_NATIVESTORE,
-                                                                "(L"JAVA_IO_FILE";L"JAVA_LANG_STRING";)V",
+                                                                "(L" JAVA_IO_FILE ";L" JAVA_LANG_STRING ";)V",
                                                                 file.data(),
                                                                 tripleIndexes.data() );
     if ( !store ) {
@@ -86,7 +86,7 @@ Soprano::Sesame2::RepositoryWrapper* Soprano::Sesame2::RepositoryWrapper::create
 
     // create an instance of org.openrdf.repository.sail.SailRepository
     JObjectRef repository = JNIWrapper::instance()->constructObject( ORG_OPENRDF_REPOSITORY_SAIL_SAILREPOSITORY,
-                                                                     "(L"ORG_OPENRDF_SAIL_SAIL";)V",
+                                                                     "(L" ORG_OPENRDF_SAIL_SAIL ";)V",
                                                                      store.data() );
     if ( !repository ) {
         return 0;
@@ -106,7 +106,7 @@ Soprano::Sesame2::RepositoryWrapper* Soprano::Sesame2::RepositoryWrapper::create
 
     // create an instance of org.openrdf.repository.sail.SailRepository
     JObjectRef repository = JNIWrapper::instance()->constructObject( ORG_OPENRDF_REPOSITORY_SAIL_SAILREPOSITORY,
-                                                                     "(L"ORG_OPENRDF_SAIL_SAIL";)V",
+                                                                     "(L" ORG_OPENRDF_SAIL_SAIL ";)V",
                                                                      store.data() );
     if ( !repository ) {
         return 0;
@@ -154,7 +154,7 @@ bool Soprano::Sesame2::RepositoryWrapper::initialize()
 Soprano::Sesame2::ValueFactory* Soprano::Sesame2::RepositoryWrapper::valueFactory()
 {
     if ( !d->valueFactory ) {
-        JObjectRef valueFactory = callObjectMethod( getMethodID( "getValueFactory", "()L"ORG_OPENRDF_MODEL_VALUEFACTORY";" ) );
+        JObjectRef valueFactory = callObjectMethod( getMethodID( "getValueFactory", "()L" ORG_OPENRDF_MODEL_VALUEFACTORY ";" ) );
         if ( !valueFactory ) {
             JNIWrapper::instance()->debugException();
             return 0;
@@ -169,7 +169,7 @@ Soprano::Sesame2::ValueFactory* Soprano::Sesame2::RepositoryWrapper::valueFactor
 Soprano::Sesame2::RepositoryConnection* Soprano::Sesame2::RepositoryWrapper::repositoryConnection()
 {
     if ( !d->repositoryConnection ) {
-        JObjectRef repositoryConnection = callObjectMethod( getMethodID( "getConnection", "()L"ORG_OPENRDF_REPOSITORY_SAIL_SAILREPOSITORYCONNECTION";" ) );
+        JObjectRef repositoryConnection = callObjectMethod( getMethodID( "getConnection", "()L" ORG_OPENRDF_REPOSITORY_SAIL_SAILREPOSITORYCONNECTION ";" ) );
         if ( !repositoryConnection ) {
             JNIWrapper::instance()->debugException();
             return 0;

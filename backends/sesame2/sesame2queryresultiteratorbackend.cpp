@@ -53,9 +53,9 @@ public:
 
         // cache the binding names, it is just simpler
         if ( isTupleResult ) {
-            JObjectRef bindingList = result->callObjectMethod( result->getMethodID( "getBindingNames", "()L"JAVA_UTIL_LIST";" ) );
+            JObjectRef bindingList = result->callObjectMethod( result->getMethodID( "getBindingNames", "()L" JAVA_UTIL_LIST ";" ) );
             JNIObjectWrapper listWrapper( bindingList );
-            Iterator it( listWrapper.callObjectMethod( listWrapper.getMethodID( "iterator", "()L"JAVA_UTIL_ITERATOR";" ) ) );
+            Iterator it( listWrapper.callObjectMethod( listWrapper.getMethodID( "iterator", "()L" JAVA_UTIL_ITERATOR ";" ) ) );
             while ( it.hasNext() ) {
                 bindingNames.append( JStringRef( it.next() ).toQString() );
             }

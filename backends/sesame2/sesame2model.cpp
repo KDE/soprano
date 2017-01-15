@@ -143,7 +143,7 @@ Soprano::QueryResultIterator Soprano::Sesame2::Model::executeQuery( const QStrin
 
     jfieldID sparqlID = JNIWrapper::instance()->env()->GetStaticFieldID( JNIWrapper::instance()->env()->FindClass( ORG_OPENRDF_QUERY_QUERYLANGUAGE ),
                                                                          "SPARQL",
-                                                                         "L"ORG_OPENRDF_QUERY_QUERYLANGUAGE";" );
+                                                                         "L" ORG_OPENRDF_QUERY_QUERYLANGUAGE ";" );
     JObjectRef sparqlQueryLang = JNIWrapper::instance()->env()->GetStaticObjectField( JNIWrapper::instance()->env()->FindClass( ORG_OPENRDF_QUERY_QUERYLANGUAGE ),
                                                                                       sparqlID );
 
@@ -155,11 +155,11 @@ Soprano::QueryResultIterator Soprano::Sesame2::Model::executeQuery( const QStrin
         // evaluate the query
         if ( JNIWrapper::instance()->env()->IsInstanceOf( queryObject, JNIWrapper::instance()->env()->FindClass( ORG_OPENRDF_QUERY_TUPLEQUERY ) ) ) {
             JNIObjectWrapper queryWrapper( queryObject );
-            it = new QueryResultIteratorBackend( queryWrapper.callObjectMethod( queryWrapper.getMethodID( "evaluate", "()L"ORG_OPENRDF_QUERY_TUPLEQUERYRESULT";" ) ), this );
+            it = new QueryResultIteratorBackend( queryWrapper.callObjectMethod( queryWrapper.getMethodID( "evaluate", "()L" ORG_OPENRDF_QUERY_TUPLEQUERYRESULT ";" ) ), this );
         }
         else if ( JNIWrapper::instance()->env()->IsInstanceOf( queryObject, JNIWrapper::instance()->env()->FindClass( ORG_OPENRDF_QUERY_GRAPHQUERY ) ) ) {
             JNIObjectWrapper queryWrapper( queryObject );
-            it = new QueryResultIteratorBackend( queryWrapper.callObjectMethod( queryWrapper.getMethodID( "evaluate", "()L"ORG_OPENRDF_QUERY_GRAPHQUERYRESULT";" ) ), this );
+            it = new QueryResultIteratorBackend( queryWrapper.callObjectMethod( queryWrapper.getMethodID( "evaluate", "()L" ORG_OPENRDF_QUERY_GRAPHQUERYRESULT ";" ) ), this );
         }
         else {
             JNIObjectWrapper queryWrapper( queryObject );

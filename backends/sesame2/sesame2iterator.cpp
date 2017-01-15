@@ -44,7 +44,7 @@ public:
 
     jmethodID IDnext() {
         if ( !m_IDnext ) {
-            m_IDnext = m_parent->getMethodID( "next", "()L"JAVA_LANG_OBJECT";" );
+            m_IDnext = m_parent->getMethodID( "next", "()L" JAVA_LANG_OBJECT ";" );
             JNIWrapper::instance()->debugException();
         }
         return m_IDnext;

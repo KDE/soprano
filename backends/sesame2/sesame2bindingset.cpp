@@ -32,7 +32,7 @@ public:
     }
 
     jmethodID IDgetValue() {
-        return m_parent->getMethodID( "getValue", "(L"JAVA_LANG_STRING";)L"ORG_OPENRDF_MODEL_VALUE";" );
+        return m_parent->getMethodID( "getValue", "(L" JAVA_LANG_STRING ";)L" ORG_OPENRDF_MODEL_VALUE ";" );
     }
 
 private:

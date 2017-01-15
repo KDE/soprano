@@ -45,7 +45,7 @@ public:
 
     jmethodID IDgetContextIDs() {
         if ( !m_IDgetContextIDs ) {
-            m_IDgetContextIDs = m_parent->getMethodID( "getContextIDs", "()L"ORG_OPENRDF_REPOSITORY_REPOSITORYRESULT";" );
+            m_IDgetContextIDs = m_parent->getMethodID( "getContextIDs", "()L" ORG_OPENRDF_REPOSITORY_REPOSITORYRESULT ";" );
             JNIWrapper::instance()->debugException();
         }
         return m_IDgetContextIDs;
@@ -53,7 +53,7 @@ public:
 
     jmethodID IDaddStatement() {
         if ( !m_IDaddStatement ) {
-            m_IDaddStatement = m_parent->getMethodID( "add", "(L"ORG_OPENRDF_MODEL_STATEMENT";[L"ORG_OPENRDF_MODEL_RESOURCE";)V" );
+            m_IDaddStatement = m_parent->getMethodID( "add", "(L" ORG_OPENRDF_MODEL_STATEMENT ";[L" ORG_OPENRDF_MODEL_RESOURCE ";)V" );
             JNIWrapper::instance()->debugException();
         }
         return m_IDaddStatement;
@@ -61,7 +61,7 @@ public:
 
     jmethodID IDgetStatements() {
         if ( !m_IDgetStatements ) {
-            m_IDgetStatements = m_parent->getMethodID( "getStatements", "(L"ORG_OPENRDF_MODEL_RESOURCE";L"ORG_OPENRDF_MODEL_URI";L"ORG_OPENRDF_MODEL_VALUE";Z[L"ORG_OPENRDF_MODEL_RESOURCE";)L"ORG_OPENRDF_REPOSITORY_REPOSITORYRESULT";" );
+            m_IDgetStatements = m_parent->getMethodID( "getStatements", "(L" ORG_OPENRDF_MODEL_RESOURCE ";L" ORG_OPENRDF_MODEL_URI";L" ORG_OPENRDF_MODEL_VALUE";Z[L" ORG_OPENRDF_MODEL_RESOURCE";)L" ORG_OPENRDF_REPOSITORY_REPOSITORYRESULT";" );
             JNIWrapper::instance()->debugException();
         }
         return m_IDgetStatements;
@@ -69,7 +69,7 @@ public:
 
     jmethodID IDhasStatement() {
         if ( !m_IDhasStatement ) {
-            m_IDhasStatement = m_parent->getMethodID( "hasStatement", "(L"ORG_OPENRDF_MODEL_RESOURCE";L"ORG_OPENRDF_MODEL_URI";L"ORG_OPENRDF_MODEL_VALUE";Z[L"ORG_OPENRDF_MODEL_RESOURCE";)Z" );
+            m_IDhasStatement = m_parent->getMethodID( "hasStatement", "(L" ORG_OPENRDF_MODEL_RESOURCE ";L " ORG_OPENRDF_MODEL_URI "; L" ORG_OPENRDF_MODEL_VALUE ";Z [L " ORG_OPENRDF_MODEL_RESOURCE ";)Z" );
             JNIWrapper::instance()->debugException();
         }
         return m_IDhasStatement;
@@ -77,7 +77,7 @@ public:
 
     jmethodID IDremove() {
         if ( !m_IDremove ) {
-            m_IDremove = m_parent->getMethodID( "remove", "(L"ORG_OPENRDF_MODEL_RESOURCE";L"ORG_OPENRDF_MODEL_URI";L"ORG_OPENRDF_MODEL_VALUE";[L"ORG_OPENRDF_MODEL_RESOURCE";)V" );
+            m_IDremove = m_parent->getMethodID( "remove", "(L" ORG_OPENRDF_MODEL_RESOURCE ";L" ORG_OPENRDF_MODEL_URI ";L" ORG_OPENRDF_MODEL_VALUE ";[L" ORG_OPENRDF_MODEL_RESOURCE ";)V" );
             JNIWrapper::instance()->debugException();
         }
         return m_IDremove;
@@ -85,7 +85,7 @@ public:
 
     jmethodID IDremoveStatement() {
         if ( !m_IDremoveStatement ) {
-            m_IDremoveStatement = m_parent->getMethodID( "remove", "(L"ORG_OPENRDF_MODEL_STATEMENT";[L"ORG_OPENRDF_MODEL_RESOURCE";)V" );
+            m_IDremoveStatement = m_parent->getMethodID( "remove", "(L" ORG_OPENRDF_MODEL_STATEMENT ";[L" ORG_OPENRDF_MODEL_RESOURCE ";)V" );
             JNIWrapper::instance()->debugException();
         }
         return m_IDremoveStatement;
@@ -93,7 +93,7 @@ public:
 
     jmethodID IDsize() {
         if ( !m_IDsize ) {
-            m_IDsize = m_parent->getMethodID( "size", "([L"ORG_OPENRDF_MODEL_RESOURCE";)J" );
+            m_IDsize = m_parent->getMethodID( "size", "([L" ORG_OPENRDF_MODEL_RESOURCE ";)J" );
             JNIWrapper::instance()->debugException();
         }
         return m_IDsize;
@@ -109,7 +109,7 @@ public:
 
     jmethodID IDprepareQuery() {
         if ( !m_IDprepareQuery ) {
-            m_IDprepareQuery = m_parent->getMethodID( "prepareQuery", "(L"ORG_OPENRDF_QUERY_QUERYLANGUAGE";L"JAVA_LANG_STRING";)L"ORG_OPENRDF_QUERY_QUERY";" );
+            m_IDprepareQuery = m_parent->getMethodID( "prepareQuery", "(L" ORG_OPENRDF_QUERY_QUERYLANGUAGE ";L" JAVA_LANG_STRING ";)L" ORG_OPENRDF_QUERY_QUERY ";" );
             JNIWrapper::instance()->debugException();
         }
         return m_IDprepareQuery;

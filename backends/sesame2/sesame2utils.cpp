@@ -33,7 +33,7 @@
 QUrl Soprano::Sesame2::convertURI( const JObjectRef& uri )
 {
     JNIObjectWrapper uriWrapper( uri );
-    JStringRef uriString = uriWrapper.callObjectMethod( uriWrapper.getMethodID( "toString", "()L"JAVA_LANG_STRING";" ) );
+    JStringRef uriString = uriWrapper.callObjectMethod( uriWrapper.getMethodID( "toString", "()L" JAVA_LANG_STRING ";" ) );
     return QUrl::fromEncoded( uriString.toAscii() );
 }
 
@@ -54,13 +54,13 @@ Soprano::Node Soprano::Sesame2::convertNode( const JObjectRef& resource )
         return convertURI( resource );
     }
     else if ( JNIWrapper::instance()->env()->IsInstanceOf( resource, classBNode ) ) {
-        JStringRef uri = resourceWrapper.callObjectMethod( resourceWrapper.getMethodID( "getID", "()L"JAVA_LANG_STRING";" ) );
+        JStringRef uri = resourceWrapper.callObjectMethod( resourceWrapper.getMethodID( "getID", "()L" JAVA_LANG_STRING ";" ) );
         return Node( uri.toQString() );
     }
     else if ( JNIWrapper::instance()->env()->IsInstanceOf( resource, classLiteral ) ) {
-        JStringRef value = resourceWrapper.callObjectMethod( resourceWrapper.getMethodID( "getLabel", "()L"JAVA_LANG_STRING";" ) );
-        JStringRef lang = resourceWrapper.callObjectMethod( resourceWrapper.getMethodID( "getLanguage", "()L"JAVA_LANG_STRING";" ) );
-        JObjectRef dataType = resourceWrapper.callObjectMethod( resourceWrapper.getMethodID( "getDatatype", "()L"ORG_OPENRDF_MODEL_URI";" ) );
+        JStringRef value = resourceWrapper.callObjectMethod( resourceWrapper.getMethodID( "getLabel", "()L" JAVA_LANG_STRING ";" ) );
+        JStringRef lang = resourceWrapper.callObjectMethod( resourceWrapper.getMethodID( "getLanguage", "()L" JAVA_LANG_STRING ";" ) );
+        JObjectRef dataType = resourceWrapper.callObjectMethod( resourceWrapper.getMethodID( "getDatatype", "()L" ORG_OPENRDF_MODEL_URI ";" ) );
 
         if ( dataType ) {
             return Node( LiteralValue::fromString( value.toQString(), convertURI( dataType ) ) );
@@ -80,10 +80,10 @@ Soprano::Statement Soprano::Sesame2::convertStatement( const JObjectRef& o )
 {
     JNIObjectWrapper statementWrapper( o );
 
-    JObjectRef subject = statementWrapper.callObjectMethod( statementWrapper.getMethodID( "getSubject", "()L"ORG_OPENRDF_MODEL_RESOURCE";" ) );
-    JObjectRef predicate = statementWrapper.callObjectMethod( statementWrapper.getMethodID( "getPredicate", "()L"ORG_OPENRDF_MODEL_URI";" ) );
-    JObjectRef object = statementWrapper.callObjectMethod( statementWrapper.getMethodID( "getObject", "()L"ORG_OPENRDF_MODEL_VALUE";" ) );
-    JObjectRef context = statementWrapper.callObjectMethod( statementWrapper.getMethodID( "getContext", "()L"ORG_OPENRDF_MODEL_RESOURCE";" ) );
+    JObjectRef subject = statementWrapper.callObjectMethod( statementWrapper.getMethodID( "getSubject", "()L" ORG_OPENRDF_MODEL_RESOURCE ";" ) );
+    JObjectRef predicate = statementWrapper.callObjectMethod( statementWrapper.getMethodID( "getPredicate", "()L" ORG_OPENRDF_MODEL_URI ";" ) );
+    JObjectRef object = statementWrapper.callObjectMethod( statementWrapper.getMethodID( "getObject", "()L" ORG_OPENRDF_MODEL_VALUE ";" ) );
+    JObjectRef context = statementWrapper.callObjectMethod( statementWrapper.getMethodID( "getContext", "()L" ORG_OPENRDF_MODEL_RESOURCE ";" ) );
 
     return Statement( convertNode( subject ),
                       convertNode( predicate ),
